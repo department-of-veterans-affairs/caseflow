@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Mark from 'mark.js';
 import uuid, { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +17,7 @@ import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+import { pdfPagePropTypes } from 'app/constants/pdfPagePropTypes';
 
 const markStyle = css({
   '& mark': {
@@ -214,7 +214,7 @@ export class PdfPage extends React.PureComponent {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       const pageMetricData = {
-        message: 'Storing PDF page',
+        message: `Storing PDF page ${this.props.pageIndex + 1}`,
         product: 'reader',
         type: 'performance',
         data: {
@@ -224,6 +224,7 @@ export class PdfPage extends React.PureComponent {
           numPagesInDoc: this.props.pdfDocument.numPages,
           prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
+        eventId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
@@ -235,7 +236,7 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: 'Storing PDF page text',
+          message: `Storing PDF page ${this.props.pageIndex + 1} text`,
           product: 'reader',
           type: 'performance',
           data: {
@@ -243,13 +244,14 @@ export class PdfPage extends React.PureComponent {
             documentId: this.props.documentId,
             pageIndex: this.props.pageIndex,
             numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
           },
+          eventId: this.props.metricsIdentifier
         };
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: 'PDFJS rendering text layer',
+          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
           type: 'performance',
           product: 'reader',
           data: {
@@ -260,6 +262,7 @@ export class PdfPage extends React.PureComponent {
             numPagesInDoc: this.props.pdfDocument.numPages,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
+          eventId: this.props.metricsIdentifier
         };
 
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
@@ -292,7 +295,8 @@ export class PdfPage extends React.PureComponent {
                 start: new Date(performance.timeOrigin + data.start),
                 end: new Date(performance.timeOrigin + data.end),
                 duration: data.start ? data.end - data.start : 0
-              }
+              },
+              this.props.metricsIdentifier,
             );
           }
         });
@@ -314,7 +318,8 @@ export class PdfPage extends React.PureComponent {
             { message,
               type: 'error',
               product: 'browser',
-            }
+            },
+            this.props.metricsIdentifier
           );
         }
       });
@@ -407,41 +412,7 @@ export class PdfPage extends React.PureComponent {
   }
 }
 
-PdfPage.propTypes = {
-  currentMatchIndex: PropTypes.any,
-  documentId: PropTypes.number,
-  documentType: PropTypes.any,
-  file: PropTypes.string,
-  getTextLayerRef: PropTypes.func,
-  handleSelectCommentIcon: PropTypes.func,
-  isDrawing: PropTypes.any,
-  isFileVisible: PropTypes.bool,
-  isPageVisible: PropTypes.any,
-  isPlacingAnnotation: PropTypes.any,
-  isVisible: PropTypes.bool,
-  matchesPerPage: PropTypes.shape({
-    length: PropTypes.any
-  }),
-  page: PropTypes.shape({
-    cleanup: PropTypes.func
-  }),
-  pageDimensions: PropTypes.any,
-  pageIndex: PropTypes.number,
-  pageIndexWithMatch: PropTypes.any,
-  pdfDocument: PropTypes.object,
-  placingAnnotationIconPageCoords: PropTypes.object,
-  relativeIndex: PropTypes.any,
-  rotate: PropTypes.number,
-  rotation: PropTypes.number,
-  scale: PropTypes.number,
-  searchBarHidden: PropTypes.bool,
-  searchText: PropTypes.string,
-  setDocScrollPosition: PropTypes.func,
-  setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string,
-  featureToggles: PropTypes.object,
-  measureTimeStartMs: PropTypes.number
-};
+PdfPage.propTypes = pdfPagePropTypes;
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators(
