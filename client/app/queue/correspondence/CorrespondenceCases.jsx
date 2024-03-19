@@ -31,7 +31,8 @@ const CorrespondenceCases = (props) => {
   const [decisionReason, setDecisionReason] = useState('');
 
   const buildMailUserData = (data) => {
-    if (data === 'undefined') {
+
+    if (!props.isSuperuser || !props.isSupervisor) {
       return [];
     }
 
@@ -237,7 +238,7 @@ const CorrespondenceCases = (props) => {
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
         >
           <b>Reason for reassignment:</b>
-          <p>PLACEHOLDER USER JUSTIFICATION</p>
+          <p>{currentSelectedVeteran.instructions}</p>
           <div>
             <RadioFieldWithChildren
               name="actionRequiredRadioField"
@@ -255,6 +256,8 @@ const CorrespondenceCases = (props) => {
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
           buttons={removeModalButtons}
           closeHandler={handleRemoveClose}>
+          <b>Reason for removal:</b>
+          <p>{currentSelectedVeteran.instructions}</p>
           <RadioFieldWithChildren
             name="actionRequiredRadioField"
             id="vertical-radio"
