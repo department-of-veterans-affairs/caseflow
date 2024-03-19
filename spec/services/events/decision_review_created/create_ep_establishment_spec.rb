@@ -10,19 +10,19 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
     let!(:converted_long) { Time.zone.at(171_046_496_764_2) }
     let!(:parser_double) do
       double("ParserDouble",
-        station_id: "101",
-        epe_payee_code: "00",
-        epe_claim_date: 202_403_14,
-        epe_code: "030HLRRPMC",
-        epe_committed_at: converted_long,
-        epe_established_at: converted_long,
-        epe_last_synced_at: converted_long,
-        epe_limited_poa_access: nil,
-        epe_limited_poa_code: nil,
-        epe_modifier: "030",
-        epe_reference_id: "337534",
-        epe_synced_status: "RW")
-      end
+             station_id: "101",
+             epe_payee_code: "00",
+             epe_claim_date: 202_403_14,
+             epe_code: "030HLRRPMC",
+             epe_committed_at: converted_long,
+             epe_established_at: converted_long,
+             epe_last_synced_at: converted_long,
+             epe_limited_poa_access: nil,
+             epe_limited_poa_code: nil,
+             epe_modifier: "030",
+             epe_reference_id: "337534",
+             epe_synced_status: "RW")
+    end
     # conversion for expect block
     let!(:converted_claim_date) { logical_date_converter(202_403_14) }
     let(:event_record_double) { double("EventRecord") }
