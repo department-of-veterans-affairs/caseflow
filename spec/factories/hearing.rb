@@ -130,8 +130,8 @@ FactoryBot.define do
           %w[mp4 mp3 vtt rtf].each do |file_type|
             TranscriptionFile.create!(
               hearing_id: hearing.id,
-              hearing_type: "LegacyHearing",
-              file_name: "#{hearing.docket_number}_#{hearing.id}_LegacyHearing#{count == 1 ? '-2' : ''}.#{file_type}",
+              hearing_type: "Hearing",
+              file_name: "#{hearing.docket_number}_#{hearing.id}_Hearing#{count == 1 ? '-2' : ''}.#{file_type}",
               file_type: file_type,
               docket_number: hearing.docket_number,
               file_status: "Successful upload (AWS)",
