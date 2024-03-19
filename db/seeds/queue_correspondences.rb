@@ -88,10 +88,9 @@ module Seeds
         create_correspondences_with_review_remove_package_tasks
       end
 
-      # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
-      10.times do
-        create_correspondence_with_completed_mail_task(mail_team_user)
-        create_correspondence_with_completed_mail_task(mail_team_superuser)
+      # 15 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
+      15.times do
+        create_correspondence_with_completed_mail_task(user, veteran)
       end
       # 15 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       15.times do
@@ -202,12 +201,10 @@ module Seeds
             assigned_to: InboundOpsTeam.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
-        end
-
     end
 
-    def create_correspondence_with_completed_mail_task(user)
-      correspondence = create_correspondence
+    def create_correspondence_with_completed_mail_task(user, veteran = {})
+      correspondence = create_correspondence(user, veteran)
       create_and_complete_mail_task(correspondence, user)
     end
 
