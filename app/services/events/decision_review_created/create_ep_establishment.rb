@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+# This is the Sub Service Class that holds the process! of starting the
+# creation of an End Product Establishment from an event.
 class Events::DecisionReviewCreated::CreateEpEstablishment
-  # The creation of End Product Establishment from an event. This is a sub service class this sub service class
-  # returns the End Product Establishment that was created fron the event.
-  # claim_review can be either a supplemental claim or higher level review
   class << self
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # This starts the creation of End Product Establishment from an event.
+    # This is a sub service class that returns the End Product Establishment
+    # that was created fron the event.
+    # claim_review can be either a supplemental claim or higher level review
+    # rubocop:disable Metrics/MethodLength
     def process!(parser, claim_review, user, event)
       converted_claim_date = logical_date_converter(parser.epe_claim_date)
       end_product_establishment = EndProductEstablishment.create!(
@@ -31,7 +34,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
     rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
       raise error
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     # convert log date int to date
     def logical_date_converter(logical_date_int)
