@@ -3,6 +3,10 @@
 class WorkQueue::CorrespondenceTaskColumnSerializer
   include FastJsonapi::ObjectSerializer
 
+  def self.serialize_attribute?(params, columns)
+    (params[:columns] & columns).any?
+  end
+
   attribute :unique_id do |object|
     object.id.to_s
   end
@@ -14,8 +18,11 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
   end
 
-  attribute :notes do |object|
-    object.correspondence.notes
+  attribute :notes do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.NOTES.name]
+    if serialize_attribute?(params, columns)
+      object.correspondence.notes
+    end
   end
 
   attribute :cmp_packet_number do |object|

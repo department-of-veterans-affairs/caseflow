@@ -113,9 +113,11 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
+    const notes = task.notes || '';
+
     return (
       task.veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.notes.toLowerCase().includes(searchValue.toLowerCase()) ||
+      notes.toLowerCase().includes(searchValue.toLowerCase()) ||
       moment(task.vaDor).format('MM/DD/YYYY').
         includes(searchValue) ||
       task.assignedBy.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
