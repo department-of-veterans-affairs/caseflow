@@ -236,12 +236,12 @@ export const veteranDetails = () => {
   const handleRemoveClick = (task) => {
     dispatch(setSelectedVeteranDetails(task));
     dispatch(setShowRemovePackageModal(true));
-  }
+  };
 
   const handleReassignClick = (task) => {
     dispatch(setSelectedVeteranDetails(task));
     dispatch(setShowReassignPackageModal(true));
-  }
+  };
 
   return {
     header: 'Veteran Details',
