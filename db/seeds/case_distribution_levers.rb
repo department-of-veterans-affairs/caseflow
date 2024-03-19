@@ -100,6 +100,9 @@ module Seeds
     def validate_levers_creation
       levers = CaseDistributionLevers.levers.map { |lever| lever[:item] }
       existing_levers = CaseDistributionLever.all.map(&:item)
+
+      puts "#{CaseDistributionLever.count} levers exist"
+      puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
     end
 
     class << self
