@@ -45,7 +45,7 @@ class HearingRequestDistributionQuery
 
   def not_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_not_genpop_non_aod_hearing_query(base_relation)
-    ama_aod_hearing_query = generate_create_ama_not_genpop_aod_hearing_query(base_relation)
+    ama_aod_hearing_query = generate_ama_not_genpop_aod_hearing_query(base_relation)
 
     ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end

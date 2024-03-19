@@ -8,8 +8,8 @@ describe HearingRequestDocket, :postgres do
 
     # these were the defaut values at time of writing tests but can change over time, so ensure they are set
     # back to what the tests were originally written for
-    CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "60")
-    CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "14")
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
   end
 
   context "#ready_priority_appeals" do
@@ -94,7 +94,9 @@ describe HearingRequestDocket, :postgres do
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
 
-        subject { HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3) }
+        subject do
+          HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
+        end
 
         it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
           expect(subject).to match_array(
@@ -106,7 +108,9 @@ describe HearingRequestDocket, :postgres do
       end
 
       context "without exclude from affinity set" do
-        subject { HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3) }
+        subject do
+          HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(requesting_judge, 3)
+        end
 
         it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
           expect(subject).to match_array([ready_nonpriority_appeal_hearing_cancelled.receipt_date])
@@ -265,7 +269,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to omit" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "omit")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "omit")
         end
 
         it "distributes all appeals regardless of tied judge" do
@@ -283,7 +289,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to a numeric value (30)" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "30")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
@@ -300,7 +308,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to a numeric value (90)" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "90")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "90")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
@@ -316,7 +326,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to infinite" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "infinite")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "infinite")
         end
 
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
@@ -358,7 +370,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to omit" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "omit")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "omit")
         end
 
         it "distributes all appeals regardless of tied judge" do
@@ -376,7 +390,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to a numeric value (15)" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "15")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
@@ -393,7 +409,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to a numeric value (30)" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "30")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "30")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
@@ -409,7 +427,9 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to infinite" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "infinite")
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+            .update!(value: "infinite")
         end
 
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
@@ -428,8 +448,10 @@ describe HearingRequestDocket, :postgres do
       context "toggle on" do
         before do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
           JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+          CaseDistributionLever
+            .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
+            .update!(value: "30")
         end
 
         let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
@@ -462,7 +484,7 @@ describe HearingRequestDocket, :postgres do
 
     context "ineligible judge appeals" do
       before do
-        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
         IneligibleJudgesJob.new.perform_now
       end
 
@@ -545,9 +567,11 @@ describe HearingRequestDocket, :postgres do
       end
 
       before do
-        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
-        CaseDistributionLever.find_by_item("cavc_affinity_days").update!(value: "14")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "14")
+        CaseDistributionLever
+          .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
+          .update!(value: "15")
       end
 
       context "for priority appeals" do
