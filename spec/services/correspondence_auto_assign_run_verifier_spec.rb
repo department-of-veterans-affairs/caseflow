@@ -4,13 +4,19 @@ describe CorrespondenceAutoAssignRunVerifier do
   subject(:described) { described_class.new }
 
   let(:current_user) { create(:user) }
+  let(:min_minutes_elapsed_batch_attempt) do
+    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_batch_attempt
+  end
+  let(:min_minutes_elapsed_individual_attempt) do
+    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_individual_attempt
+  end
 
   describe "#can_run_auto_assign?" do
     let!(:valid_batch) do
       create(
         :batch_auto_assignment_attempt,
         user: current_user,
-        started_at: (described.min_minutes_elapsed_batch_attempt + 1).minutes.ago
+        started_at: (min_minutes_elapsed_batch_attempt + 1).minutes.ago
       )
     end
 
@@ -19,7 +25,7 @@ describe CorrespondenceAutoAssignRunVerifier do
         :batch_auto_assignment_attempt,
         user: current_user,
         status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
-        started_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
+        started_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago
       )
     end
 
@@ -29,13 +35,16 @@ describe CorrespondenceAutoAssignRunVerifier do
           create(
             :individual_auto_assignment_attempt,
             batch_auto_assignment_attempt: valid_batch,
-            created_at: (described.min_minutes_elapsed_individual_attempt + 1).minutes.ago
+            created_at: (min_minutes_elapsed_individual_attempt + 1).minutes.ago
           )
         end
 
         it "returns true" do
           expect(
-            described.can_run_auto_assign?(current_user_id: current_user.id, batch_auto_assignment_attempt_id: valid_batch.id)
+            described.can_run_auto_assign?(
+              current_user_id: current_user.id,
+              batch_auto_assignment_attempt_id: valid_batch.id
+            )
           ).to eq(true)
         end
       end
@@ -43,7 +52,10 @@ describe CorrespondenceAutoAssignRunVerifier do
       context "with completed BatchAutoAssignmentAttempt" do
         it "returns true" do
           expect(
-            described.can_run_auto_assign?(current_user_id: current_user.id, batch_auto_assignment_attempt_id: valid_batch.id)
+            described.can_run_auto_assign?(
+              current_user_id: current_user.id,
+              batch_auto_assignment_attempt_id: valid_batch.id
+            )
           ).to eq(true)
         end
       end
@@ -57,7 +69,10 @@ describe CorrespondenceAutoAssignRunVerifier do
 
         it "returns false" do
           expect(
-            described.can_run_auto_assign?(current_user_id: current_user.id, batch_auto_assignment_attempt_id: valid_batch.id)
+            described.can_run_auto_assign?(
+              current_user_id: current_user.id,
+              batch_auto_assignment_attempt_id: valid_batch.id
+            )
           ).to eq(false)
         end
       end
@@ -84,19 +99,24 @@ describe CorrespondenceAutoAssignRunVerifier do
             create(
               :individual_auto_assignment_attempt,
               batch_auto_assignment_attempt: valid_batch,
-              created_at: 1.minutes.ago
+              created_at: 1.minute.ago
             )
           end
 
           before do
-            batch_stubbed = class_double(BatchAutoAssignmentAttempt).as_stubbed_const(:transfer_nested_constants => true)
-            expect(batch_stubbed).to receive(:find_by).with(user: current_user, id: valid_batch.id).and_return(valid_batch)
+            batch_stubbed = class_double(BatchAutoAssignmentAttempt)
+              .as_stubbed_const(transfer_nested_constants: true)
+            expect(batch_stubbed).to receive(:find_by)
+              .with(user: current_user, id: valid_batch.id).and_return(valid_batch)
             expect(batch_stubbed).not_to receive(:where)
           end
 
           it "returns false" do
             expect(
-              described.can_run_auto_assign?(current_user_id: current_user.id, batch_auto_assignment_attempt_id: valid_batch.id)
+              described.can_run_auto_assign?(
+                current_user_id: current_user.id,
+                batch_auto_assignment_attempt_id: valid_batch.id
+              )
             ).to eq(false)
           end
         end
@@ -106,13 +126,16 @@ describe CorrespondenceAutoAssignRunVerifier do
             create(
               :batch_auto_assignment_attempt,
               user: current_user,
-              started_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
+              started_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago
             )
           end
 
           it "returns false" do
             expect(
-              described.can_run_auto_assign?(current_user_id: current_user.id, batch_auto_assignment_attempt_id: recent_batch.id)
+              described.can_run_auto_assign?(
+                current_user_id: current_user.id,
+                batch_auto_assignment_attempt_id: recent_batch.id
+              )
             ).to eq(false)
           end
         end

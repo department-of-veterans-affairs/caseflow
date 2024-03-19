@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# For correspondence auto assignment, determines whether or not an auto assign job can be run.
+# In order to prevent race conditions and inconsistent data, only one correspondence auto assignment can be run
+# at a time.
+
 class CorrespondenceAutoAssignRunVerifier
   attr_accessor :verified_batch, :verified_user, :err_msg
 
@@ -7,14 +11,6 @@ class CorrespondenceAutoAssignRunVerifier
     verify_feature_toggles &&
       verify_id_params(current_user_id, batch_auto_assignment_attempt_id) &&
       verify_no_other_jobs_running
-  end
-
-  def min_minutes_elapsed_batch_attempt
-    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_batch_attempt
-  end
-
-  def min_minutes_elapsed_individual_attempt
-    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_individual_attempt
   end
 
   private
@@ -56,9 +52,15 @@ class CorrespondenceAutoAssignRunVerifier
   def assignment_already_running?
     last_assignment = IndividualAutoAssignmentAttempt.last
 
+    min_minutes_elapsed_individual_attempt =
+      Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_individual_attempt
+
     # Safe to move forward if we haven't seen any assignment attempts for the past X minutes
     return true if last_assignment&.created_at.present? &&
-                   ((Time.current - last_assignment.created_at)/60) < min_minutes_elapsed_individual_attempt
+                   ((Time.current - last_assignment.created_at) / 60) < min_minutes_elapsed_individual_attempt
+
+    min_minutes_elapsed_batch_attempt =
+      Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_batch_attempt
 
     # Safe to move forward if the last batch was started more than Y minutes ago
     BatchAutoAssignmentAttempt
