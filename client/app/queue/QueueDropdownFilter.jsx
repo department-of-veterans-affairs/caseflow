@@ -212,8 +212,8 @@ QueueDropdownFilter.propTypes = {
   addClearFiltersRow: PropTypes.bool,
   name: PropTypes.string,
   setSelectedValue: PropTypes.func.isRequired,
-  isReceiptDateFilter: PropTypes.func.isRequired,
-  isTaskCompletedDateFilter: PropTypes.func.isRequired
+  isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
 };
 
 export default QueueDropdownFilter;
