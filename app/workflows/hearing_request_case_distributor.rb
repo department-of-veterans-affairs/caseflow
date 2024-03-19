@@ -19,7 +19,7 @@ class HearingRequestCaseDistributor
     # the DistributedCases
     tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)
 
-    distributed_cases = tasks.map do |task, genpop_value|
+    tasks.map do |task, genpop_value|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -38,8 +38,6 @@ class HearingRequestCaseDistributor
         create_distribution_case_for_task(task, genpop_value)
       end
     end
-
-    distributed_cases.compact
   end
 
   private

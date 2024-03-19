@@ -269,8 +269,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes all appeals regardless of tied judge" do
-          # This is failing because it is double-selecting some appeals, probably because the filters are not set up
-          # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
              ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
@@ -322,8 +320,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
-          # This is failing because it is double-selecting some appeals, probably because the filters are not set up
-          # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
              ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
@@ -343,7 +339,7 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
       end
       let!(:ready_aod_tied_to_requesting_judge_out_of_window_40_days) do
-        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 40.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_in_window) do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
@@ -359,12 +355,6 @@ describe HearingRequestDocket, :postgres do
       end
 
       let(:priority) { true }
-
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: priority, genpop: "only_genpop", limit: 15, style: "request"
-        )
-      end
 
       context "lever is set to omit" do
         before do

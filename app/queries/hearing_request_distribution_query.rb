@@ -53,8 +53,9 @@ class HearingRequestDistributionQuery
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
+    hearings_with_no_judge = base_relation.most_recent_hearings.not_tied_to_any_judge
 
-    result = ama_non_aod_hearing_query.or(ama_aod_hearing_query)
+    result = ama_non_aod_hearing_query.or(ama_aod_hearing_query).or(hearings_with_no_judge)
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       result = result.or(
