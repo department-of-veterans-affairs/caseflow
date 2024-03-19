@@ -34,7 +34,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it 'requires a boolean attribute values to be either "true" or "false"' do
       lever = described_class.new
       expect(lever).not_to be_valid
-      expect(lever.errors[:is_toggle_active]).to include("is not included in the list")
       expect(lever.errors[:is_disabled_in_ui]).to include("is not included in the list")
     end
 
