@@ -172,7 +172,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = current_date.strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -253,8 +255,8 @@ RSpec.feature("The Correspondence Cases page") do
       find("#reactSelectContainer").click
       find("#react-select-2-option-0").click
       current_date = Time.zone.today
-      start_date = current_date.strftime("%m/%d/%Y")
-      end_date = (current_date + 1).strftime("%m/%d/%Y")
+      start_date = (current_date - 1).strftime("%m/%d/%Y")
+      end_date = (current_date).strftime("%m/%d/%Y")
 
       all("div.input-container > input")[0].fill_in(with: start_date)
       all("div.input-container > input")[1].fill_in(with: end_date)
@@ -273,7 +275,7 @@ RSpec.feature("The Correspondence Cases page") do
       find("#reactSelectContainer").click
       find("#react-select-2-option-1").click
       current_date = Time.zone.today
-      start_date = (current_date + 1).strftime("%m/%d/%Y")
+      start_date = (current_date -3).strftime("%m/%d/%Y")
 
       all("div.input-container > input")[0].fill_in(with: start_date)
       expect(page).to have_button("Apply filter", disabled: false)
@@ -485,7 +487,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = (current_date - 4).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -636,7 +640,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = (current_date - 5).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       click_button("Apply Filter")
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -788,7 +794,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-1").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2001")
+      current_date = Time.zone.today
+      myDate = (current_date - 5).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       click_button("Apply Filter")
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -798,7 +806,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = (current_date - 5).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       click_button("Apply Filter")
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -1010,7 +1020,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = current_date.strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -1126,7 +1138,9 @@ RSpec.feature("The Correspondence Cases page") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
-      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      current_date = Time.zone.today
+      myDate = (current_date -3).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: myDate)
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
