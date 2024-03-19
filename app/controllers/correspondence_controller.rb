@@ -428,11 +428,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def remove_message_template(user)
-    success_header_approved = "You have successfully rejected a package request for #{user.css_id}"
-    success_message_approved = "The package will be re-assigned to the user that sent the request."
-    success_header_rejected = "You have successfully removed a mail package for #{user.css_id}"
-    success_message_rejected = "The package has been removed from Caseflow and must be manually uploaded again
+    success_header_approved = "You have successfully removed a mail package for #{user.css_id}"
+    success_message_approved = "The package has been removed from Caseflow and must be manually uploaded again
      from the Centralized Mail Portal, if it needs to be processed."
+    success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
+    success_message_rejected = "The package will be re-assigned to the user that sent the request."
+
     case @action_type
     when "approve"
       {
