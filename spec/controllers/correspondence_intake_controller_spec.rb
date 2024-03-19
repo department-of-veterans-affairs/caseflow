@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
+RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
   let(:correspondence_type) { create(:correspondence_type) }
   let(:correspondence) { create(:correspondence, veteran: veteran) }
