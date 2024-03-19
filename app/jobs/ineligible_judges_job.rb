@@ -11,7 +11,6 @@ class IneligibleJudgesJob < CaseflowJob
   def perform
     @start_time ||= Time.zone.now
     case_distribution_ineligible_judges
-
     log_success(@start_time)
   rescue StandardError => error
     log_error(error)
