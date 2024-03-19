@@ -400,4 +400,61 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("Review and Confirm Correspondence")
     end
   end
+
+  context "checks for failed to upload to the eFolder banner after navigating away from page" do
+    let(:current_user) { create(:user) }
+    before :each do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      @last_correspondence_uuid = nil
+      20.times do
+        correspondence = create(:correspondence)
+        parent_task = create_correspondence_intake(correspondence, current_user)
+        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        @last_correspondence_uuid = EfolderUploadFailedTask.first.correspondence.uuid
+      end
+      puts "Last correspondence UUID: #{@last_correspondence_uuid}"
+
+      # Used to mock a single task to compare task sorting
+      EfolderUploadFailedTask.first.update!(type: "CorrespondenceIntakeTask")
+      EfolderUploadFailedTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+      EfolderUploadFailedTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2024, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+
+    it "successfully loads the in progress tab" do
+      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Correspondence in progress")
+    end
+
+    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" do
+      visit "/queue/correspondence?tab=correspondence_in_progress"
+      expect(page).to have_content("Correspondence in progress that are assigned to you:")
+      find("tbody > tr:last-child > td:nth-child(1)").click
+      expect(page).to have_current_path("/queue/correspondence/#{@last_correspondence_uuid}/intake")
+      expect(page).to have_content("Add Related Correspondence")
+      expect(page).to have_button("Continue")
+      click_on("button-continue")
+      expect(page).to have_content("Review Tasks & Appeals")
+      click_on("button-continue")
+      expect(page).to have_content("Review and Confirm Correspondence")
+      click_on("Submit")
+      click_on("Confirm")
+      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      click_on("button-Cancel")
+      visit "/queue/correspondence/#{@last_correspondence_uuid}/intake"
+      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+    end
+  end
 end
