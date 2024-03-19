@@ -18,7 +18,7 @@ import {
   daysWaitingCorrespondence,
   notes,
   taskColumn,
-  taskCompletedDateColumn,
+  correspondenceCompletedDateColumn,
   vaDor,
   veteranDetails
 } from '../components/TaskTableColumns';
@@ -119,7 +119,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]: daysWaitingCorrespondence(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
-      [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
+      [QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name]: correspondenceCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),

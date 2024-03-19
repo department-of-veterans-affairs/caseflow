@@ -620,3 +620,19 @@ export const taskCompletedDateColumn = () => {
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
+
+export const correspondenceCompletedDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
+    filterOptions: [],
+    label: QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
+    columnName: 'Date Completed',
+    backendCanSort: true,
+    enableFilter: true,
+    valueFunction: (task) => {
+      return moment(task.closedAt).format('MM/DD/YYYY');
+    },
+    getSortValue: (task) => new Date(task.closedAt)
+  };
+};
