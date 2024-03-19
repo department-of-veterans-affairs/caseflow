@@ -147,7 +147,7 @@ const CorrespondenceCases = (props) => {
     &userAction=${selectedRequestChoice}
     &decisionReason=${decisionReason}
     &operation=${operation}`;
-    window.location.href = newUrl;
+    window.location.href = { url: newUrl }.url;
   };
 
   const reassignModalButtons = [
