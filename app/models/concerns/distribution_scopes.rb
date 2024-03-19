@@ -65,7 +65,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def ama_non_aod_hearing_appeals
     where("advance_on_docket_motions.person_id IS NULL")
-      .or(where("people.date_of_birth > ?", 75.years.ago))
+      .where("people.date_of_birth > ?", 75.years.ago)
   end
 
   def ama_aod_hearing_appeals

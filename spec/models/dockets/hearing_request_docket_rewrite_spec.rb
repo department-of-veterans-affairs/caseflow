@@ -271,8 +271,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes all appeals regardless of tied judge" do
-          # This is failing because it is double-selecting some appeals, probably because the filters are not set up
-          # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
              ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
@@ -324,8 +322,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
-          # This is failing because it is double-selecting some appeals, probably because the filters are not set up
-          # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
              ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
@@ -368,7 +364,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes all appeals regardless of tied judge" do
-          # all aod tied to requesting judge double selecting
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
@@ -387,7 +382,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
-          # aod tied to requesting judge for 20/40 days are double-selecting
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
@@ -405,7 +399,6 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
-          # aod tied to requesting judge for 40 days is double selecting
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
@@ -563,7 +556,6 @@ describe HearingRequestDocket, :postgres do
         let(:priority) { true }
 
         it "distributes appeals as expected" do
-          # ready_aod_tied_to_requesting_judge_out_of_window_20_days is double selecting
           expect(subject.map(&:case_id)).to match_array(
             [ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
              ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days.uuid,
