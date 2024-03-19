@@ -10,6 +10,19 @@ describe CorrespondenceAutoAssignLogger do
   let!(:correspondence) { create(:correspondence) }
   let(:task) { correspondence.review_package_task }
 
+  describe ".fail_run_validation" do
+    it "updates the BatchAutoAssignmentAttempt record to a failed state" do
+      described_class.fail_run_validation(
+        batch_auto_assignment_attempt_id: batch_auto_assignment_attempt.id,
+        msg: "Test error"
+      )
+
+      batch = BatchAutoAssignmentAttempt.first
+      expect(batch.status).to eq("error")
+      expect(batch.error_info["message"]).to eq("Test error")
+    end
+  end
+
   describe "#begin" do
     it "creates a BatchAutoAssignmentAttempt record" do
       expect do

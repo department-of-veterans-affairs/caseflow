@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Assigns Correspondence ReviewPackageTasks to eligible InboundOpsTeam users.
+# (Assigning the Correspondence's ReviewPackageTask is considered assigning the Correspondence.)
+
 class CorrespondenceAutoAssigner
   def perform(current_user_id:, batch_auto_assignment_attempt_id:)
     # Don't catch these exceptions here so that if we're being called by a job
@@ -79,7 +82,7 @@ class CorrespondenceAutoAssigner
       self.batch = run_verifier.verified_batch
       self.current_user = run_verifier.verified_user
     else
-      logger.fail_run_validation(
+      CorrespondenceAutoAssignLogger.fail_run_validation(
         batch_auto_assignment_attempt_id: batch_auto_assignment_attempt_id,
         msg: run_verifier.err_msg
       )

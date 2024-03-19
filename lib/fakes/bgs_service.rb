@@ -120,11 +120,12 @@ class Fakes::BGSService
     end
 
     def init_client_for_user(user:)
-      {}
+      user
     end
   end
 
   def initialize(client: nil)
+    client
   end
 
   def get_end_products(file_number)
