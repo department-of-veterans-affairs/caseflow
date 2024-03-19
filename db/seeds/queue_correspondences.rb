@@ -92,6 +92,7 @@ module Seeds
       10.times do
         create_correspondence_with_completed_mail_task(mail_team_user)
         create_correspondence_with_completed_mail_task(mail_team_superuser)
+      end
       # 15 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       15.times do
         create_correspondence_with_completed_mail_task(user, veteran)
