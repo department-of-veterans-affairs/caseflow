@@ -18,10 +18,12 @@ module CorrespondenceTaskHelpers
       notes: "ABCDEFG".split("").shuffle.join,
       updated_by_id: user.id
     )
+
+    parent.update!(status: Constants.TASK_STATUSES.on_hold)
     EfolderUploadFailedTask.create!(
       parent_id: parent.id,
       appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
+      appeal_type: Correspondence.name,
       assigned_to: parent.assigned_to,
       status: Constants.TASK_STATUSES.in_progress
     ).update!(assigned_at: rand(1.month.ago..1.day.ago))

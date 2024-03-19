@@ -15,7 +15,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
       it "routes to the Correspondence Intake page" do
         correspondence = create(:correspondence)
         create_correspondence_intake(correspondence, current_user)
-        visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+        visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
         find_all("#task-link").last.click
         using_wait_time(10) do
           expect(page).to have_content("Add Related Correspondence")
@@ -40,7 +40,6 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
         it "routes to the Review Package page" do
           correspondence = create(:correspondence)
           assign_review_package_task(correspondence, current_user)
-          process_correspondence(correspondence, current_user)
           parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
           create_efolderupload_failed_task(correspondence, parent_task, user: current_user)
           visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
