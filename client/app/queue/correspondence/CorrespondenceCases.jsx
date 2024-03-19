@@ -32,7 +32,7 @@ const CorrespondenceCases = (props) => {
 
   const buildMailUserData = (data) => {
 
-    if (!props.isMailSuperUser || !props.isMailSupervisor) {
+    if (typeof data === 'undefined') {
       return [];
     }
 
