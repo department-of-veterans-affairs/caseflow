@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Parser Class that will be used to extract out datapoints from headers & payload for use with
+# DecisionReviewCreated and it's service Classes
 class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   include Events::VeteranExtractorInterface
 

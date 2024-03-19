@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Interface for use with Events::DecisionReviewCreated::DecisionReviewCreatedParser
+# to extract Veteran information
 module Events::VeteranExtractorInterface
   def veteran_file_number
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
