@@ -74,7 +74,7 @@ class MetricsService
     service ||= app
     uuid = SecureRandom.uuid
     metric_name = "request_latency"
-    sent_to = [[MetricAttributes::LOG_SYSTEMS[:rails_console]]]
+    sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
     start = Time.zone.now
@@ -99,8 +99,8 @@ class MetricsService
       }
       MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << MetricAttributes::LOG_SYSTEMS[:datadog]
-      sent_to << MetricAttributes::LOG_SYSTEMS[:dynatrace]
+      sent_to << Metric::LOG_SYSTEMS[:datadog]
+      sent_to << Metric::LOG_SYSTEMS[:dynatrace]
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
@@ -108,7 +108,7 @@ class MetricsService
     metric_params = {
       name: metric_name,
       message: description,
-      type: MetricAttributes::METRIC_TYPES[:performance],
+      type: Metric::METRIC_TYPES[:performance],
       product: service,
       attrs: {
         service: service,
@@ -127,18 +127,18 @@ class MetricsService
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
     Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
 
-    increment_datadog_counter("request_error", service, name, app) if service
+    increment_metric_service_counter("request_error", service, name, app) if service
 
     metric_params = {
       name: "error",
       message: error.message,
-      type: MetricAttributes::METRIC_TYPES[:error],
+      type: Metric::METRIC_TYPES[:error],
       product: "",
       attrs: {
         service: "",
         endpoint: ""
       },
-      sent_to: [[MetricAttributes::LOG_SYSTEMS[:rails_console]]],
+      sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
       start: "Time not recorded",
       end: "Time not recorded",
@@ -151,12 +151,12 @@ class MetricsService
     # This is just to capture the metric.
     raise
   ensure
-    increment_datadog_counter("request_attempt", service, name, app) if service
+    increment_metric_service_counter("request_attempt", service, name, app) if service
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
-    MetricsService.increment_counter(
+  private_class_method def self.increment_metric_service_counter(metric_name, service, endpoint_name, app_name)
+    increment_counter(
       metric_group: "service",
       metric_name: metric_name,
       app_name: app_name,
