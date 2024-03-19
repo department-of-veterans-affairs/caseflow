@@ -34,8 +34,11 @@ class Events::DecisionReviewCreated
           # Note: createdByStation == station_id, createdByUsername == css_id
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
 
+          # Initialize the Parser object that will be passed around as an argument
+          # parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
+
           # Create the Veteran. PII Info is stored in the headers
-          # vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, headers, vbms_veteran)
+          # vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, parser)
 
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
