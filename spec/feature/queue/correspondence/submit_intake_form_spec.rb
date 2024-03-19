@@ -73,7 +73,7 @@ RSpec.feature("Correspondence Intake submission") do
         allow(CorrespondenceIntakeProcessor).to receive(:new).and_return(mock_correspondence_intake_processor)
         require Rails.root.join("db/seeds/base.rb").to_s
         Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-        Seeds::AutoTexts.new.seed!
+        Seeds::CorrespondenceAutoTexts.new.seed!
       end
       it "displays a failed submission error banner" do
         visit_intake_form_step_2_with_appeals

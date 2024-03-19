@@ -2,6 +2,8 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -15,7 +17,9 @@ class CorrespondenceController < ApplicationController
         render json: {
           currentCorrespondence: current_correspondence,
           correspondence: correspondence_load,
-          veteranInformation: veteran_information
+          correspondenceInformation: correspondence_information,
+          veteranInformation: veteran_information,
+          responseLetters: 0
         }
       end
     end
@@ -172,6 +176,36 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def auto_assign_correspondences
+    batch = BatchAutoAssignmentAttempt.create!(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
+
+    job_args = {
+      current_user_id: current_user.id,
+      batch_auto_assignment_attempt_id: batch.id
+    }
+
+    begin
+      perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+    ensure
+      render json: { batch_auto_assignment_attempt_id: batch&.id }, status: :ok
+    end
+  end
+
+  def auto_assign_status
+    batch = BatchAutoAssignmentAttempt.find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+    status_details = {
+      error_message: batch.error_info,
+      status: batch.status,
+      number_assigned: batch.num_packages_assigned
+    }
+    render json: status_details, status: :ok
+  end
+
   private
 
   # :reek:FeatureEnvy
@@ -250,6 +284,12 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_load
     Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
+  end
+
+  def correspondence_information
+    return nil if correspondence&.correspondence_type_id.blank?
+
+    @correspondence_information ||= CorrespondenceType.find_by(id: correspondence&.correspondence_type_id)
   end
 
   def veteran_by_correspondence

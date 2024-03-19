@@ -323,6 +323,8 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake', as: :queue_correspondence_intake
     post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
@@ -341,6 +343,7 @@ Rails.application.routes.draw do
     patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake', as: :queue_correspondence_intake_process_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post '/correspondence_response_letters', to: 'correspondence_response_letters#create'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
