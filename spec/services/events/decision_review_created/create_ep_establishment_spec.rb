@@ -3,30 +3,31 @@
 describe Events::DecisionReviewCreated::CreateEpEstablishment do
   context "Events::DecisionReviewCreated::CreateEpEstablishment.process!" do
     # set up variables station_id, end_product_establishment, claim_review, user, event
-    let!(:station_id) { "101" }
     let!(:user_double) { double("User", id: 1) }
     let!(:event_double) { double("Event") }
     let!(:claim_review) { create(:higher_level_review) }
-    # conversions for expect block
-    let!(:converted_claim_date) { logical_date_converter(202_403_14) }
+    # conversions to mimic parser logic
     let!(:converted_long) { Time.zone.at(171_046_496_764_2) }
-    let!(:end_product_establishment_double) do
-      double("EndProductEstablishmentDouble",
-             payee_code: "00",
-             claim_date: 202_403_14,
-             code: "030HLRRPMC",
-             committed_at: 171_046_496_764_2,
-             established_at: 171_046_496_764_2,
-             last_synced_at: 171_046_496_764_2,
-             limited_poa_access: nil,
-             limited_poa_code: nil,
-             modifier: "030",
-             reference_id: "337534",
-             synced_status: "RW")
-    end
+    let!(:parser_double) do
+      double("ParserDouble",
+        station_id: "101",
+        epe_payee_code: "00",
+        epe_claim_date: 202_403_14,
+        epe_code: "030HLRRPMC",
+        epe_committed_at: converted_long,
+        epe_established_at: converted_long,
+        epe_last_synced_at: converted_long,
+        epe_limited_poa_access: nil,
+        epe_limited_poa_code: nil,
+        epe_modifier: "030",
+        epe_reference_id: "337534",
+        epe_synced_status: "RW")
+      end
+    # conversion for expect block
+    let!(:converted_claim_date) { logical_date_converter(202_403_14) }
     let(:event_record_double) { double("EventRecord") }
     it "creates an a End Product Establishment and Event Record" do
-      allow(EndProductEstablishment).to receive(:create!).and_return(end_product_establishment_double)
+      allow(EndProductEstablishment).to receive(:create!).and_return(parser_double)
       allow(EventRecord).to receive(:create!).and_return(event_record_double)
       expect(EndProductEstablishment).to receive(:create!).with(
         payee_code: "00",
@@ -45,10 +46,10 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         station: "101",
         synced_status: "RW",
         user_id: 1
-      ).and_return(end_product_establishment_double)
+      ).and_return(parser_double)
       expect(EventRecord).to receive(:create!)
-        .with(event: event_double, backfill_record: end_product_establishment_double).and_return(event_record_double)
-      described_class.process!(station_id, end_product_establishment_double, claim_review, user_double, event_double)
+        .with(event: event_double, backfill_record: parser_double).and_return(event_record_double)
+      described_class.process!(parser_double, claim_review, user_double, event_double)
     end
 
     # needed to convert the logical date int for the expect block
@@ -68,7 +69,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
       it "raises the error" do
         allow(EndProductEstablishment).to receive(:create!).and_raise(error)
         expect do
-          described_class.process!(station_id, end_product_establishment_double,
+          described_class.process!(parser_double,
                                    claim_review, user_double, event_double)
         end.to raise_error(error)
       end

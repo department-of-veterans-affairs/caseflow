@@ -50,7 +50,7 @@ class Events::DecisionReviewCreated
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
-          # Events::DecisionReviewCreated::CreateEpEstablishment.process!(station_id, end_product_establishment, claim_review, user, event)
+          # Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser, claim_review, user, event)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
