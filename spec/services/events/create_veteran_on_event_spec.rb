@@ -46,7 +46,7 @@ describe Events::CreateVeteranOnEvent do
         expect(EventRecord.count).to eq 1
         event_record = EventRecord.first
 
-        expect(event_record.backfill_record).to eqbackfilled_veteran
+        expect(event_record.backfill_record).to eq(backfilled_veteran)
       end
     end
 
