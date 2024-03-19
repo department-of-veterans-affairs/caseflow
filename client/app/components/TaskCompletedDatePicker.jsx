@@ -40,22 +40,22 @@ const TaskCompletedDatePicker = (props) => {
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={handleDateChange} label="From" type="date" />
-        <DateSelector onChange={handleSecondaryDateChange} label="To" type="date" />
+        <DateSelector name="startDate" onChange={handleDateChange} label="From" type="date" />
+        <DateSelector name="endDate" onChange={handleSecondaryDateChange} label="To" type="date" />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={handleDateChange} label="To" type="date" />
+        <DateSelector name="beforeDate" onChange={handleDateChange} label="To" type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={handleDateChange} type="date" />
+        <DateSelector name="afterDate" onChange={handleDateChange} type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={handleDateChange} label="Date Completed" type="date" />
+        <DateSelector name="date" onChange={handleDateChange} label="Date Completed" type="date" />
       </div>
     );
 
