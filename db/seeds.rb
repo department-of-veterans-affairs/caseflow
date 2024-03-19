@@ -53,7 +53,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Jobs
     #{}call_and_log_seed_step Seeds::Substitutions
     #{}call_and_log_seed_step Seeds::DecisionIssues
-    #{}call_and_log_seed_step Seeds::CavcAmaAppeals
+    call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     #{}call_and_log_seed_step Seeds::MTV
@@ -69,17 +69,17 @@ class SeedDB
     #{}call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
-    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
+    #{}call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
     call_and_log_seed_step Seeds::AmaAffinityCases
     #{}call_and_log_seed_step Seeds::BgsServiceRecordMaker
     #{}call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     #{}call_and_log_seed_step Seeds::AmaIntake
     # Always run this as last one
-    #{}call_and_log_seed_step Seeds::StaticTestCaseData
-    #{}call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
-    #{}call_and_log_seed_step Seeds::RemandedAmaAppeals
-    #{}call_and_log_seed_step Seeds::RemandedLegacyAppeals
+    call_and_log_seed_step Seeds::StaticTestCaseData
+    call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+    call_and_log_seed_step Seeds::RemandedAmaAppeals
+    call_and_log_seed_step Seeds::RemandedLegacyAppeals
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
 
     Judge.list_all
