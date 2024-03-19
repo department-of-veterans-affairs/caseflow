@@ -29,7 +29,7 @@ class Hearings::SendEmail
     # already been sent too.
     return if send_reminder
 
-    if !appellant_recipient.email_sent
+    if appellant_recipient&.email_address.present? && !appellant_recipient.email_sent
       appellant_recipient.update!(email_sent: send_email(appellant_recipient_info))
     end
 
