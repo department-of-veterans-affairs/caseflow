@@ -28,8 +28,7 @@ class TaskSorter
     # used for when the logic on the sorting needs to be reversed
     reverse_sort_order = sort_order == "asc" ? "desc" : "asc"
 
-    # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
-    # application, and conditional logic to only join sometimes adds unnecessary complexity.
+    # The following cases are used for Correspondence Queue tables
     case column.name
     when Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name
       tasks.joins(appeal: :veteran).order(last_name: sort_order.to_sym, first_name: sort_order.to_sym)
@@ -39,7 +38,11 @@ class TaskSorter
       tasks.joins(:appeal).order(va_date_of_receipt: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
       tasks.joins(:appeal).order(assigned_at: reverse_sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name
+      tasks.joins(:appeal).order(closed_at: sort_order.to_sym)
     else
+      # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
+      # application, and conditional logic to only join sometimes adds unnecessary complexity.
       tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
     end
   end
