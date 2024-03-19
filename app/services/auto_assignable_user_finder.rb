@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# For correspondence auto assignment, determines whether any assignable users exist as well as returns the first
+# assignable user for a given correspondence
+
 # :reek:FeatureEnvy
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
