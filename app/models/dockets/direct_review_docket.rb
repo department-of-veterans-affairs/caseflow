@@ -4,7 +4,6 @@ class DirectReviewDocket < Docket
   def docket_type
     Constants.AMA_DOCKETS.direct_review
   end
-  # rubocop:disable Layout/ArgumentAlignment
 
   def due_count
     ama_direct_review_start_distribution_prior_to_goals =
@@ -12,14 +11,13 @@ class DirectReviewDocket < Docket
     appeal_ids = if ama_direct_review_start_distribution_prior_to_goals > 0
                    appeals(priority: false, ready: true)
                      .where("target_decision_date <= ?",
-                      ama_direct_review_start_distribution_prior_to_goals.days.from_now)
+                            ama_direct_review_start_distribution_prior_to_goals.days.from_now)
                  else
                    appeals(priority: false, ready: true)
                  end
 
     Appeal.where(id: appeal_ids).count
   end
-  # rubocop:enable Layout/ArgumentAlignment
 
   def nonpriority_receipts_per_year
     number_of_nonpriority_appeals_received_in_the_past_year

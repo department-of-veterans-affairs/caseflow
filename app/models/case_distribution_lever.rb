@@ -108,8 +108,6 @@ class CaseDistributionLever < ApplicationRecord
     options&.find { |option| option["item"] == item } || {}
   end
 
-  # rubocop:disable Style/StringLiteralsInInterpolation, Lint/RedundantStringCoercion
-
   # this matches what is displayed in frontend
   # see client/app/caseDistribution/components/SaveModal.jsx
   def radio_value
@@ -117,10 +115,8 @@ class CaseDistributionLever < ApplicationRecord
 
     selected_option = option(Constants.ACD_LEVERS.value)
 
-    "#{selected_option["text"]} #{value.to_s}"
+    "#{selected_option['text']} #{value}"
   end
-
-  # rubocop:enable Style/StringLiteralsInInterpolation, Lint/RedundantStringCoercion
 
   class << self
     def respond_to_missing?(name, _include_private)
@@ -164,19 +160,20 @@ class CaseDistributionLever < ApplicationRecord
 
     private
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/RescueModifier, Lint/LiteralAsCondition
     def method_missing_value(name)
       lever = find_by_item(name).try(:value)
-
-      if INTEGER_LEVERS.include?(name)
-        Integer(lever) rescue false ? lever.to_i : lever
-      elsif FLOAT_LEVERS.include?(name)
-        Float(lever) rescue false ? lever.to_f : lever
-      else
+      begin
+        if INTEGER_LEVERS.include?(name)
+          Integer(lever)
+        elsif FLOAT_LEVERS.include?(name)
+          Float(lever)
+        else
+          lever
+        end
+      rescue ArgumentError
         lever
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/RescueModifier, Lint/LiteralAsCondition
 
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
