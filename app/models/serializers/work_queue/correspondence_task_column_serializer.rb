@@ -13,9 +13,13 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :instructions
 
-  attribute :veteran_details do |object|
-    vet = Veteran.find(object.correspondence.veteran_id)
-    "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
+  attribute :veteran_details do |object, params|
+   columns = [Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]
+
+   if serialize_attribute?(params, columns)
+      vet = Veteran.find(object.correspondence.veteran_id)
+      "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
+   end
   end
 
   attribute :notes do |object, params|
@@ -31,10 +35,20 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :closed_at, &:completed_by_date
 
-  attribute :days_waiting
+  attribute :days_waiting do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]
 
-  attribute :va_date_of_receipt do |object|
-    object.correspondence.va_date_of_receipt
+     if serialize_attribute?(params, columns)
+       object.days_waiting
+     end
+   end
+
+  attribute :va_date_of_receipt do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]
+
+    if serialize_attribute?(params, columns)
+      object.correspondence.va_date_of_receipt
+    end
   end
 
   attribute :label
@@ -45,15 +59,29 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :task_url
 
-  attribute :assigned_to do |object|
+  attribute :assigned_to do |object, params|
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+    ]
     assignee = object.assigned_to
-    {
-      css_id: assignee.try(:css_id),
-      is_organization: assignee.is_a?(Organization),
-      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-      type: assignee.class.name,
-      id: assignee.id
-    }
+
+    if serialize_attribute?(params, columns)
+      {
+        css_id: assignee.try(:css_id),
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        is_organization: assignee.is_a?(Organization),
+        type: assignee.class.name,
+        id: assignee.id
+      }
+    else
+      {
+        css_id: nil,
+        is_organization: nil,
+        name: nil,
+        type: nil,
+        id: nil
+      }
+    end
   end
 
   attribute :assigned_by do |object|

@@ -114,17 +114,22 @@ const CorrespondenceTableBuilder = (props) => {
 
   const taskMatchesSearch = (task) => {
     const notes = task.notes || '';
+    const daysWaiting = task.daysWaiting || '';
+    const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
+    const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
+    const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
+    const veteranDetails = task.veteranDetails || '';
 
     return (
-      task.veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
+      veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
       notes.toLowerCase().includes(searchValue.toLowerCase()) ||
       moment(task.vaDor).format('MM/DD/YYYY').
         includes(searchValue) ||
-      task.assignedBy.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.assignedBy.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.assignedTo.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      assignedByfirstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      assignedBylastName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      assignedToName.toLowerCase().includes(searchValue.toLowerCase()) ||
       task.label.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.daysWaiting.toString().includes(searchValue) ||
+      daysWaiting.toString().includes(searchValue) ||
       moment(task.closedAt).format('MM/DD/YYYY').
         includes(searchValue)
     );
