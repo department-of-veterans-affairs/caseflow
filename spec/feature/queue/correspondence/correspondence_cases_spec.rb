@@ -1211,4 +1211,129 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_assignee)
     end
   end
+
+  context "correspondence tasks completed tab testing filters date " do
+    let(:current_user) { create(:user) }
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    before do
+      20.times do
+        correspondence = create(:correspondence)
+        correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
+                                         closed_at: rand(6 * 24 * 60).minutes.ago)
+      end
+    end
+
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      FeatureToggle.enable!(:user_queue_pagination)
+    end
+
+    it "filters date column with 'between' the date is older than today in 'from' field" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-0").click
+      current_date = Time.zone.today
+      start_date = (current_date + 1).strftime("%m/%d/%Y")
+
+      all("div.input-container > input")[0].fill_in(with: start_date)
+
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("Date completed cannot be in the future.")
+    end
+
+    it "filters date column with 'between' the date is older than today in 'to' field" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-0").click
+      current_date = Time.zone.today
+      end_date = (current_date + 1).strftime("%m/%d/%Y")
+
+      all("div.input-container > input")[1].fill_in(with: end_date)
+
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("Date completed cannot be in the future.")
+    end
+
+    it "filters date column with 'between' the date in 'to' is older than 'from' field" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-0").click
+      current_date = Time.zone.today
+      start_date = (current_date - 1).strftime("%m/%d/%Y")
+      end_date = (current_date - 3).strftime("%m/%d/%Y")
+
+      all("div.input-container > input")[0].fill_in(with: start_date)
+      all("div.input-container > input")[1].fill_in(with: end_date)
+
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("End date must be greater than the start date")
+    end
+
+    it "filters date column with 'before' this date" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-1").click
+      current_date = Time.zone.today
+      start_date = (current_date + 3).strftime("%m/%d/%Y")
+
+      all("div.input-container > input")[0].fill_in(with: start_date)
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("Date completed cannot be in the future.")
+    end
+
+    it "filters date column with 'after' this date" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-2").click
+      current_date = Time.zone.yesterday
+      after_date = (current_date + 3).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: after_date)
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("Date completed cannot be in the future.")
+    end
+
+    it "filters date column with 'on' this date" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+
+      find("[aria-label='Filter by date completed']").click
+      expect(page).to have_content("Date filter parameters")
+      expect(page).to have_button("Apply filter", disabled: true)
+
+      find("#reactSelectContainer").click
+      find("#react-select-2-option-3").click
+      current_date = Time.zone.today
+      on_this_date = (current_date + 1).strftime("%m/%d/%Y")
+      all("div.input-container > input")[0].fill_in(with: on_this_date)
+      expect(page).to have_button("Apply filter", disabled: true)
+      expect(page).to have_content("Date completed cannot be in the future.")
+    end
+  end
 end
