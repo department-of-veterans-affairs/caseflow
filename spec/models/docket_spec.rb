@@ -114,7 +114,7 @@ describe Docket, :all_dbs do
         context "when acd_exclude_from_affinity flag is enabled" do
           before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
-          context 'when called for ready is true and judge is passed' do
+          context "when called for ready is true and judge is passed" do
             let(:judge) { judge_decision_review_task.assigned_to }
             subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
 

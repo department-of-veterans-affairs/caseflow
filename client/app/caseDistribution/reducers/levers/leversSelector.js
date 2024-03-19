@@ -33,6 +33,10 @@ const getAdminStatus = (state) => {
   return state.caseDistributionLevers.isUserAcdAdmin;
 };
 
+const getExcludeStatus = (state) => {
+  return state.caseDistributionLevers.acdExcludeFromAffinity;
+};
+
 const leverErrorList = (state, leverItem) => {
   return state.caseDistributionLevers.leversErrors?.
     filter((error) => error.leverItem === leverItem).map((error) => error.message).join('');
@@ -116,6 +120,13 @@ export const getUserIsAcdAdmin = createSelector(
   [getAdminStatus],
   (userIsAcdAdmin) => {
     return userIsAcdAdmin;
+  }
+);
+
+export const getExcludeFromAffinityStatus = createSelector(
+  [getExcludeStatus],
+  (acdExcludeFromAffinity) => {
+    return acdExcludeFromAffinity;
   }
 );
 

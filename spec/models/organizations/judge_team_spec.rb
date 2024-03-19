@@ -193,6 +193,9 @@ describe JudgeTeam, :postgres do
   end
 
   describe ".judges_with_exclude_appeals_from_affinity" do
+    before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+    after { FeatureToggle.disable!(:acd_exclude_from_affinity) }
+
     context "when there are no judge teams with exclude_appeals_from_affinity set to true" do
       let(:judge) { create(:user) }
       let(:user) { create(:user) }
