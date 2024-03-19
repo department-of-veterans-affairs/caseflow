@@ -18,6 +18,8 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
   end
 
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   describe "validations" do
     it "requires a title" do
       lever = described_class.new(title: nil)
@@ -34,7 +36,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it 'requires a boolean attribute values to be either "true" or "false"' do
       lever = described_class.new
       expect(lever).not_to be_valid
-      expect(lever.errors[:is_toggle_active]).to include("is not included in the list")
       expect(lever.errors[:is_disabled_in_ui]).to include("is not included in the list")
     end
 

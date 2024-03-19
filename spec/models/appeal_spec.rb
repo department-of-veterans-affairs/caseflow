@@ -7,6 +7,7 @@ describe Appeal, :all_dbs do
 
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze

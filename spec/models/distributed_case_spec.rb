@@ -14,6 +14,8 @@ describe DistributedCase do
     )
   end
 
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   describe "#rename_for_redistribution!" do
     subject { distributed_case.rename_for_redistribution! }
 

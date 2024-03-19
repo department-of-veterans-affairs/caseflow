@@ -17,6 +17,7 @@ describe ByDocketDateDistribution, :all_dbs do
     FeatureToggle.enable!(:priority_acd)
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
     @new_acd = ByDocketDateDistributionTest.new(judge: User.new)
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution

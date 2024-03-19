@@ -9,6 +9,7 @@ describe Distribution, :all_dbs do
 
   before do
     Timecop.freeze(Time.zone.now)
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   context "validations" do

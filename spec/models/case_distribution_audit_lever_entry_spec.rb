@@ -8,6 +8,8 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
   let(:user) { create(:user) }
   let!(:levers) { Seeds::CaseDistributionLevers.levers }
 
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   describe ".lever_history" do
     it "returns lever history for the past year" do
       lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
