@@ -29,7 +29,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
     if body[:meta].key?(:distances)
       Hash[body[:meta][:distances].pluck(:id, :distance)]
     else
-      Hash[body[:data].pluck(:id), 0]
+      []
     end
   end
 
@@ -38,7 +38,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
 
     def initialize(facility, distance)
       @facility = facility
-      @distance = distance
+      @distance = distance || 0
     end
 
     def attrs
