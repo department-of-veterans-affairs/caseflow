@@ -122,6 +122,7 @@ describe CorrespondenceAutoAssignRunVerifier do
           end
 
           before do
+            # Ensure that we don't hit this code block
             batch_stubbed = class_double(BatchAutoAssignmentAttempt)
               .as_stubbed_const(transfer_nested_constants: true)
             expect(batch_stubbed).to receive(:find_by)
