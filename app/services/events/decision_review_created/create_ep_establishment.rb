@@ -6,17 +6,17 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
   class << self
     # This starts the creation of End Product Establishment from an event.
     # This is a sub service class that returns the End Product Establishment
-    # that was created fron the event.
-    # claim_review can be either a supplemental claim or higher level review
+    # that was created fron the event. Arguments claim_review, user and event
+    # are referring to the backfill objects being created from other sub service
+    # class. claim_review can be either a supplemental claim or higher level review
     # rubocop:disable Metrics/MethodLength
     def process!(parser, claim_review, user, event)
-      converted_claim_date = logical_date_converter(parser.epe_claim_date)
       end_product_establishment = EndProductEstablishment.create!(
         payee_code: parser.epe_payee_code,
         source: claim_review,
         veteran_file_number: claim_review.veteran_file_number,
         benefit_type_code: claim_review.benefit_type,
-        claim_date: converted_claim_date,
+        claim_date: parser.epe_claim_date,
         code: parser.epe_code,
         committed_at: parser.epe_committed_at,
         established_at: parser.epe_established_at,
@@ -35,13 +35,5 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
       raise error
     end
     # rubocop:enable Metrics/MethodLength
-
-    # convert log date int to date
-    def logical_date_converter(logical_date_int)
-      year = logical_date_int / 100_00
-      month = (logical_date_int % 100_00) / 100
-      day = logical_date_int % 100
-      Date.new(year, month, day)
-    end
   end
 end

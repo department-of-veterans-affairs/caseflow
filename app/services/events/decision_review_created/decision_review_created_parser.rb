@@ -13,10 +13,17 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     @veteran = @payload.dig(:veteran)
   end
 
-
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
     Time.at(milliseconds / 1000).to_datetime
+  end
+
+  # convert logical date int to date
+  def logical_date_converter(logical_date_int)
+    year = logical_date_int / 100_00
+    month = (logical_date_int % 100_00) / 100
+    day = logical_date_int % 100
+    Date.new(year, month, day)
   end
 
   def css_id
@@ -79,7 +86,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def epe_claim_date
-    @payload.dig(:end_product_establishment, :claim_date)
+    logical_date_int = @payload.dig(:end_product_establishment, :claim_date)
+    logical_date_converter(logical_date_int)
   end
 
   def epe_code
