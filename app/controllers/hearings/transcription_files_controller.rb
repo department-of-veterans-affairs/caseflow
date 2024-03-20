@@ -7,18 +7,6 @@ class Hearings::TranscriptionFilesController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
 
-  def index
-    nil
-  end
-
-  def update
-    nil
-  end
-
-  def create
-    nil
-  end
-
   # Downloads file and sends to user's local computer
   def download_transcription_file
     hearing_id = params[:hearing_id]
