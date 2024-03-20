@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/LineLength
-
 class HearingRequestDistributionQuery
   include DistributionScopes
 
@@ -14,11 +12,13 @@ class HearingRequestDistributionQuery
 
   def call
     return not_genpop_appeals if genpop == "not_genpop"
-    if genpop == "only_genpop"
-      return [*not_genpop_appeals, *only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
-                                                                judge.present?
 
-      ###if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
+    if genpop == "only_genpop"
+
+      return [*not_genpop_appeals, *only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
+                                                            judge.present?
+
+      # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
       return only_genpop_appeals
     end
 
@@ -70,7 +70,7 @@ class HearingRequestDistributionQuery
         base_relation
           .most_recent_hearings
           .tied_to_judges_with_exclude_appeals_from_affinity
-        )
+      )
     end
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings

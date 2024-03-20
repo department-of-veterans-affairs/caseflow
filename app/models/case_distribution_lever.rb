@@ -48,11 +48,13 @@ class CaseDistributionLever < ApplicationRecord
 
   def omit?
     return false unless radio_lever?
+
     value == Constants.ACD_LEVERS.omit
   end
 
   def infinite?
     return false unless radio_lever?
+
     value == Constants.ACD_LEVERS.infinite
   end
 
@@ -103,7 +105,7 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def option(item)
-    options&.find{ |option| option["item"] == item } || {}
+    options&.find { |option| option["item"] == item } || {}
   end
 
   # this matches what is displayed in frontend
@@ -113,7 +115,7 @@ class CaseDistributionLever < ApplicationRecord
 
     selected_option = option(Constants.ACD_LEVERS.value)
 
-    "#{selected_option["text"]} #{value.to_s}"
+    "#{selected_option['text']} #{value}"
   end
 
   class << self
@@ -160,12 +162,15 @@ class CaseDistributionLever < ApplicationRecord
 
     def method_missing_value(name)
       lever = find_by_item(name).try(:value)
-
-      if INTEGER_LEVERS.include?(name)
-        Integer(lever) rescue false ? lever.to_i : lever
-      elsif FLOAT_LEVERS.include?(name)
-        Float(lever) rescue false ? lever.to_f : lever
-      else
+      begin
+        if INTEGER_LEVERS.include?(name)
+          Integer(lever)
+        elsif FLOAT_LEVERS.include?(name)
+          Float(lever)
+        else
+          lever
+        end
+      rescue ArgumentError
         lever
       end
     end
