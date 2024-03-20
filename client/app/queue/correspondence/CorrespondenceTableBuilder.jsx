@@ -113,8 +113,13 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
+    if (searchValue === '' || searchValue.length < 3) {
+    // Return all tasks when search value is empty or less than three characters
+      return true;
+    }
+
     const taskNotes = task.notes || '';
-    const daysWaiting = task.daysWaiting || '';
+    const daysWaiting = task.daysWaiting !== null ? task.daysWaiting.toString() : '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
     const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
     const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
@@ -123,19 +128,22 @@ const CorrespondenceTableBuilder = (props) => {
     const taskVaDor = task.vaDor || '';
     const closedAt = task.closedAt || '';
 
-    return (searchValue !== '' && searchValue.length >= 3) ? (
-      taskVeteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
-      taskNotes.toLowerCase().includes(searchValue.toLowerCase()) ||
-      moment(taskVaDor).format('MM/DD/YYYY').
-        includes(searchValue) ||
-      assignedByfirstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      assignedBylastName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      assignedToName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      taskLabel.toLowerCase().includes(searchValue.toLowerCase()) ||
-      daysWaiting.toString().includes(searchValue) ||
-      moment(closedAt).format('MM/DD/YYYY').
-        includes(searchValue)
-    ) : (task);
+    const searchValueTrimmed = searchValue.trim();
+    const isNumericSearchValue = !isNaN(parseFloat(searchValueTrimmed)) && isFinite(searchValueTrimmed);
+
+    return (
+      taskVeteranDetails.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    taskNotes.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    moment(taskVaDor).format('MM/DD/YYYY').
+      includes(searchValueTrimmed) ||
+    assignedByfirstName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    assignedBylastName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    assignedToName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    taskLabel.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    (isNumericSearchValue && daysWaiting.trim() === searchValueTrimmed) ||
+    moment(closedAt).format('MM/DD/YYYY').
+      includes(searchValue)
+    );
   };
 
   const queueConfig = () => {
