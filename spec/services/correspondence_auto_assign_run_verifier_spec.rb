@@ -11,30 +11,28 @@ describe CorrespondenceAutoAssignRunVerifier do
     Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.timing.min_minutes_elapsed_individual_attempt
   end
 
+  let(:batch_for_verification) do
+    create(
+      :batch_auto_assignment_attempt,
+      user: current_user
+    )
+  end
+
   describe "#can_run_auto_assign?" do
-    let!(:valid_batch) do
-      create(
-        :batch_auto_assignment_attempt,
-        user: current_user,
-        started_at: (min_minutes_elapsed_batch_attempt + 1).minutes.ago
-      )
-    end
-
-    let!(:valid_batch_recent) do
-      create(
-        :batch_auto_assignment_attempt,
-        user: current_user,
-        status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
-        started_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago
-      )
-    end
-
     context "when true" do
-      context "with completed IndividualAutoAssignmentAttempt" do
+      context "when an IndividualAutoAssignmentAttempt exists" do
+        let!(:batch) do
+          create(
+            :batch_auto_assignment_attempt,
+            user: current_user,
+            created_at: (min_minutes_elapsed_batch_attempt + 1).minutes.ago
+          )
+        end
+
         let!(:individual) do
           create(
             :individual_auto_assignment_attempt,
-            batch_auto_assignment_attempt: valid_batch,
+            batch_auto_assignment_attempt: batch,
             created_at: (min_minutes_elapsed_individual_attempt + 1).minutes.ago
           )
         end
@@ -43,18 +41,27 @@ describe CorrespondenceAutoAssignRunVerifier do
           expect(
             described.can_run_auto_assign?(
               current_user_id: current_user.id,
-              batch_auto_assignment_attempt_id: valid_batch.id
+              batch_auto_assignment_attempt_id: batch_for_verification.id
             )
           ).to eq(true)
         end
       end
 
-      context "with completed BatchAutoAssignmentAttempt" do
+      context "when a completed BatchAutoAssignmentAttempt exists" do
+        let!(:completed_batch) do
+          create(
+            :batch_auto_assignment_attempt,
+            user: current_user,
+            created_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago,
+            status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed
+          )
+        end
+
         it "returns true" do
           expect(
             described.can_run_auto_assign?(
               current_user_id: current_user.id,
-              batch_auto_assignment_attempt_id: valid_batch.id
+              batch_auto_assignment_attempt_id: batch_for_verification.id
             )
           ).to eq(true)
         end
@@ -63,6 +70,8 @@ describe CorrespondenceAutoAssignRunVerifier do
 
     context "when false" do
       context "with feature toggles enabled" do
+        let(:batch) { create(:batch_auto_assignment_attempt) }
+
         before do
           FeatureToggle.enable!(:auto_assign_banner_failure)
         end
@@ -71,16 +80,18 @@ describe CorrespondenceAutoAssignRunVerifier do
           expect(
             described.can_run_auto_assign?(
               current_user_id: current_user.id,
-              batch_auto_assignment_attempt_id: valid_batch.id
+              batch_auto_assignment_attempt_id: batch.id
             )
           ).to eq(false)
         end
       end
 
       context "with invalid current_user_id" do
+        let(:batch) { create(:batch_auto_assignment_attempt) }
+
         it "returns false" do
           expect(
-            described.can_run_auto_assign?(current_user_id: 0, batch_auto_assignment_attempt_id: valid_batch.id)
+            described.can_run_auto_assign?(current_user_id: 0, batch_auto_assignment_attempt_id: batch.id)
           ).to eq(false)
         end
       end
@@ -95,19 +106,27 @@ describe CorrespondenceAutoAssignRunVerifier do
 
       context "when checking for concurrent runs" do
         context "when the latest IndividualAutoAssignmentAttempt occurred too recently" do
+          let!(:batch) do
+            create(
+              :batch_auto_assignment_attempt,
+              user: current_user,
+              created_at: (min_minutes_elapsed_batch_attempt + 1).minutes.ago
+            )
+          end
           let!(:invalid_individual) do
             create(
               :individual_auto_assignment_attempt,
-              batch_auto_assignment_attempt: valid_batch,
+              batch_auto_assignment_attempt: batch,
               created_at: 1.minute.ago
             )
           end
 
           before do
+            # Ensure that we don't hit this code block
             batch_stubbed = class_double(BatchAutoAssignmentAttempt)
               .as_stubbed_const(transfer_nested_constants: true)
             expect(batch_stubbed).to receive(:find_by)
-              .with(user: current_user, id: valid_batch.id).and_return(valid_batch)
+              .with(user: current_user, id: batch.id).and_return(batch)
             expect(batch_stubbed).not_to receive(:where)
           end
 
@@ -115,18 +134,19 @@ describe CorrespondenceAutoAssignRunVerifier do
             expect(
               described.can_run_auto_assign?(
                 current_user_id: current_user.id,
-                batch_auto_assignment_attempt_id: valid_batch.id
+                batch_auto_assignment_attempt_id: batch.id
               )
             ).to eq(false)
           end
         end
 
         context "when the latest BatchAutoAssignmentAttempt occurred too recently" do
+          let(:batch) { create(:batch_auto_assignment_attempt) }
           let!(:recent_batch) do
             create(
               :batch_auto_assignment_attempt,
               user: current_user,
-              started_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago
+              created_at: (min_minutes_elapsed_batch_attempt - 1).minutes.ago
             )
           end
 
@@ -134,7 +154,7 @@ describe CorrespondenceAutoAssignRunVerifier do
             expect(
               described.can_run_auto_assign?(
                 current_user_id: current_user.id,
-                batch_auto_assignment_attempt_id: recent_batch.id
+                batch_auto_assignment_attempt_id: batch.id
               )
             ).to eq(false)
           end

@@ -197,12 +197,19 @@ class CorrespondenceController < ApplicationController
   end
 
   def auto_assign_status
-    batch = BatchAutoAssignmentAttempt.find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+    batch = BatchAutoAssignmentAttempt.includes(:individual_auto_assignment_attempts)
+      .find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+
+    num_assigned = batch.individual_auto_assignment_attempts
+      .where(status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed).count
+
     status_details = {
       error_message: batch.error_info,
       status: batch.status,
-      number_assigned: batch.num_packages_assigned
+      number_assigned: num_assigned,
+      number_attempted: batch.individual_auto_assignment_attempts.count
     }
+
     render json: status_details, status: :ok
   end
 

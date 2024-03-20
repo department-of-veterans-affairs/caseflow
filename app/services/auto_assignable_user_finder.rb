@@ -27,8 +27,15 @@ class AutoAssignableUserFinder
 
       user_obj = user.user_obj
 
-      if sensitivity_checker(user_obj).can_access?(vbms_id, user_to_check: user_obj)
-        return user_obj
+      begin
+        if sensitivity_checker(user_obj).can_access?(vbms_id, user_to_check: user_obj)
+          return user_obj
+        end
+      rescue StandardError => error
+        error_uuid = SecureRandom.uuid
+        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+
+        next
       end
     end
 

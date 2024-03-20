@@ -191,13 +191,27 @@ describe AutoAssignableUserFinder do
       let!(:user_1) { create(:correspondence_auto_assignable_user) }
       let!(:user_2) { create(:correspondence_auto_assignable_user) }
 
-      before do
-        expect(mock_sensitivity_checker).to receive(:can_access?).twice.and_return(false)
-        expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
+      context "with no BGSService errors" do
+        before do
+          expect(mock_sensitivity_checker).to receive(:can_access?).twice.and_return(false)
+          expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
+        end
+
+        it "does not allow access for users without the correct sensitivity level" do
+          expect(described.get_first_assignable_user(correspondence: correspondence)).to be nil
+        end
       end
 
-      it "does not allow access for users without the correct sensitivity level" do
-        expect(described.get_first_assignable_user(correspondence: correspondence)).to be nil
+      context "when the BGSService raises an error" do
+        before do
+          expect(mock_sensitivity_checker).to receive(:can_access?).once.and_raise("Test BGS error")
+          expect(mock_sensitivity_checker).to receive(:can_access?).once.and_return(true)
+          expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
+        end
+
+        it "continues iterating through all assignable users" do
+          expect(described.get_first_assignable_user(correspondence: correspondence)).to eq(user_2)
+        end
       end
     end
   end

@@ -66,6 +66,6 @@ class CorrespondenceAutoAssignRunVerifier
     BatchAutoAssignmentAttempt
       .where.not(id: verified_batch.id)
       .where(status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started)
-      .exists?(["started_at < ?", min_minutes_elapsed_batch_attempt.minutes.ago])
+      .exists?(["created_at >= ?", min_minutes_elapsed_batch_attempt.minutes.ago])
   end
 end

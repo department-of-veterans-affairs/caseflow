@@ -230,6 +230,9 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
 
     before do
+      8.times do
+        create(:individual_auto_assignment_attempt, batch_auto_assignment_attempt: error_baaa, status: "completed")
+      end
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
@@ -239,7 +242,8 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(response).to have_http_status(:ok)
       body = JSON.parse(response.body)
       expect(body["status"]).to eq(error_baaa.status)
-      expect(body["number_assigned"]).to eq(error_baaa.num_packages_assigned)
+      expect(body["number_assigned"]).to eq(8)
+      expect(body["number_attempted"]).to eq(8)
       expect(body["error_message"]).to eq(error_baaa.error_info)
     end
   end
