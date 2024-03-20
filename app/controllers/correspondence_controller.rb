@@ -242,8 +242,8 @@ class CorrespondenceController < ApplicationController
 
   def handle_html_response(mail_team_user, task_ids, tab)
     if mail_team_user && task_ids.present?
-      set_banner_params(mail_team_user, task_ids.count, tab)
-      update_tasks(mail_team_user, task_ids)
+      process_tasks_if_applicable(mail_team_user, task_ids, tab)
+      handle_reassign_or_remove_task(mail_team_user)
     end
     if @reassign_remove_task_id.present? && @action_type.present?
       task = Task.find(@reassign_remove_task_id)
@@ -254,6 +254,23 @@ class CorrespondenceController < ApplicationController
       reassign_remove_banner_action(mail_team_user)
       render "correspondence_team"
     end
+  end
+
+  def process_tasks_if_applicable(mail_team_user, task_ids, tab)
+    return unless mail_team_user && task_ids.present?
+
+    set_banner_params(mail_team_user, task_ids.count, tab)
+    update_tasks(mail_team_user, task_ids)
+  end
+
+  def handle_reassign_or_remove_task(mail_team_user)
+    return unless @reassign_remove_task_id.present? && @action_type.present?
+
+    task = Task.find(@reassign_remove_task_id)
+    mail_team_user ||= task.assigned_by
+
+    reassign_remove_banner_action(mail_team_user)
+    render "correspondence_team"
   end
 
   def handle_json_response(mail_team_user, task_ids, tab)

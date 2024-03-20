@@ -138,16 +138,19 @@ const CorrespondenceCases = (props) => {
   ];
 
   const handleConfirmReassignRemoveClick = (operation) => {
-    let newUrl = window.location.href;
+    let newUrl = new URL(window.location.href);
+    let searchParams = new URLSearchParams(newUrl.search);
 
-    newUrl = newUrl.replace('#', '');
-    newUrl += newUrl.includes('?') ? '?' : '';
-    newUrl += `&user=${selectedMailTeamUser}
-    &taskId=${currentSelectedVeteran.uniqueId}
-    &userAction=${selectedRequestChoice}
-    &decisionReason=${decisionReason}
-    &operation=${operation}`;
-    window.location.href = encodeURIComponent(newUrl);
+    // Encode and set the query parameters
+    searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
+    searchParams.set('taskId', encodeURIComponent(currentSelectedVeteran.uniqueId));
+    searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
+    searchParams.set('decisionReason', encodeURIComponent(decisionReason));
+    searchParams.set('operation', encodeURIComponent(operation));
+
+    // Construct the new URL with encoded query parameters
+    newUrl.search = searchParams.toString();
+    window.location.href = newUrl.href;
   };
 
   const reassignModalButtons = [
