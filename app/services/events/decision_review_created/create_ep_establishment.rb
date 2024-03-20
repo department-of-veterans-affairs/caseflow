@@ -6,7 +6,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
   class << self
     # This starts the creation of End Product Establishment from an event.
     # This is a sub service class that returns the End Product Establishment
-    # that was created fron the event. Arguments claim_review, user and event
+    # that was created from the event. Arguments claim_review, user and event
     # are referring to the backfill objects being created from other sub service
     # class. claim_review can be either a supplemental claim or higher level review
     # rubocop:disable Metrics/MethodLength
