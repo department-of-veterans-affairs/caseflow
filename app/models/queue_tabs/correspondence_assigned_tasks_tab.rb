@@ -22,7 +22,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   # :reek:UtilityFunction
-  def column_names
+  def self.column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
@@ -31,12 +31,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
     ]
   end
 
-  def self.column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
-      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
-    ]
+  def column_names
+    self.class.column_names
   end
 end
