@@ -4,7 +4,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
-      facilities = query[:facilityIds].split(",").map do |id|
+      facilities = query[:ids].split(",").map do |id|
         data = fake_facilities_data[:data][0]
         data["id"] = id
         data
