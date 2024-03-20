@@ -33,7 +33,13 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.correspondence.cmp_packet_number
   end
 
-  attribute :closed_at, &:completed_by_date
+  attribute :closed_at_and_completed_by_date do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]
+
+    if serialize_attribute?(params, columns)
+      object.closed_at
+    end
+  end
 
   attribute :days_waiting do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]
@@ -51,7 +57,16 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     end
   end
 
-  attribute :label
+  attribute :label do |object, params|
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name
+    ]
+
+    if serialize_attribute?(params, columns)
+      object.label
+    end
+  end
 
   attribute :status
 

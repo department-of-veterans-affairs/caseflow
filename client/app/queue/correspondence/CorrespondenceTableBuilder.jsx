@@ -119,18 +119,21 @@ const CorrespondenceTableBuilder = (props) => {
     const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
     const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
     const veteranDetails = task.veteranDetails || '';
+    const taskLabel = task.label || '';
+    const vaDor = task.vaDor || '';
+    const closedAt = task.closedAt || '';
 
     return (
       veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
       notes.toLowerCase().includes(searchValue.toLowerCase()) ||
-      moment(task.vaDor).format('MM/DD/YYYY').
+      moment(vaDor).format('MM/DD/YYYY').
         includes(searchValue) ||
       assignedByfirstName.toLowerCase().includes(searchValue.toLowerCase()) ||
       assignedBylastName.toLowerCase().includes(searchValue.toLowerCase()) ||
       assignedToName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+      taskLabel.toLowerCase().includes(searchValue.toLowerCase()) ||
       daysWaiting.toString().includes(searchValue) ||
-      moment(task.closedAt).format('MM/DD/YYYY').
+      moment(closedAt).format('MM/DD/YYYY').
         includes(searchValue)
     );
   };
