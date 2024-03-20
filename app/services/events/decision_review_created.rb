@@ -49,7 +49,7 @@ class Events::DecisionReviewCreated
           # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
 
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
-          # Events::DecisionReviewCreated::CreateClaimReview.process!(claim_review: claim_review, intake: intake, veteran: vbms_veteran)
+          # Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error

@@ -6,9 +6,11 @@ class Events::DecisionReviewCreated::CreateClaimReview
       if parser.detail_type == "HigherLevelReview"
         high_level_review = create_high_level_review(parser)
         create_event_record(event, high_level_review)
+        high_level_review
       else
         supplemental_claim = create_supplemental_claim(parser)
         create_event_record(event, supplemental_claim)
+        supplemental_claim
       end
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedCreateClaimReviewError, error.message
