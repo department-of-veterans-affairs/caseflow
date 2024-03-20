@@ -14,12 +14,12 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
   attribute :instructions
 
   attribute :veteran_details do |object, params|
-   columns = [Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]
 
-   if serialize_attribute?(params, columns)
+    if serialize_attribute?(params, columns)
       vet = Veteran.find(object.correspondence.veteran_id)
       "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
-   end
+    end
   end
 
   attribute :notes do |object, params|
@@ -44,10 +44,10 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
   attribute :days_waiting do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]
 
-     if serialize_attribute?(params, columns)
-       object.days_waiting
-     end
-   end
+    if serialize_attribute?(params, columns)
+      object.days_waiting
+    end
+  end
 
   attribute :va_date_of_receipt do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]
@@ -99,12 +99,25 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     end
   end
 
-  attribute :assigned_by do |object|
-    {
-      first_name: object.assigned_by_display_name.first,
-      last_name: object.assigned_by_display_name.last,
-      css_id: object.assigned_by.try(:css_id),
-      pg_id: object.assigned_by.try(:id)
-    }
+  attribute :assigned_by do |object, params|
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name
+    ]
+
+    if serialize_attribute?(params, columns)
+      {
+        first_name: object.assigned_by_display_name.first,
+        last_name: object.assigned_by_display_name.last,
+        css_id: object.assigned_by.try(:css_id),
+        pg_id: object.assigned_by.try(:id)
+      }
+    else
+      {
+        first_name: nil,
+        last_name: nil,
+        css_id: nil,
+        pg_id: nil
+      }
+    end
   end
 end
