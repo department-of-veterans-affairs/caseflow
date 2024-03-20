@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe TranscriptionFilesController, :all_dbs, type: :controller do
+describe Hearings::TranscriptionFilesController, :all_dbs, type: :controller do
   let(:hearings_user) { create(:hearings_coordinator) }
   before { User.authenticate!(user: hearings_user) }
   describe "routes" do

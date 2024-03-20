@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionFilesController < ApplicationController
+class Hearings::TranscriptionFilesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
   rescue_from ActionController::UnknownFormat, with: :render_page_not_found
