@@ -47,6 +47,13 @@ class Events::DecisionReviewCreated
 
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
+
+          # Note: event, user, and veteran need to be before this call.
+          # Events::DecisionReviewCreated::CreateIntake.process!(event, user, vet)
+
+          # Note: end_product_establishment & station_id is coming from the payload
+          # claim_review can either be a higher_level_revew or supplemental_claim
+          # Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser, claim_review, user, event)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
