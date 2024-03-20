@@ -41,7 +41,7 @@ class HearingRequestDocket < Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
-    base_relation = appeals(priority: priority, ready: true).limit(limit)
+    base_relation = appeals(priority: priority, ready: true, judge: distribution.judge).limit(limit)
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
     genpop = "only_genpop" if use_by_docket_date?
@@ -84,6 +84,5 @@ class HearingRequestDocket < Docket
     # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases,
     # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
     # Instead, reinstate the limit here by filtering out the newest cases
-
   end
 end
