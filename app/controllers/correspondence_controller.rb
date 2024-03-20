@@ -240,8 +240,23 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def reassign_remove_task_id_and_action_type_present?
+    if @reassign_remove_task_id.present? && @action_type.present?
+      return true
+    end
+
+    false
+  end
+
   def handle_html_response(mail_team_user, task_ids, tab)
-    if mail_team_user && task_ids.present?
+    if reassign_remove_task_id_and_action_type_present?
+      task = Task.find(@reassign_remove_task_id)
+      if mail_team_user.nil?
+        mail_team_user = task.assigned_by
+      end
+    end
+
+    if mail_team_user && (task_ids.present? || @reassign_remove_task_id.present?)
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
       handle_reassign_or_remove_task(mail_team_user)
     end
