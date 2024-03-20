@@ -8,6 +8,8 @@ export const commentStyles = {
   position: 'relative'
 };
 
+const test = "test";
+
 export const selectionStyles = css({
   '> div': {
     '::selection': {
