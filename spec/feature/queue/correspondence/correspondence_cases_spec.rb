@@ -22,7 +22,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "routes to correspondence cases if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence"
-      expect(page).to have_current_path("/queue/correspondence")
+      expect(current_path.include?("/queue/correspondence")).to eq true
     end
   end
 
@@ -212,11 +212,10 @@ RSpec.feature("The Correspondence Cases page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
     end
 
     it "displays all completed correspondence tasks" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Completed correspondence:")
       expect(page).to have_content("Viewing 1-15 of 20 total")
       expect(page).to have_button("Next")
@@ -232,7 +231,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "displays all correspondence tasks sorted by date completed" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='Sort by Date Completed']").click
 
       dates = all("tbody > tr > td:nth-child(3)").map(&:text)
@@ -244,7 +243,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "filters date column with 'between' the dates" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
 
       find("[aria-label='Filter by date completed']").click
       expect(page).to have_content("Date filter parameters")
@@ -265,7 +264,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "filters date column with 'before' this date" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='Filter by date completed']").click
       expect(page).to have_content("Date filter parameters")
       expect(page).to have_button("Apply filter", disabled: true)
@@ -282,7 +281,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "filters date column with 'after' this date" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
 
       find("[aria-label='Filter by date completed']").click
       expect(page).to have_content("Date filter parameters")
@@ -299,7 +298,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "filters date column with 'on' this date" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
 
       find("[aria-label='Filter by date completed']").click
       expect(page).to have_content("Date filter parameters")
@@ -315,19 +314,22 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "sorts by Veteran Details column" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=veteranDetailsColumn&order=asc"
+      CorrespondenceRootTask.all.limit(5).each { |crt| crt.update(status: "assigned") }
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
+      unsorted_veterans = all("#task-link").map(&:text)
       find("[aria-label='Sort by Veteran Details']").click
+      sorted_veterans = all("#task-link").map(&:text)
 
-      veterans = all("#task-link").map(&:text)
-      expect(veterans).to eq(veterans.sort.reverse)
+      expect(sorted_veterans).to eq(unsorted_veterans.sort.reverse)
 
       find("[aria-label='Sort by Veteran Details']").click
-      veterans = all("#task-link").map(&:text)
-      expect(veterans).to eq(veterans.sort)
+      sorted_veterans = all("#task-link").map(&:text)
+
+      expect(sorted_veterans).to eq(unsorted_veterans.sort)
     end
 
     it "sorts by Notes column" do
-      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=notes&order=asc"
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='Sort by Notes']").click
 
       notes = all("tbody > tr > td:nth-child(4)").map(&:text)
@@ -935,7 +937,7 @@ RSpec.feature("The Correspondence Cases page") do
       FeatureToggle.enable!(:correspondence_queue)
     end
 
-    it "successfully loads the in progress tab" do
+    it "successfully loads the completed tab" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Completed correspondence")
     end

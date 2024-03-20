@@ -626,7 +626,7 @@ export const correspondenceCompletedDateColumn = () => {
     header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
     filterOptions: [],
-    label: QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
+    label: 'Filter by date completed',
     columnName: 'Date Completed',
     backendCanSort: true,
     enableFilter: true,
