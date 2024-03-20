@@ -195,6 +195,11 @@
       "sorting_table": "tasks",
       "sorting_columns": ["closed_at"]
     },
+    "CORRESPONDENCE_TASK_CLOSED_DATE": {
+      "name": "correspondenceCompletedDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["closed_at"]
+    },
     "TASK_CREATED_AT": {
       "name": "createdDateColumn",
       "sorting_table": "tasks",
