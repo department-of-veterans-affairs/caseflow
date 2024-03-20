@@ -17,6 +17,7 @@ export const initialState = {
   selectedVeteranDetails: {},
   showReassignPackageModal: false,
   showRemovePackageModal: false,
+  showErrorBanner: false
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -166,6 +167,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       selectedVeteranDetails: {
         $set: action.payload.selectedVeteranDetails
+      }
+    });
+
+  case ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER:
+    return update(state, {
+      showErrorBanner: {
+        $set: action.payload.isVisible
       }
     });
 

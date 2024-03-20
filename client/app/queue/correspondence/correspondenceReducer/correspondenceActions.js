@@ -209,4 +209,12 @@ export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) 
       selectedVeteranDetails
     }
   });
+}
+export const setErrorBanner = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,
+    payload: {
+      isVisible
+    }
+  });
 };
