@@ -113,20 +113,20 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
-    const notes = task.notes || '';
+    const taskNotes = task.notes || '';
     const daysWaiting = task.daysWaiting || '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
     const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
     const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
-    const veteranDetails = task.veteranDetails || '';
+    const taskVeteranDetails = task.veteranDetails || '';
     const taskLabel = task.label || '';
-    const vaDor = task.vaDor || '';
+    const taskVaDor = task.vaDor || '';
     const closedAt = task.closedAt || '';
 
-    return (
-      veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
-      notes.toLowerCase().includes(searchValue.toLowerCase()) ||
-      moment(vaDor).format('MM/DD/YYYY').
+    return (searchValue !== '' && searchValue.length >= 3) ? (
+      taskVeteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
+      taskNotes.toLowerCase().includes(searchValue.toLowerCase()) ||
+      moment(taskVaDor).format('MM/DD/YYYY').
         includes(searchValue) ||
       assignedByfirstName.toLowerCase().includes(searchValue.toLowerCase()) ||
       assignedBylastName.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -135,7 +135,7 @@ const CorrespondenceTableBuilder = (props) => {
       daysWaiting.toString().includes(searchValue) ||
       moment(closedAt).format('MM/DD/YYYY').
         includes(searchValue)
-    );
+    ) : (task);
   };
 
   const queueConfig = () => {
