@@ -9,9 +9,16 @@ class AttorneyLegacyTask < LegacyTask
     # so we use the absence of this value to indicate that there is no case assignment and return no actions.
     return [] unless task_id
 
-    actions = [Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
-               Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
-               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
+    # TODO: Get it working with this
+    actions = [
+      Constants::TASK_ACTIONS["REVIEW_LEGACY_DECISION"],
+      Constants::TASK_ACTIONS["SUBMIT_OMO_REQUEST_FOR_REVIEW"],
+      Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"]
+    ]
+
+    # actions = [Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
+    #            Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
+    #            Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
 
     actions
   end

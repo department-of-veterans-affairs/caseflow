@@ -16,12 +16,51 @@ class LegacyTask
     available_actions(user, role).map { |action| build_action_hash(action, user) }
   end
 
+  # def build_action_hash(action, user)
+  #   # if action[:func]
+  #   #   puts "building action: #{action[:func]} for task type: #{self.class}"
+  #   # end
+
+  #   # old_hash = {
+  #   #   label: action[:label],
+  #   #   value: action[:value],
+  #   #   data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
+  #   # }
+
+  #   new_hash = {
+  #     label: action[:label],
+  #     value: action[:value],
+  #     data: action[:func] ? TaskActionRepository.send("legacy_and_colocated_task_add_admin_action_data_new", self, user) : nil
+  #   }
+  #   # puts old_hash.inspect
+  #   # puts new_hash.inspect
+
+
+  #   # old_hash
+  #   new_hash
+  # end
+
   def build_action_hash(action, user)
-    {
-      label: action[:label],
-      value: action[:value],
-      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
+    # if action["func"]
+    #   puts "building action: #{action['func']} for task type: #{self.class}"
+    # end
+
+    # old_hash = {
+    #   label: action["label"],
+    #   value: action["value"],
+    #   data: action["func"] ? TaskActionRepository.send(action["func"], self, user) : nil
+    # }
+
+    new_hash = {
+      label: action["label"],
+      value: action["value"],
+      data: action["func"] ? TaskActionRepository.send(action["func"], self, user) : nil
     }
+
+    # puts new_hash.inspect
+
+
+    new_hash
   end
 
   def assigned_to_label
@@ -74,15 +113,18 @@ class LegacyTask
 
   ### Serializer Methods End
 
+  # Using appeal as a method argument and also as a memoized method value is weird
   def self.from_vacols(record, appeal, user)
     new(
       id: record.vacols_id,
       docket_name: "legacy",
       added_by: record.added_by,
-      docket_date: record.docket_date.try(:to_date),
+      # docket_date: record.docket_date.try(:to_date),
+      docket_date: record.docket_date&.to_date,
       appeal_id: appeal.id,
       assigned_to: user,
-      assigned_at: record.assigned_to_location_date.try(:to_datetime),
+      # assigned_at: record.assigned_to_location_date.try(:to_datetime),
+      assigned_at: record.assigned_to_location_date&.to_datetime,
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
       assigned_by: record.assigned_by,

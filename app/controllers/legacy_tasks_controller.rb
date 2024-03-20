@@ -18,6 +18,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
+    puts "---------------getting into the legacy tasks controller for params--------------"
+    # puts params.inspect
+    # byebug
     return if needs_redirect?
 
     respond_to do |format|
@@ -27,10 +30,36 @@ class LegacyTasksController < ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
-          tasks = LegacyWorkQueue.tasks_for_user(user)
-          render json: {
-            tasks: json_tasks(tasks, user, user_role)
-          }
+          tasks = nil
+          puts "---------------------------------- legacy work queue tasks for user -----------------------------------"
+          start_time1 = Time.zone.now
+          StackProf.run(mode: :wall, out: "legacy_work_queue.dump") do
+            # tasks = LegacyWorkQueue.tasks_for_user(user)
+            tasks = []
+          end
+          end_time1 = Time.zone.now
+          puts "LegacyWorkQueue.tasks_for_user took: #{(end_time1 - start_time1) * 1000}"
+          # byebug
+
+          rendered_json = nil
+          puts "----------------------------- serialized tasks via LegacyTaskSerializer -----------------------------"
+          start_time2 = Time.zone.now
+          # tasks.appeal.pluck(find_or_create_all(*file_numbers_or_ssns)
+          # file_numbers_or_ssns = tasks.map(&:appeal).pluck(:veteran_file_number)
+          # VeteranFinder.find_or_create_all(*file_numbers_or_ssns).index_by(:veteran_file_number)
+          # preloader = ActiveRecord::Associations::Preloader.new
+          # preloader.preload(tasks, :work_mode)
+          StackProf.run(mode: :wall, out: "legacy_task_serializer.dump") do
+            rendered_json = render json: {
+              tasks: json_tasks(tasks, user, user_role)
+            }
+          end
+          end_time2 = Time.zone.now
+          puts "Number of tasks: #{tasks.count}"
+          puts "LegacyTask Serialization took: #{(end_time2 - start_time2) * 1000}"
+          # byebug
+
+          rendered_json
         end
       end
     end
@@ -140,6 +169,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def user
+    # TODO: Why does this use user.find instead of current user?????
+    # Maybe if it's being referenced by a judge or someone else that needs a count of the attorney tasks?
+    # Could maybe wrap this with an ||= current_user based on a check or fetch new user
     @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by_css_id(params[:user_id])
   end
   helper_method :user

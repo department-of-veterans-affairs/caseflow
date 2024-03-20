@@ -80,7 +80,7 @@ class QueueConfig
 
     puts "---------------------------------- In serialize tasks for columns -----------------------------------"
     start_time1 = Time.zone.now
-    primed_tasks = nil
+    primed_tasks = []
     StackProf.run(mode: :wall, out: "eager_load_legacy.dump") do
       # primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
       primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks_in_queue(tasks, testing_appeal_includes)
@@ -115,7 +115,7 @@ class QueueConfig
     end_time2 = Time.zone.now
     puts "Serialization took: #{(end_time2 - start_time2) * 1000}"
 
-    # byebug
+    byebug
 
     serialized_tasks
   end

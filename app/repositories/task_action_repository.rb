@@ -325,11 +325,24 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: ColocatedTask.find_subclass_by_action(key).name
+            value: ColocatedTask.find_subclass_by_action_new(key).name
           }
         end
       }
     end
+
+    # def legacy_and_colocated_task_add_admin_action_data_new(_task, _user)
+    #   {
+    #     redirect_after: "/queue",
+    #     selected: nil,
+    #     options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+    #       {
+    #         label: value,
+    #         value: ColocatedTask.find_subclass_by_action_new(key).name
+    #       }
+    #     end
+    #   }
+    # end
 
     def cancel_convert_hearing_request_type_data(task, _user = nil)
       {

@@ -211,9 +211,15 @@ class AppealRepository
     # :nocov:
 
     # TODO: consider persisting these records
-    def build_appeal(case_record, persist = false)
-      appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
-      appeal.save! if persist
+    def build_appeal(case_record, persist = false, fetched_appeal = nil)
+      appeal =
+        if fetched_appeal
+          fetched_appeal
+        else
+          appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+          appeal.save! if persist
+          appeal
+        end
       set_vacols_values(appeal: appeal, case_record: case_record)
     end
 

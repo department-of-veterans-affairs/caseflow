@@ -30,7 +30,8 @@ class OrganizationsController < ApplicationController
   end
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
+    # redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless current_user.member_of_organization?(organization)
   end
 
   def verify_business_line
@@ -46,7 +47,8 @@ class OrganizationsController < ApplicationController
   # a User record so they cannot be added as a member of the organization. This function exists to automatically add
   # them to the organization when they visit the organization's team queue.
   def add_user_to_vso
-    return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
+    # return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
+    return if current_user.roles.exclude?("VSO") || current_user.member_of_organization?(organization)
 
     organization.add_user(current_user)
   end
@@ -62,7 +64,7 @@ class OrganizationsController < ApplicationController
   def organization
     # Allow the url to be the ID of the row in the table since this will be what is associated with
     # tasks assigned to the organization in the tasks table.
-    Organization.find_by(url: organization_url) || Organization.find(organization_url)
+    @organization ||= Organization.find_by(url: organization_url) || Organization.find(organization_url)
   end
 
   def json_organizations(organizations)

@@ -29,6 +29,8 @@ class QueueRepository
     def appeals_by_vacols_ids(vacols_ids)
       # puts "--------------in appeals by vacols ids in queue repository--------------"
       # byebug
+      # TODO: Consider caching this via the rails cache?? or via a database timestamp so you don't have to refetch
+      # The same appeals every single time from vacols.
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
                                       name: "appeals_by_vacols_ids") do
@@ -40,9 +42,26 @@ class QueueRepository
         issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
         remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
-        case_records.map do |case_record|
-          appeal = AppealRepository.build_appeal(case_record)
+        # TODO: Should maybe do a veteran lookup here as well?
+        # Test performance difference for this
+        # Verify that preloading after this does not break it. I think preloading breaks it
+        # THIS IS TRASH
+        # veterans_by_appeal = VeteranFinder.find_or_create_all(*vacols_ids).index_by(&:file_number)
+        # veterans_by_appeal = Veteran.where(ssn: vacols_ids).where.not(file_number: vacols_ids).index_by(&:ssn)
 
+        # TODO: Verify that this is different from the vacols_ids that are being passed in?
+        case_record_vacols_ids = case_records.pluck(:bfkey)
+        legacy_appeals = LegacyAppeal.where(vacols_id: case_record_vacols_ids).index_by(&:vacols_id)
+
+        case_records.map do |case_record|
+          # TODO: Can maybe more this outside of the loop and make it one query that returns all cases
+          # Then reference that here. The only problem is the find/initialize part but you could do
+          # find/initialize as a backup if there were no matches
+          appeal = AppealRepository.build_appeal(case_record, false, legacy_appeals[case_record.bfkey])
+          # appeal = legacy_appeals[case_record.bfkey] || AppealRepository.build_appeal(case_record)
+
+          # Don't think it works
+          # appeal.veteran = veterans_by_appeal[appeal.vacols_id]
           appeal.aod = aod_by_appeal[appeal.vacols_id]
           appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map do |vacols_issue|
             issue = Issue.load_from_vacols(vacols_issue)
@@ -110,6 +129,9 @@ class QueueRepository
 
     def tasks_query(css_id)
       records = VACOLS::CaseAssignment.tasks_for_user(css_id)
+      # puts "------------in tasks query------------"
+      # puts records.class
+      # puts records.inspect
       filter_duplicate_tasks(records, css_id)
     end
 
@@ -187,11 +209,13 @@ class QueueRepository
     end
 
     def filter_duplicate_tasks(records, css_id = nil)
+      user = User.find_by_css_id(css_id) if css_id
       # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
         next result << v.first if v.size == 1
 
-        user = User.find_by_css_id(css_id) if css_id
+        # TODO: Why is this in the loop??????
+        # user = User.find_by_css_id(css_id) if css_id
         # If user is an attorney, find all associated with the user's attorney_id
         if user&.station_id == User::BOARD_STATION_ID && attorney_id_match_found?(v, user)
           v.select! { |task| task.attorney_id == user.vacols_attorney_id }
@@ -212,7 +236,9 @@ class QueueRepository
     private
 
     def attorney_id_match_found?(records, user)
-      user.attorney_in_vacols? && records.map(&:attorney_id).include?(user.vacols_attorney_id)
+      # TODO: Can use pluck?
+      # user.attorney_in_vacols? && records.map(&:attorney_id).include?(user.vacols_attorney_id)
+      user.attorney_in_vacols? && records.pluck(:attorney_id).include?(user.vacols_attorney_id)
     end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
