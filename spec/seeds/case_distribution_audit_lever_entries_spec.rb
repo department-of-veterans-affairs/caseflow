@@ -8,7 +8,7 @@ describe Seeds::CaseDistributionAuditLeverEntries do
     before do
       CDAControlGroup.singleton.add_user(user)
       OrganizationsUser.make_user_admin(user, CDAControlGroup.singleton)
-      Seeds::CaseDistributionLevers.new.seed!
+      create(:case_distribution_lever, :alternative_batch_size)
     end
 
     it "creates audit entry for a lever" do
