@@ -139,6 +139,7 @@ module QueueHelpers
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
     task = CavcCorrespondenceCorrespondenceTask.create!(
+      parent_id: correspondence&.root_task&.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
