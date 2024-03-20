@@ -138,8 +138,8 @@ const CorrespondenceCases = (props) => {
   ];
 
   const handleConfirmReassignRemoveClick = (operation) => {
-    let newUrl = new URL(window.location.href);
-    let searchParams = new URLSearchParams(newUrl.search);
+    const newUrl = new URL(window.location.href);
+    const searchParams = new URLSearchParams(newUrl.search);
 
     // Encode and set the query parameters
     searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
