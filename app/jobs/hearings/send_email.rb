@@ -240,10 +240,10 @@ class Hearings::SendEmail
   end
 
   def should_appellant_receive_email?
-    appellant_recipient&.email_address.present? && !appellant_recipient.email_sent
+    appellant_recipient&.email_address.present? && !appellant_recipient&.email_sent
   end
 
   def should_representative_receive_email?
-    representative_recipient&.email_address.present? && !representative_recipient.email_sent
+    representative_recipient&.email_address.present? && !representative_recipient&.email_sent
   end
 end
