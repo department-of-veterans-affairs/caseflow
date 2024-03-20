@@ -33,4 +33,14 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
   end
+
+  def self.column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
+    ]
+  end
 end
