@@ -159,7 +159,6 @@ describe HearingRequestDocket, :postgres do
       it { is_expected.to eq 2 }
     end
 
-
     context "with exclude from affinity disabled" do
       it { is_expected.to eq 1 }
     end

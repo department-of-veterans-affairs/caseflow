@@ -16,8 +16,8 @@ class HearingRequestDistributionQuery
     if genpop == "only_genpop"
 
       return [*not_genpop_appeals, *only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
-                                                                judge.present?
-      
+                                                            judge.present?
+
       # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
       return only_genpop_appeals
     end
@@ -47,10 +47,8 @@ class HearingRequestDistributionQuery
     ama_non_aod_hearing_query = generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_not_genpop_aod_hearing_query(base_relation)
 
-
     ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end
-  # rubocop:disable Style/MultilineTernaryOperator
 
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
@@ -69,11 +67,10 @@ class HearingRequestDistributionQuery
 
     if FeatureToggle.enabled?(:acd_exclude_from_affinity)
       result = result.or(
-
         base_relation
           .most_recent_hearings
           .tied_to_judges_with_exclude_appeals_from_affinity
-        )
+      )
     end
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings

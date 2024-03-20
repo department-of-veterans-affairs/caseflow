@@ -46,7 +46,6 @@ class HearingRequestDocket < Docket
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
     genpop = "only_genpop" if use_by_docket_date?
 
-
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
