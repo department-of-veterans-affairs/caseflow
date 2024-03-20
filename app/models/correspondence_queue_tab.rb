@@ -27,4 +27,19 @@ class CorrespondenceQueueTab < QueueTab
 
     tab
   end
+
+
+  def self.serialize_columns
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.NOTES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    ]
+  end
 end
