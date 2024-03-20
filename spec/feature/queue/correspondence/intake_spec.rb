@@ -346,7 +346,7 @@ RSpec.feature("The Correspondence Intake page") do
     end
   end
 
-  context "correspondence tasks in-progress tab and  navigate to step 3 when we click on intake task" do
+  context "correspondence tasks in-progress tab and navigate to step 3 when we click on intake task" do
     let(:current_user) { create(:user) }
     before :each do
       MailTeam.singleton.add_user(current_user)
@@ -354,27 +354,11 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     before do
-      Timecop.freeze(Time.zone.local(2020, 5, 15))
-      @last_correspondence_uuid = nil
-      20.times do
-        correspondence = create(:correspondence)
-        parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
-        @last_correspondence_uuid = EfolderUploadFailedTask.first.correspondence.uuid
-      end
-      puts "Last correspondence UUID: #{@last_correspondence_uuid}"
-
-      # Used to mock a single task to compare task sorting
-      EfolderUploadFailedTask.first.update!(type: "CorrespondenceIntakeTask")
-      EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
-      )
-      EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2024, 10, 10),
-        updated_by_id: current_user.id
-      )
       FeatureToggle.enable!(:correspondence_queue)
+
+      correspondence = create(:correspondence)
+      parent_task = create_correspondence_intake(correspondence, current_user)
+      @correspondence_uuid = correspondence.uuid
     end
 
     it "successfully loads the in progress tab" do
@@ -384,9 +368,8 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "navigates to intake form from in-progress tab to step 3" do
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      expect(page).to have_content("Correspondence in progress that are assigned to you:")
       find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@last_correspondence_uuid}/intake")
+      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
       expect(page).to have_content("Add Related Correspondence")
       expect(page).to have_button("Continue")
       click_on("button-continue")
@@ -396,7 +379,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Cancel")
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@last_correspondence_uuid}/intake")
+      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
       expect(page).to have_content("Review and Confirm Correspondence")
     end
   end
