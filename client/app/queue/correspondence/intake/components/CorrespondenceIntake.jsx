@@ -4,12 +4,13 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   loadSavedIntake,
   setUnrelatedTasks,
   saveCurrentIntake,
+  setErrorBanner
 } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
@@ -36,13 +37,18 @@ const progressBarSections = [
 ];
 
 export const CorrespondenceIntake = (props) => {
+  const dispatch = useDispatch();
   const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
+  const showErrorBanner = useSelector((state) => state.intakeCorrespondence.showErrorBanner);
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
-  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const history = useHistory();
+
+  const handleBannerState = (bannerState) => {
+    dispatch(setErrorBanner(bannerState));
+  };
 
   const exportStoredata = {
     correspondence_uuid: props.correspondence_uuid,
@@ -105,7 +111,7 @@ export const CorrespondenceIntake = (props) => {
   }, []);
 
   return <div>
-    { errorBannerVisible &&
+    { showErrorBanner &&
       <Alert title={CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE} type="error">
         {CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT}
       </Alert>
@@ -182,7 +188,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
-          setErrorBannerVisible={setErrorBannerVisible}
+          setErrorBannerVisible={handleBannerState}
         />
       }
     </div>

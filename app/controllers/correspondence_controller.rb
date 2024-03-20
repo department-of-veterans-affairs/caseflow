@@ -9,42 +9,6 @@ class CorrespondenceController < ApplicationController
   before_action :veteran_information
   MAX_QUEUED_ITEMS = 60
 
-  def intake
-    # If correspondence intake was started, json data from the database will
-    # be loaded into the page when user returns to intake
-    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
-                                                  correspondence: current_correspondence)&.redux_store
-
-    respond_to do |format|
-      format.html { return render "correspondence/intake" }
-      format.json do
-        render json: {
-          currentCorrespondence: current_correspondence,
-          correspondence: correspondence_load,
-          veteranInformation: veteran_information
-        }
-      end
-    end
-  end
-
-  def current_step
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
-             CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
-
-    intake.update(
-      current_step: params[:current_step],
-      redux_store: params[:redux_store]
-    )
-
-    if intake.valid?
-      intake.save!
-
-      render(json: {}, status: :ok) && return
-    else
-      render(json: intake.errors.full_messages, status: :unprocessable_entity) && return
-    end
-  end
-
   def correspondence_cases
     if current_user.mail_supervisor?
       redirect_to "/queue/correspondence/team"
@@ -81,20 +45,6 @@ class CorrespondenceController < ApplicationController
 
   def review_package
     render "correspondence/review_package"
-  end
-
-  def intake_update
-    begin
-      intake_appeal_update_tasks
-      if FeatureToggle.enabled?(:ce_api_demo_toggle)
-        upload_documents_to_claim_evidence
-      end
-      render json: { correspondence: correspondence }
-    rescue StandardError => error
-      Rails.logger.error(error.to_s)
-      Raven.capture_exception(error)
-      render json: {}, status: :bad_request
-    end
   end
 
   def veteran
@@ -192,15 +142,6 @@ class CorrespondenceController < ApplicationController
       type: "application/pdf",
       disposition: document_disposition
     )
-  end
-
-  def process_intake
-    if correspondence_intake_processor.process_intake(params, current_user)
-      set_flash_intake_success_message
-      render json: {}, status: :created
-    else
-      render json: { error: "Failed to update records" }, status: :bad_request
-    end
   end
 
   private
@@ -349,10 +290,6 @@ class CorrespondenceController < ApplicationController
     end
 
     @correspondence
-  end
-
-  def correspondence_load
-    Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence

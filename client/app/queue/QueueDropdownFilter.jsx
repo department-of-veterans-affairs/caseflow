@@ -36,6 +36,19 @@ const taskCompletedDateFilterStates = {
   ON: 3
 };
 
+const convertStringToDate = (stringDate) => {
+  const date = new Date();
+  const splitVals = stringDate.split('-');
+
+  date.setFullYear(Number(splitVals[0]));
+  // the datepicker component returns months from 1-12. Javascript dates count months from 0-11
+  // this offsets it so they match.
+  date.setMonth(Number(splitVals[1] - 1));
+  date.setDate(Number(splitVals[2]));
+
+  return date;
+};
+
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
@@ -46,7 +59,9 @@ class QueueDropdownFilter extends React.PureComponent {
       receiptDateSecondaryValue: '',
       taskCompletedDateState: -1,
       taskCompletedDatePrimaryValue: '',
-      taskCompletedDateSecondaryValue: ''
+      taskCompletedDateSecondaryValue: '',
+      dateErrorsFrom: [],
+      dateErrorsTo: [],
     };
   }
 
@@ -54,24 +69,81 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setState({ receiptDateState: value.value });
   };
 
+  validateDate = (date, type, filterType) => {
+    let foundErrors = [];
+    let primaryDate = '';
+    let secondaryDate = '';
+    let currentSelector = '';
+    let messageText = '';
+
+    if (filterType === 'VADOR') {
+      currentSelector = this.state.receiptDateState;
+      primaryDate = this.state.receiptDatePrimaryValue;
+      secondaryDate = this.state.receiptDateSecondaryValue;
+      messageText = 'Receipt date';
+    } else {
+      currentSelector = this.state.taskCompletedDateState;
+      primaryDate = this.state.taskCompletedDatePrimaryValue;
+      secondaryDate = this.state.taskCompletedDateSecondaryValue;
+      messageText = 'Date completed';
+    }
+
+    if (currentSelector === 0) {
+      if (type === 'fromDate') {
+        if (secondaryDate !== '' && date > secondaryDate) {
+          foundErrors = [...foundErrors, { key: type, message: 'Start date must be less than the end date' }];
+        }
+      } else if (date < primaryDate) {
+        foundErrors = [...foundErrors, { key: type, message: 'End date must be greater than the start date' }];
+      }
+    }
+
+    // Prevent the date from being picked past the current day.
+    if (convertStringToDate(date) > new Date()) {
+      foundErrors = [...foundErrors, { key: type, message: `${messageText} cannot be in the future.` }];
+    }
+
+    if (type === 'fromDate') {
+      this.setState({ dateErrorsFrom: foundErrors });
+      if (secondaryDate !== '' &&
+      date <= secondaryDate &&
+      convertStringToDate(secondaryDate) <= new Date()) {
+        this.setState({ dateErrorsTo: foundErrors });
+      }
+    } else {
+      this.setState({ dateErrorsTo: foundErrors });
+      if (primaryDate !== '' &&
+      date >= primaryDate &&
+      convertStringToDate(primaryDate) <= new Date()) {
+        this.setState({ dateErrorsFrom: [] });
+      }
+    }
+
+    return foundErrors;
+  };
+
   setTaskCompletedDateState = (value) => {
     this.setState({ taskCompletedDateState: value.value });
   };
 
   handleDateChange = (value) => {
+    this.validateDate(value, 'fromDate', 'VADOR');
     this.setState({ receiptDatePrimaryValue: value });
   }
 
   handleTaskCompletedDateChange = (value) => {
+    this.validateDate(value, 'fromDate', 'FDATE');
     this.setState({ taskCompletedDatePrimaryValue: value });
   }
 
   // Used when the between dates option is selected to store the second date.
   handleSecondaryDateChange = (value) => {
+    this.validateDate(value, 'toDate', 'VADOR');
     this.setState({ receiptDateSecondaryValue: value });
   }
 
   handleTaskCompletedSecondaryDateChange = (value) => {
+    this.validateDate(value, 'toDate', 'FDATE');
     this.setState({ taskCompletedDateSecondaryValue: value });
   }
 
@@ -89,9 +161,14 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   isApplyButtonEnabled = () => {
+
+    if (this.state.dateErrorsFrom.length > 0 || this.state.dateErrorsTo.length > 0) {
+      return true;
+    }
     if (this.state.receiptDateState >= 1 && this.state.receiptDatePrimaryValue !== '') {
       return false;
     }
+
     if (this.state.receiptDateState === 0 &&
       this.state.receiptDatePrimaryValue.length > 0 &&
       this.state.receiptDateSecondaryValue.length > 0) {
@@ -108,6 +185,8 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setTaskCompletedDateState(-1);
     this.setState({ taskCompletedDatePrimaryValue: '' });
     this.setState({ taskCompletedDateSecondaryValue: '' });
+    this.setState({ dateErrorsFrom: [] });
+    this.setState({ dateErrorsTo: [] });
     this.props.clearFilters();
 
   }
@@ -161,6 +240,8 @@ class QueueDropdownFilter extends React.PureComponent {
           receiptDateValues={this.state.receiptDateValues}
           receiptDateFilterStates={receiptDateFilterStates}
           isApplyButtonEnabled={this.isApplyButtonEnabled()}
+          dateErrorsFrom = {this.state.dateErrorsFrom}
+          dateErrorsTo = {this.state.dateErrorsTo}
         />}
         {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
           handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
@@ -171,6 +252,8 @@ class QueueDropdownFilter extends React.PureComponent {
           taskCompletedDateState={this.state.taskCompletedDateState}
           taskCompletedDateValues={this.state.taskCompletedDateValues}
           taskCompletedDateFilterStates={taskCompletedDateFilterStates}
+          dateErrorsFrom = {this.state.dateErrorsFrom}
+          dateErrorsTo = {this.state.dateErrorsTo}
         />
 
         }

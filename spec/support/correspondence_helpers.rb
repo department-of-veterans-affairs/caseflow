@@ -36,7 +36,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    allow_any_instance_of(CorrespondenceController).to receive(:correspondence_load).and_return(Correspondence.all)
+    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
   end
@@ -64,7 +64,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    allow_any_instance_of(CorrespondenceController).to receive(:correspondence_load).and_return(Correspondence.all)
+    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
@@ -85,7 +85,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    allow_any_instance_of(CorrespondenceController).to receive(:correspondence_load).and_return(Correspondence.all)
+    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 

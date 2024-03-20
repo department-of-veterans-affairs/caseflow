@@ -16,6 +16,7 @@ export const initialState = {
   waivedEvidenceTasks: [],
   showReassignPackageModal: false,
   showRemovePackageModal: false,
+  showErrorBanner: false
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -157,6 +158,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL:
     return update(state, {
       showRemovePackageModal: {
+        $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER:
+    return update(state, {
+      showErrorBanner: {
         $set: action.payload.isVisible
       }
     });

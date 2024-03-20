@@ -14,6 +14,8 @@ const dateDropdownMap = [
 const TaskCompletedDatePicker = (props) => {
   const [isDateSelected, setDateSelected] = useState(false);
   const [isSecondaryDateSelected, setSecondaryDateSelected] = useState(false);
+  const dateErrorsFrom = props.dateErrorsFrom;
+  const dateErrorsTo = props.dateErrorsTo;
 
   const handleDateChange = (value) => {
     props.handleTaskCompletedDateChange(value);
@@ -29,33 +31,67 @@ const TaskCompletedDatePicker = (props) => {
     props.handleTaskCompletedApplyFilter();
   };
 
+  const errorMessagesNode = (errors, errType) => {
+    if (errors.length) {
+      return (
+        errors.map((error, index) =>
+          (errType === error.key) &&
+            <p id={`${errType}Err${index}`} key={index}
+              style={{ color: 'red', fontSize: '13px', fontWeight: '900', marginBottom: '0px' }}>
+              {error.message}
+            </p>
+        )
+      );
+    }
+  };
+
   const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
   const isApplyFilterButtonDisabled =
     props.taskCompletedDateState === taskCompletedDateFilterStates.BETWEEN ?
-      !(isDateSelected && isSecondaryDateSelected) :
-      !isDateSelected;
+      !((isDateSelected && isSecondaryDateSelected) && (dateErrorsFrom.length <= 0 && dateErrorsTo.length <= 0)) :
+      !(isDateSelected && dateErrorsFrom.length <= 0);
 
   const getDatePickerElements = () => {
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector name="startDate" onChange={handleDateChange} label="From" type="date" />
-        <DateSelector name="endDate" onChange={handleSecondaryDateChange} label="To" type="date" />
+        <DateSelector
+          onChange={handleDateChange}
+          label="From"
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
+        <DateSelector
+          onChange={handleSecondaryDateChange}
+          label="To"
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsTo, 'toDate')} />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector name="beforeDate" onChange={handleDateChange} label="To" type="date" />
+        <DateSelector
+          onChange={handleDateChange}
+          label="Date Completed"
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector name="afterDate" onChange={handleDateChange} type="date" />
+        <DateSelector
+          onChange={handleDateChange}
+          label="Date Completed"
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector name="date" onChange={handleDateChange} label="Date Completed" type="date" />
+        <DateSelector
+          onChange={handleDateChange}
+          label="Date Completed"
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
     );
 
@@ -98,7 +134,9 @@ TaskCompletedDatePicker.propTypes = {
   onChangeMethod: PropTypes.func,
   className: PropTypes.string,
   disabled: PropTypes.bool,
-  customPlaceholder: PropTypes.string
+  customPlaceholder: PropTypes.string,
+  dateErrorsFrom: PropTypes.array,
+  dateErrorsTo: PropTypes.array
 };
 
 export default TaskCompletedDatePicker;
