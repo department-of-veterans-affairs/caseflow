@@ -245,15 +245,6 @@ class CorrespondenceController < ApplicationController
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
       handle_reassign_or_remove_task(mail_team_user)
     end
-    if @reassign_remove_task_id.present? && @action_type.present?
-      task = Task.find(@reassign_remove_task_id)
-      if mail_team_user.nil?
-        mail_team_user = task.assigned_by
-      end
-
-      reassign_remove_banner_action(mail_team_user)
-      render "correspondence_team"
-    end
   end
 
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
