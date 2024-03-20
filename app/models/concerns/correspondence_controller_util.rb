@@ -7,6 +7,10 @@ module CorrespondenceControllerUtil
     @current_correspondence ||= correspondence
   end
 
+  def veteran_information
+    @veteran_information ||= veteran_by_correspondence
+  end
+
   def pdf
     # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
     document = Document.limit(200)[params[:pdf_id].to_i]
