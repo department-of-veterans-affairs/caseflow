@@ -2,6 +2,7 @@
 
 # rubocop:disable Metrics/ModuleLength
 
+# Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerUtil
   def current_correspondence
     @current_correspondence ||= correspondence
