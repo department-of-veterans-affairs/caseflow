@@ -201,3 +201,12 @@ export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
     }
   });
 };
+
+export const setErrorBanner = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,
+    payload: {
+      isVisible
+    }
+  });
+};
