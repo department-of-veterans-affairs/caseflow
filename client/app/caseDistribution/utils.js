@@ -123,22 +123,22 @@ export const formatLeverHistory = (leverHistoryList) => {
 
 export const validateLeverInput = (lever, value) => {
   const errors = [];
-  const { min_value: minValue, max_value: maxValue } = lever;
+  const { item, min_value: minValue, max_value: maxValue } = lever;
+  let valueErrorMessage = null;
 
-  if (value === null || value === '') {
-    errors.push({ leverItem: lever.item,
-      message: ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue) });
+  const numericValue = value === '' || value === null ? NaN : parseFloat(value);
+
+  if (maxValue !== null && (isNaN(numericValue) || numericValue < minValue || numericValue > maxValue)) {
+    valueErrorMessage = ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue);
+  } else if (maxValue === null && (value === '' || value === null)) {
+    valueErrorMessage = ACD_LEVERS.validation_error_message.minimum_not_met;
   }
-  if (parseFloat(value)) {
-    if (value < minValue) {
-      errors.push({ leverItem: lever.item,
-        message: ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue) });
-    }
-    if (maxValue && value > maxValue) {
-      const message = ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue);
 
-      errors.push({ leverItem: lever.item, message });
-    }
+  if (valueErrorMessage !== null) {
+    errors.push({
+      leverItem: item,
+      message: valueErrorMessage
+    });
   }
 
   return errors;
