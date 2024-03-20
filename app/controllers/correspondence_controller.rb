@@ -8,7 +8,6 @@ class CorrespondenceController < ApplicationController
   before_action :correspondence
   before_action :auto_texts
   before_action :veteran_information
-  MAX_QUEUED_ITEMS = 60
 
   def correspondence_cases
     if current_user.mail_supervisor?
