@@ -120,7 +120,11 @@ class Fakes::BGSService
     end
 
     def init_client_for_user(user:)
-      user
+      BGSService.init_client_params(user: user)
+    end
+
+    def init_client_params(user:)
+      { user: user } if user.is_a?(User)
     end
   end
 

@@ -14,7 +14,33 @@ class ExternalApi::BGSService
     def init_client_for_user(user:)
       fail "User required" if user.blank?
 
-      BGS::Services.new(**init_client_params(user: user))
+      BGS::Services.new(**BGSService.init_client_params(user: user))
+    end
+
+    # These are the params for initializing a BGS client;
+    # this method sets the passed user's data in the request header,
+    # and as a result the passed users permissions are what get
+    # checked by the BGS service when determining permissions for BGS
+    # resource access.
+    #
+    # If no user param is passed, the current user is used
+    def init_client_params(user:)
+      forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
+
+      {
+        env: Rails.application.config.bgs_environment,
+        application: "CASEFLOW",
+        client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
+        client_station_id: user.station_id,
+        client_username: user.css_id,
+        ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
+        ssl_cert_file: ENV["BGS_CERT_LOCATION"],
+        ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
+        forward_proxy_url: forward_proxy_url,
+        jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
+        log: true,
+        logger: Rails.logger
+      }
     end
   end
 
@@ -525,33 +551,7 @@ class ExternalApi::BGSService
   end
 
   def init_default_client
-    BGS::Services.new(**init_client_params(user: current_user))
-  end
-
-  # These are the params for initializing a BGS client;
-  # this method sets the passed user's data in the request header,
-  # and as a result the passed users permissions are what get
-  # checked by the BGS service when determining permissions for BGS
-  # resource access.
-  #
-  # If no user param is passed, the current user is used
-  def init_client_params(user:)
-    forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
-
-    {
-      env: Rails.application.config.bgs_environment,
-      application: "CASEFLOW",
-      client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
-      client_station_id: user.station_id,
-      client_username: user.css_id,
-      ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
-      ssl_cert_file: ENV["BGS_CERT_LOCATION"],
-      ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
-      forward_proxy_url: forward_proxy_url,
-      jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
-      log: true,
-      logger: Rails.logger
-    }
+    BGS::Services.new(**BGSService.init_client_params(user: current_user))
   end
 
   def formatted_start_and_end_dates(start_date, end_date)
