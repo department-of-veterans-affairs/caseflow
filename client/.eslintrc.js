@@ -1,3 +1,6 @@
+/* eslint-disable no-magic-numbers */
+const noMagicStrings = require('./eslint/enforce-no-magic-strings');
+
 module.exports = {
   env: {
     browser: true,
@@ -14,13 +17,13 @@ module.exports = {
     ecmaVersion: 10,
     sourceType: 'module',
   },
-  plugins: ['babel'],
+  plugins: ['babel', {'appeals': noMagicStrings}],
   rules: {
     'comma-dangle': ['warn', 'only-multiline'],
     'prefer-const': 'off',
     'max-statements': 'off',
     'react/prop-types': [
-      1,
+      'warn',
       {
         ignore: [],
         customValidators: [],
@@ -35,6 +38,8 @@ module.exports = {
     // See https://github.com/babel/eslint-plugin-babel#rules for list
     'no-unused-expressions': 'off',
     'babel/no-unused-expressions': 'error',
+    'no-magic-numbers': 'error',
+    'appeals/enforce-no-magic-strings': 'error',
   },
   settings: {
     react: {
