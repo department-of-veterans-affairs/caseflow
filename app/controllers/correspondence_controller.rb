@@ -2,6 +2,7 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include CorrespondenceControllerUtil
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -69,16 +70,6 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def correspondence_team
-    if current_user.mail_superuser? || current_user.mail_supervisor?
-      handle_mail_superuser_or_supervisor
-    elsif current_user.mail_team_user?
-      redirect_to "/queue/correspondence"
-    else
-      redirect_to "/unauthorized"
-    end
-  end
-
   def review_package
     render "correspondence/review_package"
   end
@@ -106,9 +97,6 @@ class CorrespondenceController < ApplicationController
     render json: { package_document_types: packages }
   end
 
-  def current_correspondence
-    @current_correspondence ||= correspondence
-  end
 
   def veteran_information
     @veteran_information ||= veteran_by_correspondence
@@ -176,23 +164,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  def pdf
-    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[params[:pdf_id].to_i]
-
-    document_disposition = "inline"
-    if params[:download]
-      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
-    end
-
-    # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
-  end
 
   def process_intake
     if correspondence_intake_processor.process_intake(params, current_user)
@@ -205,16 +176,8 @@ class CorrespondenceController < ApplicationController
 
   private
 
-  def set_handle_mail_superuser_or_supervisor_params
-    @mail_team_users = User.mail_team_users.pluck(:css_id)
-    @is_superuser = current_user.mail_superuser?
-    @is_supervisor = current_user.mail_supervisor?
-    @reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
-    @action_type = params[:userAction].strip if params[:userAction].present?
-  end
-
   def handle_mail_superuser_or_supervisor
-    set_handle_mail_superuser_or_supervisor_params
+    set_handle_mail_superuser_or_supervisor_params(current_user, params)
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     tab = params[:tab] if params[:tab].present?
