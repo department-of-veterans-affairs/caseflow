@@ -53,8 +53,7 @@ module TaskPaginationConcern
   def correspondence_json_tasks(tasks)
     { data: WorkQueue::CorrespondenceTaskColumnSerializer.new(
       tasks,
-      is_collection: true,
-      params: { columns: CorrespondenceQueueTab.serialize_columns }
+      is_collection: true
     ).serializable_hash[:data] }
   end
 
