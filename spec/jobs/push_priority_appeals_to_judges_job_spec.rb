@@ -219,11 +219,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         FeatureToggle.enable!(:acd_exclude_from_affinity)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
-
-      after {
+      after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
         FeatureToggle.enable!(:acd_exclude_from_affinity)
-      }
+      end
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
