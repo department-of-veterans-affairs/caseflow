@@ -118,7 +118,9 @@ RSpec.feature "Hearing Details", :all_dbs do
         recording.each_with_index do |file, file_index|
           row_number = (group_index * 4) + file_index
           expect(find("#table-row-#{row_number}")["class"]).to match(/#{group_class}/)
+
           check_transcription_file_row_content(file, row_number, file_index)
+          check_transcription_file_download(file)
         end
       end
     end
@@ -138,10 +140,28 @@ RSpec.feature "Hearing Details", :all_dbs do
     formatted_date = file.date_upload_aws.strftime("%m/%d/%Y")
 
     within "#table-row-#{row_number}" do
+      download_url = "/hearings/transcription_file/#{file.id}/download.#{file.file_type}"
+
       expect(find("td:first-child")).to have_content(docket_number)
       expect(find("td:nth-child(2)")).to have_content(formatted_date)
-      expect(find("td:nth-child(3)")).to have_link(file.file_name, href: file.aws_link)
+      expect(find("td:nth-child(3)")).to have_link(file.file_name, href: download_url)
       expect(find("td:last-child")).to have_content(file.file_status)
+    end
+  end
+
+  def check_transcription_file_download(file)
+    file_location = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}", file.file_name).to_s
+
+    File.delete(file_location) if File.exist?(file_location)
+    click_link(file.file_name)
+    wait_for_download(file_location)
+    expect(File.exist?(file_location)).to be true
+    File.delete(file_location)
+  end
+
+  def wait_for_download(file_location)
+    Timeout.timeout(60) do
+      sleep 1 until !DownloadHelpers.downloading? && File.exist?(file_location)
     end
   end
 
@@ -803,7 +823,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   shared_examples "conference type webex" do
-    scenario "renders transcription files table" do
+    scenario "renders transcription files table and downloads files" do
       visit "hearings/#{hearing.external_id}/details"
 
       check_transcription_files_table(hearing)

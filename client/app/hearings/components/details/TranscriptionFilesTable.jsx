@@ -69,7 +69,7 @@ const transcriptionFileColumns = [
   {
     align: 'left',
     valueFunction: (rowObject) => (
-      <Link href={rowObject.awsLink} target="_blank">
+      <Link href={`/hearings/transcription_file/${rowObject.id}/download.${rowObject.fileType}`}>
         {rowObject.fileName}
         <DownloadIcon color={COLORS.PRIMARY} />
       </Link>
