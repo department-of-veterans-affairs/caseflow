@@ -18,20 +18,16 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    completed_root_tasks = CorrespondenceRootTask.includes(:children).where(
-      status: Constants.TASK_STATUSES.completed,
-      assigned_to: assignee
-    ).pluck(:id)
+    # root task ids for all the assignee's tasks
+    potential_root_task_ids = assignee.tasks.select(:parent_id)
+      .where(status: Constants.TASK_STATUSES.completed).distinct.pluck(:parent_id)
 
-    tasks_with_completed_children = CorrespondenceRootTask.includes(:children)
-      .where.not(status: Constants.TASK_STATUSES.completed)
-      .filter do |task|
-        task.children.all?(&:completed?) && task.children.any? { |child| child.assigned_to == assignee }
-      end
-      .pluck(:id)
+    # root task ids within the subset created above with open child tasks
+    ids_to_exclude = CorrespondenceTask.select(:parent_id)
+      .where(parent_id: potential_root_task_ids)
+      .open.distinct.pluck(:parent_id)
 
-    CorrespondenceTask.includes(*task_includes)
-      .where(id: completed_root_tasks + tasks_with_completed_children)
+    CorrespondenceRootTask.includes(*task_includes).where(id: potential_root_task_ids - ids_to_exclude)
   end
 
   # :reek:UtilityFunction
@@ -39,7 +35,7 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name,
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
   end

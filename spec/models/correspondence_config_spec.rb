@@ -74,7 +74,7 @@ describe CorrespondenceConfig, :postgres do
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Completed" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails vaDor completedDateColumn notes])
+            .to eq(%w[veteranDetails vaDor correspondenceCompletedDateColumn notes])
         end
       end
 
@@ -98,7 +98,7 @@ describe CorrespondenceConfig, :postgres do
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Completed" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails vaDor completedDateColumn notes])
+            .to eq(%w[veteranDetails vaDor correspondenceCompletedDateColumn notes])
         end
       end
     end
