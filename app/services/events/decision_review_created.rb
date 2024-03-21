@@ -48,6 +48,9 @@ class Events::DecisionReviewCreated
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
 
+          # Note Create Claim Review, parsed schema info passed through claim_review and intake
+          # Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
+          
           # Note: event, user, and veteran need to be before this call.
           # Events::DecisionReviewCreated::CreateIntake.process!(event, user, vet)
 

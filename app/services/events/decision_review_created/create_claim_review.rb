@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+class Events::DecisionReviewCreated::CreateClaimReview
+  class << self
+    def process!(event:, parser:)
+      if parser.detail_type == "HigherLevelReview"
+        high_level_review = create_high_level_review(parser)
+        create_event_record(event, high_level_review)
+        high_level_review
+      else
+        supplemental_claim = create_supplemental_claim(parser)
+        create_event_record(event, supplemental_claim)
+        supplemental_claim
+      end
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedCreateClaimReviewError, error.message
+    end
+
+    private
+
+    def create_high_level_review(parser)
+      HigherLevelReview.create(
+        benefit_type: parser.benefit_type,
+        filed_by_va_gov: parser.filed_by_va_gov,
+        legacy_opt_in_approved: parser.legacy_opt_in_approved,
+        receipt_date: parser.receipt_date,
+        veteran_is_not_claimant: parser.veteran_is_not_claimant,
+        establishment_attempted_at: parser.establishment_attempted_at,
+        establishment_last_submitted_at: parser.establishment_last_submitted_at,
+        establishment_processed_at: parser.establishment_processed_at,
+        establishment_submitted_at: parser.establishment_submitted_at,
+        veteran_file_number: parser.veteran_file_number
+      )
+    end
+
+    def create_supplemental_claim(parser)
+      SupplementalClaim.create(
+        benefit_type: parser.benefit_type,
+        filed_by_va_gov: parser.filed_by_va_gov,
+        legacy_opt_in_approved: parser.legacy_opt_in_approved,
+        receipt_date: parser.receipt_date,
+        veteran_is_not_claimant: parser.veteran_is_not_claimant,
+        establishment_attempted_at: parser.establishment_attempted_at,
+        establishment_last_submitted_at: parser.establishment_last_submitted_at,
+        establishment_processed_at: parser.establishment_processed_at,
+        establishment_submitted_at: parser.establishment_submitted_at,
+        veteran_file_number: parser.veteran_file_number
+      )
+    end
+
+    def create_event_record(event, claim)
+      EventRecord.create!(event: event, backfill_record: claim)
+    end
+  end
+end
