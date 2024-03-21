@@ -22,13 +22,15 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
   end
 
   # :reek:UtilityFunction
-  def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name,
+  def self.column_names
+    user = RequestStore.store[:current_user]
+    columns = [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
+    columns.insert(0, Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name) unless user.mail_superuser?
+    columns
   end
 end
