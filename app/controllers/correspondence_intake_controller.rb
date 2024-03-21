@@ -8,11 +8,7 @@ class CorrespondenceIntakeController < CorrespondenceController
                                                   correspondence: current_correspondence)&.redux_store
 
     respond_to do |format|
-      format.html do
-        intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
-        @redux_store = intake.redux_store if intake
-        return render "correspondence/intake"
-      end
+      format.html { return render "correspondence/intake" }
       format.json do
         render json: {
           currentCorrespondence: current_correspondence,
