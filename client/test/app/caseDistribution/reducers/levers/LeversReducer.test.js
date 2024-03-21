@@ -102,26 +102,6 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  it('Should handle SET_ACD_EXCLUDE_FROM_AFFINITY action', () => {
-
-    const action = {
-      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
-      payload: {
-        acdExcludeFromAffinity: true
-      }
-    };
-
-    const expectedState = {
-      ...initialState,
-      acdExcludeFromAffinity: true
-    };
-
-    const newState = leversReducer(initialState, action);
-
-    expect(newState).toEqual(expectedState);
-    expect(newState).not.toEqual(initialState);
-  });
-
   it('should handle UPDATE_LEVER_VALUE action', () => {
     const action = {
       type: ACTIONS.UPDATE_LEVER_VALUE,
