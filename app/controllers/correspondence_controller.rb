@@ -2,12 +2,12 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include CorrespondenceControllerUtil
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
   before_action :veteran_information
-  MAX_QUEUED_ITEMS = 60
 
   def correspondence_cases
     if current_user.mail_supervisor?
@@ -33,16 +33,6 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def correspondence_team
-    if current_user.mail_superuser? || current_user.mail_supervisor?
-      handle_mail_superuser_or_supervisor
-    elsif current_user.mail_team_user?
-      redirect_to "/queue/correspondence"
-    else
-      redirect_to "/unauthorized"
-    end
-  end
-
   def review_package
     render "correspondence/review_package"
   end
@@ -54,14 +44,6 @@ class CorrespondenceController < ApplicationController
   def package_documents
     packages = PackageDocumentType.all
     render json: { package_document_types: packages }
-  end
-
-  def current_correspondence
-    @current_correspondence ||= correspondence
-  end
-
-  def veteran_information
-    @veteran_information ||= veteran_by_correspondence
   end
 
   def show
@@ -126,31 +108,11 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  def pdf
-    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[params[:pdf_id].to_i]
-
-    document_disposition = "inline"
-    if params[:download]
-      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
-    end
-
-    # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
-  end
-
   private
 
   def handle_mail_superuser_or_supervisor
-    @mail_team_users = User.mail_team_users.pluck(:css_id)
-    @is_superuser = current_user.mail_superuser?
-    @is_supervisor = current_user.mail_supervisor?
-    mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+    set_handle_mail_superuser_or_supervisor_params(current_user, params)
+    mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     tab = params[:tab] if params[:tab].present?
 
@@ -160,11 +122,13 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def handle_html_response(mail_team_user, task_ids, tab)
-    if mail_team_user && task_ids.present?
-      set_banner_params(mail_team_user, task_ids.count, tab)
-      update_tasks(mail_team_user, task_ids)
-    end
+  def handle_reassign_or_remove_task(mail_team_user)
+    return unless @reassign_remove_task_id.present? && @action_type.present?
+
+    task = Task.find(@reassign_remove_task_id)
+    mail_team_user ||= task.assigned_by
+
+    reassign_remove_banner_action(mail_team_user)
     render "correspondence_team"
   end
 
@@ -176,71 +140,6 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def update_tasks(mail_team_user, task_ids)
-    return unless @response_type == "success"
-
-    tasks = Task.where(id: task_ids)
-    tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
-  end
-
-  def set_banner_params(user, task_count, tab)
-    template = message_template(user, task_count, tab)
-    response_type(user)
-    @response_header = template[:header]
-    @response_message = template[:message]
-  end
-
-  def message_template(user, task_count, tab)
-    success_header_unassigned = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
-    success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
-    success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_header_unassigned = "Correspondence assignment to #{user.css_id} has failed"
-    failure_header_assigned = "Correspondence reassignment to #{user.css_id} has failed"
-    failure_message = "Queue volume has reached maximum capacity for this user."
-
-    case tab
-    when "correspondence_unassigned"
-      {
-        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
-      }
-    when "correspondence_team_assigned"
-      {
-        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
-        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
-      }
-    end
-  end
-
-  def response_type(user)
-    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
-  end
-
-  # :reek:FeatureEnvy
-  def vbms_document_types
-    begin
-      data = ExternalApi::ClaimEvidenceService.document_types
-    rescue StandardError => error
-      Rails.logger.error(error.full_message)
-      data ||= demo_data
-    end
-    data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
-  end
-
-  def demo_data
-    json_file_path = "vbms doc types.json"
-    JSON.parse(File.read(json_file_path))
-  end
-
-  def set_flash_intake_success_message
-    # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
-    vet = veteran_by_correspondence
-    flash[:correspondence_intake_success] = [
-      "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
-      "The mail package has been uploaded to the Veteran's eFolder as well."
-    ]
-  end
-
   def verify_correspondence_access
     return true if InboundOpsTeam.singleton.user_has_access?(current_user) ||
                    MailTeam.singleton.user_has_access?(current_user) ||
@@ -250,98 +149,11 @@ class CorrespondenceController < ApplicationController
     redirect_to "/unauthorized"
   end
 
-  def general_information
-    vet = veteran_by_correspondence
-    {
-      notes: correspondence.notes,
-      file_number: vet.file_number,
-      veteran_name: vet.name,
-      correspondence_type_id: correspondence.correspondence_type_id,
-      correspondence_types: CorrespondenceType.all,
-      correspondence_tasks: correspondence.tasks.map do |task|
-        WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
-      end
-    }
-  end
-
-  def correspondence_params
-    params.require(:correspondence).permit(:notes, :correspondence_type_id)
-  end
-
-  def veteran_params
-    params.require(:veteran).permit(:file_number)
-  end
-
   def verify_feature_toggle
     if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access
       redirect_to "/under_construction"
     elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access
       redirect_to "/unauthorized"
     end
-  end
-
-  def correspondence
-    return @correspondence if @correspondence.present?
-
-    if params[:id].present?
-      @correspondence = Correspondence.find(params[:id])
-    elsif params[:correspondence_uuid].present?
-      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    end
-
-    @correspondence
-  end
-
-  def veteran_by_correspondence
-    return nil if correspondence&.veteran_id.blank?
-
-    @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
-  end
-
-  def veterans_with_correspondences
-    veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
-  end
-
-  def auto_texts
-    @auto_texts ||= AutoText.all.pluck(:name)
-  end
-
-  def vet_info_serializer(veteran, correspondence)
-    {
-      firstName: veteran.first_name,
-      lastName: veteran.last_name,
-      fileNumber: veteran.file_number,
-      cmPacketNumber: correspondence.cmp_packet_number,
-      correspondenceUuid: correspondence.uuid,
-      packageDocumentType: correspondence.correspondence_type_id
-    }
-  end
-
-  def correspondence_intake_processor
-    @correspondence_intake_processor ||= CorrespondenceIntakeProcessor.new
-  end
-
-  def correspondence_documents_efolder_uploader
-    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
-  end
-
-  # :reek:FeatureEnvy
-  def intake_appeal_update_tasks
-    tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
-    tasks.map do |task|
-      if task.type == "ReviewPackageTask"
-        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
-        task.assigned_to_id = correspondence.assigned_by_id
-        task.assigned_to = User.find(correspondence.assigned_by_id)
-      end
-      task.status = "cancelled"
-      task.save
-    end
-  end
-
-  def upload_documents_to_claim_evidence
-    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-    correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
   end
 end

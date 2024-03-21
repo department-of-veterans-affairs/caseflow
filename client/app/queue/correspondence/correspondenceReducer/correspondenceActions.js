@@ -202,6 +202,14 @@ export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
   });
 };
 
+export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SELECTED_VETERAN_DETAILS,
+    payload: {
+      selectedVeteranDetails
+    }
+  });
+}
 export const setErrorBanner = (isVisible) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,
