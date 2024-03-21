@@ -44,6 +44,21 @@ FactoryBot.define do
       lever_group_order { 1001 }
     end
 
+    trait :maximum_direct_review_proportion do
+      item { "maximum_direct_review_proportion" }
+      title { "Maximum Direct Review Proportion" }
+      description do
+        "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete "\
+        "halt to work on other dockets should demand for direct reviews approach the Board's capacity."
+      end
+      data_type { "number" }
+      value { 0.07 }
+      unit { "%" }
+      algorithms_used { ["proportion"] }
+      lever_group { "static" }
+      lever_group_order { 1000 }
+    end
+
     trait :nod_adjustment do
       item { "nod_adjustment" }
       title { "NOD Adjustment" }
