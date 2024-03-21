@@ -33,11 +33,11 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.correspondence.cmp_packet_number
   end
 
-  attribute :closed_at_and_completed_by_date do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]
+  attribute :closed_at do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name]
 
     if serialize_attribute?(params, columns)
-      object.closed_at
+      object.completed_by_date
     end
   end
 
