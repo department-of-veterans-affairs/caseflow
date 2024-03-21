@@ -20,7 +20,7 @@ describe CorrespondenceConfig, :postgres do
     describe "title" do
       context "when assigned to an org" do
         it "is formatted as expected" do
-          expect(subject[:table_title]).to eq("Correspondence cases")
+          expect(subject[:table_title]).to eq("Correspondence Cases")
         end
       end
 
@@ -28,7 +28,7 @@ describe CorrespondenceConfig, :postgres do
         let(:assignee) { user }
 
         it "is formatted as expected" do
-          expect(subject[:table_title]).to eq("Your correspondence")
+          expect(subject[:table_title]).to eq("Your Correspondence")
         end
       end
     end
