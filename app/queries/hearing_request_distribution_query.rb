@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/LineLength
-
 class HearingRequestDistributionQuery
   include DistributionScopes
 
@@ -14,6 +12,7 @@ class HearingRequestDistributionQuery
 
   def call
     return not_genpop_appeals if genpop == "not_genpop"
+
     if genpop == "only_genpop"
 
       return [*not_genpop_appeals, *only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
