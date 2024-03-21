@@ -24,7 +24,7 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   end
 
   # :reek:UtilityFunction
-  def column_names
+  def self.column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,

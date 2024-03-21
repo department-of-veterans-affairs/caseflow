@@ -6,10 +6,12 @@ import { sprintf } from 'sprintf-js';
 import querystring from 'querystring';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import moment from 'moment';
 import QueueTable from '../QueueTable';
 import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+import SearchBar from '../../components/SearchBar';
 import {
   actionType,
   assignedToColumn,
@@ -55,6 +57,7 @@ const CorrespondenceTableBuilder = (props) => {
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [isDropdownItemSelected, setIsDropdownItemSelected] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const selectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
@@ -101,6 +104,48 @@ const CorrespondenceTableBuilder = (props) => {
     return index === -1 ? 0 : index;
   };
 
+  const handleSearchChange = (value) => {
+    setSearchValue(value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
+  };
+
+  const taskMatchesSearch = (task) => {
+    if (searchValue === '' || searchValue.length < 3) {
+    // Return all tasks when search value is empty or less than three characters
+      return true;
+    }
+
+    const taskNotes = task.notes || '';
+    const daysWaiting = task.daysWaiting ? task.daysWaiting.toString() : '';
+    const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
+    const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
+    const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
+    const taskVeteranDetails = task.veteranDetails || '';
+    const taskLabel = task.label || '';
+    const taskVaDor = task.vaDor || '';
+    const closedAt = task.closedAt || '';
+
+    const searchValueTrimmed = searchValue.trim();
+    const isNumericSearchValue = !isNaN(parseFloat(searchValueTrimmed)) && isFinite(searchValueTrimmed);
+
+    return (
+      taskVeteranDetails.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    taskNotes.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    moment(taskVaDor).format('MM/DD/YYYY').
+      includes(searchValueTrimmed) ||
+    assignedByfirstName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    assignedBylastName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    assignedToName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    taskLabel.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    (isNumericSearchValue && daysWaiting.trim() === searchValueTrimmed) ||
+    moment(closedAt).format('MM/DD/YYYY').
+      includes(searchValue)
+    );
+  };
+
   const queueConfig = () => {
     const { config } = props;
 
@@ -125,7 +170,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
-      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
+      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType()
     };
 
     return functionForColumn[column.name];
@@ -229,9 +274,24 @@ const CorrespondenceTableBuilder = (props) => {
           </>
 
           }
-          <p className="cf-margin-top-0">
-            {noCasesMessage || tabConfig.description}
-          </p>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <p className="cf-margin-top-0" style={{ float: 'left' }}>
+              {noCasesMessage || tabConfig.description}
+            </p>
+            <div className="cf-noncomp-search" style={{ marginLeft: 'auto' }}>
+              <SearchBar
+                id="searchBar"
+                size="small"
+                title="Filter table by any of its columns"
+                isSearchAhead
+                placeholder="Type to filter..."
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value={searchValue}
+              />
+            </div>
+          </div>
+
           <QueueTable
             key={tabConfig.name}
             columns={columnsFromConfig(config, tabConfig, tasks)}
@@ -252,6 +312,8 @@ const CorrespondenceTableBuilder = (props) => {
             }
             enablePagination
             isCorrespondenceTable
+            searchValue={searchValue}
+            taskMatchesSearch={taskMatchesSearch}
           />
         </>
       ),

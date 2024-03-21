@@ -27,4 +27,8 @@ class CorrespondenceQueueTab < QueueTab
 
     tab
   end
+
+  def column_names
+    self.class.column_names
+  end
 end
