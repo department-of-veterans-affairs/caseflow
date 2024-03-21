@@ -99,7 +99,9 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
+    if (currentStep !== 1) {
+      props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
+    }
   }, [currentStep]);
 
   useEffect(() => {
