@@ -28,6 +28,7 @@ module Seeds
       find_or_create_inactive_judge("IneligJudgeAA", "Ineligible JudgeAA")
       find_or_create_inactive_judge("IneligJudgeBB", "Ineligible JudgeBB")
       find_or_create_inactive_judge("NotHearingDocket", "Inactive DirectReview Judge")
+      find_or_create_attorney("CAVCATNY", "CAVC Attorney")
     end
 
     def create_appeals
@@ -111,6 +112,15 @@ module Seeds
       User.find_by_css_id(css_id)
     end
 
+    def find_or_create_attorney(css_id, full_name)
+      User.find_by_css_id(css_id) ||
+        create(:user, :with_vacols_attorney_record, css_id: css_id, full_name: full_name)
+    end
+
+    def find_attorney(css_id)
+      User.find_by_css_id(css_id)
+    end
+
     #Functions for Initialization
     def initialize_ama_hearing_held_aod_cavc_file_number_and_participant_id
       @ama_hearing_held_aod_cavc_file_number ||= 702_000_200
@@ -182,14 +192,16 @@ module Seeds
         ama_hearing_aod_cavc_appeal= create(
           :appeal,
           :hearing_docket,
-          :with_post_intake_tasks,
-          :held_hearing_and_ready_to_distribute,
+          :held_hearing,
           :tied_to_judge,
           :advanced_on_docket_due_to_age,
+          :dispatched,
           veteran: create_veteran_for_ama_hearing_held_aod_cavc_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
-          adding_user: User.first
+          associated_judge: hearing_judge,
+          adding_user: User.first,
+          associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
       Timecop.travel(distribution_task_assigned_at_date)
@@ -205,6 +217,10 @@ module Seeds
         file_number: @ama_hearing_held_aod_cavc_file_number,
         participant_id: @ama_hearing_held_aod_cavc_participant_id
       )
+    end
+
+    def create_attorney_for_ama_hearing_held_aod_cavc
+
     end
 
     # AMA Hearing Held AOD appeal creation functions
@@ -240,13 +256,15 @@ module Seeds
         ama_hearing_cavc_appeal = create(
           :appeal,
           :hearing_docket,
-          :with_post_intake_tasks,
-          :held_hearing_and_ready_to_distribute,
+          :held_hearing,
           :tied_to_judge,
-          veteran: create_veteran_for_ama_hearing_held_cavc_judge,
+          :dispatched,
+          veteran: create_veteran_for_ama_hearing_held_aod_cavc_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
-          adding_user: User.first
+          associated_judge: hearing_judge,
+          adding_user: User.first,
+          associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
       Timecop.travel(distribution_task_assigned_at_date)
@@ -297,7 +315,6 @@ module Seeds
         :appeal,
         :direct_review_docket,
         :ready_for_distribution,
-        :advanced_on_docket_due_to_age,
         associated_judge: associated_judge,
         veteran: create_veteran_for_direct_review,
         receipt_date: receipt_date
