@@ -119,7 +119,7 @@ const CorrespondenceTableBuilder = (props) => {
     }
 
     const taskNotes = task.notes || '';
-    const daysWaiting = task.daysWaiting !== null ? task.daysWaiting.toString() : '';
+    const daysWaiting = task.daysWaiting ? task.daysWaiting.toString() : '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
     const assignedBylastName = (task.assignedBy && task.assignedBy.lastName) || '';
     const assignedToName = (task.assignedTo && task.assignedTo.name) || '';
