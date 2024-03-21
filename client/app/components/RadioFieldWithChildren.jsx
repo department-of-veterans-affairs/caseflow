@@ -23,9 +23,7 @@ RadioFieldHelpText.propTypes = {
 
 /**
  * Clone of RadioField button component that allows children objects .
- *
  * See StyleGuideRadioField.jsx for usage examples.
- *
  */
 
 export const RadioFieldWithChildren = (props) => {
@@ -150,9 +148,8 @@ RadioFieldWithChildren.propTypes = {
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
 
-  /**
-   * Pass a ref to the `input` element
-   */
+  // Pass a ref to the `input` element
+
   inputRef: PropTypes.oneOfType([
     // Either a function
     PropTypes.func,
@@ -160,69 +157,56 @@ RadioFieldWithChildren.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]),
 
-  /**
-   * Props to be applied to the `input` element
-   */
+  // Props to be applied to the `input` element
+
   inputProps: PropTypes.object,
 
-  /**
-   * Text to display in a `legend` element for the radio group fieldset
-   */
+  // Text to display in a `legend` element for the radio group fieldset
+
   label: PropTypes.node,
 
-  /**
-   * String to be applied to the `name` attribute of all the `input` elements
-   */
+  // String to be applied to the `name` attribute of all the `input` elements
+
   name: PropTypes.string.isRequired,
 
   /**
    * Callback fired when value is changed
-   *
    * @param {string} value The current value of the component
    */
   onChange: PropTypes.func,
 
-  /**
-   * An array of options used to define individual radio inputs
-   */
+  // an array of options used to define individual radio inputs
+
   options: PropTypes.arrayOf(
     PropTypes.shape({
 
-      /**
-       * Text to be used as label for individual radio input
-       */
+      // Text to be used as label for individual radio input
       displayText: PropTypes.node,
 
-      /**
-       * The `value` attribute for the radio input
-       */
+      // The `value` attribute for the radio input
+
       value: PropTypes.string,
 
-      /**
-       * Help text to be displayed below the label
-       */
+      // Help text to be displayed below the label
+
       help: PropTypes.string,
 
-      /**
-       * The child element to display under the radiofield option
-       */
+      // The child element to display under the radiofield option
+
       element: PropTypes.element,
 
-      /**
-       * Used to control visibility of child element
-       */
+      // Used to control visibility of child element
+
       displayElement: PropTypes.bool
     })
   ),
 
-  /**
-   * The value of the named `input` element(s); required for a controlled component
-   */
+  // The value of the named `input` element(s); required for a controlled component
+
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
-  /**
-   * Stack `input` elements vertically (automatic for more than two options)
-   */
+  // Stack `input` elements vertically (automatic for more than two options)
+
   vertical: PropTypes.bool,
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
