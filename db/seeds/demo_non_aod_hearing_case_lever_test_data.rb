@@ -22,7 +22,7 @@ module Seeds
       find_or_create_judge("AMAAODCAVC", "AMA AOD CAVC")
       find_or_create_judge("AMACAVC", "AMA CAVC")
       find_or_create_judge("AMAPri", "AMA Priority")
-      find_or_create_judge("EligJudge90days", "EligibleJudge 20Days")
+      find_or_create_judge("EligJudge90days", "EligibleJudge 90Days")
       find_or_create_judge("EligJudge21days", "EligibleJudge 21Days")
       find_or_create_judge("EligJudge18Days", "EligibleJudge 18Days")
       find_or_create_inactive_judge("IneligJudgeCC", "Ineligible JudgeCC")
