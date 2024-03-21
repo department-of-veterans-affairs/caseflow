@@ -2,6 +2,11 @@
 
 class CorrespondenceIntakeController < CorrespondenceController
   def intake
+    # If correspondence intake was started, json data from the database will
+    # be loaded into the page when user returns to intake
+    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
+                                                  correspondence: current_correspondence)&.redux_store
+
     respond_to do |format|
       format.html { return render "correspondence/intake" }
       format.json do
