@@ -75,7 +75,6 @@ class Metric < CaseflowRecord
   def self.default_object(klass, params, user)
     {
       uuid: params[:uuid],
-      event_id: params[:event_id],
       user: user || RequestStore.store[:current_user] || User.system_user,
       metric_name: params[:name] || METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class&.name || name,

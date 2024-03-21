@@ -60,7 +60,7 @@ class ClaimHistoryEvent
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
         event_hash = {
-          "event_date" => change_data["decision_created_at"] || change_data["request_decision_created_at"],
+          "event_date" => change_data["decision_created_at"],
           "event_user_name" => change_data["decision_user_name"],
           "user_facility" => change_data["decision_user_station_id"],
           "event_user_css_id" => change_data["decision_user_css_id"]
@@ -126,12 +126,11 @@ class ClaimHistoryEvent
 
     def create_issue_events(change_data)
       issue_events = []
-      before_request_issue_ids = extract_issue_ids_from_change_data(change_data, "before_request_issue_ids")
-      after_request_issue_ids = extract_issue_ids_from_change_data(change_data, "after_request_issue_ids")
-      withdrawn_request_issue_ids = extract_issue_ids_from_change_data(change_data, "withdrawn_request_issue_ids")
-      edited_request_issue_ids = extract_issue_ids_from_change_data(change_data, "edited_request_issue_ids")
+      before_request_issue_ids = (change_data["before_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      after_request_issue_ids = (change_data["after_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      withdrawn_request_issue_ids = (change_data["withdrawn_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      edited_request_issue_ids = (change_data["edited_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
-
       updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
       # Adds all request issue events to the issue events array
@@ -142,10 +141,6 @@ class ClaimHistoryEvent
       issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data.merge(updates_hash)))
 
       issue_events
-    end
-
-    def extract_issue_ids_from_change_data(change_data, key)
-      (change_data[key] || "").scan(/\d+/).map(&:to_i)
     end
 
     def process_issue_ids(request_issue_ids, event_type, change_data)
@@ -284,7 +279,7 @@ class ClaimHistoryEvent
 
     def retrieve_issue_update_data(change_data)
       # This DB fetch is gross, but thankfully it should happen very rarely
-      task = Task.includes(appeal: { request_issues_updates: :user }).where(id: change_data["task_id"]).first
+      task = Task.includes(appeal: :request_issues_updates).where(id: change_data["task_id"]).first
       issue_update = task.appeal.request_issues_updates.find do |update|
         (update.after_request_issue_ids - update.before_request_issue_ids).include?(change_data["request_issue_id"])
       end
@@ -305,15 +300,8 @@ class ClaimHistoryEvent
       return false unless first_date && second_date
 
       # Less variables for less garbage collection since this method is used a lot
-      ((parse_date(first_date) - parse_date(second_date)).abs * 24 * 60 * 60).to_f < time_in_seconds
-    end
-
-    def parse_date(date_string)
-      if date_string.include?("T") || date_string.include?("Z")
-        DateTime.iso8601(date_string)
-      else
-        DateTime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%N")
-      end
+      ((DateTime.iso8601(first_date.tr(" ", "T")) -
+        DateTime.iso8601(second_date.tr(" ", "T"))).abs * 24 * 60 * 60).to_f < time_in_seconds
     end
 
     def handle_hookless_cancelled_status_events(versions, change_data)
@@ -418,12 +406,12 @@ class ClaimHistoryEvent
 
   def readable_event_type
     {
-      in_progress: "Claim status - In progress",
+      in_progress: "Claim status - In Progress",
       incomplete: "Claim status - Incomplete",
       completed: "Claim closed",
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
-      added_issue: "Added issue",
+      added_issue: "Added Issue",
       added_issue_without_decision_date: "Added issue - No decision date",
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",
@@ -487,10 +475,9 @@ class ClaimHistoryEvent
   def parse_disposition_attributes(change_data)
     if event_can_contain_disposition?
       @disposition = change_data["disposition"]
+      @disposition_date = change_data["caseflow_decision_date"]
       @decision_description = change_data["decision_description"]
     end
-    # The disposition date is also used for the completed status event on the HistoryPage UI
-    @disposition_date = change_data["caseflow_decision_date"]
   end
 
   def parse_event_attributes(change_data)
@@ -502,18 +489,11 @@ class ClaimHistoryEvent
 
   def standardize_event_date
     # Try to keep all the dates consistent as a iso8601 string if possible
-    @event_date =
-      if event_date.is_a?(String)
-        if event_date.include?("T") || event_date.include?("Z")
-          # Assume it is in Iso8601 already so just return it
-          event_date
-        else
-          # Assume UTC string so convert it to iso8601
-          DateTime.strptime(event_date, "%Y-%m-%d %H:%M:%S.%N").iso8601
-        end
-      else
-        event_date&.iso8601
-      end
+    @event_date = if event_date.is_a?(String)
+                    event_date
+                  else
+                    event_date&.iso8601
+                  end
   end
 
   ############ CSV and Serializer Helpers ############

@@ -27,6 +27,7 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -42,12 +43,10 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
-    this.metricsIdentifier = null;
-    this.scrollTimer = null;
-    this.measureTimeStartMs = null;
   }
 
   componentDidMount = () => {
+
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -73,29 +72,22 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
-    this.metricsIdentifier = uuid.v4();
-
     const documentData = {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
       file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        this.measureTimeStartMs = performance.now();
+        pdfPageRenderTimeInMsStart = performance.now();
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
           product: 'reader',
           data: documentData,
-          eventId: this.metricsIdentifier,
         };
-
-        if (resp && resp.header && resp.header['x-document-source']) {
-          metricData.additionalInfo = JSON.stringify({ source: `${resp.header['x-document-source']}` });
-        }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
@@ -148,8 +140,7 @@ export class PdfFile extends React.PureComponent {
               type: 'error',
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            },
-            this.metricsIdentifier
+            }
           );
         }
 
@@ -180,8 +171,7 @@ export class PdfFile extends React.PureComponent {
         message: `Getting PDF document: "${file}"`,
         type: 'error',
         product: 'reader'
-      },
-      this.metricsIdentifier);
+      });
     }
 
     throw reason;
@@ -214,13 +204,6 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
-
-    this.metricsIdentifier = null;
-    this.measureTimeStartMs = null;
-
-    if (this.scrollTimer) {
-      clearTimeout(this.scrollTimer);
-    }
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -240,8 +223,7 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={this.measureTimeStartMs}
-        metricsIdentifier={this.metricsIdentifier}
+        measureTimeStartMs={pdfPageRenderTimeInMsStart}
       />
     </div>;
   }
@@ -450,41 +432,6 @@ export class PdfFile extends React.PureComponent {
       });
 
       this.onPageChange(minIndex, clientHeight);
-
-      if (this.scrollTimer) {
-        clearTimeout(this.scrollTimer);
-      }
-
-      this.scrollTimer = setTimeout(() => {
-        const scrollStart = performance.now();
-
-        const data = {
-          overscan: this.props.windowingOverscan,
-          documentType: this.props.documentType,
-          pageCount: this.props.pdfDocument.numPages,
-          pageIndex: this.pageIndex,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-          start: scrollStart,
-          end: performance.now()
-        };
-
-        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
-        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
-
-        storeMetrics(
-          this.props.documentId,
-          data,
-          {
-            message: `Scroll to position ${posx}, ${posy}`,
-            type: 'performance',
-            product: 'reader',
-            start: new Date(performance.timeOrigin + data.start),
-            end: new Date(performance.timeOrigin + data.end),
-            duration: data.start ? data.end - data.start : 0
-          },
-          this.metricsIdentifier,
-        );
-      }, 300);
     }
   }
 

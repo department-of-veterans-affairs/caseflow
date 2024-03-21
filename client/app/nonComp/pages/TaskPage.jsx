@@ -12,7 +12,6 @@ import { longFormNameFromKey } from '../util';
 import { completeTask, taskUpdateDefaultPage } from '../actions/task';
 import { ErrorAlert } from '../components/Alerts';
 import NonCompLayout from '../components/NonCompLayout';
-import Link from 'app/components/Link';
 
 class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
@@ -52,18 +51,10 @@ class TaskPageUnconnected extends React.PureComponent {
       detailedTaskView = <Disposition handleSave={this.handleSave} />;
     }
 
-    const canViewHistoryLink = this.props.isBusinessLineAdmin && this.props.businessLineConfig.canGenerateClaimHistory;
-    const claimHistoryLink = canViewHistoryLink ?
-      <div style={{ float: 'right' }}>
-        <Link button="primary" to={`${task.id}/history`}>View History</Link>
-      </div> :
-      null;
-
     return (
       <NonCompLayout>
         {errorAlert}
-        <h1 style={{ display: 'inline-block', marginBottom: '10px' }}>{businessLine}</h1>
-        {claimHistoryLink}
+        <h1>{businessLine}</h1>
         <div className="cf-review-details cf-gray-box">
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
@@ -118,7 +109,7 @@ TaskPageUnconnected.propTypes = {
     id: PropTypes.number,
     claimant: PropTypes.object,
     type: PropTypes.string,
-    created_at: PropTypes.string,
+    created_at: PropTypes.string
   }),
   businessLine: PropTypes.string,
   decisionIssuesStatus: PropTypes.object,
@@ -128,8 +119,7 @@ TaskPageUnconnected.propTypes = {
     push: PropTypes.func
   }),
   businessLineUrl: PropTypes.string,
-  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array, canGenerateClaimHistory: PropTypes.bool }),
-  isBusinessLineAdmin: PropTypes.bool
+  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array }),
 };
 
 const TaskPage = connect(
@@ -138,7 +128,6 @@ const TaskPage = connect(
     businessLine: state.nonComp.businessLine,
     businessLineUrl: state.nonComp.businessLineUrl,
     businessLineConfig: state.nonComp.businessLineConfig,
-    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
     task: state.nonComp.task,
     decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   }),
