@@ -51,9 +51,12 @@ module TaskPaginationConcern
   end
 
   def correspondence_json_tasks(tasks)
+    tab = CorrespondenceQueueTab.from_name(params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym])
+
     { data: WorkQueue::CorrespondenceTaskColumnSerializer.new(
       tasks,
-      is_collection: true
+      is_collection: true,
+      params: { columns: tab.column_names }
     ).serializable_hash[:data] }
   end
 
