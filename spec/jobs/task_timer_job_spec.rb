@@ -80,12 +80,15 @@ describe TaskTimerJob, :postgres do
       .find_by(type: SendInitialNotificationLetterTask.name)
       .update_columns(status: Task.open_statuses.sample)
 
+    last_submitted_at = timer_for_task_with_child_letter_task.last_submitted_at
+
     TaskTimerJob.perform_now
 
     expect(timer_for_task_with_child_letter_task.error).to be_nil
     expect(timer_for_task_with_child_letter_task.canceled_at).to be_nil
     expect(timer_for_task_with_child_letter_task.reload.processed_at).to be_nil
     expect(timer_for_task_with_child_letter_task.attempted_at).to be_nil
+    expect(timer_for_task_with_child_letter_task.last_submitted_at).not_to eq(last_submitted_at)
   end
 
   it "does process timers that have closed letter tasks as children" do
