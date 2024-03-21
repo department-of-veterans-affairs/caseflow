@@ -31,8 +31,4 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
   end
-
-  def column_names
-    self.class.column_names
-  end
 end

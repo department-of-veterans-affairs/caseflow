@@ -32,8 +32,4 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
     ]
   end
-
-  def column_names
-    self.class.column_names
-  end
 end
