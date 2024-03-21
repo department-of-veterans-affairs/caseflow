@@ -41,22 +41,13 @@ const checkUuid = (uniqueId, data, message, type) => {
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
  *
  */
-export const storeMetrics = (uniqueId, data, {
-  message,
-  type = 'log',
-  product,
-  start,
-  end,
-  duration,
-  additionalInfo
-}, eventId = null) => {
+export const storeMetrics = (uniqueId, data, { message, type = 'log', product, start, end, duration }) => {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
   const postData = {
     metric: {
       uuid: uniqueId,
-      event_id: eventId,
       name: `caseflow.client.${productArea}.${metricType}`,
       message: metricMessage(uniqueId, data, message),
       type: metricType,
@@ -65,18 +56,14 @@ export const storeMetrics = (uniqueId, data, {
       sent_to: 'javascript_console',
       start,
       end,
-      duration,
-      additional_info: additionalInfo
+      duration
     }
   };
-
-  // eslint-disable-next-line no-console
-  console.info(`EVENT_ID: ${eventId} ${message}`);
 
   postMetricLogs(postData);
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null },
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -102,7 +89,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, eventId);
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
   }
 
   return result;
@@ -113,7 +100,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, eventId, additionalInfo },
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -140,7 +127,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
   }
 
   return result;
