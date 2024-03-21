@@ -966,6 +966,7 @@ metrics,app_name,string ∗,x,,,,x,Application name: caseflow or efolder
 metrics,created_at,datetime ∗,x,,,,,
 metrics,duration,float,,,,,,Time in milliseconds from start to end
 metrics,end,datetime,,,,,,When metric recording stopped
+metrics,event_id,uuid,,,,,,Track metrics for retrieving loading and viewing a single pdf document.
 metrics,id,integer (8) PK,x,x,,,,
 metrics,metric_attributes,json,,,,,,"Store attributes relevant to the metric: OS, browser, etc"
 metrics,metric_class,string ∗,x,,,,,"Class of metric, use reflection to find value to populate this"
