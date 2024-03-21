@@ -28,6 +28,7 @@ module Seeds
       find_or_create_inactive_judge("IneligJudgeCC", "Ineligible JudgeCC")
       find_or_create_inactive_judge("IneligJudgeDD", "Ineligible JudgeDD")
       find_or_create_inactive_judge("NotHearingDctAOD", "Inactive DirectReview Judge")
+      find_or_create_attorney("CAVCATNY", "CAVC Attorney")
     end
 
     def create_appeals
@@ -35,14 +36,14 @@ module Seeds
       create_ama_hearing_held_aod_cavc_appeals(2, find_judge("AMAAODCAVC"), 395.days.ago, 18.years.ago)
       # 2 | AMA hearings + CAVC  | AMACAVC | 395 days
       create_ama_hearing_held_cavc_appeals(2, find_judge("AMACAVC"), 395.days.ago, 18.years.ago)
-      # 2 | AMA hearing +AOD | AMAPri, BVAOSchowalt, | 395 days
+      # 2 | AMA hearing + AOD | AMAPri, BVAOSchowalt, | 395 days
       create_ama_hearing_held_aod_appeals(1, find_judge("AMAPri"), 395.days.ago, 18.years.ago)
       create_ama_hearing_held_aod_appeals(1, find_judge("BVAOSchowalt"), 395.days.ago, 18.years.ago)
       # 12 | AMA Hearings tied to judges no longer w board | need names of ppl in ineligible judges list or need to create an ineligible judge (if create, name them IneligListJudge) | 399 days
       create_ama_hearing_held_appeals(6, find_inactive_judge("IneligJudgeCC"), 399.days.ago, 18.years.ago)
       create_ama_hearing_held_appeals(6, find_inactive_judge("IneligJudgeDD"), 399.days.ago, 18.years.ago)
-      # 18 | AMA hearing tied to judge <BVAAAbshire | BVAAAbshire | 400 days
-      create_ama_hearing_held_appeals(6, find_judge("BVAAAbshire"), 400.days.ago, 18.years.ago)
+      # 18 | AMA hearing tied to judge BVAAAbshire | BVAAAbshire | 400 days
+      create_ama_hearing_held_appeals(18, find_judge("BVAAAbshire"), 400.days.ago, 18.years.ago)
       # 6 | AMA hearings tied to a tester's judge | BVACOTBJUdge, BVAEEmard (Evangeline), BVACGISLASON1, BVAKKeeling, BVADCremin, BVAAWakefield | 395 days
       create_ama_hearing_held_appeals(1, find_judge("BVACOTBJUdge"), 400.days.ago, 18.years.ago)
       create_ama_hearing_held_appeals(1, find_judge("BVAEEmard"), 400.days.ago, 18.years.ago)
@@ -117,6 +118,15 @@ module Seeds
       User.find_by_css_id(css_id)
     end
 
+    def find_or_create_attorney(css_id, full_name)
+      User.find_by_css_id(css_id) ||
+        create(:user, :with_vacols_attorney_record, css_id: css_id, full_name: full_name)
+    end
+
+    def find_attorney(css_id)
+      User.find_by_css_id(css_id)
+    end
+
     #Functions for Initialization
     def initialize_ama_hearing_held_aod_cavc_file_number_and_participant_id
       @ama_hearing_held_aod_cavc_file_number ||= 702_500_700
@@ -187,14 +197,16 @@ module Seeds
         ama_hearing_aod_cavc_appeal= create(
           :appeal,
           :hearing_docket,
-          :with_post_intake_tasks,
-          :held_hearing_and_ready_to_distribute,
+          :held_hearing,
           :tied_to_judge,
           :advanced_on_docket_due_to_age,
+          :dispatched,
           veteran: create_veteran_for_ama_hearing_held_aod_cavc_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
-          adding_user: User.first
+          associated_judge: hearing_judge,
+          adding_user: User.first,
+          associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
       Timecop.travel(distribution_task_assigned_at_date)
@@ -245,13 +257,15 @@ module Seeds
         ama_hearing_cavc_appeal = create(
           :appeal,
           :hearing_docket,
-          :with_post_intake_tasks,
-          :held_hearing_and_ready_to_distribute,
+          :held_hearing,
           :tied_to_judge,
-          veteran: create_veteran_for_ama_hearing_held_cavc_judge,
+          :dispatched,
+          veteran: create_veteran_for_ama_hearing_held_aod_cavc_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
-          adding_user: User.first
+          associated_judge: hearing_judge,
+          adding_user: User.first,
+          associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
       Timecop.travel(distribution_task_assigned_at_date)
@@ -302,7 +316,6 @@ module Seeds
         :appeal,
         :direct_review_docket,
         :ready_for_distribution,
-        :advanced_on_docket_due_to_age,
         associated_judge: associated_judge,
         veteran: create_veteran_for_direct_review,
         receipt_date: receipt_date
