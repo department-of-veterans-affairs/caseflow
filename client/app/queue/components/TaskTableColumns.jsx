@@ -18,7 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setShowReassignPackageModal,
   setShowRemovePackageModal,
-  setSelectedTasks
+  setSelectedTasks,
+  setSelectedVeteranDetails
 } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
@@ -232,12 +233,14 @@ export const assignedByColumn = () => {
 export const veteranDetails = () => {
   const dispatch = useDispatch();
 
-  const showReassignPackageModal = () => {
-    dispatch(setShowReassignPackageModal(true));
+  const handleRemoveClick = (task) => {
+    dispatch(setSelectedVeteranDetails(task));
+    dispatch(setShowRemovePackageModal(true));
   };
 
-  const showRemovePackageModal = () => {
-    dispatch(setShowRemovePackageModal(true));
+  const handleReassignClick = (task) => {
+    dispatch(setSelectedVeteranDetails(task));
+    dispatch(setShowReassignPackageModal(true));
   };
 
   return {
@@ -250,7 +253,7 @@ export const veteranDetails = () => {
       if (task.taskUrl === '/modal/reassign_package') {
         return <a
           href="#"
-          onClick={showReassignPackageModal}
+          onClick={() => handleReassignClick(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >
@@ -259,7 +262,7 @@ export const veteranDetails = () => {
       } else if (task.taskUrl === '/modal/remove_package') {
         return <a
           href="#"
-          onClick={showRemovePackageModal}
+          onClick={() => handleRemoveClick(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >

@@ -1214,6 +1214,78 @@ RSpec.feature("The Correspondence Cases page") do
     end
   end
 
+  context "Banner alert for approval and reject request" do
+    let(:current_user) { create(:user) }
+    let(:mail_team_user) { create(:user) }
+    before :each do
+      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    before do
+      5.times do
+        corres_array = (1..2).map { create(:correspondence) }
+        task_array = [ReassignPackageTask, RemovePackageTask]
+
+        corres_array.each_with_index do |corres, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          task_array[index].create!(
+            parent_id: rpt.id,
+            appeal_type: "Correspondence",
+            appeal_id: corres.id,
+            assigned_to: InboundOpsTeam.singleton,
+            instructions: ["This was the default"],
+            assigned_by_id: rpt.assigned_to_id
+          )
+        end
+      end
+    end
+
+    it "approve request to reassign" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find('[for="vertical-radio_approve"]').click
+      find("#react-select-2-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
+      find("#react-select-2-option-0").click
+      find("#Review-request-button-id-1").click
+      expect(page).to have_content("You have successfully reassigned a mail record for")
+    end
+
+    it "deny request to reassign" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find('[for="vertical-radio_reject"]').click
+      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      find("#Review-request-button-id-1").click
+      expect(page).to have_content("You have successfully rejected a package request for")
+    end
+
+    it "approve request to remove" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Remove Package Task Link']")[0].click
+      find('[for="vertical-radio_approve"]').click
+      find("#Review-request-button-id-1").click
+      expect(page).to have_content("You have successfully removed a mail package for")
+    end
+
+    it "deny request to remove" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Remove Package Task Link']")[0].click
+      find('[for="vertical-radio_reject"]').click
+      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      find("#Review-request-button-id-1").click
+      expect(page).to have_content("You have successfully rejected a package request")
+    end
+
+    it "goes to Task Package" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find("[id='Review-request-button-id-2']").click
+      expect(page).to have_content("Review the mail package details below.")
+    end
+  end
   context "correspondence tasks completed tab testing filters date " do
     let(:current_user) { create(:user) }
     before :each do

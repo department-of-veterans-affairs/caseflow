@@ -12,7 +12,9 @@ import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import Modal from 'app/components/Modal';
-import Button from '../../components/Button';
+import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
+import ReactSelectDropdown from '../../components/ReactSelectDropdown';
+import TextareaField from '../../components/TextareaField';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -20,8 +22,87 @@ const CorrespondenceCases = (props) => {
 
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
+  const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
+  const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
 
   const [vetName, setVetName] = useState('');
+  const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
+  const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
+  const [decisionReason, setDecisionReason] = useState('');
+
+  const buildMailUserData = (data) => {
+
+    if (typeof data === 'undefined') {
+      return [];
+    }
+
+    return data.map((user) => {
+      return {
+        value: user,
+        label: user
+      };
+    });
+  };
+
+  const handleDecisionReasonInput = (value) => {
+    setDecisionReason(value);
+  };
+
+  const handleViewPackage = () => {
+    let url = window.location.href;
+    const index = url.indexOf('/team');
+
+    url = url.slice(0, index);
+    const parentUrlArray = (currentSelectedVeteran.parentTaskUrl.split('/'));
+
+    window.location.href = (`${url }/${parentUrlArray[3]}/${parentUrlArray[4]}`);
+  };
+
+  const resetState = () => {
+    setSelectedMailTeamUser('');
+    setSelectedRequestChoice('');
+    setDecisionReason('');
+  };
+
+  const handleReassignClose = () => {
+    resetState();
+    dispatch(setShowReassignPackageModal(false));
+  };
+
+  const handleRemoveClose = () => {
+    resetState();
+    dispatch(setShowRemovePackageModal(false));
+  };
+
+  const confirmButtonDisabled = () => {
+    if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '' && reassignModalVisible) {
+      return true;
+    }
+
+    if (selectedRequestChoice === 'reject' && decisionReason === '') {
+      return true;
+    }
+
+    if (selectedRequestChoice === '') {
+      return true;
+    }
+
+    return false;
+  };
+
+  const approveElement = (<div style={{ width: '28vw' }}>
+    <ReactSelectDropdown
+      className="cf-margin-left-2rem img"
+      label="Assign to person"
+      onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
+      options={buildMailUserData(props.mailTeamUsers)}
+    />
+  </div>);
+
+  const textAreaElement = (
+    <div style={{ width: '280%' }}>
+      <TextareaField onChange={handleDecisionReasonInput} value={decisionReason} />
+    </div>);
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -31,13 +112,92 @@ const CorrespondenceCases = (props) => {
   const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
-  const closeReassignPackageModal = () => {
-    dispatch(setShowReassignPackageModal(false));
+  const reassignOptions = [
+    { displayText: 'Approve request',
+      value: 'approve',
+      element: approveElement,
+      displayElement: selectedRequestChoice === 'approve'
+    },
+    { displayText: 'Reject request',
+      value: 'reject',
+      element: textAreaElement,
+      displayElement: selectedRequestChoice === 'reject'
+    }
+  ];
+
+  const removeOptions = [
+    { displayText: 'Approve request',
+      value: 'approve',
+      displayElement: selectedRequestChoice === 'approve'
+    },
+    { displayText: 'Reject request',
+      value: 'reject',
+      element: textAreaElement,
+      displayElement: selectedRequestChoice === 'reject'
+    }
+  ];
+
+  const handleConfirmReassignRemoveClick = (operation) => {
+    const newUrl = new URL(window.location.href);
+    const searchParams = new URLSearchParams(newUrl.search);
+
+    // Encode and set the query parameters
+    searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
+    searchParams.set('taskId', encodeURIComponent(currentSelectedVeteran.uniqueId));
+    searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
+    searchParams.set('decisionReason', encodeURIComponent(decisionReason));
+    searchParams.set('operation', encodeURIComponent(operation));
+
+    // Construct the new URL with encoded query parameters
+    newUrl.search = searchParams.toString();
+    window.location.href = newUrl.href;
   };
 
-  const closeRemovePackageModal = () => {
-    dispatch(setShowRemovePackageModal(false));
-  };
+  const reassignModalButtons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: handleReassignClose,
+      disabled: false
+    },
+    {
+      id: '#confirm-button',
+      classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
+      name: 'Confirm',
+      onClick: () => handleConfirmReassignRemoveClick('reassign'),
+      disabled: confirmButtonDisabled()
+    },
+    {
+      id: '#view-package-button',
+      classNames: ['usa-button', 'usa-button-secondary'],
+      name: 'View package',
+      onClick: handleViewPackage,
+      disabled: false
+    }
+  ];
+
+  const removeModalButtons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: handleRemoveClose,
+      disabled: false
+    },
+    {
+      id: '#confirm-button',
+      classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
+      name: 'Confirm',
+      onClick: () => handleConfirmReassignRemoveClick('remove'),
+      disabled: confirmButtonDisabled()
+    },
+    {
+      id: '#view-package-button',
+      classNames: ['usa-button', 'usa-button-secondary'],
+      name: 'View package',
+      onClick: handleViewPackage,
+      disabled: false
+    }
+  ];
 
   useEffect(() => {
     if (
@@ -77,16 +237,41 @@ const CorrespondenceCases = (props) => {
           isMailSupervisor={props.isMailSupervisor} />}
         {showReassignPackageModal &&
         <Modal
+          closeHandler={handleReassignClose}
+          buttons={reassignModalButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
-          closeHandler={closeReassignPackageModal}
-          cancelButton={<Button linkStyling onClick={closeReassignPackageModal}>Cancel</Button>}
-        />}
+        >
+          <b>Reason for reassignment:</b>
+          <p>{currentSelectedVeteran.instructions}</p>
+          <div>
+            <RadioFieldWithChildren
+              name="actionRequiredRadioField"
+              id="vertical-radio"
+              label="Choose whether to approve the request for removal or reject it."
+              options={reassignOptions}
+              onChange={(val) => setSelectedRequestChoice(val)}
+              value={selectedRequestChoice}
+              optionsStyling={{ width: '180px' }}
+            />
+          </div>
+        </Modal>}
         {showRemovePackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
-          closeHandler={closeRemovePackageModal}
-          cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
-        />}
+          buttons={removeModalButtons}
+          closeHandler={handleRemoveClose}>
+          <b>Reason for removal:</b>
+          <p>{currentSelectedVeteran.instructions}</p>
+          <RadioFieldWithChildren
+            name="actionRequiredRadioField"
+            id="vertical-radio"
+            label="Choose whether to approve the request for removal or reject it."
+            options={removeOptions}
+            onChange={(val) => setSelectedRequestChoice(val)}
+            value={selectedRequestChoice}
+            optionsStyling={{ width: '180px' }}
+          />
+        </Modal>}
       </AppSegment>
     </>
   );
