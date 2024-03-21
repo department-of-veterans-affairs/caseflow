@@ -470,7 +470,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             case_id: SecureRandom.uuid,
             docket: Constants.AMA_DOCKETS.direct_review,
             ready_at: Time.zone.now,
-            priority: true
+            priority: true,
+            sct_appeal: false
           )
         end
         distribution
