@@ -13,13 +13,9 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :instructions
 
-  attribute :veteran_details do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]
-
-    if serialize_attribute?(params, columns)
-      vet = Veteran.find(object.correspondence.veteran_id)
-      "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
-    end
+  attribute :veteran_details do |object|
+    vet = Veteran.find(object.correspondence.veteran_id)
+    "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
   end
 
   attribute :notes do |object, params|
@@ -49,12 +45,8 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     end
   end
 
-  attribute :va_date_of_receipt do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]
-
-    if serialize_attribute?(params, columns)
-      object.correspondence.va_date_of_receipt
-    end
+  attribute :va_date_of_receipt do |object|
+    object.correspondence.va_date_of_receipt
   end
 
   attribute :label do |object, params|
