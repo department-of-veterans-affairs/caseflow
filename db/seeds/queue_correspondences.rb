@@ -185,7 +185,8 @@ module Seeds
           appeal_id: corres.id,
           appeal_type: "Correspondence",
           assigned_to: InboundOpsTeam.singleton,
-          assigned_by_id: rpt.assigned_to_id
+          assigned_by_id: rpt.assigned_to_id,
+          instructions: ["Test instructions for #{task_array[index]&.name}."]
         )
         pat.update(assigned_at: corres.va_date_of_receipt)
       end
