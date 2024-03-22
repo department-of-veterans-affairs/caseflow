@@ -72,11 +72,6 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:all) do
-    # This needs to be run in order for tests involving external tables to pass.
-    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
-  end
-
   config.before(:each) do
     @spec_time_zone = Time.zone
     Seeds::CaseDistributionLevers.new.seed!

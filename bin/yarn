@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
-APP_ROOT = File.expand_path('..', __dir__)
+# frozen_string_literal: true
+APP_ROOT = File.expand_path("..", __dir__) # rubocop:disable Layout/EmptyLineAfterMagicComment
 Dir.chdir(APP_ROOT) do
-  begin
-    exec "yarnpkg", *ARGV
-  rescue Errno::ENOENT
-    $stderr.puts "Yarn executable was not detected in the system."
-    $stderr.puts "Download Yarn at https://yarnpkg.com/en/docs/install"
-    exit 1
-  end
+  exec "yarnpkg", *ARGV
+rescue Errno::ENOENT
+  $stderr.puts "Yarn executable was not detected in the system." # rubocop:disable Style/StderrPuts
+  $stderr.puts "Download Yarn at https://yarnpkg.com/en/docs/install" # rubocop:disable Style/StderrPuts
+  exit 1
 end
