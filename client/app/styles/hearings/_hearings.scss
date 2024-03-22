@@ -705,3 +705,53 @@ $form-width: 575px;
     margin-right: 1rem;
   }
 }
+
+// Transcription Files Table
+.transcription-files-table {
+  margin-top: 0;
+
+  *:focus {
+    outline: none;
+  }
+
+  tr > *:first-child {
+    padding-left: 2.5rem !important;
+  }
+
+  tbody {
+
+    tr {
+      &:first-child td {
+        padding-top: 3rem;
+      }
+
+      &.even-row-group td {
+        background-color: #F9F9F9;
+      }
+
+      td {
+        border: 0;
+        padding-top: 0;
+        padding-bottom: 3rem;
+
+        &:last-child {
+          font-style: italic;
+        }
+
+        a {
+          display: inline-flex;
+          align-items: center;
+        }
+
+        svg {
+          margin-left: 1rem;
+        }
+      }
+    }
+
+    tr.even-row-group + tr.odd-row-group td, tr.odd-row-group + tr.even-row-group td {
+      border-top: 1px solid #D6D7D9;
+      padding-top: 3rem;
+    }
+  }
+}

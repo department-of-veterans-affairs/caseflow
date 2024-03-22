@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -11,48 +10,10 @@ import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { COLORS } from '../../../constants/AppConstants';
 import { DownloadIcon } from '../../../components/icons/DownloadIcon';
 
-const tableStyling = css({
-  marginTop: 0,
-  '& *:focus': {
-    outline: 'none'
-  },
-  '& tr > *:first-child': {
-    paddingLeft: '2.5rem'
-  }
-});
-
-const bodyStyling = css({
-  '& tr:first-child td': {
-    paddingTop: '3rem'
-  },
-  '& tr.even-row-group td': {
-    backgroundColor: '#F9F9F9'
-  },
-  '& tr.even-row-group + tr.odd-row-group td, tr.odd-row-group + tr.even-row-group td': {
-    borderTop: '1px solid #D6D7D9',
-    paddingTop: '3rem'
-  },
-  '& tr td': {
-    border: '0',
-    paddingTop: '0',
-    paddingBottom: '3rem',
-    '&:last-child': {
-      fontStyle: 'italic'
-    },
-    '& a': {
-      display: 'inline-flex',
-      alignItems: 'center'
-    },
-    '& svg': {
-      marginLeft: '1rem'
-    }
-  }
-});
-
 const transcriptionFileColumns = [
   {
     align: 'left',
-    valueFunction: (rowObject) => (
+    valueFunction: (rowObject) => rowObject.docketName && (
       <span>
         <DocketTypeBadge name={rowObject.docketName} number={rowObject.docketNumber} />
         {rowObject.docketNumber}
@@ -69,7 +30,7 @@ const transcriptionFileColumns = [
   {
     align: 'left',
     valueFunction: (rowObject) => (
-      <Link href={`/hearings/transcription_file/${rowObject.id}/download.${rowObject.fileType}`}>
+      <Link href={`/hearings/transcription_file/${rowObject.id}/download`}>
         {rowObject.fileName}
         <DownloadIcon color={COLORS.PRIMARY} />
       </Link>
@@ -97,9 +58,9 @@ const TranscriptionFilesTable = ({ hearing }) => {
       return fileGroup.map((file, fileIndex) => {
         return {
           ...file,
-          docketNumber: fileIndex === 0 && file.docketNumber,
-          docketName: fileIndex === 0 && file.hearingType,
-          isEvenGroup: groupIndex % 2 === 0
+          isEvenGroup: groupIndex % 2 === 0,
+          docketName: fileIndex === 0 ? file.hearingType : null,
+          docketNumber: fileIndex === 0 ? file.docketNumber : null
         };
       });
     }).flat();
@@ -112,13 +73,11 @@ const TranscriptionFilesTable = ({ hearing }) => {
   return (
     <div {...genericRow}>
       <Table
-        id="transcription-files-table"
+        className="transcription-files-table"
         columns={transcriptionFileColumns}
         getKeyForRow={(index) => index}
         rowObjects={rows}
         rowClassNames={rowClassNames}
-        styling={tableStyling}
-        bodyStyling={bodyStyling}
       />
     </div>
   );
