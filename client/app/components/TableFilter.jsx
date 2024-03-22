@@ -142,7 +142,7 @@ class TableFilter extends React.PureComponent {
       if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = [value];
       }
     } else {
       newFilters = newFilters.concat([value]);
