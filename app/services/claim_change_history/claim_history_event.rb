@@ -86,11 +86,11 @@ class ClaimHistoryEvent
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
         # Due to the way intake is processed a task is always created as assigned first
+        time_difference = (first_version["updated_at"][0] - first_version["updated_at"][1]).to_f.abs
+
         # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
         # Normal intake assigned -> on_hold that will happen for no decision date HLR/SC intakes
-        if !timestamp_within_seconds?(first_version["updated_at"][0],
-                                      first_version["updated_at"][1],
-                                      STATUS_EVENT_TIME_WINDOW)
+        if time_difference > STATUS_EVENT_TIME_WINDOW
           status_events.push event_from_version(first_version, 0, change_data)
         end
 
@@ -162,9 +162,9 @@ class ClaimHistoryEvent
         request_issue_data = change_data.merge(issue_data)
         if event_type == :edited_issue
           # Compare the two dates to try to guess if it was adding a decision date or not
-          same_transaction = timestamp_within_seconds?(request_issue_data["decision_date_added_at"],
-                                                       request_issue_data["request_issue_update_time"],
-                                                       REQUEST_ISSUE_TIME_WINDOW)
+          same_transaction = date_strings_within_seconds?(request_issue_data["decision_date_added_at"],
+                                                          request_issue_data["request_issue_update_time"],
+                                                          REQUEST_ISSUE_TIME_WINDOW)
           if request_issue_data["decision_date_added_at"].present? && same_transaction
             created_events.push from_change_data(:added_decision_date, request_issue_data)
           end
@@ -178,9 +178,9 @@ class ClaimHistoryEvent
 
     def create_add_issue_event(change_data)
       # Try to guess if it was added during intake. If not, it was a probably added during an issue update
-      same_transaction = timestamp_within_seconds?(change_data["intake_completed_at"],
-                                                   change_data["request_issue_created_at"],
-                                                   REQUEST_ISSUE_TIME_WINDOW)
+      same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
+                                                      change_data["request_issue_created_at"],
+                                                      REQUEST_ISSUE_TIME_WINDOW)
       # If it was during intake or if there's no request issue update time then use the intake event hash
       # This will also catch most request issues that were added to claims that don't have an intake
       event_hash = if same_transaction || !change_data["request_issue_update_time"]
@@ -209,7 +209,7 @@ class ClaimHistoryEvent
           "nonrating_issue_description" => request_issue.nonrating_issue_description ||
             request_issue.unidentified_issue_text,
           "decision_date" => request_issue.decision_date,
-          "decision_date_added_at" => request_issue.decision_date_added_at,
+          "decision_date_added_at" => request_issue.decision_date_added_at&.iso8601,
           "request_issue_closed_at" => request_issue.closed_at
         }
       end
@@ -238,9 +238,9 @@ class ClaimHistoryEvent
       # If there is no decision_date_added_at time, assume it is old data and that it had a decision date on creation
       had_decision_date = if change_data["decision_date"] && change_data["decision_date_added_at"]
                             # Assume if the time window was within 15 seconds of creation that it had a decision date
-                            timestamp_within_seconds?(change_data["request_issue_created_at"],
-                                                      change_data["decision_date_added_at"],
-                                                      REQUEST_ISSUE_TIME_WINDOW)
+                            date_strings_within_seconds?(change_data["request_issue_created_at"],
+                                                         change_data["decision_date_added_at"],
+                                                         REQUEST_ISSUE_TIME_WINDOW)
                           elsif change_data["decision_date"].blank?
                             false
                           else
@@ -272,9 +272,9 @@ class ClaimHistoryEvent
     def add_issue_update_event_hash(change_data)
       # Check the current request issue updates time to see if the issue update is in the correct row
       # If it is, then do the normal update_event_hash information
-      if timestamp_within_seconds?(change_data["request_issue_created_at"],
-                                   change_data["request_issue_update_time"],
-                                   REQUEST_ISSUE_TIME_WINDOW)
+      if date_strings_within_seconds?(change_data["request_issue_created_at"],
+                                      change_data["request_issue_update_time"],
+                                      REQUEST_ISSUE_TIME_WINDOW)
         update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
       else
         # If it's not, then do some database fetches to grab the correct information
@@ -301,11 +301,19 @@ class ClaimHistoryEvent
       end
     end
 
-    def timestamp_within_seconds?(first_date, second_date, time_in_seconds)
+    def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
       return false unless first_date && second_date
 
       # Less variables for less garbage collection since this method is used a lot
-      (first_date - second_date).abs < time_in_seconds
+      ((parse_date(first_date) - parse_date(second_date)).abs * 24 * 60 * 60).to_f < time_in_seconds
+    end
+
+    def parse_date(date_string)
+      if date_string.include?("T") || date_string.include?("Z")
+        DateTime.iso8601(date_string)
+      else
+        DateTime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%N")
+      end
     end
 
     def handle_hookless_cancelled_status_events(versions, change_data)
@@ -486,9 +494,26 @@ class ClaimHistoryEvent
   end
 
   def parse_event_attributes(change_data)
+    standardize_event_date
     @user_facility = change_data["user_facility"]
     @event_user_name = change_data["event_user_name"]
     @event_user_css_id = change_data["event_user_css_id"]
+  end
+
+  def standardize_event_date
+    # Try to keep all the dates consistent as a iso8601 string if possible
+    @event_date =
+      if event_date.is_a?(String)
+        if event_date.include?("T") || event_date.include?("Z")
+          # Assume it is in Iso8601 already so just return it
+          event_date
+        else
+          # Assume UTC string so convert it to iso8601
+          DateTime.strptime(event_date, "%Y-%m-%d %H:%M:%S.%N").iso8601
+        end
+      else
+        event_date&.iso8601
+      end
   end
 
   ############ CSV and Serializer Helpers ############
@@ -530,7 +555,7 @@ class ClaimHistoryEvent
 
   def format_date_string(date)
     if date.class == String
-      DateTime.iso8601(date).strftime("%-m/%-d/%Y")
+      DateTime.iso8601(date.tr(" ", "T")).strftime("%-m/%-d/%Y")
     elsif date.present?
       date.strftime("%-m/%-d/%Y")
     end
