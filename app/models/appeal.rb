@@ -628,7 +628,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || AdvanceOnDocketMotion.granted.for_appeal(self).any?
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
