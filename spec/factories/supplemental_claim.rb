@@ -104,6 +104,15 @@ FactoryBot.define do
             type: "OtherClaimant",
             payee_code: payee_code
           )
+        when :other_claimant_not_listed
+          create(
+            :claimant,
+            :with_unrecognized_appellant_not_listed_poa,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            type: "OtherClaimant",
+            payee_code: payee_code
+          )
         when :veteran_claimant
           sc.update!(veteran_is_not_claimant: false)
           create(
@@ -230,7 +239,8 @@ FactoryBot.define do
           decision_review: sc,
           request_issues: sc.request_issues,
           benefit_type: sc.benefit_type,
-          disposition: "Granted"
+          disposition: "Granted",
+          caseflow_decision_date: 5.days.ago.to_date
         )
       end
     end
