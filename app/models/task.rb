@@ -389,7 +389,8 @@ class Task < CaseflowRecord
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
+    # return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
+    return false if status == Constants::TASK_STATUSES["on_hold"] && !on_timed_hold?
 
     actions_allowable?(user)
   end
@@ -398,7 +399,11 @@ class Task < CaseflowRecord
     return false if !open?
 
     # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
+    # TODO: This is probably a DB call because of .open?
+    # return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
+    # The child.assigned_to probably can't be avoided
+    return false if assigned_to.is_a?(Organization) &&
+                    children.any? { |child| child.open? && child.assigned_to == user }
 
     true
   end
@@ -420,7 +425,9 @@ class Task < CaseflowRecord
   end
 
   def children_attorney_tasks
-    children.where(type: AttorneyTask.name)
+    # Can't preload this
+    # children.where(type: AttorneyTask.name)
+    children.select { |child| child.type == AttorneyTask.name }
   end
 
   def on_timed_hold?
@@ -428,7 +435,9 @@ class Task < CaseflowRecord
   end
 
   def active_child_timed_hold_task
-    children.open.find { |task| task.type == TimedHoldTask.name }
+    # Can't preload with this since I think it forces a DB call.
+    # children.open.find { |task| task.type == TimedHoldTask.name }
+    children.find { |task| task.open? && task.type == TimedHoldTask.name }
   end
 
   def cancel_timed_hold
@@ -560,17 +569,22 @@ class Task < CaseflowRecord
 
   def latest_attorney_case_review
     # Should be the same as calling: appeal.latest_attorney_case_review
-    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+    # @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+
+    # Except you can't preload it if you call it like that
+    @latest_attorney_case_review ||= appeal.latest_attorney_case_review
   end
 
   def prepared_by_display_name
     return nil unless latest_attorney_case_review
 
-    if latest_attorney_case_review.attorney.try(:full_name)
-      return latest_attorney_case_review.attorney.full_name.split(" ")
-    end
+    # if latest_attorney_case_review.attorney.try(:full_name)
+    #   return latest_attorney_case_review.attorney.full_name.split(" ")
+    # end
 
-    ["", ""]
+    latest_attorney_case_review.attorney&.full_name&.split(" ") || ["", ""]
+
+    # ["", ""]
   end
 
   def when_child_task_completed(child_task)

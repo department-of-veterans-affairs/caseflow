@@ -243,7 +243,7 @@ class Appeal < DecisionReview
   end
 
   def contested_claim?
-    return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
+    # return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
 
     category_substrings = %w[Contested Apportionment]
 
@@ -277,7 +277,8 @@ class Appeal < DecisionReview
 
   # :reek:RepeatedConditionals
   def pact?
-    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+    # TODO: FeatureToggle is slow either define it at the class level or just leave it out
+    # return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     # return decision_issues.any?(&:pact_status) unless decision_issues.empty?
 

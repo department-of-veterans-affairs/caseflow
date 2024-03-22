@@ -2,6 +2,7 @@
 
 class WorkQueue::TaskSerializer
   include FastJsonapi::ObjectSerializer
+
   attribute :is_legacy do
     false
   end
@@ -29,24 +30,26 @@ class WorkQueue::TaskSerializer
       first_name: object.assigned_by_display_name.first,
       last_name: object.assigned_by_display_name.last,
       full_name: object.assigned_by.try(:full_name),
-      css_id: object.assigned_by.try(:css_id),
-      pg_id: object.assigned_by.try(:id)
+      css_id: object.assigned_by&.css_id,
+      pg_id: object.assigned_by&.id
     }
   end
 
   attribute :completed_by do |object|
-    object.try(:completed_by).try(:css_id)
+    # object.try(:completed_by).try(:css_id)
+    object.completed_by&.css_id
   end
 
   attribute :assigned_to do |object|
-    assignee = object.try(:unscoped_assigned_to)
+    # assignee = object.try(:unscoped_assigned_to)
+    assignee = object.unscoped_assigned_to
 
     {
-      css_id: assignee.try(:css_id),
+      css_id: assignee.css_id,
       full_name: assignee.try(:full_name),
       is_organization: assignee.is_a?(Organization),
-      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-      status: assignee.try(:status),
+      name: assignee.name,
+      status: assignee.status,
       type: assignee.class.name,
       id: assignee.id
     }
@@ -54,7 +57,7 @@ class WorkQueue::TaskSerializer
 
   attribute :cancelled_by do |object|
     {
-      css_id: object.cancelled_by.try(:css_id)
+      css_id: object.cancelled_by&.css_id
     }
   end
 
@@ -62,7 +65,8 @@ class WorkQueue::TaskSerializer
   # refers to the conversion of hearing request type
   attribute :converted_by do |object|
     {
-      css_id: object.try(:converted_by).try(:css_id)
+      # css_id: object.try(:converted_by).try(:css_id)
+      css_id: object.try(:converted_by)&.css_id
     }
   end
 
@@ -82,27 +86,33 @@ class WorkQueue::TaskSerializer
   attribute :on_hold_duration, &:calculated_on_hold_duration
 
   attribute :docket_name do |object|
-    object.appeal.try(:docket_name)
+    # object.appeal.try(:docket_name)
+    object.appeal.docket_name
   end
 
   attribute :case_type do |object|
-    object.appeal.try(:type)
+    # object.appeal.try(:type)
+    object.appeal.type
   end
 
   attribute :docket_number do |object|
-    object.appeal.try(:docket_number)
+    # object.appeal.try(:docket_number)
+    object.appeal.docket_number
   end
 
   attribute :docket_range_date do |object|
     if object.appeal.is_a?(LegacyAppeal)
-      object.appeal.try(:docket_date)
+      # object.appeal.try(:docket_date)
+      object.docket_date
     else
-      object.appeal.try(:docket_range_date)
+      # object.appeal.try(:docket_range_date)
+      object.appeal.docket_range_date
     end
   end
 
   attribute :veteran_full_name do |object|
     object.appeal.veteran_full_name
+    # ""
   end
 
   attribute :veteran_file_number do |object|
@@ -110,7 +120,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :closest_regional_office do |object|
-    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
+    RegionalOffice.find!(object.appeal.closest_regional_office) if object.appeal.closest_regional_office
   end
 
   attribute :external_appeal_id do |object|
@@ -118,27 +128,34 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :aod do |object|
-    object.appeal.try(:advanced_on_docket?)
+    # object.appeal.try(:advanced_on_docket?)
+    object.appeal.advanced_on_docket?
   end
 
   attribute :overtime do |object|
-    object.appeal.try(:overtime?)
+    # object.appeal.try(:overtime?)
+    object.appeal.overtime?
   end
 
   attribute :contested_claim do |object|
-    object.appeal.try(:contested_claim?)
+    # object.appeal.try(:contested_claim?)
+    object.appeal.contested_claim?
   end
 
   attribute :mst do |object|
-    object.appeal.try(:mst?)
+    # object.appeal.try(:mst?)
+    object.appeal.mst?
   end
 
   attribute :pact do |object|
-    object.appeal.try(:pact?)
+    # object.appeal.try(:pact?)
+    object.appeal.pact?
   end
 
   attribute :veteran_appellant_deceased do |object|
-    object.appeal.try(:veteran_appellant_deceased?)
+    # object.appeal.try(:veteran_appellant_deceased?)
+    object.appeal.veteran_appellant_deceased?
+    # false
   end
 
   attribute :issue_count do |object|
@@ -154,7 +171,8 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :external_hearing_id do |object|
-    object.hearing&.external_id if object.respond_to?(:hearing)
+    # object.hearing&.external_id if object.respond_to?(:hearing)
+    object.hearing&.external_id if defined? object.hearing
   end
 
   attribute :available_hearing_locations do |object|
@@ -163,7 +181,9 @@ class WorkQueue::TaskSerializer
 
   attribute :previous_task do |object|
     {
-      assigned_at: object.previous_task.try(:assigned_at)
+      # assigned_at: object.previous_task.try(:assigned_at)
+      assigned_at: object.previous_task&.assigned_at
+      # assigned_at: nil
     }
   end
 
@@ -172,24 +192,33 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :decision_prepared_by do |object|
-    {
-      first_name: object.prepared_by_display_name&.first,
-      last_name: object.prepared_by_display_name&.last
-    }
+    name = object.prepared_by_display_name
+    if name
+      {
+        first_name: name.first,
+        last_name: name.last
+      }
+    else
+      {
+        first_name: nil,
+        last_name: nil
+      }
+    end
   end
 
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user])
+    # {}
   end
 
-  attribute :can_move_on_docket_switch do |object|
-    object.try(:can_move_on_docket_switch?)
-  end
+  attribute :can_move_on_docket_switch, &:can_move_on_docket_switch?
+
+  # attribute :can_move_on_docket_switch do |object|
+  #   object.try(:can_move_on_docket_switch?)
+  # end
 
   attribute :timer_ends_at do |object|
-    if object.type == "EvidenceSubmissionWindowTask"
-      object.timer_ends_at
-    end
+    object.timer_ends_at if object.type == "EvidenceSubmissionWindowTask"
   end
 
   attribute :unscheduled_hearing_notes do |object|
@@ -197,7 +226,8 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :appeal_receipt_date do |object|
-    object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
+    # object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
+    object.appeal.is_legacy? ? nil : object.appeal.receipt_date
   end
 
   attribute :days_since_last_status_change, &:calculated_last_change_duration

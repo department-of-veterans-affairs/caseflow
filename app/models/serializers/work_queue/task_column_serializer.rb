@@ -7,11 +7,7 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
-  attribute :instructions do |object|
-    # TODO: Shouldn't this always be an array since it's an array in the tasks table?
-    # object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
-    object.instructions
-  end
+  attribute :instructions, &:instructions
 
   # Used by hasDASRecord()
   attribute :docket_name do |object|
@@ -26,7 +22,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.receipt_date
   end
 
-  attribute :docket_number do |object, params|
+  attribute :docket_number do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["APPEAL_TYPE"]["name"],
     #   Constants::QUEUE_CONFIG["COLUMNS"]["DOCKET_NUMBER"]["name"]
@@ -40,7 +36,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.docket_number
   end
 
-  attribute :external_appeal_id do |object, params|
+  attribute :external_appeal_id do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"],
     #   Constants::QUEUE_CONFIG["COLUMNS"]["BADGES"]["name"],
@@ -53,7 +49,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.external_id
   end
 
-  attribute :paper_case do |object, params|
+  attribute :paper_case do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"],
     #   Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_COUNT_READER_LINK"]["name"]
@@ -74,7 +70,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :veteran_full_name do |object, params|
+  attribute :veteran_full_name do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -84,7 +80,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :veteran_file_number do |object, params|
+  attribute :veteran_file_number do |object, _params|
     # columns = [Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"]]
 
     # if serialize_attribute?(params, columns)
@@ -95,7 +91,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.veteran_file_number
   end
 
-  attribute :started_at do |object, params|
+  attribute :started_at do |object, _params|
     # columns = [Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"]]
 
     # if serialize_attribute?(params, columns)
@@ -106,7 +102,7 @@ class WorkQueue::TaskColumnSerializer
     object.started_at
   end
 
-  attribute :issue_count do |object, params|
+  attribute :issue_count do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["ISSUE_COUNT"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -129,7 +125,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :aod do |object, params|
+  attribute :aod do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["APPEAL_TYPE"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -139,7 +135,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :case_type do |object, params|
+  attribute :case_type do |object, _params|
     # columns = [Constants::QUEUE_CONFIG["COLUMNS"]["APPEAL_TYPE"]["name"]]
 
     # if serialize_attribute?(params, columns)
@@ -149,7 +145,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.type
   end
 
-  attribute :label do |object, params|
+  attribute :label do |object, _params|
     # columns = [Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"]]
 
     # if serialize_attribute?(params, columns)
@@ -158,7 +154,7 @@ class WorkQueue::TaskColumnSerializer
     object.label
   end
 
-  attribute :placed_on_hold_at do |object, params|
+  attribute :placed_on_hold_at do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_ON_HOLD"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -168,7 +164,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :on_hold_duration do |object, params|
+  attribute :on_hold_duration do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_ON_HOLD"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -178,7 +174,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :status do |object, params|
+  attribute :status do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_ON_HOLD"]["name"],
     #   Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"]
@@ -190,7 +186,7 @@ class WorkQueue::TaskColumnSerializer
     object.status
   end
 
-  attribute :assigned_at do |object, params|
+  attribute :assigned_at do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_WAITING"]["name"],
     #   Constants::QUEUE_CONFIG["COLUMNS"]["BOARD_INTAKE"]["name"]
@@ -202,7 +198,7 @@ class WorkQueue::TaskColumnSerializer
     object.assigned_at
   end
 
-  attribute :closest_regional_office do |object, params|
+  attribute :closest_regional_office do |object, _params|
     # columns = [Constants::QUEUE_CONFIG["COLUMNS"]["REGIONAL_OFFICE"]["name"]]
 
     # if serialize_attribute?(params, columns)
@@ -211,7 +207,7 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
   end
 
-  attribute :assigned_to do |object, params|
+  attribute :assigned_to do |object, _params|
     # columns = [
     #   Constants::QUEUE_CONFIG["COLUMNS"]["TASK_ASSIGNEE"]["name"]
     # ]
@@ -258,7 +254,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  attribute :hearing_request_type do |object, params|
+  attribute :hearing_request_type do |object, _params|
     # columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
 
     # if serialize_attribute?(params, columns)
@@ -274,7 +270,7 @@ class WorkQueue::TaskColumnSerializer
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
   # former_travel technically isn't it's own column, it's part of
   # hearing request type column
-  attribute :former_travel do |object, params|
+  attribute :former_travel do |object, _params|
     # columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
 
     # if serialize_attribute?(params, columns)
@@ -288,7 +284,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  attribute :power_of_attorney_name do |object, params|
+  attribute :power_of_attorney_name do |object, _params|
     # columns = [Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME]
 
     # if serialize_attribute?(params, columns)
@@ -302,7 +298,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  attribute :suggested_hearing_location do |object, params|
+  attribute :suggested_hearing_location do |_object, params|
     columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)
@@ -351,7 +347,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :veteran_appellant_deceased do |object, params|
+  attribute :veteran_appellant_deceased do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["BADGES"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -370,7 +366,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :document_id do |object, params|
+  attribute :document_id do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_ID"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -379,7 +375,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :decision_prepared_by do |object, params|
+  attribute :decision_prepared_by do |_object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_ID"]["name"]]
 
     if serialize_attribute?(params, columns)
@@ -388,7 +384,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :latest_informal_hearing_presentation_task do |object, params|
+  attribute :latest_informal_hearing_presentation_task do |_object, params|
     columns = [
       Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"],
       Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_WAITING"]["name"]
@@ -402,15 +398,15 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :owned_by do |object, params|
+  attribute :owned_by do |object, _params|
     object.assigned_to&.name
   end
 
-  attribute :days_since_last_status_change do |object, params|
+  attribute :days_since_last_status_change do |object, _params|
     object.calculated_last_change_duration
   end
 
-  attribute :days_since_board_intake do |object, params|
+  attribute :days_since_board_intake do |object, _params|
     object.calculated_duration_from_board_intake
   end
 

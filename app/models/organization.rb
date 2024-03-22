@@ -45,6 +45,7 @@ class Organization < CaseflowRecord
     end
   end
 
+  # Probably dumb to do this but saves a lot of call chain guarding
   def css_id
     nil
   end

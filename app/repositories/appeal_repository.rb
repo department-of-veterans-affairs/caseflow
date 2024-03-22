@@ -45,16 +45,30 @@ class AppealRepository
     end
 
     def eager_load_legacy_appeals_for_tasks_in_queue(tasks, appeal_includes = [], legacy_includes = [])
-      appeal_tasks = tasks.where(appeal_type: "Appeal")
-      legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
-      appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
-      legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
+      appeal_tasks = nil
+      legacy_tasks = nil
+      if tasks.is_a?(Array)
+        legacy_tasks, appeal_tasks = tasks.partition { |task| task.is_a? LegacyTask }
+        appeals_preloader = ActiveRecord::Associations::Preloader.new
+        legacy_preloader = ActiveRecord::Associations::Preloader.new
+        appeals_preloader.preload(appeal_tasks, appeal_includes) if appeal_includes.present?
+        legacy_preloader.preload(legacy_tasks, legacy_includes) if legacy_includes.present?
+      else
+        appeal_tasks = tasks.where(appeal_type: "Appeal")
+        legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
+        appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
+        legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
+      end
+      # appeal_tasks = tasks.where(appeal_type: "Appeal")
+      # legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
+      # appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
+      # legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
 
       puts "in my new eager load method"
-      puts appeal_includes.inspect
-      puts appeal_tasks.to_sql
+      # puts appeal_includes.inspect
+      # puts appeal_tasks.to_sql
       # puts legacy_tasks.to_sql
-      pp appeal_tasks.includes_values
+      # pp appeal_tasks.includes_values
       # puts legacy_tasks.includes_values
       # byebug
 

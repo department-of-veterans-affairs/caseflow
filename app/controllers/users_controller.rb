@@ -50,6 +50,11 @@ class UsersController < ApplicationController
   end
 
   def filter_by_role # rubocop:disable Metrics/CyclomaticComplexity
+    # Guard clause if the user only needs a judges attorneys and not the whole list
+    if params[:judge_id] && params[:role] == Constants::USER_ROLE_TYPES["attorney"]
+      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) }
+    end
+
     finder = UserFinder.new(role: params[:role])
     users = finder.users
 
@@ -57,8 +62,6 @@ class UsersController < ApplicationController
     when Constants::USER_ROLE_TYPES["judge"]
       render json: { judges: users }
     when Constants::USER_ROLE_TYPES["attorney"]
-      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]
-
       render json: { attorneys: users }
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       render json: { coordinators: users }

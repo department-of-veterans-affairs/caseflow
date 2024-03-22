@@ -162,5 +162,8 @@ module CaseflowCertification
     config.assets.configure do |env|
       env.unregister_postprocessor("application/javascript", ::Sprockets::Rails::SourcemappingUrlProcessor)
     end
+
+    # Configure Rails to use Oj for json parsing
+    Oj.optimize_rails
   end
 end

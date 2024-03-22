@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository # rubocop:disable Metrics/ClassLength
+class TaskActionRepository
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -161,7 +161,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def reassign_to_judge_data(task, _user = nil)
       {
         selected: nil,
-        options: users_to_options(Judge.list_all),
+        # Judge.list_all is cached but doesn't happen on local unless you have the cache file that turns it on
+        # It's probably better to cache the built hashes themselves since that is probably a
+        # Decent amount of garbage collection for a list that never changes.
+        # options: users_to_options(Judge.list_all),
+        options: Judge.list_all_hashes,
         type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
@@ -186,7 +190,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
+        options: user.can_act_on_behalf_of_judges? ? Attorney.list_all_hashes : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -571,8 +575,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def toggle_timed_hold(task, user)
-      action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-      action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+      # action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      # action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+      action =
+        if task.on_timed_hold?
+          Constants::TASK_ACTIONS["END_TIMED_HOLD"]
+        else
+          Constants::TASK_ACTIONS["PLACE_TIMED_HOLD"]
+        end
 
       task_helper = TaskActionHelper.build_hash(action, task, user).merge(
         returns_complete_hash: true
