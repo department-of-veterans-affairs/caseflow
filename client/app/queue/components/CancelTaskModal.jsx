@@ -86,7 +86,7 @@ const CancelTaskModal = (props) => {
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
     'HearingPostponementRequestMailTask'
-  ].includes(task?.type)) {
+  ].includes(task?.type) || task?.appeal.hasCompletedSctAssignTask) {
     modalProps.submitButtonClassNames = ['usa-button'];
     modalProps.submitDisabled = !validateForm();
   }
@@ -158,6 +158,9 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
+    appeal: PropTypes.shape({
+      hasCompletedSctAssignTask: PropTypes.bool
+    }),
     assignedTo: PropTypes.shape({
       type: PropTypes.string
     }),
