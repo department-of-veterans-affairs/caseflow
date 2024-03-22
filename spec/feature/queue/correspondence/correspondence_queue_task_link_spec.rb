@@ -81,7 +81,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
         end
 
         it "user remains on Correspondence Cases" do
-          expect(page).to have_content("Correspondence cases")
+          expect(page).to have_content("Correspondence Cases")
         end
 
         it "a modal appears on the screen" do
@@ -105,7 +105,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
         end
 
         it "user remains on Correspondence Cases" do
-          expect(page).to have_content("Correspondence cases")
+          expect(page).to have_content("Correspondence Cases")
         end
 
         it "a modal appears on the screen" do
