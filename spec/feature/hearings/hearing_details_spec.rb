@@ -111,8 +111,8 @@ RSpec.feature "Hearing Details", :all_dbs do
     within "table#transcription-files-table > tbody" do
       expect(find_all("tr").length).to eq(hearing.transcription_files.size)
 
-      # Group transcription files by associated recording to ensure table styled accordingly
-      hearing.transcription_files_by_recording.each_with_index do |recording, group_index|
+      # Group transcription files by docket number to ensure table styled accordingly
+      hearing.transcription_files_by_docket_number.each_with_index do |recording, group_index|
         group_class = "#{group_index.even? ? 'even' : 'odd'}-row-group"
 
         recording.each_with_index do |file, file_index|

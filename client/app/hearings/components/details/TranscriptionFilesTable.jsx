@@ -88,30 +88,25 @@ const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-
 const TranscriptionFilesTable = ({ hearing }) => {
   const [rows, setRows] = useState([]);
 
-  // One hearing may yield multiple recordings. Format table to group associated files by recording
-  const buildRowsFromRecordings = () => {
+  // Format table to group files by docket number and style accordingly
+  const buildRowsFromFileGroups = () => {
     // Flatten nested objects into nested arrays
-    const recordings = _.values(hearing.transcriptionFiles).map((rec) => _.values(rec));
+    const fileGroups = _.values(hearing.transcriptionFiles).map((rec) => _.values(rec));
 
-    return recordings.map((recording, recordingIndex) => {
-      return recording.map((file, fileIndex) => {
-        const fileObj = {
+    return fileGroups.map((fileGroup, groupIndex) => {
+      return fileGroup.map((file, fileIndex) => {
+        return {
           ...file,
-          isEvenGroup: recordingIndex % 2 === 0
+          docketNumber: fileIndex === 0 && file.docketNumber,
+          docketName: fileIndex === 0 && file.hearingType,
+          isEvenGroup: groupIndex % 2 === 0
         };
-
-        if (fileIndex === 0) {
-          fileObj.docketNumber = hearing.docketNumber;
-          fileObj.docketName = hearing.docketName;
-        }
-
-        return fileObj;
       });
     }).flat();
   };
 
   useEffect(() => {
-    setRows(buildRowsFromRecordings());
+    setRows(buildRowsFromFileGroups());
   }, []);
 
   return (
