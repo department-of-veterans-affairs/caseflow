@@ -218,7 +218,8 @@ describe('levers actions', () => {
     const lever = alternativeBatchSize;
     const dispatch = jest.fn();
 
-    actions.validateLever(lever, lever.item, -1, [])(dispatch);
+    actions.validateLever(lever, lever.item, '', [])(dispatch);
+    actions.validateLever(lever, lever.item, null, [])(dispatch);
 
     expect(dispatch).toHaveBeenLastCalledWith(expect.any(Function));
   });
