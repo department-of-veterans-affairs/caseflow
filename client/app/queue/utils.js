@@ -402,7 +402,6 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
-
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -568,7 +567,6 @@ export const prepareAppealForSearchStore = (appeals) => {
 
     return accumulator;
   }, {});
-
 
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
@@ -815,17 +813,6 @@ export const validateWorkProductTypeAndId = (decision) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const taskHasNewDocuments = (task, newDocsForAppeal) => {
-  if (
-    !newDocsForAppeal[task.externalAppealId] ||
-    !newDocsForAppeal[task.externalAppealId].docs
-  ) {
-    return false;
-  }
-
-  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
-};
-
 export const taskIsOnHold = (task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
@@ -903,14 +890,6 @@ export const getAllChildrenTasks = (tasks, parentId) => {
   }
 
   return childrenTasks.concat(grandchildrenTasks);
-};
-
-export const nullToFalse = (key, obj) => {
-  if (obj[key] === null) {
-    obj[key] = false;
-  }
-
-  return obj;
 };
 
 export const timelineEventsFromAppeal = ({ appeal }) => {
@@ -1129,5 +1108,5 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 };
 
 export const replaceSpecialCharacters = (string_replace) => {
-  return string_replace.replace(/[^\w\s]/gi, '_')
+  return string_replace.replace(/[^\w\s]/gi, '_');
 };
