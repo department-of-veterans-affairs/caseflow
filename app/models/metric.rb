@@ -75,7 +75,7 @@ class Metric < CaseflowRecord
   # - end
   # - duration
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:ControlParameter
   def self.default_object(klass, params, user)
     product_types = PRODUCT_TYPES
