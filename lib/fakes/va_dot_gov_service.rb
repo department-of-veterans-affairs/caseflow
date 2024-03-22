@@ -4,22 +4,15 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
-      facilities = query[:ids].split(",").map do |id|
+      facilities = query[:facilityIds].split(",").map do |id|
         data = fake_facilities_data[:data][0]
         data["id"] = id
         data
       end
 
-      distances = query[:ids].split(",").map.with_index do |id, index|
-        {
-          id: id,
-          distance: index
-        }
-      end
-
       fake_facilities = fake_facilities_data
       fake_facilities[:data] = facilities
-      fake_facilities[:meta][:distances] = distances
+      fake_facilities[:meta][:distances] = distances(query)
       HTTPI::Response.new 200, {}, fake_facilities.to_json
     elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       request_address_keys = args[:body][:requestAddress].keys
@@ -33,6 +26,24 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       end
     elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
+    end
+  end
+
+  def self.distances(query)
+    if query[:lat].present? && query[:long].present?
+      query[:facilityIds].split(",").map.with_index do |id, index|
+        {
+          id: id,
+          distance: index
+        }
+      end
+    else
+      query[:facilityIds].split(",").map do |id|
+        {
+          id: id,
+          distance: 0
+        }
+      end
     end
   end
 
@@ -146,7 +157,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "type": "va_facilities",
           "attributes": {
             "name": "Holdrege VA Clinic",
-            "facility_type": "va_health_facility",
+            "facilityType": "va_health_facility",
             "classification": "Primary Care CBOC",
             "website": nil,
             "lat": 40.4454392100001,
@@ -159,19 +170,19 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
                 "zip": "68949-1705",
                 "city": "Holdrege",
                 "state": "NE",
-                "address_1": "1118 Burlington Street",
-                "address_2": "",
-                "address_3": nil
+                "address1": "1118 Burlington Street",
+                "address2": "",
+                "address3": nil
               }
             },
             "phone": {
               "fax": "555-555-3775 x",
               "main": "555-555-3760 x",
               "pharmacy": "555-555-0827 x",
-              "after_hours": "555-555-5555 x",
-              "patient_advocate": "555-555-5555 x7933",
-              "mental_health_clinic": "555-555-5555",
-              "enrollment_coordinator": "555-555-5555 x"
+              "afterHours": "555-555-5555 x",
+              "patientAdvocate": "555-555-5555 x7933",
+              "mentalHealthClinic": "555-555-5555",
+              "enrollmentCoordinator": "555-555-5555 x"
             },
             "hours": {
               "friday": "800AM-430PM",
@@ -192,17 +203,17 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
                 Audiology
                 Cardiology
               ],
-              "last_updated": "2019-01-02"
+              "lastUpdated": "2019-01-02"
             },
             "satisfaction": {
               "health": {
 
               },
-              "effective_date": nil
+              "effectiveDate": nil
             },
-            "wait_times": {
+            "waitTimes": {
               "health": [],
-              "effective_date": "2018-12-24"
+              "effectiveDate": "2018-12-24"
             }
           }
         }
@@ -216,10 +227,10 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       },
       "meta": {
         "pagination": {
-          "current_page": 1,
-          "per_page": 30,
-          "total_pages": 77,
-          "total_entries": 2289
+          "currentPage": 1,
+          "perPage": 30,
+          "totalPages": 77,
+          "totalEntries": 2289
         },
         "distances": [
           {
