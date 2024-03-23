@@ -108,7 +108,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   def check_transcription_files_table(hearing)
     check_transcription_files_table_headers
 
-    within "table#transcription-files-table > tbody" do
+    within "table.transcription-files-table > tbody" do
       expect(find_all("tr").length).to eq(hearing.transcription_files.size)
 
       # Group transcription files by docket number to ensure table styled accordingly
@@ -127,7 +127,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   def check_transcription_files_table_headers
-    within "table#transcription-files-table > thead > tr" do
+    within "table.transcription-files-table > thead > tr" do
       expect(find("th:first-child")).to have_content("Docket(s)")
       expect(find("th:nth-child(2)")).to have_content("Uploaded")
       expect(find("th:nth-child(3)")).to have_content("File Link")
@@ -140,7 +140,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     formatted_date = file.date_upload_aws.strftime("%m/%d/%Y")
 
     within "#table-row-#{row_number}" do
-      download_url = "/hearings/transcription_file/#{file.id}/download.#{file.file_type}"
+      download_url = "/hearings/transcription_file/#{file.id}/download"
 
       expect(find("td:first-child")).to have_content(docket_number)
       expect(find("td:nth-child(2)")).to have_content(formatted_date)
