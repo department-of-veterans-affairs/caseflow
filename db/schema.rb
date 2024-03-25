@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_06_021307) do
+ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1048,6 +1048,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
@@ -1215,6 +1216,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.string "military_service", comment: "Periods and circumstances of military service"
     t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the legacy hearing will have to provide accurate hearing times."
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
