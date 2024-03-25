@@ -90,7 +90,8 @@ class TeamManagementController < ApplicationController
 
   def update_params
     params.require(:organization).permit(
-      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request
+      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request,
+      :exclude_appeals_from_affinity
     )
   end
 

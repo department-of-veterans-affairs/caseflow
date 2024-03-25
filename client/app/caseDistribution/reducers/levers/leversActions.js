@@ -2,6 +2,16 @@ import { ACTIONS } from './leversActionTypes';
 import ApiUtil from '../../../util/ApiUtil';
 import { validateLeverInput } from '../../utils';
 
+export const loadAcdExcludeFromAffinity = (acdExcludeFromAffinity) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
+      payload: {
+        acdExcludeFromAffinity
+      }
+    });
+  };
+
 export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
   (dispatch) => {
     dispatch({

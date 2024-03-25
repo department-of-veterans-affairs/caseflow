@@ -201,4 +201,19 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       expect(errors.last.to_s).to include("PG::NotNullViolation: ERROR")
     end
   end
+
+  context "snapshot" do
+    it "should return hash with item keys and values objects of value and is_toggle_active" do
+      snapshot_hash = {}
+
+      Seeds::CaseDistributionLevers.levers.each_with_object(snapshot_hash) do |lever, s_hash|
+        s_hash[lever[:item]] = {
+          value: lever[:value].to_s,
+          is_toggle_active: lever[:is_toggle_active]
+        }
+      end
+
+      expect(CaseDistributionLever.snapshot).to eq(snapshot_hash)
+    end
+  end
 end

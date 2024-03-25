@@ -145,13 +145,19 @@ describe Distribution, :all_dbs do
         algorithm: "proportions"
       }
     end
+    let(:result_stats) do
+      {
+        batch_size: 0,
+        info: "See related row in distribution_stats for additional stats"
+      }
+    end
 
     it "updates status and started_at" do
       expect(new_distribution).to receive(:update!)
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: statistics)
+        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
         .exactly(1).times
 
       new_distribution.distribute!

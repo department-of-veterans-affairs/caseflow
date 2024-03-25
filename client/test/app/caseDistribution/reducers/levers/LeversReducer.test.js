@@ -37,6 +37,7 @@ describe('Lever reducer', () => {
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
     isUserAcdAdmin: false,
+    acdExcludeFromAffinity: false
   };
 
   afterEach(() => {
@@ -93,6 +94,26 @@ describe('Lever reducer', () => {
     const expectedState = {
       ...initialState,
       isUserAcdAdmin: true
+    };
+
+    const newState = leversReducer(initialState, action);
+
+    expect(newState).toEqual(expectedState);
+    expect(newState).not.toEqual(initialState);
+  });
+
+  it('Should handle SET_ACD_EXCLUDE_FROM_AFFINITY action', () => {
+
+    const action = {
+      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
+      payload: {
+        acdExcludeFromAffinity: true
+      }
+    };
+
+    const expectedState = {
+      ...initialState,
+      acdExcludeFromAffinity: true
     };
 
     const newState = leversReducer(initialState, action);
