@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { fetchFlaggedForReview } from './actions';
 import LoadingContainer from '../components/LoadingContainer';
-import FlaggedForReview from './FlaggedForReview';
 import UserStats from './UserStats';
 
 export class FlaggedForReviewContainer extends Component {
@@ -29,7 +28,6 @@ export class FlaggedForReviewContainer extends Component {
 
     return <div>
       <UserStats selectedUser={this.props.selectedUser} />
-      <FlaggedForReview {...this.props} />
     </div>;
   }
 }
@@ -38,7 +36,6 @@ const mapStateToProps = (state) => {
   return {
     loading: false,
     // loading: state.loading,
-    intakes: state.flaggedForReview
   };
 };
 
