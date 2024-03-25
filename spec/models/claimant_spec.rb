@@ -171,10 +171,13 @@ describe Claimant, :postgres do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
-      it "returns false" do
+      it "returns false when based on age" do
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
-        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
+      end
+
+      it "returns true when motion is granted" do
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
       end
     end
   end
