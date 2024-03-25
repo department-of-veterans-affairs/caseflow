@@ -137,7 +137,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
         }
       }
       label="Hearing Coordinator Link"
-      link="https://instant-usgov.webex.com/visit/wz17ys8"
+      link={null}
       linkText="Start Hearing"
       role="HC"
       user={
@@ -172,7 +172,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
             }
           }
           label="Start Hearing"
-          link="https://instant-usgov.webex.com/visit/wz17ys8"
+          link={null}
           role="HC"
           user={
             Object {
@@ -199,7 +199,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
             }
             isVirtual={false}
             label="Start Hearing"
-            link="https://instant-usgov.webex.com/visit/wz17ys8"
+            link={null}
             newWindow={true}
             showFullLink={false}
             user={
@@ -213,11 +213,11 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
             }
           >
             <Link
-              href="https://instant-usgov.webex.com/visit/wz17ys8"
+              href={null}
               target="_blank"
             >
               <a
-                href="https://instant-usgov.webex.com/visit/wz17ys8"
+                href={null}
                 target="_blank"
                 type={null}
               >
@@ -273,15 +273,13 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
           <div
             className="helper-text"
             data-css-1abghdv=""
-          >
-            https://instant-usgov.webex.com/visit/wz17ys8
-          </div>
+          />
           <CopyTextButton
             ariaLabel="Copy HC Link"
             label=""
             styling={Object {}}
             text="Copy HC Link"
-            textToCopy="https://instant-usgov.webex.com/visit/wz17ys8"
+            textToCopy={null}
           >
             <Tooltip
               id="tooltip-Copy HC Link"
@@ -296,7 +294,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                 data-for="tooltip-Copy HC Link"
                 data-tip={true}
                 tabIndex={0}
-                text="https://instant-usgov.webex.com/visit/wz17ys8"
+                text="Copy HC Link"
               >
                 <button
                   aria-describedby="tooltip-Copy HC Link"
@@ -307,7 +305,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy HC Link"
                   data-tip={true}
-                  disabled={false}
+                  disabled={true}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"

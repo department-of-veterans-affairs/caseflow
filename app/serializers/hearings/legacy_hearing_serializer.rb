@@ -95,6 +95,11 @@ class LegacyHearingSerializer
   attribute :submission_window_end, if: for_worksheet, &:calculate_submission_window
   attribute :summary
   attribute :transcript_requested
+  attribute :transcription_files, if: for_worksheet do |hearing|
+    if hearing.conference_provider == "webex"
+      hearing.serialized_transcription_files
+    end
+  end
   attribute :user_id
   attribute :vacols_id, if: for_worksheet
   attribute :vbms_id

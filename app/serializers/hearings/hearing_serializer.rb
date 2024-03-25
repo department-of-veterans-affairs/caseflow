@@ -103,6 +103,11 @@ class HearingSerializer
   attribute :transcript_requested
   attribute :transcript_sent_date
   attribute :transcription
+  attribute :transcription_files, if: for_worksheet do |hearing|
+    if hearing.conference_provider == "webex"
+      hearing.serialized_transcription_files
+    end
+  end
   attribute :uuid
   attribute :veteran_age, if: for_full
   attribute :veteran_file_number

@@ -4,8 +4,9 @@ describe Hearings::TranscriptionFilesController, :all_dbs, type: :controller do
   let(:hearings_user) { create(:hearings_coordinator) }
   before { User.authenticate!(user: hearings_user) }
   describe "routes" do
-    let!(:hearing) { create(:hearing, :held) }
-    let(:options) { { format: :vtt, hearing_id: hearing.id } }
+    let!(:hearing) { create(:hearing, :with_transcription_files) }
+    let(:transcription_file) { hearing.transcription_files.first }
+    let(:options) { { format: :vtt, file_id: transcription_file.id } }
     subject { get :download_transcription_file, params: options }
 
     it "downloading file" do
