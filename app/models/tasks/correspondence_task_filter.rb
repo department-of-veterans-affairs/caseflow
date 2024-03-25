@@ -5,7 +5,9 @@ class CorrespondenceTaskFilter < TaskFilter
     va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
     date_completed_params = filter_params.select { |param| param.include?("col=correspondenceCompletedDateColumn") }
     task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
+    nod_column_params = filter_params.select { |param| param.include?("col=packageDocTypeColumn") }
 
+    # binding.pry
     # task_column_params comes in as a single string, delimited by |. Updates task_column_params
     # to be an array of the incoming values.
     unless task_column_params == []
@@ -17,6 +19,10 @@ class CorrespondenceTaskFilter < TaskFilter
     va_dor_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
       result = result.merge(filter_by_va_dor(value_hash[:val]))
+    end
+
+    unless nod_column_params.empty?
+      result = result.merge(filter_by_nod(nod_column_params))
     end
 
     unless task_column_params.empty?
@@ -31,6 +37,10 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   private
+
+  def filter_by_nod(nod_value)
+    tasks.where(nod: nod_value)
+  end
 
   def filter_by_date(date_info)
     date_type, first_date, second_date = date_info.split(",")

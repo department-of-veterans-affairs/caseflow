@@ -297,6 +297,28 @@ export const vaDor = () => {
   };
 };
 
+export const packageDocumentType = (tasks) => {
+  return {
+    header: 'Package Document Type',
+    // filterOptions: [
+    //   {displayText: 'Non-NOD', value: false},
+    //   {displayText: 'NOD', value: true}
+    // ],
+    filterOptions: [],
+    columnName: 'nod',
+    valueName: 'Package Document Type',
+    backendCanSort: true,
+    customFilterLabels: { false: 'Non-NOD', true: 'NOD' },
+    enableFilter: true,
+    getSortValue: (task) => task.nod,
+    name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    label: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    valueFunction: (task) => {
+      return task.nod ? 'NOD' : 'Non-NOD';
+    }
+  };
+};
+
 export const notes = () => {
   return {
     header: 'Notes',

@@ -37,10 +37,12 @@ class QueueColumn
     Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name => :regional_office_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => :assignee_options,
-    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options,
+    Constants.QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name => :package_document_type_options
   }.freeze
 
   def filter_options(tasks)
+    binding.pry
     filter_option_func = self.class::FILTER_OPTIONS[name]
 
     if filter_option_func
@@ -155,6 +157,11 @@ class QueueColumn
     end
 
     updated_totals
+  end
+
+  def package_document_type_options
+    binding.pry
+
   end
 
   def issue_type_options(tasks)
