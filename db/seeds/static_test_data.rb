@@ -11,6 +11,7 @@ module Seeds
     end
 
     def seed!
+      create_evidence_submission_contested_claim_cases_with_open_letter_task
       cases_for_timely_calculations_on_das
       case_with_bad_decass_for_timeline_range_checks
       create_veterans_for_mpi_sfnod_updates
@@ -489,6 +490,27 @@ module Seeds
           :assigned,
           assigned_to: MailTeam.singleton,
           parent: appeal.root_task
+        )
+      end
+      Timecop.return
+    end
+
+    def create_evidence_submission_contested_claim_cases_with_open_letter_task
+      byebug
+      Timecop.travel(91.days.ago)
+      6.times do
+        appeal = create(
+          :appeal,
+          :evidence_submission_docket,
+          :with_post_intake_tasks,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              nonrating_issue_category: "Contested Claims - Apportionment"
+            )
+          ],
+          veteran: create_veteran
         )
       end
       Timecop.return
