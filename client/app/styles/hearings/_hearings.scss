@@ -753,7 +753,8 @@ $form-width: 575px;
       }
     }
 
-    .even-row-group + .odd-row-group td, .odd-row-group + .even-row-group td {
+    .even-row-group + .odd-row-group td,
+    .odd-row-group + .even-row-group td {
       border-top: 1px solid $color-gray-lighter;
       padding-top: 3rem;
     }
