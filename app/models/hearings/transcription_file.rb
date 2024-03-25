@@ -2,7 +2,6 @@
 
 class TranscriptionFile < CaseflowRecord
   belongs_to :hearing, polymorphic: true
-
   belongs_to :transcription
   belongs_to :docket
 
