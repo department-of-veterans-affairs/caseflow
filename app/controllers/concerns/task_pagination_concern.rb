@@ -52,7 +52,7 @@ module TaskPaginationConcern
     end_time2 = Time.zone.now
     puts "Serialization took: #{(start_time2 - end_time2) * 1000}"
 
-    byebug
+    # byebug
     serialized_tasks
   end
 end

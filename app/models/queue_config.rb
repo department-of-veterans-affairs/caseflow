@@ -115,7 +115,7 @@ class QueueConfig
     end_time2 = Time.zone.now
     puts "Serialization took: #{(end_time2 - start_time2) * 1000}"
 
-    byebug
+    # byebug
 
     serialized_tasks
   end
