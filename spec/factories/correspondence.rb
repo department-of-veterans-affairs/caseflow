@@ -9,8 +9,8 @@ FactoryBot.define do
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
     va_date_of_receipt { Time.zone.yesterday }
     notes { "This is a note from CMP." }
+    nod { false }
     assigned_by factory: :user
-
     correspondence_type
     veteran
     package_document_type
