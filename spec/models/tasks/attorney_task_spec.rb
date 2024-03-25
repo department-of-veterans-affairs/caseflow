@@ -48,7 +48,7 @@ describe AttorneyTask, :all_dbs do
       let!(:attorney_staff) { create(:staff, sdomainid: attorney.css_id, sattyid: nil) }
       it "fails" do
         expect(subject).to be_invalid
-        expect(subject.errors.messages[:assigned_to].first).to eq "has to be an attorney"
+        expect(subject.errors.messages[:base].first).to eq "The selected individual is not an attorney in VACOLS"
       end
     end
 
