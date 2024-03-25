@@ -714,8 +714,8 @@ $form-width: 575px;
     outline: none;
   }
 
-  tr > *:first-child {
-    padding-left: 2.5rem !important;
+  th:first-child {
+    padding-left: 2.5rem;
   }
 
   tbody {
@@ -726,13 +726,17 @@ $form-width: 575px;
       }
 
       &.even-row-group td {
-        background-color: #F9F9F9;
+        background-color: $cf-background;
       }
 
       td {
         border: 0;
         padding-top: 0;
         padding-bottom: 3rem;
+
+        &:first-child {
+          padding-left: 2.5rem;
+        }
 
         &:last-child {
           font-style: italic;
@@ -749,8 +753,8 @@ $form-width: 575px;
       }
     }
 
-    tr.even-row-group + tr.odd-row-group td, tr.odd-row-group + tr.even-row-group td {
-      border-top: 1px solid #D6D7D9;
+    .even-row-group + .odd-row-group td, .odd-row-group + .even-row-group td {
+      border-top: 1px solid $color-gray-lighter;
       padding-top: 3rem;
     }
   }
