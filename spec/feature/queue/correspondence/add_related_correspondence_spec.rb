@@ -17,6 +17,8 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
       expect(page).to have_content("Add Related Correspondence")
       expect(page).to have_content("Add any related correspondence to the mail package that is in progress.")
+      expect(page).to have_content("Response Letter")
+      expect(page).to have_button("+ Add letter")
       expect(page).to have_content("Is this correspondence related to prior mail?")
       expect(page).to have_content("Associate with prior Mail")
       expect(associate_with_prior_mail_radio_options[:yes]).to have_text("Yes")

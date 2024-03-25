@@ -110,7 +110,7 @@ export const ReviewForm = (props) => {
 
   const generateOptions = (options) =>
     options.map((option) => ({
-      value: option.name,
+      value: option.id,
       label: option.name,
       id: option.id,
     }));
@@ -213,6 +213,7 @@ export const ReviewForm = (props) => {
                 name="correspondence-dropdown"
                 label="Correspondence type"
                 styling={tagStyling}
+                value={props.reviewDetails.correspondence_type_id}
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelect}
                 readOnly={props.isReadOnly}
@@ -267,6 +268,7 @@ ReviewForm.propTypes = {
       last_name: PropTypes.string,
     }),
     dropdown_values: PropTypes.array,
+    correspondence_type_id: PropTypes.number
   }),
   editableData: PropTypes.shape({
     notes: PropTypes.string,
