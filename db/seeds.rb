@@ -71,6 +71,7 @@ class SeedDB
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     call_and_log_seed_step Seeds::AmaIntake
@@ -83,6 +84,14 @@ class SeedDB
 
     Judge.list_all
     Attorney.list_all
+
+    # temporary disabling existing appeals for testing
+
+    RequestStore.store[:current_user] = User.system_user
+    DistributionTask.where(status: 'assigned').map { |t| t.update!(status: 'on_hold') }
+
+    VACOLS::Case.where(bfcurloc: ['81', '83']).map { |c| c.update!(bfcurloc: 'testing') }
+
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
