@@ -977,18 +977,6 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
     'Caseflow won’t send notifications immediately after scheduling.';
 };
 
-export const docketTypes = (originalType) => {
-  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
-
-  return [
-    option,
-    {
-      value: HEARING_REQUEST_TYPES.virtual,
-      label: VIRTUAL_HEARING_LABEL
-    }
-  ];
-};
-
 export const readableDocketType = (docketType) =>
   REQUEST_TYPE_OPTIONS.find((type) => docketType === type.value || docketType?.value === type.value);
 
