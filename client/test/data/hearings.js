@@ -51,7 +51,7 @@ export const virtualWebexHearing = {
     aliasWithHost: 'BVA@care.env.va.gov',
     appellantEmail: 'test@test.com',
     appellantTz: 'America/Los_Angeles',
-    coHostHearingLink: 'https://instant-usgov.webex.com/visit/u2f4ls3',
+    coHostLink: 'https://instant-usgov.webex.com/visit/u2f4ls3',
     conferenceProvider: 'webex',
     guestLink: 'https://instant-usgov.webex.com/visit/w9hjxwa',
     guestPin: null,

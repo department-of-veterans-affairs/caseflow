@@ -156,7 +156,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
       >
         <strong>
           Hearing Coordinator Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           hearing={
@@ -518,7 +518,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       >
         <strong>
           VLJ Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           aliasWithHost="BVA#00000001@localhost"
@@ -847,7 +847,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       >
         <strong>
           Guest Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           aliasWithHost="BVA#00000001@localhost"
@@ -1168,7 +1168,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
         "aliasWithHost": "BVA@care.env.va.gov",
         "appellantEmail": "test@test.com",
         "appellantTz": "America/Los_Angeles",
-        "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+        "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
         "conferenceProvider": "webex",
         "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
         "guestPin": null,
@@ -1213,7 +1213,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
             "aliasWithHost": "BVA@care.env.va.gov",
             "appellantEmail": "test@test.com",
             "appellantTz": "America/Los_Angeles",
-            "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+            "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
             "conferenceProvider": "webex",
             "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
             "guestPin": null,
@@ -1234,7 +1234,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       >
         <strong>
           VLJ Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           hearing={
@@ -1261,7 +1261,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                 "aliasWithHost": "BVA@care.env.va.gov",
                 "appellantEmail": "test@test.com",
                 "appellantTz": "America/Los_Angeles",
-                "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                 "conferenceProvider": "webex",
                 "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                 "guestPin": null,
@@ -1302,7 +1302,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                   "aliasWithHost": "BVA@care.env.va.gov",
                   "appellantEmail": "test@test.com",
                   "appellantTz": "America/Los_Angeles",
-                  "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                   "conferenceProvider": "webex",
                   "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                   "guestPin": null,
@@ -1573,7 +1573,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
             "aliasWithHost": "BVA@care.env.va.gov",
             "appellantEmail": "test@test.com",
             "appellantTz": "America/Los_Angeles",
-            "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+            "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
             "conferenceProvider": "webex",
             "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
             "guestPin": null,
@@ -1594,7 +1594,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       >
         <strong>
           Hearing Coordinator Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           hearing={
@@ -1621,7 +1621,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                 "aliasWithHost": "BVA@care.env.va.gov",
                 "appellantEmail": "test@test.com",
                 "appellantTz": "America/Los_Angeles",
-                "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                 "conferenceProvider": "webex",
                 "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                 "guestPin": null,
@@ -1662,7 +1662,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                   "aliasWithHost": "BVA@care.env.va.gov",
                   "appellantEmail": "test@test.com",
                   "appellantTz": "America/Los_Angeles",
-                  "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                   "conferenceProvider": "webex",
                   "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                   "guestPin": null,
@@ -1933,7 +1933,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
             "aliasWithHost": "BVA@care.env.va.gov",
             "appellantEmail": "test@test.com",
             "appellantTz": "America/Los_Angeles",
-            "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+            "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
             "conferenceProvider": "webex",
             "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
             "guestPin": null,
@@ -1954,7 +1954,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
       >
         <strong>
           Guest Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           hearing={
@@ -1981,7 +1981,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                 "aliasWithHost": "BVA@care.env.va.gov",
                 "appellantEmail": "test@test.com",
                 "appellantTz": "America/Los_Angeles",
-                "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                 "conferenceProvider": "webex",
                 "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                 "guestPin": null,
@@ -2022,7 +2022,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, webex, and in pr
                   "aliasWithHost": "BVA@care.env.va.gov",
                   "appellantEmail": "test@test.com",
                   "appellantTz": "America/Los_Angeles",
-                  "coHostHearingLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/u2f4ls3",
                   "conferenceProvider": "webex",
                   "guestLink": "https://instant-usgov.webex.com/visit/w9hjxwa",
                   "guestPin": null,
@@ -2339,7 +2339,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       >
         <strong>
           VLJ Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           aliasWithHost="BVA#00000001@localhost"
@@ -2418,7 +2418,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       >
         <strong>
           Guest Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           aliasWithHost="BVA#00000001@localhost"
@@ -2780,7 +2780,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       >
         <strong>
           Guest Link
-          : 
+          :
         </strong>
         <VirtualHearingLinkDetails
           aliasWithHost="BVA0000009@care.evn.va.gov"
@@ -3153,7 +3153,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             data-css-1abghdv=""
           >
             <strong>
-              Conference Room: 
+              Conference Room:
             </strong>
             BVA0000009@care.evn.va.gov
           </div>
@@ -3161,7 +3161,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             data-css-6aejb2=""
           >
             <strong>
-              PIN: 
+              PIN:
             </strong>
             2684353125#
           </div>
