@@ -14,8 +14,6 @@ class ExternalApi::VANotifyService
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
   GET_STATUS_ENDPOINT = "/v2/notifications/"
-  TEMPLATE_ENDPOINT = "/service/#{SERVICE_ID}/template"
-  CALLBACK_ENDPOINT = "/service/#{SERVICE_ID}/callback"
   HEADERS = {
     "Content-Type": "application/json", Accept: "application/json"
   }.freeze
