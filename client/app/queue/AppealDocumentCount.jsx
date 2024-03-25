@@ -54,7 +54,8 @@ class AppealDocumentCount extends React.PureComponent {
       });
     };
 
-    tryFetchingDocumentCount();
+    // TODO: Turn this back on eventually. It's clogging up my logs
+    // tryFetchingDocumentCount();
   }
 
   render = () => {

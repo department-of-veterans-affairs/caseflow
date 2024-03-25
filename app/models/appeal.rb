@@ -661,6 +661,9 @@ class Appeal < DecisionReview
   end
 
   def advanced_on_docket?
+    # TODO: If aod is already true should it just skip this?
+    return aod_based_on_age if aod_based_on_age
+
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.

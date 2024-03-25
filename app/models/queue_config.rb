@@ -47,14 +47,14 @@ class QueueConfig
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(
-      tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
+      tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names, tab.name),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
       task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}"
     )
   end
 
-  def serialized_tasks_for_columns(tasks, columns)
+  def serialized_tasks_for_columns(tasks, columns, tab_name = "unknown")
     return [] if tasks.empty?
 
     testing_appeal_includes =
@@ -62,7 +62,7 @@ class QueueConfig
         {
           appeal: [
             :available_hearing_locations,
-            :claimants,
+            { claimants: [person: :advance_on_docket_motions] },
             :work_mode,
             :latest_informal_hearing_presentation_task,
             :request_issues,
@@ -81,7 +81,7 @@ class QueueConfig
     puts "---------------------------------- In serialize tasks for columns -----------------------------------"
     start_time1 = Time.zone.now
     primed_tasks = []
-    StackProf.run(mode: :wall, out: "eager_load_legacy.dump") do
+    StackProf.run(mode: :wall, out: "eager_load_legacy_#{tab_name}.dump") do
       # primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
       primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks_in_queue(tasks, testing_appeal_includes)
     end
@@ -105,7 +105,7 @@ class QueueConfig
     #     #{CachedAppeal.table_name}.former_travel"
     #   )
 
-    StackProf.run(mode: :wall, out: "serialize_tasks_column_serializer.dump") do
+    StackProf.run(mode: :wall, out: "serialize_tasks_column_serializer_#{tab_name}.dump") do
       serialized_tasks = WorkQueue::TaskColumnSerializer.new(
         primed_tasks,
         is_collection: true,
@@ -115,7 +115,7 @@ class QueueConfig
     end_time2 = Time.zone.now
     puts "Serialization took: #{(end_time2 - start_time2) * 1000}"
 
-    # byebug
+    byebug
 
     serialized_tasks
   end

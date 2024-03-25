@@ -298,12 +298,6 @@ class Veteran < CaseflowRecord
     nil
   end
 
-  # Testing serializer speed without bgs calls. This is one of the few things that probably should be kept external
-  # However, we could just do all of our caching via jobs instead of baking it into the accessors.
-  # def date_of_death_fast
-  #   instance_variable_get("@date_of_death".to_sym)
-  # end
-
   def set_date_of_death_reported_at!
     self.date_of_death_reported_at = Time.zone.now
   end

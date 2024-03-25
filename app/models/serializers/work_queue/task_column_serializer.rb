@@ -70,13 +70,12 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :veteran_full_name do |_object, params|
+  attribute :veteran_full_name do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["CASE_DETAILS_LINK"]["name"]]
 
     if serialize_attribute?(params, columns)
-      # TODO: This is a DB call and possibly a BGS call if it's not redis cached. Much slower than you think
-      # object.appeal.veteran_full_name
-      "Billy Bob"
+      # TODO: This is probably a DB call and possibly a BGS call if it's not redis cached. Much slower than you think
+      object.appeal.veteran_full_name
     end
   end
 
@@ -102,13 +101,13 @@ class WorkQueue::TaskColumnSerializer
     object.started_at
   end
 
-  attribute :issue_count do |_object, params|
+  attribute :issue_count do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["ISSUE_COUNT"]["name"]]
 
     if serialize_attribute?(params, columns)
       # TODO: Can serialize based on cached appeals I think.
-      # object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
-      1
+      object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
+      # 1
     end
   end
 
@@ -125,13 +124,13 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :aod do |_object, params|
+  attribute :aod do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["APPEAL_TYPE"]["name"]]
 
     if serialize_attribute?(params, columns)
       # TODO: See if this can be retrieved without query
-      # object.appeal.try(:advanced_on_docket?)
-      true
+      object.appeal.try(:advanced_on_docket?)
+      # true
     end
   end
 
@@ -154,23 +153,23 @@ class WorkQueue::TaskColumnSerializer
     object.label
   end
 
-  attribute :placed_on_hold_at do |_object, params|
+  attribute :placed_on_hold_at do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_ON_HOLD"]["name"]]
 
     if serialize_attribute?(params, columns)
       # TODO: Unlikely to be able to fix this one
-      # object.calculated_placed_on_hold_at
-      Time.zone.now
+      object.calculated_placed_on_hold_at
+      # Time.zone.now
     end
   end
 
-  attribute :on_hold_duration do |_object, params|
+  attribute :on_hold_duration do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_ON_HOLD"]["name"]]
 
     if serialize_attribute?(params, columns)
       # TODO: Unlikely to be able to fix this one
-      # object.calculated_on_hold_duration
-      Time.zone.now
+      object.calculated_on_hold_duration
+      # Time.zone.now
     end
   end
 
@@ -298,14 +297,15 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  attribute :suggested_hearing_location do |_object, params|
-    columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
+  attribute :suggested_hearing_location do |object, params|
+    # columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
 
-    if serialize_attribute?(params, columns)
+    # if serialize_attribute?(params, columns)
       # TODO: See if this one matters
       # object.appeal.suggested_hearing_location&.to_hash
-      {}
-    end
+      # {}
+    # end
+    object.appeal.suggested_hearing_location&.to_hash
   end
 
   attribute :overtime do |object, params|
@@ -325,7 +325,7 @@ class WorkQueue::TaskColumnSerializer
     if serialize_attribute?(params, columns)
       # object.appeal.try(:contested_claim?)
       object.appeal.contested_claim?
-      true
+      # true
     end
   end
 
@@ -347,13 +347,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :veteran_appellant_deceased do |_object, params|
+  attribute :veteran_appellant_deceased do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["BADGES"]["name"]]
 
     if serialize_attribute?(params, columns)
       begin
         # object.appeal.try(:veteran_appellant_deceased?)
-        true
+        object.appeal.veteran_appellant_deceased?
+        # true
       rescue BGS::PowerOfAttorneyFolderDenied => error
         # This is a bit of a leaky abstraction: BGS exceptions are suppressed and logged here so
         # that a single appeal raising this error does not prevent users from loading their queues.
@@ -366,35 +367,34 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :document_id do |_object, params|
+  attribute :document_id do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_ID"]["name"]]
 
     if serialize_attribute?(params, columns)
-      # object.latest_attorney_case_review&.document_id
-      "1"
+      object.latest_attorney_case_review&.document_id
     end
   end
 
-  attribute :decision_prepared_by do |_object, params|
+  attribute :decision_prepared_by do |object, params|
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_ID"]["name"]]
 
     if serialize_attribute?(params, columns)
-      # object.prepared_by_display_name || { first_name: nil, last_name: nil }
-      { first_name: nil, last_name: nil }
+      object.prepared_by_display_name || { first_name: nil, last_name: nil }
+      # { first_name: nil, last_name: nil }
     end
   end
 
-  attribute :latest_informal_hearing_presentation_task do |_object, params|
+  attribute :latest_informal_hearing_presentation_task do |object, params|
     columns = [
       Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"],
       Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_WAITING"]["name"]
     ]
 
     if serialize_attribute?(params, columns)
-      # task = object.appeal.latest_informal_hearing_presentation_task
+      task = object.appeal.latest_informal_hearing_presentation_task
 
-      # task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
-      {}
+      task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
+      # {}
     end
   end
 

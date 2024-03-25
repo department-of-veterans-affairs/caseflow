@@ -136,11 +136,6 @@ module AppealConcern
     veteran_is_deceased && appellant_is_veteran
   end
 
-  def veteran_appellant_deceased_fast?
-    # veteran & [:date_of_death] && appellant_is_veteran
-    veteran&.date_of_death_fast && appellant_is_veteran
-  end
-
   def veteran_death_date
     veteran&.date_of_death
   end

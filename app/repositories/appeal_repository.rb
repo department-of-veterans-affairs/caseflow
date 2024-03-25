@@ -53,11 +53,21 @@ class AppealRepository
         legacy_preloader = ActiveRecord::Associations::Preloader.new
         appeals_preloader.preload(appeal_tasks, appeal_includes) if appeal_includes.present?
         legacy_preloader.preload(legacy_tasks, legacy_includes) if legacy_includes.present?
+        return appeal_tasks if legacy_tasks.empty?
       else
         appeal_tasks = tasks.where(appeal_type: "Appeal")
+        # TODO: Make sure this works
         legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
         appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
         legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
+
+        # Preload veterans as well
+        # This could be faster if it was made into an inner join and select only the fields from it that we need
+        vet_numbers = appeal_tasks.map { |task| task.appeal.veteran_file_number }
+        veterans = Veteran.where(file_number: vet_numbers).index_by(&:file_number)
+        appeal_tasks.each do |task|
+          task.appeal.veteran = veterans[task.appeal.veteran_file_number]
+        end
       end
       # appeal_tasks = tasks.where(appeal_type: "Appeal")
       # legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
