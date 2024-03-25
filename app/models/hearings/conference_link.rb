@@ -10,8 +10,7 @@ class ConferenceLink < CaseflowRecord
   include CreatedByUserConcern
   include ConferenceableConcern
 
-  include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing :hearing
+  belongs_to :hearing, polymorphic: true
 
   after_create :generate_conference_information
 
