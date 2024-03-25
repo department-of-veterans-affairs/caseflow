@@ -146,4 +146,43 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       )
     end
   end
+
+  describe "GET #auto_assign_correpsondences" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    context "when there is no existing batch assignment attempt" do
+      it "creates batch auto assignment attempt and returns the id" do
+        expect { get :auto_assign_correspondences }.to change(BatchAutoAssignmentAttempt, :count).by(1)
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)["batch_auto_assignment_attempt_id"]).to eq(BatchAutoAssignmentAttempt.last.id)
+      end
+    end
+  end
+
+  describe "POST #auto_assign_status" do
+    let(:error_baaa) do
+      create(:batch_auto_assignment_attempt, :max_capacity_error, :packages_assigned, user: current_user)
+    end
+
+    before do
+      8.times do
+        create(:individual_auto_assignment_attempt, batch_auto_assignment_attempt: error_baaa, status: "completed")
+      end
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    it "returns status details" do
+      get :auto_assign_status, params: { batch_auto_assignment_attempt_id: error_baaa.id }
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+      expect(body["status"]).to eq(error_baaa.status)
+      expect(body["number_assigned"]).to eq(8)
+      expect(body["number_attempted"]).to eq(8)
+      expect(body["error_message"]).to eq(error_baaa.error_info)
+    end
+  end
 end

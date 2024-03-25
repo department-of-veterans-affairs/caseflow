@@ -11,6 +11,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
+  has_many :organization_user_permissions, through: :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :membership_requests, foreign_key: :requestor_id
   has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
@@ -93,6 +94,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def hearings_user?
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
+  def inbound_ops_team_superuser?
+    member_of_organization?(InboundOpsTeam.singleton) &&
+      (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
   end
 
   def can_assign_hearing_schedule?
