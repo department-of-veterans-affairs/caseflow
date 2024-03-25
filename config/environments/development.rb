@@ -144,6 +144,9 @@ Rails.application.configure do
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
 
+  # Dynatrace variables
+  ENV["STATSD_ENV"] = "development"
+
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
