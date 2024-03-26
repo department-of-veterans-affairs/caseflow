@@ -1001,7 +1001,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             <a
               href="/ae4c4050-36e8-4df2-83a4-839cf73725dc/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
@@ -2747,7 +2747,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
             <a
               href="/ae4c4050-36e8-4df2-83a4-839cf73725dc/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
@@ -3959,7 +3959,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             <a
               href="/3c170697-2c52-4bad-b7bd-2ccf44f0c44c/details"
             >
-              Edit Hearing Details
+              Hearing Details and links
               <span
                 data-css-1qcxu9b=""
               >
