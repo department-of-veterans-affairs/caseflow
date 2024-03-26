@@ -163,7 +163,7 @@ describe SendNotificationJob, type: :job do
       it "logs error when message is nil" do
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
-            expect(error_received.message).to eq  "There was no message passed into the " \
+            expect(error_received.message).to eq "There was no message passed into the " \
                "SendNotificationListener.perform_later function. Exiting job."
           end
 
