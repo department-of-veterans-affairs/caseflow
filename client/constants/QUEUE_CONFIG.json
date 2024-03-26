@@ -258,5 +258,10 @@
     "IS_FORMER_TRAVEL": {
       "key": "former Travel"
     }
+  },
+
+  "PACKAGE_DOC_TYPE_FILTER_OPTIONS": {
+    "NOD": "NOD",
+    "NON_NOD": "Non-NOD"
   }
 }
