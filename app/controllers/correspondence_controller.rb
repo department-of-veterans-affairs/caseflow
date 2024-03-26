@@ -108,8 +108,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  private
-
   def handle_mail_superuser_or_supervisor
     set_handle_mail_superuser_or_supervisor_params(current_user, params)
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
@@ -158,6 +156,8 @@ class CorrespondenceController < ApplicationController
 
     render json: status_details, status: :ok
   end
+
+  private
 
   def handle_reassign_or_remove_task(mail_team_user)
     return unless @reassign_remove_task_id.present? && @action_type.present?

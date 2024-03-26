@@ -12,6 +12,7 @@ import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import SearchBar from '../../components/SearchBar';
+import BatchAutoAssignButton from './component/BatchAutoAssignButton';
 import {
   actionType,
   assignedToColumn,
@@ -228,9 +229,7 @@ const CorrespondenceTableBuilder = (props) => {
                   disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
                 />
                 <span style={{ marginLeft: 'auto' }}>
-                  <Button
-                    name="Auto assign correspondence"
-                  />
+                  <BatchAutoAssignButton />
                 </span>
               </>
           }
