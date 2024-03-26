@@ -136,4 +136,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def epe_development_item_reference_id
     @payload.dig(:end_product_establishment, :development_item_reference_id)
   end
+
+  # RequestIssues attr
+  # return the array of RI objects
+  def get_request_issues
+    @payload.dig(:request_issues)
+  end
 end
