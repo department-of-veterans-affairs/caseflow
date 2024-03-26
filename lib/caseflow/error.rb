@@ -487,4 +487,5 @@ module Caseflow::Error
   class DecisionReviewCreatedIntakeError < StandardError; end
   class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
   class DecisionReviewCreatedEpEstablishmentError < StandardError; end
+  class DecisionReviewCreatedRequestIssuesError< StandardError; end
 end
