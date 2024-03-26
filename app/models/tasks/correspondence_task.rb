@@ -5,6 +5,7 @@ class CorrespondenceTask < Task
   self.abstract_class = true
 
   before_create :verify_org_task_unique
+  belongs_to :appeal, class_name: "Correspondence", foreign_key: :appeal_id
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
 
@@ -24,7 +25,7 @@ class CorrespondenceTask < Task
       appeal_id: appeal_id,
       appeal_type: appeal_type,
       type: type
-    ).any?
+    ).open.any?
       fail(
         Caseflow::Error::DuplicateOrgTask,
         task_type: self.class.name,
@@ -63,17 +64,35 @@ class CorrespondenceTask < Task
     )
   end
 
+  def correspondence
+    appeal
+  end
+
+  def completed_by_date
+    closed_at
+  end
+
+  def task_url
+    "/under_construction"
+  end
+
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def status_is_valid_on_create
-    if type == "ReviewPackageTask" && status != Constants.TASK_STATUSES.unassigned
-      update!(status: :unassigned)
-    elsif type != "ReviewPackageTask" && status != Constants.TASK_STATUSES.assigned
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    case type
+    when "ReviewPackageTask"
+      return Constants.TASK_STATUSES.on_hold if status != Constants.TASK_STATUSES.on_hold
+    when "CorrespondenceIntakeTask", "EfolderUploadFailedTask"
+      return Constants.TASK_STATUSES.in_progress if status != Constants.TASK_STATUSES.in_progress
+    when "CorrespondenceRootTask", "HearingPostponementRequestMailTask"
+      return Constants.TASK_STATUSES.completed if status != Constants.TASK_STATUSES.completed
+    else
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type unless status == Constants.TASK_STATUSES.assigned
     end
-
     true
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def assignee_status_is_valid_on_create
     if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?

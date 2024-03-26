@@ -1,4 +1,5 @@
 import { ACTIONS } from './correspondenceConstants';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const loadCurrentCorrespondence = (currentCorrespondence) =>
   (dispatch) => {
@@ -27,8 +28,36 @@ export const loadCorrespondenceInformation = (correspondenceInformation) =>
       payload: {
         correspondenceInformation
       }
+    })
+  };
+export const loadSavedIntake = (savedStore) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_SAVED_INTAKE,
+      payload: {
+        savedStore
+      }
     });
   };
+
+export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
+  ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
+    then((response) => {
+      if (!response.ok) {
+        console.error(response);
+      }
+
+      dispatch({
+        type: ACTIONS.SAVE_CURRENT_INTAKE,
+        payload: {
+          currentIntake
+        }
+      });
+    }).
+    catch((err) => {
+      console.error(new Error(`Problem with GET ${currentIntake} ${err}`));
+    });
+};
 
 export const loadVeteranInformation = (veteranInformation) =>
   (dispatch) => {
@@ -48,6 +77,28 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
         vetCorrespondences
       }
     });
+  };
+
+export const loadCorrespondenceConfig = (configUrl) =>
+  (dispatch) => {
+    ApiUtil.get(configUrl).then(
+      (response) => {
+        const returnedObject = response.body;
+        const correspondenceConfig = returnedObject.correspondence_config;
+
+        dispatch(
+          {
+            type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
+            payload: {
+              correspondenceConfig
+            }
+          });
+
+      }).
+      catch(
+        (err) => {
+          console.error(new Error(`Problem with GET ${configUrl} ${err}`));
+        });
   };
 
 export const updateRadioValue = (value) =>
@@ -72,6 +123,14 @@ export const clearCheckboxState = () =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
+    });
+  };
+
+export const setSelectedTasks = (values) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_SELECTED_TASKS,
+      payload: { values }
     });
   };
 
@@ -153,3 +212,39 @@ export const removeResponseLetters = (index) =>
       }
     });
   };
+
+export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
+
+export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
+
+export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SELECTED_VETERAN_DETAILS,
+    payload: {
+      selectedVeteranDetails
+    }
+  });
+};
+
+export const setErrorBanner = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,
+    payload: {
+      isVisible
+    }
+  });
+};

@@ -26,6 +26,9 @@ import {
   setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
+  setMailTeamUser,
+  setMailSupervisor,
+  setMailSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -97,6 +100,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
@@ -128,6 +132,9 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
+    this.props.setMailTeamUser(this.props.isMailTeamUser);
+    this.props.setMailSupervisor(this.props.isMailSupervisor);
+    this.props.setMailSuperUser(this.props.isMailSuperUser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
@@ -687,10 +694,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
   );
 
-  routedCorrespondenceCase = () => (
+  routedCorrespondenceCases = () => (
     <CorrespondenceCases {...this.props} />
   );
 
@@ -755,9 +762,16 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
+              path="/queue/correspondence/team"
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
+            />
+
+            <PageRoute
+              exact
               path="/queue/correspondence"
-              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
-              render={this.routedCorrespondenceCase}
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
             />
 
             <PageRoute
@@ -1505,6 +1519,12 @@ QueueApp.propTypes = {
   setUserCssId: PropTypes.func,
   setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
+  setMailTeamUser: PropTypes.func,
+  setMailSupervisor: PropTypes.func,
+  setMailSuperUser: PropTypes.func,
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
@@ -1530,6 +1550,7 @@ QueueApp.propTypes = {
   correspondence: PropTypes.object,
   autoTexts: PropTypes.array,
   veteranInformation: PropTypes.object,
+  reduxStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
@@ -1555,6 +1576,9 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
+      setMailTeamUser,
+      setMailSupervisor,
+      setMailSuperUser,
     },
     dispatch
   );

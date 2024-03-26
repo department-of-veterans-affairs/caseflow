@@ -7,8 +7,8 @@ FactoryBot.define do
     source_type { "Mail" }
     cmp_queue_id { 1 }
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
-    va_date_of_receipt { Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday) }
-    notes { "This is a note from CMP." }
+    va_date_of_receipt { Time.zone.yesterday }
+    notes { "This is a test note." }
     nod { false }
     assigned_by factory: :user
 
@@ -32,7 +32,12 @@ FactoryBot.define do
       end
 
       after(:create) do |correspondence, evaluator|
-        create(:correspondence_intake_task, appeal: correspondence, assigned_to: evaluator.assigned_to)
+        create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          assigned_to: evaluator.assigned_to,
+          appeal_type: Correspondence.name
+        )
       end
     end
   end
