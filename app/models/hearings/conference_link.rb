@@ -10,11 +10,12 @@ class ConferenceLink < CaseflowRecord
   include CreatedByUserConcern
   include ConferenceableConcern
 
+  belongs_to :hearing, polymorphic: true
+
   after_create :generate_conference_information
 
   belongs_to :hearing_day
   belongs_to :created_by, class_name: "User"
-  belongs_to :hearing, polymorphic: true
 
   alias_attribute :alias_name, :alias
 

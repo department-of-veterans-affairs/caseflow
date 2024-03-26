@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class TranscriptionFile < CaseflowRecord
+  belongs_to :hearing, polymorphic: true
+
   belongs_to :transcription
   belongs_to :docket
-  belongs_to :hearing, polymorphic: true
 
   VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv].freeze
 
