@@ -13,6 +13,8 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :instructions
 
+  attribute :nod
+
   attribute :veteran_details do |object|
     vet = Veteran.find(object.correspondence.veteran_id)
     "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
@@ -73,7 +75,7 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
       { parent_task_url: "" }
     end
   end
-  
+
   attribute :assigned_to do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
