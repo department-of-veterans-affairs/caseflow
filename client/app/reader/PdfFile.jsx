@@ -143,10 +143,17 @@ export class PdfFile extends React.PureComponent {
 
         console.error(message);
 
+        const documentData = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        };
+
         if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
           storeMetrics(
             logId,
-            this.metricsAttributes,
+            documentData,
             { message,
               type: 'error',
               product: 'browser',

@@ -51,12 +51,8 @@ const storeMetricsError = {
   data:
   {
     documentId: 1,
-    numPagesInDoc: null,
-    pageIndex: null,
     file: '/document/1/pdf',
     documentType: 'test',
-    prefetchDisabled: undefined,
-    overscan: undefined
   },
   info: {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
