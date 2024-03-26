@@ -10,16 +10,14 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call
+  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
 
-    include_feature = FeatureToggle.enabled?(:acd_exclude_from_affinity) ||
-      ( CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit &&
-        CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
-      )
-
+      include_feature = FeatureToggle.enabled?(:acd_exclude_from_affinity) ||
+                        (CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit &&
+                        CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit)
 
       return [*not_genpop_appeals, *only_genpop_appeals] if include_feature &&
                                                             judge.present?
