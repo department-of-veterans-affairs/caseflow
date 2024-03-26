@@ -279,19 +279,19 @@ export class PdfPage extends React.PureComponent {
         });
       }).catch((error) => {
         const id = uuid.v4();
-        // const data = {
-        //   documentId: this.props.documentId,
-        //   documentType: this.props.documentType,
-        //   file: this.props.file,
-        //   prefetchDisabled: this.props.featureToggles.prefetchDisabled
-        // };
+        const data = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        };
         const message = `${id} : setUpPage ${this.props.file} : ${error}`;
 
         console.error(message);
         if (pageAndTextFeatureToggle) {
           storeMetrics(
             id,
-            this.props.metricsAttributes,
+            data,
             { message,
               type: 'error',
               product: 'browser',
