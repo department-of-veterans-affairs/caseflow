@@ -8,7 +8,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        request_more_cases_minimum
        alternative_batch_size
        batch_size_per_attorney
-       days_before_goal_due_for_distribution
+       ama_direct_review_start_distribution_prior_to_goals
        ama_hearing_case_affinity_days
        cavc_affinity_days
        ama_evidence_submission_docket_time_goals
@@ -34,7 +34,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it 'requires a boolean attribute values to be either "true" or "false"' do
       lever = described_class.new
       expect(lever).not_to be_valid
-      expect(lever.errors[:is_toggle_active]).to include("is not included in the list")
       expect(lever.errors[:is_disabled_in_ui]).to include("is not included in the list")
     end
 
@@ -106,19 +105,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
     it "should match array of FLOAT Levers" do
       expect(CaseDistributionLever::FLOAT_LEVERS).to match_array(float_levers)
-    end
-  end
-
-  context "distribution_value" do
-    it "should return value from options value when radio data type lever object" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
-      option = lever.options.detect { |opt| opt["item"] == lever.value }
-      expect(lever.distribution_value).to eq(option["value"])
-    end
-
-    it "should return value from lever object" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)
-      expect(lever.distribution_value).to eq(lever.value)
     end
   end
 
@@ -199,6 +185,21 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       errors = CaseDistributionLever.update_acd_levers(current_levers, nil)
       expect(errors.size).to eq(2)
       expect(errors.last.to_s).to include("PG::NotNullViolation: ERROR")
+    end
+  end
+
+  context "snapshot" do
+    it "should return hash with item keys and values objects of value and is_toggle_active" do
+      snapshot_hash = {}
+
+      Seeds::CaseDistributionLevers.levers.each_with_object(snapshot_hash) do |lever, s_hash|
+        s_hash[lever[:item]] = {
+          value: lever[:value].to_s,
+          is_toggle_active: lever[:is_toggle_active]
+        }
+      end
+
+      expect(CaseDistributionLever.snapshot).to eq(snapshot_hash)
     end
   end
 end

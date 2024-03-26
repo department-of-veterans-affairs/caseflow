@@ -15,7 +15,6 @@ class HearingRequestCaseDistributor
     # will create one array for the appeals and one for their genpop values with matching indexes
     appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
     genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
-
     # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
     # the DistributedCases
     tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)

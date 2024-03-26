@@ -16,8 +16,8 @@ FactoryBot.define do
         scheduled_for: Time.zone.today,
         judge: judge,
         request_type: regional_office.nil? ? "C" : "V",
-        created_by: adding_user,
-        updated_by: adding_user
+        created_by: adding_user || User.system_user,
+        updated_by: adding_user || User.system_user
       )
     end
     hearing_location do
