@@ -37,7 +37,7 @@ class SendNotificationJob < CaseflowJob
       unless message_json
         fail Caseflow::Error::NotificationInitializationError,
              message: "There was no message passed into the " \
-               "SendNotificationListener.perform_later function. Exiting job."
+               "SendNotificationJob.perform_later function. Exiting job."
       end
 
       handle_message_json(message_json)
@@ -98,11 +98,11 @@ class SendNotificationJob < CaseflowJob
         notification_audit_record.save!
       else
         fail Caseflow::Error::NotificationInitializationError,
-             message: "Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job."
+             message: "Audit record was unable to be found or created in SendNotificationJob. Exiting Job."
       end
     else
       fail Caseflow::Error::NotificationInitializationError,
-           message: "appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job."
+           message: "appeals_id or appeal_type or event_type was nil in the SendNotificationJob. Exiting job."
     end
   end
   # rubocop:enable Layout/LineLength, Metrics/BlockNesting

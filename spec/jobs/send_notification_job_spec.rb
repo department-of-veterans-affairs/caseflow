@@ -164,7 +164,7 @@ describe SendNotificationJob, type: :job do
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "There was no message passed into the " \
-               "SendNotificationListener.perform_later function. Exiting job."
+               "SendNotificationJob.perform_later function. Exiting job."
           end
 
           SendNotificationJob.perform_later(nil)
@@ -175,7 +175,7 @@ describe SendNotificationJob, type: :job do
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "appeals_id or appeal_type or event_type was nil " \
-              "in the SendNotificationListnerJob. Exiting job."
+              "in the SendNotificationJob. Exiting job."
           end
 
           SendNotificationJob.perform_later(fail_create_message.to_json)
@@ -188,7 +188,7 @@ describe SendNotificationJob, type: :job do
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "Audit record was unable to be found or created " \
-              "in SendNotificationListnerJob. Exiting Job."
+              "in SendNotificationJob. Exiting Job."
           end
 
           SendNotificationJob.perform_later(good_message.to_json)
