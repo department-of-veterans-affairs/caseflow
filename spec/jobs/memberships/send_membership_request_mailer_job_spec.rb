@@ -119,14 +119,14 @@ describe Memberships::SendMembershipRequestMailerJob do
       let(:email_message) { instance_double(GovDelivery::TMS::EmailMessage) }
       let(:response) { instance_double("Response") }
 
-      it "Calls the DataDogService in the external_message_id method" do
+      it "Calls the MetricsService in the external_message_id method" do
         allow_any_instance_of(ActionMailer::Parameterized::MessageDelivery).to receive(:deliver_now!)
           .and_return(email_message)
         allow(email_message).to receive(:is_a?).with(GovDelivery::TMS::EmailMessage).and_return(true)
         allow(email_message).to receive(:response).and_return(response)
         allow(response).to receive(:body).and_return({})
         allow(response).to receive(:status).and_return("200 Good")
-        expect(DataDogService).to receive(:emit_gauge).with(
+        expect(MetricsService).to receive(:emit_gauge).with(
           app_name: "caseflow_job",
           metric_group: Memberships::SendMembershipRequestMailerJob.name.underscore,
           metric_name: "runtime",

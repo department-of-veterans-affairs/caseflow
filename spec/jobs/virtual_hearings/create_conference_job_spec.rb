@@ -102,7 +102,7 @@ describe VirtualHearings::CreateConferenceJob do
     include_examples "sent email event objects are created"
 
     it "logs success to datadog" do
-      expect(DataDogService).to receive(:increment_counter).with(
+      expect(MetricsService).to receive(:increment_counter).with(
         hash_including(
           metric_name: "created_conference.successful",
           metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -173,7 +173,7 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       it "logs failure to datadog" do
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "created_conference.failed",
             metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
