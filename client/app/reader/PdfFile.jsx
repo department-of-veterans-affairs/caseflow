@@ -474,7 +474,6 @@ export class PdfFile extends React.PureComponent {
       this.scrollTimer = setTimeout(() => {
         const scrollStart = performance.now();
 
-
         const data = {
           overscan: this.props.windowingOverscan,
           documentType: this.props.documentType,
@@ -484,9 +483,6 @@ export class PdfFile extends React.PureComponent {
           start: scrollStart,
           end: performance.now()
         };
-
-        console.log(`metricsAttributes == SCROLL TIMER ${JSON.stringify(this.metricsAttributes)}`);
-
 
         const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
         const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
