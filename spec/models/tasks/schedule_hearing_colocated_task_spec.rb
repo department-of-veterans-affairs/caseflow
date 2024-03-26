@@ -15,7 +15,8 @@ describe ScheduleHearingColocatedTask, :all_dbs do
         docket: appeal.docket_type,
         priority: false,
         case_id: appeal.uuid,
-        task: DistributionTask.find_by(appeal: appeal)
+        task: DistributionTask.find_by(appeal: appeal),
+        sct_appeal: false
       )
     end
 

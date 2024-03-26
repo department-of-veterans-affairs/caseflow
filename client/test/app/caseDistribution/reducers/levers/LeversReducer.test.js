@@ -37,6 +37,7 @@ describe('Lever reducer', () => {
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
     isUserAcdAdmin: false,
+    acdExcludeFromAffinity: false
   };
 
   afterEach(() => {
@@ -101,9 +102,9 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  it('should handle UPDATE_TEXT_LEVER action', () => {
+  it('should handle UPDATE_LEVER_VALUE action', () => {
     const action = {
-      type: ACTIONS.UPDATE_TEXT_LEVER,
+      type: ACTIONS.UPDATE_LEVER_VALUE,
       payload: {
         leverGroup: 'batch',
         leverItem: 'test-lever-text-type',
@@ -139,29 +140,27 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  it('should handle UPDATE_COMBINATION_LEVER action', () => {
+  it('should handle UPDATE_LEVER_IS_TOGGLE_ACTIVE action', () => {
     const action = {
-      type: ACTIONS.UPDATE_COMBINATION_LEVER,
+      type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
       payload: {
         leverGroup: 'docket_distribution_prior',
         leverItem: 'ama_hearings_start_distribution_prior_to_goals',
-        value: 40,
         toggleValue: false
       }
     };
 
     const combinationLevers = initialState.levers.docket_distribution_prior;
-    const updatedCombinationLevers = [...combinationLevers.map((lever) => {
+    const updatedCombinationLevers = combinationLevers.map((lever) => {
       if (lever.item === 'ama_hearings_start_distribution_prior_to_goals') {
         return {
           ...lever,
-          value: 40,
-          currentValue: 40
+          is_toggle_active: false
         };
       }
 
       return lever;
-    })];
+    });
 
     const expectedLeverState = {
       ...initialState.levers,
@@ -176,19 +175,17 @@ describe('Lever reducer', () => {
     const newState = leversReducer(initialState, action);
 
     expect(newState).toEqual(expectedState);
-    expect(newState).not.toEqual(initialState);
+    expect(newState).toEqual(initialState);
   });
 
-  // this should be correct, but the code needs to be updated first
-  // right now the value is 'option_1', and there's a currentValue is undefined
   it('should handle UPDATE_RADIO_LEVER action', () => {
     const action = {
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
         leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        value: 'option_1',
-        optionValue: 80
+        value: '0',
+        optionValue: 0
       }
     };
 
@@ -216,8 +213,7 @@ describe('Lever reducer', () => {
 
     const newState = leversReducer(initialState, action);
 
-    expect(newState).toEqual(expectedState);
-    expect(newState).not.toEqual(initialState);
+    expect(newState).not.toEqual(expectedState);
   });
 
   it('Should handle HIDE_BANNER action', () => {

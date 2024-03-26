@@ -12,6 +12,20 @@ class CaseDistributionLeversTestsController < ApplicationController
     render "case_distribution_levers/test"
   end
 
+  def run_demo_non_aod_hearing_seeds
+    Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].reenable
+    Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].invoke
+
+    head :ok
+  end
+
+  def run_demo_aod_hearing_seeds
+    Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].reenable
+    Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].invoke
+
+    head :ok
+  end
+
   def appeals_ready_to_distribute
     csv_data = AppealsReadyForDistribution.process
 
