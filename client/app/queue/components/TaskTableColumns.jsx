@@ -297,19 +297,15 @@ export const vaDor = () => {
   };
 };
 
-export const packageDocumentType = (tasks) => {
+export const packageDocumentType = (filterOptions) => {
   return {
-    header: 'Package Document Type',
-    // filterOptions: [
-    //   {displayText: 'Non-NOD', value: false},
-    //   {displayText: 'NOD', value: true}
-    // ],
-    filterOptions: [],
-    columnName: 'nod',
-    valueName: 'Package Document Type',
+    header: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    filterOptions,
+    columnName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    valueName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
     backendCanSort: true,
-    customFilterLabels: { false: 'Non-NOD', true: 'NOD' },
     enableFilter: true,
+    anyFiltersAreSet: true,
     getSortValue: (task) => task.nod,
     name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
     label: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
