@@ -128,7 +128,7 @@ const CorrespondenceTableBuilder = (props) => {
     const taskLabel = task.label || '';
     const taskVaDor = task.vaDor || '';
     const closedAt = task.closedAt || '';
-
+    const packageDocType = task.nod ? 'NOD' : 'Non-NOD';
     const searchValueTrimmed = searchValue.trim();
     const isNumericSearchValue = !isNaN(parseFloat(searchValueTrimmed)) && isFinite(searchValueTrimmed);
 
@@ -140,6 +140,7 @@ const CorrespondenceTableBuilder = (props) => {
     assignedByfirstName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     assignedBylastName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     assignedToName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    packageDocType.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     taskLabel.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     (isNumericSearchValue && daysWaiting.trim() === searchValueTrimmed) ||
     moment(closedAt).format('MM/DD/YYYY').
@@ -172,7 +173,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
       [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
-      [QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name]: packageDocumentType()
+      [QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name]: packageDocumentType(filterOptions)
     };
 
     return functionForColumn[column.name];
