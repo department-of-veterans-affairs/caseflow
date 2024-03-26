@@ -8,11 +8,6 @@ export const onReceiveNewJudgeTeam = (payload) => ({
   payload
 });
 
-export const onReceiveNewDvcTeam = (payload) => ({
-  type: ACTIONS.ON_RECEIVE_NEW_DVC_TEAM,
-  payload
-});
-
 export const onReceiveNewPrivateBar = (payload) => ({
   type: ACTIONS.ON_RECEIVE_NEW_PRIVATE_BAR,
   payload

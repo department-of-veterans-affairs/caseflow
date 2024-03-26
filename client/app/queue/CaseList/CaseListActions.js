@@ -13,10 +13,6 @@ export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
 });
 
-export const clearCaseListSearchResults = () => ({
-  type: Constants.CLEAR_CASE_LIST_SEARCH_RESULTS
-});
-
 export const setSearchTerm = (searchQuery) => ({
   type: Constants.SET_CASE_LIST_SEARCH,
   payload: { searchQuery }
