@@ -28,9 +28,12 @@ const metricArgs = (featureValue) => {
       data:
       {
         documentId: 1,
-        documentType: 'test',
+        numPagesInDoc: null,
+        pageIndex: null,
         file: '/document/1/pdf',
+        documentType: 'test',
         prefetchDisabled: undefined,
+        overscan: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -48,8 +51,8 @@ const storeMetricsError = {
   data:
   {
     documentId: 1,
+    file: '/document/1/pdf',
     documentType: 'test',
-    file: '/document/1/pdf'
   },
   info: {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
