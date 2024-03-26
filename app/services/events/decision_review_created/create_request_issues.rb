@@ -14,7 +14,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
     # iterate through the array of issues and create backfill object from each one
     def create_request_issue_backfill(event, parser)
-      request_issues = parser.get_request_issues
+      request_issues = parser.request_issues
 
       request_issues.each do |issue|
         # Extract values using .dig() method for each column

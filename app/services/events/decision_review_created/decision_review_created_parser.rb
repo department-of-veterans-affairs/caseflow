@@ -139,7 +139,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # RequestIssues attr
   # return the array of RI objects
-  def get_request_issues
+  def request_issues
     @payload.dig(:request_issues)
   end
 end
