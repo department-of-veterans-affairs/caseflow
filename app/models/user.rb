@@ -22,6 +22,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+  scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -99,6 +100,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   def inbound_ops_team_superuser?
     member_of_organization?(InboundOpsTeam.singleton) &&
       (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
+  end
+
+  def mail_team_user?
+    organizations.include?(MailTeam.singleton)
+  end
+
+  def mail_supervisor?
+    organizations.include?(InboundOpsTeam.singleton)
+  end
+
+  def mail_superuser?
+    organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
   end
 
   def can_assign_hearing_schedule?
@@ -430,6 +443,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_assigned_tasks_tab,
+      correspondence_in_progress_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def self.default_active_tab
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
@@ -444,6 +465,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def completed_tasks_tab
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::CorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_in_progress_tasks_tab
+    ::CorrespondenceInProgressTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::CorrespondenceCompletedTasksTab.new(assignee: self)
   end
 
   def can_edit_unrecognized_poa?

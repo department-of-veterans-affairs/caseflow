@@ -81,7 +81,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         cit = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id, type: CorrespondenceIntakeTask.name)
         review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
         parent = cit.parent
-        expect(cit.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(cit.status).to eq(Constants.TASK_STATUSES.in_progress)
         expect(cit.parent_id).to eq(parent.id)
         expect(review_package_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(review_package_task.parent_id).to eq(parent.id)

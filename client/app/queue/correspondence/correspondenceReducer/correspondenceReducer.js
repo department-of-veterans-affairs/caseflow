@@ -8,13 +8,18 @@ export const initialState = {
   correspondences: [],
   radioValue: '0',
   relatedCorrespondences: [],
+  selectedTasks: [],
   mailTasks: [],
   unrelatedTasks: [],
   currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: {},
-  correspondenceInformation: {}
+  correspondenceInformation: {},
+  selectedVeteranDetails: {},
+  showReassignPackageModal: false,
+  showRemovePackageModal: false,
+  showErrorBanner: false
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -39,6 +44,11 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: action.payload.correspondenceInformation
       }
     });
+  case ACTIONS.LOAD_SAVED_INTAKE:
+    return action.payload.savedStore;
+
+  case ACTIONS.SAVE_CURRENT_INTAKE:
+    return action.payload.currentIntake;
 
   case ACTIONS.LOAD_VETERAN_INFORMATION:
     return update(state, {
@@ -51,6 +61,20 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       vetCorrespondences: {
         $set: action.payload.vetCorrespondences
+      }
+    });
+
+  case ACTIONS.LOAD_CORRESPONDENCE_CONFIG:
+    return update(state, {
+      correspondenceConfig: {
+        $set: action.payload.correspondenceConfig
+      }
+    });
+
+  case ACTIONS.LOAD_MAIL_TEAM_USERS:
+    return update(state, {
+      mailTeamUsers: {
+        $set: action.payload.mailTeamUsers
       }
     });
 
@@ -80,6 +104,14 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       relatedCorrespondences: {
         $set: []
+      }
+    });
+
+    // fix this to use the actual value for set
+  case ACTIONS.SET_SELECTED_TASKS:
+    return update(state, {
+      selectedTasks: {
+        $set: [...action.payload.values]
       }
     });
 
@@ -133,11 +165,41 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     });
 
   case ACTIONS.REMOVE_RESPONSE_LETTERS:
-    const newResponseLetters = state.responseLetters
-    delete newResponseLetters[action.payload.index]
+    const newResponseLetters = state.responseLetters;
+
+    delete newResponseLetters[action.payload.index];
+
     return update(state, {
       responseLetters: {
         $set: newResponseLetters
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL:
+    return update(state, {
+      showReassignPackageModal: {
+        $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL:
+    return update(state, {
+      showRemovePackageModal: {
+        $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SELECTED_VETERAN_DETAILS:
+    return update(state, {
+      selectedVeteranDetails: {
+        $set: action.payload.selectedVeteranDetails
+      }
+    });
+
+  case ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER:
+    return update(state, {
+      showErrorBanner: {
+        $set: action.payload.isVisible
       }
     });
 

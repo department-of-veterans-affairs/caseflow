@@ -52,8 +52,9 @@ describe CorrespondenceDocumentsEfolderUploader do
       end
 
       context "with existing EfolderUploadFailedTask" do
-        let!(:existing_failed_task) { create(:efolder_upload_failed_task, appeal: correspondence) }
-
+        # rubocop:disable Layout/LineLength
+        let!(:existing_failed_task) { create(:efolder_upload_failed_task, appeal: correspondence, appeal_type: "Correspondence") }
+        # rubocop:enable Layout/LineLength
         it "does not create a new EfolderUploadFailedTask if one already exists" do
           expect do
             described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)

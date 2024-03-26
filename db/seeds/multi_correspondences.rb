@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
 # create correspondence seeds
-require_relative "./helpers/seed_helpers"
+require_relative "./helpers/queue_helpers"
 
 module Seeds
   # :reek:InstanceVariableAssumption
   class MultiCorrespondences < Base
 
-    include SeedHelpers
+    include QueueHelpers
 
     def initialize
       initial_id_values
-      RequestStore[:current_user] = User.find_by_css_id("BVADWISE")
+      RequestStore[:current_user] = User.find_by_css_id("BVADWISE") if RequestStore[:current_user].blank?
     end
 
-    def seed!
-      create_multi_correspondences
+    # seed with values for UAT rake task correspondence.rake
+    # seed without values for Demo (default)
+    def seed!(user = {}, veteran = {})
+      create_multi_correspondences(user, veteran)
     end
 
     private
@@ -32,134 +34,50 @@ module Seeds
       @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
+    # creates correspondences for given vet (UAT)
+    # default, creates Batman vets to assign cases to (demo)
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def create_multi_correspondences
-      veteran = create_veteran(first_name: "Adam", last_name: "West")
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      21.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
+    def create_multi_correspondences(user = {}, veteran = {})
+      if user.blank?
+        user = User.find_by_css_id("JOLLY_POSTMAN")
+        # create veterans
+        west = create_veteran(first_name: "Adam", last_name: "West")
+        bale = create_veteran(first_name: "Christian", last_name: "Bale")
+        keaton = create_veteran(first_name: "Michael", last_name: "Keaton")
+
+        # build correspondences
+        build_correspondences(west, user, 5)
+        build_correspondences(bale, user, 10)
+        build_correspondences(keaton, user, 20)
+        return
       end
 
-      veteran = create_veteran(first_name: "Michael", last_name: "Keaton")
-      2.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      31.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
-      end
-
-      veteran = create_veteran(first_name: "Christian", last_name: "Bale")
-      1.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      10.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      101.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
-      end
+      # used for UAT correspondence.rake
+      build_correspondences(veteran, user, 20)
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def build_correspondences(veteran, user, iterations = 10)
+      5.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number
+        )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+      5.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review
+        )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+      iterations.times do
+        corr = create_correspondence(user, veteran)
+        create_correspondence_document(corr, veteran)
+        assign_review_package_task(corr, user)
+      end
+    end
   end
 end

@@ -4,14 +4,18 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import {
+  loadSavedIntake,
+  setUnrelatedTasks,
+  saveCurrentIntake,
+  setErrorBanner
+} from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
-import ApiUtil from '../../../../util/ApiUtil';
 import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
@@ -33,13 +37,24 @@ const progressBarSections = [
 ];
 
 export const CorrespondenceIntake = (props) => {
+  const dispatch = useDispatch();
   const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
+  const showErrorBanner = useSelector((state) => state.intakeCorrespondence.showErrorBanner);
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
-  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const history = useHistory();
+
+  const handleBannerState = (bannerState) => {
+    dispatch(setErrorBanner(bannerState));
+  };
+
+  const exportStoredata = {
+    correspondence_uuid: props.correspondence_uuid,
+    current_step: currentStep,
+    redux_store: intakeCorrespondence
+  };
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -47,6 +62,13 @@ export const CorrespondenceIntake = (props) => {
 
   const handleCheckboxChange = (isSelected) => {
     setContinueEnabled(isSelected);
+  };
+
+  const handleCancel = () => {
+    // Redirect the user to the previous page
+    // then needed to allow POST to complete first
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata).
+      then(history.goBack());
   };
 
   const nextStep = () => {
@@ -77,24 +99,21 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    const data = {
-      correspondence_uuid: props.correspondence_uuid,
-      current_step: currentStep,
-      redux_store: intakeCorrespondence
-    };
-
-    ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/current_step`, { data }).
-      then(
-        (response) => {
-          if (!response.ok) {
-            console.error(response);
-          }
-        }
-      );
+    if (currentStep !== 1) {
+      props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
+    }
   }, [currentStep]);
 
+  useEffect(() => {
+    // load previous correspondence intake from database (if any)
+    if (props.reduxStore !== null) {
+      setCurrentStep(3);
+      props.loadSavedIntake(props.reduxStore);
+    }
+  }, []);
+
   return <div>
-    { errorBannerVisible &&
+    { showErrorBanner &&
       <Alert title={CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE} type="error">
         {CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT}
       </Alert>
@@ -140,7 +159,8 @@ export const CorrespondenceIntake = (props) => {
           name="Cancel"
           styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
           href="/queue/correspondence"
-          classNames={['cf-btn-link', 'cf-left-side']} />
+          classNames={['cf-btn-link', 'cf-left-side']}
+          onClick={handleCancel} />
       </a>
       {currentStep < 3 &&
       <Button
@@ -170,7 +190,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
-          setErrorBannerVisible={setErrorBannerVisible}
+          setErrorBannerVisible={handleBannerState}
         />
       }
     </div>
@@ -186,7 +206,10 @@ CorrespondenceIntake.propTypes = {
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.arrayOf(PropTypes.string),
-  autoTexts: PropTypes.arrayOf(PropTypes.string)
+  autoTexts: PropTypes.arrayOf(PropTypes.string),
+  reduxStore: PropTypes.object,
+  loadSavedIntake: PropTypes.func,
+  saveCurrentIntake: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -198,7 +221,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setUnrelatedTasks
+    setUnrelatedTasks,
+    loadSavedIntake,
+    saveCurrentIntake
   }, dispatch)
 );
 
