@@ -496,7 +496,6 @@ module Seeds
     end
 
     def create_evidence_submission_contested_claim_cases_with_open_letter_task
-      byebug
       Timecop.travel(91.days.ago)
       6.times do
         appeal = create(
@@ -510,7 +509,7 @@ module Seeds
               nonrating_issue_category: "Contested Claims - Apportionment"
             )
           ],
-          veteran: create_veteran
+          veteran: create_veteran(first_name: "EvidenceTestAppeal", last_name: "OpenLetterTask")
         )
       end
       Timecop.return
