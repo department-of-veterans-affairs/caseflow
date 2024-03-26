@@ -45,7 +45,7 @@ describe Hearings::SendSentStatusEmail do
       # Expect we logged the failure to Rails.logger
       expect(Rails.logger).to receive(:info).at_least(:once)
       # Expect we logged the failure to DataDog
-      expect(DataDogService).to receive(:increment_counter).at_least(:once)
+      expect(MetricsService).to receive(:increment_counter).at_least(:once)
       # Call the sender
       subject
       # We should not set an external_message_id because we didnt sent an email

@@ -55,7 +55,7 @@ class RatingIssue
     end
 
     def deserialize(serialized_hash)
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         metric_group: "mst_pact_group",
         metric_name: "bgs_service.previous_service_call.rating_issue",
         app_name: RequestStore[:application]
