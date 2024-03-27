@@ -7,7 +7,6 @@ class CorrespondenceTaskFilter < TaskFilter
     task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
     nod_column_params = filter_params.select { |param| param.include?("col=packageDocTypeColumn") }
 
-    # binding.pry
     # task_column_params comes in as a single string, delimited by |. Updates task_column_params
     # to be an array of the incoming values.
     unless task_column_params == []
