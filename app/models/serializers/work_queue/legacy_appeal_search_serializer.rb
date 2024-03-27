@@ -51,6 +51,10 @@ class WorkQueue::LegacyAppealSearchSerializer
     object.veteran ? object.veteran.id : nil
   end
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
