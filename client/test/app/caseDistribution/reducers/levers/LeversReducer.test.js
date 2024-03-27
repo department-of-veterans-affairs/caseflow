@@ -184,7 +184,7 @@ describe('Lever reducer', () => {
       payload: {
         leverGroup: ACD_LEVERS.lever_groups.affinity,
         leverItem: 'ama_hearing_case_affinity_days',
-        value: ACD_LEVERS.value,
+        optionItem: ACD_LEVERS.value,
         optionValue: 0
       }
     };

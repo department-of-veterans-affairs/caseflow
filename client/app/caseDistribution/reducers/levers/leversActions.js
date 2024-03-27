@@ -50,23 +50,23 @@ export const resetLevers = () => async (dispatch) => {
  *
  * This will break if a Radio lever has more than one option that has an input
  *
- * @param {*} leverGroup the group the lever is in:
+ * @param {*} leverGroup is the group the lever is in:
  *      affinity, batch, docket_distribution_prior, docket_time_goal, docket_levers
- * @param {*} leverItem the name of the lever:
+ * @param {*} leverItem is the name of the lever:
  *      see DISTRIBUTION.json for valid names
- * @param {*} value the option that was selected:
+ * @param {*} optionItem is the option that was selected:
  *      value, omit, infinite
- * @param {*} optionValue if value option is selected the value of the input
+ * @param {*} optionValue if value option is the selected the value of the input
  * @returns
  */
-export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
+export const updateRadioLever = (leverGroup, leverItem, optionItem, optionValue = null) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
         leverGroup,
         leverItem,
-        value,
+        optionItem,
         optionValue
       }
     });
