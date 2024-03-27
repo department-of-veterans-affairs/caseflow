@@ -1,0 +1,192 @@
+{
+  "payload_examples":{
+    "hlr_example": {
+      "css_id": "BVADWISE",
+      "detail_type": "HigherLevelReview",
+      "station": "101",
+      "intake": {
+        "started_at": 1702067143435,
+        "completion_started_at": 1702067145000,
+        "completed_at": 1702067145000,
+        "completion_status": "success",
+        "type": "HigherLevelReviewIntake",
+        "detail_type": "HigherLevelReview"
+      },
+      "veteran": {
+        "participant_id": "1826209",
+        "bgs_last_synced_at": 1708533584000,
+        "name_suffix": null,
+        "date_of_death": null
+      },
+      "claimant": {
+        "payee_code": "00",
+        "type": "VeteranClaimant",
+        "participant_id": "1826209",
+        "name_suffix": null
+      },
+      "claim_review": {
+        "benefit_type": "compensation",
+        "filed_by_va_gov": false,
+        "legacy_opt_in_approved": false,
+        "receipt_date": 20231208,
+        "veteran_is_not_claimant": false,
+        "establishment_attempted_at": 1702067145000,
+        "establishment_last_submitted_at": 1702067145000,
+        "establishment_processed_at": 1702067145000,
+        "establishment_submitted_at": 1702067145000,
+        "informal_conference": false,
+        "same_office": false
+      },
+      "end_product_establishment": {
+        "benefit_type_code": "1",
+        "claim_date": 20231208,
+        "code": "030HLRNR",
+        "modifier": "030",
+        "payee_code": "00",
+        "reference_id": "337534",
+        "limited_poa_access": null,
+        "limited_poa_code": null,
+        "committed_at": 1702067145000,
+        "established_at": 1702067145000,
+        "last_synced_at": 1702067145000,
+        "synced_status": "RW",
+        "development_item_reference_id": null
+      },
+      "request_issues": [
+        {
+          "benefit_type": "compensation",
+          "contested_issue_description": null,
+          "contention_reference_id": 7905752,
+          "contested_rating_decision_reference_id": null,
+          "contested_rating_issue_profile_date": null,
+          "contested_rating_issue_reference_id": null,
+          "contested_decision_issue_id": null,
+          "decision_date": 20231220,
+          "ineligible_due_to_id": null,
+          "ineligible_reason": null,
+          "is_unidentified": false,
+          "unidentified_issue_text": null,
+          "nonrating_issue_category": "Accrued Benefits",
+          "nonrating_issue_description": "The user entered description if the issue is a nonrating issue",
+          "untimely_exemption": null,
+          "untimely_exemption_notes": null,
+          "vacols_id": null,
+          "vacols_sequence_id": null,
+          "closed_at": null,
+          "closed_status": null,
+          "contested_rating_issue_diagnostic_code": null,
+          "ramp_claim_id": null,
+          "rating_issue_associated_at": null,
+          "nonrating_issue_bgs_id": "13"
+        }
+      ]
+    },
+    "sc_example": {
+      "css_id": "BVADWISE",
+      "detail_type": "SupplementalClaim",
+      "station": "101",
+      "intake": {
+        "started_at": 1702067143435,
+        "completion_started_at": 1702067145000,
+        "completed_at": 1702067145000,
+        "completion_status": "success",
+        "type": "SupplementalClaimIntake",
+        "detail_type": "SupplementalClaim"
+      },
+      "veteran": {
+        "participant_id": "1826209",
+        "bgs_last_synced_at": 1708533584000,
+        "name_suffix": null,
+        "date_of_death": null
+      },
+      "claimant": {
+        "payee_code": "00",
+        "type": "VeteranClaimant",
+        "participant_id": "1826209",
+        "name_suffix": null
+      },
+      "claim_review": {
+        "benefit_type": "pension",
+        "filed_by_va_gov": false,
+        "legacy_opt_in_approved": false,
+        "receipt_date": 20231208,
+        "veteran_is_not_claimant": false,
+        "establishment_attempted_at": 1702067145000,
+        "establishment_last_submitted_at": 1702067145000,
+        "establishment_processed_at": 1702067145000,
+        "establishment_submitted_at": 1702067145000,
+        "informal_conference": false,
+        "same_office": false
+      },
+      "end_product_establishment": {
+        "benefit_type_code": "1",
+        "claim_date": 20231208,
+        "code": "040SCRPMC",
+        "modifier": "040",
+        "payee_code": "00",
+        "reference_id": "337534",
+        "limited_poa_access": null,
+        "limited_poa_code": null,
+        "committed_at": 1702067145000,
+        "established_at": 1702067145000,
+        "last_synced_at": 1702067145000,
+        "synced_status": "RW",
+        "development_item_reference_id": null
+      },
+      "request_issues": [
+        {
+          "benefit_type": "pension",
+          "contested_issue_description": null,
+          "contention_reference_id": 4542785,
+          "contested_rating_decision_reference_id": null,
+          "contested_rating_issue_profile_date": null,
+          "contested_rating_issue_reference_id": null,
+          "contested_decision_issue_id": null,
+          "decision_date": null,
+          "ineligible_due_to_id": null,
+          "ineligible_reason": null,
+          "is_unidentified": true,
+          "unidentified_issue_text": "User entered description",
+          "nonrating_issue_category": null,
+          "nonrating_issue_description": null,
+          "untimely_exemption": null,
+          "untimely_exemption_notes": null,
+          "vacols_id": null,
+          "vacols_sequence_id": null,
+          "closed_at": null,
+          "closed_status": null,
+          "contested_rating_issue_diagnostic_code": null,
+          "ramp_claim_id": null,
+          "rating_issue_associated_at": null,
+          "nonrating_issue_bgs_id": null
+        },
+        {
+          "benefit_type": "pension",
+          "contested_issue_description": "PTSD",
+          "contention_reference_id": null,
+          "contested_rating_decision_reference_id": null,
+          "contested_rating_issue_profile_date": "2017-02-07T07:21:24+00:00",
+          "contested_rating_issue_reference_id": "69819459807832",
+          "contested_decision_issue_id": null,
+          "decision_date": 20231220,
+          "ineligible_due_to_id": null,
+          "ineligible_reason": "legacy_appeal_not_eligible",
+          "is_unidentified": false,
+          "unidentified_issue_text": null,
+          "nonrating_issue_category": null,
+          "nonrating_issue_description": null,
+          "untimely_exemption": false,
+          "untimely_exemption_notes": null,
+          "vacols_id": "2903521",
+          "vacols_sequence_id": 1,
+          "closed_at": 1702067145000,
+          "closed_status": "ineligible",
+          "contested_rating_issue_diagnostic_code": "5008",
+          "ramp_claim_id": null,
+          "rating_issue_associated_at": null,
+          "nonrating_issue_bgs_id": null
+        }
+      ]
+    }
+  }
+}
