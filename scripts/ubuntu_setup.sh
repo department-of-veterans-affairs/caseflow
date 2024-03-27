@@ -77,7 +77,7 @@ sudo usermod -aG docker $USER
 if ! grep -q HOME/.local/bin ~/.bashrc; then
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
     source ~/.bashrc
-fi 
+fi
 if ! grep -q "Start Docker daemon automatically" ~/.bashrc; then
     echo '# Start Docker daemon automatically when logging in if not running.' >> ~/.bashrc
     echo 'RUNNING=`ps aux | grep dockerd | grep -v grep`' >> ~/.bashrc
@@ -115,7 +115,7 @@ if [[ ! `rbenv version | grep $RUBY_VERSION` ]]; then
     rbenv install $RUBY_VERSION
 fi
 rbenv rehash
-gem install bundler -v 2.2.25
+gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)
 bundle install
 
 # Install javascript dependencies
@@ -127,16 +127,16 @@ yarn --cwd ./client/ install
 if [ ! -d "local/vacols/build_facols/" ]; then
     echo -e "
 \033[0;31m====================================================
-This setup script assumes you have the 
+This setup script assumes you have the
 appropriate oracle files downloaded and copied to
 caseflow/local/vacols/build_facols/
 
-Either ./build_push.sh has already run or Oracle has 
-not been installed and FACOLS has not been set up, 
-those will need to be done before running the app. 
+Either ./build_push.sh has already run or Oracle has
+not been installed and FACOLS has not been set up,
+those will need to be done before running the app.
 ====================================================${NC}
 "
-else 
+else
     # Install oracle instantclient
     if ! grep -q instantclient ~/.bashrc; then
         echo -e "\n\n${C}==> Installing oracle instantclient${NC}\n\n"
