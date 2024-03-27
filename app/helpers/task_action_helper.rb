@@ -4,7 +4,7 @@ module TaskActionHelper
   def self.build_hash(config, task, user)
     return config unless config[:func] || config["func"]
 
-    ret_val = TaskActionRepository.send(config[:func] || config["func"], task, user)
+    ret_val = TaskActionRepository.send((config[:func] || config["func"]), task, user)
 
     return ret_val if ret_val&.delete(:returns_complete_hash)
 

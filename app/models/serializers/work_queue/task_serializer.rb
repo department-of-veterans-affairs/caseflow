@@ -103,7 +103,7 @@ class WorkQueue::TaskSerializer
   attribute :docket_range_date do |object|
     if object.appeal.is_a?(LegacyAppeal)
       # object.appeal.try(:docket_date)
-      object.docket_date
+      object.appeal.docket_date
     else
       # object.appeal.try(:docket_range_date)
       object.appeal.docket_range_date
@@ -207,8 +207,9 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :available_actions do |object, params|
+    # puts "in available actions task serializer method"
+    # p object.available_actions_unwrapper(params[:user])
     object.available_actions_unwrapper(params[:user])
-    # {}
   end
 
   attribute :can_move_on_docket_switch, &:can_move_on_docket_switch?

@@ -13,22 +13,22 @@ class JudgeTask < Task
     # Only the current assignee of a judge task should have actions available to them on the judge task.
     # TODO: Get it working with hashes instead of subconstants
     if assigned_to == user
-      # [
-      #   Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      #   Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-      #   Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-      #   additional_available_actions(user)
-      # ].flatten
       [
-        Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"],
-        Constants::TASK_ACTIONS["TOGGLE_TIMED_HOLD"],
-        Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
+      # [
+      #   Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"],
+      #   Constants::TASK_ACTIONS["TOGGLE_TIMED_HOLD"],
+      #   Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
+      #   additional_available_actions(user)
+      # ].flatten
     elsif user&.can_act_on_behalf_of_judges?
       [
-        # Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-        Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        # Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
         additional_available_actions(user)
       ].flatten
     else

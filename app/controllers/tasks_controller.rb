@@ -148,9 +148,17 @@ class TasksController < ApplicationController
   def for_appeal
     no_cache
 
+    # puts "is this where the case details page enters?"
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
-    render json: { tasks: json_tasks(tasks)[:data] }
+    # puts "after getting tasks from TasksForAppeal"
+    # puts tasks.count
+
+    # puts "before serializing"
+    json_task_data = json_tasks(tasks)[:data]
+    # puts "after serializing"
+    # byebug
+    render json: { tasks: json_task_data }
   end
 
   def reschedule

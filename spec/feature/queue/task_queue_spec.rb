@@ -1068,6 +1068,7 @@ feature "Task queue", :all_dbs do
       it "should be able to add admin actions from case details" do
         Colocated.singleton.add_user(create(:user))
         visit("/queue")
+
         click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
         # On case details page select the "Add admin action" option
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)

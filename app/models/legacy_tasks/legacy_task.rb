@@ -21,11 +21,11 @@ class LegacyTask
   #   #   puts "building action: #{action[:func]} for task type: #{self.class}"
   #   # end
 
-  #   # old_hash = {
-  #   #   label: action[:label],
-  #   #   value: action[:value],
-  #   #   data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
-  #   # }
+  # old_hash = {
+  #   label: action[:label],
+  #   value: action[:value],
+  #   data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
+  # }
 
   #   new_hash = {
   #     label: action[:label],
@@ -34,7 +34,6 @@ class LegacyTask
   #   }
   #   # puts old_hash.inspect
   #   # puts new_hash.inspect
-
 
   #   # old_hash
   #   new_hash
@@ -51,16 +50,23 @@ class LegacyTask
     #   data: action["func"] ? TaskActionRepository.send(action["func"], self, user) : nil
     # }
 
-    new_hash = {
-      label: action["label"],
-      value: action["value"],
-      data: action["func"] ? TaskActionRepository.send(action["func"], self, user) : nil
+    # new_hash = {
+    #   label: action["label"],
+    #   value: action["value"],
+    #   data: action["func"] ? TaskActionRepository.send(action["func"], self, user) : nil
+    # }
+
+    # TODO: Figure out how to make this work without subconstants
+    old_hash = {
+      label: action[:label],
+      value: action[:value],
+      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
     }
 
     # puts new_hash.inspect
 
-
-    new_hash
+    # new_hash
+    old_hash
   end
 
   def assigned_to_label

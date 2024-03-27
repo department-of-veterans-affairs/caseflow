@@ -18,10 +18,18 @@ class AmaAndLegacyTaskSerializer
     puts "--------------------------- In call method for ama and legacy task serializer ---------------------------"
     start_time1 = Time.zone.now
     ama_tasks_hash = {}
-    StackProf.run(mode: :wall, out: "ama_serializer_call.dump") do
-      ama_tasks_hash = ama_serializer.new(
-        ama_tasks, is_collection: true, params: params
-      ).serializable_hash[:data]
+    p ama_serializer.name
+
+    begin
+      StackProf.run(mode: :wall, out: "ama_serializer_call.dump") do
+        ama_tasks_hash = ama_serializer.new(
+          ama_tasks, is_collection: true, params: params
+        ).serializable_hash[:data]
+      end
+    rescue StandardError => error
+      # Print the error message and stack trace
+      puts "An error occurred: #{error.message}"
+      puts error.backtrace.join("\n")
     end
 
     end_time1 = Time.zone.now

@@ -38,25 +38,20 @@ class LegacyTasksController < ApplicationController
             # tasks = []
           end
           end_time1 = Time.zone.now
-          # puts "LegacyWorkQueue.tasks_for_user took: #{(end_time1 - start_time1) * 1000}"
+          puts "LegacyWorkQueue.tasks_for_user took: #{(end_time1 - start_time1) * 1000}"
           # byebug
 
           rendered_json = nil
-          # puts "----------------------------- serialized tasks via LegacyTaskSerializer -----------------------------"
-          # start_time2 = Time.zone.now
-          # tasks.appeal.pluck(find_or_create_all(*file_numbers_or_ssns)
-          # file_numbers_or_ssns = tasks.map(&:appeal).pluck(:veteran_file_number)
-          # VeteranFinder.find_or_create_all(*file_numbers_or_ssns).index_by(:veteran_file_number)
-          # preloader = ActiveRecord::Associations::Preloader.new
-          # preloader.preload(tasks, :work_mode)
+          puts "----------------------------- serialized tasks via LegacyTaskSerializer -----------------------------"
+          start_time2 = Time.zone.now
           StackProf.run(mode: :wall, out: "legacy_task_serializer.dump") do
             rendered_json = render json: {
               tasks: json_tasks(tasks, user, user_role)
             }
           end
-          # end_time2 = Time.zone.now
-          # puts "Number of tasks: #{tasks.count}"
-          # puts "LegacyTask Serialization took: #{(end_time2 - start_time2) * 1000}"
+          end_time2 = Time.zone.now
+          puts "Number of tasks: #{tasks.count}"
+          puts "LegacyTask Serialization took: #{(end_time2 - start_time2) * 1000}"
           # byebug
 
           rendered_json

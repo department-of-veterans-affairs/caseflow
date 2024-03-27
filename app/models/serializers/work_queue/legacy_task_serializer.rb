@@ -101,13 +101,13 @@ class WorkQueue::LegacyTaskSerializer
     # file_number = object.appeal.veteran_file_number_fast
 
     # object.appeal.veteran_file_number_fast || object.veteran_file_number
-    puts "in veteran file number serialize field block"
-    puts object.appeal.veteran_file_number_fast.inspect
-    puts object.appeal.sanitized_vbms_id
-    puts "Dying after calling veteran_file_number"
+    # puts "in veteran file number serialize field block"
+    # puts object.appeal.veteran_file_number_fast.inspect
+    # puts object.appeal.sanitized_vbms_id
+    # puts "Dying after calling veteran_file_number"
 
-    puts object.appeal.veteran_file_number.inspect
-    puts "makes it past veteran_file_number"
+    # puts object.appeal.veteran_file_number.inspect
+    # puts "makes it past veteran_file_number"
     # puts object.sanitized_vbms_id.inspect
 
     object.appeal.veteran_file_number_fast || object.appeal.veteran_file_number
