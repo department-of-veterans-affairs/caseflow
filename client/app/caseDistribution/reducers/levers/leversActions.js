@@ -44,6 +44,21 @@ export const resetLevers = () => async (dispatch) => {
   });
 };
 
+/**
+ * Used when updating a radio lever
+ * Pass in the selected option and a value if the selected option is value
+ *
+ * This will break if a Radio lever has more than one option that has an input
+ *
+ * @param {*} leverGroup the group the lever is in:
+ *      affinity, batch, docket_distribution_prior, docket_time_goal, docket_levers
+ * @param {*} leverItem the name of the lever:
+ *      see DISTRIBUTION.json for valid names
+ * @param {*} value the option that was selected:
+ *      value, omit, infinite
+ * @param {*} optionValue if value option is selected the value of the input
+ * @returns
+ */
 export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
   (dispatch) => {
     dispatch({

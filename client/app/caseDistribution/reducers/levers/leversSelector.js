@@ -165,7 +165,7 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
- * Used when updating the a radio lever
+ * Used when updating a radio lever
  * Pass in the selected option and a value if the selected option is value
  *
  * This will break if a Radio lever has more than one option that has an input
