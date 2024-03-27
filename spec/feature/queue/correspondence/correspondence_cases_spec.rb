@@ -154,7 +154,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
@@ -164,7 +164,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
@@ -176,7 +176,7 @@ RSpec.feature("The Correspondence Cases page") do
       my_date = current_date.strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
@@ -186,7 +186,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses uses task filter correctly" do
@@ -334,11 +334,11 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='Sort by Notes']").click
 
-      notes = all("tbody > tr > td:nth-child(4)").map(&:text)
+      notes = all("tbody > tr > td:nth-child(5)").map(&:text)
       expect(notes).to eq(notes.sort.reverse)
 
       find("[aria-label='Sort by Notes']").click
-      notes = all("tbody > tr > td:nth-child(4)").map(&:text)
+      notes = all("tbody > tr > td:nth-child(5)").map(&:text)
       expect(notes).to eq(notes.sort)
     end
   end
@@ -471,7 +471,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
@@ -481,7 +481,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
@@ -493,7 +493,7 @@ RSpec.feature("The Correspondence Cases page") do
       my_date = (current_date - 4).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
@@ -503,7 +503,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -624,7 +624,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
@@ -634,7 +634,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-3-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
@@ -646,7 +646,7 @@ RSpec.feature("The Correspondence Cases page") do
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
@@ -656,7 +656,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-3-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -788,7 +788,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
@@ -800,7 +800,7 @@ RSpec.feature("The Correspondence Cases page") do
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
@@ -812,7 +812,7 @@ RSpec.feature("The Correspondence Cases page") do
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
@@ -822,7 +822,7 @@ RSpec.feature("The Correspondence Cases page") do
       find_by_id("react-select-3-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
