@@ -177,6 +177,21 @@ export const hasNoLeverErrors = createSelector(
  * If omit or infinite is the selected Radio option
  *   Update lever.value to the value passed in
  *   Set valueOptionValue to value in value's option
+ *
+ * @param {*} state
+ * @param { payload: {leverGroup, leverItem, value, optionValue} } action
+ * leverGroup: the group the lever is in
+ *      affinity, batch, docket_distribution_prior, docket_time_goal, docket_levers
+ *
+ * leverItem: the name of the lever
+ *      see DISTRIBUTION.json for valid names
+ *
+ * value: the option that was selected
+ *      value, omit, infinite
+ *
+ * optionValue:: if value option is selected the value of the input
+ *
+ * @returns
  */
 export const updateLeverGroupForRadioLever = (state, action) => {
   const { leverGroup, leverItem, value, optionValue } = action.payload;

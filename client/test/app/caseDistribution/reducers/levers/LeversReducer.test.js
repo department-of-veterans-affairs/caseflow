@@ -182,7 +182,7 @@ describe('Lever reducer', () => {
     const action = {
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
-        leverGroup: 'affinity',
+        leverGroup: ACD_LEVERS.lever_groups.affinity,
         leverItem: 'ama_hearing_case_affinity_days',
         value: ACD_LEVERS.value,
         optionValue: 0
