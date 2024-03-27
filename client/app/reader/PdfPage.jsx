@@ -216,7 +216,7 @@ export class PdfPage extends React.PureComponent {
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
 
       const pageMetricData = {
-        message: `Storing PDF page ${this.props.pageIndex + 1}`,
+        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
         product: 'reader',
         type: 'performance',
         data: this.props.metricsAttributes,
@@ -232,7 +232,7 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text`,
+          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
           product: 'reader',
           type: 'performance',
           data: this.props.metricsAttributes,
@@ -241,7 +241,7 @@ export class PdfPage extends React.PureComponent {
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
           type: 'performance',
           product: 'reader',
           data: this.props.metricsAttributes,
