@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case Distribution Levers" do
+  before { Seeds::CaseDistributionLevers.new.seed! }
   let!(:current_user) do
     user = create(:user, css_id: "BVATTWAYNE")
     CDAControlGroup.singleton.add_user(user)

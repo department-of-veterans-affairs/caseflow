@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
+  before do
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :alternative_batch_size)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+  end
+
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
@@ -216,15 +227,17 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
-
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
-
-      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+      after do
+        FeatureToggle.disable!(:acd_distribute_by_docket_date)
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+      end
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)

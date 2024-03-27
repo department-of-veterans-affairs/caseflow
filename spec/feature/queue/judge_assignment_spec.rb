@@ -20,6 +20,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
 
     User.authenticate!(user: judge_one)
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   context "Acting judge can see team and other users load" do

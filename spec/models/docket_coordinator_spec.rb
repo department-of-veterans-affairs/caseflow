@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 describe DocketCoordinator do
+  before do
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :minimum_legacy_proportion)
+    create(:case_distribution_lever, :maximum_direct_review_proportion)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+  end
+
   describe "direct review docket steady state" do
     before do
       FeatureToggle.enable!(:test_facols)
@@ -79,7 +90,7 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { CaseDistributionLever.days_before_goal_due_for_distribution }
+    let(:days_before_goal_due) { CaseDistributionLever.ama_direct_review_start_distribution_prior_to_goals }
     let(:days_to_decision_goal) { CaseDistributionLever.ama_direct_review_docket_time_goals }
 
     let!(:other_direct_review_cases) do

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
+  before { Seeds::CaseDistributionLevers.new.seed! }
   let!(:lever_user) { create(:user) }
   let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }

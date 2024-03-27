@@ -5,6 +5,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
   before do
     setup_intake_flags
+    Seeds::CaseDistributionLevers.new.seed!
   end
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do

@@ -3,6 +3,11 @@
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
+  before do
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :request_more_cases_minimum)
+  end
+
   context "docket" do
     # nonpriority
     let!(:appeal) do
@@ -108,6 +113,21 @@ describe Docket, :all_dbs do
 
           it "returns only the cavc appeal" do
             expect(subject).to match_array([cavc_appeal])
+          end
+        end
+
+        context "when acd_exclude_from_affinity flag is enabled" do
+          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+          context "when called for ready is true and judge is passed" do
+            let(:judge) { judge_decision_review_task.assigned_to }
+            subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
+
+            it "returns non priority appeals" do
+              expect(subject).to include appeal
+              expect(subject).to include denied_aod_motion_appeal
+              expect(subject).to include inapplicable_aod_motion_appeal
+            end
           end
         end
       end
