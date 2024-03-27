@@ -35,8 +35,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     response = fetch_recordings_list
     topics = response.topics
     topic_num = 0
-    response.ids.each do |n|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n, topic: topics[topic_num])
+    response.ids.each do |id|
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: id, topic: topics[topic_num])
       topic_num += 1
     end
   end
@@ -47,16 +47,16 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     from = CGI.escape(2.hours.ago.in_time_zone("America/New_York").iso8601)
     to = CGI.escape(1.hour.ago.in_time_zone("America/New_York").iso8601)
     max = 100
-    query = { "from": from, "to": to, "max": max }
-
-    WebexService.new(
+    config = {
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
       apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: query
-    ).fetch_recordings_list
+      query: { "from": from, "to": to, "max": max }
+    }
+
+    WebexService.new(config).fetch_recordings_list
   end
 end

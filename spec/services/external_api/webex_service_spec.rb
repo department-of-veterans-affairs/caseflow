@@ -8,9 +8,8 @@ describe ExternalApi::WebexService do
   let(:domain) { "gov.fake.com" }
   let(:api_endpoint) { "/api/v2/fake" }
   let(:query) { nil }
-
-  let(:webex_service) do
-    ExternalApi::WebexService.new(
+  let(:config) do
+    {
       host: host,
       domain: domain,
       api_endpoint: api_endpoint,
@@ -18,7 +17,11 @@ describe ExternalApi::WebexService do
       apikey: apikey,
       port: port,
       query: query
-    )
+    }
+  end
+
+  let(:webex_service) do
+    ExternalApi::WebexService.new(config)
   end
 
   describe "webex requests" do

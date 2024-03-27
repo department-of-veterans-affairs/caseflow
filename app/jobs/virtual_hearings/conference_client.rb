@@ -13,7 +13,7 @@ module VirtualHearings::ConferenceClient
         client_host: ENV["PEXIP_CLIENT_HOST"]
       )
     when "webex"
-      @client ||= WebexService.new(
+      config = {
         host: ENV["WEBEX_HOST_IC"],
         port: ENV["WEBEX_PORT"],
         aud: ENV["WEBEX_ORGANIZATION"],
@@ -21,7 +21,8 @@ module VirtualHearings::ConferenceClient
         domain: ENV["WEBEX_DOMAIN_IC"],
         api_endpoint: ENV["WEBEX_API_IC"],
         query: nil
-      )
+      }
+      @client ||= WebexService.new(config)
     else
       msg = "Conference Provider for the Virtual Hearing Not Found"
       fail Caseflow::Error::MeetingTypeNotFoundError, message: msg

@@ -22,9 +22,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     action_hash = {
       action: "retrieve",
       direction: "from",
+      filetype: "vtt",
       call: "download_file_to_tmp!"
     }
-    details = build_error_details(action_hash, "vtt", "Webex", exception)
+    details = build_error_details(action_hash, "Webex", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
@@ -39,9 +40,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     action_hash = {
       action: "convert",
       direction: "to",
+      filetype: "vtt",
       call: "convert_to_rtf_and_upload_to_s3!"
     }
-    details = build_error_details(action_hash, "vtt", "rtf", exception)
+    details = build_error_details(action_hash, "rtf", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
@@ -50,9 +52,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     action_hash = {
       action: "retrieve",
       direction: "from",
+      filetype: "vtt",
       call: "parse_hearing"
     }
-    details = build_error_details(action_hash, "vtt", "Webex", error)
+    details = build_error_details(action_hash, "Webex", error)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
@@ -63,7 +66,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
     @file_name = file_name
-    @transcription_file = find_or_create_transcription_file
+    @transcription_file ||= find_or_create_transcription_file
     ensure_hearing_held
 
     download_file_to_tmp!(download_link)
@@ -204,10 +207,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #         error - Exception - the error that was raised
   #
   # Returns: The hash for details on the error
-  def build_error_details(action_hash, filetype, provider, error)
+  def build_error_details(action_hash, provider, error)
     {
       action: action_hash[:action],
-      filetype: filetype,
+      filetype: action[:filetype],
       direction: action_hash[:direction],
       provider: provider,
       error: error,

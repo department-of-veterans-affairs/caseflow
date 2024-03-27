@@ -14,14 +14,16 @@ class WebexConferenceLink < ConferenceLink
   def generate_conference_information
     meeting_type.update!(service_name: "webex")
 
-    conference_response = WebexService.new(
+    config = {
       host: ENV["WEBEX_HOST_IC"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
       apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_IC"],
       api_endpoint: ENV["WEBEX_API_IC"]
-    ).create_conference(hearing)
+    }
+
+    conference_response = WebexService.new(config).create_conference(hearing)
 
     update!(
       host_link: conference_response.host_link,
