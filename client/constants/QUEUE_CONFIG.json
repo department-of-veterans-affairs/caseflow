@@ -163,6 +163,10 @@
     "VETERAN_DETAILS": {
       "name": "veteranDetails"
     },
+    "PACKAGE_DOCUMENT_TYPE": {
+      "filterable": true,
+      "name": "packageDocTypeColumn"
+    },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },
@@ -254,5 +258,10 @@
     "IS_FORMER_TRAVEL": {
       "key": "former Travel"
     }
+  },
+
+  "PACKAGE_DOC_TYPE_FILTER_OPTIONS": {
+    "NOD": "NOD",
+    "NON_NOD": "Non-NOD"
   }
 }

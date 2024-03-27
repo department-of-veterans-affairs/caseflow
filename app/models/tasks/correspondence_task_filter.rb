@@ -5,6 +5,7 @@ class CorrespondenceTaskFilter < TaskFilter
     va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
     date_completed_params = filter_params.select { |param| param.include?("col=correspondenceCompletedDateColumn") }
     task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
+    nod_column_params = filter_params.select { |param| param.include?("col=packageDocTypeColumn") }
 
     # task_column_params comes in as a single string, delimited by |. Updates task_column_params
     # to be an array of the incoming values.
@@ -19,6 +20,13 @@ class CorrespondenceTaskFilter < TaskFilter
       result = result.merge(filter_by_va_dor(value_hash[:val]))
     end
 
+    unless nod_column_params.empty?
+      nod_column_params.each do |param|
+        value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
+        result = result.merge(filter_by_nod(value_hash[:val]))
+      end
+    end
+
     unless task_column_params.empty?
       result = result.merge(filter_by_task(task_column_params))
     end
@@ -31,6 +39,15 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   private
+
+  def filter_by_nod(nod_value)
+    # If both NOD and Non-NOD checkboxes are selected in the filter dropdown,
+    # nod_value will be "true|false" or "false|true",
+    # so we return all the tasks if the string contains pipe character.
+    return tasks if nod_value.include?("|")
+
+    tasks.joins(:appeal).where("correspondences.nod = ?", nod_value)
+  end
 
   def filter_by_date(date_info)
     date_type, first_date, second_date = date_info.split(",")
