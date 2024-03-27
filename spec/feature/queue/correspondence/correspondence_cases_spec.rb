@@ -998,45 +998,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = current_date.strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -1116,45 +1116,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = (current_date - 3).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses days waiting sort correctly" do
@@ -1191,10 +1191,10 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses tasks filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[1].click
+      all(".unselected-filter-icon")[2].click
       all(".cf-filter-option-row")[1].click
       # find_by_id("0-CavcCorrespondenceCorrespondenceTask").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 5)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(3)").length == 5)
     end
 
     it "uses assigned to sort correctly" do
@@ -1257,7 +1257,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
       all("[aria-label='Reassign Package Task Link']")[0].click
       find('[for="vertical-radio_reject"]').click
-      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
       expect(page).to have_content("You have successfully rejected a package request for")
     end
@@ -1274,7 +1274,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
       all("[aria-label='Remove Package Task Link']")[0].click
       find('[for="vertical-radio_reject"]').click
-      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
       expect(page).to have_content("You have successfully rejected a package request")
     end
