@@ -25,6 +25,7 @@ import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
+import { featureToggles } from 'test/data/queue/cavc';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -45,6 +46,16 @@ export class PdfFile extends React.PureComponent {
     this.metricsIdentifier = null;
     this.scrollTimer = null;
     this.measureTimeStartMs = null;
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: null,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan
+    };
   }
 
   componentDidMount = () => {
@@ -70,17 +81,37 @@ export class PdfFile extends React.PureComponent {
    * different domain (eFolder), and still need to pass our credentials to authenticate.
    */
 
+  receiveEndTime = (endTime, pageIndex, documentId) => {
+    if (this.measureTimeStartMs !== null) {
+      if (this.props.featureToggles.pdfPageRenderTimeInMs && pageIndex === 0) {
+        storeMetrics(
+          documentId,
+          this.metricsAttributes,
+          {
+            message: 'pdf_page_render_time_in_ms',
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + this.measureTimeStartMs),
+            end: new Date(performance.timeOrigin + endTime),
+            duration: this.measureTimeStartMs ? endTime - this.measureTimeStartMs : 0
+          },
+          this.metricsIdentifier,
+        );
+      }
+      console.log('========WE HAVE METRICS=========');
+      console.log(endTime - this.measureTimeStartMs);
+      console.log(pageIndex);
+      console.log(documentId);
+      console.log(this.metricsIdentifier);
+      console.log(this.metricsAttributes);
+      this.measureTimeStartMs = null;
+    }
+  }
+
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
     this.metricsIdentifier = uuid.v4();
-
-    const documentData = {
-      documentId: this.props.documentId,
-      documentType: this.props.documentType,
-      file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-    };
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
@@ -89,7 +120,7 @@ export class PdfFile extends React.PureComponent {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
           product: 'reader',
-          data: documentData,
+          data: this.metricsAttributes,
           eventId: this.metricsIdentifier,
         };
 
@@ -139,6 +170,13 @@ export class PdfFile extends React.PureComponent {
         const message = `UUID: ${logId} : Getting PDF document failed for ${this.props.file} : ${error}`;
 
         console.error(message);
+
+        const documentData = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        };
 
         if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
           storeMetrics(
@@ -230,18 +268,25 @@ export class PdfFile extends React.PureComponent {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
+    const calculatedPageIndex = (rowIndex * this.columnCount) + columnIndex;
+
+    this.metricsAttributes.pageIndex = calculatedPageIndex;
+    this.metricsAttributes.numPagesInDoc = this.props.pdfDocument.numPages;
+
     return <div key={pageIndex} style={style}>
       <PdfPage
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
-        pageIndex={(rowIndex * this.columnCount) + columnIndex}
+        pageIndex={calculatedPageIndex}
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
         measureTimeStartMs={this.measureTimeStartMs}
         metricsIdentifier={this.metricsIdentifier}
+        metricsAttributes={this.metricsAttributes}
+        receiveEndTime={this.receiveEndTime}
       />
     </div>;
   }
@@ -473,7 +518,7 @@ export class PdfFile extends React.PureComponent {
 
         storeMetrics(
           this.props.documentId,
-          data,
+          this.metricsAttributes,
           {
             message: `Scroll to position ${posx}, ${posy}`,
             type: 'performance',
@@ -686,7 +731,7 @@ const mapDispatchToProps = (dispatch) => ({
     setDocScrollPosition,
     updateSearchIndexPage,
     updateSearchRelativeIndex,
-    setPageDimensions
+    setPageDimensions,
   }, dispatch)
 });
 

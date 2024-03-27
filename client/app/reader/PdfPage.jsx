@@ -36,6 +36,7 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = null;
     this.marks = [];
     this.measureTimeStartMs = props.measureTimeStartMs;
+    this.receiveEndTime = props.receiveEndTime;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -212,18 +213,14 @@ export class PdfPage extends React.PureComponent {
   // and PDFJS page object.
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
+
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
+
       const pageMetricData = {
-        message: `Storing PDF page ${this.props.pageIndex + 1}`,
+        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
         product: 'reader',
         type: 'performance',
-        data: {
-          file: this.props.file,
-          documentId: this.props.documentId,
-          pageIndex: this.props.pageIndex,
-          numPagesInDoc: this.props.pdfDocument.numPages,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled
-        },
+        data: this.props.metricsAttributes,
         eventId: this.props.metricsIdentifier
       };
 
@@ -236,16 +233,10 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text`,
+          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
           product: 'reader',
           type: 'performance',
-          data: {
-            file: this.props.file,
-            documentId: this.props.documentId,
-            pageIndex: this.props.pageIndex,
-            numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-          },
+          data: this.props.metricsAttributes,
           eventId: this.props.metricsIdentifier
         };
 
@@ -254,14 +245,7 @@ export class PdfPage extends React.PureComponent {
           message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
           type: 'performance',
           product: 'reader',
-          data: {
-            documentId: this.props.documentId,
-            documentType: this.props.documentType,
-            file: this.props.file,
-            pageIndex: this.props.pageIndex,
-            numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
-          },
+          data: this.props.metricsAttributes,
           eventId: this.props.metricsIdentifier
         };
 
@@ -273,30 +257,11 @@ export class PdfPage extends React.PureComponent {
         });
 
         this.drawPage(page).then(() => {
-          const data = {
-            overscan: this.props.windowingOverscan,
-            documentType: this.props.documentType,
-            pageCount: this.props.pdfDocument.numPages,
-            pageIndex: this.props.pageIndex,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-            start: this.measureTimeStartMs,
-            end: performance.now()
-          };
 
-          // Waits for all the pages before storing metric
-          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex === 0) {
-            storeMetrics(
+          if (this.props.isPageVisible) {
+            this.receiveEndTime(performance.now(),
+              this.props.pageIndex,
               this.props.documentId,
-              data,
-              {
-                message: 'pdf_page_render_time_in_ms',
-                type: 'performance',
-                product: 'reader',
-                start: new Date(performance.timeOrigin + data.start),
-                end: new Date(performance.timeOrigin + data.end),
-                duration: data.start ? data.end - data.start : 0
-              },
-              this.props.metricsIdentifier,
             );
           }
         });
