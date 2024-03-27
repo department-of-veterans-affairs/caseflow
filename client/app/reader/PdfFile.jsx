@@ -25,6 +25,7 @@ import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
+import { featureToggles } from 'test/data/queue/cavc';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -79,6 +80,33 @@ export class PdfFile extends React.PureComponent {
    * We have to set withCredentials to true since we're requesting the file from a
    * different domain (eFolder), and still need to pass our credentials to authenticate.
    */
+
+  receiveEndTime = (endTime, pageIndex, documentId) => {
+    if (this.measureTimeStartMs !== null) {
+      if (this.props.featureToggles.pdfPageRenderTimeInMs && pageIndex === 0) {
+        storeMetrics(
+          documentId,
+          this.metricsAttributes,
+          {
+            message: 'pdf_page_render_time_in_ms',
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + this.measureTimeStartMs),
+            end: new Date(performance.timeOrigin + endTime),
+            duration: this.measureTimeStartMs ? endTime - this.measureTimeStartMs : 0
+          },
+          this.metricsIdentifier,
+        );
+      }
+      console.log('========WE HAVE METRICS=========');
+      console.log(endTime - this.measureTimeStartMs);
+      console.log(pageIndex);
+      console.log(documentId);
+      console.log(this.metricsIdentifier);
+      console.log(this.metricsAttributes);
+      this.measureTimeStartMs = null;
+    }
+  }
 
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
@@ -258,6 +286,7 @@ export class PdfFile extends React.PureComponent {
         measureTimeStartMs={this.measureTimeStartMs}
         metricsIdentifier={this.metricsIdentifier}
         metricsAttributes={this.metricsAttributes}
+        receiveEndTime={this.receiveEndTime}
       />
     </div>;
   }

@@ -36,6 +36,7 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = null;
     this.marks = [];
     this.measureTimeStartMs = props.measureTimeStartMs;
+    this.receiveEndTime = props.receiveEndTime;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -257,23 +258,10 @@ export class PdfPage extends React.PureComponent {
 
         this.drawPage(page).then(() => {
 
-          const startTime = this.measureTimeStartMs;
-          const endTime = performance.now();
-
-          // Waits for all the pages before storing metric
-          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex === 0) {
-            storeMetrics(
+          if (this.props.isPageVisible) {
+            this.receiveEndTime(performance.now(),
+              this.props.pageIndex,
               this.props.documentId,
-              this.props.metricsAttributes,
-              {
-                message: 'pdf_page_render_time_in_ms',
-                type: 'performance',
-                product: 'reader',
-                start: new Date(performance.timeOrigin + startTime),
-                end: new Date(performance.timeOrigin + endTime),
-                duration: startTime ? endTime - startTime : 0
-              },
-              this.props.metricsIdentifier,
             );
           }
         });
