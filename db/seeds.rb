@@ -84,14 +84,6 @@ class SeedDB
 
     Judge.list_all
     Attorney.list_all
-
-    # temporary disabling existing appeals for testing
-
-    RequestStore.store[:current_user] = User.system_user
-    DistributionTask.where(status: 'assigned').map { |t| t.update!(status: 'on_hold') }
-
-    VACOLS::Case.where(bfcurloc: ['81', '83']).map { |c| c.update!(bfcurloc: 'testing') }
-
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
