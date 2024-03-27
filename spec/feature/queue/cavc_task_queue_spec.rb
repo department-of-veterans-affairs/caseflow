@@ -866,7 +866,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         step "assigned user completes task" do
           User.authenticate!(user: org_nonadmin2)
-          visit "queue/appeals/#{task.appeal.external_id}"
+          visit "queue/appeals/#{task.appeal.reload.external_id}"
+
+          puts task.inspect
+          puts task.available_actions_unwrapper(org_nonadmin2).inspect
+          puts task.available_actions(org_nonadmin2).inspect
+          puts "where are my task actions??"
 
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
           click_on COPY::MODAL_END_HOLD_BUTTON

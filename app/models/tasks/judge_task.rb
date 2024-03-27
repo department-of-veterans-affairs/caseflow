@@ -11,6 +11,7 @@
 class JudgeTask < Task
   def available_actions(user)
     # Only the current assignee of a judge task should have actions available to them on the judge task.
+    # TODO: Get it working with hashes instead of subconstants
     if assigned_to == user
       # [
       #   Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

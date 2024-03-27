@@ -137,9 +137,8 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        if appeal.accessible?
-          id = params[:appeal_id]
-          MetricsService.record("Get appeal information for ID #{id}",
+        if appeal.accessible?(current_user)
+          MetricsService.record("Get appeal information for ID #{params[:appeal_id]}",
                                 service: :queue,
                                 name: "AppealsController.show") do
             appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)

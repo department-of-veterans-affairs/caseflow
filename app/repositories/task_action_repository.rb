@@ -223,6 +223,8 @@ class TaskActionRepository
     end
 
     def address_motion_to_vacate_data(task, _user = nil)
+      puts "in address motion to vacate"
+      byebug
       attorney = task.appeal.assigned_attorney
       judge_attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys
       {
@@ -466,12 +468,19 @@ class TaskActionRepository
 
     def return_to_attorney_data(task, _user = nil)
       assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+      # judge_team = JudgeTeam.for_judge(task.assigned_to)
 
-      judge_team = JudgeTeam.for_judge(task.assigned_to)
-
+      # puts "before first attorneys call"
+      # judge_team_attorneys = judge_team&.attorneys || []
+      # byebug
       # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to
       # attorneys who are not on their judge team.
-      attorneys = (judge_team&.attorneys || []) + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
+      # puts "before all other attorneys call"
+      # Actually this is dumb. This is no different from JudgeTeam.all
+      # attorneys = judge_team_attorneys + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
+      # attorneys = JudgeTeam.all.map(&:attorneys).flatten
+      attorneys = JudgeTeam.all_judge_team_attorneys
+      # byebug
       attorneys |= [assignee] if assignee.present?
       {
         selected: assignee,
@@ -575,14 +584,20 @@ class TaskActionRepository
     end
 
     def toggle_timed_hold(task, user)
-      # action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-      # action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
-      action =
-        if task.on_timed_hold?
-          Constants::TASK_ACTIONS["END_TIMED_HOLD"]
-        else
-          Constants::TASK_ACTIONS["PLACE_TIMED_HOLD"]
-        end
+      action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+      # puts "in toggle timed hold in task_action_repository"
+      # puts task.inspect
+      # puts user.inspect
+      # puts task.on_timed_hold?
+      # TODO: Figure out how this seraialization works so we can avoid subconstants since it's slow
+      # action =
+      #   if task.on_timed_hold?
+      #     Constants::TASK_ACTIONS["END_TIMED_HOLD"]
+      #   else
+      #     Constants::TASK_ACTIONS["PLACE_TIMED_HOLD"]
+      #   end
+      # puts action.inspect
 
       task_helper = TaskActionHelper.build_hash(action, task, user).merge(
         returns_complete_hash: true

@@ -31,19 +31,19 @@ class LegacyTasksController < ApplicationController
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
           tasks = nil
-          puts "---------------------------------- legacy work queue tasks for user -----------------------------------"
+          # puts "---------------------------------- legacy work queue tasks for user -----------------------------------"
           start_time1 = Time.zone.now
           StackProf.run(mode: :wall, out: "legacy_work_queue.dump") do
-            # tasks = LegacyWorkQueue.tasks_for_user(user)
-            tasks = []
+            tasks = LegacyWorkQueue.tasks_for_user(user)
+            # tasks = []
           end
           end_time1 = Time.zone.now
-          puts "LegacyWorkQueue.tasks_for_user took: #{(end_time1 - start_time1) * 1000}"
+          # puts "LegacyWorkQueue.tasks_for_user took: #{(end_time1 - start_time1) * 1000}"
           # byebug
 
           rendered_json = nil
-          puts "----------------------------- serialized tasks via LegacyTaskSerializer -----------------------------"
-          start_time2 = Time.zone.now
+          # puts "----------------------------- serialized tasks via LegacyTaskSerializer -----------------------------"
+          # start_time2 = Time.zone.now
           # tasks.appeal.pluck(find_or_create_all(*file_numbers_or_ssns)
           # file_numbers_or_ssns = tasks.map(&:appeal).pluck(:veteran_file_number)
           # VeteranFinder.find_or_create_all(*file_numbers_or_ssns).index_by(:veteran_file_number)
@@ -54,9 +54,9 @@ class LegacyTasksController < ApplicationController
               tasks: json_tasks(tasks, user, user_role)
             }
           end
-          end_time2 = Time.zone.now
-          puts "Number of tasks: #{tasks.count}"
-          puts "LegacyTask Serialization took: #{(end_time2 - start_time2) * 1000}"
+          # end_time2 = Time.zone.now
+          # puts "Number of tasks: #{tasks.count}"
+          # puts "LegacyTask Serialization took: #{(end_time2 - start_time2) * 1000}"
           # byebug
 
           rendered_json

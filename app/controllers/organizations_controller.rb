@@ -30,8 +30,8 @@ class OrganizationsController < ApplicationController
   end
 
   def verify_organization_access
-    # redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
-    redirect_to "/unauthorized" unless current_user.member_of_organization?(organization)
+    # Maybe just revert this back. This should be fast enough and should really only be called one time.
+    redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
   end
 
   def verify_business_line
@@ -47,9 +47,9 @@ class OrganizationsController < ApplicationController
   # a User record so they cannot be added as a member of the organization. This function exists to automatically add
   # them to the organization when they visit the organization's team queue.
   def add_user_to_vso
-    # return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
-    return if current_user.roles.exclude?("VSO") || current_user.member_of_organization?(organization)
+    return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
 
+    # Might need to reload here now that I am memoing organization
     organization.add_user(current_user)
   end
 

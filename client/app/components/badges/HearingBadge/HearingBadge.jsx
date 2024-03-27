@@ -24,24 +24,24 @@ import { setMostRecentlyHeldHearingForAppeal } from 'app/queue/QueueActions';
 class HearingBadge extends React.PureComponent {
   componentDidMount = () => {
     // TODO: Turn this back on eventually. It just clogs up the logs for now with hearings requests
-    // if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
-    //   ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
-    //     this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, response.body);
-    //   }).
-    //     catch((err) => {
-    //       // we don't care if the browser gave up for some reason.
-    //       if (err.message.match(/Request has been terminated|Response timeout/)) {
-    //         return;
-    //       }
+    if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
+      ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
+        this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, response.body);
+      }).
+        catch((err) => {
+          // we don't care if the browser gave up for some reason.
+          if (err.message.match(/Request has been terminated|Response timeout/)) {
+            return;
+          }
 
-    //       const error = new Error(`There was an error getting hearings for appeal ${this.props.externalId} ${err}`);
+          const error = new Error(`There was an error getting hearings for appeal ${this.props.externalId} ${err}`);
 
-    //       if (window.Raven) {
-    //         window.Raven.captureException(error);
-    //       }
-    //       console.error(error);
-    //     });
-    // }
+          if (window.Raven) {
+            window.Raven.captureException(error);
+          }
+          console.error(error);
+        });
+    }
   }
 
   render = () => {

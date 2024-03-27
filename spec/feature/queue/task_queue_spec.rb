@@ -148,6 +148,8 @@ feature "Task queue", :all_dbs do
     end
 
     it "supports custom sorting" do
+      puts "attorney tasks"
+      puts attorney_user.tasks.inspect
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[4]/span/span[1]")
       docket_number_column_header.click
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[5]/span[3]")

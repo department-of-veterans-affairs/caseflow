@@ -98,7 +98,26 @@ class WorkQueue::LegacyTaskSerializer
   attribute :veteran_file_number do |object|
     # object.appeal.veteran_file_number_fast || object.appeal.veteran_file_number
     # Same thing as veteran death date. I would like a fallback, but it slows things down
-    object.appeal.veteran_file_number_fast
+    # file_number = object.appeal.veteran_file_number_fast
+
+    # object.appeal.veteran_file_number_fast || object.veteran_file_number
+    puts "in veteran file number serialize field block"
+    puts object.appeal.veteran_file_number_fast.inspect
+    puts object.appeal.sanitized_vbms_id
+    puts "Dying after calling veteran_file_number"
+
+    puts object.appeal.veteran_file_number.inspect
+    puts "makes it past veteran_file_number"
+    # puts object.sanitized_vbms_id.inspect
+
+    object.appeal.veteran_file_number_fast || object.appeal.veteran_file_number
+
+    # if file_number
+    #   file_number
+    # else
+    #   object.appeal_veteran_file_number
+    # end
+    # object.appeal.veteran_file_number
   end
 
   attribute :issue_count do |object|

@@ -757,7 +757,7 @@ class LegacyAppeal < CaseflowRecord
 
       vacols_file_number = sanitized_vbms_id
 
-      # puts "legacy_appeal.rb in veteran_file_number"
+      puts "legacy_appeal.rb in veteran_file_number"
 
       return vacols_file_number unless veteran
 

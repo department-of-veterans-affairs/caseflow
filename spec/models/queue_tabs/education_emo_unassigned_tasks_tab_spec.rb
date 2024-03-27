@@ -74,6 +74,8 @@ describe EducationEmoUnassignedTasksTab, :postgres do
       it "returns the appeal that has tasks completed by RPO and EMO, and then is assigned again to EMO" do
         assignee_assigned_task.update!(status: Constants.TASK_STATUSES.completed)
         create(:education_document_search_task, :assigned, assigned_to: assignee, parent: assignee_assigned_task.parent)
+        # This has to be reloaded now since children are cached via the association
+        assignee_assigned_task.reload
         expect(subject.to_a.first).to eq(assignee_assigned_task.siblings.first)
       end
     end

@@ -300,6 +300,8 @@ class TasksController < ApplicationController
   end
 
   def verify_view_access
+    # puts "when does this happen?"
+    # byebug
     return true if user == current_user ||
                    Judge.new(current_user).attorneys.include?(user) ||
                    current_user.can_act_on_behalf_of_judges?

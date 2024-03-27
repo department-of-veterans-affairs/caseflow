@@ -297,13 +297,13 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  attribute :suggested_hearing_location do |object, params|
+  attribute :suggested_hearing_location do |object, _params|
     # columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
 
     # if serialize_attribute?(params, columns)
-      # TODO: See if this one matters
-      # object.appeal.suggested_hearing_location&.to_hash
-      # {}
+    # TODO: See if this one matters
+    # object.appeal.suggested_hearing_location&.to_hash
+    # {}
     # end
     object.appeal.suggested_hearing_location&.to_hash
   end
@@ -379,7 +379,19 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants::QUEUE_CONFIG["COLUMNS"]["DOCUMENT_ID"]["name"]]
 
     if serialize_attribute?(params, columns)
-      object.prepared_by_display_name || { first_name: nil, last_name: nil }
+      name = object.prepared_by_display_name
+      if name
+        {
+          first_name: name.first,
+          last_name: name.last
+        }
+      else
+        {
+          first_name: nil,
+          last_name: nil
+        }
+      end
+      # object.prepared_by_display_name || { first_name: nil, last_name: nil }
       # { first_name: nil, last_name: nil }
     end
   end

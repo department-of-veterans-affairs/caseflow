@@ -10,15 +10,15 @@ class AttorneyLegacyTask < LegacyTask
     return [] unless task_id
 
     # TODO: Get it working with this
-    actions = [
-      Constants::TASK_ACTIONS["REVIEW_LEGACY_DECISION"],
-      Constants::TASK_ACTIONS["SUBMIT_OMO_REQUEST_FOR_REVIEW"],
-      Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"]
-    ]
+    # actions = [
+    #   Constants::TASK_ACTIONS["REVIEW_LEGACY_DECISION"],
+    #   Constants::TASK_ACTIONS["SUBMIT_OMO_REQUEST_FOR_REVIEW"],
+    #   Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"]
+    # ]
 
-    # actions = [Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
-    #            Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
-    #            Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
+    actions = [Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
+               Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
+               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
 
     actions
   end

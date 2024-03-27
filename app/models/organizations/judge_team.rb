@@ -20,6 +20,12 @@ class JudgeTeam < Organization
         OrganizationsUser.make_user_admin(user, org)
       end
     end
+
+    def all_judge_team_attorneys
+      Rails.cache.fetch("#{Rails.env}_list_of_all_judge_team_attorneys") do
+        JudgeTeam.all.map(&:attorneys).flatten
+      end
+    end
   end
 
   def judge
