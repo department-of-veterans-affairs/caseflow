@@ -64,7 +64,7 @@ class CorrespondenceTask < Task
   end
 
   def correspondence
-    appeal
+    Correspondence.find(appeal_id)
   end
 
   def completed_by_date
