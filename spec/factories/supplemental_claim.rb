@@ -239,7 +239,8 @@ FactoryBot.define do
           decision_review: sc,
           request_issues: sc.request_issues,
           benefit_type: sc.benefit_type,
-          disposition: "Granted"
+          disposition: "Granted",
+          caseflow_decision_date: 5.days.ago.to_date
         )
       end
     end

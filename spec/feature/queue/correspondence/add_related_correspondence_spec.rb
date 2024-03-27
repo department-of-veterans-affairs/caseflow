@@ -88,7 +88,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         expect(page).to have_content("Mail")
         expect(page).to have_content("15")
         expect(page).to have_content("9")
-        expect(page).to have_content("This is a note from CMP")
+        expect(page).to have_content("This is a test note")
       end
 
       it "table displays 15 items per page" do
