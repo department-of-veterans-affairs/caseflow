@@ -30,7 +30,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       docket_number: docket_number
     }
     TranscriptFileIssuesMailer.send_issue_details(details, hearing.appeal.external_id)
-    job.log_error(exception)
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
+    log_error(exception, extra: { application: self.class.name, job_id: job.id })
   end
   # rubocop:enable Layout/LineLength
 
@@ -50,15 +51,6 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
     send_file(topic, "mp3", mp3_link)
   end
   # rubocop:enable Lint/UnusedMethodArgument
-
-  def log_error(error)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
-    extra = {
-      application: self.class.name,
-      job_id: job_id
-    }
-    Raven.capture_exception(error, extra: extra)
-  end
 
   private
 

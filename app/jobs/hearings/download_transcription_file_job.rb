@@ -19,7 +19,12 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class HearingAssociationError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
-    details = build_error_details("retrieve", "vtt", "from", "Webex", "download_file_to_tmp!", exception)
+    action_hash = {
+      action: "retrieve",
+      direction: "from",
+      call: "download_file_to_tmp!"
+    }
+    details = build_error_details(action_hash, "vtt", "Webex", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
@@ -31,13 +36,23 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
-    details = build_error_details("convert", "vtt", "to", "rtf", "convert_to_rtf_and_upload_to_s3!", exception)
+    action_hash = {
+      action: "convert",
+      direction: "to",
+      call: "convert_to_rtf_and_upload_to_s3!"
+    }
+    details = build_error_details(action_hash, "vtt", "rtf", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, error|
-    details = build_error_details("retrieve", "vtt", "from", "Webex", "parse_hearing", error)
+    action_hash = {
+      action: "retrieve",
+      direction: "from",
+      call: "parse_hearing"
+    }
+    details = build_error_details(action_hash, "vtt", "Webex", error)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
@@ -181,26 +196,23 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     Rails.logger.info(message)
   end
 
-  # rubocop:disable Metrics/ParameterLists
   # Purpose: Builds object detailing error for mail template
   # Params:
-  #         action - string, the action that the job was doing
+  #         action_hash - object, hash object for describing the action that was attempted
   #         filetype - string, the filetype that was getting worked on
-  #         direction - string, either to/from in relative to provider
   #         provider - string, either the destination or starting point
-  #         call - string, the method call where the error occured
   #         error - Exception - the error that was raised
   #
   # Returns: The hash for details on the error
-  def build_error_details(action, filetype, direction, provider, call, error)
+  def build_error_details(action_hash, filetype, provider, error)
     {
-      action: action,
+      action: action_hash[:action],
       filetype: filetype,
-      direction: direction,
+      direction: action_hash[:direction],
       provider: provider,
       error: error,
       docket_number: hearing.docket_number,
-      api_call: call
+      api_call: action_hash[:call]
     }
   end
 
@@ -209,5 +221,4 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def appeal_id
     hearing.appeal.external_id
   end
-  # rubocop:enable Metrics/ParameterLists
 end

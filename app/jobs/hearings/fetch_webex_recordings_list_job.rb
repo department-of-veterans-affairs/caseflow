@@ -26,7 +26,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       times: "From: #{from}, To: #{to}"
     }
     TranscriptFileIssuesMailer.webex_recording_list_issues(details)
-    job.log_error(exception)
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
+    log_error(exception, extra: { application: self.class.name, job_id: job.id })
   end
 
   def perform
@@ -38,15 +39,6 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n, topic: topics[topic_num])
       topic_num += 1
     end
-  end
-
-  def log_error(error)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
-    extra = {
-      application: self.class.name,
-      job_id: job_id
-    }
-    Raven.capture_exception(error, extra: extra)
   end
 
   private
