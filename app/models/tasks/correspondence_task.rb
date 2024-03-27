@@ -71,8 +71,8 @@ class CorrespondenceTask < Task
     closed_at
   end
 
-  def task_url
-    "/under_construction"
+  def task_url(uuid)
+    "/#{uuid}/under_construction"
   end
 
   private

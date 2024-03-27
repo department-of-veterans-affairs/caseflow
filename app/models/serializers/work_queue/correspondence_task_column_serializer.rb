@@ -64,7 +64,9 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :assigned_at
 
-  attribute :task_url
+  attribute :task_url do |object|
+    object.correspondence.uuid
+  end
 
   attribute :parent_task_url do |object|
     if object.is_a?(ReassignPackageTask) || object.is_a?(RemovePackageTask)
@@ -73,7 +75,7 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
       { parent_task_url: "" }
     end
   end
-  
+
   attribute :assigned_to do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
