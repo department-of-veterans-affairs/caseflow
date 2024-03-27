@@ -146,6 +146,7 @@ describe SendNotificationJob, type: :job do
 
   context ".perform" do
     subject(:job) { SendNotificationJob.perform_later(good_message.to_json) }
+
     describe "send message to queue" do
       it "has one message in queue" do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
@@ -160,23 +161,36 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when message is nil" do
-        expect(Rails.logger).to receive(:error).with(/There was no message passed/)
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "There was no message passed into the " \
+               "SendNotificationJob.perform_later function. Exiting job."
+          end
+
           SendNotificationJob.perform_later(nil)
         end
       end
 
       it "logs error when appeals_id, appeals_type, or event_type is nil" do
-        expect(Rails.logger).to receive(:error).with(/appeals_id or appeal_type or event_type/)
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "appeals_id or appeal_type or event_type was nil " \
+              "in the SendNotificationJob. Exiting job."
+          end
+
           SendNotificationJob.perform_later(fail_create_message.to_json)
         end
       end
 
       it "logs error when audit record is nil" do
         allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
-        expect(Rails.logger).to receive(:error).with(/Audit record was unable to be found or created/)
+
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "Audit record was unable to be found or created " \
+              "in SendNotificationJob. Exiting Job."
+          end
+
           SendNotificationJob.perform_later(good_message.to_json)
         end
       end

@@ -4,18 +4,20 @@
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
 class SendNotificationJob < CaseflowJob
+  include Hearings::EnsureCurrentUserIsSet
+
   queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
   application_attr :hearing_schedule
 
-  retry_on(Caseflow::Error::VANotifyNotFoundError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(Caseflow::Error::VANotifyNotFoundError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
-  retry_on(Caseflow::Error::VANotifyInternalServerError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(Caseflow::Error::VANotifyInternalServerError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
-  retry_on(Caseflow::Error::VANotifyRateLimitError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(Caseflow::Error::VANotifyRateLimitError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
@@ -28,62 +30,82 @@ class SendNotificationJob < CaseflowJob
   end
 
   # Must receive JSON string as argument
+  def perform(message_json)
+    ensure_current_user_is_set
 
+    begin
+      unless message_json
+        fail Caseflow::Error::NotificationInitializationError,
+             message: "There was no message passed into the " \
+               "SendNotificationJob.perform_later function. Exiting job."
+      end
+
+      handle_message_json(message_json)
+    rescue StandardError => error
+      log_error(error)
+    end
+  end
+
+  private
+
+  # Purpose: Conditionally handles a JSON outline of a notification and maybe sends it to
+  #          to a veteran via VANotify.
+  #
+  # Params: A JSON object containing notification data
+  #
+  # Response: nil
   # rubocop:disable Layout/LineLength, Metrics/BlockNesting
-  def perform(message_json) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-    if message_json
-      @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
-      @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
-      @va_notify_quarterly_sms = FeatureToggle.enabled?(:va_notify_quarterly_sms)
-      message = JSON.parse(message_json, object_class: OpenStruct)
-      if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(
-          message.appeal_id,
-          message.appeal_type,
-          message.template_name,
-          message.participant_id
-        )
-        if notification_audit_record
-          if message.status != "No participant_id" && message.status != "No claimant"
-            to_update = {}
-            if @va_notify_email
-              to_update[:email_notification_status] = message.status
-            end
-            if @va_notify_sms && message.template_name != "Quarterly Notification" ||
-               @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
-              to_update[:sms_notification_status] = message.status
-            end
-            update_notification_audit_record(notification_audit_record, to_update)
-            if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
-              notification_audit_record.update!(email_enabled: false)
-            else send_to_va_notify(message, notification_audit_record)
-            end
-          else
-            status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
-            to_update = {}
-            if @va_notify_email
-              to_update[:email_notification_status] = status
-            end
-            if @va_notify_sms && message.template_name != "Quarterly Notification" ||
-               @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
-              to_update[:sms_notification_status] = status
-            end
-            update_notification_audit_record(notification_audit_record, to_update)
+  def handle_message_json(message_json) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
+    @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
+    @va_notify_quarterly_sms = FeatureToggle.enabled?(:va_notify_quarterly_sms)
+    message = JSON.parse(message_json, object_class: OpenStruct)
+    if message.appeal_id && message.appeal_type && message.template_name
+      notification_audit_record = create_notification_audit_record(
+        message.appeal_id,
+        message.appeal_type,
+        message.template_name,
+        message.participant_id
+      )
+      if notification_audit_record
+        if message.status != "No participant_id" && message.status != "No claimant"
+          to_update = {}
+          if @va_notify_email
+            to_update[:email_notification_status] = message.status
           end
-          notification_audit_record.save!
+          if @va_notify_sms && message.template_name != "Quarterly Notification" ||
+             @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
+            to_update[:sms_notification_status] = message.status
+          end
+          update_notification_audit_record(notification_audit_record, to_update)
+          if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
+            notification_audit_record.update!(email_enabled: false)
+          else
+            send_to_va_notify(message, notification_audit_record)
+          end
         else
-          log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
+          status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
+          to_update = {}
+          if @va_notify_email
+            to_update[:email_notification_status] = status
+          end
+          if @va_notify_sms && message.template_name != "Quarterly Notification" ||
+             @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
+            to_update[:sms_notification_status] = status
+          end
+          update_notification_audit_record(notification_audit_record, to_update)
         end
+        notification_audit_record.save!
       else
-        log_error("appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job.")
+        fail Caseflow::Error::NotificationInitializationError,
+             message: "Audit record was unable to be found or created in SendNotificationJob. Exiting Job."
       end
     else
-      log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
+      fail Caseflow::Error::NotificationInitializationError,
+           message: "appeals_id or appeal_type or event_type was nil in the SendNotificationJob. Exiting job."
     end
   end
   # rubocop:enable Layout/LineLength, Metrics/BlockNesting
-
-  private
 
   # Purpose: Updates and saves notification status for notification_audit_record
   #
@@ -147,15 +169,6 @@ class SendNotificationJob < CaseflowJob
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
-  end
-
-  # Purpose: Method to be called with an error need to be logged to the rails logger
-  #
-  # Params: error_message (Expecting a string) - Message to be logged to the logger
-  #
-  # Response: None
-  def log_error(error_message)
-    Rails.logger.error(error_message)
   end
 
   # Purpose: Method to create a new notification table row for the appeal
