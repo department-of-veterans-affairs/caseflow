@@ -11,6 +11,7 @@ import {
   mockTextLeverReturn,
   mockDocketDistributionPriorLeversReturn,
 } from 'test/data/adminCaseDistributionLevers';
+import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 let mockInitialLevers = {
   static: mockStaticLevers,
@@ -183,7 +184,7 @@ describe('Lever reducer', () => {
       payload: {
         leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        value: '0',
+        value: ACD_LEVERS.value,
         optionValue: 0
       }
     };
@@ -193,7 +194,9 @@ describe('Lever reducer', () => {
       if (lever.item === 'ama_hearing_case_affinity_days') {
         return {
           ...lever,
-          currentValue: 80
+          value: 80,
+          selectedOption: ACD_LEVERS.value,
+          valueOptionValue: 80
         };
       }
 
