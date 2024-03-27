@@ -377,6 +377,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       table_rows = current_table_rows
 
+      binding.pry
       expect(table_rows.last.include?(earlier_date)).to eq true
       expect(table_rows.first.include?(later_date)).to eq true
 
