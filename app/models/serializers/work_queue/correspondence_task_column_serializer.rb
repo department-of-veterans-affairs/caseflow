@@ -27,10 +27,6 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     end
   end
 
-  attribute :cmp_packet_number do |object|
-    object.correspondence.cmp_packet_number
-  end
-
   attribute :closed_at do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.CORRESPONDENCE_TASK_CLOSED_DATE.name]
 
@@ -62,8 +58,6 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     end
   end
 
-  attribute :status
-
   attribute :assigned_at
 
   attribute :task_url
@@ -84,19 +78,11 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       {
-        css_id: assignee.try(:css_id),
-        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-        is_organization: assignee.is_a?(Organization),
-        type: assignee.class.name,
-        id: assignee.id
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id
       }
     else
       {
-        css_id: nil,
-        is_organization: nil,
-        name: nil,
-        type: nil,
-        id: nil
+        name: nil
       }
     end
   end
@@ -109,16 +95,12 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     if serialize_attribute?(params, columns)
       {
         first_name: object.assigned_by_display_name.first,
-        last_name: object.assigned_by_display_name.last,
-        css_id: object.assigned_by.try(:css_id),
-        pg_id: object.assigned_by.try(:id)
+        last_name: object.assigned_by_display_name.last
       }
     else
       {
         first_name: nil,
-        last_name: nil,
-        css_id: nil,
-        pg_id: nil
+        last_name: nil
       }
     end
   end
