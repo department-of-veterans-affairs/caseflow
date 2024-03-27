@@ -13,6 +13,7 @@ class TasksForAppeal
   end
 
   def call
+    # TODO: This is always a DB call no matter what. It also never assigns it so it's pointless if it doesn't create it
     RootTask.find_or_create_by!(appeal: appeal)
 
     if initialize_hearing_tasks_for_travel_board?
@@ -70,6 +71,7 @@ class TasksForAppeal
   end
 
   def initialize_hearing_tasks_for_travel_board?
+    # This is gross it's like 3 db calls for things loaded into memory
     appeal.is_a?(LegacyAppeal) &&
       user.can_change_hearing_request_type? &&
       appeal.tasks.open.where(type: HearingTask.name).empty? &&

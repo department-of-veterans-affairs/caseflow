@@ -37,7 +37,8 @@ class ApplicationController < ApplicationBaseController
   private
 
   def deny_non_bva_admins
-    redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
+    # redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless current_user.member_of_organization?(Bva)
   end
 
   def handle_non_critical_error(endpoint, err)

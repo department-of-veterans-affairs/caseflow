@@ -10,25 +10,38 @@ class VACOLS::CaseAssignment < VACOLS::Record
   has_one :case_decision, foreign_key: :defolder, primary_key: :bfkey
   has_one :correspondent, foreign_key: :stafkey, primary_key: :bfcorkey
 
-  def added_by
-    added_by_name = FullName.new(added_by_first_name,
-                                 added_by_middle_name,
-                                 added_by_last_name).formatted(:readable_full)
+  # Testing Structs vs OpenStructs for speed
+  AddedByUser = Struct.new(:name, :css_id)
+  AssignedByUser = Struct.new(:first_name, :last_name, :pg_id, :css_id)
 
-    OpenStruct.new(name: added_by_name, css_id: added_by_css_id.presence || "")
+  def added_by
+    @added_by ||= begin
+      added_by_name = FullName.new(added_by_first_name,
+                                   added_by_middle_name,
+                                   added_by_last_name).formatted(:readable_full)
+
+      # OpenStruct.new(name: added_by_name, css_id: added_by_css_id.presence || "")
+      # TODO: OpenStruct is a bit slow, but .notation and delegation are pretty handy.
+      # Change to hash if I get that desperate
+      # OpenStruct.new(name: added_by_name, css_id: added_by_css_id || "")
+      AddedByUser.new(added_by_name, added_by_css_id || "")
+    end
   end
 
   def assigned_by
-    assigned_by_user_id = if assigned_by_css_id
-                            User.find_by_css_id_or_create_with_default_station_id(assigned_by_css_id).id
-                          end
+    @assigned_by ||= begin
+      assigned_by_user_id = if assigned_by_css_id
+                              User.find_by_css_id_or_create_with_default_station_id(assigned_by_css_id).id
+                            end
 
-    OpenStruct.new(
-      first_name: assigned_by_first_name,
-      last_name: assigned_by_last_name,
-      pg_id: assigned_by_user_id,
-      css_id: assigned_by_css_id
-    )
+      # OpenStruct.new(
+      #   first_name: assigned_by_first_name,
+      #   last_name: assigned_by_last_name,
+      #   pg_id: assigned_by_user_id,
+      #   css_id: assigned_by_css_id
+      # )
+      AssignedByUser.new(assigned_by_first_name, assigned_by_last_name, assigned_by_user_id, assigned_by_css_id)
+    end
   end
 
   def assigned_by_name

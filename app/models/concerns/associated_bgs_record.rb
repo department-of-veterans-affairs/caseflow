@@ -25,6 +25,10 @@ module AssociatedBgsRecord
           instance_variable_get("@#{attribute}".to_sym)
         end
 
+        define_method "#{attribute}_fast" do
+          instance_variable_get("@#{attribute}".to_sym)
+        end
+
         define_method "#{attribute}=" do |value|
           instance_variable_set("@#{attribute}".to_sym, value)
         end

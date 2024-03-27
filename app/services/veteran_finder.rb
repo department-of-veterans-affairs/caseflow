@@ -7,6 +7,7 @@ class VeteranFinder
     end
 
     def find_best_match(file_number_or_ssn)
+      # puts "in find best match with file_number_or_ssn: #{file_number_or_ssn}"
       if file_number_or_ssn.to_s.length == 9
         found_by_ssn = find_preferred_by_ssn(file_number_or_ssn)
 
@@ -22,6 +23,8 @@ class VeteranFinder
 
     def find_best_match_by_ssn(ssn)
       vets = find_or_create_by_file_number_or_ssn(ssn)
+      # TODO: Why is it written this way? Is it to avoid triggering the BGS call?
+      # Still seems like .find { |vet| vet[:ssn].present? && vet.ssn.to_s == ssn.to_s } would be better
       vets.select { |vet| vet[:ssn].present? }.find { |vet| vet.ssn.to_s == ssn.to_s } || vets.first
     end
 

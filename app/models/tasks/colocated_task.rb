@@ -17,6 +17,24 @@ class ColocatedTask < Task
 
   class << self
     prepend IhpTaskPending
+
+    # attr_accessor :subclasses_hash
+
+    # def subclasses_hash
+    #   @subclasses_hash ||= {}
+    # end
+
+    # Round two
+    def subclasses_hash
+      @subclasses_hash ||= subclasses.index_by(&:label)
+    end
+
+    # def inherited(subclass)
+    #   # subclasses_hash ||= {}
+    #   subclasses_hash[subclass.label] = subclass
+    #   super
+    # end
+
     def create_from_params(params, user)
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
       verify_user_can_create!(user, parent_task)
@@ -83,6 +101,11 @@ class ColocatedTask < Task
     # out their days with their old colocated task workflow
     def find_subclass_by_action(action)
       subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
+    end
+
+    def find_subclass_by_action_new(action)
+      subclasses_hash[Constants::CO_LOCATED_ADMIN_ACTIONS[action]]
+      # self
     end
 
     # Is this method still relevant given ticket #12279 and related tickets?

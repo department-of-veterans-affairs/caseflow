@@ -11,6 +11,7 @@
 class JudgeTask < Task
   def available_actions(user)
     # Only the current assignee of a judge task should have actions available to them on the judge task.
+    # TODO: Get it working with hashes instead of subconstants
     if assigned_to == user
       [
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -18,9 +19,16 @@ class JudgeTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
+      # [
+      #   Constants::TASK_ACTIONS["ADD_ADMIN_ACTION"],
+      #   Constants::TASK_ACTIONS["TOGGLE_TIMED_HOLD"],
+      #   Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
+      #   additional_available_actions(user)
+      # ].flatten
     elsif user&.can_act_on_behalf_of_judges?
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        # Constants::TASK_ACTIONS["REASSIGN_TO_JUDGE"],
         additional_available_actions(user)
       ].flatten
     else
@@ -39,7 +47,9 @@ class JudgeTask < Task
   end
 
   def previous_task
-    children_attorney_tasks.order(:assigned_at).last
+    # .order might be a database call but might not matter
+    # children_attorney_tasks.order(:assigned_at).last
+    children_attorney_tasks.max_by(&:assigned_at)
   end
 
   def reassign_clears_overtime?

@@ -21,6 +21,7 @@ class AppealRepository
     def eager_load_legacy_appeals_for_tasks(tasks)
       # Make a single request to VACOLS to grab all of the rows we want here?
       legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+      # legacy_appeal_ids = legacy_tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
       # Do not make a VACOLS request if there are no legacy appeals in the set of tasks
       return tasks if legacy_appeal_ids.empty?
@@ -41,6 +42,69 @@ class AppealRepository
         set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
         t.appeal.aod = aod[t.appeal.vacols_id.to_s]
       end
+    end
+
+    def eager_load_legacy_appeals_for_tasks_in_queue(tasks, appeal_includes = [], legacy_includes = [])
+      appeal_tasks = nil
+      legacy_tasks = nil
+      if tasks.is_a?(Array)
+        legacy_tasks, appeal_tasks = tasks.partition { |task| task.is_a? LegacyTask }
+        appeals_preloader = ActiveRecord::Associations::Preloader.new
+        legacy_preloader = ActiveRecord::Associations::Preloader.new
+        appeals_preloader.preload(appeal_tasks, appeal_includes) if appeal_includes.present?
+        legacy_preloader.preload(legacy_tasks, legacy_includes) if legacy_includes.present?
+        return appeal_tasks if legacy_tasks.empty?
+      else
+        appeal_tasks = tasks.where(appeal_type: "Appeal")
+        # TODO: Make sure this works
+        legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
+        appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
+        legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
+
+        # Preload veterans as well
+        # This could be faster if it was made into an inner join and select only the fields from it that we need
+        vet_numbers = appeal_tasks.map { |task| task.appeal.veteran_file_number }
+        veterans = Veteran.where(file_number: vet_numbers).index_by(&:file_number)
+        appeal_tasks.each do |task|
+          task.appeal.veteran = veterans[task.appeal.veteran_file_number]
+        end
+      end
+      # appeal_tasks = tasks.where(appeal_type: "Appeal")
+      # legacy_tasks = tasks.where(appeal_type: "LegacyAppeal")
+      # appeal_tasks = appeal_tasks.except(:includes).includes(appeal_includes) if appeal_includes.present?
+      # legacy_tasks = legacy_tasks.except(:includes).includes(legacy_includes) if legacy_includes.present?
+
+      puts "in my new eager load method"
+      # puts appeal_includes.inspect
+      # puts appeal_tasks.to_sql
+      # puts legacy_tasks.to_sql
+      # pp appeal_tasks.includes_values
+      # puts legacy_tasks.includes_values
+      # byebug
+
+      # Make a single request to VACOLS to grab all of the rows we want here?
+      legacy_appeal_ids = legacy_tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+
+      # Do not make a VACOLS request if there are no legacy appeals in the set of tasks
+      return appeal_tasks if legacy_appeal_ids.empty?
+
+      # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
+      # longer appear in VACOLS.
+      cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
+
+      aod = legacy_appeal_ids.in_groups_of(1000, false).reduce({}) do |acc, group|
+        acc.merge(VACOLS::Case.aod(group))
+      end
+
+      # Associate the cases we pulled from VACOLS to the appeals of the tasks.
+      (appeal_tasks + legacy_tasks).each do |t|
+        next unless t.appeal.is_a?(LegacyAppeal)
+
+        case_record = cases[t.appeal.vacols_id.to_s]&.first
+        set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+        t.appeal.aod = aod[t.appeal.vacols_id.to_s]
+      end
+      # appeal_tasks
     end
 
     def find_case_record(id, ignore_misses: false)
@@ -171,9 +235,15 @@ class AppealRepository
     # :nocov:
 
     # TODO: consider persisting these records
-    def build_appeal(case_record, persist = false)
-      appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
-      appeal.save! if persist
+    def build_appeal(case_record, persist = false, fetched_appeal = nil)
+      appeal =
+        if fetched_appeal
+          fetched_appeal
+        else
+          appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+          appeal.save! if persist
+          appeal
+        end
       set_vacols_values(appeal: appeal, case_record: case_record)
     end
 

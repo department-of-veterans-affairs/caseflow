@@ -153,6 +153,9 @@ describe OtherClaimant, :postgres do
     subject { claimant.advanced_on_docket_motion_granted?(appeal) }
 
     it "returns whether an AOD has been granted" do
+      # This has to be reloaded because claimant caches person but it's based on the decision review attribute??
+      # TODO: Understand this one a bit better. It doesn't make sense
+      appeal.reload
       AdvanceOnDocketMotion.create_or_update_by_appeal(appeal, granted: true, reason: "age")
       expect(subject).to be_truthy
     end

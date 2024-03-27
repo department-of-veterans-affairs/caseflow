@@ -30,6 +30,7 @@ class OrganizationsController < ApplicationController
   end
 
   def verify_organization_access
+    # Maybe just revert this back. This should be fast enough and should really only be called one time.
     redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
   end
 
@@ -48,6 +49,7 @@ class OrganizationsController < ApplicationController
   def add_user_to_vso
     return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
 
+    # Might need to reload here now that I am memoing organization
     organization.add_user(current_user)
   end
 
@@ -62,7 +64,7 @@ class OrganizationsController < ApplicationController
   def organization
     # Allow the url to be the ID of the row in the table since this will be what is associated with
     # tasks assigned to the organization in the tasks table.
-    Organization.find_by(url: organization_url) || Organization.find(organization_url)
+    @organization ||= Organization.find_by(url: organization_url) || Organization.find(organization_url)
   end
 
   def json_organizations(organizations)

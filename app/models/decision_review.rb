@@ -193,7 +193,9 @@ class DecisionReview < CaseflowRecord
 
   # Currently AMA only supports one claimant per decision review
   def claimant
-    claimants.order(:id).last
+    # TODO: This is always a DB call which stomps preloading
+    # claimants.order(:id).last
+    claimants.max_by(&:id)
   end
 
   def claimant_participant_id
@@ -216,6 +218,9 @@ class DecisionReview < CaseflowRecord
   def payee_code
     claimant&.payee_code
   end
+
+  # TODO: Testing bulk preloading veterans. Also for serialization
+  attr_writer :veteran
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)

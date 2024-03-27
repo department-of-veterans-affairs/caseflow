@@ -192,7 +192,16 @@ class QueueTab
 
   def task_includes
     [
-      { appeal: [:available_hearing_locations, :claimants, :work_mode, :latest_informal_hearing_presentation_task] },
+      {
+        appeal: [
+          :available_hearing_locations,
+          :claimants,
+          :work_mode,
+          :latest_informal_hearing_presentation_task,
+          :appeal_views,
+          :special_issue_list
+        ]
+      },
       :assigned_by,
       :assigned_to,
       :children,

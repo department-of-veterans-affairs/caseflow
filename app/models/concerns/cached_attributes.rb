@@ -50,10 +50,14 @@ module CachedAttributes
         cached_value = get_cached_value(attr_name)
 
         # making sure false values are retrived from cache as well
-        if !cached_value.nil?
-          Rails.logger.info("Retrieving cached value for #{self.class.name}##{attr_name}")
-          return cached_value
-        end
+        # TODO: Is this still neccessary instead of just a guard clause??
+        # if !cached_value.nil?
+        #   Rails.logger.info("Retrieving cached value for #{self.class.name}##{attr_name}")
+        #   return cached_value
+        # end
+
+        return cached_value unless cached_value.nil?
+
         value = instance_eval(&get_value)
         set_cached_value(attr_name, value, write_options)
       end

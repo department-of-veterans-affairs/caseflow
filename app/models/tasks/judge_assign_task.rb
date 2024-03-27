@@ -18,7 +18,8 @@ class JudgeAssignTask < JudgeTask
                                     unless: :skip_check_for_only_open_task_of_type
 
   def additional_available_actions(_user)
-    [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    # [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    [Constants::TASK_ACTIONS["ASSIGN_TO_ATTORNEY"]]
   end
 
   def begin_decision_review_phase

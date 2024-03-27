@@ -45,6 +45,11 @@ class Organization < CaseflowRecord
     end
   end
 
+  # Probably dumb to do this but saves a lot of call chain guarding
+  def css_id
+    nil
+  end
+
   def active!
     self.status_updated_at = Time.zone.now
     super

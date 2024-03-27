@@ -9,6 +9,7 @@ class AttorneyQueue
   # Until we get rid of legacy tasks for attorneys, we have to search for tasks that are on hold
   # using assigned by user. We set status to being on_hold and placed_on_hold_at to assigned_at timestamp
   def tasks
+    puts "------------------in AttorneyQueue.tasks---------------"
     colocated_tasks_grouped = ColocatedTask.includes(*task_includes)
       .open.where(assigned_by: user, assigned_to_type: Organization.name, appeal_type: LegacyAppeal.name)
       .order(:created_at).group_by(&:appeal_id)

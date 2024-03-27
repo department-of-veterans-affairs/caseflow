@@ -53,6 +53,8 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
   end
 
   def json_tasks(tasks)
+    puts "do I ever get in schedule hearing tasks controller???"
+    # byebug
     primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
     WorkQueue::TaskColumnSerializer.new(

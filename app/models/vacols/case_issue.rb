@@ -102,12 +102,13 @@ class VACOLS::CaseIssue < VACOLS::Record
     SQL
 
     issues_result = MetricsService.record("VACOLS: CaseIssue.descriptions for #{vacols_ids}",
-                                          name: "CaseIssue.descriptios",
+                                          name: "CaseIssue.descriptions",
                                           service: :vacols) do
       conn.exec_query(sanitize_sql_array([query, vacols_ids]))
     end
 
-    issues_result.to_hash.reduce({}) do |memo, result|
+    # to_hash was renamed to to_a in rails 6
+    issues_result.to_a.reduce({}) do |memo, result|
       issue_key = result["isskey"].to_s
       memo[issue_key] = (memo[issue_key] || []) << result
       memo
