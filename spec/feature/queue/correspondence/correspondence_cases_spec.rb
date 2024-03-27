@@ -148,7 +148,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
@@ -159,7 +159,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
@@ -169,7 +169,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
@@ -181,7 +181,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
@@ -191,7 +191,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses uses task filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[1].click
+      all(".unselected-filter-icon")[2].click
       find("label", text: "Review Package Task (1)").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
