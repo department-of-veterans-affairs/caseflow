@@ -22,7 +22,7 @@ module VirtualHearings::ConferenceClient
         api_endpoint: ENV["WEBEX_API_IC"],
         query: nil
       }
-      @client ||= WebexService.new(config)
+      @client ||= WebexService.new(config: config)
     else
       msg = "Conference Provider for the Virtual Hearing Not Found"
       fail Caseflow::Error::MeetingTypeNotFoundError, message: msg

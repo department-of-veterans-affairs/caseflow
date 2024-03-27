@@ -35,7 +35,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   end
   # rubocop:enable Layout/LineLength
 
-  def perform(id:, file_name: nil)
+  def perform(id:, file_name:)
     ensure_current_user_is_set
     @file_name ||= file_name
     data = fetch_recording_details(id)
@@ -64,7 +64,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       query: { "id": id }
     }
 
-    WebexService.new(config).fetch_recording_details
+    WebexService.new(config:config).fetch_recording_details
   end
 
   def create_file_name(topic, extension)

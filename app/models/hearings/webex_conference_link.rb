@@ -23,7 +23,7 @@ class WebexConferenceLink < ConferenceLink
       api_endpoint: ENV["WEBEX_API_IC"]
     }
 
-    conference_response = WebexService.new(config).create_conference(hearing)
+    conference_response = WebexService.new(config: config).create_conference(hearing)
 
     update!(
       host_link: conference_response.host_link,

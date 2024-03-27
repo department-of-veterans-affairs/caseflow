@@ -21,7 +21,7 @@ describe ExternalApi::WebexService do
   end
 
   let(:webex_service) do
-    ExternalApi::WebexService.new(config)
+    ExternalApi::WebexService.new(config: config)
   end
 
   describe "webex requests" do
