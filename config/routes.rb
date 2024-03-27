@@ -351,7 +351,7 @@ Rails.application.routes.draw do
     get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
-  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
+  match '/explain/correspondence/:correspondence_uuid/' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -434,7 +434,7 @@ Rails.application.routes.draw do
 
   get "feedback" => "application#feedback"
 
-  get "under_construction" => "application#under_construction"
+  get "/:uuid/under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code
