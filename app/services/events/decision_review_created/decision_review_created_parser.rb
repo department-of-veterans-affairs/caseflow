@@ -7,6 +7,24 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   attr_reader :headers, :payload
 
+  # methods to load example response
+  class << self
+    def example_response
+      File.read("#{Rails.root}/app/services/events/decision_review_created/decision_review_created_example.json")
+    end
+
+    def load_example
+      sample_header = {
+        "X-VA-Vet-SSN" => "123456789",
+        "X-VA-File-Number" => "123456789",
+        "X-VA-Vet-First-Name" => "John",
+        "X-VA-Vet-Last-Name" => "Smith",
+        "X-VA-Vet-Middle-Name" => "Alexander"
+      }
+      new(sample_header, JSON.parse(example_response, symbolize_names: true))
+    end
+  end
+
   def initialize(headers, payload)
     @payload = payload
     @headers = headers
@@ -25,6 +43,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     day = logical_date_int % 100
     Date.new(year, month, day)
   end
+
+
 
   def css_id
     @payload.dig(:css_id)
