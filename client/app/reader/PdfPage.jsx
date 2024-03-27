@@ -241,7 +241,7 @@ export class PdfPage extends React.PureComponent {
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
           type: 'performance',
           product: 'reader',
           data: this.props.metricsAttributes,
