@@ -250,7 +250,13 @@ const QueueTableBuilder = (props) => {
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown organizations={props.organizations} />
+    <QueueOrganizationDropdown
+      isMailTeamUser={props.isMailTeamUser}
+      isMailSupervisor={props.isMailSupervisor}
+      isMailSuperUser={props.isMailSuperUser}
+      organizations={props.organizations}
+      featureToggles = {props.featureToggles}
+    />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -263,12 +269,18 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
+    isMailTeamUser: state.ui.isMailTeamUser,
+    isMailSupervisor: state.ui.isMailSupervisor,
+    isMailSuperUser: state.ui.isMailSuperUser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
   };
 };
 
 QueueTableBuilder.propTypes = {
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
@@ -278,6 +290,7 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
