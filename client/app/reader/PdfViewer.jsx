@@ -73,6 +73,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
+
   // eslint-disable-next-line max-statements
   keyListener = (event) => {
     if (isUserEditingText()) {
@@ -210,6 +211,10 @@ export class PdfViewer extends React.Component {
   </Modal>;
 
   render() {
+    // console.log(`duration! PdfViewer.jsx renderstarttime ${this.props.renderStartTime}`);
+
+
+
     const doc = this.selectedDoc();
 
     // If we don't have a currently selected document, we
@@ -236,6 +241,7 @@ export class PdfViewer extends React.Component {
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             featureToggles={this.props.featureToggles}
+            renderStartTime={this.props.renderStartTime}
           />
           <PdfSidebar
             doc={doc}
@@ -313,6 +319,7 @@ export default connect(
 )(PdfViewer);
 
 PdfViewer.propTypes = {
+  renderStartTime: PropTypes.any,
   annotations: PropTypes.object,
   appeal: PropTypes.object,
   closeAnnotationDeleteModal: PropTypes.func,

@@ -395,7 +395,7 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators(
     {
       setDocScrollPosition,
-      setSearchIndexToHighlight
+      setSearchIndexToHighlight,
     },
     dispatch
   )

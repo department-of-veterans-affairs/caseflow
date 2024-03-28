@@ -9,7 +9,8 @@ export const initialState = {
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
-  text: []
+  text: [],
+  renderStartTime: null
 };
 
 export const pdfReducer = (state = initialState, action = {}) => {
@@ -71,6 +72,12 @@ export const pdfReducer = (state = initialState, action = {}) => {
         [action.payload.file]: {
           $set: false
         }
+      }
+    });
+  case Constants.SET_RENDER_START_TIME:
+    return update(state, {
+      renderStartTime: {
+        $set: action.payload.renderStartTime
       }
     });
   default:

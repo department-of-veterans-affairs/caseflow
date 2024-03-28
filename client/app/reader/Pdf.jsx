@@ -68,6 +68,7 @@ export class Pdf extends React.PureComponent {
         scale={this.props.scale}
         documentType={this.props.documentType}
         featureToggles={this.props.featureToggles}
+        renderStartTime={this.props.renderStartTime}
       />;
     });
   }
@@ -84,6 +85,9 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
+    // console.log(`duration! Pdf.jsx renderstarttime ${this.props.renderStartTime}`);
+
+
     const files = this.props.featureToggles.prefetchDisabled ?
       [this.props.file] : [...this.props.prefetchFiles, this.props.file];
 
@@ -131,6 +135,8 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
+  renderStartTime: PropTypes.any,
+
   documentId: PropTypes.number.isRequired,
   documentPathBase: PropTypes.any,
   documentType: PropTypes.any,
@@ -153,5 +159,5 @@ Pdf.propTypes = {
   selectedAnnotationId: PropTypes.number,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
 };

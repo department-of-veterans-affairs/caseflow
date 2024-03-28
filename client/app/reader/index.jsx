@@ -15,6 +15,7 @@ class Reader extends React.PureComponent {
   routedDecisionReviewer = () => <DecisionReviewer {...this.props} />;
 
   render = () => {
+    // console.log("duration! READER INDEX!")
 
     return (
       <ReduxBase reducer={rootReducer}>

@@ -210,6 +210,9 @@ export class PdfUI extends React.Component {
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
+    // console.log(`duration! PdfUI.jsx renderstarttime ${this.props.renderStartTime}`);
+
+
     const pdfUiClass = classNames(
       'cf-pdf-container',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
@@ -331,6 +334,7 @@ export class PdfUI extends React.Component {
           prefetchFiles={this.props.prefetchFiles}
           resetJumpToPage={this.props.resetJumpToPage}
           featureToggles={this.props.featureToggles}
+          renderStartTime={this.props.renderStartTime}
         />
       </div>
       { this.getPdfFooter() }
@@ -370,6 +374,8 @@ export default connect(
 )(PdfUI);
 
 PdfUI.propTypes = {
+  renderStartTime: PropTypes.any,
+
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,

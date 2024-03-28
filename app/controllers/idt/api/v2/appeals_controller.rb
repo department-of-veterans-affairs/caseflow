@@ -62,6 +62,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     end
   end
 
+  #pass in render_start_time
   def appeals_single_document
     if params[:download]
       document = Document.find(document_id)
