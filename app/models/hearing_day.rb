@@ -226,18 +226,6 @@ class HearingDay < CaseflowRecord
     @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
   end
 
-  def subject_for_conference
-    "#{id}_#{scheduled_for.strftime('%m %e, %Y')}"
-  end
-
-  def nbf
-    scheduled_for.beginning_of_day.to_i
-  end
-
-  def exp
-    scheduled_for.end_of_day.to_i
-  end
-
   private
 
   # called through the 'before_destroy' callback on the hearing_day object.
