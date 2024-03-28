@@ -70,6 +70,9 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
+  # Bypass DNS rebinding protection for all `demo` sub-domains
+  config.hosts << ".demo.appeals.va.gov"
+
   #=====================================================================================================================
   # Please keep custom config settings below this comment.
   #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
