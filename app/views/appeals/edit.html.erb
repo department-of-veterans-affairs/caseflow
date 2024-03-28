@@ -14,6 +14,8 @@
     buildDate: build_date,
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
+    hasDistributionTask: appeal.try(:distributed?),
+    hasSpecialtyCaseTeamAssignTask: appeal.try(:specialty_case_team_assign_task?),
     isLegacy: appeal.is_legacy?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
@@ -21,6 +23,7 @@
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
+      specialtyCaseTeamDistribution: FeatureToggle.enabled?(:specialty_case_team_distribution, user: current_user),
       mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
       pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
       legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),

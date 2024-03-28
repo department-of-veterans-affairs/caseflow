@@ -301,6 +301,10 @@ class ClaimReview < DecisionReview
     processed? && cleared_end_products.any?(&:nonrating?)
   end
 
+  def sct_appeal?
+    false
+  end
+
   private
 
   def cleared_end_products

@@ -935,6 +935,10 @@ class LegacyAppeal < CaseflowRecord
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
+  def sct_appeal?
+    false
+  end
+
   # :reek:FeatureEnvy
   def hearing_day_if_schedueled
     hearing_date = Hearing.find_by(appeal_id: id)
