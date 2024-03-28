@@ -74,10 +74,6 @@ class Fakes::BGSServicePOA
       ].sample
     end
 
-    def vietnam_veterans_vso_mapped
-      get_claimant_poa_from_bgs_poa(vietnam_veterans_vso)
-    end
-
     def paralyzed_veterans_vso_mapped
       get_claimant_poa_from_bgs_poa(paralyzed_veterans_vso)
     end
