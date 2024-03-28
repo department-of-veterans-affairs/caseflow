@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+# preview mailer html [http://localhost:3000/rails/mailers/transcript_file_issues_mailer/send_issue_details]
+# [http://localhost:3000/rails/mailers/transcript_file_issues_mailer/webex_recording_list_issues]
+
+class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
+  def send_issue_details
+    details = {
+      action: "convert",
+      filetype: "VTT",
+      direction: "Download",
+      provider: "Webex",
+      docket_number: "123456",
+      times: nil,
+      api_call: "www.webext.test.com",
+      response: {
+        thing1key: "thing1value",
+        thing2key: "thing2value",
+        thing3key: "thing3value"
+      },
+      error: "some error"
+    }
+    appeal_id = "772f677a-b5fd-45f0-b74d-ecdd15da0730"
+    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
+  end
+
+  def webex_recording_list_issues
+    details = {
+      action: "convert",
+      provider: "webex"
+    }
+    TranscriptFileIssuesMailer.webex_recording_list_issues(details)
+  end
+end

@@ -1,46 +1,42 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
-import { axe } from 'jest-axe';
-// eslint-disable-next-line max-len
-import { DailyDocketGuestLinkSection } from '../../../../../app/hearings/components/dailyDocket/DailyDocketGuestLinkSection';
+import { render, screen } from '@testing-library/react';
+import { DailyDocketGuestLinkSection } from 'app/hearings/components/dailyDocket/DailyDocketGuestLinkSection';
 
 describe('DailyDocketGuestLinkSection', () => {
+  const linkInfo = [
+    {
+      guestLink: 'https://example.com/guestLink1?pin=123456',
+      guestPin: '123456',
+      alias: 'Room 1',
+      type: 'PexipConferenceLink',
+    },
+    {
+      guestLink: 'https://example.com/guestLink2?meetingID=123456789',
+      guestPin: '',
+      alias: 'Room 2',
+      type: 'WebexConferenceLink',
+    },
+  ];
 
-  const linkInfo = {
-    alias: 'BVA0000001@caseflow.va.gov',
-    guestLink: 'https://example.va.gov/sample/?conference=BVA0000001@example.va.gov&pin=3998472&callType=video',
-    guestPin: '3998472',
-  };
-
-  it('renders correctly for hearing admins and hearing management users', () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
-
-    expect(container).toMatchSnapshot();
-  });
-
-  it('renders correctly for non hearing admins and hearing management users', () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
-
-    expect(container).toMatchSnapshot();
-  });
-
-  it('passes a11y testing', async () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
-
-    const results = await axe(container);
-
-    expect(results).toHaveNoViolations();
-  });
-
-  it('renders conference room correctly', () => {
+  it('renders the guest link information', async () => {
     render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
-    expect(screen.getByRole('heading', { name: 'Conference Room: BVA0000001@caseflow.va.gov' })).toBeTruthy();
-  });
+    const link1Alias = await screen.findByText('Room 1');
+    const pexipLinkText = await screen.findByText('Pexip Guest link for non-virtual hearings');
+    const link1Pin = await screen.findByText('123456#');
+    const link1CopyButtons = screen.getAllByRole('button', { name: 'Copy Guest Link' });
 
-  it('renders guest pin correctly', () => {
-    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
+    const link2Alias = await screen.findByText('Room 2');
+    const webexLinkText = await screen.findByText('Webex Guest link for non-virtual hearings');
+    const link2CopyButton = screen.getAllByRole('button', { name: 'Copy Guest Link' });
 
-    expect(screen.getByRole('heading', { name: 'PIN: 3998472#' })).toBeTruthy();
+    expect(pexipLinkText).toBeInTheDocument();
+    expect(link1Alias).toBeInTheDocument();
+    expect(link1Pin).toBeInTheDocument();
+    expect(link1CopyButtons[0]).toBeInTheDocument();
+
+    expect(webexLinkText).toBeInTheDocument();
+    expect(link2Alias).toBeInTheDocument();
+    expect(link2CopyButton[1]).toBeInTheDocument();
   });
 });

@@ -95,7 +95,7 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "node-sass": "^4.13.1",
+    "node-sass": "4.13.1",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "2.6.347",
     "pluralize": "^7.0.0",
