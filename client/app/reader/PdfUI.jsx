@@ -210,9 +210,6 @@ export class PdfUI extends React.Component {
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
-    // console.log(`duration! PdfUI.jsx renderstarttime ${this.props.renderStartTime}`);
-
-
     const pdfUiClass = classNames(
       'cf-pdf-container',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
@@ -374,8 +371,6 @@ export default connect(
 )(PdfUI);
 
 PdfUI.propTypes = {
-  renderStartTime: PropTypes.any,
-
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
@@ -412,5 +407,6 @@ PdfUI.propTypes = {
   showPdf: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  toggleSearchBar: PropTypes.any
+  toggleSearchBar: PropTypes.any,
+  renderStartTime: PropTypes.any
 };

@@ -44,7 +44,6 @@ export class PdfFile extends React.PureComponent {
     this.columnCount = 1;
     this.metricsIdentifier = null;
     this.scrollTimer = null;
-    this.measureTimeStartMs = null;
 
     this.metricsAttributes = {
       documentId: this.props.documentId,
@@ -58,6 +57,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    this.metricsIdentifier = uuid.v4();
+
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -83,12 +84,12 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
-    const pdfStartTime = performance.now();
+    const apiCallStart = performance.now();
+
     this.metricsIdentifier = uuid.v4();
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        this.measureTimeStartMs = performance.now();
 
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
@@ -126,9 +127,8 @@ export class PdfFile extends React.PureComponent {
 
       }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
-        const apiDuration = performance.now() - pdfStartTime;
-        console.log(`duration! API call ${apiDuration}`);
-
+        const apiCallDuration = performance.now() - apiCallStart;
+        console.log(`duration! API call time: ${apiCallDuration}`)
         this.pdfDocument = pdfDocument;
 
         return this.getPages(pdfDocument);
@@ -231,7 +231,6 @@ export class PdfFile extends React.PureComponent {
     }
 
     this.metricsIdentifier = null;
-    this.measureTimeStartMs = null;
 
     if (this.scrollTimer) {
       clearTimeout(this.scrollTimer);
@@ -260,7 +259,6 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={this.measureTimeStartMs}
         metricsIdentifier={this.metricsIdentifier}
         metricsAttributes={this.metricsAttributes}
       />
@@ -606,26 +604,31 @@ export class PdfFile extends React.PureComponent {
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
     // eslint-disable-next-line no-underscore-dangle
+
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
 
       if (this.props.renderStartTime) {
-        // console.log(`duration!  PDF FILE start time: ${this.props.renderStartTime}`);
+        console.log(`duration!  PdfFile start time: ${this.props.renderStartTime}`);
+        const renderEndTime = performance.now();
+        const renderDuration = renderEndTime - this.props.renderStartTime;
+        console.log(`duration! ${renderDuration}`);
 
-        const endTime = performance.now();
-        // console.log(`duration!  PDF FILE end time: ${endTime}`);
+        storeMetrics(
+          this.props.documentId,
+          this.props.metricsAttributes,
+          {
+            message: 'pdf_page_render_time_in_ms',
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + this.props.renderStartTime),
+            end: new Date(performance.timeOrigin + renderEndTime),
+            duration: renderDuration
+          },
+          this.metricsIdentifier
+        );
 
-        const duration = endTime - this.props.renderStartTime;
-
-        console.log(`duration! ${duration}`);
-
-
-        // code to update the renderStartTime in redux store
         this.props.setRenderStartTime(null);
       }
-
-      // if (this.props.renderStartTime) {
-      //   console.log(`duration! you shouldnt see me!: ${this.props.renderStartTime}`);
-      // }
 
       return <AutoSizer>{
         ({ width, height }) => {

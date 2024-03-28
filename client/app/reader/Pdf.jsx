@@ -57,6 +57,7 @@ export class Pdf extends React.PureComponent {
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
   }
+
   loadDocs = (arr) => {
     return arr.map((file) => {
       return <PdfFile
@@ -74,6 +75,7 @@ export class Pdf extends React.PureComponent {
   }
 
   componentDidMount() {
+
     window.addEventListener('keydown', this.keyListener);
     window.addEventListener('resize', this.updateScrollWindowCenter);
   }
@@ -85,9 +87,6 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    // console.log(`duration! Pdf.jsx renderstarttime ${this.props.renderStartTime}`);
-
-
     const files = this.props.featureToggles.prefetchDisabled ?
       [this.props.file] : [...this.props.prefetchFiles, this.props.file];
 
@@ -110,7 +109,7 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
     sidebarHidden: state.pdfViewer.hidePdfSidebar,
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
   };
 };
 
@@ -135,8 +134,6 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
-  renderStartTime: PropTypes.any,
-
   documentId: PropTypes.number.isRequired,
   documentPathBase: PropTypes.any,
   documentType: PropTypes.any,
@@ -160,4 +157,5 @@ Pdf.propTypes = {
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
   featureToggles: PropTypes.object,
+  renderStartTime: PropTypes.any
 };

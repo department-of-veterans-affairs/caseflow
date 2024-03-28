@@ -10,7 +10,7 @@ import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
-import { onScrollToComment, setRenderStartTime } from '../reader/Pdf/PdfActions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { CATEGORIES } from './analytics';
@@ -31,7 +31,7 @@ export class DecisionReviewer extends React.PureComponent {
     super(props);
 
     this.state = {
-      isCommentLabelSelected: false,
+      isCommentLabelSelected: false
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
@@ -55,15 +55,9 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('click', this.clearPlacingAnnotationState);
-
-    // this.renderStartTime = null;
   }
 
   componentDidMount = () => {
-
-    this.props.setRenderStartTime(performance.now());
-    // console.log(`duration! DECISION REVIEWER start time: ${this.props.renderStartTime}`);
-
     window.addEventListener('click', this.clearPlacingAnnotationState);
     if (this.props.singleDocumentMode) {
       fireSingleDocumentModeEvent();
@@ -129,7 +123,6 @@ export class DecisionReviewer extends React.PureComponent {
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
         featureToggles={this.props.featureToggles}
-        renderStartTime={this.renderStartTime}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -195,8 +188,6 @@ DecisionReviewer.propTypes = {
   stopPlacingAnnotation: PropTypes.func,
   storeDocuments: PropTypes.any,
   userDisplayName: PropTypes.string,
-  setRenderStartTime: PropTypes.func,
-  renderStartTime: PropTypes.any
 };
 
 const mapStateToProps = (state, props) => {
@@ -211,8 +202,7 @@ const mapStateToProps = (state, props) => {
     storeDocuments: state.documents,
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
-      state.pdfViewer.loadedAppeal,
-    renderStartTime: state.pdf.renderStartTime
+      state.pdfViewer.loadedAppeal
   };
 };
 
@@ -221,7 +211,6 @@ const mapDispatchToProps = (dispatch) => ({
     onScrollToComment,
     setCategoryFilter,
     stopPlacingAnnotation,
-    setRenderStartTime
   }, dispatch)
 });
 
