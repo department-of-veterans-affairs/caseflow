@@ -64,9 +64,7 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :assigned_at
 
-  attribute :task_url do |object|
-    object.correspondence.uuid
-  end
+  attribute :task_url
 
   attribute :parent_task_url do |object|
     if object.is_a?(ReassignPackageTask) || object.is_a?(RemovePackageTask)

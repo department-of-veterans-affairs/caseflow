@@ -71,8 +71,13 @@ class CorrespondenceTask < Task
     closed_at
   end
 
-  def task_url(uuid)
-    "/#{uuid}/under_construction"
+  def task_url
+    # Future: route to the Correspondence Details Page after implementation.
+    if ENV["RAILS_ENV"] == "production"
+      "/under_construction"
+    else
+      "/explain/correspondence/#{correspondence.uuid}/"
+    end
   end
 
   private
