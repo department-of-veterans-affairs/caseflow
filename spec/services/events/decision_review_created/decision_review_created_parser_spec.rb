@@ -15,6 +15,18 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       expect(parser.station_id).to eq(response_hash.station)
     end
     it "has Intake attributes" do
+      expect(parser.intake_started_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.intake["started_at"]
+      )
+      expect(parser.intake_completion_started_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.intake["completion_started_at"]
+      )
+      expect(parser.intake_completed_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.intake["completed_at"]
+      )
+      expect(parser.intake_completion_status).to eq response_hash.intake["completion_status"]
+      expect(parser.intake_type).to eq response_hash.intake["type"]
+      expect(parser.intake_detail_type).to eq response_hash.intake["detail_type"]
     end
     it "has Veteran attributes" do
       expect(parser.veteran_file_number).to eq(headers["X-VA-File-Number"])
@@ -30,8 +42,33 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       expect(parser.veteran_date_of_death).to eq(response_hash.veteran["date_of_death"])
     end
     it "has Claimant attributes" do
+      expect(parser.claimant_payee_code).to eq response_hash.claimant["payee_code"]
+      expect(parser.claimant_type).to eq response_hash.claimant["type"]
+      expect(parser.claimant_participant_id).to eq response_hash.claimant["participant_id"]
+      expect(parser.claimant_name_suffix).to eq response_hash.claimant["name_suffix"]
     end
     it "has Claim Review attributes" do
+      expect(parser.claim_review_benefit_type).to eq response_hash.claim_review["benefit_type"]
+      expect(parser.claim_review_filed_by_va_gov).to eq response_hash.claim_review["filed_by_va_gov"]
+      expect(parser.claim_review_legacy_opt_in_approved).to eq response_hash.claim_review["legacy_opt_in_approved"]
+      expect(parser.claim_review_receipt_date).to eq parser.logical_date_converter(
+        response_hash.claim_review["receipt_date"]
+      )
+      expect(parser.claim_review_veteran_is_not_claimant).to eq response_hash.claim_review["veteran_is_not_claimant"]
+      expect(parser.claim_review_establishment_attempted_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.claim_review["establishment_attempted_at"]
+      )
+      expect(parser.claim_review_establishment_last_submitted_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.claim_review["establishment_last_submitted_at"]
+      )
+      expect(parser.claim_review_establishment_processed_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.claim_review["establishment_processed_at"]
+      )
+      expect(parser.claim_review_establishment_submitted_at).to eq parser.convert_milliseconds_to_datetime(
+        response_hash.claim_review["establishment_submitted_at"]
+      )
+      expect(parser.claim_review_informal_conference).to eq response_hash.claim_review["informal_conference"]
+      expect(parser.claim_review_same_office).to eq response_hash.claim_review["same_office"]
     end
     it "has End Product Establishment attributes" do
       expect(parser.epe_benefit_type_code).to eq response_hash.end_product_establishment["benefit_type_code"]
