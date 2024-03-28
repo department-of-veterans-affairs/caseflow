@@ -72,7 +72,7 @@ class DecisionDocument < CaseflowRecord
     fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
-    upload_to_vbms!
+    upload_to_vbms! if uploaded_to_vbms_at.blank?
     queue_mail_request_job!(mail_package) unless mail_package.nil?
 
     if appeal.is_a?(Appeal)
@@ -218,16 +218,16 @@ class DecisionDocument < CaseflowRecord
     begin
       if processed? && uploaded_to_vbms_at.present?
         if end_product_establishments.present?
-          epes = end_product_establishments
-          epes.each(&:establish!)
+          end_product_establishments&.each(&:establish!)
         end
         clear_error!
         true # Indicate success
+      else
+        false # Indicate failure
       end
     rescue StandardError => error
       update(error: error.message)
       log_error(error)
-      false # Indicate failure
     end
   end
 end
