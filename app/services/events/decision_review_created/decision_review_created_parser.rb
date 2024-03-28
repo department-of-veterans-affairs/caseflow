@@ -10,13 +10,17 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   # methods to load example response
   class << self
     def example_response
-      File.read("#{Rails.root}/app/services/events/decision_review_created/decision_review_created_example.json")
+      File.read(Rails.root.join("app",
+        "services",
+        "events",
+        "decision_review_created",
+        "decision_review_created_example.json"))
     end
 
     def load_example
       sample_header = {
         "X-VA-Vet-SSN" => "123456789",
-        "X-VA-File-Number" => "123456789",
+        "X-VA-File-Number" => "77799777",
         "X-VA-Vet-First-Name" => "John",
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"

@@ -107,7 +107,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
   def sample_headers
     {
       "X-VA-Vet-SSN" => "123456789",
-      "X-VA-File-Number" => "123456789",
+      "X-VA-File-Number" => "77799777",
       "X-VA-Vet-First-Name" => "John",
       "X-VA-Vet-Last-Name" => "Smith",
       "X-VA-Vet-Middle-Name" => "Alexander"
