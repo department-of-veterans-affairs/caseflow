@@ -88,7 +88,6 @@ const PackageActionModal = (props) => {
 
   const submitHandler = async () => {
     const data = {
-      correspondence_id: correspondence.id,
       type: packageActionModal,
       instructions: []
     };
