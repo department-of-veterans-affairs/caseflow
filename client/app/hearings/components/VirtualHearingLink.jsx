@@ -12,19 +12,19 @@ const VirtualHearingLink = ({
   isVirtual,
   newWindow,
   link,
-  virtualHearing,
-  label
+  label,
+  hearing
 }) => {
-  if (!isVirtual) {
-    return null;
-  }
-
   return (
-    <Link href={link} target={newWindow ? '_blank' : '_self'}>
+    <Link
+      // TODO: Update null for non virtual hearing link
+      href={isVirtual ? link : null}
+      target={newWindow ? '_blank' : '_self'}
+    >
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
-        <ExternalLinkIcon color={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
+        <ExternalLinkIcon color={hearing?.scheduledForIsPast ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>
   );
@@ -47,7 +47,12 @@ VirtualHearingLink.propTypes = {
     aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired,
-  label: PropTypes.string
+  label: PropTypes.string,
+  hearing: PropTypes.shape({
+    dailyDocketConferenceLinks: PropTypes.shape({
+      coHostLink: PropTypes.string
+    })
+  })
 };
 
 VirtualHearingLink.defaultProps = {

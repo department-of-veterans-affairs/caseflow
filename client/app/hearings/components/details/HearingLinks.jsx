@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { COLORS } from '../../../constants/AppConstants';
 import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
 import {
   rowThirds,
@@ -28,7 +27,7 @@ export const VirtualHearingLinkDetails = ({
 }) => (
   <React.Fragment>
     {hearing?.scheduledForIsPast || wasVirtual ? (
-      <span>Expired</span>
+      <span>N/A</span>
     ) : (
       <VirtualHearingLink
         label={label}
@@ -39,16 +38,28 @@ export const VirtualHearingLinkDetails = ({
         hearing={hearing}
       />
     )}
-    <div {...labelPaddingFirst}>
-      <strong>Conference Room: </strong>
-      {`${aliasWithHost}`}
-    </div>
-    <div {...labelPadding}>
-      <strong>PIN: </strong>
-      {pin}
-    </div>
+    {hearing.conferenceProvider === 'pexip' ? (
+      <>
+        <div {...labelPaddingFirst}>
+          <strong>Conference Room: </strong>
+          {`${aliasWithHost}`}
+        </div>
+        <div {...labelPadding}>
+          <strong>PIN: </strong>
+          {pin}
+        </div>
+      </>
+    ) : (
+      <div {...labelPaddingFirst} className="helper-text">
+        {link}
+      </div>
+    )}
     {!hearing?.scheduledForIsPast && !wasVirtual && (
-      <CopyTextButton ariaLabel={`Copy ${role} Link`} text={`Copy ${role} Link`} textToCopy={link} />
+      <CopyTextButton
+        ariaLabel={`Copy ${role} Link`}
+        text={`Copy ${role} Link`}
+        textToCopy={link}
+      />
     )}
   </React.Fragment>
 );
@@ -74,22 +85,18 @@ export const LinkContainer = (
 ) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
     <strong>{label}: </strong>
-    {!virtualHearing || virtualHearing?.status === 'pending' ? (
-      <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
-    ) : (
-      <VirtualHearingLinkDetails
-        label={linkText}
-        user={user}
-        virtualHearing={virtualHearing}
-        isVirtual={isVirtual}
-        wasVirtual={wasVirtual}
-        hearing={hearing}
-        link={link}
-        role={role}
-        aliasWithHost={virtualHearing?.aliasWithHost}
-        pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
-      />
-    )}
+    <VirtualHearingLinkDetails
+      label={linkText}
+      user={user}
+      virtualHearing={virtualHearing}
+      isVirtual={isVirtual}
+      wasVirtual={wasVirtual}
+      hearing={hearing}
+      link={link}
+      role={role}
+      aliasWithHost={virtualHearing?.aliasWithHost}
+      pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
+    />
   </div>
 );
 
@@ -106,25 +113,61 @@ LinkContainer.propTypes = {
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
-  if (!isVirtual && !wasVirtual) {
-    return null;
-  }
-
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
+
+  if ((hearing.conferenceProvider === 'pexip') && !isVirtual && !wasVirtual) {
+    return null;
+  } else if ((hearing.conferenceProvider === 'webex') && !isVirtual && !wasVirtual) {
+    return (
+      <div {...rowThirds} {...hearingLinksContainer}>
+        {showHostLink && (
+          <LinkContainer
+            hearing={hearing}
+            isVirtual={isVirtual}
+            label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
+            // TODO: update here for non virtual hearing links
+            link={null}
+            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+            role="HC"
+            user={user}
+            virtualHearing={virtualHearing}
+            wasVirtual={wasVirtual}
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
-      {showHostLink && <LinkContainer
-        hearing={hearing}
-        isVirtual={isVirtual}
-        label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
-        link={virtualHearing?.hostLink}
-        linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-        role="VLJ"
-        user={user}
-        virtualHearing={virtualHearing}
-        wasVirtual={wasVirtual}
-      />}
+      {showHostLink && (
+        <>
+          <LinkContainer
+            hearing={hearing}
+            isVirtual={isVirtual}
+            label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
+            link={virtualHearing?.hostLink}
+            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+            role="VLJ"
+            user={user}
+            virtualHearing={virtualHearing}
+            wasVirtual={wasVirtual}
+          />
+          {(hearing.conferenceProvider === 'webex') && (
+            <LinkContainer
+              hearing={hearing}
+              isVirtual={isVirtual}
+              label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
+              link={virtualHearing?.coHostHearingLink}
+              linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+              role="HC"
+              user={user}
+              virtualHearing={virtualHearing}
+              wasVirtual={wasVirtual}
+            />
+          )}
+        </>
+      )}
       <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
@@ -136,7 +179,6 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
       />
-      <div />
     </div>
   );
 };

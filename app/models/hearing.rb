@@ -31,6 +31,7 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
   prepend HearingScheduled
   prepend HearingPostponed
@@ -47,6 +48,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
+  has_many :transcription_files
 
   class HearingDayFull < StandardError; end
 
@@ -185,6 +187,10 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def daily_docket_conference_links
+    hearing_day.conference_links
+  end
+
   def scheduled_for
     return nil unless hearing_day
 
@@ -279,6 +285,18 @@ class Hearing < CaseflowRecord
     email_events.order(sent_at: :desc).map do |event|
       SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
     end
+  end
+
+  def subject_for_conference
+    "#{docket_number}_#{id}_#{self.class}"
+  end
+
+  def nbf
+    scheduled_for.beginning_of_day.to_i
+  end
+
+  def exp
+    scheduled_for.end_of_day.to_i
   end
 
   private
