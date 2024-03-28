@@ -8,6 +8,12 @@ class CorrespondenceTaskPagesController < ApplicationController
   end
 
   def assignee
+    @assignee ||= find_assignee
+  end
+
+  private
+
+  def find_assignee
     if params[:user_id]
       User.find(params[:user_id])
     elsif params[:organization_id]
