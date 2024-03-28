@@ -9,7 +9,6 @@ import ApiUtil from '../../../util/ApiUtil';
 import { bindActionCreators } from 'redux';
 import { setReasonRemovePackage } from '../correspondenceReducer/reviewPackageActions';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
-import { useHistory } from 'react-router';
 
 const PackageActionModal = (props) => {
   const {
@@ -21,7 +20,6 @@ const PackageActionModal = (props) => {
   } = props;
 
   const modalInfo = getModalInformation(packageActionModal);
-  const history = useHistory();
 
   const [textInputReason, setTextInputReason] = useState('');
   const [mergePackageReason, setMergePackageReason] = useState('');
@@ -127,11 +125,12 @@ const PackageActionModal = (props) => {
         if (packageActionModal === 'removePackage') {
           props.setReasonRemovePackage(textInputReason);
         }
-        history.push('/queue/correspondence');
+        window.location.href = '/queue/correspondence';
       }
     }
     ).
       catch(() => {
+        // error banner logic?
         console.error('Review Package Action already exists');
       });
     setTextInputReason('');
