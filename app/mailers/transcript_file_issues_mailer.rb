@@ -9,7 +9,6 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   # off the template to the above recipients
   def send_issue_details(details, appeal_id)
     @details = details
-    @deploy_env = Rails.deploy_env
     @config = mailer_config(appeal_id)
     @case_link = @config[:link]
     @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
@@ -28,7 +27,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   end
 
   def mailer_config(appeal_id)
-    case @deploy_env
+    case Rails.deploy_env
     when :development, :demo, :test
       { link: non_external_link(appeal_id), to_email_address: "Caseflow@test.com" }
     when :uat
@@ -51,7 +50,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
 
   # The link for the case details page when not in prod or uat
   def non_external_link(appeal_id)
-    return "https://demo.appeals.va.gov/appeals/#{appeal_id}" if @deploy_env == "demo"
+    return "https://demo.appeals.va.gov/appeals/#{appeal_id}" if Rails.deploy_env == "demo"
 
     "localhost:3000/queue/appeals/#{appeal_id}"
   end

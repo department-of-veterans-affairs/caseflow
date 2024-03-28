@@ -21,7 +21,12 @@ class TranscriptionTransformer
     if File.exist?(csv_path)
       paths.push(csv_path)
     elsif @error_count > 0
-      paths.push(build_csv(csv_path, @error_count, @length, @hearing_info))
+      error_hash = {
+        error_count: @error_count,
+        length: @length,
+        hearing_info: @hearing_info
+      }
+      paths.push(build_csv(csv_path, error_hash))
     end
     paths
   end
@@ -83,12 +88,12 @@ class TranscriptionTransformer
     styles["PS_CODE"].line_spacing = -1
     styles["CS_CODE"].underline = true
     format_transcript(transcript).each do |cue|
-      document.paragraph(styles["PS_CODE"]) do |n1|
-        n1.apply(styles["CS_CODE"]) do |n2|
-          n2 << cue[:identifier].upcase
+      document.paragraph(styles["PS_CODE"]) do |paragraph_style|
+        paragraph_style.apply(styles["CS_CODE"]) do |char_style|
+          char_style << cue[:identifier].upcase
         end
-        n1.paragraph << ": #{cue[:text]}"
-        n1.paragraph
+        paragraph_style.paragraph << ": #{cue[:text]}"
+        paragraph_style.paragraph
       end
     end
   end
@@ -130,21 +135,22 @@ class TranscriptionTransformer
   #       row - the current row in the document
   #       count - amount of line breaks to add
   def insert_line_breaks(row, count)
-    i = 0
+    breaks = 0
     while i < count
       row.line_break
-      i += 1
+      breaks += 1
     end
   end
 
-  # Builds csv which captures error and details of vtt file
-  # Params: count - count of how many inaudibles were found
-  #         length - total length of meeting
-  #         hearing_info - object containing info about the hearing
+  # Params: path - the path to save the csv
+  #         details - hash that has details pertaining to the error
   # Returns the created csv
-  def build_csv(path, count, length, hearing_info)
+  def build_csv(path, details)
     filename = path.split("/").last.sub(".csv", "")
     header = %w[length appeal_id hearing_date judge issues filename]
+    length = details[:length]
+    count = details[:count]
+    hearing_info = details[:hearing_info]
     length_string = "#{(length / 3600).floor}:#{(length / 60 % 60).floor}:#{(length % 60).floor}"
     CSV.open(path, "w") do |writer|
       writer << header

@@ -64,7 +64,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       query: { "id": id }
     }
 
-    WebexService.new(config:config).fetch_recording_details
+    WebexService.new(config: config).fetch_recording_details
   end
 
   def create_file_name(topic, extension)

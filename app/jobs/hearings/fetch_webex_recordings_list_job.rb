@@ -57,6 +57,6 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       query: { "from": from, "to": to, "max": max }
     }
 
-    WebexService.new(config:config).fetch_recordings_list
+    WebexService.new(config: config).fetch_recordings_list
   end
 end
