@@ -35,6 +35,12 @@ import { isActiveOrganizationVHA } from '../selectors';
 const rootStyles = css({
   '.usa-alert + &': {
     marginTop: '1.5em'
+  },
+  '& .cf-tab-window-body-full-screen': {
+    padding: '26px 30px 30px 30px',
+    '& p.cf-margin-bottom-0rem': {
+      margin: 0
+    }
   }
 });
 
@@ -210,7 +216,7 @@ const CorrespondenceTableBuilder = (props) => {
     const getBulkAssignArea = () => {
       return (<>
         <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', paddingBottom: '25px' }}>
           <SearchableDropdown
             className="cf-dropdown"
             name="Assign to mail team user"
@@ -274,7 +280,7 @@ const CorrespondenceTableBuilder = (props) => {
           </>
 
           }
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', paddingTop: '17px' }}>
             <p className="cf-margin-top-0" style={{ float: 'left' }}>
               {noCasesMessage || tabConfig.description}
             </p>
