@@ -35,8 +35,6 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
-    this.measureTimeStartMs = props.measureTimeStartMs;
-    this.receiveEndTime = props.receiveEndTime;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -158,10 +156,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (!this.measureTimeStartMs && this.props.isPageVisible && !prevProps.isPageVisible) {
-      this.measureTimeStartMs = performance.now();
-    }
-
     if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
@@ -256,15 +250,7 @@ export class PdfPage extends React.PureComponent {
             this.props.featureToggles.metricsReaderRenderText);
         });
 
-        this.drawPage(page).then(() => {
-
-          if (this.props.isPageVisible) {
-            this.receiveEndTime(performance.now(),
-              this.props.pageIndex,
-              this.props.documentId,
-            );
-          }
-        });
+        this.drawPage(page).then();
       }).catch((error) => {
         const id = uuid.v4();
         const data = {
