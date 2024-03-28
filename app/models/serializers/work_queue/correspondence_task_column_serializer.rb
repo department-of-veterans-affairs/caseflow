@@ -73,7 +73,7 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
       { parent_task_url: "" }
     end
   end
-    
+  
   attribute :assigned_to do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
