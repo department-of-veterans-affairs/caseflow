@@ -3,11 +3,14 @@
 require "rails_helper"
 
 RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
-  shared_examples "assigns @details" do
-    expect(mail.body.encoded).to match(details[:action])
-    expect(mail.body.encoded).to match(details[:provider])
-    expect(mail.body.encoded).to match(details[:docket_number])
+  shared_examples "mail assignment" do
+    it "assigns @details" do
+      expect(mail.body.encoded).to match(details[:action])
+      expect(mail.body.encoded).to match(details[:provider])
+      expect(mail.body.encoded).to match(details[:docket_number])
+    end
   end
+
 
   describe "#send_issue_details" do
     let(:details) do
@@ -32,7 +35,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
       expect(mail.from).to eq(["BoardofVeteransAppealsHearings@messages.va.gov"])
     end
 
-    include_examples "assigns @details"
+    include_examples "mail assignment"
 
     it "assigns @case_link" do
       expect(mail.body.encoded).to match("localhost:3000/queue/appeals/#{appeal_id}")
@@ -94,7 +97,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
       expect(mail.from).to eq(["BoardofVeteransAppealsHearings@messages.va.gov"])
     end
 
-    include_examples "assigns @details"
+    include_examples "mail assignment"
 
     it "does not assign @case_link if times is present" do
       details[:times] = "10:00 AM"
