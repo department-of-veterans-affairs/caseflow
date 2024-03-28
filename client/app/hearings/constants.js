@@ -129,6 +129,7 @@ export const CENTRAL_OFFICE_HEARING_LABEL = 'Central';
 export const TRAVEL_BOARD_HEARING_LABEL = 'Travel';
 export const VIRTUAL_HEARING_LABEL = 'Virtual';
 
+/* eslint-disable id-length */
 // Given a Docket request type return readable request type for that Docket.
 export const DOCKET_READABLE_REQUEST_TYPE = {
   R: VIRTUAL_HEARING_LABEL,
@@ -136,6 +137,7 @@ export const DOCKET_READABLE_REQUEST_TYPE = {
   T: TRAVEL_BOARD_HEARING_LABEL,
   C: CENTRAL_OFFICE_HEARING_LABEL
 };
+/* eslint-enable id-length */
 
 export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',
@@ -164,12 +166,3 @@ export const ENDPOINT_NAMES = {
   HEARINGS_SCHEDULE: 'hearings-schedule',
   UPCOMING_HEARING_DAYS: 'upcoming-hearing-days'
 };
-
-/* eslint-disable id-length */
-export const REQUEST_TYPE_LABELS = {
-  R: 'Virtual',
-  V: 'Video',
-  C: 'Central',
-  T: 'Travel'
-};
-/* eslint-enable id-length */

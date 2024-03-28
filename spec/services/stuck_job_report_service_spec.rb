@@ -4,9 +4,7 @@ describe StuckJobReportService, :postres do
   ERROR_TEXT = "Descriptive Error Name"
   FAILED_TRANSACTION_ERROR = "great error"
   STUCK_JOB_NAME = "VBMS::UnknownUser"
-  BUCKET_NAME = "data-remediation-output"
   CREATE_FILE_NAME = "descriptive-error-name"
-  FILEPATH = "/var/folders/fc/8gwfm4251qlb2nzgn3g4kldm0000gp/T/cdc-log.txt20230831-49789-qkyx0t"
 
   before do
     Timecop.freeze

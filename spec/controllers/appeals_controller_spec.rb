@@ -349,20 +349,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     before do
       User.authenticate!(roles: ["System Admin"])
     end
-
-    def allow_vbms_to_return_doc
-      allow(VBMSService)
-        .to receive(:fetch_document_series_for)
-        .with(appeal)
-        .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
-    end
-
-    def allow_vbms_to_return_empty_array
-      allow(VBMSService)
-        .to receive(:fetch_document_series_for)
-        .with(appeal)
-        .and_return([])
-    end
   end
 
   describe "GET cases/:id" do

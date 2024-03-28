@@ -14,7 +14,6 @@ describe MandateHoldTask, :postgres do
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
     let(:parent_task) { cavc_task }
-    let(:parent_task_class) { CavcTask }
 
     it_behaves_like "task requiring specific parent"
 

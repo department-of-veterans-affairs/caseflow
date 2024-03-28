@@ -6,7 +6,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     let(:closed_task_count) { 1 }
     let(:correct_task_count) { 6 }
     let(:error_count) { 0 }
-    let(:changed_tasks_count) { new_task_count + closed_task_count + error_count }
 
     let(:vso_for_appeal) { {} }
     let(:vso_for_legacy_appeal) { {} }

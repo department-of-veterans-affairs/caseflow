@@ -485,12 +485,6 @@ def correct_existing_request_issue(request_issue_to_correct)
   expect(request_issue_to_correct.closed_status).to eq("no_decision")
 end
 
-def visit_edit_page(type)
-  visit "#{type}/#{reference_id}/edit/"
-  expect(page).to have_content("Edit Issues")
-  expect(page).to have_content("Cleared, waiting for decision")
-end
-
 def check_adding_rating_correction_issue
   click_intake_add_issue
   add_intake_rating_issue("Left knee granted")

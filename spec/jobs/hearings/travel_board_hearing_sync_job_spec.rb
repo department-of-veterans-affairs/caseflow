@@ -5,7 +5,7 @@ describe Hearings::TravelBoardHearingSyncJob do
   let(:vacols_ids) { %w[123450 123451 123452 123453 123454 123455 123456 123457 123458 123459] }
   let(:new_caseflow_vacols_ids) { %w[123450 123451 123452 123453 123455 123456 123458 123459] }
   let(:legacy_appeal) { create(:legacy_appeal) }
-  let(:existing_caseflow_vacols_ids) { LegacyAppeal.all.pluck(:vacols_id) }
+
   # rubocop:disable Style/BlockDelimiters
   let(:cases) {
     create_list(:case, 10) do |vacols_case, i|

@@ -2,7 +2,6 @@
 
 describe VANotifySendMessageTemplate do
   let(:appeal) { create(:appeal, :active, number_of_claimants: 1) }
-  let(:queue_url) { "caseflow_development_send_notifications" }
   let(:info) do
     {
       participant_id: appeal.claimant_participant_id,

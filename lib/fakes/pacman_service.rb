@@ -23,28 +23,6 @@ class Fakes::PacmanService < ExternalApi::PacmanService
 
     private
 
-    def bad_request_response
-      HTTPI::Response.new(
-        400,
-        {},
-        {
-          "error": "BadRequestError",
-          "message": "participant id is not valid"
-        }.with_indifferent_access
-      )
-    end
-
-    def bad_access_response
-      HTTPI::Response.new(
-        403,
-        {},
-        {
-          "error": "BadRequestError",
-          "message": "package cannot be created because of insufficient privileges"
-        }.with_indifferent_access
-      )
-    end
-
     def distribution_not_found_response
       HTTPI::Response.new(
         404,

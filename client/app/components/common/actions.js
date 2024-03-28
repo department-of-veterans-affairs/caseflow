@@ -1,24 +1,10 @@
 import { ACTIONS } from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 
-export const onReceiveRegionalOffices = (regionalOffices) => ({
-  type: ACTIONS.RECEIVE_REGIONAL_OFFICES,
-  payload: {
-    regionalOffices,
-  },
-});
-
 export const onRegionalOfficeChange = (regionalOffice) => ({
   type: ACTIONS.REGIONAL_OFFICE_CHANGE,
   payload: {
     regionalOffice,
-  },
-});
-
-export const onReceiveHearingDays = (hearingDays) => ({
-  type: ACTIONS.RECEIVE_HEARING_DAYS,
-  payload: {
-    hearingDays,
   },
 });
 
@@ -42,13 +28,6 @@ export const onDropdownError = (dropdownName, errorMsg) => ({
   payload: {
     dropdownName,
     errorMsg,
-  },
-});
-
-export const onHearingOptionalTime = (optionalTime) => ({
-  type: ACTIONS.HEARING_OPTIONAL_TIME_CHANGE,
-  payload: {
-    optionalTime,
   },
 });
 

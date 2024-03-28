@@ -47,61 +47,6 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       )
     end
 
-    def bad_email_address_response
-      HTTPI::Response.new(
-        400,
-        {},
-        OpenStruct.new(
-          "error": "BadRequestError",
-          "message": "email is not valid"
-        )
-      )
-    end
-
-    def bad_email_template_response
-      HTTPI::Response.new(
-        400,
-        {},
-        OpenStruct.new(
-          "error": "BadRequestError",
-          "message": "email template id not valid"
-        )
-      )
-    end
-
-    def bad_phone_number_response
-      HTTPI::Response.new(
-        400,
-        {},
-        OpenStruct.new(
-          "error": "BadRequestError",
-          "message": "phone number not valid"
-        )
-      )
-    end
-
-    def bad_sms_template_response
-      HTTPI::Response.new(
-        400,
-        {},
-        OpenStruct.new(
-          "error": "BadRequestError",
-          "message": "sms template id not valid"
-        )
-      )
-    end
-
-    def bad_notification_response
-      HTTPI::Response.new(
-        400,
-        {},
-        OpenStruct.new(
-          "error": "BadRequestError",
-          "message": "notification id not valid"
-        )
-      )
-    end
-
     def fake_notification_response(email_template_id)
       HTTPI::Response.new(
         200,

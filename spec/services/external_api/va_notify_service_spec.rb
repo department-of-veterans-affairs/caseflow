@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe ExternalApi::VANotifyService do
-  let(:notification_url) { "fake.api.vanotify.com" }
-  let(:client_secret) { "SOME-FAKE-KEY" }
-  let(:service_id) { "SOME-FAKE-SERVICE" }
   let(:email_template_id) { "some-fake-email-template" }
   let(:sms_template_id) { "some-fake-sms-template" }
   let(:notification_id) { "some-fake-notification" }

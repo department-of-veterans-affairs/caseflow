@@ -3,15 +3,7 @@
 describe VANotifyStatusUpdateJob, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
-  let(:notifications_email_only) do
-    FactoryBot.create_list :notification_email_only, 10
-  end
-  let(:notifications_sms_only) do
-    FactoryBot.create_list :notification_sms_only, 10
-  end
-  let(:notifications_email_and_sms) do
-    FactoryBot.create_list :notification_email_and_sms, 10
-  end
+
   let(:email_only) do
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",

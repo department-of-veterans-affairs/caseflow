@@ -28,16 +28,6 @@ module StubbableUser
       self.stub = user
     end
 
-    def tester!(roles: nil)
-      self.stub = User.from_session(
-        "user" =>
-          { "id" => ENV["TEST_USER_ID"],
-            "station_id" => "283",
-            "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-      )
-    end
-
     def current_user
       @stub
     end

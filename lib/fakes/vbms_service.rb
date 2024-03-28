@@ -108,9 +108,6 @@ class Fakes::VBMSService
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
-    @appeal = appeal
-    @updated_document = uploadable_document
-
     {
       appeal: appeal,
       updated_document: uploadable_document,

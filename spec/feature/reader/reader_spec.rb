@@ -666,18 +666,6 @@ RSpec.feature "Reader", :all_dbs do
         expect(page.has_no_content?("how's it going")).to eq(true)
       end
 
-      def element_position(selector)
-        page.driver.evaluate_script <<-EOS
-        function() {
-          var rect = document.querySelector('#{selector}').getBoundingClientRect();
-          return {
-            top: rect.top,
-            left: rect.left
-          };
-        }();
-        EOS
-      end
-
       # :nocov:
       # commented out because "canvas-cursor-0" is not recognized without interface_version_2 enabled
       # scenario "Leave annotation with keyboard" do

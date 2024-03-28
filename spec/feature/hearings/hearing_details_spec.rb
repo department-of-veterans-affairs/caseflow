@@ -26,7 +26,6 @@ RSpec.feature "Hearing Details", :all_dbs do
     COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
 
-  let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "veteran@example.com" }
   let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }

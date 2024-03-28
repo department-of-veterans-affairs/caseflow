@@ -64,13 +64,6 @@ RSpec.feature "Log in as User", :postgres do
   end
 
   context "First time user login" do
-    let(:vha_body_text) do
-      "If you are a VHA team member, you will need access to VHA-specific "\
-      "pages to perform your duties. Press the “Request access” button below to"\
-      " be redirected to the VHA section within the Help page, where you can"\
-      " submit a form for access."
-    end
-
     before do
       Fakes::AuthenticationService.user_session = {
         "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405", "email" => "test@example.com"

@@ -101,10 +101,6 @@ class HearingDayRange
   end
 
   class << self
-    def open_hearing_day?(hearing_day, scheduled_hearings)
-      scheduled_hearings.size < hearing_day.total_slots
-    end
-
     def ama_hearing_day_for_vso_user?(hearing_day, user)
       hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
     end

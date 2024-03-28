@@ -43,11 +43,6 @@ describe PollDocketedLegacyAppealsJob, type: :job do
              notification_type: "Email",
              notified_at: today)
     }
-    let(:filtered_claim_histories) {
-      claim_histories_copy = claim_histories.dup
-      claim_histories_copy.slice!(2, 4)
-      claim_histories_copy
-    }
 
     let(:recent_docketed_appeal_ids) { %w[12340 12342 12346 12348] }
 

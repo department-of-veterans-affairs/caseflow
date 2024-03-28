@@ -25,11 +25,4 @@ class Fakes::AuthenticationService
       "timezone" => user.timezone
     }
   end
-
-  def self.find_ro(regional_office)
-    # case-insensitive compare on all the keys
-    vacols_regional_offices.keys.find do |known_ro|
-      known_ro.casecmp(regional_office) == 0
-    end
-  end
 end

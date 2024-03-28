@@ -92,40 +92,8 @@ describe SendNotificationJob, type: :job do
   let(:quarterly_message) { VANotifySendMessageTemplate.new(success_message_attributes, "Quarterly Notification") }
   let(:participant_id) { success_message_attributes[:participant_id] }
   let(:no_name_participant_id) { no_name_message_attributes[:participant_id] }
-  let(:bad_participant_id) { "123" }
   let(:appeal_id) { success_message_attributes[:appeal_id] }
   let(:email_template_id) { "d78cdba9-f02f-43dd-ab89-3ce42cc88078" }
-  let(:bad_response) {
-    HTTPI::Response.new(
-      400,
-      {},
-      OpenStruct.new(
-        "error": "BadRequestError",
-        "message": "participant id is not valid"
-      )
-    )
-  }
-  let(:good_response) {
-    HTTPI::Response.new(
-      200,
-      {},
-      OpenStruct.new(
-        "id": SecureRandom.uuid,
-        "reference": "string",
-        "uri": "string",
-        "template": {
-          "id" => email_template_id,
-          "version" => 0,
-          "uri" => "string"
-        },
-        "scheduled_for": "string",
-        "content": {
-          "body" => "string",
-          "subject" => "string"
-        }
-      )
-    )
-  }
   let(:notification_events_id) { "VSO IHP complete" }
   let(:notification_type) { "VSO IHP complete" }
   let(:queue_name) { "caseflow_test_send_notifications" }

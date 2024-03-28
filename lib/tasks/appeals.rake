@@ -3,7 +3,6 @@
 namespace :appeals do
   class NotEnoughArguments < StandardError; end
   class InvalidLocationPassed < StandardError; end
-  class VacolsIdsRequired < StandardError; end
 
   # usage:
   # Move legacy appeals matching the passed VACOLS ids from/to the passed VACOLS locations (dry run)
