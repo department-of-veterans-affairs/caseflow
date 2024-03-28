@@ -217,8 +217,7 @@ class DecisionDocument < CaseflowRecord
     begin
       if processed? && uploaded_to_vbms_at.present?
         if end_product_establishments.present?
-          epes = end_product_establishments
-          epes.each(&:establish!)
+          end_product_establishments&.each(&:establish!)
         end
         clear_error!
         true # Indicate success
