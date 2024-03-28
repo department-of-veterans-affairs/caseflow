@@ -21,12 +21,12 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"
       }
-      new(sample_header, JSON.parse(example_response, symbolize_names: true))
+      new(sample_header, example_response)
     end
   end
 
-  def initialize(headers, payload)
-    @payload = payload
+  def initialize(headers, payload_json)
+    @payload = JSON.parse(payload_json, symbolize_names: true)
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
@@ -43,8 +43,6 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     day = logical_date_int % 100
     Date.new(year, month, day)
   end
-
-
 
   def css_id
     @payload.dig(:css_id)
