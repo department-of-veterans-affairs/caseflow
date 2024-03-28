@@ -37,9 +37,12 @@ const rootStyles = css({
     marginTop: '1.5em'
   },
   '& .cf-tab-window-body-full-screen': {
-    padding: '26px 30px 30px 30px',
-    '& p.cf-margin-bottom-0rem': {
-      margin: 0
+    padding: '16px 30px 30px 30px',
+    '& #tasks-tabwindow-tabpanel-3': {
+      '& p.cf-margin-bottom-0rem': {
+        marginTop: 0
+      }
+
     }
   }
 });
@@ -280,7 +283,7 @@ const CorrespondenceTableBuilder = (props) => {
           </>
 
           }
-          <div style={{ display: 'flex', flexDirection: 'row', paddingTop: '17px' }}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <p className="cf-margin-top-0" style={{ float: 'left' }}>
               {noCasesMessage || tabConfig.description}
             </p>
