@@ -1,15 +1,25 @@
 # frozen_string_literal: true
 
-class TranscriptionFilesController < ApplicationController
-  def index
-    nil
+class Hearings::TranscriptionFilesController < ApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
+  before_action :verify_access_to_hearings, only: [:download_transcription_file]
+
+  # Downloads file and sends to user's local computer
+  def download_transcription_file
+    tmp_location = file.download_from_s3
+    File.open(tmp_location, "r") { |f| send_data f.read, filename: file.file_name }
+    file.clean_up_tmp_location
   end
 
-  def update
-    nil
+  def render_page_not_found
+    redirect_to "/404"
   end
 
-  def create
-    nil
+  private
+
+  def file
+    @file ||= TranscriptionFile.find(params[:file_id])
   end
 end

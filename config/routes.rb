@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -236,6 +236,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
@@ -283,6 +284,7 @@ Rails.application.routes.draw do
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
+        get :history
         get :power_of_attorney
         patch :update_power_of_attorney
       end

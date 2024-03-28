@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class TranscriptionFile < CaseflowRecord
-  include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing :hearing
+  belongs_to :hearing, polymorphic: true
 
   belongs_to :transcription
   belongs_to :docket
@@ -10,6 +9,13 @@ class TranscriptionFile < CaseflowRecord
   VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
+
+  # Purpose: Fetches file from S3
+  # Return: The temporary save location of the file
+  def download_from_s3
+    S3Service.fetch_file(aws_link, tmp_location)
+    tmp_location
+  end
 
   # Purpose: Uploads transcription file to its corresponding location in S3
   def upload_to_s3!

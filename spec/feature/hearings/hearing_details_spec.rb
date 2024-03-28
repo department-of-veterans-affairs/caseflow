@@ -105,6 +105,66 @@ RSpec.feature "Hearing Details", :all_dbs do
     expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
   end
 
+  def check_transcription_files_table(hearing)
+    check_transcription_files_table_headers
+
+    within "table.transcription-files-table > tbody" do
+      expect(find_all("tr").length).to eq(hearing.transcription_files.size)
+
+      # Group transcription files by docket number to ensure table styled accordingly
+      hearing.transcription_files_by_docket_number.each_with_index do |recording, group_index|
+        group_class = "#{group_index.even? ? 'even' : 'odd'}-row-group"
+
+        recording.each_with_index do |file, file_index|
+          row_number = (group_index * 4) + file_index
+          expect(find("#table-row-#{row_number}")["class"]).to match(/#{group_class}/)
+
+          check_transcription_file_row_content(file, row_number, file_index)
+          check_transcription_file_download(file)
+        end
+      end
+    end
+  end
+
+  def check_transcription_files_table_headers
+    within "table.transcription-files-table > thead > tr" do
+      expect(find("th:first-child")).to have_content("Docket(s)")
+      expect(find("th:nth-child(2)")).to have_content("Uploaded")
+      expect(find("th:nth-child(3)")).to have_content("File Link")
+      expect(find("th:last-child")).to have_content("Status")
+    end
+  end
+
+  def check_transcription_file_row_content(file, row_number, file_index)
+    docket_number = file_index == 0 ? file.docket_number : ""
+    formatted_date = file.date_upload_aws.strftime("%m/%d/%Y")
+
+    within "#table-row-#{row_number}" do
+      download_url = "/hearings/transcription_file/#{file.id}/download"
+
+      expect(find("td:first-child")).to have_content(docket_number)
+      expect(find("td:nth-child(2)")).to have_content(formatted_date)
+      expect(find("td:nth-child(3)")).to have_link(file.file_name, href: download_url)
+      expect(find("td:last-child")).to have_content(file.file_status)
+    end
+  end
+
+  def check_transcription_file_download(file)
+    file_location = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}", file.file_name).to_s
+
+    File.delete(file_location) if File.exist?(file_location)
+    click_link(file.file_name)
+    wait_for_download(file_location)
+    expect(File.exist?(file_location)).to be true
+    File.delete(file_location)
+  end
+
+  def wait_for_download(file_location)
+    Timeout.timeout(60) do
+      sleep 1 until !DownloadHelpers.downloading? && File.exist?(file_location)
+    end
+  end
+
   shared_examples "always updatable fields" do
     scenario "user can select judge, hearing room, hearing coordinator, and add notes" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -762,6 +822,14 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
+  shared_examples "conference type webex" do
+    scenario "renders transcription files table and downloads files" do
+      visit "hearings/#{hearing.external_id}/details"
+
+      check_transcription_files_table(hearing)
+    end
+  end
+
   context "with unauthorized user role (non-hearings management)" do
     let!(:current_user) { User.authenticate!(user: user) }
 
@@ -865,6 +933,12 @@ RSpec.feature "Hearing Details", :all_dbs do
           end
         end
       end
+
+      context "when conference type is webex" do
+        let!(:hearing) { create(:hearing, :with_transcription_files) }
+
+        include_examples "conference type webex"
+      end
     end
 
     context "when hearing is Legacy" do
@@ -895,6 +969,12 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_no_field("requestedRemedy")
         expect(page).to have_no_field("copySentDate")
         expect(page).to have_no_field("copyRequested")
+      end
+
+      context "when conference type is webex" do
+        let!(:hearing) { create(:legacy_hearing, :with_transcription_files) }
+
+        include_examples "conference type webex"
       end
     end
   end
