@@ -128,12 +128,12 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   const dailyDocketLink = useSelector((state) => state.dailyDocket.hearingDay.conferenceLinks);
 
   const getLinks = () => {
-    if (!hearing.isVirtual && hearing.conferenceProvider === 'webex') {
-      return hearing.nonVirtualConferenceLink;
-    } else if (!hearing.isVirtual && hearing.conferenceProvider === 'pexip') {
-      return dailyDocketLink[0];
-    } else if (hearing.isVirtual && (hearing.conferenceProvider === ('webex' || 'pexip'))) {
+    if (hearing.isVirtual) {
       return virtualHearing;
+    } else if (hearing.conferenceProvider === 'pexip') {
+      return dailyDocketLink[0];
+    } else if (hearing.conferenceProvider === 'webex') {
+      return hearing.nonVirtualConferenceLink;
     }
   };
 
@@ -155,20 +155,18 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             wasVirtual={wasVirtual}
             links={links}
           />
-          {(hearing.conferenceProvider === 'webex') && (
-            <LinkContainer
-              hearing={hearing}
-              isVirtual={isVirtual}
-              label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-              link={links.coHostLink}
-              linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-              role="HC"
-              user={user}
-              virtualHearing={virtualHearing}
-              wasVirtual={wasVirtual}
-              links={links}
-            />
-          )}
+          <LinkContainer
+            hearing={hearing}
+            isVirtual={isVirtual}
+            label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
+            link={hearing.conferenceProvider === 'webex' ? links.coHostLink : links.hostLink}
+            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+            role={hearing.conferenceProvider === 'webex' ? 'HC' : 'VLJ'}
+            user={user}
+            virtualHearing={virtualHearing}
+            wasVirtual={wasVirtual}
+            links={links}
+          />
         </>
       )}
       <LinkContainer

@@ -44,7 +44,7 @@ VirtualHearingLink.propTypes = {
     ]),
     aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
-  }).isRequired,
+  }),
   label: PropTypes.string,
   hearing: PropTypes.shape({
     dailyDocketConferenceLinks: PropTypes.shape({
