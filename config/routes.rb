@@ -351,7 +351,7 @@ Rails.application.routes.draw do
     get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
-  match '/explain/correspondence/:correspondence_uuid/' => 'explain#show', via: [:get]
+  match '/explain/correspondence/:correspondence_uuid' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
