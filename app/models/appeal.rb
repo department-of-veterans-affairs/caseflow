@@ -17,6 +17,7 @@ class Appeal < DecisionReview
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
   include AppealNotificationReportConcern
+  include SpecialtyCaseTeamMethodsMixin
   prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal
@@ -25,6 +26,8 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :correspondences_appeals
+  has_many :correspondences, through: :correspondences_appeals
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -374,9 +377,9 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # Clone issues and request_issues that the user selected
+  # Also clone any decision_issues/decision_request_issues tied to the request issue
   # :reek:RepeatedConditionals
-  # clone issues clones request_issues the user selected
-  # and anydecision_issues/decision_request_issues tied to the request issue
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
@@ -445,9 +448,16 @@ class Appeal < DecisionReview
     )
   end
 
+  # :reek:FeatureEnvy
   def clone_issue(issue)
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
+
+    # If the original issue has a contention reference id, it has to be removed because it's a unique index
+    if issue.try(:contention_reference_id)
+      issue.update!(contention_reference_id: nil)
+    end
+
     dup_issue.save
     dup_issue
   end
@@ -549,7 +559,7 @@ class Appeal < DecisionReview
     dup_task.save
 
     # set the status to the correct status
-    dup_task.status = original_task.status
+    dup_task.update_column(:status, original_task.status)
 
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id user_css_id
@@ -570,8 +580,8 @@ class Appeal < DecisionReview
     # set the status to assigned as placeholder
     dup_task.status = "assigned"
 
-    # set the parent to the parent_task_id
-    dup_task.parent_id = parent_task_id
+    # set the parent to the nil to skip over callbacks for the original parent or new parent
+    dup_task.parent_id = nil
 
     # set the appeal split process to true for the task
     dup_task.appeal.appeal_split_process = true
@@ -579,14 +589,11 @@ class Appeal < DecisionReview
     # save the task
     dup_task.save(validate: false)
 
-    # set the status to the correct status
-    dup_task.status = original_task.status
-
-    dup_task.save(validate: false)
+    # Set the status and the parent id to the correct values without triggering callbacks
+    dup_task.update_columns(status: original_task.status, parent_id: parent_task_id)
 
     # if the status is cancelled, pull the original canceled ID
     if dup_task.status == "cancelled" && !original_task.cancelled_by_id.nil?
-
       # set request store to original task canceller to handle verification
       RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
 
@@ -946,6 +953,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   def is_legacy?

@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -198,6 +200,8 @@ Rails.application.routes.draw do
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
+  get '/appeals/:appeal_id/active_evidence_submissions' => 'appeals#active_evidence_submissions'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
@@ -321,13 +325,38 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence_intake#current_step', as: :queue_correspondence_intake_current_step
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
+    post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
+    post '/correspondence/:id/completed_package', to: 'correspondence_tasks#completed_package'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
+    patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
+    get '/correspondence/packages', to: 'correspondence#package_documents'
+    get '/correspondence/team', to: 'correspondence#correspondence_team'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
+    patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
+    post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post '/correspondence_response_letters', to: 'correspondence_response_letters#create'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
+    get 'correspondence/users/:user_id(*rest)', to: 'correspondence_task_pages#index'
+    get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -370,6 +399,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 
@@ -409,6 +439,8 @@ Rails.application.routes.draw do
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
+
+  get "under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code

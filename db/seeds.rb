@@ -40,12 +40,14 @@ class SeedDB
 
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
+
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies
+
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
@@ -69,8 +71,18 @@ class SeedDB
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::CorrespondenceTypes
+    call_and_log_seed_step Seeds::PackageDocumentTypes
+    call_and_log_seed_step Seeds::Correspondence
+    call_and_log_seed_step Seeds::MultiCorrespondences
+    call_and_log_seed_step Seeds::QueueCorrespondences
+    call_and_log_seed_step Seeds::VbmsDocumentTypes
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::AmaAffinityCases
+    call_and_log_seed_step Seeds::CorrespondenceAutoTexts
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     call_and_log_seed_step Seeds::AmaIntake
@@ -83,6 +95,14 @@ class SeedDB
 
     Judge.list_all
     Attorney.list_all
+
+    # temporary disabling existing appeals for testing
+
+    RequestStore.store[:current_user] = User.system_user
+    DistributionTask.where(status: 'assigned').map { |t| t.update!(status: 'on_hold') }
+
+    VACOLS::Case.where(bfcurloc: ['81', '83']).map { |c| c.update!(bfcurloc: 'testing') }
+
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

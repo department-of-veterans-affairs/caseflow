@@ -88,6 +88,7 @@ class DecisionDocument < CaseflowRecord
 
     send_outcode_email(appeal)
 
+    clear_error!
     processed!
   rescue StandardError => error
     update_error!(error.to_s)

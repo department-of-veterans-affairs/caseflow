@@ -20,6 +20,9 @@ export const initialState = {
   userCssId: '',
   userInfo: null,
   organizations: [],
+  isMailTeamUser: false,
+  isMailSupervisor: false,
+  isMailSuperUser: false,
   activeOrganization: {
     id: null,
     name: null,
@@ -27,6 +30,7 @@ export const initialState = {
   },
   userIsVsoEmployee: false,
   userIsCamoEmployee: false,
+  userIsSCTCoordinator: false,
   feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
@@ -224,6 +228,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userIsCamoEmployee: { $set: action.payload.userIsCamoEmployee }
     });
+  case ACTIONS.SET_USER_IS_SCT_COORDINATOR:
+    return update(state, {
+      userIsSCTCoordinator: { $set: action.payload.userIsSCTCoordinator }
+    });
   case ACTIONS.SET_FEEDBACK_URL:
     return update(state, {
       feedbackUrl: { $set: action.payload.feedbackUrl }
@@ -247,6 +255,24 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       },
       selectedAssignee: {
         $set: null
+      }
+    });
+  case ACTIONS.SET_MAIL_TEAM_USER:
+    return update(state, {
+      isMailTeamUser: {
+        $set: action.payload.isMailTeamUser
+      }
+    });
+  case ACTIONS.SET_MAIL_SUPERVISOR:
+    return update(state, {
+      isMailSupervisor: {
+        $set: action.payload.isMailSupervisor
+      }
+    });
+  case ACTIONS.SET_MAIL_SUPER_USER:
+    return update(state, {
+      isMailSuperUser: {
+        $set: action.payload.isMailSuperUser
       }
     });
   case ACTIONS.SET_ORGANIZATIONS:

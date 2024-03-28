@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
@@ -49,7 +49,7 @@ class ApplicationController < ApplicationBaseController
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "errors",
       metric_name: "non_critical",
       app_name: RequestStore[:application],

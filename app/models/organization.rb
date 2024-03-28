@@ -6,6 +6,7 @@ class Organization < CaseflowRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
   has_many :membership_requests
+  has_many :organization_permissions
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
   require_dependency "dvc_team"
 
@@ -19,6 +20,10 @@ class Organization < CaseflowRecord
     Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
     Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
+
+  # Sometimes when a task referencing the assigned to field it will ask for full name if it is commonly a user
+  # Add this alias here to prevent errors from that assumption when it could also be an organization assigned to
+  alias_attribute :full_name, :name
 
   default_scope { active }
 
@@ -138,6 +143,16 @@ class Organization < CaseflowRecord
     ]
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_unassigned_tasks_tab,
+      correspondence_action_required_tasks_tab,
+      correspondence_pending_tasks_tab,
+      correspondence_assigned_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def unassigned_tasks_tab
     ::OrganizationUnassignedTasksTab.new(
       assignee: self,
@@ -158,6 +173,26 @@ class Organization < CaseflowRecord
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
+  def correspondence_unassigned_tasks_tab
+    ::OrganizationCorrespondenceUnassignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_action_required_tasks_tab
+    ::OrganizationCorrespondenceActionRequiredTasksTab.new(assignee: self)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::OrganizationCorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_pending_tasks_tab
+    ::OrganizationCorrespondencePendingTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::OrganizationCorrespondenceCompletedTasksTab.new(assignee: self)
+  end
+
   def serialize
     {
       accepts_priority_pushed_cases: accepts_priority_pushed_cases,
@@ -168,7 +203,8 @@ class Organization < CaseflowRecord
       participant_id: participant_id,
       type: type,
       url: url,
-      user_admin_path: user_admin_path
+      user_admin_path: user_admin_path,
+      exclude_appeals_from_affinity: exclude_appeals_from_affinity
     }
   end
 

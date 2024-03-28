@@ -90,7 +90,8 @@ class TeamManagementController < ApplicationController
 
   def update_params
     params.require(:organization).permit(
-      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request
+      :name, :participant_id, :url, :accepts_priority_pushed_cases, :ama_only_push, :ama_only_request,
+      :exclude_appeals_from_affinity
     )
   end
 
@@ -113,13 +114,17 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
+    rejected_orgs = [
+      JudgeTeam,
+      DvcTeam,
+      Representative,
+      VhaProgramOffice,
+      VhaRegionalOffice,
+      EducationRpo,
+      InboundOpsTeam
+    ]
     Organization.order(:name).reject do |org|
-      org.is_a?(JudgeTeam) ||
-        org.is_a?(DvcTeam) ||
-        org.is_a?(Representative) ||
-        org.is_a?(VhaProgramOffice) ||
-        org.is_a?(VhaRegionalOffice) ||
-        org.is_a?(EducationRpo)
+      rejected_orgs.any? { |excluded_org| org.is_a?(excluded_org) }
     end
   end
 
