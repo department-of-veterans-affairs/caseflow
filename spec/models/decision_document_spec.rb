@@ -369,9 +369,16 @@ describe DecisionDocument, :postgres do
       context "the EPE is present" do
         before do
           epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
+          allow(epe).to receive(:establish!).and_return(true)
         end
         it "runs establish on the EPE" do
-          allow(epe).to receive(:establish!).and_return(true)
+          subject
+          expect(decision_document.reload.error).to be_nil
+        end
+      end
+
+      context "no EPE is present" do
+        it "clears the error on the DD" do
           subject
           expect(decision_document.reload.error).to be_nil
         end
