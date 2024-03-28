@@ -37,12 +37,11 @@ const rootStyles = css({
     marginTop: '1.5em'
   },
   '& .cf-tab-window-body-full-screen': {
-    padding: '16px 30px 30px 30px',
+    padding: '26px 30px 30px 30px',
     '& #tasks-tabwindow-tabpanel-3': {
       '& p.cf-margin-bottom-0rem': {
         marginTop: 0
       }
-
     }
   }
 });
