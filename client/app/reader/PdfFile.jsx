@@ -57,8 +57,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    this.metricsIdentifier = uuid.v4();
-
     let requestOptions = {
       cache: true,
       withCredentials: true,
