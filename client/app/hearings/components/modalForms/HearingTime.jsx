@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment-timezone';
 
 import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
 import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO_OPTIONS';
@@ -10,21 +9,6 @@ import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import { hearingTimeOptsWithZone } from '../../utils';
 import { verticalAlign } from '../details/style';
-
-export const getAssignHearingTime = (time, day) => {
-  return {
-    // eslint-disable-next-line id-length
-    h: time.split(':')[0],
-    // eslint-disable-next-line id-length
-    m: time.split(':')[1],
-    offset: moment.
-      tz(
-        day.hearingDate || day.scheduledFor,
-        day.timezone || 'America/New_York'
-      ).
-      format('Z'),
-  };
-};
 
 const formStyling = css({
   '& .cf-form-radio-option:not(:last-child)': {

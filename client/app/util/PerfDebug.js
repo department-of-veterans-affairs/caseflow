@@ -64,9 +64,9 @@ export const timeFunction = (fn, getLabel) => (...args) => {
 
 /**
  * Time an asynchronous function for perf debugging purposes.
- * 
+ *
  * @param {function(...args): Promise} fn the async function to time.
- * @param {function(timeElapsedMs, ...args)} onTimeElapsed a function to call when the async function is complete. 
+ * @param {function(timeElapsedMs, ...args)} onTimeElapsed a function to call when the async function is complete.
  *  It will be passed the time the function took to complete, and the args that were passed to the function.
  * @param {string?} label Providing label will cause the timing information to be logged to the console.
  */
