@@ -207,6 +207,16 @@ export const legacyWebexHearing = {
   judgeId: '3',
   location: null,
   militaryService: '',
+  nonVirtualConferenceLink: {
+    hostPin: null,
+    hostLink: 'https://instant-usgov.webex.com/visit/3k8cjyd',
+    alias: null,
+    guestPin: null,
+    guestLink: 'https://instant-usgov.webex.com/visit/4exy2vk',
+    coHostLink: 'https://instant-usgov.webex.com/visit/6yxtt4e',
+    type: 'WebexConferenceLink',
+    conferenceProvider: 'webex'
+  },
   notes: null,
   paperCase: false,
   prepped: null,
