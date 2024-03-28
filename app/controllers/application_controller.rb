@@ -430,11 +430,4 @@ class ApplicationController < ApplicationBaseController
         Rails.env.development?
     end
   end
-
-  def under_construction
-    # Get appeal/correspondence
-    record = Correspondence.find_by(uuid: params[:uuid])
-    route_type = record.nil? ? "appeals" : "correspondences"
-    @explain_route = `/explain/#{route_type}/#{params[:uuid]}/`
-  end
 end
