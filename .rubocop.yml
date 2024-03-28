@@ -4,6 +4,7 @@ require:
 
 AllCops:
   Exclude:
+    - 'bin/**/*'
     - 'db/**/*'
     - 'config/**/*'
     - 'script/**/*'

@@ -207,6 +207,22 @@ FactoryBot.define do
       end
     end
 
+    trait :cancelled_hearing_and_ready_to_distribute do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing,
+               :cancelled,
+               appeal: appeal,
+               created_at: appeal.created_at,
+               adding_user: evaluator.adding_user)
+        appeal.tasks.find_by(type: :ScheduleHearingTask)&.update!(status: :cancelled)
+        appeal.tasks.find_by(type: :DistributionTask)&.update!(status: :assigned)
+      end
+    end
+
     trait :tied_to_judge do
       transient do
         tied_judge { nil }

@@ -33,7 +33,7 @@ describe('Affinity Days Lever', () => {
         <AffinityDays />
       </Provider>
     );
-    const option = lever.options.find((opt) => opt.item === 'option_1');
+    const option = lever.options.find((opt) => opt.selected);
     const value = `${option.text} ${option.value} ${option.unit}`;
 
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
@@ -74,11 +74,19 @@ describe('Affinity Days Lever', () => {
       </Provider>
     );
 
-    let radioOption = wrapper.find('input[id="ama_hearing_case_affinity_days-option_1"]');
-    let radioOption1 = wrapper.find('input[id="ama_hearing_case_affinity_days-infinite"]');
+    let radioOption = wrapper.find('input[id="ama_hearing_case_affinity_days-value"]');
+    let radioOption2 = wrapper.find('input[id="ama_hearing_case_affinity_days-infinite"]');
+    let radioOption3 = wrapper.find('input[id="ama_hearing_case_affinity_days-omit"]');
 
+    // Sets radioOption input of value to "true"
+    radioOption.getDOMNode().checked = true;
+    radioOption2.getDOMNode().checked = false;
+    radioOption3.getDOMNode().checked = false;
+
+    // Ensure that all Radio Options are correctly set
     expect(radioOption.getDOMNode().checked).toEqual(true);
-    expect(radioOption1.getDOMNode().checked).toEqual(false);
+    expect(radioOption2.getDOMNode().checked).toEqual(false);
+    expect(radioOption3.getDOMNode().checked).toEqual(false);
 
     let inputField = wrapper.find('input[id="ama_hearing_case_affinity_days-0-input"]');
 
@@ -102,7 +110,7 @@ describe('Affinity Days Lever', () => {
   });
 
   it('should display the input text when radio option selected', () => {
-    const inputData = { target: { value: "test value" } };
+    const inputData = { target: { value: 'test value' } };
     const logSpy = jest.spyOn(console, 'log');
     const store = getStore();
 
@@ -115,13 +123,15 @@ describe('Affinity Days Lever', () => {
       </Provider>
     );
 
-    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-option_1"]');
+    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-value"]');
 
+    // Sets radioOption input of value to "true"
+    radioOption.getDOMNode().checked = true;
     expect(radioOption.getDOMNode().checked).toEqual(true);
 
     let inputField = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-0-input"]');
 
-     // Calls simulate change to set value outside of min/max range
+    // Calls simulate change to set value outside of min/max range
     waitFor(() => inputField.simulate('change', inputData));
 
     wrapper.update();
