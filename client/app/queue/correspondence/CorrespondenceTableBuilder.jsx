@@ -43,6 +43,14 @@ const rootStyles = css({
         marginTop: 0
       }
     }
+  },
+  '& #case-table-description': {
+    '& tr td:nth-child(1):focus': {
+      outline: 'none',
+    },
+    '& .cf-form-checkboxes': {
+      marginLeft: '0.5rem'
+    }
   }
 });
 
