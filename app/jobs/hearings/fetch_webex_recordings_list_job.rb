@@ -26,7 +26,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       times: "From: #{from}, To: #{to}"
     }
     TranscriptFileIssuesMailer.webex_recording_list_issues(details)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{exception}")
     log_error(exception, extra: { application: self.class.name, job_id: job.id })
   end
 

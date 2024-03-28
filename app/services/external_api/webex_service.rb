@@ -23,9 +23,8 @@ class ExternalApi::WebexService
     method = "POST"
 
     resp = send_webex_request(body, method)
-    return if resp.nil?
 
-    ExternalApi::WebexService::CreateResponse.new(resp)
+    ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
   end
 
   def delete_conference(conferenced_item)
@@ -46,7 +45,7 @@ class ExternalApi::WebexService
     resp = send_webex_request(body, method)
     return if resp.nil?
 
-    ExternalApi::WebexService::DeleteResponse.new(resp)
+    ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
   end
 
   def fetch_recordings_list
@@ -55,7 +54,7 @@ class ExternalApi::WebexService
     resp = send_webex_request(body, method)
     return if resp.nil?
 
-    ExternalApi::WebexService::RecordingsListResponse.new(resp)
+    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
   end
 
   def fetch_recording_details
@@ -64,7 +63,7 @@ class ExternalApi::WebexService
     resp = send_webex_request(body, method)
     return if resp.nil?
 
-    ExternalApi::WebexService::RecordingDetailsResponse.new(resp)
+    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
   end
 
   private
@@ -82,7 +81,7 @@ class ExternalApi::WebexService
     MetricsService.record(
       "#{@config[:host]} #{method} request to #{url}",
       service: :webex,
-      name: @api_endpoint
+      name: @config[:api_endpoint]
     ) do
       case method
       when "POST"

@@ -9,22 +9,11 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   # off the template to the above recipients
   def send_issue_details(details, appeal_id)
     @details = details
-    @case_link = case Rails.deploy_env
-                 when :demo
-                   "https://demo.appeals.va.gov/appeals/#{appeal_id}"
-                 when :uat
-                   "https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}"
-                 when :prod
-                   "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}"
-                 when :prodtest
-                   "https://appeals.cf.prodtest.ds.va.gov/queue/appeals/#{appeal_id}"
-                 when :preprod
-                   "https://appeals.cf.preprod.ds.va.gov/queue/appeals/#{appeal_id}"
-                 else
-                   "localhost:3000/queue/appeals/#{appeal_id}"
-                 end
+    @deploy_env = Rails.deploy_env
+    @config = mailer_config(appeal_id)
+    @case_link = @config[:link]
     @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
-    mail(subject: @subject, to: to_email_address, cc: cc_email_address) do |format|
+    mail(subject: @subject, to: @mailer_config[:to_email_address], cc: @mailer_config[:cc_email_address]) do |format|
       format.html { render "layouts/transcript_file_issues" }
     end
   end
@@ -38,21 +27,33 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     end
   end
 
-  # The email address to send mail to
-  def to_email_address
-    case Rails.deploy_env
-    when :demo, :development, :test
-      "Caseflow@test.com"
+  def mailer_config(appeal_id)
+    case @deploy_env
+    when :development, :demo, :test
+      { link: non_external_link(appeal_id), to_email_address: "Caseflow@test.com" }
     when :uat
-      "BID_Appeals_UAT@bah.com"
+      {
+        link: "https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}",
+        to_email_address: "BID_Appeals_UAT@bah.com"
+      }
+    when :prodtest
+      { link: "https://appeals.cf.prodtest.ds.va.gov/queue/appeals/#{appeal_id}" }
+    when :preprod
+      { link: "https://appeals.cf.preprod.ds.va.gov/queue/appeals/#{appeal_id}" }
     when :prod
-      "BVAHearingTeam@VA.gov"
+      {
+        link: "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}",
+        to_email_address: "BVAHearingTeam@VA.gov",
+        cc_email_address: "OITAppealsHelpDesk@va.gov"
+      }
     end
   end
 
-  # The email address to cc
-  def cc_email_address
-    "OITAppealsHelpDesk@va.gov" if Rails.deploy_env == :prod
+  # The link for the case details page when not in prod or uat
+  def non_external_link(appeal_id)
+    return "https://demo.appeals.va.gov/appeals/#{appeal_id}" if @deploy_env == "demo"
+
+    "localhost:3000/queue/appeals/#{appeal_id}"
   end
 end
 
