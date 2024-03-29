@@ -30,7 +30,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.log_error(exception)
   end
 
-  retry_on(UploadTranscriptionFileToS3::FileUploadError, wait: :exponentially_longer) do |job, exception|
+  retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
   end
@@ -102,16 +102,17 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: Updated @transcription_file
   def download_file_to_tmp!(link)
-    return if File.exist?(@transcription_file.tmp_location)
+    transcription_file = @transcription_file
+    return if File.exist?(transcription_file.tmp_location)
 
     URI(link).open do |download|
-      IO.copy_stream(download, @transcription_file.tmp_location)
+      IO.copy_stream(download, transcription_file.tmp_location)
     end
-    @transcription_file.update_status!(process: :retrieval, status: :success)
+    transcription_file.update_status!(process: :retrieval, status: :success)
     log_info("File #{file_name} successfully downloaded from Webex. Uploading to S3...")
   rescue OpenURI::HTTPError => error
-    @transcription_file.update_status!(process: :retrieval, status: :failure)
-    @transcription_file.clean_up_tmp_location
+    transcription_file.update_status!(process: :retrieval, status: :failure)
+    transcription_file.clean_up_tmp_location
     raise FileDownloadError, "Webex temporary download link responded with error: #{error}"
   end
 
@@ -171,7 +172,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: integer value of 1 if tmp file deleted after successful upload
   def convert_to_rtf_and_upload_to_s3!
     log_info("Converting file #{file_name} to rtf...")
-    file_paths = @transcription_file.convert_to_rtf!
+    transcription_file = @transcription_file
+    file_paths = transcription_file.convert_to_rtf!
     file_paths.each do |file_path|
       output_file_name = file_path.split("/").last
       output_file = find_or_create_transcription_file(output_file_name)

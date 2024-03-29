@@ -12,14 +12,14 @@ class TranscriptionFile < CaseflowRecord
 
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
-  def download_from_s3
+  def fetch_from_s3
     S3Service.fetch_file(aws_link, tmp_location)
     tmp_location
   end
 
   # Purpose: Uploads transcription file to its corresponding location in S3
   def upload_to_s3!
-    UploadTranscriptionFileToS3.new(self).call
+    TranscriptionFileUpload.new(self).call
   end
 
   # Purpose: Converts transcription file from vtt to rtf
