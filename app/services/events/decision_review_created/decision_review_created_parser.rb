@@ -142,4 +142,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def request_issues
     @payload.dig(:request_issues)
   end
+
+  # Individual RequestIssue parsing methods
+  # An RI instance will be passed in as you iterate through the array
+  def ri_benefit_type(issue)
+    issue.dig(:benefit_type)
+  end
 end

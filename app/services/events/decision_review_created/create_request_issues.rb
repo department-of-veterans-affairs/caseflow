@@ -4,8 +4,8 @@
 # when an Event is received using the data sent from VBMS
 class Events::DecisionReviewCreated::CreateRequestIssues
   class << self
-    def process!(event, parser)
-      create_request_issue_backfill(event, parser)
+    def process!(event, parser, epe)
+      create_request_issue_backfill(event, parser, epe)
     rescue Caseflow::Error::DecisionReviewCreatedRequestIssuesError => error
       raise error
     end
@@ -13,12 +13,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     private
 
     # iterate through the array of issues and create backfill object from each one
-    def create_request_issue_backfill(event, parser)
+    def create_request_issue_backfill(event, parser, epe)
       request_issues = parser.request_issues
+      newly_created_issues = []
 
       request_issues.each do |issue|
         # Extract values using .dig() method for each column
-        benefit_type = issue.dig(:benefit_type)
+        # benefit_type = issue.dig(:benefit_type)
+        benefit_type = parser.ri_benefit_type(issue)
         contested_issue_description = issue.dig(:contested_issue_description)
         contention_reference_id = issue.dig(:contention_reference_id)
         contested_rating_decision_reference_id = issue.dig(:contested_rating_decision_reference_id)
@@ -39,6 +41,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
         closed_at = issue.dig(:closed_at)
         closed_status = issue.dig(:closed_status)
         contested_rating_issue_diagnostic_code = issue.dig(:contested_rating_issue_diagnostic_code)
+        nonrating_issue_bgs_id = issue.dig(:nonrating_issue_bgs_id)
 
         # create backfill RI object using extracted values
         ri = RequestIssue.create!(
@@ -49,7 +52,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           contested_rating_issue_profile_date: contested_rating_issue_profile_date,
           contested_rating_issue_reference_id: contested_rating_issue_reference_id,
           contested_decision_issue_id: contested_decision_issue_id,
-          decision_date: decision_date,
+          decision_date: parser.logical_date_converter(decision_date),
           ineligible_due_to_id: ineligible_due_to_id,
           ineligible_reason: ineligible_reason,
           is_unidentified: is_unidentified,
@@ -62,11 +65,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           vacols_sequence_id: vacols_sequence_id,
           closed_at: closed_at,
           closed_status: closed_status,
-          contested_rating_issue_diagnostic_code: contested_rating_issue_diagnostic_code
+          contested_rating_issue_diagnostic_code: contested_rating_issue_diagnostic_code,
+          end_product_establishment_id: epe.id,
+          nonrating_issue_bgs_id: nonrating_issue_bgs_id
         )
-
         create_request_issue_event_record(event, ri)
+        newly_created_issues.push(ri)
       end
+      newly_created_issues
     end
 
     def create_request_issue_event_record(event, issue)
