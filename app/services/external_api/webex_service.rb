@@ -19,11 +19,8 @@ class ExternalApi::WebexService
       "provideShortUrls": true,
       "verticalType": "gen"
     }
-
     method = "POST"
-
     resp = send_webex_request(body, method)
-
     ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
   end
 
@@ -39,12 +36,8 @@ class ExternalApi::WebexService
       "provideShortUrls": true,
       "verticalType": "gen"
     }
-
     method = "POST"
-
     resp = send_webex_request(body, method)
-    return if resp.nil?
-
     ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
   end
 
@@ -52,8 +45,6 @@ class ExternalApi::WebexService
     body = nil
     method = "GET"
     resp = send_webex_request(body, method)
-    return if resp.nil?
-
     ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
   end
 
@@ -61,8 +52,6 @@ class ExternalApi::WebexService
     body = nil
     method = "GET"
     resp = send_webex_request(body, method)
-    return if resp.nil?
-
     ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
   end
 

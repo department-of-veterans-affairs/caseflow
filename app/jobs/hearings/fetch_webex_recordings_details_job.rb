@@ -12,7 +12,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    file_name = @file_name
+    file_name = @file_name || job.arguments&.first&.[](:file_name)
     docket_number, hearing_id, class_name = file_name.split("_")
     hearing = if class_name == "Hearing"
                 Hearing.find_by(id: hearing_id)
@@ -30,8 +30,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       docket_number: docket_number
     }
     TranscriptFileIssuesMailer.send_issue_details(details, hearing.appeal.external_id)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
-    log_error(exception, extra: { application: self.class.name, job_id: job.id })
+    job.log_error(exception)
   end
   # rubocop:enable Layout/LineLength
 
@@ -49,6 +48,15 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
     mp3_link = data.mp3_link
     send_file(topic, "mp3", mp3_link)
+  end
+
+  def log_error(error)
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
+    extra = {
+      application: self.class.name,
+      job_id: job_id
+    }
+    Raven.capture_exception(error, extra: extra)
   end
 
   private

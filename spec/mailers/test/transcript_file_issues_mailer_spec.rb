@@ -11,7 +11,6 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
   end
 
-
   describe "#send_issue_details" do
     let(:details) do
       {
