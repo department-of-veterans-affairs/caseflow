@@ -133,6 +133,18 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
+  putIntofilter = (filtersForColumn, columnName, value) => {
+    let newValue = [];
+
+    if ((columnName === 'Receipt Date') || (columnName === 'Date Completed')) {
+      newValue = [value];
+    } else {
+      newValue = filtersForColumn.concat([value]);
+    }
+
+    return newValue;
+  }
+
   updateSelectedFilter = (value, columnName) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
@@ -142,7 +154,7 @@ class TableFilter extends React.PureComponent {
       if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = this.putIntofilter(filtersForColumn, columnName, value);
       }
     } else {
       newFilters = newFilters.concat([value]);
