@@ -12,7 +12,7 @@ describe TranscriptionFile do
 
   describe "model functions" do
     it "downloading a file" do
-      expect(uploaded_file.fetch_from_s3).to eq("#{Rails.root}/tmp/transcription_files/vtt/transcript.vtt")
+      expect(uploaded_file.download_file_from_s3).to eq("#{Rails.root}/tmp/transcription_files/vtt/transcript.vtt")
     end
 
     it "uploading a file" do

@@ -12,7 +12,7 @@ class TranscriptionFile < CaseflowRecord
 
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
-  def fetch_from_s3
+  def download_file_from_s3
     S3Service.fetch_file(aws_link, tmp_location)
     tmp_location
   end
