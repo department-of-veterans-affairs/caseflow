@@ -276,11 +276,9 @@ class DailyDocketRow extends React.Component {
   conferenceLinkOnClick = () => {
     const { conferenceLinks, hearing } = this.props;
 
-    const linkType = hearing.conferenceProvider === 'webex' ? 'WebexConferenceLink' : 'PexipConferenceLink';
-    const link = conferenceLinks[0].type === linkType ? 0 : 1;
+    const link = hearing.conferenceProvider === 'webex' ? hearing.nonVirtualConferenceLink : conferenceLinks[0];
 
-    window.open(conferenceLinks[link].hostLink, 'Recording Session').focus();
-
+    window.open(link.hostLink, 'Recording Session').focus();
   }
 
   getInputProps = () => {
@@ -507,7 +505,10 @@ DailyDocketRow.propTypes = {
     disposition: PropTypes.string,
     scheduledForIsPast: PropTypes.bool,
     scheduledTimeString: PropTypes.string,
-    conferenceProvider: PropTypes.string
+    conferenceProvider: PropTypes.string,
+    nonVirtualConferenceLink: PropTypes.shape({
+      hostLink: PropTypes.string
+    })
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
