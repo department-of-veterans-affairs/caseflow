@@ -13,7 +13,7 @@ import { selectCurrentPdf, closeDocumentUpdatedModal } from '../reader/Documents
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation,
   closeAnnotationDeleteModal, closeAnnotationShareModal
 } from '../reader/AnnotationLayer/AnnotationActions';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
+import { onScrollToComment, setRenderStartTime } from '../reader/Pdf/PdfActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import CopyTextButton from '../components/CopyTextButton';
@@ -134,6 +134,7 @@ export class PdfViewer extends React.Component {
   }
 
   componentDidMount() {
+    this.props.setRenderStartTime(performance.now());
     this.props.handleSelectCurrentPdf(this.selectedDocId());
     window.addEventListener('keydown', this.keyListener);
 
@@ -236,6 +237,7 @@ export class PdfViewer extends React.Component {
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             featureToggles={this.props.featureToggles}
+            renderStartTime={this.props.renderStartTime}
           />
           <PdfSidebar
             doc={doc}
@@ -302,7 +304,8 @@ const mapDispatchToProps = (dispatch) => ({
     fetchAppealDetails,
     showSearchBar,
     closeDocumentUpdatedModal,
-    onScrollToComment
+    onScrollToComment,
+    setRenderStartTime
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
@@ -342,5 +345,7 @@ PdfViewer.propTypes = {
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool,
-  showPdf: PropTypes.func
+  showPdf: PropTypes.func,
+  setRenderStartTime: PropTypes.func,
+  renderStartTime: PropTypes.any
 };
