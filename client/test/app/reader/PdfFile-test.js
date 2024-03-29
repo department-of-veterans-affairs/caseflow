@@ -186,13 +186,7 @@ describe('PdfFile', () => {
         subject.getDocument();
 
         // Assert that measureTimeStartMs is counting
-        expect(subject.measureTimeStartMs).toBe('RUNNING_IN_NODE');
-
-        // Unmount the component
-        wrapper.unmount();
-
-        // Assert that measureTimeStartMs is reset to null
-        expect(subject.measureTimeStartMs).toBeNull();
+        expect(subject.props.renderStartTime).not.toBeNull();
       });
     });
   });

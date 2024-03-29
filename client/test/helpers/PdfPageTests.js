@@ -6,8 +6,7 @@ import { PdfPage } from '../../app/reader/PdfPage';
 export const pageMetricData = [
   'test',
   {
-    data: undefined,
-    message: 'Storing PDF page 2',
+    message: 'Getting PDF page 2 from PDFJS document',
     product: 'reader',
     type: 'performance',
     eventId: '123456'
@@ -18,8 +17,7 @@ export const pageMetricData = [
 export const textMetricData = [
   'test',
   {
-    data: undefined,
-    message: 'Storing PDF page text',
+    message: 'Storing PDF page text text in Redux',
     product: 'reader',
     type: 'performance'
   },
@@ -60,7 +58,6 @@ export const storeMetricsBrowserError = [
 export const recordMetricsArgs = [
   'Test',
   {
-    data: undefined,
     message: 'Rendering PDF page 2 text',
     product: 'reader',
     type: 'performance',
