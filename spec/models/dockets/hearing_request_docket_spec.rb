@@ -119,6 +119,60 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
+  context "when the distribution contains Specialty Case Team appeals" do
+    subject do
+      HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: "any")
+    end
+
+    let(:distribution_judge) { create(:user, last_login_at: Time.zone.now) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: distribution_judge.css_id) }
+    let!(:distribution) { Distribution.create!(judge: distribution_judge) }
+
+    let(:limit) { 15 }
+
+    let!(:vha_appeals) do
+      (1..5).map { create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge }
+    end
+
+    let!(:non_vha_appeals) do
+      (1..20).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
+    end
+
+    context "when specialty_case_team_distribution feature toggle is enabled" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+      end
+      after do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+        subject
+
+        expect(DistributionTask.open.count).to eq(5)
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq(20)
+        expect(distributed_cases.count(&:sct_appeal)).to eq(5)
+      end
+    end
+
+    context "when specialty_case_team_distribution feature toggle is disabled" do
+      before do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+        subject
+
+        # It should only distribute 15 appeals due to the limit so 10 should remain in the ready to distribute state
+        expect(DistributionTask.open.count).to eq(10)
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq(15)
+        expect(distributed_cases.count(&:sct_appeal)).to eq(0)
+      end
+    end
+  end
+
   context "#genpop_priority_count" do
     let(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:ineligible_judge) { create(:user, :judge, :inactive) }
@@ -566,7 +620,12 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
       end
 
+      let!(:sct_ready_priority_appeal_not_tied_to_a_judge) do
+        create_priority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+      end
+
       before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "30")
         CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.cavc_affinity_days).update!(value: "14")
         CaseDistributionLever
@@ -585,8 +644,10 @@ describe HearingRequestDocket, :postgres do
              ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
              ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
-             ready_aod_hearing_cancelled.uuid]
+             ready_aod_hearing_cancelled.uuid,
+             sct_ready_priority_appeal_not_tied_to_a_judge.uuid]
           )
+          expect(sct_ready_priority_appeal_not_tied_to_a_judge.specialty_case_team_assign_task?).to be true
         end
       end
     end
@@ -732,6 +793,35 @@ describe HearingRequestDocket, :postgres do
     )
     appeal.tasks.find_by(type: ScheduleHearingTask.name).cancelled!
     Timecop.return
+    appeal
+  end
+
+  def create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    :with_vha_issue,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_priority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :advanced_on_docket_due_to_age,
+                    :with_vha_issue,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
   end
 end

@@ -14,7 +14,6 @@ class HearingRequestDistributionQuery
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
-
       include_feature = FeatureToggle.enabled?(:acd_exclude_from_affinity) ||
                         (CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit &&
                         CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit)
