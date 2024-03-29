@@ -14,7 +14,7 @@ export const VirtualHearingFields = (
 
   return (
     <ContentSection
-      header = "Hearing Links"
+      header="Hearing Links"
     >
       <div {...css({ marginTop: '1.5rem' })}>
         <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider)} Hearing</strong>

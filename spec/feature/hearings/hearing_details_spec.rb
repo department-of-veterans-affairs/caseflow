@@ -935,7 +935,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       context "when conference type is webex" do
-        let!(:hearing) { create(:hearing, :with_transcription_files) }
+        let!(:hearing) { create(:hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
 
         include_examples "conference type webex"
       end
@@ -972,7 +972,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       context "when conference type is webex" do
-        let!(:hearing) { create(:legacy_hearing, :with_transcription_files) }
+        let!(:hearing) { create(:legacy_hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
 
         include_examples "conference type webex"
       end
