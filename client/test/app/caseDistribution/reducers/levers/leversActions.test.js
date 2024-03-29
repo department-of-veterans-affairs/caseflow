@@ -91,14 +91,14 @@ describe('levers actions', () => {
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
-        value: option.value,
-        optionValue: option.text
+        optionItem: option.item,
+        optionValue: option.value
       }
     };
 
     const dispatch = jest.fn();
 
-    actions.updateRadioLever(lever.lever_group, lever.item, option.value, option.text)(dispatch);
+    actions.updateRadioLever(lever.lever_group, lever.item, option.item, option.value)(dispatch);
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 

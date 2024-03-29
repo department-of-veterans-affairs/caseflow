@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
 import {
-  findSelectedOption,
+  findOption,
   hasCombinationLeverChanged,
   radioValueOptionSelected,
   findValueOption,
@@ -176,7 +176,7 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
- * Used when updating the a radio lever
+ * Used when updating a radio lever
  * Pass in the selected option and a value if the selected option is value
  *
  * This will break if a Radio lever has more than one option that has an input
@@ -188,15 +188,30 @@ export const hasNoLeverErrors = createSelector(
  * If omit or infinite is the selected Radio option
  *   Update lever.value to the value passed in
  *   Set valueOptionValue to value in value's option
+ *
+ * @param {*} state
+ * @param { payload: {leverGroup, leverItem, optionItem, optionValue} } action
+ * leverGroup: the group the lever is in
+ *      affinity, batch, docket_distribution_prior, docket_time_goal, docket_levers
+ *
+ * leverItem: the name of the lever
+ *      see DISTRIBUTION.json for valid names
+ *
+ * optionItem: the option that was selected
+ *      value, omit, infinite
+ *
+ * optionValue:: if value option is selected the value of the input
+ *
+ * @returns
  */
 export const updateLeverGroupForRadioLever = (state, action) => {
-  const { leverGroup, leverItem, value, optionValue } = action.payload;
+  const { leverGroup, leverItem, optionItem, optionValue } = action.payload;
 
   const updateLeverValue = (lever) => {
-    const selectedOption = findSelectedOption(lever);
-    const isValueOption = radioValueOptionSelected(value);
+    const selectedOption = findOption(lever, optionItem);
+    const isValueOption = radioValueOptionSelected(optionItem);
     const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
-    const leverValue = isValueOption ? optionValue : value;
+    const leverValue = isValueOption ? optionValue : optionItem;
     // Set all options to not selected
 
     lever.options.forEach((option) => option.selected = false);
@@ -207,7 +222,7 @@ export const updateLeverGroupForRadioLever = (state, action) => {
     return {
       ...lever,
       value: leverValue,
-      selectedOption: value,
+      selectedOption: optionItem,
       valueOptionValue
     };
   };
