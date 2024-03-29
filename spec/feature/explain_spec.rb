@@ -37,7 +37,7 @@ RSpec.feature "Explain JSON" do
     end
 
     scenario "admin visits explain page for correspondence" do
-      visit "explain/correspondence/#{correspondence.uuid}/review_package"
+      visit "explain/correspondence/#{correspondence.uuid}/"
       expect(page).to have_content("Correspondence #{correspondence.uuid}")
       expect(page).to have_content("Task Tree")
       expect(page).to have_content("Task Versions")

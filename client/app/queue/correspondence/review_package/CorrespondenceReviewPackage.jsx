@@ -1,5 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
@@ -20,6 +21,7 @@ import {
   from '../../../../COPY';
 
 export const CorrespondenceReviewPackage = (props) => {
+  const history = useHistory();
   const [reviewDetails, setReviewDetails] = useState({
     veteran_name: {},
     dropdown_values: [],
@@ -116,7 +118,7 @@ export const CorrespondenceReviewPackage = (props) => {
     if (disableButton) {
       setShowModal(!showModal);
     } else {
-      history.push('/queue/correspondence');
+      history.goBack();
     }
   };
 

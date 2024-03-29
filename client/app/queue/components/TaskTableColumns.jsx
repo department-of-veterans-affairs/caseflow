@@ -243,6 +243,14 @@ export const veteranDetails = () => {
     dispatch(setShowReassignPackageModal(true));
   };
 
+  // Developer Function for in-progress and future work
+  const handleExplainPageInConSoleLog = (task) => {
+    // eslint-disable-next-line
+    console.log("Correspondence Explain Page for Under Construction Link:")
+    // eslint-disable-next-line
+    console.log(window.location.origin + task.taskUrl);
+  };
+
   return {
     header: 'Veteran Details',
     label: 'Veteran Details',
@@ -263,6 +271,15 @@ export const veteranDetails = () => {
         return <a
           href="#"
           onClick={() => handleRemoveClick(task)}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl.includes('explain')) {
+        return <a
+          href="/under_construction"
+          onContextMenu={() => handleExplainPageInConSoleLog(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >

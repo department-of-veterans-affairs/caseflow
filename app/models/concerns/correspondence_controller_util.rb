@@ -4,6 +4,9 @@
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerUtil
+
+  MAX_QUEUED_ITEMS = 60
+
   def current_correspondence
     @current_correspondence ||= correspondence
   end
@@ -210,7 +213,7 @@ module CorrespondenceControllerUtil
 
   def handle_correspondence_unassigned_response(user, task_count)
     success_header_unassigned = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence assignment to #{user.css_id} has failed"
+    failure_header_unassigned = "Correspondence assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
     {
@@ -221,7 +224,7 @@ module CorrespondenceControllerUtil
 
   def handle_correspondence_assigned_response(user, task_count)
     success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_assigned = "Correspondence reassignment to #{user.css_id} has failed"
+    failure_header_assigned = "Correspondence reassignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
     {
@@ -235,7 +238,7 @@ module CorrespondenceControllerUtil
     when "correspondence_unassigned"
       handle_correspondence_unassigned_response(user, task_count)
     when "correspondence_team_assigned"
-      handle_correspondence_assigned_response
+      handle_correspondence_assigned_response(user, task_count)
     end
   end
 
