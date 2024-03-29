@@ -10,7 +10,7 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call
+  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
@@ -80,9 +80,10 @@ class HearingRequestDistributionQuery
     end
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
-    # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
+    # yet, so we add with_no_hearings to retrieve those appeals
+    no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
-    [*result, *with_no_hearings, *with_no_held_hearings].uniq
+    [*result, *no_hearings_or_no_held_hearings].uniq
   end
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
