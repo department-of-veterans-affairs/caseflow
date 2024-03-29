@@ -36,13 +36,14 @@ module CorrespondenceControllerUtil
     @is_supervisor = current_user.mail_supervisor?
     @reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
     @action_type = params[:userAction].strip if params[:userAction].present?
+    @veteran_name = URI.decode(params[:veteranName].strip) if params[:veteranName].present?
   end
 
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
       handle_mail_superuser_or_supervisor
     elsif current_user.mail_team_user?
-      redirect_to "/queue/correspondence"
+      redirect_to "/queue/correspondence/team"
     else
       redirect_to "/unauthorized"
     end
@@ -61,7 +62,7 @@ module CorrespondenceControllerUtil
       end
       set_reassign_remove_banner_params(mail_team_user, operation_type)
     rescue StandardError
-      set_error_banner_params(mail_team_user)
+      set_error_banner_params
     end
   end
 
@@ -188,7 +189,7 @@ module CorrespondenceControllerUtil
   def set_reassign_remove_banner_params(user, operation_type)
     case operation_type
     when "remove"
-      template = remove_message_template(user)
+      template = remove_message_template
       @response_header = template[:header]
       @response_message = template[:message]
       @response_type = "success"
@@ -200,9 +201,9 @@ module CorrespondenceControllerUtil
     end
   end
 
-  def set_error_banner_params(mail_team_user)
+  def set_error_banner_params
     operation_verb = @action_type == "approve" ? "approved" : "rejected"
-    @response_header = "Package request for #{mail_team_user.css_id} could not be #{operation_verb}"
+    @response_header = "Package request for #{@veteran_name} could not be #{operation_verb}"
     @response_message = "Please try again at a later time or contact the Help Desk."
     @response_type = "error"
   end
@@ -257,11 +258,11 @@ module CorrespondenceControllerUtil
     end
   end
 
-  def remove_message_template(user)
-    success_header_approved = "You have successfully removed a mail package for #{user.css_id}"
+  def remove_message_template
+    success_header_approved = "You have successfully removed a mail package for #{@veteran_name}"
     success_message_approved = "The package has been removed from Caseflow and must be manually uploaded again
      from the Centralized Mail Portal, if it needs to be processed."
-    success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
+    success_header_rejected = "You have successfully rejected a package request for #{@veteran_name}"
     success_message_rejected = "The package will be re-assigned to the user that sent the request."
 
     case @action_type

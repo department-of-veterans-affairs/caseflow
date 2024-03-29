@@ -36,6 +36,10 @@ export const CorrespondenceReviewPackage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [reviewPackageDetails, setReviewPackageDetails] = useState({
+    veteranName: '',
+    taksId: [],
+  });
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
@@ -48,6 +52,13 @@ export const CorrespondenceReviewPackage = (props) => {
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
       const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
+
+      if(assignedRemoveTask) {
+        setReviewPackageDetails((prev) => {
+          return {...prev, taskId: assignedRemoveTask.id}
+          }
+        )
+      }
 
       // Return true if a removePackageTask that is currently assigned is found, else false
       return (typeof assignedRemoveTask !== 'undefined') && isInboundOpsTeam;
@@ -73,6 +84,11 @@ export const CorrespondenceReviewPackage = (props) => {
         dropdown_values: data.correspondence_types || [],
       });
 
+      setReviewPackageDetails((prev) => {
+        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}`}
+        }
+      )
+
       setEditableData({
         notes: data.notes,
         veteran_file_number: data.file_number,
@@ -83,7 +99,7 @@ export const CorrespondenceReviewPackage = (props) => {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
           message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
-          bannerType: 'warning'
+          bannerType: 'info'
         });
         setIsReadOnly(true);
       }
@@ -170,6 +186,7 @@ export const CorrespondenceReviewPackage = (props) => {
       <React.Fragment>
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
+            reviewDetails={reviewPackageDetails}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
