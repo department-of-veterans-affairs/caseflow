@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_29_165212) do
+ActiveRecord::Schema.define(version: 2024_04_01_185955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -621,6 +621,9 @@ ActiveRecord::Schema.define(version: 2024_02_29_165212) do
     t.index ["created_by_id"], name: "index_created_by_id"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_updated_by_id"
+  end
+
+  create_table "correspondence_appeals", force: :cascade do |t|
   end
 
   create_table "correspondence_documents", force: :cascade do |t|
