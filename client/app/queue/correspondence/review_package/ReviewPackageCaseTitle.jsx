@@ -57,7 +57,7 @@ const ReviewPackageCaseTitle = (props) => {
 
   return (
     <div>
-      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
+      <CaseTitleScaffolding reviewDetails={props.reviewDetails} correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
       <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
     </div>
   );
@@ -92,6 +92,7 @@ const CaseTitleScaffolding = (props) => {
       </span>
       { modalState &&
       <RemovePackageModal
+        reviewDetails={props.reviewDetails}
         modalState={modalState}
         setModalState={setModalState}
         onCancel={closeModal}
@@ -129,6 +130,7 @@ const CaseSubTitleScaffolding = (props) => (
 );
 
 ReviewPackageCaseTitle.propTypes = {
+  reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
   correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool

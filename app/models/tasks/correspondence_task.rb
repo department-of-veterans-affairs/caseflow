@@ -19,6 +19,10 @@ class CorrespondenceTask < Task
     ]
   end
 
+  def nod
+    correspondence.nod
+  end
+
   def verify_org_task_unique
     if Task.where(
       appeal_id: appeal_id,
