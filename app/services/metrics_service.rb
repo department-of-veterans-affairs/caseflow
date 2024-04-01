@@ -155,6 +155,7 @@ class MetricsService
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # :reek:LongParameterList
   private_class_method def self.increment_metric_service_counter(metric_name, service, endpoint_name, app_name)
     increment_counter(
       metric_group: "service",
@@ -166,6 +167,7 @@ class MetricsService
       }
     )
   end
+
   # :reek:ControlParameter
   def self.store_record_metric(uuid, params, caller)
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])

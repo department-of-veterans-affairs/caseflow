@@ -12,6 +12,7 @@ module CollectCustomMetrics
     collect_vacols_metrics
   end
 
+  # :reek:FeatureEnvy
   def collect_postgres_metrics
     conns = ActiveRecord::Base.connection_pool.connections
 
@@ -24,6 +25,7 @@ module CollectCustomMetrics
     emit_metrics_point("postgres", "idle", idle)
   end
 
+  # :reek:FeatureEnvy
   def collect_vacols_metrics
     conns = VACOLS::Record.connection_pool.connections
 

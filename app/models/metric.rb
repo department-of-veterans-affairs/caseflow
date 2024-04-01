@@ -75,7 +75,7 @@ class Metric < CaseflowRecord
   # - end
   # - duration
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   # :reek:ControlParameter
   def self.default_object(klass, params, user)
     product_types = PRODUCT_TYPES
@@ -100,7 +100,7 @@ class Metric < CaseflowRecord
       duration: calculate_duration(params[:start], params[:end], params[:duration])
     }
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   def self.calculate_duration(start, end_time, duration)
     return duration if duration || !start || !end_time
