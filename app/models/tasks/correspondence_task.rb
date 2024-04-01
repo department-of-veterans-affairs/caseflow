@@ -64,7 +64,7 @@ class CorrespondenceTask < Task
   end
 
   def correspondence
-    appeal
+    Correspondence.find(appeal_id)
   end
 
   def completed_by_date
@@ -72,7 +72,12 @@ class CorrespondenceTask < Task
   end
 
   def task_url
-    "/under_construction"
+    # Future: route to the Correspondence Details Page after implementation.
+    if ENV["RAILS_ENV"] == "production"
+      "/under_construction"
+    else
+      "/explain/correspondence/#{correspondence.uuid}/"
+    end
   end
 
   private
