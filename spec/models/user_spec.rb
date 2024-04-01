@@ -437,7 +437,34 @@ describe User, :all_dbs do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }
 
-    subject { user.member_of_organization?(org) }
+    subject { user.member_of_organization?(org.class) }
+
+    context "when the organization does not exist" do
+      let(:org) { nil }
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the current user is not a member of the organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of the organization" do
+      before { org.add_user(user) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  context "#member_of_team?" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    subject { user.member_of_team?(org) }
 
     context "when the organization does not exist" do
       let(:org) { nil }

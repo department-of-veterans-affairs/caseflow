@@ -60,8 +60,11 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=judge
   #      GET /tasks?user_id=xxx&role=judge&type=assign
   def index
+    puts "in index method in tasks_controller"
     tasks = params[:type].eql?("assign") ? QueueForRole.new(user_role).create(user: user).tasks : []
-    render json: { tasks: json_tasks(tasks), queue_config: queue_config }
+    my_stuff = { tasks: json_tasks(tasks), queue_config: queue_config }
+    puts "it creates the hash?????? but dies after that"
+    render json: my_stuff
   end
 
   # To create colocated task
@@ -108,7 +111,6 @@ class TasksController < ApplicationController
   # {
   #   assigned_to_id: 23
   # }
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def update
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
@@ -143,19 +145,21 @@ class TasksController < ApplicationController
 
     render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
 
   def for_appeal
     no_cache
 
-    # puts "is this where the case details page enters?"
+    puts "is this where the case details page enters?"
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
-    # puts "after getting tasks from TasksForAppeal"
+    puts "after getting tasks from TasksForAppeal"
     # puts tasks.count
 
     # puts "before serializing"
+    puts "before serializing in for_appeal in the tasks_controller"
     json_task_data = json_tasks(tasks)[:data]
+    puts "after serializing json tasks in for_appeal in tasks_controller"
     # puts "after serializing"
     # byebug
     render json: { tasks: json_task_data }
@@ -276,7 +280,6 @@ class TasksController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def process_contested_claim_final_task
     case task.status
     when "cancelled"
@@ -297,18 +300,18 @@ class TasksController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
   end
 
   def queue_config
+    puts "calling queue_config??"
     params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_view_access
-    # puts "when does this happen?"
+    puts "when does verify view access happen?"
     # byebug
     return true if user == current_user ||
                    Judge.new(current_user).attorneys.include?(user) ||
@@ -400,11 +403,14 @@ class TasksController < ApplicationController
   end
 
   def json_tasks(tasks, ama_serializer: WorkQueue::TaskSerializer)
-    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
+    puts "in json tasks in tasks_controller"
+    serialized_tasks = AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
       params: { user: current_user, role: user_role },
       tasks: tasks,
       ama_serializer: ama_serializer
     ).call
+    puts "after serializing tasks in tasks_controller"
+    serialized_tasks
   end
 
   def task_includes

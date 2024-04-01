@@ -49,12 +49,14 @@ shared_examples_for "sort by Appeal Type column" do
     end
 
     appeals = [
+      # Same problem with factories not working with cached associations
       create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand),
       create(:appeal, :advanced_on_docket_due_to_motion),
       create(:appeal, :type_cavc_remand),
       create(:appeal)
     ]
     appeals.each_with_index do |appeal, index|
+      appeal.reload
       create(:ama_colocated_task, appeal: appeal, assigned_to: assignee)
       create(:cached_appeal,
              appeal_id: appeal.id,

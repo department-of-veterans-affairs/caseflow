@@ -26,7 +26,10 @@ class DecisionReviewIntake < Intake
     transaction do
       start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
-      detail.create_issues!(build_issues(req_issues))
+      # puts req_issues.inspect
+      built_issues = build_issues(req_issues)
+      # p built_issues
+      detail.create_issues!(built_issues)
       yield
       complete_with_status!(:success)
     end
@@ -38,6 +41,7 @@ class DecisionReviewIntake < Intake
 
   private
 
+  # Oh this is why a lot of stuff hapepns
   def create_claimant!
     # Existing claimant can be changed in any way, including their class type. Destroying and
     # re-creating ensures that associated records get cleaned up and the correct validations run.
@@ -137,6 +141,7 @@ class DecisionReviewIntake < Intake
   def participant_id
     case claimant_class_name
     when VeteranClaimant.name
+      puts "is this why it is dying?"
       veteran.participant_id
     when OtherClaimant.name
       ""

@@ -853,6 +853,7 @@ class Task < CaseflowRecord
   end
 
   def update_parent_status
+    parent.reload
     parent.when_child_task_completed(self)
   end
 
@@ -861,6 +862,7 @@ class Task < CaseflowRecord
   end
 
   def update_children_status_after_closed
+    children.reload
     active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 

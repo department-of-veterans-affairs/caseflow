@@ -22,8 +22,10 @@ class MembershipRequest < CaseflowRecord
   class << self
     def create_many_from_orgs(organizations, params, user)
       created_requests = organizations.map do |org|
+        puts "org"
+        p org
         # Skip creating this request if the user is already a member of the Organization
-        next if user.member_of_organization?(org)
+        next if user.member_of_team?(org)
 
         create!(
           organization: org,

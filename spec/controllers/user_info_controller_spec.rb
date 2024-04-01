@@ -26,7 +26,8 @@ describe UserInfoController, :postgres, type: :controller do
 
     context "when the requestor is a BVA admin" do
       before do
-        allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true)
+        # allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true)
+        allow_any_instance_of(User).to receive(:member_of_organization?).and_return(true)
       end
 
       context "when there is no css_id parameter in the request" do

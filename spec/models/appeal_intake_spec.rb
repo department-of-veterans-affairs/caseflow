@@ -36,7 +36,8 @@ describe AppealIntake, :all_dbs do
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
-    let(:detail) { create(:appeal, veteran_file_number: veteran_file_number, receipt_date: 3.days.ago) }
+    # Same factory issue
+    let(:detail) { create(:appeal, veteran_file_number: veteran_file_number, receipt_date: 3.days.ago).reload }
 
     let!(:claimant) do
       DependentClaimant.create!(
@@ -65,6 +66,7 @@ describe AppealIntake, :all_dbs do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      # This won't raise an error because claimant wasn't deleted?
       expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
       expect { request_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
@@ -83,7 +85,8 @@ describe AppealIntake, :all_dbs do
     # set hearing type
     let(:original_hearing_request_type) { "virtual" }
 
-    let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
+    # TODO: This one definitely shouldn't fail. Maybe is is due to the veteran stuff?
+    let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number).reload }
 
     let(:request_params) do
       ActionController::Parameters.new(
@@ -101,7 +104,7 @@ describe AppealIntake, :all_dbs do
     it "updates appeal with values" do
       expect(subject).to be_truthy
 
-      expect(intake.detail).to have_attributes(
+      expect(intake.detail.reload).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
         docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
@@ -406,9 +409,17 @@ describe AppealIntake, :all_dbs do
         let(:legacy_opt_in_approved) { true }
 
         it "submits a LegacyIssueOptin" do
+          # puts legacy_appeal.vacols_id
+          # p vacols_issue
+          # p vacols_case
+          # p AppealRepository.issues(legacy_appeal.vacols_id)
           expect(LegacyIssueOptin.count).to eq 0
           expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
 
+          # puts legacy_appeal.reload
+          # puts vacols_case.reload
+          # puts vacols_issue.reload
+          # puts detail.reload
           subject
 
           expect(LegacyIssueOptin.count).to eq 1

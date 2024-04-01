@@ -10,6 +10,8 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
 
   describe "#as_json" do
     it "renders ready for client consumption" do
+      # Same factory problem
+      appeal.reload
       serializable_hash = {
         id: task.id.to_s,
         type: :veteran_record_request,

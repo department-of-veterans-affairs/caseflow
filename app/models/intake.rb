@@ -199,6 +199,7 @@ class Intake < CaseflowRecord
     !error_code
   end
 
+  # TODO: Here we go. The root of the problem
   # Turn this into an ordinary ActiveRecord association once veteran_id is fully populated
   def veteran
     @veteran ||= if veteran_id.present?

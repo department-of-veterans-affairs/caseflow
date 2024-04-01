@@ -142,7 +142,7 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
 
   def belongs_to_vha_org?
     # requestor.organizations.any? { |org| org.url == "vha" }
-    requestor.member_of_organization?(VhaBusinessLine.singleton)
+    requestor.member_of_organization?(VhaBusinessLine)
   end
 
   def single_request

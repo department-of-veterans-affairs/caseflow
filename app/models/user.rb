@@ -346,7 +346,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def administered_teams
     # Try memo here to see if it can cut out some db calls
-    @administered_teams ||= organizations_users.includes(:organization).admin.map(&:organization).compact
+    # @administered_teams ||= organizations_users.includes(:organization).admin.map(&:organization).compact
+    # Memoing on this seems to causes problems, but it should be possile
+    organizations_users.includes(:organization).admin.map(&:organization).compact
   end
 
   def check_for_org_admin?(org)
@@ -405,9 +407,17 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     orgs
   end
 
+  # This makes this method a bit less safe to use now. It won't work for subclasses or "teams" like
+  # JudgeTeams or VhaProgramOffices, but it removes a lot of DB calls for singletons when is_a? is good enough
+  # Might make a seperate method that is more specific that uses the old .include? check
   def member_of_organization?(org)
     # organizations.include?(org)
     organizations.any? { |organization| organization.is_a?(org) }
+  end
+
+  # This is the old method and should be used for NonSingleton Organizations
+  def member_of_team?(org)
+    organizations.include?(org)
   end
 
   def judge?
