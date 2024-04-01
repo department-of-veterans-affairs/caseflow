@@ -90,14 +90,15 @@ const CorrespondenceCases = (props) => {
     return false;
   };
 
-  const approveElement = (<div style={{ width: '28vw' }}>
-    <ReactSelectDropdown
-      className="cf-margin-left-2rem img"
-      label="Assign to person"
-      onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-      options={buildMailUserData(props.mailTeamUsers)}
-    />
-  </div>);
+  const approveElement = (
+    <div style={{ width: '250%' }}>
+      <ReactSelectDropdown
+        className="cf-margin-left-2rem img"
+        label="Assign to person"
+        onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
+        options={buildMailUserData(props.mailTeamUsers)}
+      />
+    </div>);
 
   const textAreaElement = (
     <div style={{ width: '280%' }}>
