@@ -90,14 +90,15 @@ const CorrespondenceCases = (props) => {
     return false;
   };
 
-  const approveElement = (<div style={{ width: '28vw' }}>
-    <ReactSelectDropdown
-      className="cf-margin-left-2rem img"
-      label="Assign to person"
-      onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-      options={buildMailUserData(props.mailTeamUsers)}
-    />
-  </div>);
+  const approveElement = (
+    <div style={{ width: '250%' }}>
+      <ReactSelectDropdown
+        className="cf-margin-left-2rem img"
+        label="Assign to person"
+        onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
+        options={buildMailUserData(props.mailTeamUsers)}
+      />
+    </div>);
 
   const textAreaElement = (
     <div style={{ width: '280%' }}>
@@ -138,17 +139,19 @@ const CorrespondenceCases = (props) => {
       displayElement: selectedRequestChoice === 'reject'
     }
   ];
-
   const handleConfirmReassignRemoveClick = (operation) => {
     const newUrl = new URL(window.location.href);
     const searchParams = new URLSearchParams(newUrl.search);
-
     // Encode and set the query parameters
+
     searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
     searchParams.set('taskId', encodeURIComponent(currentSelectedVeteran.uniqueId));
+    searchParams.set('veteranName', encodeURIComponent(currentSelectedVeteran.veteranDetails.split('(')[0].trim()));
     searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
     searchParams.set('decisionReason', encodeURIComponent(decisionReason));
     searchParams.set('operation', encodeURIComponent(operation));
+    searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
+    searchParams.set('page', encodeURIComponent('1'));
 
     // Construct the new URL with encoded query parameters
     newUrl.search = searchParams.toString();
