@@ -109,7 +109,7 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
-      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
+      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} could not be completed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
 
@@ -156,7 +156,7 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
-      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} has failed")
+      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} could not be completed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
   end

@@ -145,7 +145,7 @@ describe ExplainController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET explain/correspondence/:correspondence_uuid/:any" do
+  describe "GET explain/correspondence/:correspondence_uuid/" do
     let(:user_roles) { ["System Admin"] }
     let(:veteran) { create(:veteran) }
     let(:package_document_type) do
