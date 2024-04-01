@@ -61,7 +61,7 @@ describe Events::CreateVeteranOnEvent do
     end
 
     def get_payload
-      {
+      data = {
         "veteran": {
           "participant_id": "1826209",
           "bgs_last_synced_at": 1_708_533_584_000,
@@ -69,6 +69,7 @@ describe Events::CreateVeteranOnEvent do
           "date_of_death": nil
         }
       }
+      JSON.generate(data)
     end
   end
 end
