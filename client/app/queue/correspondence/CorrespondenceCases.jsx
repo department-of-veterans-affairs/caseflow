@@ -139,17 +139,19 @@ const CorrespondenceCases = (props) => {
       displayElement: selectedRequestChoice === 'reject'
     }
   ];
-
   const handleConfirmReassignRemoveClick = (operation) => {
     const newUrl = new URL(window.location.href);
     const searchParams = new URLSearchParams(newUrl.search);
-
     // Encode and set the query parameters
+
     searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
     searchParams.set('taskId', encodeURIComponent(currentSelectedVeteran.uniqueId));
+    searchParams.set('veteranName', encodeURIComponent(currentSelectedVeteran.veteranDetails.split('(')[0].trim()));
     searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
     searchParams.set('decisionReason', encodeURIComponent(decisionReason));
     searchParams.set('operation', encodeURIComponent(operation));
+    searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
+    searchParams.set('page', encodeURIComponent('1'));
 
     // Construct the new URL with encoded query parameters
     newUrl.search = searchParams.toString();
