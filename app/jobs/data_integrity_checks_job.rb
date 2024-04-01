@@ -30,7 +30,7 @@ class DataIntegrityChecksJob < CaseflowJob
       checker_start_time = Time.zone.now
       checker = klass.constantize.new
       checker.call
-      datadog_report_time_segment(segment: klass.underscore, start_time: checker_start_time)
+      metrics_service_report_time_segment(segment: klass.underscore, start_time: checker_start_time)
       if checker.report?
         send_to_slack(checker)
       end
