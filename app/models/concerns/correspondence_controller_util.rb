@@ -65,7 +65,7 @@ module CorrespondenceControllerUtil
       end
       set_reassign_remove_banner_params(mail_team_user, operation_type)
     rescue StandardError
-      set_error_banner_params
+      handle_error_banner_params(mail_team_user)
     end
   end
 
@@ -204,7 +204,7 @@ module CorrespondenceControllerUtil
     end
   end
 
-  def set_error_banner_params
+  def handle_error_banner_params(mail_team_user)
     operation_verb = @action_type == "approve" ? "approved" : "rejected"
     @response_header = "Package request for #{@veteran_name} could not be #{operation_verb}"
     @response_message = "Please try again at a later time or contact the Help Desk."

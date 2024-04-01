@@ -22,7 +22,8 @@ import {
   taskColumn,
   correspondenceCompletedDateColumn,
   vaDor,
-  veteranDetails
+  veteranDetails,
+  packageDocumentType
 } from '../components/TaskTableColumns';
 
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
@@ -129,11 +130,6 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
-    if (searchValue === '' || searchValue.length < 3) {
-    // Return all tasks when search value is empty or less than three characters
-      return true;
-    }
-
     const taskNotes = task.notes || '';
     const daysWaiting = task.daysWaiting ? task.daysWaiting.toString() : '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
@@ -143,7 +139,7 @@ const CorrespondenceTableBuilder = (props) => {
     const taskLabel = task.label || '';
     const taskVaDor = task.vaDor || '';
     const closedAt = task.closedAt || '';
-
+    const packageDocType = task.nod ? 'NOD' : 'Non-NOD';
     const searchValueTrimmed = searchValue.trim();
     const isNumericSearchValue = !isNaN(parseFloat(searchValueTrimmed)) && isFinite(searchValueTrimmed);
 
@@ -155,6 +151,7 @@ const CorrespondenceTableBuilder = (props) => {
     assignedByfirstName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     assignedBylastName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     assignedToName.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
+    packageDocType.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     taskLabel.toLowerCase().includes(searchValueTrimmed.toLowerCase()) ||
     (isNumericSearchValue && daysWaiting.trim() === searchValueTrimmed) ||
     moment(closedAt).format('MM/DD/YYYY').
@@ -186,7 +183,8 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
-      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType()
+      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
+      [QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name]: packageDocumentType(filterOptions)
     };
 
     return functionForColumn[column.name];
