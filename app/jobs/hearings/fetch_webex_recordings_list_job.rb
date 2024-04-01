@@ -13,7 +13,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     from = 2.days.ago.in_time_zone("America/New_York").end_of_day
     to = 1.day.ago.in_time_zone("America/New_York").end_of_day
     max = 100
-    query = "?max=#{max}from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
+    query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     details = {
       action: "retrieve",
       filetype: "vtt",
