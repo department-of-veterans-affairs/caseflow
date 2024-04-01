@@ -13,6 +13,8 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :instructions
 
+  attribute :nod
+
   attribute :veteran_details do |object|
     vet = Veteran.find(object.correspondence.veteran_id)
     "#{vet.first_name} #{vet.last_name} (#{vet.file_number})"
