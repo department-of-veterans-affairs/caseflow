@@ -12,7 +12,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     from = 2.days.ago.in_time_zone("America/New_York").end_of_day
     to = 1.day.ago.in_time_zone("America/New_York").end_of_day
-    query = "?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
+    max = 100
+    query = "?max=#{max}from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     details = {
       action: "retrieve",
       filetype: "vtt",
@@ -49,7 +50,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   def fetch_recordings_list
     from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
     to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
-    query = { "from": from, "to": to }
+    max = 100
+    query = { "from": from, "to": to, "max": max }
 
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
