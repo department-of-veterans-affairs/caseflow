@@ -29,7 +29,6 @@ const VirtualHearingLink = ({
 };
 
 VirtualHearingLink.propTypes = {
-  isVirtual: PropTypes.bool,
   link: PropTypes.string,
   newWindow: PropTypes.bool,
   virtualHearing: PropTypes.shape({
@@ -54,7 +53,6 @@ VirtualHearingLink.propTypes = {
 };
 
 VirtualHearingLink.defaultProps = {
-  isVirtual: false,
   newWindow: true,
   showFullLink: false
 };
