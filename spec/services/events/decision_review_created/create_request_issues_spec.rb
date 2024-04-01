@@ -44,7 +44,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
     end
 
     def get_payload
-      {
+      data = {
         "request_issues": [
           {
             "benefit_type": "pension",
@@ -100,6 +100,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
           }
         ]
       }
+      JSON.generate(data)
     end
   end
 end

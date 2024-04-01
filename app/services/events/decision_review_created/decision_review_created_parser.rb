@@ -7,8 +7,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   attr_reader :headers, :payload
 
-  def initialize(headers, payload)
-    @payload = payload
+  def initialize(headers, payload_json)
+    @payload = JSON.parse(payload_json, symbolize_names: true)
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
