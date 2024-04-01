@@ -9,6 +9,9 @@ Rails.application.configure do
   # Eager load code on boot.
   config.eager_load = true
 
+  # Bypass DNS rebinding protection for all `demo` sub-domains
+  config.hosts << ".demo.appeals.va.gov"
+
   # Show full error reports.
   config.consider_all_requests_local = true
 
