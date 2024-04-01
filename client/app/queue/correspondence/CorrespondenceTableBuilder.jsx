@@ -114,11 +114,6 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
-    if (searchValue === '' || searchValue.length < 3) {
-    // Return all tasks when search value is empty or less than three characters
-      return true;
-    }
-
     const taskNotes = task.notes || '';
     const daysWaiting = task.daysWaiting ? task.daysWaiting.toString() : '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
