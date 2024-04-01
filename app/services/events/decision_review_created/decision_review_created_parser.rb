@@ -7,8 +7,33 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   attr_reader :headers, :payload
 
-  def initialize(headers, payload)
-    @payload = payload
+  class << self
+    # This method reads the drc_example.json file for our load_example method
+    def example_response
+      File.read(Rails.root.join("app",
+                                "services",
+                                "events",
+                                "decision_review_created",
+                                "decision_review_created_example.json"))
+    end
+
+    # This method creates a new instance of DecisionReviewCreatedParser in order to
+    # mimic the parsing of a payload recieved by appeals-consumer
+    # arguments being passed in are the sample_header and example_response
+    def load_example
+      sample_header = {
+        "X-VA-Vet-SSN" => "123456789",
+        "X-VA-File-Number" => "77799777",
+        "X-VA-Vet-First-Name" => "John",
+        "X-VA-Vet-Last-Name" => "Smith",
+        "X-VA-Vet-Middle-Name" => "Alexander"
+      }
+      new(sample_header, example_response)
+    end
+  end
+
+  def initialize(headers, payload_json)
+    @payload = JSON.parse(payload_json, symbolize_names: true)
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
@@ -36,6 +61,34 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   def station_id
     @payload.dig(:station)
+  end
+
+  # Intake attributes
+  def intake_started_at
+    intake_started_at_milliseconds = @payload.dig(:intake, :started_at)
+    convert_milliseconds_to_datetime(intake_started_at_milliseconds)
+  end
+
+  def intake_completion_started_at
+    intake_completetion_start_at_milliseconds = @payload.dig(:intake, :completion_started_at)
+    convert_milliseconds_to_datetime(intake_completetion_start_at_milliseconds)
+  end
+
+  def intake_completed_at
+    intake_completed_at_milliseconds = @payload.dig(:intake, :completed_at)
+    convert_milliseconds_to_datetime(intake_completed_at_milliseconds)
+  end
+
+  def intake_completion_status
+    @payload.dig(:intake, :completion_status)
+  end
+
+  def intake_type
+    @payload.dig(:intake, :type)
+  end
+
+  def intake_detail_type
+    @payload.dig(:intake, :detail_type)
   end
 
   # Veteran attributes
@@ -76,9 +129,72 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     @payload.dig(:veteran, :date_of_death)
   end
 
-  # Claimant attr
+  # Claimant attributes
+  def claimant_payee_code
+    @payload.dig(:claimant, :payee_code)
+  end
 
-  # Intake attr
+  def claimant_type
+    @payload.dig(:claimant, :type)
+  end
+
+  def claimant_participant_id
+    @payload.dig(:claimant, :participant_id)
+  end
+
+  def claimant_name_suffix
+    @payload.dig(:claimant, :name_suffix)
+  end
+
+  # ClaimReview attributes
+  def claim_review_benefit_type
+    @payload.dig(:claim_review, :benefit_type)
+  end
+
+  def claim_review_filed_by_va_gov
+    @payload.dig(:claim_review, :filed_by_va_gov)
+  end
+
+  def claim_review_legacy_opt_in_approved
+    @payload.dig(:claim_review, :legacy_opt_in_approved)
+  end
+
+  def claim_review_receipt_date
+    receipt_date_logical_int_date = @payload.dig(:claim_review, :receipt_date)
+    logical_date_converter(receipt_date_logical_int_date)
+  end
+
+  def claim_review_veteran_is_not_claimant
+    @payload.dig(:claim_review, :veteran_is_not_claimant)
+  end
+
+  def claim_review_establishment_attempted_at
+    establishment_attempted_at_in_milliseconds = @payload.dig(:claim_review, :establishment_attempted_at)
+    convert_milliseconds_to_datetime(establishment_attempted_at_in_milliseconds)
+  end
+
+  def claim_review_establishment_last_submitted_at
+    establishment_last_submitted_at_in_milliseconds = @payload.dig(:claim_review, :establishment_last_submitted_at)
+    convert_milliseconds_to_datetime(establishment_last_submitted_at_in_milliseconds)
+  end
+
+  def claim_review_establishment_processed_at
+    establishment_processed_at_in_milliseconds = @payload.dig(:claim_review, :establishment_processed_at)
+    convert_milliseconds_to_datetime(establishment_processed_at_in_milliseconds)
+  end
+
+  def claim_review_establishment_submitted_at
+    establishment_submitted_at_in_milliseconds = @payload.dig(:claim_review, :establishment_submitted_at)
+    convert_milliseconds_to_datetime(establishment_submitted_at_in_milliseconds)
+  end
+
+  def claim_review_informal_conference
+    @payload.dig(:claim_review, :informal_conference)
+  end
+
+  def claim_review_same_office
+    @payload.dig(:claim_review, :same_office)
+  end
 
   # EndProductEstablishment attr
   def epe_benefit_type_code
