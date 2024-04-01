@@ -50,13 +50,16 @@ class Events::DecisionReviewCreated
 
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
           # Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
-          
+
           # Note: event, user, and veteran need to be before this call.
           # Events::DecisionReviewCreated::CreateIntake.process!(event, user, vet)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
           # Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser, claim_review, user, event)
+
+          # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
+          # Events::DecisionReviewCreated::CreateRequestIssues.process!(event, parser, epe)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
