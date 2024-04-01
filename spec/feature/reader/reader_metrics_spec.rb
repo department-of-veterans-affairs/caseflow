@@ -8,6 +8,7 @@ end
 def exists_in_db(metric_msg)
   db_result = Metric.where(metric_message: metric_msg)
   expect(db_result.count).to eq(1)
+  #verify start, end, event_id not null
 end
 
 def scroll_event(pos_x, pos_y)
@@ -123,6 +124,7 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
         exists_in_db(metric_get_pdf_page)
         exists_in_db(metric_store_pdf_page)
         exists_in_db(metric_render_pdf_page)
+        #verify start, end, event_id not null
       end
     end
   end
