@@ -64,3 +64,22 @@ export const PAGE_MARGIN = 25;
 
 // Base scale used to calculate dimensions and draw text.
 export const PAGE_DIMENSION_SCALE = 1;
+
+// Metrics
+export const PDF_RENDER_TIME_METRIC = 'PDF render time in Milliseconds';
+
+export const getPdfDocMetric = (file) => {
+  return `Getting PDF document: "${file}"`;
+};
+
+export const getPdfMetric = (pageIndex) => {
+  return {
+    page: `Getting PDF page ${pageIndex + 1} from PDFJS document`,
+    text: `Storing PDF page ${pageIndex + 1} text in Redux`,
+    text_render: `Rendering PDF page ${pageIndex + 1} text`
+  };
+};
+
+export const getPdfScrollMetric = (x, y) => {
+  return `Scroll to position ${x}, ${y}`;
+};

@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
+import { browserName, browserVersion} from 'react-device-detect';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
@@ -8,7 +9,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIMENSION_SCALE, PAGE_MARGIN
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIMENSION_SCALE, PAGE_MARGIN, PDF_RENDER_TIME_METRIC, getPdfDocMetric, getPdfScrollMetric
 } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
   setPageDimensions, setRenderStartTime } from '../reader/Pdf/PdfActions';
@@ -52,7 +53,9 @@ export class PdfFile extends React.PureComponent {
       file: this.props.file,
       documentType: this.props.documentType,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-      overscan: this.props.windowingOverscan
+      overscan: this.props.windowingOverscan,
+      name: null,
+      device: `${browserName} | ${browserVersion}`
     };
   }
 
@@ -87,7 +90,7 @@ export class PdfFile extends React.PureComponent {
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
         const metricData = {
-          message: `Getting PDF document: "${this.props.file}"`,
+          message: getPdfDocMetric(this.props.file),
           type: 'performance',
           product: 'reader',
           data: this.metricsAttributes,
@@ -185,7 +188,7 @@ export class PdfFile extends React.PureComponent {
       };
 
       storeMetrics(logId, documentData, {
-        message: `Getting PDF document: "${file}"`,
+        message: getPdfDocMetric(this.props.file),
         type: 'error',
         product: 'reader'
       },
@@ -484,10 +487,10 @@ export class PdfFile extends React.PureComponent {
         const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
 
         storeMetrics(
-          this.props.documentId,
+          uuid.v4,
           this.metricsAttributes,
           {
-            message: `Scroll to position ${posx}, ${posy}`,
+            message: getPdfScrollMetric(posx, posy),
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + data.start),
@@ -604,10 +607,10 @@ export class PdfFile extends React.PureComponent {
         const renderDuration = renderEndTime - this.props.renderStartTime;
 
         storeMetrics(
-          this.props.documentId,
+          uuid.v4,
           this.metricsAttributes,
           {
-            message: 'PDF render time in Milliseconds',
+            message: PDF_RENDER_TIME_METRIC,
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + this.props.renderStartTime),

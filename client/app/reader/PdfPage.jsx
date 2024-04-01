@@ -9,7 +9,7 @@ import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN, getPdfMetric } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
 import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
@@ -210,7 +210,9 @@ export class PdfPage extends React.PureComponent {
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
 
       const pageMetricData = {
-        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
+        uuid: uuidv4(),
+        // message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
+        message: getPdfMetric(this.props.pageIndex).page,
         product: 'reader',
         type: 'performance',
         data: this.props.metricsAttributes,
@@ -226,7 +228,8 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+          uuid: uuidv4(),
+          message: getPdfMetric(this.props.pageIndex).text,
           product: 'reader',
           type: 'performance',
           data: this.props.metricsAttributes,
@@ -235,7 +238,7 @@ export class PdfPage extends React.PureComponent {
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+          message: getPdfMetric(this.props.pageIndex).text_render,
           type: 'performance',
           product: 'reader',
           data: this.props.metricsAttributes,
