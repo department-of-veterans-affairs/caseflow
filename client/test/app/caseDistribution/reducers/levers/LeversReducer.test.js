@@ -38,6 +38,7 @@ describe('Lever reducer', () => {
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
     isUserAcdAdmin: false,
+    acdExcludeFromAffinity: false
   };
 
   afterEach(() => {
