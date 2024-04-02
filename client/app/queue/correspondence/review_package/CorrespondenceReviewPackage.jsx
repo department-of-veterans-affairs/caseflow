@@ -36,6 +36,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isReassignPackage, setIsReassignPackage] = useState(false);
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
@@ -51,6 +52,15 @@ export const CorrespondenceReviewPackage = (props) => {
 
       // Return true if a removePackageTask that is currently assigned is found, else false
       return (typeof assignedRemoveTask !== 'undefined') && isInboundOpsTeam;
+    };
+
+    // When a reassign package task is active and pending review, the page is read-only
+    const hasAssignedReassignPackageTask = (tasks) => {
+      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' && task.type === 'ReassignPackageTask');
+      const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
+
+      // Return true if a reassignPackageTask that is currently assigned is found, else false
+      return (typeof assignedReassignTask !== 'undefined') && isInboundOpsTeam;
     };
 
     try {
@@ -86,6 +96,15 @@ export const CorrespondenceReviewPackage = (props) => {
           bannerType: 'warning'
         });
         setIsReadOnly(true);
+      }
+      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
+        setBannerInformation({
+          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          bannerType: 'info'
+        });
+        setIsReadOnly(true);
+        setIsReassignPackage(true);
       }
     } catch (error) {
       console.error(error);
@@ -174,6 +193,7 @@ export const CorrespondenceReviewPackage = (props) => {
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
+            isReassignPackage={isReassignPackage}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
