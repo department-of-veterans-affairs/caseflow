@@ -31,7 +31,6 @@ class HearingDay < CaseflowRecord
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   has_one :vacols_user, through: :judge
-  has_one :conference_link
   has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -222,10 +221,10 @@ class HearingDay < CaseflowRecord
     scheduled_for < Date.current
   end
 
-  # over write of the .conference_links method from belongs_to :conference_links to add logic to create of not there
-  # def conference_links
-  #   @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
-  # end
+  # over write of the .conference_link method from belongs_to :conference_link to add logic to create if not there
+  def conference_link
+    @conference_link ||= scheduled_date_passed? ? nil : find_or_create_conference_link!
+  end
 
   private
 
@@ -292,16 +291,11 @@ class HearingDay < CaseflowRecord
   end
 
   # Method to get the associated conference link records if they exist and if not create new ones
-  # def find_or_create_conference_links!
-  #   [].tap do |links|
-  #     if FeatureToggle.enabled?(:pexip_conference_service)
-  #       links << PexipConferenceLink.find_or_create_by!(
-  #         hearing_day: self,
-  #         created_by: created_by
-  #       )
-  #     end
-  #   end
-  # end
+  def find_or_create_conference_link!
+    if FeatureToggle.enabled?(:pexip_conference_service)
+      PexipConferenceLink.find_or_create_by!(hearing_day: self, created_by: created_by)
+    end
+  end
 
   class << self
     def create_schedule(scheduled_hearings)
