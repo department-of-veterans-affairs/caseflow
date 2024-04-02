@@ -15,17 +15,15 @@ describe('HearingLinks', () => {
   const storeValues = {
     dailyDocket: {
       hearingDay: {
-        conferenceLinks: {
-          0: {
-            hostPin: '2949749',
-            hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host',
-            alias: 'BVA0000130@example.va.gov',
-            guestPin: '9523850278',
-            guestLink: 'https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video',
-            coHostLink: null,
-            type: 'PexipConferenceLink',
-            conferenceProvider: 'pexip'
-          }
+        conferenceLink: {
+          hostPin: '2949749',
+          hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host',
+          alias: 'BVA0000130@example.va.gov',
+          guestPin: '9523850278',
+          guestLink: 'https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video',
+          coHostLink: null,
+          type: 'PexipConferenceLink',
+          conferenceProvider: 'pexip'
         }
       }
     }
@@ -181,7 +179,7 @@ describe('HearingLinks', () => {
     expect(form.find('LinkContainer')).toHaveLength(3);
     expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
     expect(
-      form.find('LinkContainer').exists({ link: storeValues.dailyDocket.hearingDay.conferenceLinks[0].hostLink })
+      form.find('LinkContainer').exists({ link: storeValues.dailyDocket.hearingDay.conferenceLink.hostLink })
     ).toBe(true);
   });
 

@@ -4,7 +4,14 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
-  attribute :daily_docket_conference_links
+  attribute :daily_docket_conference_link do |object|
+    conference_link = object.hearing_day.conference_link
+    {
+      co_host_link: conference_link.co_host_link,
+      host_link: conference_link.host_link,
+      guest_link: conference_link.guest_link
+    }
+  end
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?

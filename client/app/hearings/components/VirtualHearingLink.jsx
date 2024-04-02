@@ -48,7 +48,7 @@ VirtualHearingLink.propTypes = {
   }).isRequired,
   label: PropTypes.string,
   hearing: PropTypes.shape({
-    dailyDocketConferenceLinks: PropTypes.shape({
+    dailyDocketConferenceLink: PropTypes.shape({
       coHostLink: PropTypes.string
     })
   })

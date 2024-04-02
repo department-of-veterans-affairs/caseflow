@@ -12,7 +12,7 @@ export const initialState = {
   hearingSchedule: { hearings: [defaultHearing, amaHearing, centralHearing] },
   dailyDocket: {
     hearingDay: {
-      conferenceLinks: {
+      conferenceLink: {
         0: {
           hostPin: '2949749',
           hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host',

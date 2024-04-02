@@ -125,13 +125,14 @@ LinkContainer.propTypes = {
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
-  const dailyDocketLink = useSelector((state) => state.dailyDocket.hearingDay.conferenceLinks);
+  // const dailyDocketLink = useSelector((state) => state.dailyDocket.hearingDay.conferenceLinks);
 
   const getLinks = () => {
     if (hearing.isVirtual) {
       return virtualHearing;
     } else if (hearing.conferenceProvider === 'pexip') {
-      return dailyDocketLink[0];
+      // return dailyDocketLink[0];
+      return hearing.dailyDocketConferenceLink;
     } else if (hearing.conferenceProvider === 'webex') {
       return hearing.nonVirtualConferenceLink;
     }

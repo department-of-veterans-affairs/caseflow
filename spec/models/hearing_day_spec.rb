@@ -559,7 +559,7 @@ describe HearingDay, :all_dbs do
       )
     end
 
-    subject { hearing_day.conference_links }
+    subject { hearing_day.conference_link }
 
     context "The Pexip and Webex services are both enabled" do
       include_context "Enable both conference services"

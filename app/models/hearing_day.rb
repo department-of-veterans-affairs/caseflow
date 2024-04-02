@@ -31,6 +31,7 @@ class HearingDay < CaseflowRecord
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   has_one :vacols_user, through: :judge
+  has_one :conference_link
   has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -138,7 +139,7 @@ class HearingDay < CaseflowRecord
   end
 
   # :reek:BooleanParameter
-  def to_hash(include_conference_links = false)
+  def to_hash(include_conference_link = false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
@@ -153,7 +154,7 @@ class HearingDay < CaseflowRecord
       params: {
         video_hearing_days_request_types: video_hearing_days_request_types,
         judge_names: judge_names,
-        include_conference_links: include_conference_links
+        include_conference_link: include_conference_link
       }
     ).serializable_hash[:data][:attributes]
   end
@@ -222,9 +223,9 @@ class HearingDay < CaseflowRecord
   end
 
   # over write of the .conference_links method from belongs_to :conference_links to add logic to create of not there
-  def conference_links
-    @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
-  end
+  # def conference_links
+  #   @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
+  # end
 
   private
 
@@ -244,7 +245,7 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      conference_links
+      conference_link
     rescue StandardError => error
       log_error(error)
     end
@@ -291,16 +292,16 @@ class HearingDay < CaseflowRecord
   end
 
   # Method to get the associated conference link records if they exist and if not create new ones
-  def find_or_create_conference_links!
-    [].tap do |links|
-      if FeatureToggle.enabled?(:pexip_conference_service)
-        links << PexipConferenceLink.find_or_create_by!(
-          hearing_day: self,
-          created_by: created_by
-        )
-      end
-    end
-  end
+  # def find_or_create_conference_links!
+  #   [].tap do |links|
+  #     if FeatureToggle.enabled?(:pexip_conference_service)
+  #       links << PexipConferenceLink.find_or_create_by!(
+  #         hearing_day: self,
+  #         created_by: created_by
+  #       )
+  #     end
+  #   end
+  # end
 
   class << self
     def create_schedule(scheduled_hearings)
