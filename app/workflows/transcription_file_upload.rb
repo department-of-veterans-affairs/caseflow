@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UploadTranscriptionFileToS3
+class TranscriptionFileUpload
   attr_reader :file_name, :file_type
 
   S3_SUB_BUCKET = "vaec-appeals-caseflow"

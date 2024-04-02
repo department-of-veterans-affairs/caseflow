@@ -160,8 +160,9 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   def wait_for_download(file_location)
+    count = 0
     Timeout.timeout(60) do
-      sleep 1 until !DownloadHelpers.downloading? && File.exist?(file_location)
+      count += 1 until !DownloadHelpers.downloading? && File.exist?(file_location)
     end
   end
 

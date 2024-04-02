@@ -19,25 +19,43 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class HearingAssociationError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
-    details = build_error_details("retrieve", "vtt", "from", "Webex", "download_file_to_tmp!", exception)
+    action_hash = {
+      action: "retrieve",
+      direction: "from",
+      filetype: "vtt",
+      call: "download_file_to_tmp!"
+    }
+    details = build_error_details(action_hash, "Webex", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
-  retry_on(UploadTranscriptionFileToS3::FileUploadError, wait: :exponentially_longer) do |job, exception|
+  retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
-    details = build_error_details("convert", "vtt", "to", "rtf", "convert_to_rtf_and_upload_to_s3!", exception)
+    action_hash = {
+      action: "convert",
+      direction: "to",
+      filetype: "vtt",
+      call: "convert_to_rtf_and_upload_to_s3!"
+    }
+    details = build_error_details(action_hash, "rtf", exception)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, error|
-    details = build_error_details("retrieve", "vtt", "from", "Webex", "parse_hearing", error)
+    action_hash = {
+      action: "retrieve",
+      direction: "from",
+      filetype: "vtt",
+      call: "parse_hearing"
+    }
+    details = build_error_details(action_hash, "Webex", error)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
@@ -48,7 +66,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
     @file_name = file_name
-    @transcription_file = find_or_create_transcription_file
+    @transcription_file ||= find_or_create_transcription_file
     ensure_hearing_held
 
     download_file_to_tmp!(download_link)
@@ -84,16 +102,17 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: Updated @transcription_file
   def download_file_to_tmp!(link)
-    return if File.exist?(@transcription_file.tmp_location)
+    transcription_file = @transcription_file
+    return if File.exist?(transcription_file.tmp_location)
 
     URI(link).open do |download|
-      IO.copy_stream(download, @transcription_file.tmp_location)
+      IO.copy_stream(download, transcription_file.tmp_location)
     end
-    @transcription_file.update_status!(process: :retrieval, status: :success)
+    transcription_file.update_status!(process: :retrieval, status: :success)
     log_info("File #{file_name} successfully downloaded from Webex. Uploading to S3...")
   rescue OpenURI::HTTPError => error
-    @transcription_file.update_status!(process: :retrieval, status: :failure)
-    @transcription_file.clean_up_tmp_location
+    transcription_file.update_status!(process: :retrieval, status: :failure)
+    transcription_file.clean_up_tmp_location
     raise FileDownloadError, "Webex temporary download link responded with error: #{error}"
   end
 
@@ -153,7 +172,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: integer value of 1 if tmp file deleted after successful upload
   def convert_to_rtf_and_upload_to_s3!
     log_info("Converting file #{file_name} to rtf...")
-    file_paths = @transcription_file.convert_to_rtf!
+    transcription_file = @transcription_file
+    file_paths = transcription_file.convert_to_rtf!
     file_paths.each do |file_path|
       output_file_name = file_path.split("/").last
       output_file = find_or_create_transcription_file(output_file_name)
@@ -181,26 +201,23 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     Rails.logger.info(message)
   end
 
-  # rubocop:disable Metrics/ParameterLists
   # Purpose: Builds object detailing error for mail template
   # Params:
-  #         action - string, the action that the job was doing
+  #         action_hash - object, hash object for describing the action that was attempted
   #         filetype - string, the filetype that was getting worked on
-  #         direction - string, either to/from in relative to provider
   #         provider - string, either the destination or starting point
-  #         call - string, the method call where the error occured
   #         error - Exception - the error that was raised
   #
   # Returns: The hash for details on the error
-  def build_error_details(action, filetype, direction, provider, call, error)
+  def build_error_details(action_hash, provider, error)
     {
-      action: action,
-      filetype: filetype,
-      direction: direction,
+      action: action_hash[:action],
+      filetype: action[:filetype],
+      direction: action_hash[:direction],
       provider: provider,
       error: error,
       docket_number: hearing.docket_number,
-      api_call: call
+      api_call: action_hash[:call]
     }
   end
 
@@ -209,5 +226,4 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def appeal_id
     hearing.appeal.external_id
   end
-  # rubocop:enable Metrics/ParameterLists
 end

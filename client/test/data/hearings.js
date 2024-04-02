@@ -504,7 +504,7 @@ export const amaWebexHearing = {
   judgeId: 3,
   judge: {
     id: 3,
-    createdAt: '2020-06-25T11:00:43.257-04:00',
+    createdAt: '2020-06-26T11:00:43.257-04:00',
     cssId: 'BVAAABSHIRE',
     efolderDocumentsFetchedAt: null,
     email: null,
