@@ -1,6 +1,6 @@
-class CreateCorrespondenceAppeals < ActiveRecord::Migration[6.0]
+class CreateCorrespondenceAppeals < ActiveRecord::Migration
   def change
-    create_table :correspondence_appeals do |t|
-    end
+    rename_table :correspondences_appeals, :correspondence_appeals
   end
+end
 end
