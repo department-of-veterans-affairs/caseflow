@@ -3,7 +3,7 @@
 # rubocop:disable Metrics/ModuleLength
 
 # Contains most of the logic inside of CorrespondenceController
-module CorrespondenceControllerUtil
+module CorrespondenceControllerConcern
 
   MAX_QUEUED_ITEMS = 60
 
