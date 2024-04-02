@@ -41,7 +41,14 @@ class LegacyHearingSerializer
   end
   attribute :conference_provider
   attribute :current_issue_count
-  attribute :daily_docket_conference_link
+  attribute :daily_docket_conference_link do |object|
+    conference_link = object.hearing_day.conference_link
+    {
+      co_host_link: conference_link.co_host_link,
+      host_link: conference_link.host_link,
+      guest_link: conference_link.guest_link
+    }
+  end
   attribute :disposition
   attribute :disposition_editable
   attribute :docket_name
