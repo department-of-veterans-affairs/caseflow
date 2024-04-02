@@ -305,6 +305,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def ri_is_unidentified(issue)
     issue.dig(:is_unidentified)
   end
+
   def ri_unidentified_issue_text(issue)
     issue.dig(:unidentified_issue_text)
   end
