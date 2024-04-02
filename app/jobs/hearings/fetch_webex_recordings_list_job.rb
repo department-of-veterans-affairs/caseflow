@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# This job will retrieve a list of webex hearing recordings and details
-# in a 24 hours period from the previous day
+# This job will retrieve a list of webex hearing recordings and details every hour
 
 class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
@@ -41,8 +40,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   end
 
   def log_error(error)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
-    Raven.capture_exception(error, extra: { application: self.class.name, job_id: job_id })
+    super(error, extra: { application: self.class.name, job_id: job_id })
   end
 
   private

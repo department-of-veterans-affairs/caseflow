@@ -51,12 +51,11 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def log_error(error)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
     extra = {
       application: self.class.name,
       job_id: job_id
     }
-    Raven.capture_exception(error, extra: extra)
+    super(error, extra: extra)
   end
 
   private
