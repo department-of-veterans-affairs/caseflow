@@ -95,6 +95,35 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
         response_hash.end_product_establishment["development_item_reference_id"]
       )
     end
+    it "has Request Issue attributes" do
+      total_issues = parser.request_issues
+      expect(total_issues.count).to eq(1)
+      issue = total_issues.first
+      expect(parser.ri_benefit_type(issue)).to eq response_hash.request_issues.first["benefit_type"]
+      expect(parser.ri_contested_issue_description(issue)).to eq response_hash.request_issues.first["contested_issue_description"]
+      expect(parser.ri_contention_reference_id(issue)).to eq response_hash.request_issues.first["contention_reference_id"]
+      expect(parser.ri_contested_rating_decision_reference_id(issue)).to eq response_hash.request_issues.first["contested_rating_decision_reference_id"]
+      expect(parser.ri_contested_rating_issue_profile_date(issue)).to eq response_hash.request_issues.first["contested_rating_issue_profile_date"]
+      expect(parser.ri_contested_rating_issue_reference_id(issue)).to eq response_hash.request_issues.first["contested_rating_issue_reference_id"]
+      expect(parser.ri_contested_decision_issue_id(issue)).to eq response_hash.request_issues.first["contested_decision_issue_id"]
+      expect(parser.ri_decision_date(issue)).to eq parser.logical_date_converter(response_hash.request_issues.first["decision_date"])
+      expect(parser.ri_ineligible_due_to_id(issue)).to eq response_hash.request_issues.first["ineligible_due_to_id"]
+      expect(parser.ri_ineligible_reason(issue)).to eq response_hash.request_issues.first["ineligible_reason"]
+      expect(parser.ri_is_unidentified(issue)).to eq response_hash.request_issues.first["is_unidentified"]
+      expect(parser.ri_unidentified_issue_text(issue)).to eq response_hash.request_issues.first["unidentified_issue_text"]
+      expect(parser.ri_nonrating_issue_category(issue)).to eq response_hash.request_issues.first["nonrating_issue_category"]
+      expect(parser.ri_nonrating_issue_description(issue)).to eq response_hash.request_issues.first["nonrating_issue_description"]
+      expect(parser.ri_untimely_exemption(issue)).to eq response_hash.request_issues.first["untimely_exemption"]
+      expect(parser.ri_untimely_exemption_notes(issue)).to eq response_hash.request_issues.first["untimely_exemption_notes"]
+      expect(parser.ri_vacols_id(issue)).to eq response_hash.request_issues.first["vacols_id"]
+      expect(parser.ri_vacols_sequence_id(issue)).to eq response_hash.request_issues.first["vacols_sequence_id"]
+      expect(parser.ri_closed_at(issue)).to eq response_hash.request_issues.first["closed_at"]
+      expect(parser.ri_closed_status(issue)).to eq response_hash.request_issues.first["closed_status"]
+      expect(parser.ri_contested_rating_issue_diagnostic_code(issue)).to eq response_hash.request_issues.first["contested_rating_issue_diagnostic_code"]
+      expect(parser.ri_ramp_claim_id(issue)).to eq response_hash.request_issues.first["ramp_claim_id"]
+      expect(parser.ri_rating_issue_associated_at(issue)).to eq response_hash.request_issues.first["rating_issue_associated_at"]
+      expect(parser.ri_nonrating_issue_bgs_id(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
+    end
   end
   def read_json_payload
     JSON.parse(File.read(Rails.root.join("app",
