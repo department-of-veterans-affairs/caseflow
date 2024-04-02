@@ -11,6 +11,8 @@ import { css } from 'glamor';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
+import AutoAssignAlertBanner from '../correspondence/component/AutoAssignAlertBanner';
+import BatchAutoAssignButton from '../correspondence/component/BatchAutoAssignButton';
 
 export const CorrespondenceCases = (props) => {
   const {
@@ -46,6 +48,7 @@ export const CorrespondenceCases = (props) => {
 
   return (
     <AppSegment filledBackground>
+      {props.featureToggles.correspondence_queue && <AutoAssignAlertBanner />}
       {(Object.keys(veteranInformation).length > 0) &&
         currentAction.action_type === 'DeleteReviewPackage' &&
         <Alert
@@ -56,6 +59,7 @@ export const CorrespondenceCases = (props) => {
       }
       <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
       <QueueOrganizationDropdown organizations={organizations} />
+      {props.featureToggles.correspondence_queue && <BatchAutoAssignButton />}
       {vetCorrespondences &&
         <CorrespondenceTable
           vetCorrespondences={vetCorrespondences}
@@ -70,7 +74,8 @@ CorrespondenceCases.propTypes = {
   loadVetCorrespondence: PropTypes.func,
   vetCorrespondences: PropTypes.array,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object
+  veteranInformation: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

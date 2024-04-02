@@ -93,12 +93,13 @@ const AutoAssignAlertBanner = (props) => {
 
   return (
     <>
-      { batchId && bannerAlert.message &&
+      {batchId && bannerAlert.message &&
         <Alert
           type={bannerAlert.type}
           title={bannerAlert.title}
           message={bannerAlert.message}
           scrollOnAlert={false}
+	  lowerMargin={true}
         />
       }
     </>
