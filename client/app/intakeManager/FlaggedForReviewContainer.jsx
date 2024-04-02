@@ -32,7 +32,7 @@ export class FlaggedForReviewContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = () => {
   return {
     loading: false,
     // loading: state.loading,
