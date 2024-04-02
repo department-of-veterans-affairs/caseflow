@@ -77,8 +77,8 @@ class Idt::V1::AppealDetailsSerializer
         fnod: object.veteran_appellant_deceased?,
         hearing: object.hearings.any?(&:held?),
         overtime: object.overtime?,
-        mst: object.mst?,
-        pact: object.pact?
+        mst: !!object.mst?,
+        pact: !!object.pact?
       }
     end
   end

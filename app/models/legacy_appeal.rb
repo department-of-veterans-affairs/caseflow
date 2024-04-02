@@ -757,7 +757,7 @@ class LegacyAppeal < CaseflowRecord
 
       vacols_file_number = sanitized_vbms_id
 
-      puts "legacy_appeal.rb in veteran_file_number"
+      # puts "legacy_appeal.rb in veteran_file_number"
 
       return vacols_file_number unless veteran
 
@@ -776,6 +776,25 @@ class LegacyAppeal < CaseflowRecord
       caseflow_file_number
     end
   end
+
+  # def veteran_file_number
+  #   vacols_file_number = sanitized_vbms_id
+
+  #   return vacols_file_number unless veteran
+
+  #   caseflow_file_number = veteran.file_number
+  #   if vacols_file_number != caseflow_file_number
+  #     DataDogService.increment_counter(
+  #       metric_group: "database_disagreement",
+  #       metric_name: "file_number",
+  #       app_name: RequestStore[:application],
+  #       attrs: {
+  #         appeal_id: external_id
+  #       }
+  #     )
+  #   end
+  #   caseflow_file_number
+  # end
 
   def pending_eps
     end_products&.select(&:dispatch_conflict?)

@@ -116,7 +116,7 @@ describe NoShowHearingTask, :postgres do
       it "closes existing tasks and creates new HearingTask and ScheduleHearingTask" do
         expect { no_show_hearing_task.reschedule_hearing }.to_not raise_error
 
-        expect(hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(hearing_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(disposition_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
 

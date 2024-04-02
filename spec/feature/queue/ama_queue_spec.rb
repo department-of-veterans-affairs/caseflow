@@ -157,6 +157,7 @@ feature "AmaQueue", :all_dbs do
       before do
         allow_any_instance_of(AppealDecisionIssuesPolicy).to receive(:visible_decision_issues).and_return([])
         allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(attorney_user).and_return(true)
+        allow_any_instance_of(User).to receive(:aod_team_member?).and_return(true)
         allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
           address_line_1: "Veteran Address",
           city: "Washington",
@@ -242,7 +243,7 @@ feature "AmaQueue", :all_dbs do
         iup = IssuesUpdateTask.create!(
           appeal: appeal,
           parent: appeal.root_task,
-          assigned_to: Organization.find_by_url("bva-intake"),
+          assigned_to: BvaIntake.singleton,
           assigned_by: RequestStore[:current_user]
         )
         set = CaseTimelineInstructionSet.new(

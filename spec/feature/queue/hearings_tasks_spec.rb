@@ -5,12 +5,13 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
 
   before do
     HearingsManagement.singleton.add_user(user)
+    HearingAdmin.singleton
     User.authenticate!(user: user)
   end
 
   describe "Postponing a NoShowHearingTask" do
     let(:veteran) { create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
-    let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+    let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number).reload }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:distribution_task) { create(:distribution_task, parent: root_task) }
@@ -104,7 +105,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
 
   describe "Completing a NoShowHearingTask" do
     def mark_complete_and_verify_status(appeal, page, task)
-      visit("/queue/appeals/#{appeal.external_id}")
+      visit("/queue/appeals/#{appeal.reload.external_id}")
       click_dropdown(text: Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.label)
       click_on(COPY::MARK_TASK_COMPLETE_BUTTON)
 
@@ -130,7 +131,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
 
     context "when the appeal is a LegacyAppeal" do
       let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
-      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case).reload }
       let(:lar) { double("LegacyAppealRepresentative") }
       let(:hearing_task_parent) { root_task }
 

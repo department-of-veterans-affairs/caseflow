@@ -13,7 +13,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     allow(slack_service).to receive(:send_notification) { true }
   end
 
-  let(:appeal) { create(:appeal) }
+  let(:appeal) { create(:appeal).reload }
   let!(:sil) { SpecialIssueList.create(appeal: appeal) }
   let(:legacy_appeal) { create(:legacy_appeal) }
   let!(:leg_sil) { SpecialIssueList.create(appeal: legacy_appeal) }

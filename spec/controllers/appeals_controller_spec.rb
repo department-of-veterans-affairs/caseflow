@@ -569,7 +569,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
 
     context "with an AMA appeal" do
-      let!(:appeal) { create(:appeal, :hearing_docket) }
+      let!(:appeal) { create(:appeal, :hearing_docket).reload }
 
       subject { get :show, params: { appeal_id: appeal.external_id }, as: :json }
 
@@ -693,7 +693,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         :appeal,
         veteran_file_number: "500000102",
         receipt_date: 6.months.ago.to_date.mdY
-      )
+      ).reload
     end
     let(:patch_params) { { appeal_id: appeal.uuid, poaId: appeal.power_of_attorney.id } }
     let!(:poa) do

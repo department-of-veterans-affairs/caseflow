@@ -46,8 +46,8 @@ class UserFinder
     when "non_dvcs"
       # Should be less looping
       dvc_ids = DvcTeam.all.each_with_object([]) do |team, ids|
-        judge = team.judge
-        ids << judge.id if judge
+        dvc = team.dvc
+        ids << dvc.id if dvc
       end
       # User.where.not(id: DvcTeam.all.map(&:dvc).reject(&:nil?).map(&:id))
       User.where.not(id: dvc_ids)

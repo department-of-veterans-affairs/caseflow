@@ -906,7 +906,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with VSO user role" do
-    let(:expected_veteran_email) { hearing.appeal.appellant_email_address }
+    let(:expected_veteran_email) { hearing.appeal.reload.appellant_email_address }
 
     scenario "user is immediately redirected to the Convert to Virtual form" do
       step "hearing is not virtual on hearing itself and appeal" do

@@ -15,7 +15,7 @@ describe Appeal, :all_dbs do
     let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
     let!(:appeal) { create(:appeal, number_of_claimants: 1) }
 
-    subject { appeal.create_stream(stream_type) }
+    subject { appeal.reload.create_stream(stream_type) }
 
     it "creates a new appeal stream with data from the original appeal" do
       expect(subject).to have_attributes(
@@ -194,7 +194,7 @@ describe Appeal, :all_dbs do
   end
 
   context "#create_issues!" do
-    subject { appeal.create_issues!(issues) }
+    subject { appeal.reload.create_issues!(issues) }
 
     let(:issues) { [request_issue] }
     let(:request_issue) do
@@ -209,7 +209,7 @@ describe Appeal, :all_dbs do
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }
     let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
-    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case).reload }
 
     context "when there is no associated legacy issue" do
       it "does not create a legacy issue" do
@@ -247,11 +247,11 @@ describe Appeal, :all_dbs do
   end
 
   context "#create_remand_supplemental_claims!" do
-    before { setup_prior_claim_with_payee_code(appeal, veteran) }
+    before { setup_prior_claim_with_payee_code(appeal.reload, veteran) }
 
     let(:veteran) { create(:veteran) }
     let(:appeal) do
-      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number).reload
     end
 
     subject { appeal.create_remand_supplemental_claims! }
@@ -561,7 +561,7 @@ describe Appeal, :all_dbs do
     end
 
     context "when no claimant is advanced_on_docket? due to age" do
-      let(:appeal) { create(:appeal) }
+      let(:appeal) { create(:appeal).reload }
 
       it "returns false" do
         expect(appeal.advanced_on_docket?).to eq(false)
@@ -570,7 +570,7 @@ describe Appeal, :all_dbs do
     end
 
     context "when a claimant is advanced_on_docket? due to motion" do
-      let(:appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
+      let(:appeal) { create(:appeal, :advanced_on_docket_due_to_motion).reload }
 
       it "returns true" do
         expect(appeal.advanced_on_docket?).to eq(true)
@@ -625,7 +625,7 @@ describe Appeal, :all_dbs do
     subject { appeal.appellant_first_name }
 
     context "when appeal has claimants" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:appeal) { create(:appeal, number_of_claimants: 1).reload }
 
       it "returns claimant's name" do
         expect(subject).to_not eq nil
@@ -644,7 +644,7 @@ describe Appeal, :all_dbs do
     subject { appeal.appellant_middle_initial }
 
     context "when appeal has claimants" do
-      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:appeal) { create(:appeal, number_of_claimants: 1).reload }
 
       it "returns non-nil string of size 1" do
         expect(subject).to_not eq nil
@@ -1507,7 +1507,7 @@ describe Appeal, :all_dbs do
   end
 
   describe ".ready_for_distribution?" do
-    let(:appeal) { create(:appeal) }
+    let(:appeal) { create(:appeal).reload }
     let(:distribution_task) { create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton) }
 
     it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do

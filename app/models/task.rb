@@ -566,12 +566,24 @@ class Task < CaseflowRecord
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
-  def latest_attorney_case_review
-    # Should be the same as calling: appeal.latest_attorney_case_review
-    # @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+  # def latest_attorney_case_review
+  #   # Should be the same as calling: appeal.latest_attorney_case_review
+  #   # @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
 
-    # Except you can't preload it if you call it like that
-    @latest_attorney_case_review ||= appeal.latest_attorney_case_review
+  #   # Except you can't preload it if you call it like that
+  #   # @latest_attorney_case_review ||= appeal.latest_attorney_case_review
+  #   appeal.latest_attorney_case_review
+  # end
+
+  # delegate :latest_attorney_case_review, to: :appeal
+
+  def latest_attorney_case_review
+    # TODO: see if this can still be preloaded after adding the fallback
+    # This isn't 100% exactly the same as it was since the last one was ordered by the query
+    @latest_attorney_case_review ||= begin
+      appeal.latest_attorney_case_review ||
+        AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+    end
   end
 
   def prepared_by_display_name
@@ -581,7 +593,7 @@ class Task < CaseflowRecord
     #   return latest_attorney_case_review.attorney.full_name.split(" ")
     # end
 
-    latest_attorney_case_review.attorney&.full_name&.split(" ") || ["", ""]
+    latest_attorney_case_review.try(:attorney).try(:full_name)&.split(" ") || ["", ""]
 
     # ["", ""]
   end
@@ -853,16 +865,21 @@ class Task < CaseflowRecord
   end
 
   def update_parent_status
-    parent.reload
+    # Fix caching errors on save hooks
+    # TODO: This destroys the save_changes hash and I don't know how to overcome that right now
+    # while also making sure this works on the correct parent tasks and children tasks
+    parent&.reload
+    # This is pretty bad though
     parent.when_child_task_completed(self)
   end
 
   def tell_parent_task_child_task_created
-    parent&.when_child_task_created(self)
+    # Need to reload now that caching is being used
+    parent&.reload && parent&.when_child_task_created(self)
   end
 
   def update_children_status_after_closed
-    children.reload
+    children&.reload
     active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 

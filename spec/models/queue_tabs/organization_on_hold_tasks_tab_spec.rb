@@ -46,6 +46,8 @@ describe OrganizationOnHoldTasksTab, :postgres do
         assignee_on_hold_tasks.map do |task|
           create(:ama_task, parent: task)
           create(:timed_hold_task, parent: task)
+          # Need to reload here before mappping through decendents because of caching
+          task.reload
           task.descendants.each(&:on_hold!)
           task.children
         end.flatten

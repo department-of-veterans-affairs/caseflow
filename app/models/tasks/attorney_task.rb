@@ -52,7 +52,8 @@ class AttorneyTask < Task
   end
 
   def update_parent_status
-    parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
+    # Hack to make it so this can be reloaded after mutating the task
+    parent = parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
     super
   end
 

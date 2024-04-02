@@ -628,7 +628,7 @@ RSpec.feature "Case details", :all_dbs do
 
             expect(page).to have_content("Successfully refreshed. No power of attorney information was found")
             expect(page).to have_content("POA last refreshed on")
-            expect(appeal.claimant.power_of_attorney).to eq(nil)
+            expect(appeal.reload.claimant.power_of_attorney).to eq(nil)
             expect(appeal.power_of_attorney).to eq(nil)
             expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.claimant.participant_id}")).to eq(true)
             expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.veteran.file_number}")).to eq(true)
@@ -866,6 +866,9 @@ RSpec.feature "Case details", :all_dbs do
     scenario "displays who prepared task" do
       task = LegacyWorkQueue.tasks_for_user(judge_user).first
       appeal = task.appeal
+
+      puts task.inspect
+      puts appeal.inspect
 
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
