@@ -18,7 +18,8 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.where(assigned_to: assignee)
+    CorrespondenceTask.includes(*task_includes)
+      .where(assigned_to: assignee)
       .where.not(type: EfolderUploadFailedTask.name)
       .where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.on_hold])
   end
@@ -27,6 +28,7 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   def self.column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
