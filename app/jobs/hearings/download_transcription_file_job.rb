@@ -25,14 +25,24 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       filetype: "vtt",
       call: "download_file_to_tmp!"
     }
-    details = build_error_details(action_hash, "Webex", exception)
+    details = build_error_details(action_hash, "Webex", exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
-    job.transcription_file.clean_up_tmp_location
-    job.log_error(exception)
+    if job.executions == 5
+      action_hash = {
+        action: "upload",
+        direction: "to",
+        filetype: exception.filetype,
+        call: "upload_to_s3!"
+      }
+      details = build_error_details(action_hash, "s3", exception.class)
+      TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
+      job.transcription_file.clean_up_tmp_location
+      job.log_error(exception)
+    end
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
@@ -43,7 +53,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       filetype: "vtt",
       call: "convert_to_rtf_and_upload_to_s3!"
     }
-    details = build_error_details(action_hash, "rtf", exception)
+    details = build_error_details(action_hash, "rtf", exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
@@ -55,13 +65,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       filetype: "vtt",
       call: "parse_hearing"
     }
-    details = build_error_details(action_hash, "Webex", error)
+    details = build_error_details(action_hash, "Webex", error.class)
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
 
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
-  #          uploads the file to corresponding S3 loccation. If file is vtt, kicks off conversion of vtt to rtf
+  #          uploads the file to corresponding S3 location. If file is vtt, kicks off conversion of vtt to rtf
   #          and uploads rtf file to S3.
   def perform(download_link:, file_name:)
     ensure_current_user_is_set

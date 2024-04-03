@@ -14,7 +14,14 @@ class TranscriptionFileUpload
     csv: "transcript_text"
   }.freeze
 
-  class FileUploadError < StandardError; end
+  class FileUploadError < StandardError
+    attr_reader :filetype, :message
+
+    def initialize(filetype, message = self.class)
+      @filetype = filetype
+      @message = message.to_s
+    end
+  end
 
   # Params: transcription_file - TranscriptionFile object
   def initialize(transcription_file)
@@ -31,7 +38,7 @@ class TranscriptionFileUpload
     Rails.logger.info("File #{file_name} successfully uploaded to S3 location: #{s3_location}")
   rescue StandardError => error
     @transcription_file.update_status!(process: :upload, status: :failure)
-    raise FileUploadError, "Amazon S3 service responded with error: #{error}"
+    raise FileUploadError(file_type), "Amazon S3 service responded with error: #{error}"
   end
 
   private
