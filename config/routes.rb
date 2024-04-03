@@ -421,6 +421,10 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
+  # demo seed buttons routes
+  get 'test/seeds', :to => 'demo_seeds#seeds'
+  post 'run-demo-tasks-seeds', to: 'demo_seeds#run_demo_tasks_seeds', as: "run-demo-tasks-seeds"
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
