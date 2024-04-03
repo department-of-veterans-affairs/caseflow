@@ -47,6 +47,7 @@ const convertStringToDate = (stringDate) => {
   date.setDate(Number(splitVals[2]));
 
   return date;
+
 };
 
 class QueueDropdownFilter extends React.PureComponent {
