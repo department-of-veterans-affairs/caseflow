@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_29_165212) do
+ActiveRecord::Schema.define(version: 2024_04_03_154413) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -623,6 +623,13 @@ ActiveRecord::Schema.define(version: 2024_02_29_165212) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
+  create_table "correspondence_appeals", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.bigint "correspondence_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
     t.datetime "created_at", null: false, comment: "Date and Time of creation."
@@ -683,15 +690,6 @@ ActiveRecord::Schema.define(version: 2024_02_29_165212) do
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
-  end
-
-  create_table "correspondences_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -2321,6 +2319,8 @@ ActiveRecord::Schema.define(version: 2024_02_29_165212) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
+  add_foreign_key "correspondence_appeals", "appeals"
+  add_foreign_key "correspondence_appeals", "correspondences"
   add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "correspondence_intakes", "correspondences"
   add_foreign_key "correspondence_intakes", "users"
@@ -2331,8 +2331,6 @@ ActiveRecord::Schema.define(version: 2024_02_29_165212) do
   add_foreign_key "correspondences", "users", column: "assigned_by_id"
   add_foreign_key "correspondences", "users", column: "updated_by_id"
   add_foreign_key "correspondences", "veterans"
-  add_foreign_key "correspondences_appeals", "appeals"
-  add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
