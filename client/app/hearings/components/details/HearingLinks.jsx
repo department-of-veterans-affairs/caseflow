@@ -12,7 +12,6 @@ import {
 import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
 import VirtualHearingLink from '../VirtualHearingLink';
-import { useSelector } from 'react-redux';
 
 export const VirtualHearingLinkDetails = ({
   aliasWithHost,
@@ -86,9 +85,10 @@ export const LinkContainer = (
 ) => {
   // The pin used depends on the role and link used depends on virtual or not
   const getPin = () => {
-    let whichLink = isVirtual ? virtualHearing : links;
+    const whichLink = isVirtual ? virtualHearing : links;
+    const isPexipHearingCoordinator = (hearing.conferenceProvider === 'pexip' && role === 'HC');
 
-    return (role === 'VLJ' ? whichLink?.hostPin : whichLink?.guestPin);
+    return (role === 'VLJ' || isPexipHearingCoordinator) ? whichLink?.hostPin : whichLink?.guestPin;
   };
 
   return (
@@ -125,13 +125,11 @@ LinkContainer.propTypes = {
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
-  // const dailyDocketLink = useSelector((state) => state.dailyDocket.hearingDay.conferenceLinks);
 
   const getLinks = () => {
     if (hearing.isVirtual) {
       return virtualHearing;
     } else if (hearing.conferenceProvider === 'pexip') {
-      // return dailyDocketLink[0];
       return hearing.dailyDocketConferenceLink;
     } else if (hearing.conferenceProvider === 'webex') {
       return hearing.nonVirtualConferenceLink;
@@ -162,7 +160,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
             link={hearing.conferenceProvider === 'webex' ? links?.coHostLink : links?.hostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-            role={hearing.conferenceProvider === 'webex' ? 'HC' : 'VLJ'}
+            role="HC"
             user={user}
             virtualHearing={virtualHearing}
             wasVirtual={wasVirtual}
