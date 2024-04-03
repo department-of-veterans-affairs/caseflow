@@ -91,16 +91,16 @@ class QueueDropdownFilter extends React.PureComponent {
     if (currentSelector === 0) {
       if (type === 'fromDate') {
         if (secondaryDate !== '' && date > secondaryDate) {
-          foundErrors = [...foundErrors, { key: type, message: 'Start date must be less than the end date' }];
+          foundErrors = [...foundErrors, { key: type, message: 'From date cannot occur after to date.' }];
         }
       } else if (date < primaryDate) {
-        foundErrors = [...foundErrors, { key: type, message: 'End date must be greater than the start date' }];
+        foundErrors = [...foundErrors, { key: type, message: 'To date cannot occur before from date.' }];
       }
     }
 
     // Prevent the date from being picked past the current day.
     if (convertStringToDate(date) > new Date()) {
-      foundErrors = [...foundErrors, { key: type, message: `${messageText} cannot be in the future.` }];
+      foundErrors = [...foundErrors, { key: type, message: `${messageText} cannot occur in the the future.` }];
     }
 
     if (type === 'fromDate') {
