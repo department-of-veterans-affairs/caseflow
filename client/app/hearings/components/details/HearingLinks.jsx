@@ -148,7 +148,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
-            link={links.hostLink}
+            link={links?.hostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role="VLJ"
             user={user}
@@ -160,7 +160,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-            link={hearing.conferenceProvider === 'webex' ? links.coHostLink : links.hostLink}
+            link={hearing.conferenceProvider === 'webex' ? links?.coHostLink : links?.hostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role={hearing.conferenceProvider === 'webex' ? 'HC' : 'VLJ'}
             user={user}
@@ -174,7 +174,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
         hearing={hearing}
         isVirtual={isVirtual}
         label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-        link={links.guestLink}
+        link={links?.guestLink}
         linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
         role="Guest"
         user={user}
