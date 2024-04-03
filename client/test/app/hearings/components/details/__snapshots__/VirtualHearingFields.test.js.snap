@@ -326,20 +326,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
               }
               isVirtual={false}
               label="Guest Link"
-              link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
               linkText="Join Hearing"
-              links={
-                Object {
-                  "alias": "BVA0000130@example.va.gov",
-                  "coHostLink": null,
-                  "conferenceProvider": "pexip",
-                  "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-                  "guestPin": "9523850278",
-                  "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-                  "hostPin": "2949749",
-                  "type": "PexipConferenceLink",
-                }
-              }
               role="Guest"
               user={
                 Object {
@@ -361,7 +348,6 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                   : 
                 </strong>
                 <VirtualHearingLinkDetails
-                  aliasWithHost="BVA0000130@example.va.gov"
                   hearing={
                     Object {
                       "advanceOnDocketMotion": null,
@@ -457,8 +443,6 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                   }
                   isVirtual={false}
                   label="Join Hearing"
-                  link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
-                  pin="9523850278"
                   role="Guest"
                   user={
                     Object {
@@ -567,7 +551,6 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     }
                     isVirtual={false}
                     label="Join Hearing"
-                    link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
                     newWindow={true}
                     showFullLink={false}
                     user={
@@ -581,11 +564,9 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     }
                   >
                     <Link
-                      href="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
                       target="_blank"
                     >
                       <a
-                        href="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
                         target="_blank"
                         type={null}
                       >
@@ -644,7 +625,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     <strong>
                       Conference Room: 
                     </strong>
-                    BVA0000130@example.va.gov
+                    undefined
                   </div>
                   <div
                     data-css-6aejb2=""
@@ -652,14 +633,13 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     <strong>
                       PIN: 
                     </strong>
-                    9523850278
                   </div>
                   <CopyTextButton
                     ariaLabel="Copy Guest Link"
                     label=""
                     styling={Object {}}
                     text="Copy Guest Link"
-                    textToCopy="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
+                    textToCopy={null}
                   >
                     <Tooltip
                       id="tooltip-Copy Guest Link"
@@ -674,7 +654,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                         data-for="tooltip-Copy Guest Link"
                         data-tip={true}
                         tabIndex={0}
-                        text="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
+                        text="Copy Guest Link"
                       >
                         <button
                           aria-describedby="tooltip-Copy Guest Link"
@@ -685,7 +665,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                           data-event-off="mouseleave keydown"
                           data-for="tooltip-Copy Guest Link"
                           data-tip={true}
-                          disabled={false}
+                          disabled={true}
                           onClick={[Function]}
                           tabIndex={0}
                           type="submit"

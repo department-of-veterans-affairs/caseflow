@@ -45,20 +45,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         }
         isVirtual={true}
         label="VLJ Link"
-        link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
         linkText="Start Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
         role="VLJ"
         user={
           Object {
@@ -88,7 +75,6 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             }
             isVirtual={true}
             label="Start Hearing"
-            link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
             role="VLJ"
             user={
               Object {
@@ -110,7 +96,6 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
               isVirtual={true}
               label="Start Hearing"
-              link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
               newWindow={true}
               showFullLink={false}
               user={
@@ -124,11 +109,9 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
             >
               <Link
-                href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
                 target="_blank"
               >
                 <a
-                  href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
                   target="_blank"
                   type={null}
                 >
@@ -201,7 +184,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               label=""
               styling={Object {}}
               text="Copy VLJ Link"
-              textToCopy="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
+              textToCopy={null}
             >
               <Tooltip
                 id="tooltip-Copy VLJ Link"
@@ -216,7 +199,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                   data-for="tooltip-Copy VLJ Link"
                   data-tip={true}
                   tabIndex={0}
-                  text="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
+                  text="Copy VLJ Link"
                 >
                   <button
                     aria-describedby="tooltip-Copy VLJ Link"
@@ -227,7 +210,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                     data-event-off="mouseleave keydown"
                     data-for="tooltip-Copy VLJ Link"
                     data-tip={true}
-                    disabled={false}
+                    disabled={true}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
@@ -376,21 +359,8 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         }
         isVirtual={true}
         label="Hearing Coordinator Link"
-        link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
         linkText="Start Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
-        role="VLJ"
+        role="HC"
         user={
           Object {
             "addressCity": "Washington",
@@ -403,7 +373,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
       >
         <div
           data-css-tx10g=""
-          id="vlj-hearings-link"
+          id="hc-hearings-link"
         >
           <strong>
             Hearing Coordinator Link
@@ -419,8 +389,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             }
             isVirtual={true}
             label="Start Hearing"
-            link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
-            role="VLJ"
+            role="HC"
             user={
               Object {
                 "addressCity": "Washington",
@@ -441,7 +410,6 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
               isVirtual={true}
               label="Start Hearing"
-              link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
               newWindow={true}
               showFullLink={false}
               user={
@@ -455,11 +423,9 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
             >
               <Link
-                href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
                 target="_blank"
               >
                 <a
-                  href="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
                   target="_blank"
                   type={null}
                 >
@@ -528,42 +494,42 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               </strong>
             </div>
             <CopyTextButton
-              ariaLabel="Copy VLJ Link"
+              ariaLabel="Copy HC Link"
               label=""
               styling={Object {}}
-              text="Copy VLJ Link"
-              textToCopy="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
+              text="Copy HC Link"
+              textToCopy={null}
             >
               <Tooltip
-                id="tooltip-Copy VLJ Link"
+                id="tooltip-Copy HC Link"
                 position="bottom"
                 text="Click to copy"
               >
                 <CopyToClipboard
-                  aria-describedby="tooltip-Copy VLJ Link"
+                  aria-describedby="tooltip-Copy HC Link"
                   aria-label=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
-                  data-for="tooltip-Copy VLJ Link"
+                  data-for="tooltip-Copy HC Link"
                   data-tip={true}
                   tabIndex={0}
-                  text="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
+                  text="Copy HC Link"
                 >
                   <button
-                    aria-describedby="tooltip-Copy VLJ Link"
+                    aria-describedby="tooltip-Copy HC Link"
                     aria-label=""
                     className="cf-apppeal-id"
                     data-css-p6dv0b=""
                     data-event="focus mouseenter"
                     data-event-off="mouseleave keydown"
-                    data-for="tooltip-Copy VLJ Link"
+                    data-for="tooltip-Copy HC Link"
                     data-tip={true}
-                    disabled={false}
+                    disabled={true}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
                   >
-                    Copy VLJ Link
+                    Copy HC Link
                      
                     <ClipboardIcon
                       className=""
@@ -586,13 +552,13 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                   </button>
                 </CopyToClipboard>
                 <span
-                  data-css-as2zk0=""
+                  data-css-1lc5pkv=""
                 >
                   <ReactTooltip
                     className="cf-tooltip"
                     clickable={false}
                     effect="solid"
-                    id="tooltip-Copy VLJ Link"
+                    id="tooltip-Copy HC Link"
                     insecure={true}
                     multiline={true}
                     offset={Object {}}
@@ -604,7 +570,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                     <div
                       className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                       data-id="tooltip"
-                      id="tooltip-Copy VLJ Link"
+                      id="tooltip-Copy HC Link"
                       role="tooltip"
                     >
                       <style
@@ -707,20 +673,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         }
         isVirtual={true}
         label="Guest Link"
-        link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
         linkText="Join Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
         role="Guest"
         user={
           Object {
@@ -750,7 +703,6 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             }
             isVirtual={true}
             label="Join Hearing"
-            link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
             role="Guest"
             user={
               Object {
@@ -772,7 +724,6 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
               isVirtual={true}
               label="Join Hearing"
-              link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
               newWindow={true}
               showFullLink={false}
               user={
@@ -786,11 +737,9 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
             >
               <Link
-                href="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
                 target="_blank"
               >
                 <a
-                  href="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
                   target="_blank"
                   type={null}
                 >
@@ -863,7 +812,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               label=""
               styling={Object {}}
               text="Copy Guest Link"
-              textToCopy="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
+              textToCopy={null}
             >
               <Tooltip
                 id="tooltip-Copy Guest Link"
@@ -878,7 +827,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
                   tabIndex={0}
-                  text="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
+                  text="Copy Guest Link"
                 >
                   <button
                     aria-describedby="tooltip-Copy Guest Link"
@@ -889,7 +838,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                     data-event-off="mouseleave keydown"
                     data-for="tooltip-Copy Guest Link"
                     data-tip={true}
-                    disabled={false}
+                    disabled={true}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
@@ -2604,7 +2553,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
             "type": "PexipConferenceLink",
           }
         }
-        role="VLJ"
+        role="HC"
         user={
           Object {
             "addressCity": "Washington",
@@ -2633,7 +2582,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
       >
         <div
           data-css-tx10g=""
-          id="vlj-hearings-link"
+          id="hc-hearings-link"
         >
           <strong>
             Hearing Coordinator Link
@@ -2652,7 +2601,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
             label="Start Hearing"
             link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
             pin="1234567890#"
-            role="VLJ"
+            role="HC"
             user={
               Object {
                 "addressCity": "Washington",
@@ -2793,42 +2742,42 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
               1234567890#
             </div>
             <CopyTextButton
-              ariaLabel="Copy VLJ Link"
+              ariaLabel="Copy HC Link"
               label=""
               styling={Object {}}
-              text="Copy VLJ Link"
+              text="Copy HC Link"
               textToCopy="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
             >
               <Tooltip
-                id="tooltip-Copy VLJ Link"
+                id="tooltip-Copy HC Link"
                 position="bottom"
                 text="Click to copy"
               >
                 <CopyToClipboard
-                  aria-describedby="tooltip-Copy VLJ Link"
+                  aria-describedby="tooltip-Copy HC Link"
                   aria-label=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
-                  data-for="tooltip-Copy VLJ Link"
+                  data-for="tooltip-Copy HC Link"
                   data-tip={true}
                   tabIndex={0}
                   text="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
                 >
                   <button
-                    aria-describedby="tooltip-Copy VLJ Link"
+                    aria-describedby="tooltip-Copy HC Link"
                     aria-label=""
                     className="cf-apppeal-id"
                     data-css-p6dv0b=""
                     data-event="focus mouseenter"
                     data-event-off="mouseleave keydown"
-                    data-for="tooltip-Copy VLJ Link"
+                    data-for="tooltip-Copy HC Link"
                     data-tip={true}
                     disabled={false}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
                   >
-                    Copy VLJ Link
+                    Copy HC Link
                      
                     <ClipboardIcon
                       className=""
@@ -2851,13 +2800,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                   </button>
                 </CopyToClipboard>
                 <span
-                  data-css-as2zk0=""
+                  data-css-1lc5pkv=""
                 >
                   <ReactTooltip
                     className="cf-tooltip"
                     clickable={false}
                     effect="solid"
-                    id="tooltip-Copy VLJ Link"
+                    id="tooltip-Copy HC Link"
                     insecure={true}
                     multiline={true}
                     offset={Object {}}
@@ -2869,7 +2818,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                     <div
                       className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                       data-id="tooltip"
-                      id="tooltip-Copy VLJ Link"
+                      id="tooltip-Copy HC Link"
                       role="tooltip"
                     >
                       <style
@@ -4623,20 +4572,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
         }
         label="VLJ Link"
-        link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
         linkText="Start Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
         role="VLJ"
         user={
           Object {
@@ -4674,7 +4610,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
             : 
           </strong>
           <VirtualHearingLinkDetails
-            aliasWithHost="BVA0000130@example.va.gov"
             hearing={
               Object {
                 "conferenceProvider": "pexip",
@@ -4683,8 +4618,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               }
             }
             label="Start Hearing"
-            link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
-            pin="2949749"
             role="VLJ"
             user={
               Object {
@@ -4722,7 +4655,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 Conference Room: 
               </strong>
-              BVA0000130@example.va.gov
+              undefined
             </div>
             <div
               data-css-6aejb2=""
@@ -4730,7 +4663,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 PIN: 
               </strong>
-              2949749
             </div>
           </VirtualHearingLinkDetails>
         </div>
@@ -4744,21 +4676,8 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
         }
         label="Hearing Coordinator Link"
-        link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
         linkText="Start Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
-        role="VLJ"
+        role="HC"
         user={
           Object {
             "addressCity": "Washington",
@@ -4788,14 +4707,13 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       >
         <div
           data-css-tx10g=""
-          id="vlj-hearings-link"
+          id="hc-hearings-link"
         >
           <strong>
             Hearing Coordinator Link
             : 
           </strong>
           <VirtualHearingLinkDetails
-            aliasWithHost="BVA0000130@example.va.gov"
             hearing={
               Object {
                 "conferenceProvider": "pexip",
@@ -4804,9 +4722,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               }
             }
             label="Start Hearing"
-            link="https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host"
-            pin="2949749"
-            role="VLJ"
+            role="HC"
             user={
               Object {
                 "addressCity": "Washington",
@@ -4843,7 +4759,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 Conference Room: 
               </strong>
-              BVA0000130@example.va.gov
+              undefined
             </div>
             <div
               data-css-6aejb2=""
@@ -4851,7 +4767,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 PIN: 
               </strong>
-              2949749
             </div>
           </VirtualHearingLinkDetails>
         </div>
@@ -4865,20 +4780,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
         }
         label="Guest Link"
-        link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
         linkText="Join Hearing"
-        links={
-          Object {
-            "alias": "BVA0000130@example.va.gov",
-            "coHostLink": null,
-            "conferenceProvider": "pexip",
-            "guestLink": "https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video",
-            "guestPin": "9523850278",
-            "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host",
-            "hostPin": "2949749",
-            "type": "PexipConferenceLink",
-          }
-        }
         role="Guest"
         user={
           Object {
@@ -4916,7 +4818,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
             : 
           </strong>
           <VirtualHearingLinkDetails
-            aliasWithHost="BVA0000130@example.va.gov"
             hearing={
               Object {
                 "conferenceProvider": "pexip",
@@ -4925,8 +4826,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               }
             }
             label="Join Hearing"
-            link="https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video"
-            pin="9523850278"
             role="Guest"
             user={
               Object {
@@ -4964,7 +4863,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 Conference Room: 
               </strong>
-              BVA0000130@example.va.gov
+              undefined
             </div>
             <div
               data-css-6aejb2=""
@@ -4972,7 +4871,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               <strong>
                 PIN: 
               </strong>
-              9523850278
             </div>
           </VirtualHearingLinkDetails>
         </div>
