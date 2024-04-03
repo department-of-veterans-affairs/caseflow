@@ -23,7 +23,7 @@ import {
 } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
-import { daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
+import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
@@ -243,6 +243,14 @@ export const veteranDetails = () => {
     dispatch(setShowReassignPackageModal(true));
   };
 
+  // Developer Function for in-progress and future work
+  const handleExplainPageInConSoleLog = (task) => {
+    // eslint-disable-next-line
+    console.log("Correspondence Explain Page for Under Construction Link:")
+    // eslint-disable-next-line
+    console.log(window.location.origin + task.taskUrl);
+  };
+
   return {
     header: 'Veteran Details',
     label: 'Veteran Details',
@@ -263,6 +271,15 @@ export const veteranDetails = () => {
         return <a
           href="#"
           onClick={() => handleRemoveClick(task)}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl.includes('explain')) {
+        return <a
+          href="/under_construction"
+          onContextMenu={() => handleExplainPageInConSoleLog(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >
@@ -293,6 +310,24 @@ export const vaDor = () => {
     label: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
+    }
+  };
+};
+
+export const packageDocumentType = (filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    filterOptions,
+    columnName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    valueName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
+    backendCanSort: true,
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    getSortValue: (task) => task.nod,
+    name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    label: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    valueFunction: (task) => {
+      return task.nod ? 'NOD' : 'Non-NOD';
     }
   };
 };
@@ -608,18 +643,8 @@ export const taskCompletedDateColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
-    filterOptions: [],
-    valueName: 'Date Completed',
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    label: 'Filter by date completed',
-    columnName: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
-    anyFiltersAreSet: true,
+    valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
     backendCanSort: true,
-    enableFilter: true,
-    filterable: true,
-    valueFunction: (task) => {
-      return moment(task.closedAt).format('MM/DD/YYYY');
-    },
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
