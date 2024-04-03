@@ -4,6 +4,7 @@
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerConcern
+  private
 
   MAX_QUEUED_ITEMS = 60
 
@@ -33,7 +34,7 @@ module CorrespondenceControllerConcern
     )
   end
 
-  def set_handle_mail_superuser_or_supervisor_params(current_user, params)
+  def set_correspondence_props(current_user, params)
     @mail_team_users = User.mail_team_users.pluck(:css_id)
     @is_superuser = current_user.mail_superuser?
     @is_supervisor = current_user.mail_supervisor?
@@ -41,18 +42,6 @@ module CorrespondenceControllerConcern
     @action_type = params[:userAction].strip if params[:userAction].present?
     @veteran_name = URI.decode(params[:veteranName].strip) if params[:veteranName].present?
   end
-
-  def correspondence_team
-    if current_user.mail_superuser? || current_user.mail_supervisor?
-      handle_mail_superuser_or_supervisor
-    elsif current_user.mail_team_user?
-      redirect_to "/queue/correspondence/team"
-    else
-      redirect_to "/unauthorized"
-    end
-  end
-
-  private
 
   def reassign_remove_banner_action(mail_team_user)
     operation_type = params[:operation]
@@ -70,25 +59,7 @@ module CorrespondenceControllerConcern
   end
 
   def reassign_remove_task_id_and_action_type_present?
-    if @reassign_remove_task_id.present? && @action_type.present?
-      return true
-    end
-
-    false
-  end
-
-  def handle_html_response(mail_team_user, task_ids, tab)
-    if reassign_remove_task_id_and_action_type_present?
-      task = Task.find(@reassign_remove_task_id)
-      if mail_team_user.nil?
-        mail_team_user = task.assigned_by
-      end
-    end
-
-    if mail_team_user && (task_ids.present? || @reassign_remove_task_id.present?)
-      process_tasks_if_applicable(mail_team_user, task_ids, tab)
-      handle_reassign_or_remove_task(mail_team_user)
-    end
+    @reassign_remove_task_id.present? && @action_type.present?
   end
 
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)

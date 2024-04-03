@@ -70,23 +70,10 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
-    if veteran && correspondence.update(
-      correspondence_params.merge(
-        veteran_id: veteran.id,
-        updated_by_id: RequestStore.store[:current_user].id
-      )
-    )
-      correspondence.tasks.map do |task|
-        if task.type == "ReviewPackageTask"
-          task.status = "in_progress"
-          task.save
-        end
-      end
-      render json: { status: :ok }
-    else
-      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
+    unless update_veteran_on_correspondence
+      return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
+    update_open_review_package_tasks ? render(json: { status: :ok }) : render(json: { status: 500 })
   end
 
   def update_cmp
@@ -94,12 +81,7 @@ class CorrespondenceController < ApplicationController
       va_date_of_receipt: params["VADORDate"].in_time_zone,
       package_document_type_id: params["packageDocument"]["value"].to_i
     )
-    correspondence.tasks.map do |task|
-      if task.type == "ReviewPackageTask"
-        task.status = "in_progress"
-        task.save
-      end
-    end
+    update_open_review_package_tasks
     render json: { status: 200, correspondence: correspondence }
   end
 
@@ -108,17 +90,43 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
+  def correspondence_team
+    if current_user.mail_superuser? || current_user.mail_supervisor?
+      correspondence_team_response
+    elsif current_user.mail_team_user?
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
+    end
+  end
+
   private
 
-  def handle_mail_superuser_or_supervisor
-    set_handle_mail_superuser_or_supervisor_params(current_user, params)
+  def update_veteran_on_correspondence
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
+    )
+  end
+
+  def update_open_review_package_tasks
+    correspondence.tasks.open.where(type: ReviewPackageTask.name).each do |task|
+      task.update(status: Constants.TASK_STATUSES.in_progress)
+    end
+  end
+
+  def correspondence_team_response
+    set_correspondence_props(current_user, params)
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     tab = params[:tab] if params[:tab].present?
 
     respond_to do |format|
-      format.html { handle_html_response(mail_team_user, task_ids, tab) }
-      format.json { handle_json_response(mail_team_user, task_ids, tab) }
+      format.html { correspondence_team_html_response(mail_team_user, task_ids, tab) }
+      format.json { correspondence_team_json_response(mail_team_user, task_ids, tab) }
     end
   end
 
@@ -132,11 +140,25 @@ class CorrespondenceController < ApplicationController
     render "correspondence_team"
   end
 
-  def handle_json_response(mail_team_user, task_ids, tab)
+  def correspondence_team_json_response(mail_team_user, task_ids, tab)
     if mail_team_user && task_ids.present?
       set_banner_params(mail_team_user, task_ids&.count, tab)
     else
       render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
+    end
+  end
+
+  def correspondence_team_html_response(mail_team_user, task_ids, tab)
+    if reassign_remove_task_id_and_action_type_present?
+      task = Task.find(@reassign_remove_task_id)
+      if mail_team_user.nil?
+        mail_team_user = task.assigned_by
+      end
+    end
+
+    if mail_team_user && (task_ids.present? || @reassign_remove_task_id.present?)
+      process_tasks_if_applicable(mail_team_user, task_ids, tab)
+      handle_reassign_or_remove_task(mail_team_user)
     end
   end
 
