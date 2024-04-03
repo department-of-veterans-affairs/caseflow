@@ -102,7 +102,6 @@ class ReassignPackageModal extends React.Component {
       const updatedUrl = `${modifyURL.substring(0, index + searchString.length)}/team`;
 
       newUrl = new URL(updatedUrl);
-      console.log(updatedUrl);
       const searchParams = new URLSearchParams(newUrl.search);
 
       // Encode and set the query parameters
@@ -219,6 +218,8 @@ class ReassignPackageModal extends React.Component {
           <span style= {{ fontWeight: 'bold' }}>{sprintf(COPY.CORRESPONDENCE_TITLE_REASSIGN_PACKAGE)}</span><br />
           {this.props.reasonRemovePackage[0]}
         </p>
+
+        <p>{this.props.veteranInformation.correspondence_tasks[2].instructions[0]}</p>
 
         <RadioFieldWithChildren
           vertical
