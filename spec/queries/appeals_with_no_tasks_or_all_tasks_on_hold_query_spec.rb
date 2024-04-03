@@ -74,6 +74,8 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     end
 
     it "returns array of appeals that look stuck" do
+      puts appeal_with_failed_reactivated_task.treee
+      # The appeal_with_failed_reactivated_task is supposed to be assigned instead of on_hold. That's why
       expect(subject).to match_array(stuck_appeals)
     end
   end

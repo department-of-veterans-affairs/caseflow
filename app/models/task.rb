@@ -433,14 +433,20 @@ class Task < CaseflowRecord
     !active_child_timed_hold_task.nil? || type == PostSendInitialNotificationLetterHoldingTask.name
   end
 
+  # This one is better for serialization because it can be preloaded
   def active_child_timed_hold_task
     # Can't preload with this since I think it forces a DB call.
     # children.open.find { |task| task.type == TimedHoldTask.name }
     children.find { |task| task.open? && task.type == TimedHoldTask.name }
   end
 
+  # This one seems to work better for after save hooks because they weren't designed around caching apparently
+  def active_child_timed_hold_task_no_cache
+    children.open.find { |task| task.type == TimedHoldTask.name }
+  end
+
   def cancel_timed_hold
-    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+    active_child_timed_hold_task_no_cache&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def calculated_placed_on_hold_at
@@ -872,32 +878,33 @@ class Task < CaseflowRecord
     # puts parent.inspect
     # Added an error handling block here in case the task was mutated and it's no longer the same task type or id
     # This always happens in the attorney task update parent change hook.
-    begin
-      # Attempt to find a record
-      # record = Model.find(id
-      parent.reload
-      parent.when_child_task_completed(self)
-      # Do something with the record
-    rescue ActiveRecord::RecordNotFound => error
-      # Handle the error
-      puts "Record not found it must have been mutated: #{error.message}"
-      new_parent = Task.find(parent_id)
-      new_parent.when_child_task_completed(self)
-    end
+    # begin
+    #   # Attempt to find a record
+    #   # record = Model.find(id
+    #   parent.reload
+    #   parent.when_child_task_completed(self)
+    #   # Do something with the record
+    # rescue ActiveRecord::RecordNotFound => error
+    #   # Handle the error
+    #   puts "Record not found it must have been mutated: #{error.message}"
+    #   new_parent = Task.find(parent_id)
+    #   new_parent.when_child_task_completed(self)
+    # end
     # parent.when_child_task_completed(self)
     # parent.reload unless parent.is_a?(JudgeAssignTask)
     # This is pretty bad though
-    # parent.when_child_task_completed(self)
+    parent.when_child_task_completed(self)
   end
 
   def tell_parent_task_child_task_created
     # Need to reload now that caching is being used
-    parent&.reload && parent&.when_child_task_created(self)
+    # parent&.reload && parent&.when_child_task_created(self)
+    parent&.when_child_task_created(self)
   end
 
   def update_children_status_after_closed
-    children&.reload
-    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+    # children&.reload
+    active_child_timed_hold_task_no_cache&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def cancel_task_timers
