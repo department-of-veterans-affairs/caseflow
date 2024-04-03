@@ -623,15 +623,23 @@ FactoryBot.define do
       end
 
       factory :review_package_task, class: ReviewPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
       end
 
       factory :merge_package_task, class: MergePackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
       end
 
       factory :reassign_package_task, class: ReassignPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
       end
 
       factory :split_package_task, class: SplitPackageTask do
+        appeal { create(:correspondence) }
+        appeal_type { Correspondence.name }
       end
 
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
