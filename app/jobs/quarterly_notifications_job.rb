@@ -2,6 +2,7 @@
 
 class QuarterlyNotificationsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include MessageConfigurations::DeleteMessageBeforeStart
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
