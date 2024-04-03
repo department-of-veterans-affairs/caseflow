@@ -36,6 +36,22 @@ import { isActiveOrganizationVHA } from '../selectors';
 const rootStyles = css({
   '.usa-alert + &': {
     marginTop: '1.5em'
+  },
+  '& .cf-tab-window-body-full-screen': {
+    padding: '26px 30px 30px 30px',
+    '& #tasks-tabwindow-tabpanel-3': {
+      '& p.cf-margin-bottom-0rem': {
+        marginTop: 0
+      }
+    }
+  },
+  '& #case-table-description': {
+    '& tr td:nth-child(1):focus': {
+      outline: 'none',
+    },
+    '& .cf-form-checkboxes': {
+      marginLeft: '0.5rem'
+    }
   }
 });
 
@@ -114,11 +130,6 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const taskMatchesSearch = (task) => {
-    if (searchValue === '' || searchValue.length < 3) {
-    // Return all tasks when search value is empty or less than three characters
-      return true;
-    }
-
     const taskNotes = task.notes || '';
     const daysWaiting = task.daysWaiting ? task.daysWaiting.toString() : '';
     const assignedByfirstName = (task.assignedBy && task.assignedBy.firstName) || '';
@@ -213,7 +224,7 @@ const CorrespondenceTableBuilder = (props) => {
     const getBulkAssignArea = () => {
       return (<>
         <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', paddingBottom: '25px' }}>
           <SearchableDropdown
             className="cf-dropdown"
             name="Assign to mail team user"
