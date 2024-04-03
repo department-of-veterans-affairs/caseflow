@@ -96,8 +96,8 @@ class ReassignPackageModal extends React.Component {
     const { onCancel } = this.props;
     const submit = (operation) => {
       let newUrl = new URL(window.location.href);
-      const modifyURL = newUrl.href
-      const searchString = '/queue/correspondence'
+      const modifyURL = newUrl.href;
+      const searchString = '/queue/correspondence';
       const index = modifyURL.indexOf(searchString);
       const updatedUrl = `${modifyURL.substring(0, index + searchString.length)}/team`;
 
@@ -115,7 +115,6 @@ class ReassignPackageModal extends React.Component {
       newUrl.search = searchParams.toString();
       window.location.href = newUrl.href;
     };
-
 
     const confirmButtonDisabled = () => {
       const selectedRequestChoice = this.state.selectedRequestChoice;
@@ -249,10 +248,12 @@ const mapStateToProps = (state) => {
 ReassignPackageModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
+  mailTeamUsers: PropTypes.array,
   setModalState: PropTypes.func,
   correspondence_id: PropTypes.number,
   vetInfo: PropTypes.object,
   reasonRemovePackage: PropTypes.object,
+  veteranInformation: PropTypes.object,
   updateLastAction: PropTypes.func,
 };
 

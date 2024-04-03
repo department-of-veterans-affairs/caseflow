@@ -133,7 +133,7 @@ const CaseTitleScaffolding = (props) => {
         setModalState={setReassignModalState}
         onCancel={closeReassignModal}
         correspondence_id = {props.correspondence_id}
-        mailTeamUsers={props.mailTeamUsers}/>
+        mailTeamUsers={props.mailTeamUsers} />
       }
     </div>
   );
@@ -169,6 +169,7 @@ const CaseSubTitleScaffolding = (props) => (
 ReviewPackageCaseTitle.propTypes = {
   reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
+  mailTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
@@ -177,6 +178,7 @@ ReviewPackageCaseTitle.propTypes = {
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
+  mailTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
   isInboundOpsTeam: PropTypes.bool
@@ -184,8 +186,10 @@ CaseSubTitleScaffolding.propTypes = {
 
 CaseTitleScaffolding.propTypes = {
   correspondence_id: PropTypes.number,
+  mailTeamUsers: PropTypes.array,
   reviewDetails: PropTypes.object,
   isReadOnly: PropTypes.bool,
+  isReassignPackage: PropTypes.bool,
   isInboundOpsTeam: PropTypes.bool
 };
 

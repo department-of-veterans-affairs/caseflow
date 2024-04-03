@@ -291,6 +291,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
 CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
+  mailTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
