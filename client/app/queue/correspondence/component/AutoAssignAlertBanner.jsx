@@ -99,7 +99,7 @@ const AutoAssignAlertBanner = (props) => {
           title={bannerAlert.title}
           message={bannerAlert.message}
           scrollOnAlert={false}
-	  lowerMargin={true}
+          lowerMargin
         />
       }
     </>
