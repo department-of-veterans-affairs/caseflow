@@ -6,6 +6,9 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # Bypass DNS rebinding protection for all `demo` sub-domains
+  config.hosts << ".demo.appeals.va.gov"
+
   # Eager load code on boot.
   config.eager_load = true
 
