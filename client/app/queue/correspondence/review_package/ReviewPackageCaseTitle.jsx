@@ -57,8 +57,13 @@ const ReviewPackageCaseTitle = (props) => {
 
   return (
     <div>
-      <CaseTitleScaffolding reviewDetails={props.reviewDetails} correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
-      <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
+      <CaseTitleScaffolding
+        reviewDetails={props.reviewDetails}
+        correspondence_id={props.correspondence.id}
+        isReadOnly={props.isReadOnly}
+        isInboundOpsTeam={props.isInboundOpsTeam}
+      />
+      <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} isInboundOpsTeam={props.isInboundOpsTeam} />
     </div>
   );
 };
@@ -79,7 +84,7 @@ const CaseTitleScaffolding = (props) => {
       <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
 
       <span {...removebotton}>
-        { props.isReadOnly &&
+        { props.isReadOnly && props.isInboundOpsTeam &&
           <Button
             name="Review removal request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
@@ -133,18 +138,22 @@ ReviewPackageCaseTitle.propTypes = {
   reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
   correspondence: PropTypes.object,
-  isReadOnly: PropTypes.bool
+  isReadOnly: PropTypes.bool,
+  isInboundOpsTeam: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
   packageActionModal: PropTypes.string,
-  isReadOnly: PropTypes.bool
+  isReadOnly: PropTypes.bool,
+  isInboundOpsTeam: PropTypes.bool
 };
 
 CaseTitleScaffolding.propTypes = {
   correspondence_id: PropTypes.number,
-  isReadOnly: PropTypes.bool
+  reviewDetails: PropTypes.object,
+  isReadOnly: PropTypes.bool,
+  isInboundOpsTeam: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;

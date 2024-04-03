@@ -38,6 +38,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isInboundOpsTeam, setIsInboundOpsTeam] = useState(false);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taksId: [],
@@ -53,17 +54,19 @@ export const CorrespondenceReviewPackage = (props) => {
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-      const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
+      const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
 
-      if(assignedRemoveTask) {
+      setIsInboundOpsTeam(Boolean(inboundOpsTeam));
+
+      if (assignedRemoveTask) {
         setReviewPackageDetails((prev) => {
-          return {...prev, taskId: assignedRemoveTask.id}
-          }
-        )
+          return { ...prev, taskId: assignedRemoveTask.id };
+        }
+        );
       }
 
       // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined') && isInboundOpsTeam;
+      return (typeof assignedRemoveTask !== 'undefined');
     };
 
     try {
@@ -87,9 +90,9 @@ export const CorrespondenceReviewPackage = (props) => {
       });
 
       setReviewPackageDetails((prev) => {
-        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}`}
-        }
-      )
+        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
+      }
+      );
 
       setEditableData({
         notes: data.notes,
@@ -193,6 +196,7 @@ export const CorrespondenceReviewPackage = (props) => {
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
+            isInboundOpsTeam={isInboundOpsTeam}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
