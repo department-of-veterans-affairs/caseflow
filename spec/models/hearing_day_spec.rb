@@ -604,8 +604,8 @@ describe HearingDay, :all_dbs do
         FeatureToggle.enable!(:webex_conference_service)
       end
 
-      it "Only pexip conference links are created for the entire hearing day requested" do
-        expect(subject.pluck(:type)).to eql(PexipConferenceLink.name)
+      it "Only a pexip conference link is created for the entire hearing day requested" do
+        expect(subject.type).to eql(PexipConferenceLink.name)
       end
     end
 
