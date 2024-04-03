@@ -194,6 +194,7 @@ export const CorrespondenceReviewPackage = (props) => {
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
+            mailTeamUsers={props.mailTeamUsers}
           />
           <ReviewPackageData
             correspondence={props.correspondence}

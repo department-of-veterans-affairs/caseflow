@@ -34,6 +34,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def review_package
+    @mail_team_users = User.mail_team_users.pluck(:css_id)
     render "correspondence/review_package"
   end
 
@@ -47,8 +48,6 @@ class CorrespondenceController < ApplicationController
   end
 
   def show
-    @mail_team_users = User.mail_team_users.pluck(:css_id)
-    @test_for_test = PackageDocumentType.all
     corres_docs = correspondence.correspondence_documents
     reason_remove = if RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).nil?
                       ""

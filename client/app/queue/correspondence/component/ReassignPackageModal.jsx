@@ -31,7 +31,6 @@ class ReassignPackageModal extends React.Component {
   }
 
   handleSelect(reasonForRemove) {
-    console.log(reasonForRemove);
     if (reasonForRemove === 'Approve request') {
       this.setState({ reasonForRemove,
         disabledSaveButton: false
@@ -96,12 +95,19 @@ class ReassignPackageModal extends React.Component {
   render() {
     const { onCancel } = this.props;
     const submit = (operation) => {
-      const newUrl = new URL(window.location.href);
+      let newUrl = new URL(window.location.href);
+      const modifyURL = newUrl.href
+      const searchString = '/queue/correspondence'
+      const index = modifyURL.indexOf(searchString);
+      const updatedUrl = `${modifyURL.substring(0, index + searchString.length)}/team`;
+
+      newUrl = new URL(updatedUrl);
+      console.log(updatedUrl);
       const searchParams = new URLSearchParams(newUrl.search);
 
       // Encode and set the query parameters
       searchParams.set('user', encodeURIComponent(this.state.selectedMailTeamUser));
-      searchParams.set('taskId', encodeURIComponent(this.state.currentSelectedVeteran.uniqueId));
+      searchParams.set('taskId', encodeURIComponent(this.props.veteranInformation.correspondence_tasks[2].id));
       searchParams.set('userAction', encodeURIComponent(this.state.selectedRequestChoice));
       searchParams.set('decisionReason', encodeURIComponent(this.state.decisionReason));
       searchParams.set('operation', encodeURIComponent(operation));
@@ -111,10 +117,11 @@ class ReassignPackageModal extends React.Component {
       window.location.href = newUrl.href;
     };
 
+
     const confirmButtonDisabled = () => {
       const selectedRequestChoice = this.state.selectedRequestChoice;
       const selectedMailTeamUser = this.state.selectedMailTeamUser;
-      const reassignModalVisible = this.state.reassignModalVisible;
+      const reassignModalVisible = this.props.modalState;
       const decisionReason = this.state.decisionReason;
 
       if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '' && reassignModalVisible) {
@@ -154,7 +161,14 @@ class ReassignPackageModal extends React.Component {
       this.setState({ decisionReason: decisionText });
     };
 
+    const resetState = () => {
+      this.setState({ selectedMailTeamUser: '' });
+      this.setState({ selectedRequestChoice: '' });
+      this.setState({ decisionReason: '' });
+    };
+
     const handleSelectedRequestChoice = (selectedRequest) => {
+      resetState();
       this.setState({ selectedRequestChoice: selectedRequest });
     };
 
@@ -197,8 +211,8 @@ class ReassignPackageModal extends React.Component {
       <Modal
         title= {sprintf(COPY.CORRESPONDENCE_HEADER_REMOVE_PACKAGE)}
         closeHandler={onCancel}
-        confirmButton={<Button disabled={this.state.disabledSaveButton}
-          onClick={submit}>Confirm</Button>}
+        confirmButton={<Button disabled={(confirmButtonDisabled())}
+          onClick={() => (submit('reassign'))}>Confirm</Button>}
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
         <p>
@@ -214,14 +228,6 @@ class ReassignPackageModal extends React.Component {
           options={reassignReasonOptions}
           onChange={(val) => handleSelectedRequestChoice(val)}
         />
-
-        {/* {this.state.reasonForRemove === 'Reject request' &&
-              <TextareaField
-                name={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT)}
-                onChange={this.reasonChange}
-                value={this.state.reasonReject}
-              />
-        } */}
 
       </Modal>
     );

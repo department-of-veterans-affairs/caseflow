@@ -58,7 +58,12 @@ const ReviewPackageCaseTitle = (props) => {
 
   return (
     <div>
-      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} isReassignPackage={props.isReassignPackage} />
+      <CaseTitleScaffolding
+        correspondence_id = {props.correspondence.id}
+        isReadOnly={props.isReadOnly}
+        isReassignPackage={props.isReassignPackage}
+        mailTeamUsers={props.mailTeamUsers}
+      />
       <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
     </div>
   );
@@ -97,7 +102,6 @@ const CaseTitleScaffolding = (props) => {
             }
           />
         }
-        {console.log(props)}
         { (props.isReadOnly && props.isReassignPackage) &&
           <Button
             name="Review reassign request"
@@ -121,7 +125,8 @@ const CaseTitleScaffolding = (props) => {
         modalState={modalReassignState}
         setModalState={setReassignModalState}
         onCancel={closeReassignModal}
-        correspondence_id = {props.correspondence_id} />
+        correspondence_id = {props.correspondence_id}
+        mailTeamUsers={props.mailTeamUsers}/>
       }
     </div>
   );

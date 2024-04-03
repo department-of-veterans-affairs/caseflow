@@ -633,8 +633,11 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReviewPackage = (props) => (
-    <ReviewPackageLoadingScreen {...props.match.params}>
-      <CorrespondenceReviewPackage {...props.match.params} />
+    <ReviewPackageLoadingScreen mailTeamUsers= {props.mailTeamUsers} {...props.match.params}>
+      <CorrespondenceReviewPackage
+        mailTeamUsers= {this.props.mailTeamUsers}
+        {...props.match.params}
+      />
     </ReviewPackageLoadingScreen>
   );
 
