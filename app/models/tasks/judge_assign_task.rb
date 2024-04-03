@@ -23,6 +23,7 @@ class JudgeAssignTask < JudgeTask
   end
 
   def begin_decision_review_phase
+    # This is so gross. This sometimes happens in a freaking change hook and you can't reload because the type changes
     update!(type: JudgeDecisionReviewTask.name)
 
     # Tell sentry so we know this is still happening. Remove this in a month

@@ -868,9 +868,26 @@ class Task < CaseflowRecord
     # Fix caching errors on save hooks
     # TODO: This destroys the save_changes hash and I don't know how to overcome that right now
     # while also making sure this works on the correct parent tasks and children tasks
-    parent&.reload
+    # puts "what type of task is it now???"
+    # puts parent.inspect
+    # Added an error handling block here in case the task was mutated and it's no longer the same task type or id
+    # This always happens in the attorney task update parent change hook.
+    begin
+      # Attempt to find a record
+      # record = Model.find(id
+      parent.reload
+      parent.when_child_task_completed(self)
+      # Do something with the record
+    rescue ActiveRecord::RecordNotFound => error
+      # Handle the error
+      puts "Record not found it must have been mutated: #{error.message}"
+      new_parent = Task.find(parent_id)
+      new_parent.when_child_task_completed(self)
+    end
+    # parent.when_child_task_completed(self)
+    # parent.reload unless parent.is_a?(JudgeAssignTask)
     # This is pretty bad though
-    parent.when_child_task_completed(self)
+    # parent.when_child_task_completed(self)
   end
 
   def tell_parent_task_child_task_created
