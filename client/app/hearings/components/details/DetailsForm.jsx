@@ -28,8 +28,6 @@ const DetailsForm = (props) => {
     hearingRequestTypeDropdownOnchange
   } = props;
 
-  console.log(hearing);
-
   return (
     <React.Fragment>
       <ContentSection header="Hearing Details">
