@@ -42,7 +42,6 @@ import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../queue/selectors';
-import BatchAutoAssignButton from './correspondence/component/BatchAutoAssignButton';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -211,11 +210,6 @@ const QueueTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <React.Fragment>
-          {props.userCanBulkAssign &&
-          tabConfig.allow_bulk_assign &&
-          props.activeOrganization.type === 'InboundOpsTeam' && (
-            <BatchAutoAssignButton />
-          )}
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>

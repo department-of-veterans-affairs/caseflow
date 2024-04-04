@@ -5,8 +5,10 @@ import COPY from '../../../../COPY';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setBatchAutoAssignmentAttemptId,
-  setAutoAssignButtonDisabled } from '../correspondenceReducer/reviewPackageActions';
+import {
+  setBatchAutoAssignmentAttemptId,
+  setAutoAssignButtonDisabled
+} from '../correspondenceReducer/reviewPackageActions';
 
 const BatchAutoAssignButton = (props) => {
   const handleAutoAssign = async () => {
@@ -22,7 +24,7 @@ const BatchAutoAssignButton = (props) => {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
       <Button
         onClick={handleAutoAssign}
         ariaLabel="Auto assign correspondences"

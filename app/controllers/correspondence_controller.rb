@@ -3,6 +3,8 @@
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
   include CorrespondenceControllerUtil
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
