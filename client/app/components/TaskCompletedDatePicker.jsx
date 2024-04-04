@@ -154,11 +154,11 @@ const TaskCompletedDatePicker = (props) => {
         onChangeMethod={props.onChangeMethod} />
     </div>
 
-    <div style={{ width: '100%', margin: 'auto', paddingBottom: '14%' }}>
+    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.5%' }}>
       {getDatePickerElements()}
     </div>
     <div style={{ display: 'flex',
-      padding: '18px 10px 27px 0',
+      padding: '16.5px 10px 24px 0',
       justifyContent: 'right',
       width: '190px',
       borderTop: '1px solid #d6d7d9' }}>
