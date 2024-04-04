@@ -26,7 +26,7 @@ export const VirtualHearingLinkDetails = ({
   virtualHearing
 }) => (
   <React.Fragment>
-    {hearing?.scheduledForIsPast || wasVirtual ? (
+    {hearing?.scheduledForIsPast ? (
       <span>N/A</span>
     ) : (
       <VirtualHearingLink
@@ -42,11 +42,11 @@ export const VirtualHearingLinkDetails = ({
       <>
         <div {...labelPaddingFirst}>
           <strong>Conference Room: </strong>
-          {`${aliasWithHost}`}
+          {aliasWithHost || 'N/A'}
         </div>
         <div {...labelPadding}>
           <strong>PIN: </strong>
-          {pin}
+          {pin || 'N/A'}
         </div>
       </>
     ) : (
@@ -86,9 +86,14 @@ export const LinkContainer = (
   // The pin used depends on the role and link used depends on virtual or not
   const getPin = () => {
     const whichLink = isVirtual ? virtualHearing : links;
+
     const isPexipHearingCoordinator = (hearing.conferenceProvider === 'pexip' && role === 'HC');
 
-    return (role === 'VLJ' || isPexipHearingCoordinator) ? whichLink?.hostPin : whichLink?.guestPin;
+    if (role === 'VLJ' || isPexipHearingCoordinator) {
+      return whichLink?.hostPin;
+    }
+
+    return (whichLink?.guestPinLong || whichLink?.guestPin);
   };
 
   return (
@@ -172,7 +177,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
         hearing={hearing}
         isVirtual={isVirtual}
         label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-        link={links?.guestLink}
+        link={links?.guestLink || links?.guestHearingLink}
         linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
         role="Guest"
         user={user}
