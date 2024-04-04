@@ -11,7 +11,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
-import Numberfield from '../components/NumberField';
+import NumberField from '../components/NumberField';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -28,11 +28,48 @@ class TestSeeds extends React.PureComponent {
         Substitutions: false,
         DecisionIssues: false,
         CavcAmaAppeals: false,
+        SanitizedJsonSeeds: false,
+        VeteransHealthAdministration: false,
+        MTV: false,
+        Education: false,
+        PriorityDistributions: false,
+        TestCaseData: false,
+        CaseDistributionAuditLeverEntries: false,
+        Notifications: false,
+        CavcDashboardData: false,
+        VbmsExtClaim: false,
+        CasesTiedToJudgesNoLongerWithBoard: false,
+        StaticTestCaseData: false,
+        StaticDispatchedAppealsTestData: false,
+        RemandedAmaAppeals: false,
+        RemandedLegacyAppeals: false,
+        PopulateCaseflowFromVacols: false
+      },
+      seedCounts: {
+        // Starting with a default value of 1
+        Aod: 1,
+        NonAod: 1,
+        Tasks: 1,
+        Hearings: 1,
+        Intake: 1,
+        Dispatch: 1,
+        Jobs: 1,
+        Substitutions: 1,
+        DecisionIssues: 1,
+        CavcAmaAppeals: 1,
       }
     };
   }
 
-  reseed = (type) => {
+  handleSeedCountChange = (type, value) => {
+    const count = Math.max(Number(value), 1);
+
+    this.setState((prevState) => ({
+      seedCounts: { ...prevState.seedCounts, [type]: count }
+    }));
+  }
+
+  reseed = (type, count) => {
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
@@ -40,25 +77,33 @@ class TestSeeds extends React.PureComponent {
     const endpointMap = {
       Aod: '/run-demo-aod-seeds',
       NonAod: '/run-demo-non-aod-seeds',
-      Tasks: '/run_demo_tasks_seeds',
-      Hearings: '/run_demo_hearings_seeds',
-      Intake: '/run_demo_intake_seeds',
-      Dispatch: '/run_demo_dispatch_seeds',
-      Jobs: '/run_demo_jobs_seeds',
-      Substitutions: '/run_demo_substitutions_seeds',
-      DecisionIssues: '/run_demo_decision_issues_seeds',
-      CavcAmaAppeals: '/run_demo_cavc_ama_appeals_seeds',
-      SanitizedJsonSeeds: '/run_demo_sanitized_json_seeds_seeds',
-      VeteransHealthAdministration: '/run_demo_veterans_health_administration_seeds',
-      MTV: '/run_demo_mtv_seeds',
-      Education: '/run_demo_education_seeds',
-      PriorityDistributions: '/run_demo_priority_distributions_seeds',
-      TestCaseData: '/run_demo_priority_distributions_seeds',
-      CaseDistributionAuditLeverEntries: '/run_demo_case_distribution_audit_lever_entries_seeds',
-      Notifications: '/run_demo_notifications_seeds',
+      Tasks: '/run-demo-tasks-seeds',
+      Hearings: '/run-demo-hearings-seeds',
+      Intake: '/run-demo-intake-seeds',
+      Dispatch: '/run-demo-dispatch-seeds',
+      Jobs: '/run-demo-jobs-seeds',
+      Substitutions: '/run-demo-substitutions-seeds',
+      DecisionIssues: '/run-demo-decision-issues-seeds',
+      CavcAmaAppeals: '/run-demo-cavc-ama-appeals-seeds',
+      SanitizedJsonSeeds: '/run-demo-sanitized-json-seeds-seeds',
+      VeteransHealthAdministration: '/run-demo-veterans-health-administration-seeds',
+      MTV: '/run-demo-mtv-seeds',
+      Education: '/run-demo-education-seeds',
+      PriorityDistributions: '/run-demo-priority-distributions-seeds',
+      TestCaseData: '/run-demo-priority-distributions-seeds',
+      CaseDistributionAuditLeverEntries: '/run-demo-case-distribution-audit-lever-entries-seeds',
+      Notifications: '/run-demo-notifications-seeds',
+      CavcDashboardData: '/run-demo-cavc-dashboard-data-seeds',
+      VbmsExtClaim: '/run-demo-vbms-ext-claim-seeds',
+      CasesTiedToJudgesNoLongerWithBoard: '/run-demo-cases-tied-to-judges-no-longer-with-board-seeds',
+      StaticTestCaseData: '/run-demo-static-test-case-data-seeds',
+      StaticDispatchedAppealsTestData: '/run-demo-static-dispatched-appeals-test-data-seeds',
+      RemandedAmaAppeals: '/run-demo-remanded-ama-appeals-seeds',
+      RemandedLegacyAppeals: '/run-demo-remanded-legacy-appeals-seeds',
+      PopulateCaseflowFromVacols: '/run-demo-populate-caseflow-from-vacols-seeds'
     };
 
-    ApiUtil.post(endpointMap[type]).then(() => {
+    ApiUtil.post(endpointMap[type], { count }).then(() => {
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
       }));
@@ -88,8 +133,16 @@ class TestSeeds extends React.PureComponent {
       'MTV',
       'Education',
       'PriorityDistributions',
+      'TestCaseData',
       'CaseDistributionAuditLeverEntries',
-      'Notifications'
+      'Notifications',
+      'CavcDashboardData',
+      'CasesTiedToJudgesNoLongerWithBoard',
+      'StaticTestCaseData',
+      'StaticDispatchedAppealsTestData',
+      'RemandedAmaAppeals',
+      'RemandedLegacyAppeals',
+      'PopulateCaseflowFromVacols'
     ];
 
     return (
@@ -119,7 +172,14 @@ class TestSeeds extends React.PureComponent {
                       <h2 id="run_seeds">Run Seed Files</h2>
                       <ul>
                         {seedTypes.map((type) => (
-                          <li key={type}>
+                          <li key={type} style={{ marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <NumberField
+                                value={this.state.seedCounts[type]}
+                                onChange={(newValue) => this.handleSeedCountChange(type, newValue)}
+                                isInteger
+                              />
+                            </div>
                             <Button
                               onClick={() => this.reseed(type)}
                               name={`Run Demo ${type} Seeds`}

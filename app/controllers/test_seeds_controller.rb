@@ -110,6 +110,13 @@ class TestSeedsController < ApplicationController
     head :ok
   end
 
+  def run_demo_test_case_data_seeds
+    Rake::Task["db:seed:demo_test_case_data_seeds"].reenable
+    Rake::Task["db:seed:demo_test_case_data_seeds"].invoke
+
+    head :ok
+  end
+
   def run_demo_case_distribution_audit_lever_entries_seeds
     Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].reenable
     Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].invoke
@@ -120,6 +127,62 @@ class TestSeedsController < ApplicationController
   def run_demo_notifications_seeds
     Rake::Task["db:seed:demo_notifications_seeds"].reenable
     Rake::Task["db:seed:demo_notifications_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_demo_cavc_dashboard_data_seeds
+    Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].reenable
+    Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_demo_vbms_ext_claim_seeds
+    Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].reenable
+    Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_cases_tied_to_judges_no_longer_with_board_seeds
+    Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].reenable
+    Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_static_test_case_data_seeds
+    Rake::Task["db:seed:static_test_case_data_seeds"].reenable
+    Rake::Task["db:seed:static_test_case_data_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_static_dispatched_appeals_test_data_seeds
+    Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].reenable
+    Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_remanded_ama_appeals_seeds
+    Rake::Task["db:seed:remanded_ama_appeals_seeds"].reenable
+    Rake::Task["db:seed:remanded_ama_appeals_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_remanded_legacy_appeals_seeds
+    Rake::Task["db:seed:remanded_legacy_appeals_seeds"].reenable
+    Rake::Task["db:seed:remanded_legacy_appeals_seeds"].invoke
+
+    head :ok
+  end
+
+  def run_populate_caseflow_from_vacols_seeds
+    Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].reenable
+    Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].invoke
 
     head :ok
   end
