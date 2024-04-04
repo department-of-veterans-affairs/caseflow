@@ -59,7 +59,7 @@ import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
 import CaseDistribution from 'app/caseDistribution';
 import CaseDistributionTest from 'app/caseDistribution/test';
-import DemoSeeds from 'app/seeds/index';
+import TestSeeds from 'app/test/TestSeeds';
 import uuid from 'uuid';
 
 const COMPONENTS = {
@@ -97,7 +97,7 @@ const COMPONENTS = {
   Admin,
   CaseDistribution,
   CaseDistributionTest,
-  DemoSeeds
+  TestSeeds
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {

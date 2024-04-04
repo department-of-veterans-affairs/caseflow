@@ -421,9 +421,23 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
-  # demo seed buttons routes
-  get 'test/seeds', :to => 'demo_seeds#seeds'
-  post 'run-demo-tasks-seeds', to: 'demo_seeds#run_demo_tasks_seeds', as: "run-demo-tasks-seeds"
+  # test seed buttons routes
+  get 'test/seeds', :to => 'test_seeds#seeds'
+  post 'run-demo-tasks-seeds', to: 'test_seeds#run_demo_tasks_seeds', as: "run-demo-tasks-seeds"
+  post 'run-demo-hearings-seeds', to: 'test_seeds#run_demo_hearings_seeds', as: "run-demo-hearings-seeds"
+  post 'run-demo-intake-seeds', to: 'test_seeds#run_demo_intake_seeds', as: "run-demo-intake-seeds"
+  post 'run-demo-dispatch-seeds', to: 'test_seeds#run_demo_dispatch_seeds', as: "run-demo-dispatch-seeds"
+  post 'run-demo-jobs-seeds', to: 'test_seeds#run_demo_jobs_seeds', as: "run-demo-jobs-seeds"
+  post 'run-demo-substitutions-seeds', to: 'test_seeds#run_demo_substitutions_seeds', as: "run-demo-substitutions-seeds"
+  post 'run-demo-decision_issues-seeds', to: 'test_seeds#run_demo_decision_issues_seeds', as: "run-demo-decision_issues-seeds"
+  post 'run-demo-cavc_ama_appeals-seeds', to: 'test_seeds#run_demo_cavc_ama_appeals_seeds', as: "run-demo-cavc_ama_appeals-seeds"
+  post 'run-demo-sanitized_json_seeds-seeds', to: 'test_seeds#run_demo_sanitized_json_seeds_seeds', as: "run-demo-sanitized_json_seeds-seeds"
+  post 'run-demo-veterans_health_administration-seeds', to: 'test_seeds#run_demo_veterans_health_administration_seeds', as: "run-demo-veterans_health_administration-seeds"
+  post 'run-demo-mtv-seeds', to: 'test_seeds#run_demo_mtv_seeds', as: "run-demo-mtv-seeds"
+  post 'run-demo-education-seeds', to: 'test_seeds#run_demo_education_seeds', as: "run-demo-education-seeds"
+  post 'run-demo-notifications', to: 'test_seeds#run_demo_priority_distributions_seeds', as: "run-demo-priority_distributions-seeds"
+  post 'run-demo-case_distribution_audit_lever_entries', to: 'test_seeds#run_demo_priority_distributions_seeds', as: "run-demo-case_distribution_audit_lever_entries"
+  post 'run-demo-notifications', to: 'test_seeds#run_demo_priority_distributions_seeds', as: "run-demo-notifications"
 
   # :nocov:
   namespace :test do

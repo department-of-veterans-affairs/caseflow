@@ -1,0 +1,145 @@
+/* eslint-disable react/prop-types */
+
+import React from 'react';
+import NavigationBar from '../components/NavigationBar';
+import { BrowserRouter } from 'react-router-dom';
+import PageRoute from '../components/PageRoute';
+import AppFrame from '../components/AppFrame';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { LOGO_COLORS } from '../constants/AppConstants';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import CaseSearchLink from '../components/CaseSearchLink';
+import ApiUtil from '../util/ApiUtil';
+import Button from '../components/Button';
+import Numberfield from '../components/NumberField';
+
+class TestSeeds extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      reseedingStatus: {
+        Aod: false,
+        NonAod: false,
+        Tasks: false,
+        Hearings: false,
+        Intake: false,
+        Dispatch: false,
+        Jobs: false,
+        Substitutions: false,
+        DecisionIssues: false,
+        CavcAmaAppeals: false,
+      }
+    };
+  }
+
+  reseed = (type) => {
+    this.setState((prevState) => ({
+      reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
+    }));
+
+    const endpointMap = {
+      Aod: '/run-demo-aod-seeds',
+      NonAod: '/run-demo-non-aod-seeds',
+      Tasks: '/run_demo_tasks_seeds',
+      Hearings: '/run_demo_hearings_seeds',
+      Intake: '/run_demo_intake_seeds',
+      Dispatch: '/run_demo_dispatch_seeds',
+      Jobs: '/run_demo_jobs_seeds',
+      Substitutions: '/run_demo_substitutions_seeds',
+      DecisionIssues: '/run_demo_decision_issues_seeds',
+      CavcAmaAppeals: '/run_demo_cavc_ama_appeals_seeds',
+      SanitizedJsonSeeds: '/run_demo_sanitized_json_seeds_seeds',
+      VeteransHealthAdministration: '/run_demo_veterans_health_administration_seeds',
+      MTV: '/run_demo_mtv_seeds',
+      Education: '/run_demo_education_seeds',
+      PriorityDistributions: '/run_demo_priority_distributions_seeds',
+      TestCaseData: '/run_demo_priority_distributions_seeds',
+      CaseDistributionAuditLeverEntries: '/run_demo_case_distribution_audit_lever_entries_seeds',
+      Notifications: '/run_demo_notifications_seeds',
+    };
+
+    ApiUtil.post(endpointMap[type]).then(() => {
+      this.setState((prevState) => ({
+        reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
+      }));
+    }, (err) => {
+      console.warn(err);
+      this.setState((prevState) => ({
+        reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
+      }));
+    });
+  };
+
+  render() {
+    const Router = this.props.router || BrowserRouter;
+    const seedTypes = [
+      'Aod',
+      'NonAod',
+      'Tasks',
+      'Hearings',
+      'Intake',
+      'Dispatch',
+      'Jobs',
+      'Substitutions',
+      'DecisionIssues',
+      'CavcAmaAppeals',
+      'SanitizedJsonSeeds',
+      'VeteransHealthAdministration',
+      'MTV',
+      'Education',
+      'PriorityDistributions',
+      'CaseDistributionAuditLeverEntries',
+      'Notifications'
+    ];
+
+    return (
+      <Router {...this.props.routerTestProps}>
+        <div>
+          <NavigationBar
+            wideApp
+            defaultUrl={
+              this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
+                '/search' :
+                '/queue'
+            }
+            userDisplayName={this.props.userDisplayName}
+            dropdownUrls={this.props.dropdownUrls}
+            applicationUrls={this.props.applicationUrls}
+            logoProps={{
+              overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
+              accentColor: LOGO_COLORS.QUEUE.ACCENT,
+            }}
+            rightNavElement={<CaseSearchLink />}
+            appName="Caseflow Admin"
+          >          <AppFrame>
+              <AppSegment filledBackground>
+                <div>
+                  <PageRoute exact path="/test/seeds" title="Caseflow Seeds" component={() => (
+                    <div>
+                      <h2 id="run_seeds">Run Seed Files</h2>
+                      <ul>
+                        {seedTypes.map((type) => (
+                          <li key={type}>
+                            <Button
+                              onClick={() => this.reseed(type)}
+                              name={`Run Demo ${type} Seeds`}
+                              loading={this.state.reseedingStatus[type]}
+                              loadingText={`Reseeding ${type} Seeds`}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                      <hr />
+                    </div>
+                  )} />
+                </div>
+              </AppSegment>
+            </AppFrame>
+          </NavigationBar>
+        </div>
+      </Router>
+    );
+  }
+}
+
+export default TestSeeds;
