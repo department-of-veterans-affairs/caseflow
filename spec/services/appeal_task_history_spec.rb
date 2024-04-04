@@ -21,9 +21,7 @@ describe AppealTaskHistory, :postgres do
       end
 
       let(:diff) do
-        # Have to add in updated at time since the change hook reloads slow it down just enough so that
-        # there is a small gap of time in the code.Timecop doesn't seem to prevent this
-        { "placed_on_hold_at" => [nil, Time.zone.now], "status" => %w[assigned on_hold], "updated_at" => anything }
+        { "placed_on_hold_at" => [nil, Time.zone.now], "status" => %w[assigned on_hold] }
       end
 
       it "records the changeset" do

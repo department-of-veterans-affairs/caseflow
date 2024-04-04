@@ -219,7 +219,7 @@ class WorkQueue::TaskColumnSerializer
         css_id: assignee.css_id,
         is_organization: assignee.is_a?(Organization),
         name: assignee.name,
-        type: object.assigned_to_type,
+        type: assignee.class.name,
         id: assignee.id
       }
     else
