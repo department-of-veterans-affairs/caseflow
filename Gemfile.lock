@@ -689,7 +689,11 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sql_tracker (1.3.2)
+<<<<<<< HEAD
     stackprof (0.2.26)
+=======
+    statsd-instrument (3.7.0)
+>>>>>>> master
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
@@ -847,6 +851,7 @@ DEPENDENCIES
   solargraph
   sql_tracker
   stackprof
+  statsd-instrument
   stringex
   strong_migrations
   test-prof

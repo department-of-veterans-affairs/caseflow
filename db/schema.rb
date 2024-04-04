@@ -200,6 +200,10 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
 
+  create_table "auto_texts", force: :cascade do |t|
+    t.string "name"
+  end
+
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address", comment: "Full address of the location"
     t.integer "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
@@ -362,7 +366,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
     t.boolean "is_disabled_in_ui", null: false, comment: "Determines behavior in the controls page"
-    t.boolean "is_toggle_active", null: false, comment: "used for the docket time goals, otherwise it is true and unused"
+    t.boolean "is_toggle_active", comment: "used for the docket time goals, otherwise it is true and unused"
     t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
     t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
     t.integer "lever_group_order", null: false, comment: "determines the order that the lever appears in each section of inputs, and the order in the history table"
@@ -619,6 +623,76 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
+  create_table "correspondence_documents", force: :cascade do |t|
+    t.bigint "correspondence_id"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation."
+    t.string "document_file_number", comment: "From CMP documents table"
+    t.integer "document_type", comment: "ID of the doc to lookup VBMS Doc Type"
+    t.integer "pages", comment: "Number of pages in the CMP Document"
+    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
+    t.uuid "uuid", comment: "Reference to document in AWS S3"
+    t.bigint "vbms_document_type_id", comment: "From CMP documents table"
+    t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
+  end
+
+  create_table "correspondence_intakes", force: :cascade do |t|
+    t.bigint "correspondence_id", comment: "Foreign key on correspondences table"
+    t.datetime "created_at", null: false
+    t.integer "current_step", null: false, comment: "Tracks users progress on intake workflow"
+    t.jsonb "redux_store", null: false, comment: "JSON representation of the data for the current step"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", comment: "Foreign key on users table"
+    t.index ["correspondence_id"], name: "index_on_correspondence_id"
+    t.index ["user_id"], name: "index_on_user_id"
+  end
+
+  create_table "correspondence_relations", force: :cascade do |t|
+    t.bigint "correspondence_id"
+    t.datetime "created_at", null: false
+    t.bigint "related_correspondence_id"
+    t.datetime "updated_at", null: false
+    t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
+    t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
+  end
+
+  create_table "correspondence_types", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "correspondences", force: :cascade do |t|
+    t.bigint "assigned_by_id", comment: "Foreign key to users table"
+    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
+    t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
+    t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.text "notes", comment: "Comes from CMP; can be updated by user"
+    t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
+    t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
+    t.string "source_type", comment: "An information identifier we get from CMP"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "updated_by_id", comment: "Foreign key to users table"
+    t.uuid "uuid", comment: "Unique identifier"
+    t.datetime "va_date_of_receipt", comment: "Date package delivered"
+    t.bigint "veteran_id", comment: "Foreign key to veterans table"
+    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
+    t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
+    t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
+    t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
+    t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
+  end
+
+  create_table "correspondences_appeals", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.bigint "correspondence_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appeal_id"], name: "index on appeal_id"
+    t.index ["correspondence_id"], name: "index on correspondence_id"
+  end
+
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
@@ -705,6 +779,15 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
     t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
+  end
+
+  create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
+    t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
+    t.datetime "updated_at", null: false
+    t.index ["distribution_id"], name: "index_distribution_stats_on_distribution_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -1388,6 +1471,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
     t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
+    t.boolean "exclude_appeals_from_affinity", default: false, null: false, comment: "Used to track whether a judge (team) should have their affinity appeals distributed to any available judge team even if the set amount of time has not elapsed."
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
@@ -1412,6 +1496,13 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
+  end
+
+  create_table "package_document_types", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -1997,6 +2088,52 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
+  create_table "vbms_document_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "doc_type_id"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2194,10 +2331,23 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
+  add_foreign_key "correspondence_documents", "correspondences"
+  add_foreign_key "correspondence_intakes", "correspondences"
+  add_foreign_key "correspondence_intakes", "users"
+  add_foreign_key "correspondence_relations", "correspondences"
+  add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
+  add_foreign_key "correspondences", "correspondence_types"
+  add_foreign_key "correspondences", "package_document_types"
+  add_foreign_key "correspondences", "users", column: "assigned_by_id"
+  add_foreign_key "correspondences", "users", column: "updated_by_id"
+  add_foreign_key "correspondences", "veterans"
+  add_foreign_key "correspondences_appeals", "appeals"
+  add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
   add_foreign_key "distributed_cases", "tasks"
+  add_foreign_key "distribution_stats", "distributions"
   add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"

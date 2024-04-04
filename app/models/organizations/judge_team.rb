@@ -26,6 +26,12 @@ class JudgeTeam < Organization
         JudgeTeam.all.map(&:attorneys).flatten
       end
     end
+
+    def judges_with_exclude_appeals_from_affinity
+      return [] unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+
+      active.where(exclude_appeals_from_affinity: true).flat_map(&:judge).compact.pluck(:id)
+    end
   end
 
   def judge
