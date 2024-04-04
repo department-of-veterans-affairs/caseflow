@@ -40,7 +40,7 @@ class Events::CreateVeteranOnEvent
       # create EventRecord indicating this is a backfilled Veteran
       EventRecord.create!(event: event, backfill_record: vet)
 
-      return vet
+      vet
     end
   end
 end

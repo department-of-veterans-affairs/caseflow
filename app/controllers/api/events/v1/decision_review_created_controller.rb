@@ -4,11 +4,14 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
     claim_id = drc_params[:claim_id]
-    ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id)
+    payload = drc_params[:payload]
+    headers = request.headers
+    ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, payload)
     render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
+    binding.pry
     render json: { message: error.message }, status: :unprocessable_entity
   end
 
@@ -31,6 +34,6 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   end
 
   def drc_params
-    params.permit(:event_id, :claim_id)
+    params.permit(:event_id, :claim_id, :payload)
   end
 end

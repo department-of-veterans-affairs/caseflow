@@ -4,16 +4,16 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
   let(:parser) do
     instance_double("ParserDouble",
-                    benefit_type: "benefit type",
+                    claim_review_benefit_type: "benefit type",
                     detail_type: "HigherLevelReview",
-                    filed_by_va_gov: true,
-                    legacy_opt_in_approved: true,
-                    receipt_date: DateTime.now.to_s,
-                    veteran_is_not_claimant: false,
-                    establishment_attempted_at: nil,
-                    establishment_last_submitted_at: nil,
-                    establishment_processed_at: nil,
-                    establishment_submitted_at: nil,
+                    claim_review_filed_by_va_gov: true,
+                    claim_review_legacy_opt_in_approved: true,
+                    claim_review_receipt_date: DateTime.now.to_s,
+                    claim_review_veteran_is_not_claimant: false,
+                    claim_review_establishment_attempted_at: nil,
+                    claim_review_establishment_last_submitted_at: nil,
+                    claim_review_establishment_processed_at: nil,
+                    claim_review_establishment_submitted_at: nil,
                     veteran_file_number: "7479234")
   end
 
@@ -29,14 +29,14 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
         expect(described_class.process!(event: event, parser: parser)).to eq(SupplementalClaim.last)
 
         claim_review = SupplementalClaim.last
-        expect(claim_review.benefit_type).to eq(parser.benefit_type)
-        expect(claim_review.filed_by_va_gov).to eq(parser.filed_by_va_gov)
-        expect(claim_review.legacy_opt_in_approved).to eq(parser.legacy_opt_in_approved)
-        expect(claim_review.veteran_is_not_claimant).to eq(parser.veteran_is_not_claimant)
-        expect(claim_review.establishment_attempted_at).to eq(parser.establishment_attempted_at)
-        expect(claim_review.establishment_last_submitted_at).to eq(parser.establishment_last_submitted_at)
-        expect(claim_review.establishment_processed_at).to eq(parser.establishment_processed_at)
-        expect(claim_review.establishment_submitted_at).to eq(parser.establishment_submitted_at)
+        expect(claim_review.benefit_type).to eq(parser.claim_review_benefit_type)
+        expect(claim_review.filed_by_va_gov).to eq(parser.claim_review_filed_by_va_gov)
+        expect(claim_review.legacy_opt_in_approved).to eq(parser.claim_review_legacy_opt_in_approved)
+        expect(claim_review.veteran_is_not_claimant).to eq(parser.claim_review_veteran_is_not_claimant)
+        expect(claim_review.establishment_attempted_at).to eq(parser.claim_review_establishment_attempted_at)
+        expect(claim_review.establishment_last_submitted_at).to eq(parser.claim_review_establishment_last_submitted_at)
+        expect(claim_review.establishment_processed_at).to eq(parser.claim_review_establishment_processed_at)
+        expect(claim_review.establishment_submitted_at).to eq(parser.claim_review_establishment_submitted_at)
         expect(claim_review.veteran_file_number).to eq(parser.veteran_file_number)
       end
     end
@@ -50,14 +50,14 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
         expect(described_class.process!(event: event, parser: parser)).to eq(HigherLevelReview.last)
 
         claim_review = HigherLevelReview.last
-        expect(claim_review.benefit_type).to eq(parser.benefit_type)
-        expect(claim_review.filed_by_va_gov).to eq(parser.filed_by_va_gov)
-        expect(claim_review.legacy_opt_in_approved).to eq(parser.legacy_opt_in_approved)
-        expect(claim_review.veteran_is_not_claimant).to eq(parser.veteran_is_not_claimant)
-        expect(claim_review.establishment_attempted_at).to eq(parser.establishment_attempted_at)
-        expect(claim_review.establishment_last_submitted_at).to eq(parser.establishment_last_submitted_at)
-        expect(claim_review.establishment_processed_at).to eq(parser.establishment_processed_at)
-        expect(claim_review.establishment_submitted_at).to eq(parser.establishment_submitted_at)
+        expect(claim_review.benefit_type).to eq(parser.claim_review_benefit_type)
+        expect(claim_review.filed_by_va_gov).to eq(parser.claim_review_filed_by_va_gov)
+        expect(claim_review.legacy_opt_in_approved).to eq(parser.claim_review_legacy_opt_in_approved)
+        expect(claim_review.veteran_is_not_claimant).to eq(parser.claim_review_veteran_is_not_claimant)
+        expect(claim_review.establishment_attempted_at).to eq(parser.claim_review_establishment_attempted_at)
+        expect(claim_review.establishment_last_submitted_at).to eq(parser.claim_review_establishment_last_submitted_at)
+        expect(claim_review.establishment_processed_at).to eq(parser.claim_review_establishment_processed_at)
+        expect(claim_review.establishment_submitted_at).to eq(parser.claim_review_establishment_submitted_at)
         expect(claim_review.veteran_file_number).to eq(parser.veteran_file_number)
       end
     end
