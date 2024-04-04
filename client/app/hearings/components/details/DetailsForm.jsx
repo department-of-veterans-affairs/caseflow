@@ -28,6 +28,8 @@ const DetailsForm = (props) => {
     hearingRequestTypeDropdownOnchange
   } = props;
 
+  console.log(hearing);
+
   return (
     <React.Fragment>
       <ContentSection header="Hearing Details">
@@ -95,14 +97,16 @@ const DetailsForm = (props) => {
         </div>
       </ContentSection>
 
-      <VirtualHearingFields
-        errors={errors}
-        hearing={hearing}
-        initialHearing={initialHearing}
-        readOnly={readOnly}
-        virtualHearing={hearing?.virtualHearing}
-        update={update}
-      />
+      {((hearing?.isVirtual || hearing?.wasVirtual) || hearing.readableRequestType === 'Video') && (
+        <VirtualHearingFields
+          errors={errors}
+          hearing={hearing}
+          initialHearing={initialHearing}
+          readOnly={readOnly}
+          virtualHearing={hearing?.virtualHearing}
+          update={update}
+        />
+      )}
 
       <EmailNotificationFields
         header="Email Notifications"
