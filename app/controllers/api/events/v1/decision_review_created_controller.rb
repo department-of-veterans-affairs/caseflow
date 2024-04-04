@@ -11,7 +11,6 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
-    binding.pry
     render json: { message: error.message }, status: :unprocessable_entity
   end
 
