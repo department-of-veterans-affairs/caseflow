@@ -29,8 +29,6 @@ class Events::DecisionReviewCreated
         event = find_or_create_event(consumer_event_id)
 
         ActiveRecord::Base.transaction do
-          # TODO: backfill models as needed, set Event.completed_at when finished
-
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
