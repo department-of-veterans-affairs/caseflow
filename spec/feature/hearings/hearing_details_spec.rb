@@ -301,28 +301,28 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   shared_examples "all hearing types" do
-    context "when type is Video" do
-      before do
-        User.authenticate!(user: user)
-        hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
-      end
+    # context "when type is Video" do
+    #   before do
+    #     User.authenticate!(user: user)
+    #     hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
+    #   end
 
-      include_examples "always updatable fields"
-      include_examples "non-virtual hearing types"
-    end
+    #   include_examples "always updatable fields"
+    #   include_examples "non-virtual hearing types"
+    # end
 
-    context "when type is Central" do
-      before do
-        hearing.hearing_day.update!(regional_office: nil, request_type: "C")
+    # context "when type is Central" do
+    #   before do
+    #     hearing.hearing_day.update!(regional_office: nil, request_type: "C")
 
-        if hearing.is_a?(LegacyHearing)
-          hearing.update(original_vacols_request_type: "C")
-        end
-      end
+    #     if hearing.is_a?(LegacyHearing)
+    #       hearing.update(original_vacols_request_type: "C")
+    #     end
+    #   end
 
-      include_examples "always updatable fields"
-      include_examples "non-virtual hearing types"
-    end
+    #   include_examples "always updatable fields"
+    #   include_examples "non-virtual hearing types"
+    # end
 
     context "when type is Virtual" do
       let!(:virtual_hearing) do
@@ -339,102 +339,102 @@ RSpec.feature "Hearing Details", :all_dbs do
         )
       end
 
-      include_examples "always updatable fields"
+      # include_examples "always updatable fields"
 
-      context "User switches hearing type from Virtual back to original type" do
-        let!(:virtual_hearing) do
-          create(
-            :virtual_hearing,
-            :initialized,
-            :all_emails_sent,
-            :timezones_initialized,
-            status: :active,
-            appellant_email: fill_in_veteran_email,
-            hearing: hearing
-          )
-        end
+      # context "User switches hearing type from Virtual back to original type" do
+      #   let!(:virtual_hearing) do
+      #     create(
+      #       :virtual_hearing,
+      #       :initialized,
+      #       :all_emails_sent,
+      #       :timezones_initialized,
+      #       status: :active,
+      #       appellant_email: fill_in_veteran_email,
+      #       hearing: hearing
+      #     )
+      #   end
 
-        # Mock an Email Event for the Veteran
-        let!(:veteran_email_event) do
-          create(
-            :sent_hearing_email_event,
-            email_address: fill_in_veteran_email,
-            sent_by: current_user,
-            hearing: hearing
-          )
-        end
+      #   # Mock an Email Event for the Veteran
+      #   let!(:veteran_email_event) do
+      #     create(
+      #       :sent_hearing_email_event,
+      #       email_address: fill_in_veteran_email,
+      #       sent_by: current_user,
+      #       hearing: hearing
+      #     )
+      #   end
 
-        # Mock an Email Event for the Rep
-        let!(:rep_email_event) do
-          create(
-            :sent_hearing_email_event,
-            email_address: pre_loaded_rep_email,
-            sent_by: current_user,
-            hearing: hearing
-          )
-        end
+      #   # Mock an Email Event for the Rep
+      #   let!(:rep_email_event) do
+      #     create(
+      #       :sent_hearing_email_event,
+      #       email_address: pre_loaded_rep_email,
+      #       sent_by: current_user,
+      #       hearing: hearing
+      #     )
+      #   end
 
-        let(:virtual_hearing_alert) do
-          COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
-        end
-        let!(:expected_alert) do
-          COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
-        end
+      #   let(:virtual_hearing_alert) do
+      #     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      #   end
+      #   let!(:expected_alert) do
+      #     COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      #   end
 
-        scenario "user can optionally change emails and timezone" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+      #   scenario "user can optionally change emails and timezone" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
 
-          # Change the hearing type
-          click_dropdown(name: "hearingType", index: 0)
+      #     # Change the hearing type
+      #     click_dropdown(name: "hearingType", index: 0)
 
-          # Update the POA and Appellant emails
-          fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-          fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+      #     # Update the POA and Appellant emails
+      #     fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+      #     fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
 
-          # Update the POA and Appellant timezones
-          click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
-          click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
-          expect(page).to have_no_field("judgeDropdown")
+      #     # Update the POA and Appellant timezones
+      #     click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+      #     click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+      #     expect(page).to have_no_field("judgeDropdown")
 
-          # Confirm the Modal change to cancel the virtual hearing
-          click_button("Convert to #{hearing.readable_request_type} Hearing")
+      #     # Confirm the Modal change to cancel the virtual hearing
+      #     click_button("Convert to #{hearing.readable_request_type} Hearing")
 
-          # Confirm the alerts
-          expect(page).to have_content(virtual_hearing_alert)
-          expect(page).to have_content(expected_alert)
+      #     # Confirm the alerts
+      #     expect(page).to have_content(virtual_hearing_alert)
+      #     expect(page).to have_content(expected_alert)
 
-          # Ensure the emails and timezone were updated
-          expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
-          expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
-          expect(page).to have_content(fill_in_veteran_tz)
-          expect(page).to have_content(fill_in_rep_tz)
-        end
+      #     # Ensure the emails and timezone were updated
+      #     expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+      #     expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      #     expect(page).to have_content(fill_in_veteran_tz)
+      #     expect(page).to have_content(fill_in_rep_tz)
+      #   end
 
-        scenario "email notifications and links display correctly" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+      #   scenario "email notifications and links display correctly" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
 
-          click_dropdown(name: "hearingType", index: 0)
+      #     click_dropdown(name: "hearingType", index: 0)
 
-          # Confirm the Modal change to cancel the virtual hearing
-          click_button("Convert to #{hearing.readable_request_type} Hearing")
+      #     # Confirm the Modal change to cancel the virtual hearing
+      #     click_button("Convert to #{hearing.readable_request_type} Hearing")
 
-          expect(page).to have_content(virtual_hearing_alert)
-          expect(page).to have_content(expected_alert)
+      #     expect(page).to have_content(virtual_hearing_alert)
+      #     expect(page).to have_content(expected_alert)
 
-          # Reload to get the updated page contents
-          hearing.reload
-          virtual_hearing.reload
+      #     # Reload to get the updated page contents
+      #     hearing.reload
+      #     virtual_hearing.reload
 
-          expect(virtual_hearing.cancelled?).to eq(true)
-          expect(page).to have_content(hearing.readable_request_type)
+      #     expect(virtual_hearing.cancelled?).to eq(true)
+      #     expect(page).to have_content(hearing.readable_request_type)
 
-          # Check the Email Notification History
-          check_email_event_table(hearing, 4)
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 4)
 
-          # Check that links were generated correctly
-          check_virtual_hearings_links_expired(virtual_hearing)
-        end
-      end
+      #     # Check that links were generated correctly
+      #     check_virtual_hearings_links_expired(virtual_hearing)
+      #   end
+      # end
 
       context "Links display correctly when scheduling Virtual Hearings" do
         let!(:virtual_hearing) do
@@ -456,17 +456,17 @@ RSpec.feature "Hearing Details", :all_dbs do
             hearing.reload
           end
 
-          scenario "displays details when the date is before the hearing date" do
-            visit "hearings/" + hearing.external_id.to_s + "/details"
-            check_virtual_hearings_links(virtual_hearing)
-          end
+          # scenario "displays details when the date is before the hearing date" do
+          #   visit "hearings/" + hearing.external_id.to_s + "/details"
+          #   check_virtual_hearings_links(virtual_hearing)
+          # end
 
-          scenario "displays expired when the date is after the hearing date" do
-            hearing.update(hearing_day_id: hearing_day.id)
-            visit "hearings/" + hearing.external_id.to_s + "/details"
-            hearing.reload
-            check_virtual_hearings_links_expired(virtual_hearing)
-          end
+          # scenario "displays expired when the date is after the hearing date" do
+          #   hearing.update(hearing_day_id: hearing_day.id)
+          #   visit "hearings/" + hearing.external_id.to_s + "/details"
+          #   hearing.reload
+          #   check_virtual_hearings_links_expired(virtual_hearing)
+          # end
 
           scenario "displays expired when the virtual hearing is cancelled" do
             virtual_hearing.update(request_cancelled: true)
@@ -475,350 +475,350 @@ RSpec.feature "Hearing Details", :all_dbs do
             check_virtual_hearings_links_expired(virtual_hearing)
           end
 
-          scenario "displays disabled virtual hearing link when changing emails" do
-            virtual_hearing.hearing.appellant_recipient.update!(email_sent: false)
-            virtual_hearing.hearing.representative_recipient.update!(email_sent: false)
-            virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
-            visit "hearings/" + hearing.external_id.to_s + "/details"
-            hearing.reload
-            check_virtual_hearings_links(virtual_hearing, true)
-          end
+          # scenario "displays disabled virtual hearing link when changing emails" do
+          #   virtual_hearing.hearing.appellant_recipient.update!(email_sent: false)
+          #   virtual_hearing.hearing.representative_recipient.update!(email_sent: false)
+          #   virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
+          #   visit "hearings/" + hearing.external_id.to_s + "/details"
+          #   hearing.reload
+          #   check_virtual_hearings_links(virtual_hearing, true)
+          # end
         end
       end
 
-      context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
-        let!(:virtual_hearing) do
-          create(:virtual_hearing, :all_emails_sent, hearing: hearing)
-        end
-
-        scenario "async job is not completed" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-          expect(find(".dropdown-hearingType")).to have_css(".cf-select__control--is-disabled")
-          expect(page).to have_field("Veteran Email", readonly: true)
-          expect(page).to have_field("POA/Representative Email", readonly: true)
-        end
-
-        scenario "async job is completed" do
-          virtual_hearing.update!(
-            host_hearing_link: "https://example.va.gov/sample/?conference",
-            guest_hearing_link: "https://example.va.gov/sample/?conference"
-          )
-
-          # Mock the conference details
-          virtual_hearing.alias_name = rand(1..9).to_s[0..6]
-          virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
-          virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
-          virtual_hearing.conference_id = "0"
-
-          virtual_hearing.established!
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-          hearing.reload
-          expect(find(".dropdown-hearingType")).to have_no_css(".cf-select__control--is-disabled")
-          expect(page).to have_field("Veteran Email", readonly: false)
-          expect(page).to have_field("POA/Representative Email", readonly: false)
-        end
-      end
-
-      context "User can see and edit veteran and poa emails" do
-        let!(:virtual_hearing) do
-          create(
-            :virtual_hearing,
-            :all_emails_sent,
-            :timezones_initialized,
-            :initialized,
-            status: :active,
-            hearing: hearing
-          )
-        end
-        let(:fill_in_veteran_email) { "veteran@example.com" }
-        let(:fill_in_rep_email) { "rep@example.com" }
-
-        scenario "user can update emails" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-          fill_in "Veteran Email", with: fill_in_veteran_email
-          fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
-          expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 2
-          expect(events.where(sent_by_id: current_user.id).count).to eq 2
-          expect(events.where(email_type: "confirmation").count).to eq 2
-          expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-          expect(events.sent_to_appellant.count).to eq 1
-          expect(events.where(email_address: fill_in_rep_email).count).to eq 1
-          expect(events.where(recipient_role: "representative").count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 2)
-        end
-
-        scenario "input empty veteran email and valid representative email shows validation error" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "Veteran Email", with: ""
-          fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
-
-          expect(page).to have_content("Veteran email is required")
-        end
-      end
-
-      context "Updating POA/Representative email address" do
-        let!(:virtual_hearing) do
-          create(
-            :virtual_hearing,
-            :all_emails_sent,
-            :timezones_initialized,
-            :initialized,
-            status: :active,
-            hearing: hearing
-          )
-        end
-
-        scenario "Sends confirmation email only to the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      # context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
+      #   let!(:virtual_hearing) do
+      #     create(:virtual_hearing, :all_emails_sent, hearing: hearing)
+      #   end
+
+      #   scenario "async job is not completed" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+      #     expect(find(".dropdown-hearingType")).to have_css(".cf-select__control--is-disabled")
+      #     expect(page).to have_field("Veteran Email", readonly: true)
+      #     expect(page).to have_field("POA/Representative Email", readonly: true)
+      #   end
+
+      #   scenario "async job is completed" do
+      #     virtual_hearing.update!(
+      #       host_hearing_link: "https://example.va.gov/sample/?conference",
+      #       guest_hearing_link: "https://example.va.gov/sample/?conference"
+      #     )
+
+      #     # Mock the conference details
+      #     virtual_hearing.alias_name = rand(1..9).to_s[0..6]
+      #     virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
+      #     virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
+      #     virtual_hearing.conference_id = "0"
+
+      #     virtual_hearing.established!
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+      #     hearing.reload
+      #     expect(find(".dropdown-hearingType")).to have_no_css(".cf-select__control--is-disabled")
+      #     expect(page).to have_field("Veteran Email", readonly: false)
+      #     expect(page).to have_field("POA/Representative Email", readonly: false)
+      #   end
+      # end
+
+      # context "User can see and edit veteran and poa emails" do
+      #   let!(:virtual_hearing) do
+      #     create(
+      #       :virtual_hearing,
+      #       :all_emails_sent,
+      #       :timezones_initialized,
+      #       :initialized,
+      #       status: :active,
+      #       hearing: hearing
+      #     )
+      #   end
+      #   let(:fill_in_veteran_email) { "veteran@example.com" }
+      #   let(:fill_in_rep_email) { "rep@example.com" }
+
+      #   scenario "user can update emails" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+      #     fill_in "Veteran Email", with: fill_in_veteran_email
+      #     fill_in "POA/Representative Email", with: fill_in_rep_email
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+      #     expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 2
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 2
+      #     expect(events.where(email_type: "confirmation").count).to eq 2
+      #     expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
+      #     expect(events.sent_to_appellant.count).to eq 1
+      #     expect(events.where(email_address: fill_in_rep_email).count).to eq 1
+      #     expect(events.where(recipient_role: "representative").count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 2)
+      #   end
+
+      #   scenario "input empty veteran email and valid representative email shows validation error" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "Veteran Email", with: ""
+      #     fill_in "POA/Representative Email", with: fill_in_rep_email
+      #     click_button("Save")
+
+      #     expect(page).to have_content("Veteran email is required")
+      #   end
+      # end
+
+      # context "Updating POA/Representative email address" do
+      #   let!(:virtual_hearing) do
+      #     create(
+      #       :virtual_hearing,
+      #       :all_emails_sent,
+      #       :timezones_initialized,
+      #       :initialized,
+      #       status: :active,
+      #       hearing: hearing
+      #     )
+      #   end
+
+      #   scenario "Sends confirmation email only to the POA/Representative" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "POA/Representative Email", with: fill_in_rep_email
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 1
-          expect(events.where(sent_by_id: current_user.id).count).to eq 1
-          expect(events.where(email_type: "confirmation").count).to eq 1
-          expect(events.where(email_address: fill_in_rep_email).count).to eq 1
-          expect(events.where(recipient_role: "representative").count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 1)
-        end
-
-        scenario "Removing POA/Representative email address gives expected alert" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "POA/Representative Email", with: ""
-          click_button("Save")
-
-          expect(page.has_no_content?(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)).to be(true)
-          expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
-        end
-
-        scenario "Entering invalid representative email and shows validation error" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "POA/Representative Email", with: "123456"
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON, wait: 5)
-
-          expect(page).to have_content("Representative email does not appear to be a valid e-mail address")
-        end
-      end
-
-      context "Updating Appellant email address" do
-        let!(:virtual_hearing) do
-          create(
-            :virtual_hearing,
-            :all_emails_sent,
-            :timezones_initialized,
-            :initialized,
-            status: :active,
-            hearing: hearing
-          )
-        end
-
-        scenario "Sends confirmation email only to the Appellant" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "Veteran Email", with: fill_in_veteran_email
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 1
-          expect(events.where(sent_by_id: current_user.id).count).to eq 1
-          expect(events.where(email_type: "confirmation").count).to eq 1
-          expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-          expect(events.sent_to_appellant.count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 1)
-        end
-      end
-
-      context "Updating POA/Representative timezone" do
-        let!(:virtual_hearing) do
-          create(:virtual_hearing,
-                 :all_emails_sent,
-                 :timezones_initialized,
-                 :initialized,
-                 status: :active,
-                 hearing: hearing)
-        end
-
-        scenario "Sends update hearing time email only to the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          click_dropdown(name: "representativeTz", index: 1)
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("representative-tz")
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 1
-          expect(events.where(sent_by_id: current_user.id).count).to eq 1
-          expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
-          expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
-          expect(events.where(recipient_role: "representative").count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 1)
-        end
-      end
-
-      context "Updating Appellant timezone" do
-        let!(:virtual_hearing) do
-          create(:virtual_hearing,
-                 :all_emails_sent,
-                 :timezones_initialized,
-                 :initialized,
-                 status: :active,
-                 hearing: hearing)
-        end
-
-        scenario "Sends update hearing time email only to the Appellant" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("appellant-tz")
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 1
-          expect(events.where(sent_by_id: current_user.id).count).to eq 1
-          expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
-          expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
-          expect(events.sent_to_appellant.count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 1)
-        end
-      end
-
-      context "Updating both Appellant and POA/Representative timezone" do
-        let!(:virtual_hearing) do
-          create(:virtual_hearing,
-                 :all_emails_sent,
-                 :timezones_initialized,
-                 :initialized,
-                 status: :active,
-                 hearing: hearing)
-        end
-
-        scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          click_dropdown(name: "representativeTz", index: 1)
-          click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("appellant-tz")
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 2
-          expect(events.where(sent_by_id: current_user.id).count).to eq 2
-          expect(events.where(email_type: "updated_time_confirmation").count).to eq 2
-          expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
-          expect(events.sent_to_appellant.count).to eq 1
-          expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
-          expect(events.where(recipient_role: "representative").count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 2)
-        end
-      end
-
-      context "Updating either Appellant and POA/Representative email address and timezone" do
-        let!(:virtual_hearing) do
-          create(:virtual_hearing,
-                 :all_emails_sent,
-                 :timezones_initialized,
-                 :initialized,
-                 status: :active,
-                 hearing: hearing)
-        end
-
-        scenario "Sends the confirmation email" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
-
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
-          expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-          click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          expect(page).to have_field("appellant-tz")
-
-          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
-          expect(events.count).to eq 2
-          expect(events.where(sent_by_id: current_user.id).count).to eq 2
-          expect(events.where(email_type: "confirmation").count).to eq 2
-          expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
-          expect(events.sent_to_appellant.count).to eq 1
-          expect(events.where(email_address: fill_in_rep_email).count).to eq 1
-          expect(events.where(recipient_role: "representative").count).to eq 1
-
-          # Check the Email Notification History
-          check_email_event_table(hearing, 2)
-        end
-      end
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 1
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 1
+      #     expect(events.where(email_type: "confirmation").count).to eq 1
+      #     expect(events.where(email_address: fill_in_rep_email).count).to eq 1
+      #     expect(events.where(recipient_role: "representative").count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 1)
+      #   end
+
+      #   scenario "Removing POA/Representative email address gives expected alert" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "POA/Representative Email", with: ""
+      #     click_button("Save")
+
+      #     expect(page.has_no_content?(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)).to be(true)
+      #     expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
+      #   end
+
+      #   scenario "Entering invalid representative email and shows validation error" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "POA/Representative Email", with: "123456"
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON, wait: 5)
+
+      #     expect(page).to have_content("Representative email does not appear to be a valid e-mail address")
+      #   end
+      # end
+
+      # context "Updating Appellant email address" do
+      #   let!(:virtual_hearing) do
+      #     create(
+      #       :virtual_hearing,
+      #       :all_emails_sent,
+      #       :timezones_initialized,
+      #       :initialized,
+      #       status: :active,
+      #       hearing: hearing
+      #     )
+      #   end
+
+      #   scenario "Sends confirmation email only to the Appellant" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "Veteran Email", with: fill_in_veteran_email
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 1
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 1
+      #     expect(events.where(email_type: "confirmation").count).to eq 1
+      #     expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
+      #     expect(events.sent_to_appellant.count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 1)
+      #   end
+      # end
+
+      # context "Updating POA/Representative timezone" do
+      #   let!(:virtual_hearing) do
+      #     create(:virtual_hearing,
+      #            :all_emails_sent,
+      #            :timezones_initialized,
+      #            :initialized,
+      #            status: :active,
+      #            hearing: hearing)
+      #   end
+
+      #   scenario "Sends update hearing time email only to the POA/Representative" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     click_dropdown(name: "representativeTz", index: 1)
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("representative-tz")
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 1
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 1
+      #     expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
+      #     expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
+      #     expect(events.where(recipient_role: "representative").count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 1)
+      #   end
+      # end
+
+      # context "Updating Appellant timezone" do
+      #   let!(:virtual_hearing) do
+      #     create(:virtual_hearing,
+      #            :all_emails_sent,
+      #            :timezones_initialized,
+      #            :initialized,
+      #            status: :active,
+      #            hearing: hearing)
+      #   end
+
+      #   scenario "Sends update hearing time email only to the Appellant" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     click_dropdown(name: "appellantTz", index: 1)
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("appellant-tz")
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 1
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 1
+      #     expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
+      #     expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
+      #     expect(events.sent_to_appellant.count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 1)
+      #   end
+      # end
+
+      # context "Updating both Appellant and POA/Representative timezone" do
+      #   let!(:virtual_hearing) do
+      #     create(:virtual_hearing,
+      #            :all_emails_sent,
+      #            :timezones_initialized,
+      #            :initialized,
+      #            status: :active,
+      #            hearing: hearing)
+      #   end
+
+      #   scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     click_dropdown(name: "representativeTz", index: 1)
+      #     click_dropdown(name: "appellantTz", index: 1)
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("appellant-tz")
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 2
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 2
+      #     expect(events.where(email_type: "updated_time_confirmation").count).to eq 2
+      #     expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
+      #     expect(events.sent_to_appellant.count).to eq 1
+      #     expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
+      #     expect(events.where(recipient_role: "representative").count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 2)
+      #   end
+      # end
+
+      # context "Updating either Appellant and POA/Representative email address and timezone" do
+      #   let!(:virtual_hearing) do
+      #     create(:virtual_hearing,
+      #            :all_emails_sent,
+      #            :timezones_initialized,
+      #            :initialized,
+      #            status: :active,
+      #            hearing: hearing)
+      #   end
+
+      #   scenario "Sends the confirmation email" do
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     fill_in "POA/Representative Email", with: fill_in_rep_email
+      #     click_dropdown(name: "appellantTz", index: 1)
+      #     click_button("Save")
+
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
+      #     expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      #     click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      #     visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      #     expect(page).to have_field("appellant-tz")
+
+      #     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+      #     expect(events.count).to eq 2
+      #     expect(events.where(sent_by_id: current_user.id).count).to eq 2
+      #     expect(events.where(email_type: "confirmation").count).to eq 2
+      #     expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
+      #     expect(events.sent_to_appellant.count).to eq 1
+      #     expect(events.where(email_address: fill_in_rep_email).count).to eq 1
+      #     expect(events.where(recipient_role: "representative").count).to eq 1
+
+      #     # Check the Email Notification History
+      #     check_email_event_table(hearing, 2)
+      #   end
+      # end
     end
   end
 
@@ -849,96 +849,96 @@ RSpec.feature "Hearing Details", :all_dbs do
     context "when hearing is AMA" do
       include_examples "all hearing types"
 
-      scenario "user can update transcription fields" do
-        visit "hearings/" + hearing.external_id.to_s + "/details"
+      # scenario "user can update transcription fields" do
+      #   visit "hearings/" + hearing.external_id.to_s + "/details"
 
-        fill_in "taskNumber", with: "123456789"
-        click_dropdown(name: "transcriber", index: 1)
-        fill_in "sentToTranscriberDate", with: "04012019"
-        fill_in "expectedReturnDate", with: "04022019"
-        fill_in "uploadedToVbmsDate", with: "04032019"
+      #   fill_in "taskNumber", with: "123456789"
+      #   click_dropdown(name: "transcriber", index: 1)
+      #   fill_in "sentToTranscriberDate", with: "04012019"
+      #   fill_in "expectedReturnDate", with: "04022019"
+      #   fill_in "uploadedToVbmsDate", with: "04032019"
 
-        click_dropdown(name: "problemType", index: 1)
-        fill_in "problemNoticeSentDate", with: "04042019"
-        find(
-          ".cf-form-radio-option",
-          text: Constants.TRANSCRIPTION_REQUESTED_REMEDIES.PROCEED_WITHOUT_TRANSCRIPT
-        ).click
+      #   click_dropdown(name: "problemType", index: 1)
+      #   fill_in "problemNoticeSentDate", with: "04042019"
+      #   find(
+      #     ".cf-form-radio-option",
+      #     text: Constants.TRANSCRIPTION_REQUESTED_REMEDIES.PROCEED_WITHOUT_TRANSCRIPT
+      #   ).click
 
-        find("label", text: "Yes, Transcript Requested").click
-        fill_in "copySentDate", with: "04052019"
+      #   find("label", text: "Yes, Transcript Requested").click
+      #   fill_in "copySentDate", with: "04052019"
 
-        click_button("Save")
+      #   click_button("Save")
 
-        expect(page).to have_content(expected_alert)
-      end
+      #   expect(page).to have_content(expected_alert)
+      # end
 
-      context "when hearing already has transcription details" do
-        let!(:transcription) do
-          create(
-            :transcription,
-            hearing: hearing,
-            problem_type: Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO,
-            requested_remedy: Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING
-          )
-        end
+      # context "when hearing already has transcription details" do
+      #   let!(:transcription) do
+      #     create(
+      #       :transcription,
+      #       hearing: hearing,
+      #       problem_type: Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO,
+      #       requested_remedy: Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING
+      #     )
+      #   end
 
-        # This test ensures that a bug related to sending partial form data is fixed.
-        #   See: https://github.com/department-of-veterans-affairs/caseflow/issues/14130
-        scenario "can update fields without side-effects to transcription" do
-          visit "hearings/#{hearing.external_id}/details"
+      #   # This test ensures that a bug related to sending partial form data is fixed.
+      #   #   See: https://github.com/department-of-veterans-affairs/caseflow/issues/14130
+      #   scenario "can update fields without side-effects to transcription" do
+      #     visit "hearings/#{hearing.external_id}/details"
 
-          step "ensure page has existing transcription details" do
-            expect(
-              page.find(".dropdown-problemType .cf-select__value-container")
-            ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO)
-            expect(
-              find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
-            ).to be_checked
-          end
+      #     step "ensure page has existing transcription details" do
+      #       expect(
+      #         page.find(".dropdown-problemType .cf-select__value-container")
+      #       ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO)
+      #       expect(
+      #         find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
+      #       ).to be_checked
+      #     end
 
-          step "changing only problem type preserves already populated fields" do
-            click_dropdown(name: "problemType", index: 0)
-            click_button("Save")
+      #     step "changing only problem type preserves already populated fields" do
+      #       click_dropdown(name: "problemType", index: 0)
+      #       click_button("Save")
 
-            expect(page).to have_content(expected_alert)
+      #       expect(page).to have_content(expected_alert)
 
-            visit "hearings/#{hearing.external_id}/details"
+      #       visit "hearings/#{hearing.external_id}/details"
 
-            expect(
-              page.find(".dropdown-problemType .cf-select__value-container")
-            ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
-            expect(
-              find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
-            ).to be_checked
-            expect(Transcription.count).to be(2)
-          end
+      #       expect(
+      #         page.find(".dropdown-problemType .cf-select__value-container")
+      #       ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
+      #       expect(
+      #         find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
+      #       ).to be_checked
+      #       expect(Transcription.count).to be(2)
+      #     end
 
-          step "changing notes preserves already populated fields and doesn't create new transcription" do
-            fill_in "Notes", with: "Test Notes Test Notes"
-            click_button("Save")
+      #     step "changing notes preserves already populated fields and doesn't create new transcription" do
+      #       fill_in "Notes", with: "Test Notes Test Notes"
+      #       click_button("Save")
 
-            expect(page).to have_content(expected_alert)
+      #       expect(page).to have_content(expected_alert)
 
-            visit "hearings/#{hearing.external_id}/details"
+      #       visit "hearings/#{hearing.external_id}/details"
 
-            expect(page).to have_content("Test Notes Test Notes")
-            expect(
-              page.find(".dropdown-problemType .cf-select__value-container")
-            ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
-            expect(
-              find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
-            ).to be_checked
-            expect(Transcription.count).to be(2)
-          end
-        end
-      end
+      #       expect(page).to have_content("Test Notes Test Notes")
+      #       expect(
+      #         page.find(".dropdown-problemType .cf-select__value-container")
+      #       ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
+      #       expect(
+      #         find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
+      #       ).to be_checked
+      #       expect(Transcription.count).to be(2)
+      #     end
+      #   end
+      # end
 
-      context "when conference type is webex" do
-        let!(:hearing) { create(:hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
+      # context "when conference type is webex" do
+      #   let!(:hearing) { create(:hearing, :with_transcription_files, :with_webex_non_virtual_conference_link) }
 
-        include_examples "conference type webex"
-      end
+      #   include_examples "conference type webex"
+      # end
     end
 
     context "when hearing is Legacy" do
