@@ -48,7 +48,7 @@ module Caseflow
         #
         # @note Inspired by {Caseflow::Migration} https://github.com/department-of-veterans-affairs/caseflow/blob/6fc9d26a5ae9417b69d7d1f30cc70bea57a0700d/lib/caseflow/migration.rb#L12-L29
         def add_safe_index(*args)
-          original_statement_timeout_duration = get_current_statement_timeout_duration
+          original_statement_timeout_duration = current_statement_timeout_duration
           extend_statement_timeout
           add_index_concurrently(args)
         rescue StandardError => error
@@ -60,7 +60,7 @@ module Caseflow
 
         private
 
-        def get_current_statement_timeout_duration
+        def current_statement_timeout_duration
           ActiveSupport::Duration.build(
             ActiveRecord::Base.connection.execute("SHOW statement_timeout").first["statement_timeout"].to_i
           )
@@ -69,7 +69,8 @@ module Caseflow
         def extend_statement_timeout
           say "Extending statement_timeout to #{EXTENDED_STATEMENT_TIMEOUT_DURATION.inspect}"
           ActiveRecord::Base.connection.execute(
-            "SET statement_timeout = #{EXTENDED_STATEMENT_TIMEOUT_DURATION.in_milliseconds}"
+            ActiveRecord::Base.sanitize_sql(["SET statement_timeout = ?",
+                                             EXTENDED_STATEMENT_TIMEOUT_DURATION.in_milliseconds])
           )
         end
 
@@ -87,9 +88,12 @@ module Caseflow
           remove_index(table, options)
         end
 
+        # :reek:FeatureEnvy
         def restore_original_statement_timeout(duration)
           say "Restoring statement_timeout to #{duration.inspect}"
-          ActiveRecord::Base.connection.execute("SET statement_timeout = #{duration.in_milliseconds}")
+          ActiveRecord::Base.connection.execute(
+            ActiveRecord::Base.sanitize_sql(["SET statement_timeout = ?", duration.in_milliseconds])
+          )
         end
       end
     end
