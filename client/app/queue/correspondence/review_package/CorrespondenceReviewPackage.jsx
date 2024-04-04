@@ -38,6 +38,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [isInboundOpsTeam, setIsInboundOpsTeam] = useState(false);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
@@ -50,11 +51,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const fetchData = async () => {
     const correspondence = props;
-
+    const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-      const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
 
       setIsInboundOpsTeam(Boolean(inboundOpsTeam));
 
@@ -67,6 +67,15 @@ export const CorrespondenceReviewPackage = (props) => {
 
       // Return true if a removePackageTask that is currently assigned is found, else false
       return (typeof assignedRemoveTask !== 'undefined');
+    };
+
+    // When a reassign package task is active and pending review, the page is read-only
+    const hasAssignedReassignPackageTask = (tasks) => {
+      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+          task.type === 'ReassignPackageTask');
+
+      // Return true if a reassignPackageTask that is currently assigned is found, else false
+      return (typeof assignedReassignTask !== 'undefined') && inboundOpsTeam;
     };
 
     try {
@@ -107,6 +116,15 @@ export const CorrespondenceReviewPackage = (props) => {
           bannerType: 'info'
         });
         setIsReadOnly(true);
+      }
+      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
+        setBannerInformation({
+          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          bannerType: 'info'
+        });
+        setIsReadOnly(true);
+        setIsReassignPackage(true);
       }
     } catch (error) {
       console.error(error);
@@ -196,6 +214,8 @@ export const CorrespondenceReviewPackage = (props) => {
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
+            isReassignPackage={isReassignPackage}
+            mailTeamUsers={props.mailTeamUsers}
             isInboundOpsTeam={isInboundOpsTeam}
           />
           <ReviewPackageData
@@ -270,6 +290,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
 CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
+  mailTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,

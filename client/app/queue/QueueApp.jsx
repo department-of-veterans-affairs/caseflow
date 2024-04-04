@@ -633,8 +633,11 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReviewPackage = (props) => (
-    <ReviewPackageLoadingScreen {...props.match.params}>
-      <CorrespondenceReviewPackage {...props.match.params} />
+    <ReviewPackageLoadingScreen mailTeamUsers= {props.mailTeamUsers} {...props.match.params}>
+      <CorrespondenceReviewPackage
+        mailTeamUsers= {this.props.mailTeamUsers}
+        {...props.match.params}
+      />
     </ReviewPackageLoadingScreen>
   );
 
@@ -1511,6 +1514,7 @@ QueueApp.propTypes = {
   isMailTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
   isMailSuperUser: PropTypes.bool,
+  mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
