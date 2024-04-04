@@ -46,6 +46,9 @@ class SeedDB
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies (other seeds should go in ./optional.rb)
+
+    Judge.list_all
+    Attorney.list_all
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
