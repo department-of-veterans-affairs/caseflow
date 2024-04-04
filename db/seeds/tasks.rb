@@ -559,8 +559,8 @@ module Seeds
       # Tell sentry so we know this is still happening. Remove this in a month
       # The atty task update function changes the type of the JudgeAssignTask to
       # a JudgeDecisionReviewTask.name which is a bit of a rough situation
-      atty_task.reload.update!(status: Constants.TASK_STATUSES.completed)
-      judge_task.reload.update!(status: Constants.TASK_STATUSES.completed)
+      atty_task.update!(status: Constants.TASK_STATUSES.completed)
+      judge_task.update!(status: Constants.TASK_STATUSES.completed)
       distribution_task.update!(status: Constants.TASK_STATUSES.completed)
 
       qr_org_task = QualityReviewTask.create_from_root_task(root_task)

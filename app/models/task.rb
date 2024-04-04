@@ -400,7 +400,8 @@ class Task < CaseflowRecord
     # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
     # TODO: This is probably a DB call because of .open?
     # return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
-    # The child.assigned_to probably can't be avoided
+
+    # TODO: The child.assigned_to probably can't be avoided see if it's possible since this sucks
     return false if assigned_to.is_a?(Organization) &&
                     children.any? { |child| child.open? && child.assigned_to == user }
 
