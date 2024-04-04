@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser,
-  initialCamoAssignTasksToVhaProgramOffice,
-  initialSpecialtyCaseTeamAssignTasksToUser
+  initialCamoAssignTasksToVhaProgramOffice
 } from './QueueActions';
 import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
 import AssignToVhaProgramOfficeWidget from './components/AssignToVhaProgramOfficeWidget';
@@ -20,10 +19,7 @@ import {
 import {
   judgeAssignTasksSelector,
   selectedTasksSelector,
-  camoAssignTasksSelector,
-  specialtyCaseTeamAssignTasksSelector,
-  isVhaCamoOrg,
-  isSpecialtyCaseTeamOrg
+  camoAssignTasksSelector
 } from './selectors';
 import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
@@ -47,44 +43,34 @@ class UnassignedCasesPage extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, selectedTasks, success, error, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
+    const { userId, selectedTasks, success, error, userIsCamoEmployee } = this.props;
     let assignWidget;
-
-    const commonAssignProps = {
-      userId,
-      previousAssigneeId: userId,
-      selectedTasks,
-    };
 
     if (userIsCamoEmployee) {
       assignWidget = <AssignToVhaProgramOfficeWidget
-        {...commonAssignProps}
-        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice} />;
-    } else if (userIsSCTCoordinator) {
-      assignWidget = <AssignToAttorneyWidget
-        {...commonAssignProps}
-        onTaskAssignment={this.props.initialSpecialtyCaseTeamAssignTasksToUser}
-        selectedAssignee="OTHER"
-        hidePrimaryAssignDropdown
-        secondaryAssignDropdownLabel="Select an attorney"
-      />;
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
     } else {
       assignWidget = <AssignToAttorneyWidget
-        {...commonAssignProps}
-        onTaskAssignment={this.props.initialAssignTasksToUser} />;
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialAssignTasksToUser}
+        selectedTasks={selectedTasks}
+        showRequestCasesButton />;
     }
 
-    const HeadingTag = userIsSCTCoordinator ? 'h1' : 'h2';
-
     return <React.Fragment>
-      <HeadingTag {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</HeadingTag>
+      <h2 {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <div {...assignSectionStyling}>
         <React.Fragment>
           <div {...assignAndRequestStyling}>
             {assignWidget}
-            {!userIsCamoEmployee && !userIsSCTCoordinator && <RequestDistributionButton userId={userId} />}
+            {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
@@ -102,8 +88,8 @@ class UnassignedCasesPage extends React.PureComponent {
               includeType
               includeDocketNumber
               includeIssueCount
-              {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
-              {...((userIsSCTCoordinator) ? { includeDaysWaiting: false } : { includeDaysWaiting: true })}
+              {...(userIsCamoEmployee ? { includeIssueTypes: true } : {})}
+              includeDaysWaiting
               includeReaderLink
               includeNewDocsIcon
               tasks={this.props.tasks}
@@ -125,7 +111,6 @@ const mapStateToProps = (state, ownProps) => {
     },
     ui: {
       userIsCamoEmployee,
-      userIsSCTCoordinator,
       messages: {
         success,
         error
@@ -135,12 +120,8 @@ const mapStateToProps = (state, ownProps) => {
 
   let taskSelector = judgeAssignTasksSelector(state);
 
-  if (userIsCamoEmployee && isVhaCamoOrg(state)) {
+  if (userIsCamoEmployee) {
     taskSelector = camoAssignTasksSelector(state);
-  }
-
-  if (userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state)) {
-    taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
 
   return {
@@ -152,8 +133,7 @@ const mapStateToProps = (state, ownProps) => {
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
     error,
-    userIsCamoEmployee: isVhaCamoOrg(state),
-    userIsSCTCoordinator: isSpecialtyCaseTeamOrg(state)
+    userIsCamoEmployee
   };
 };
 
@@ -165,7 +145,6 @@ UnassignedCasesPage.propTypes = {
   distributionCompleteCasesLoading: PropTypes.bool,
   initialAssignTasksToUser: PropTypes.func,
   initialCamoAssignTasksToVhaProgramOffice: PropTypes.func,
-  initialSpecialtyCaseTeamAssignTasksToUser: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   error: PropTypes.shape({
@@ -176,17 +155,13 @@ UnassignedCasesPage.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  userIsCamoEmployee: PropTypes.bool,
-  userIsSCTCoordinator: PropTypes.bool,
-  isVhaCamoOrg: PropTypes.bool,
-  isSpecialtyCaseTeamOrg: PropTypes.bool,
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser,
     initialCamoAssignTasksToVhaProgramOffice,
-    initialSpecialtyCaseTeamAssignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
   }, dispatch);

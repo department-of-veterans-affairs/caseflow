@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { indexOf } from 'lodash';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
@@ -68,12 +68,12 @@ const QueueTableBuilder = (props) => {
   }, []);
 
   const calculateActiveTabIndex = (config) => {
-    const tabNames = config.tabs.filter((tab) => !tab.hide_from_queue_table_view).map((tab) => {
+    const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
 
     const activeTab = paginationOptions().tab || config.active_tab;
-    const index = indexOf(tabNames, activeTab);
+    const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
@@ -242,11 +242,9 @@ const QueueTableBuilder = (props) => {
   };
 
   const tabsFromConfig = (config) =>
-    (config.tabs || []).
-      filter((tabConfig) => !tabConfig.hide_from_queue_table_view).
-      map((tabConfig) =>
-        taskTableTabFactory(tabConfig, config)
-      );
+    (config.tabs || []).map((tabConfig) =>
+      taskTableTabFactory(tabConfig, config)
+    );
 
   const config = queueConfig();
 

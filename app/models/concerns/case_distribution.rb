@@ -22,17 +22,9 @@ module CaseDistribution
   def collect_appeals
     appeals = yield
     appeals.compact!
-    @rem -= calculate_reduction(appeals)
+    @rem -= appeals.count
     @appeals += appeals
     appeals
-  end
-
-  def calculate_reduction(appeals)
-    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
-      appeals.count { |appeal| !appeal.sct_appeal }
-    else
-      appeals.count
-    end
   end
 
   def priority_target

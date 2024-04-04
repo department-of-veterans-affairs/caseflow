@@ -142,13 +142,7 @@ describe Distribution, :all_dbs do
         batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
         evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
         legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
-        algorithm: "proportions", sct_appeals: 0
-      }
-    end
-    let(:result_stats) do
-      {
-        batch_size: 0,
-        info: "See related row in distribution_stats for additional stats"
+        algorithm: "proportions"
       }
     end
 
@@ -157,7 +151,7 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
+        .with(status: "completed", completed_at: Time.zone.now, statistics: statistics)
         .exactly(1).times
 
       new_distribution.distribute!

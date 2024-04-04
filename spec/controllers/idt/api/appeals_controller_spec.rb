@@ -731,22 +731,22 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let(:params) do
       {
         "request_address": {
-          "addressLine1": "string",
-          "addressLine2": "string",
-          "addressLine3": "string",
+          "address_line_1": "string",
+          "address_line_2": "string",
+          "address_line_3": "string",
           "city": "string",
-          "zipCode5": "string",
-          "zipCode4": "string",
-          "internationalPostalCode": "string",
-          "stateProvince": {
+          "zip_code_5": "string",
+          "zip_code_4": "string",
+          "international_postal_code": "string",
+          "state_province": {
             "name": "string",
             "code": "string"
           },
-          "requestCountry": {
-            "countryName": "string",
-            "countryCode": "string"
+          "request_country": {
+            "country_name": "string",
+            "country_code": "string"
           },
-          "addressPOU": "RESIDENCE/CHOICE"
+          "address_pou": "RESIDENCE/CHOICE"
         }
       }
     end

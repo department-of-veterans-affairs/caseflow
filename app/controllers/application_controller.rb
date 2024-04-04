@@ -49,7 +49,7 @@ class ApplicationController < ApplicationBaseController
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
-    MetricsService.increment_counter(
+    DataDogService.increment_counter(
       metric_group: "errors",
       metric_name: "non_critical",
       app_name: RequestStore[:application],

@@ -73,12 +73,6 @@ export const pdfReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SET_RENDER_START_TIME:
-    return update(state, {
-      renderStartTime: {
-        $set: action.payload.renderStartTime
-      }
-    });
   default:
     return state;
   }

@@ -4,7 +4,7 @@ class BusinessMetrics
   def self.record(service: nil, name: "unknown")
     app_name = RequestStore[:application] || "other"
 
-    MetricsService.increment_counter(
+    DataDogService.increment_counter(
       metric_group: "business",
       metric_name: "event",
       app_name: app_name,

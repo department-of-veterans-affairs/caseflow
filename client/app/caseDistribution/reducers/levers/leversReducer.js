@@ -1,9 +1,9 @@
 import { ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 import {
-  updateLeverGroupForValue,
-  updateLeverGroupForRadioLever,
-  updateLeverGroupForIsToggleActive
+  createUpdatedLever,
+  createUpdatedRadioLever,
+  createUpdatedCombinationLever
 } from './leversSelector';
 import {
   createUpdatedLeversWithValues,
@@ -18,8 +18,7 @@ export const initialState = {
   displayBanner: false,
   leversErrors: [],
   errors: [],
-  isUserAcdAdmin: false,
-  acdExcludeFromAffinity: false
+  isUserAcdAdmin: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -42,14 +41,10 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.isUserAcdAdmin
       }
     });
-  case ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY:
-    return update(state, {
-      acdExcludeFromAffinity: {
-        $set: action.payload.acdExcludeFromAffinity
-      }
-    });
-  case ACTIONS.UPDATE_LEVER_VALUE: {
-    const leverGroup = updateLeverGroupForValue(state, action);
+  case ACTIONS.UPDATE_BOOLEAN_LEVER:
+  case ACTIONS.UPDATE_NUMBER_LEVER:
+  case ACTIONS.UPDATE_TEXT_LEVER: {
+    const leverGroup = createUpdatedLever(state, action);
 
     return {
       ...state,
@@ -59,8 +54,8 @@ const leversReducer = (state = initialState, action = {}) => {
       },
     };
   }
-  case ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE: {
-    const leverGroup = updateLeverGroupForIsToggleActive(state, action);
+  case ACTIONS.UPDATE_COMBINATION_LEVER: {
+    const leverGroup = createUpdatedCombinationLever(state, action);
 
     return {
       ...state,
@@ -71,7 +66,7 @@ const leversReducer = (state = initialState, action = {}) => {
     };
   }
   case ACTIONS.UPDATE_RADIO_LEVER: {
-    const leverGroup = updateLeverGroupForRadioLever(state, action);
+    const leverGroup = createUpdatedRadioLever(state, action);
 
     return {
       ...state,

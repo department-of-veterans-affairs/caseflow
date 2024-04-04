@@ -473,30 +473,27 @@ export const mockAffinityDaysLevers = [
     title: 'AMA Hearing Case Affinity Days',
     description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
     data_type: 'radio',
-    value: 0,
+    value: 'option_1',
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: 'option_1',
         data_type: 'number',
         value: 0,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,
-        max_value: 100,
-        selected: true
+        max_value: 100
       },
       {
         item: 'infinite',
         value: 'infinite',
-        text: 'Always distribute to current judge',
-        selected: false
+        text: 'Always distribute to current judge'
       },
       {
         item: 'omit',
         value: 'omit',
-        text: 'Omit variable from distribution rules',
-        selected: false
+        text: 'Omit variable from distribution rules'
       }
     ],
     is_toggle_active: false,
@@ -512,32 +509,29 @@ export const mockAffinityDaysLevers = [
     title: 'AMA Hearing Case AOD Affinity Days',
     description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
     data_type: 'radio',
-    value: 'infinite',
+    value: 'option_1',
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: 'option_1',
         data_type: 'text',
         value: 'test',
         text: 'Attempt distribution to current judge for max of:',
-        unit: 'days',
-        selected: false
+        unit: 'days'
       },
       {
         item: 'infinite',
         data_type: '',
         value: 'infinite',
         text: 'Always distribute to current judge',
-        unit: '',
-        selected: true
+        unit: ''
       },
       {
         item: 'omit',
         data_type: '',
         value: 'omit',
         text: 'Omit variable from distribution rules',
-        unit: '',
-        selected: false
+        unit: ''
       }
     ],
     is_toggle_active: false,
@@ -761,8 +755,7 @@ export const mockAffinityDaysLeversReturn = [
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,
-        max_value: 100,
-        selected: true
+        max_value: 100
       },
       {
         item: 'infinite',

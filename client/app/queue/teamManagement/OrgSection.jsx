@@ -8,14 +8,10 @@ const tableStyling = css({
   '& input': { margin: 0 }
 });
 
-const divStyling = css({
-  borderBottom: '1px solid #d6d7d9'
-});
-
 export const OrgSection = ({ children }) => {
 
   return (
-    <div {...divStyling}>
+    <div>
       <table {...tableStyling}>
         <tbody>{children}</tbody>
       </table>

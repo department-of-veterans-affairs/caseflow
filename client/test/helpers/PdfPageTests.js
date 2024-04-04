@@ -5,21 +5,29 @@ import { PdfPage } from '../../app/reader/PdfPage';
 
 export const pageMetricData = [
   'test',
-  {
-    message: 'Getting PDF page 2 from PDFJS document',
-    product: 'reader',
-    type: 'performance',
-    eventId: '123456'
+  { data: {
+    documentId: documents[0].id,
+    file: documents[0].content_url,
+    numPagesInDoc: 1,
+    pageIndex: 1
+  },
+  message: 'Storing PDF page 2',
+  product: 'reader',
+  type: 'performance',
+  eventId: '123456'
   },
   true
 ];
 
 export const textMetricData = [
   'test',
-  {
-    message: 'Storing PDF page text text in Redux',
-    product: 'reader',
-    type: 'performance'
+  { data: {
+    documentId: documents[0].id,
+    file: documents[0].content_url
+  },
+  message: 'Storing PDF page text',
+  product: 'reader',
+  type: 'performance'
   },
   true
 ];
@@ -57,12 +65,18 @@ export const storeMetricsBrowserError = [
 
 export const recordMetricsArgs = [
   'Test',
-  {
-    message: 'Rendering PDF page 2 text',
-    product: 'reader',
-    type: 'performance',
-    uuid: '1234',
-    eventId: '123456'
+  { data: {
+    documentId: documents[0].id,
+    documentType: 'Test',
+    file: documents[0].content_url,
+    numPagesInDoc: 1,
+    pageIndex: 1
+  },
+  message: 'Rendering PDF page 2 text',
+  product: 'reader',
+  type: 'performance',
+  uuid: '1234',
+  eventId: '123456'
   },
   true
 ];

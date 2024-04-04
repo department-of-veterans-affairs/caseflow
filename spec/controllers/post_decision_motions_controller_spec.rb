@@ -53,8 +53,7 @@ describe PostDecisionMotionsController do
         expect(body["errors"]).to match_array(
           [{
             "detail" =>
-            "Assigned by has to be a judge or special case movement team member, "\
-            "The selected individual is not an attorney in VACOLS"
+            "Assigned by has to be a judge or special case movement team member, Assigned to has to be an attorney"
           }]
         )
       end

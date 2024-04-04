@@ -76,20 +76,20 @@ export const storeMetrics = (uniqueId, data, {
   postMetricLogs(postData);
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null, additionalInfo },
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
-  const start = new Date(performance.timeOrigin + t0);
+  const start = Date.now();
   const name = targetFunction?.name || message;
 
   // eslint-disable-next-line no-console
   console.info(`STARTED: ${id} ${name}`);
   const result = () => targetFunction();
   const t1 = performance.now();
-  const end = new Date(performance.timeOrigin + t1);
+  const end = Date.now();
 
   const duration = t1 - t0;
 
@@ -102,7 +102,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, eventId);
   }
 
   return result;
@@ -119,7 +119,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
-  const start = new Date(performance.timeOrigin + t0);
+  const start = Date.now();
   const name = message || promise;
 
   // eslint-disable-next-line no-console
@@ -127,7 +127,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
   const prom = () => promise;
   const result = await prom();
   const t1 = performance.now();
-  const end = new Date(performance.timeOrigin + t1);
+  const end = Date.now();
 
   const duration = t1 - t0;
 

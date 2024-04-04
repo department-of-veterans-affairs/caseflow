@@ -1,12 +1,6 @@
 import { createSelector } from 'reselect';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
-import {
-  findSelectedOption,
-  hasCombinationLeverChanged,
-  radioValueOptionSelected,
-  findValueOption,
-  hasLeverValueChanged
-} from '../../utils';
+import { findOption, createCombinationValue } from '../../utils';
 
 const sortLevers = (leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order;
 
@@ -33,10 +27,6 @@ const getAdminStatus = (state) => {
   return state.caseDistributionLevers.isUserAcdAdmin;
 };
 
-const getExcludeStatus = (state) => {
-  return state.caseDistributionLevers.acdExcludeFromAffinity;
-};
-
 const leverErrorList = (state, leverItem) => {
   return state.caseDistributionLevers.leversErrors?.
     filter((error) => error.leverItem === leverItem).map((error) => error.message).join('');
@@ -46,58 +36,21 @@ const leverErrorCount = (state) => {
   return state.caseDistributionLevers.leversErrors.length;
 };
 
-const getLeversAsArray = (state) => {
-  return Object.values(getLevers(state)).flat();
-};
-
-const getSimpleLevers = (state) => {
-  return getLeversAsArray(state).filter((lever) =>
-    lever.data_type !== ACD_LEVERS.data_types.radio &&
-    lever.data_type !== ACD_LEVERS.data_types.combination
-  );
-};
-
-const getCombinationLevers = (state) => {
-  return getLeversAsArray(state).filter((lever) =>
-    lever.data_type === ACD_LEVERS.data_types.combination
-  );
-};
-
-const getRadioLevers = (state) => {
-  return getLeversAsArray(state).filter((lever) =>
-    lever.data_type === ACD_LEVERS.data_types.radio
-  );
-};
-
 /**
- * Determine which levers have changed
- *
- * For radio levers compare if value has changed
- *
- * For combination levers compare if either is_toggle_active or value has changed
- *
- * For simple lever data types compare if value has changed
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
 export const changedLevers = createSelector(
-  [getSimpleLevers, getCombinationLevers, getRadioLevers],
-  (simpleLevers, combinationLevers, radioLevers) => {
-    const changedSimpleLevers = simpleLevers.filter((lever) =>
-      hasLeverValueChanged(lever)
-    );
-
-    const changedCombinationLevers = combinationLevers.filter((lever) =>
-      hasCombinationLeverChanged(lever)
-    );
-
-    // Keeping separated in case there is a need to add additional checks
-    const changedRadioLevers = radioLevers.filter((lever) =>
-      hasLeverValueChanged(lever)
-    );
-
-    return changedSimpleLevers.concat(changedCombinationLevers, changedRadioLevers).
+  [getLevers],
+  (levers) => {
+    return Object.values(levers).flat().
+      filter((lever) =>
+        lever.data_type !== ACD_LEVERS.data_types.radio &&
+        lever.data_type !== ACD_LEVERS.data_types.combination &&
+        lever.backendValue !== null &&
+        `${lever.value}` !== lever.backendValue
+      ).
       sort((leverA, leverB) => sortLevers(leverA, leverB));
   }
-
 );
 
 export const hasChangedLevers = (state) => changedLevers(state).length > 0;
@@ -123,22 +76,15 @@ export const getUserIsAcdAdmin = createSelector(
   }
 );
 
-export const getExcludeFromAffinityStatus = createSelector(
-  [getExcludeStatus],
-  (acdExcludeFromAffinity) => {
-    return acdExcludeFromAffinity;
-  }
-);
-
 const updateLeverGroup = (state, leverGroup, leverItem, updateLeverValue) =>
   state.levers[leverGroup].map((lever) =>
     lever.item === leverItem ? updateLeverValue(lever) : lever
   );
 
 /**
- * Used when updating the value of a lever
+ * Updates levers of data type number, boolean, and text
  */
-export const updateLeverGroupForValue = (state, action) => {
+export const createUpdatedLever = (state, action) => {
   const { leverGroup, leverItem, value } = action.payload;
 
   const updateLeverValue = (lever) => {
@@ -149,13 +95,18 @@ export const updateLeverGroupForValue = (state, action) => {
 };
 
 /**
- * Used when updating the is_toggle_active of a lever
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
-export const updateLeverGroupForIsToggleActive = (state, action) => {
-  const { leverGroup, leverItem, toggleValue } = action.payload;
+export const createUpdatedRadioLever = (state, action) => {
+  const { leverGroup, leverItem, value, optionValue } = action.payload;
 
   const updateLeverValue = (lever) => {
-    return { ...lever, is_toggle_active: toggleValue };
+    const selectedOption = findOption(lever, value);
+
+    selectedOption.value = optionValue;
+
+    return { ...lever, currentValue: optionValue };
   };
 
   return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
@@ -176,40 +127,16 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
- * Used when updating the a radio lever
- * Pass in the selected option and a value if the selected option is value
- *
- * This will break if a Radio lever has more than one option that has an input
- *
- * If value is the selected Radio option
- *   Update lever.value to optionValue passed in
- *   Set valueOptionValue to value passed in
- *
- * If omit or infinite is the selected Radio option
- *   Update lever.value to the value passed in
- *   Set valueOptionValue to value in value's option
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
-export const updateLeverGroupForRadioLever = (state, action) => {
-  const { leverGroup, leverItem, value, optionValue } = action.payload;
+export const createUpdatedCombinationLever = (state, action) => {
+  const { leverGroup, leverItem, value, toggleValue } = action.payload;
 
   const updateLeverValue = (lever) => {
-    const selectedOption = findSelectedOption(lever);
-    const isValueOption = radioValueOptionSelected(value);
-    const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
-    const leverValue = isValueOption ? optionValue : value;
-    // Set all options to not selected
+    const newValue = createCombinationValue(toggleValue, value);
 
-    lever.options.forEach((option) => option.selected = false);
-
-    selectedOption.value = optionValue;
-    selectedOption.selected = true;
-
-    return {
-      ...lever,
-      value: leverValue,
-      selectedOption: value,
-      valueOptionValue
-    };
+    return { ...lever, currentValue: newValue, is_toggle_active: toggleValue };
   };
 
   return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);

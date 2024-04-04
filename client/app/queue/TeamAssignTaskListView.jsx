@@ -17,8 +17,7 @@ import { fullWidth } from './constants';
 import {
   judgeAssignTasksSelector,
   camoAssignTasksSelector,
-  getTasksByUserId,
-  specialtyCaseTeamAssignTasksSelector
+  getTasksByUserId
 } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -53,21 +52,17 @@ class TeamAssignTaskListView extends React.PureComponent {
       organizations,
       unassignedTasksCount,
       match,
-      userIsCamoEmployee,
-      userIsSCTCoordinator
+      userIsCamoEmployee
     } = this.props;
 
     const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
-        {!userIsSCTCoordinator &&
-          <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-            <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' :
-              ` for ${targetUserCssId}`}</h1>
-          </div>
-        }
-        {!userIsCamoEmployee && !userIsSCTCoordinator &&
+        <div {...fullWidth} {...css({ marginBottom: '2em' })}>
+          <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
+        </div>
+        {!userIsCamoEmployee &&
           <div className="usa-width-one-fourth">
             <ul className="usa-sidenav-list">
               <li>
@@ -86,7 +81,7 @@ class TeamAssignTaskListView extends React.PureComponent {
             </ul>
           </div>
         }
-        <div className={`usa-width-${(userIsCamoEmployee || userIsSCTCoordinator) ? 'one-whole' : 'three-fourths'}`}>
+        <div className={`usa-width-${userIsCamoEmployee ? 'one-whole' : 'three-fourths'}`}>
           <QueueOrganizationDropdown organizations={organizations} />
           <PageRoute
             exact
@@ -117,8 +112,7 @@ TeamAssignTaskListView.propTypes = {
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
   organizations: PropTypes.array,
-  userIsCamoEmployee: PropTypes.bool,
-  userIsSCTCoordinator: PropTypes.bool,
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
@@ -127,8 +121,7 @@ const mapStateToProps = (state) => {
       attorneysOfJudge
     },
     ui: {
-      userIsCamoEmployee,
-      userIsSCTCoordinator
+      userIsCamoEmployee
     }
   } = state;
 
@@ -136,10 +129,6 @@ const mapStateToProps = (state) => {
 
   if (userIsCamoEmployee) {
     taskSelector = camoAssignTasksSelector(state);
-  }
-
-  if (userIsSCTCoordinator) {
-    taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
 
   return {

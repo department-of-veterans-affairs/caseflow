@@ -17,8 +17,4 @@ class CDAControlGroup < Organization
   def can_receive_task?(_task)
     false
   end
-
-  def selectable_in_queue?
-    false
-  end
 end

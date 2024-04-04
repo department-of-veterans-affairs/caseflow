@@ -216,17 +216,15 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
+
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
-      after do
-        FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
-      end
+
+      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
@@ -470,8 +468,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             case_id: SecureRandom.uuid,
             docket: Constants.AMA_DOCKETS.direct_review,
             ready_at: Time.zone.now,
-            priority: true,
-            sct_appeal: false
+            priority: true
           )
         end
         distribution

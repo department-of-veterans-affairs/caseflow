@@ -47,7 +47,6 @@ export default class Button extends React.Component {
             type={type}
             disabled
             aria-label={ariaLabel}
-            {...styling}
           >
             <span className="cf-loading-icon-container">
               <span className="cf-loading-icon-front">

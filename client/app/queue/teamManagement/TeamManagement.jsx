@@ -54,8 +54,7 @@ export const TeamManagement = React.memo(({
   onAddPrivateBar,
   onLookupParticipantId,
   onOrgUpdate,
-  statuses,
-  featureToggles
+  statuses
 }) => {
   const handleAddDvcTeam = () => onAddDvcTeam?.();
   const handleAddJudgeTeam = () => onAddJudgeTeam?.();
@@ -99,8 +98,7 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={handleAddJudgeTeam} />
               </span>
             </OrgHeader>
-            <OrgList orgs={judgeTeams} statuses={statuses} showDistributionToggles
-              showExcludeFromAffinityToggles={featureToggles.acd_exclude_from_affinity} onUpdate={handleOrgUpdate} />
+            <OrgList orgs={judgeTeams} statuses={statuses} showDistributionToggles onUpdate={handleOrgUpdate} />
           </OrgSection> }
 
           { vsos && <OrgSection>
@@ -181,11 +179,10 @@ TeamManagement.propTypes = {
       saved: PropTypes.object,
       error: PropTypes.object
     })
-  }),
-  featureToggles: PropTypes.object,
+  })
 };
 
-export const TeamManagementWrapper = (featureToggleProp) => {
+export const TeamManagementWrapper = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const {
@@ -199,7 +196,6 @@ export const TeamManagementWrapper = (featureToggleProp) => {
     otherOrgs
   } = useSelector((state) => state.teamManagement.data);
   const { statuses } = useSelector((state) => state.teamManagement);
-  const { featureToggles } = featureToggleProp;
 
   const { success, error } = useSelector((state) => state.ui.messages);
 
@@ -240,8 +236,7 @@ export const TeamManagementWrapper = (featureToggleProp) => {
     onAddPrivateBar,
     onLookupParticipantId,
     onOrgUpdate,
-    statuses,
-    featureToggles
+    statuses
   };
 
   return <TeamManagement {...props} />;

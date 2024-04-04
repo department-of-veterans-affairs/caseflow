@@ -286,10 +286,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(VhaBusinessLine.singleton)
   end
 
-  def specialty_case_team_coordinator?
-    member_of_organization?(SpecialtyCaseTeam.singleton)
-  end
-
   def organization_queue_user?
     organizations.any?
   end
@@ -332,7 +328,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def administered_teams
-    organizations_users.includes(:organization).admin.map(&:organization).compact
+    organizations_users.admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -364,11 +360,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     self.class.user_repository.user_info_for_idt(css_id)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
+    camo_team_users = camo_employee? ? [self] : []
 
     judge_team_judges.each do |judge|
       orgs << {
@@ -377,23 +373,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    if camo_employee?
+    camo_team_users.each do |user|
       orgs << {
         name: "Assign VHA CAMO",
-        url: "/queue/#{css_id}/assign?role=camo"
-      }
-    end
-
-    if specialty_case_team_coordinator?
-      orgs << {
-        name: "Assign SCT Appeals",
-        url: "/queue/#{css_id}/assign?role=sct_coordinator"
+        url: "/queue/#{user.css_id}/assign?role=camo"
       }
     end
 
     orgs
   end
-  # rubocop:enable Metrics/MethodLength
 
   def member_of_organization?(org)
     organizations.include?(org)

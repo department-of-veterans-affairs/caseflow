@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
-import {
-  updateLeverValue,
-  validateLever,
-  updateLeverIsToggleActive
-} from '../reducers/levers/leversActions';
+import { updateNumberLever, validateLever } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
@@ -46,17 +42,22 @@ const DocketTimeGoals = () => {
     const { lever_group, item } = lever;
 
     dispatch(validateLever(lever, item, event, leverErrors(item)));
-    dispatch(updateLeverValue(lever_group, item, event));
+    dispatch(updateNumberLever(lever_group, item, event));
   };
 
-  const toggleLever = (lever) => () => {
-    const {
-      lever_group: leverGroup,
-      item,
-      is_toggle_active: isToggleActive
-    } = lever;
+  const toggleLever = (index) => () => {
+    const levers = docketDistributionLevers.map((lever, i) => {
+      if (index === i) {
+        lever.is_toggle_active = !lever.is_toggle_active;
 
-    dispatch(updateLeverIsToggleActive(leverGroup, item, !isToggleActive));
+        return lever;
+      }
+
+      return lever;
+
+    });
+
+    setDistributionLever(levers);
   };
 
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
@@ -100,7 +101,7 @@ const DocketTimeGoals = () => {
               id={`toggle-switch-${distributionPriorLever.item}`}
               selected={distributionPriorLever.is_toggle_active}
               disabled={distributionPriorLever.is_disabled_in_ui}
-              toggleSelected={toggleLever(distributionPriorLever)}
+              toggleSelected={toggleLever(index)}
             />
             <div
               className={distributionPriorLever.is_toggle_active ? 'toggle-switch-input' : 'toggle-input-hide'}

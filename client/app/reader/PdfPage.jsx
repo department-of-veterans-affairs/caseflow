@@ -35,6 +35,7 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
+    this.measureTimeStartMs = props.measureTimeStartMs;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -156,6 +157,10 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
+    if (!this.measureTimeStartMs && this.props.isPageVisible && !prevProps.isPageVisible) {
+      this.measureTimeStartMs = performance.now();
+    }
+
     if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
@@ -208,12 +213,17 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
-
       const pageMetricData = {
-        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
+        message: `Storing PDF page ${this.props.pageIndex + 1}`,
         product: 'reader',
         type: 'performance',
-        data: this.props.metricsAttributes,
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+          pageIndex: this.props.pageIndex,
+          numPagesInDoc: this.props.pdfDocument.numPages,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        },
         eventId: this.props.metricsIdentifier
       };
 
@@ -226,10 +236,16 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+          message: `Storing PDF page ${this.props.pageIndex + 1} text`,
           product: 'reader',
           type: 'performance',
-          data: this.props.metricsAttributes,
+          data: {
+            file: this.props.file,
+            documentId: this.props.documentId,
+            pageIndex: this.props.pageIndex,
+            numPagesInDoc: this.props.pdfDocument.numPages,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          },
           eventId: this.props.metricsIdentifier
         };
 
@@ -238,7 +254,14 @@ export class PdfPage extends React.PureComponent {
           message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
           type: 'performance',
           product: 'reader',
-          data: this.props.metricsAttributes,
+          data: {
+            documentId: this.props.documentId,
+            documentType: this.props.documentType,
+            file: this.props.file,
+            pageIndex: this.props.pageIndex,
+            numPagesInDoc: this.props.pdfDocument.numPages,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
+          },
           eventId: this.props.metricsIdentifier
         };
 
@@ -249,7 +272,34 @@ export class PdfPage extends React.PureComponent {
             this.props.featureToggles.metricsReaderRenderText);
         });
 
-        this.drawPage(page).then();
+        this.drawPage(page).then(() => {
+          const data = {
+            overscan: this.props.windowingOverscan,
+            documentType: this.props.documentType,
+            pageCount: this.props.pdfDocument.numPages,
+            pageIndex: this.props.pageIndex,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+            start: this.measureTimeStartMs,
+            end: performance.now()
+          };
+
+          // Waits for all the pages before storing metric
+          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex === 0) {
+            storeMetrics(
+              this.props.documentId,
+              data,
+              {
+                message: 'pdf_page_render_time_in_ms',
+                type: 'performance',
+                product: 'reader',
+                start: new Date(performance.timeOrigin + data.start),
+                end: new Date(performance.timeOrigin + data.end),
+                duration: data.start ? data.end - data.start : 0
+              },
+              this.props.metricsIdentifier,
+            );
+          }
+        });
       }).catch((error) => {
         const id = uuid.v4();
         const data = {

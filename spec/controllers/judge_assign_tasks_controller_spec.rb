@@ -110,11 +110,10 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
       let!(:assignee) { second_judge }
 
       it "raises an error" do
-        subject
-
-        expect(response.status).to eq 400
-        response_body = JSON.parse(response.body)["errors"].first["detail"]
-        expect(response_body).to eq "The selected individual is not an attorney in VACOLS"
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActiveRecord::RecordInvalid)
+          expect(error.message).to eq("Validation failed: Assigned to has to be an attorney")
+        end
       end
     end
   end

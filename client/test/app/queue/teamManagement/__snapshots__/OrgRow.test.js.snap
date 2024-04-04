@@ -3,7 +3,7 @@
 exports[`OrgRow renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -15,10 +15,7 @@ exports[`OrgRow renders correctly 1`] = `
     <td
       class="css-a2hn0y"
     />
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    />
+    <td />
   </tr>
 </div>
 `;
@@ -26,7 +23,7 @@ exports[`OrgRow renders correctly 1`] = `
 exports[`OrgRow status indicators  status: error renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -48,10 +45,7 @@ exports[`OrgRow status indicators  status: error renders correctly 1`] = `
          Error
       </span>
     </td>
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    />
+    <td />
   </tr>
 </div>
 `;
@@ -59,7 +53,7 @@ exports[`OrgRow status indicators  status: error renders correctly 1`] = `
 exports[`OrgRow status indicators  status: loading renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -81,10 +75,7 @@ exports[`OrgRow status indicators  status: loading renders correctly 1`] = `
          Saving
       </span>
     </td>
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    />
+    <td />
   </tr>
 </div>
 `;
@@ -92,7 +83,7 @@ exports[`OrgRow status indicators  status: loading renders correctly 1`] = `
 exports[`OrgRow status indicators  status: saved renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -114,10 +105,7 @@ exports[`OrgRow status indicators  status: saved renders correctly 1`] = `
          Saved
       </span>
     </td>
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    />
+    <td />
   </tr>
 </div>
 `;
@@ -125,7 +113,7 @@ exports[`OrgRow status indicators  status: saved renders correctly 1`] = `
 exports[`OrgRow with JudgeTeam with edit permissions renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -133,7 +121,7 @@ exports[`OrgRow with JudgeTeam with edit permissions renders correctly 1`] = `
       </span>
     </td>
     <td
-      class="css-1pcj4sl"
+      class="css-5en2de"
     >
       <div
         class=""
@@ -233,7 +221,7 @@ exports[`OrgRow with JudgeTeam with edit permissions renders correctly 1`] = `
       </div>
     </td>
     <td
-      class="css-1pcj4sl"
+      class="css-5en2de"
     >
       <div
         class=""
@@ -335,10 +323,7 @@ exports[`OrgRow with JudgeTeam with edit permissions renders correctly 1`] = `
     <td
       class="css-a2hn0y"
     />
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    >
+    <td>
       <a
         href="/org-0/users"
       >
@@ -360,7 +345,7 @@ exports[`OrgRow with JudgeTeam with edit permissions renders correctly 1`] = `
 exports[`OrgRow with JudgeTeam without edit permissions renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <span>
@@ -368,7 +353,7 @@ exports[`OrgRow with JudgeTeam without edit permissions renders correctly 1`] = 
       </span>
     </td>
     <td
-      class="css-1pcj4sl"
+      class="css-5en2de"
     >
       <div
         class=""
@@ -443,7 +428,7 @@ exports[`OrgRow with JudgeTeam without edit permissions renders correctly 1`] = 
       </div>
     </td>
     <td
-      class="css-1pcj4sl"
+      class="css-5en2de"
     >
       <div
         class=""
@@ -520,10 +505,7 @@ exports[`OrgRow with JudgeTeam without edit permissions renders correctly 1`] = 
     <td
       class="css-a2hn0y"
     />
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    >
+    <td>
       <a
         href="/org-0/users"
       >
@@ -545,7 +527,7 @@ exports[`OrgRow with JudgeTeam without edit permissions renders correctly 1`] = 
 exports[`OrgRow with VSO renders correctly 1`] = `
 <div>
   <tr
-    data-css-ch4o84=""
+    data-css-156syk=""
   >
     <td>
       <div
@@ -605,7 +587,7 @@ exports[`OrgRow with VSO renders correctly 1`] = `
     <td>
       <span>
         <button
-          class="cf-submit usa-button"
+          class="usa-button-secondary usa-button"
           id="1"
           type="button"
         >
@@ -616,10 +598,7 @@ exports[`OrgRow with VSO renders correctly 1`] = `
     <td
       class="css-a2hn0y"
     />
-    <td
-      colspan="2"
-      data-css-syjz65=""
-    >
+    <td>
       <a
         href="/org-0/users"
       >

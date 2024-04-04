@@ -20,10 +20,6 @@ class Organization < CaseflowRecord
     Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
 
-  # Sometimes when a task referencing the assigned to field it will ask for full name if it is commonly a user
-  # Add this alias here to prevent errors from that assumption when it could also be an organization assigned to
-  alias_attribute :full_name, :name
-
   default_scope { active }
 
   class << self
@@ -172,8 +168,7 @@ class Organization < CaseflowRecord
       participant_id: participant_id,
       type: type,
       url: url,
-      user_admin_path: user_admin_path,
-      exclude_appeals_from_affinity: exclude_appeals_from_affinity
+      user_admin_path: user_admin_path
     }
   end
 

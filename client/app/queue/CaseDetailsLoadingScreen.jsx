@@ -69,9 +69,7 @@ class CaseDetailsLoadingScreen extends React.PureComponent {
   }
 
   maybeLoadJudgeData = () => {
-    const { userRole, userIsSCTCoordinator } = this.props;
-
-    if (userRole !== USER_ROLE_TYPES.judge && !userIsSCTCoordinator) {
+    if (this.props.userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
     this.props.fetchAllAttorneys();
@@ -144,8 +142,7 @@ CaseDetailsLoadingScreen.propTypes = {
   resetErrorMessages: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetSaveState: PropTypes.func,
-  preventReset: PropTypes.bool,
-  userIsSCTCoordinator: PropTypes.bool
+  preventReset: PropTypes.bool
 };
 
 export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLoadingScreen));

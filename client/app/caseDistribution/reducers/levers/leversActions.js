@@ -2,16 +2,6 @@ import { ACTIONS } from './leversActionTypes';
 import ApiUtil from '../../../util/ApiUtil';
 import { validateLeverInput } from '../../utils';
 
-export const loadAcdExcludeFromAffinity = (acdExcludeFromAffinity) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
-      payload: {
-        acdExcludeFromAffinity
-      }
-    });
-  };
-
 export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
   (dispatch) => {
     dispatch({
@@ -67,22 +57,47 @@ export const updateRadioLever = (leverGroup, leverItem, value, optionValue = nul
     });
   };
 
-export const updateLeverIsToggleActive = (leverGroup, leverItem, toggleValue) =>
+export const updateCombinationLever = (leverGroup, leverItem, value, toggleValue = false) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
+      type: ACTIONS.UPDATE_COMBINATION_LEVER,
       payload: {
         leverGroup,
         leverItem,
+        value,
         toggleValue
       }
     });
   };
 
-export const updateLeverValue = (leverGroup, leverItem, value) =>
+export const updateBooleanLever = (leverGroup, leverItem, value) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_LEVER_VALUE,
+      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value
+      }
+    });
+  };
+
+export const updateTextLever = (leverGroup, leverItem, value) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_TEXT_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value
+      }
+    });
+  };
+
+export const updateNumberLever = (leverGroup, leverItem, value) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_NUMBER_LEVER,
       payload: {
         leverGroup,
         leverItem,
@@ -93,11 +108,10 @@ export const updateLeverValue = (leverGroup, leverItem, value) =>
 
 export const saveLevers = (levers) =>
   (dispatch) => {
-    const changedValues = levers.
+    const changedValues = Object.values(levers).flat().
       map((lever) => ({
         id: lever.id,
-        value: lever.value,
-        is_toggle_active: lever.is_toggle_active
+        value: lever.value
       }));
 
     const postData = {

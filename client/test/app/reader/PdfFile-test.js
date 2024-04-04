@@ -28,12 +28,9 @@ const metricArgs = (featureValue) => {
       data:
       {
         documentId: 1,
-        numPagesInDoc: null,
-        pageIndex: null,
-        file: '/document/1/pdf',
         documentType: 'test',
+        file: '/document/1/pdf',
         prefetchDisabled: undefined,
-        overscan: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -51,8 +48,8 @@ const storeMetricsError = {
   data:
   {
     documentId: 1,
-    file: '/document/1/pdf',
     documentType: 'test',
+    file: '/document/1/pdf'
   },
   info: {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
@@ -186,7 +183,13 @@ describe('PdfFile', () => {
         subject.getDocument();
 
         // Assert that measureTimeStartMs is counting
-        expect(subject.props.renderStartTime).not.toBeNull();
+        expect(subject.measureTimeStartMs).toBe('RUNNING_IN_NODE');
+
+        // Unmount the component
+        wrapper.unmount();
+
+        // Assert that measureTimeStartMs is reset to null
+        expect(subject.measureTimeStartMs).toBeNull();
       });
     });
   });

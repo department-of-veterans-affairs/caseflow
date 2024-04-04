@@ -2,6 +2,7 @@ import * as actions from 'app/caseDistribution/reducers/levers/leversActions';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
 import { alternativeBatchSize, levers, historyList } from '../../../../data/adminCaseDistributionLevers';
+import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),
@@ -19,20 +20,6 @@ describe('levers actions', () => {
     const dispatch = jest.fn();
 
     actions.setUserIsAcdAdmin(isUserAcdAdmin)(dispatch);
-
-    expect(dispatch).toHaveBeenCalledWith(expectedAction);
-  });
-
-  it('should create an action to set exclude from affinity', () => {
-    const acdExcludeFromAffinity = true;
-    const expectedAction = {
-      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
-      payload: { acdExcludeFromAffinity }
-    };
-
-    const dispatch = jest.fn();
-
-    actions.loadAcdExcludeFromAffinity(acdExcludeFromAffinity)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
@@ -102,12 +89,33 @@ describe('levers actions', () => {
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
+  it('should create an action to update a combination lever', () => {
+    const leverIndex = 9;
+    const lever = levers[leverIndex];
+
+    const expectedAction = {
+      type: ACTIONS.UPDATE_COMBINATION_LEVER,
+      payload: {
+        leverGroup: lever.lever_group,
+        leverItem: lever.item,
+        value: lever.value,
+        toggleValue: lever.is_toggle_active
+      }
+    };
+
+    const dispatch = jest.fn();
+
+    actions.updateCombinationLever(lever.lever_group, lever.item, lever.value, lever.is_toggle_active)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
   it('should create an action to update a boolean lever', () => {
     const leverIndex = 0;
     const lever = levers[leverIndex];
 
     const expectedAction = {
-      type: ACTIONS.UPDATE_LEVER_VALUE,
+      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
@@ -117,27 +125,46 @@ describe('levers actions', () => {
 
     const dispatch = jest.fn();
 
-    actions.updateLeverValue(lever.lever_group, lever.item, lever.value)(dispatch);
+    actions.updateBooleanLever(lever.lever_group, lever.item, lever.value)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  it('should create an action to update a combination lever', () => {
+  it('should create an action to update a text lever', () => {
     const leverIndex = 0;
     const lever = levers[leverIndex];
 
     const expectedAction = {
-      type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
+      type: ACTIONS.UPDATE_TEXT_LEVER,
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
-        toggleValue: lever.value
+        value: lever.value
       }
     };
 
     const dispatch = jest.fn();
 
-    actions.updateLeverIsToggleActive(lever.lever_group, lever.item, lever.value)(dispatch);
+    actions.updateTextLever(lever.lever_group, lever.item, lever.value)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
+  it('should create an action to update a number lever', () => {
+    const leverIndex = 0;
+    const lever = levers[leverIndex];
+    const expectedAction = {
+      type: ACTIONS.UPDATE_NUMBER_LEVER,
+      payload: {
+        leverGroup: lever.lever_group,
+        leverItem: lever.item,
+        value: lever.value
+      }
+    };
+
+    const dispatch = jest.fn();
+
+    actions.updateNumberLever(lever.lever_group, lever.item, lever.value)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
@@ -232,8 +259,7 @@ describe('levers actions', () => {
     const lever = alternativeBatchSize;
     const dispatch = jest.fn();
 
-    actions.validateLever(lever, lever.item, '', [])(dispatch);
-    actions.validateLever(lever, lever.item, null, [])(dispatch);
+    actions.validateLever(lever, lever.item, -1, [])(dispatch);
 
     expect(dispatch).toHaveBeenLastCalledWith(expect.any(Function));
   });

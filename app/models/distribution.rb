@@ -10,7 +10,6 @@ class Distribution < CaseflowRecord
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
-  has_one :distribution_stats
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
@@ -43,21 +42,21 @@ class Distribution < CaseflowRecord
 
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
-      ama_stats = ama_statistics
-
-      # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
-      update!(status: "completed", completed_at: Time.zone.now, statistics: completed_statistics(ama_stats))
-
-      record_distribution_stats(ama_stats)
+      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
   rescue StandardError => error
-    process_error(error)
-
+    # DO NOT use update! because we want to avoid validations and saving any cached associations.
+    # Prevent prod database from getting Stacktraces as this is debugging information
+    if Rails.deploy_env?(:prod)
+      update_columns(status: "error", errored_at: Time.zone.now)
+    else
+      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+    end
     raise error
   end
 
   def distributed_cases_count
-    (status == "completed") ? distributed_cases.count { |distributed_case| !distributed_case.sct_appeal } : 0
+    (status == "completed") ? distributed_cases.count : 0
   end
 
   private
@@ -132,32 +131,5 @@ class Distribution < CaseflowRecord
     {
       error: error&.full_message
     }
-  end
-
-  def process_error(error)
-    # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    # Prevent prod database from getting Stacktraces as this is debugging information
-    if Rails.deploy_env?(:prod)
-      update_columns(status: "error", errored_at: Time.zone.now)
-      record_distribution_stats({})
-    else
-      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
-      record_distribution_stats(error_statistics(error))
-    end
-  end
-
-  # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
-  def completed_statistics(stats)
-    {
-      batch_size: stats[:batch_size],
-      info: "See related row in distribution_stats for additional stats"
-    }
-  end
-
-  def record_distribution_stats(stats)
-    create_distribution_stats!(
-      statistics: stats,
-      levers: CaseDistributionLever.snapshot
-    )
   end
 end

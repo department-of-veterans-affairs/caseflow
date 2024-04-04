@@ -1,51 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { getUserIsAcdAdmin, getLeversByGroup, getLeverErrors } from '../reducers/levers/leversSelector';
+import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSelector';
 import { Constant } from '../constants';
 import { dynamicallyAddAsterisk } from '../utils';
-import { validateLever, updateRadioLever } from '../reducers/levers/leversActions';
 
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
-  const dispatch = useDispatch();
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
+
   const storeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
-
-  const leverErrors = (leverItem) => {
-    return getLeverErrors(theState, leverItem);
-  };
 
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
 
-  const isOptionSelected = (lever, option) => lever.selectedOption === option.item;
-
-  const onChangeRadio = (lever, option) => () => {
-    // eslint-disable-next-line camelcase
-    const { lever_group, item } = lever;
-
-    dispatch(updateRadioLever(lever_group, item, option.item, option.value));
-  };
-
-  const onChangeField = (lever, option) => (event) => {
-    // eslint-disable-next-line camelcase
-    const { lever_group, item } = lever;
-
-    dispatch(validateLever(lever, item, event, leverErrors(item)));
-    dispatch(updateRadioLever(lever_group, item, option.item, event));
-  };
-
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
     const tabIndex = lever.is_disabled_in_ui ? -1 : 0;
-    const value = lever.valueOptionValue;
 
     if (dataType === ACD_LEVERS.data_types.number) {
       return (
@@ -54,12 +31,12 @@ const AffinityDays = () => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
-          value={value}
-          errorMessage={leverErrors(lever.item)}
-          onChange={onChangeField(lever, option)}
-          id={`${lever.item}-${value}`}
-          inputID={`${lever.item}-${value}-input`}
+          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
+          value={option.value}
+          errorMessage={option.errorMessage}
+          onChange={() => console.warn('not implemented')}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
           disabled={lever.is_disabled_in_ui}
@@ -72,12 +49,11 @@ const AffinityDays = () => {
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
-          value={value}
-          errorMessage={leverErrors(lever.item)}
-          onChange={onChangeField(lever, option)}
-          id={`${lever.item}-${value}`}
-          inputID={`${lever.item}-${value}-input`}
+          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
+          value={option.value}
+          onChange={() => console.warn('not implemented')}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
           disabled={lever.is_disabled_in_ui}
@@ -91,7 +67,7 @@ const AffinityDays = () => {
   const generateMemberViewLabel = (option, lever, index) => {
     const affinityLabelId = `affinity-day-label-for-${lever.item}`;
 
-    if (isOptionSelected(lever, option)) {
+    if (lever.value === option.item) {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
@@ -100,7 +76,7 @@ const AffinityDays = () => {
               htmlFor={`${lever.item}-${option.item}`}
             >
               {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
-                `${lever.value} ${option.unit}` : ''}`}
+                `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -111,19 +87,19 @@ const AffinityDays = () => {
   };
 
   const renderAdminInput = (option, lever, index) => {
-    const className = cx('combined-radio-input', (isOptionSelected(lever, option)) ? '' : 'outline-radio-input');
+    const className = cx('combined-radio-input', (lever.value === option.item) ? '' : 'outline-radio-input');
 
     return (
       <div key={`${lever.item}-${index}-${option.item}`}>
         <div>
           <input
-            checked={isOptionSelected(lever, option)}
+            checked={option.item === lever.value}
             type={ACD_LEVERS.data_types.radio}
             value={option.item}
             disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}
             name={lever.item}
-            onChange={onChangeRadio(lever, option)}
+            onChange={() => console.warn('not implemented')}
           />
           <label htmlFor={`${lever.item}-${option.item}`}>
             {option.text}
@@ -131,7 +107,7 @@ const AffinityDays = () => {
         </div>
         <div>
           <div className={className} aria-label={option.unit}>
-            {generateFields(option.data_type, option, lever)}
+            {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
           </div>
         </div>
       </div>

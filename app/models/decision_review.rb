@@ -124,7 +124,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def number_of_issues
-    request_issues.active.count
+    request_issues.count
   end
 
   def external_id

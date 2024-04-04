@@ -70,9 +70,6 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  # Bypass DNS rebinding protection for all `demo` sub-domains
-  config.hosts << ".demo.appeals.va.gov"
-
   #=====================================================================================================================
   # Please keep custom config settings below this comment.
   #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
@@ -146,9 +143,6 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
-
-  # Dynatrace variables
-  ENV["STATSD_ENV"] = "development"
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"

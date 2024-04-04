@@ -15,8 +15,7 @@ import {
   fetchAllAttorneys,
   fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
-  fetchCamoTasks,
-  fetchSpecialtyCaseTeamTasks
+  fetchCamoTasks
 } from './QueueActions';
 import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
@@ -28,22 +27,13 @@ class QueueLoadingScreen extends React.PureComponent {
       userId,
       userRole,
       type,
-      userIsCamoEmployee,
-      userIsSCTCoordinator
+      userIsCamoEmployee
     } = this.props;
 
     this.props.setUserId(userId);
 
-    // Get the user role in the url params if this is an assign queue page
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const role = urlSearchParams.get('role');
-
-    if (role === 'camo' && userIsCamoEmployee && type === 'assign') {
+    if (userIsCamoEmployee && type === 'assign') {
       return this.props.fetchCamoTasks(chosenUserId, userRole, type);
-    }
-
-    if (role === 'sct_coordinator' && userIsSCTCoordinator && type === 'assign') {
-      return this.props.fetchSpecialtyCaseTeamTasks(chosenUserId, userRole, type);
     }
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
@@ -171,7 +161,6 @@ QueueLoadingScreen.propTypes = {
   fetchVhaProgramOffices: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   fetchCamoTasks: PropTypes.func,
-  fetchSpecialtyCaseTeamTasks: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -191,8 +180,7 @@ QueueLoadingScreen.propTypes = {
   userCssId: PropTypes.string,
   userRole: PropTypes.string,
   loadJudgeData: PropTypes.bool,
-  userIsCamoEmployee: PropTypes.bool,
-  userIsSCTCoordinator: PropTypes.bool
+  userIsCamoEmployee: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
@@ -215,7 +203,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
   fetchCamoTasks,
-  fetchSpecialtyCaseTeamTasks,
   setUserId,
   setTargetUser
 }, dispatch);

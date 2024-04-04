@@ -1,23 +1,6 @@
 # frozen_string_literal: true
 
 describe QueueConfig, :postgres do
-  let(:expected_tab_hash_keys) do
-    [
-      :label,
-      :name,
-      :description,
-      :columns,
-      :allow_bulk_assign,
-      :contains_legacy_tasks,
-      :tasks,
-      :task_page_count,
-      :total_task_count,
-      :task_page_endpoint_base_path,
-      :defaultSort,
-      :hide_from_queue_table_view
-    ]
-  end
-
   describe ".new" do
     let(:arguments) { { assignee: assignee } }
 
@@ -111,7 +94,21 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(expected_tab_hash_keys)
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :contains_legacy_tasks,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path,
+                :defaultSort
+              ]
+            )
           end
         end
 
@@ -174,7 +171,21 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(expected_tab_hash_keys)
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :contains_legacy_tasks,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path,
+                :defaultSort
+              ]
+            )
           end
         end
 
@@ -202,7 +213,21 @@ describe QueueConfig, :postgres do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array(expected_tab_hash_keys)
+            expect(tab.keys).to match_array(
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :contains_legacy_tasks,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path,
+                :defaultSort
+              ]
+            )
           end
         end
 

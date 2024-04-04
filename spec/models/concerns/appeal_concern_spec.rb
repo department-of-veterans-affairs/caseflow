@@ -66,7 +66,7 @@ describe AppealConcern do
       let(:country) { "Australia" }
 
       it "Returns nil and increments a datadog counter" do
-        expect(MetricsService).to receive(:increment_counter).with(
+        expect(DataDogService).to receive(:increment_counter).with(
           app_name: nil,
           metric_group: "appeal_timezone_service",
           metric_name: "ambiguous_timezone_error",
