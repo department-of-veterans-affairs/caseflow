@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe CorrespondencesAppeal, type: :model do
+RSpec.describe CorrespondenceAppeal, type: :model do
   let(:correspondence) { create(:correspondence) }
   let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
   before do
-    @subject = CorrespondencesAppeal.create!(
+    @subject = CorrespondenceAppeal.create!(
       correspondence_id: correspondence.id,
       appeal_id: appeal.id
     )
   end
 
   it "exists" do
-    expect(@subject).to be_a(CorrespondencesAppeal)
+    expect(@subject).to be_a(CorrespondenceAppeal)
   end
 
   it "belongs to a correspondence" do

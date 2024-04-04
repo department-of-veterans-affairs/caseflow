@@ -163,7 +163,7 @@ RSpec.feature("Correspondence Intake submission") do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
 
-        eswt = EvidenceSubmissionWindowTask.find_by(appeal_id: CorrespondencesAppeal.first.appeal_id)
+        eswt = EvidenceSubmissionWindowTask.find_by(appeal_id: CorrespondenceAppeal.first.appeal_id)
         expect(eswt.status).to eq("completed")
       end
     end

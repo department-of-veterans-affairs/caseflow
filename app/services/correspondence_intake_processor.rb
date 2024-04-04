@@ -52,7 +52,7 @@ class CorrespondenceIntakeProcessor
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
-      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
+      CorrespondenceAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
     end
   end
 
