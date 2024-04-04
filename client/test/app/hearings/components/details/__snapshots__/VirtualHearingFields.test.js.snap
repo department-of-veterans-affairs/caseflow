@@ -625,7 +625,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     <strong>
                       Conference Room: 
                     </strong>
-                    undefined
+                    N/A
                   </div>
                   <div
                     data-css-6aejb2=""
@@ -633,6 +633,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
                     <strong>
                       PIN: 
                     </strong>
+                    N/A
                   </div>
                   <CopyTextButton
                     ariaLabel="Copy Guest Link"
