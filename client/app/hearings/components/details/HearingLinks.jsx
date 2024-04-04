@@ -136,6 +136,8 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
     }
   };
 
+  console.log(hearing);
+
   const links = getLinks();
 
   return (

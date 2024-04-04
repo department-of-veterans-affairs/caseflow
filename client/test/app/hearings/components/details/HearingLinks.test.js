@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
-import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
+import { virtualHearing, amaHearing, virtualWebexHearing, nonVirtualPexipHearing } from 'test/data/hearings';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
 import { mount } from 'enzyme';
@@ -162,8 +162,23 @@ describe('HearingLinks', () => {
     const hearing = {
       scheduledForIsPast: false,
       isVirtual: false,
+      wasVirtual: false,
       conferenceProvider: 'pexip',
-    }
+      readableRequestType: 'Video',
+      dailyDocketConferenceLink: {
+        alias: '0000014',
+        aliasWithHost: 'BVA0000014@example.va.gov',
+        coHostLink: 'https://instant-usgov.webex.com/visit/wz17ys8',
+        conferenceDeleted: false,
+        conferenceId: null,
+        guestHearingLink: 'https://instant-usgov.webex.com/visit/47imtxx',
+        guestPinLong: '9722799217',
+        hearingDayId: 151,
+        hostLink: 'https://instant-usgov.webex.com/visit/hu1swd0',
+        hostPin: '6172491',
+        id: 302
+      }
+    };
 
     const form = mount(
       <Provider store={store}>
@@ -179,7 +194,7 @@ describe('HearingLinks', () => {
     expect(form.find('LinkContainer')).toHaveLength(3);
     expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
     expect(
-      form.find('LinkContainer').exists({ link: storeValues.dailyDocket.hearingDay.conferenceLink.hostLink })
+      form.find('LinkContainer').exists({ link: hearing.dailyDocketConferenceLink.hostLink })
     ).toBe(true);
   });
 

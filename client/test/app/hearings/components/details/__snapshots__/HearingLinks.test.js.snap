@@ -16,8 +16,23 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
     hearing={
       Object {
         "conferenceProvider": "pexip",
+        "dailyDocketConferenceLink": Object {
+          "alias": "0000014",
+          "aliasWithHost": "BVA0000014@example.va.gov",
+          "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+          "conferenceDeleted": false,
+          "conferenceId": null,
+          "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+          "guestPinLong": "9722799217",
+          "hearingDayId": 151,
+          "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+          "hostPin": "6172491",
+          "id": 302,
+        },
         "isVirtual": false,
+        "readableRequestType": "Video",
         "scheduledForIsPast": false,
+        "wasVirtual": false,
       }
     }
     isVirtual={true}
@@ -39,13 +54,44 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         hearing={
           Object {
             "conferenceProvider": "pexip",
+            "dailyDocketConferenceLink": Object {
+              "alias": "0000014",
+              "aliasWithHost": "BVA0000014@example.va.gov",
+              "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+              "conferenceDeleted": false,
+              "conferenceId": null,
+              "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+              "guestPinLong": "9722799217",
+              "hearingDayId": 151,
+              "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+              "hostPin": "6172491",
+              "id": 302,
+            },
             "isVirtual": false,
+            "readableRequestType": "Video",
             "scheduledForIsPast": false,
+            "wasVirtual": false,
           }
         }
         isVirtual={true}
         label="VLJ Link"
+        link="https://instant-usgov.webex.com/visit/hu1swd0"
         linkText="Start Hearing"
+        links={
+          Object {
+            "alias": "0000014",
+            "aliasWithHost": "BVA0000014@example.va.gov",
+            "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+            "conferenceDeleted": false,
+            "conferenceId": null,
+            "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+            "guestPinLong": "9722799217",
+            "hearingDayId": 151,
+            "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+            "hostPin": "6172491",
+            "id": 302,
+          }
+        }
         role="VLJ"
         user={
           Object {
@@ -69,12 +115,28 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             hearing={
               Object {
                 "conferenceProvider": "pexip",
+                "dailyDocketConferenceLink": Object {
+                  "alias": "0000014",
+                  "aliasWithHost": "BVA0000014@example.va.gov",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                  "conferenceDeleted": false,
+                  "conferenceId": null,
+                  "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                  "guestPinLong": "9722799217",
+                  "hearingDayId": 151,
+                  "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                  "hostPin": "6172491",
+                  "id": 302,
+                },
                 "isVirtual": false,
+                "readableRequestType": "Video",
                 "scheduledForIsPast": false,
+                "wasVirtual": false,
               }
             }
             isVirtual={true}
             label="Start Hearing"
+            link="https://instant-usgov.webex.com/visit/hu1swd0"
             role="VLJ"
             user={
               Object {
@@ -90,12 +152,28 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               hearing={
                 Object {
                   "conferenceProvider": "pexip",
+                  "dailyDocketConferenceLink": Object {
+                    "alias": "0000014",
+                    "aliasWithHost": "BVA0000014@example.va.gov",
+                    "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                    "conferenceDeleted": false,
+                    "conferenceId": null,
+                    "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                    "guestPinLong": "9722799217",
+                    "hearingDayId": 151,
+                    "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                    "hostPin": "6172491",
+                    "id": 302,
+                  },
                   "isVirtual": false,
+                  "readableRequestType": "Video",
                   "scheduledForIsPast": false,
+                  "wasVirtual": false,
                 }
               }
               isVirtual={true}
               label="Start Hearing"
+              link="https://instant-usgov.webex.com/visit/hu1swd0"
               newWindow={true}
               showFullLink={false}
               user={
@@ -109,9 +187,11 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
             >
               <Link
+                href="https://instant-usgov.webex.com/visit/hu1swd0"
                 target="_blank"
               >
                 <a
+                  href="https://instant-usgov.webex.com/visit/hu1swd0"
                   target="_blank"
                   type={null}
                 >
@@ -184,7 +264,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               label=""
               styling={Object {}}
               text="Copy VLJ Link"
-              textToCopy={null}
+              textToCopy="https://instant-usgov.webex.com/visit/hu1swd0"
             >
               <Tooltip
                 id="tooltip-Copy VLJ Link"
@@ -199,7 +279,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                   data-for="tooltip-Copy VLJ Link"
                   data-tip={true}
                   tabIndex={0}
-                  text="Copy VLJ Link"
+                  text="https://instant-usgov.webex.com/visit/hu1swd0"
                 >
                   <button
                     aria-describedby="tooltip-Copy VLJ Link"
@@ -210,7 +290,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                     data-event-off="mouseleave keydown"
                     data-for="tooltip-Copy VLJ Link"
                     data-tip={true}
-                    disabled={true}
+                    disabled={false}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
@@ -353,13 +433,44 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         hearing={
           Object {
             "conferenceProvider": "pexip",
+            "dailyDocketConferenceLink": Object {
+              "alias": "0000014",
+              "aliasWithHost": "BVA0000014@example.va.gov",
+              "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+              "conferenceDeleted": false,
+              "conferenceId": null,
+              "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+              "guestPinLong": "9722799217",
+              "hearingDayId": 151,
+              "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+              "hostPin": "6172491",
+              "id": 302,
+            },
             "isVirtual": false,
+            "readableRequestType": "Video",
             "scheduledForIsPast": false,
+            "wasVirtual": false,
           }
         }
         isVirtual={true}
         label="Hearing Coordinator Link"
+        link="https://instant-usgov.webex.com/visit/hu1swd0"
         linkText="Start Hearing"
+        links={
+          Object {
+            "alias": "0000014",
+            "aliasWithHost": "BVA0000014@example.va.gov",
+            "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+            "conferenceDeleted": false,
+            "conferenceId": null,
+            "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+            "guestPinLong": "9722799217",
+            "hearingDayId": 151,
+            "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+            "hostPin": "6172491",
+            "id": 302,
+          }
+        }
         role="HC"
         user={
           Object {
@@ -383,12 +494,28 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             hearing={
               Object {
                 "conferenceProvider": "pexip",
+                "dailyDocketConferenceLink": Object {
+                  "alias": "0000014",
+                  "aliasWithHost": "BVA0000014@example.va.gov",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                  "conferenceDeleted": false,
+                  "conferenceId": null,
+                  "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                  "guestPinLong": "9722799217",
+                  "hearingDayId": 151,
+                  "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                  "hostPin": "6172491",
+                  "id": 302,
+                },
                 "isVirtual": false,
+                "readableRequestType": "Video",
                 "scheduledForIsPast": false,
+                "wasVirtual": false,
               }
             }
             isVirtual={true}
             label="Start Hearing"
+            link="https://instant-usgov.webex.com/visit/hu1swd0"
             role="HC"
             user={
               Object {
@@ -404,12 +531,28 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               hearing={
                 Object {
                   "conferenceProvider": "pexip",
+                  "dailyDocketConferenceLink": Object {
+                    "alias": "0000014",
+                    "aliasWithHost": "BVA0000014@example.va.gov",
+                    "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                    "conferenceDeleted": false,
+                    "conferenceId": null,
+                    "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                    "guestPinLong": "9722799217",
+                    "hearingDayId": 151,
+                    "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                    "hostPin": "6172491",
+                    "id": 302,
+                  },
                   "isVirtual": false,
+                  "readableRequestType": "Video",
                   "scheduledForIsPast": false,
+                  "wasVirtual": false,
                 }
               }
               isVirtual={true}
               label="Start Hearing"
+              link="https://instant-usgov.webex.com/visit/hu1swd0"
               newWindow={true}
               showFullLink={false}
               user={
@@ -423,9 +566,11 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               }
             >
               <Link
+                href="https://instant-usgov.webex.com/visit/hu1swd0"
                 target="_blank"
               >
                 <a
+                  href="https://instant-usgov.webex.com/visit/hu1swd0"
                   target="_blank"
                   type={null}
                 >
@@ -498,7 +643,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               label=""
               styling={Object {}}
               text="Copy HC Link"
-              textToCopy={null}
+              textToCopy="https://instant-usgov.webex.com/visit/hu1swd0"
             >
               <Tooltip
                 id="tooltip-Copy HC Link"
@@ -513,7 +658,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                   data-for="tooltip-Copy HC Link"
                   data-tip={true}
                   tabIndex={0}
-                  text="Copy HC Link"
+                  text="https://instant-usgov.webex.com/visit/hu1swd0"
                 >
                   <button
                     aria-describedby="tooltip-Copy HC Link"
@@ -524,7 +669,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
                     data-event-off="mouseleave keydown"
                     data-for="tooltip-Copy HC Link"
                     data-tip={true}
-                    disabled={true}
+                    disabled={false}
                     onClick={[Function]}
                     tabIndex={0}
                     type="submit"
@@ -667,13 +812,43 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
         hearing={
           Object {
             "conferenceProvider": "pexip",
+            "dailyDocketConferenceLink": Object {
+              "alias": "0000014",
+              "aliasWithHost": "BVA0000014@example.va.gov",
+              "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+              "conferenceDeleted": false,
+              "conferenceId": null,
+              "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+              "guestPinLong": "9722799217",
+              "hearingDayId": 151,
+              "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+              "hostPin": "6172491",
+              "id": 302,
+            },
             "isVirtual": false,
+            "readableRequestType": "Video",
             "scheduledForIsPast": false,
+            "wasVirtual": false,
           }
         }
         isVirtual={true}
         label="Guest Link"
         linkText="Join Hearing"
+        links={
+          Object {
+            "alias": "0000014",
+            "aliasWithHost": "BVA0000014@example.va.gov",
+            "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+            "conferenceDeleted": false,
+            "conferenceId": null,
+            "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+            "guestPinLong": "9722799217",
+            "hearingDayId": 151,
+            "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+            "hostPin": "6172491",
+            "id": 302,
+          }
+        }
         role="Guest"
         user={
           Object {
@@ -697,8 +872,23 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
             hearing={
               Object {
                 "conferenceProvider": "pexip",
+                "dailyDocketConferenceLink": Object {
+                  "alias": "0000014",
+                  "aliasWithHost": "BVA0000014@example.va.gov",
+                  "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                  "conferenceDeleted": false,
+                  "conferenceId": null,
+                  "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                  "guestPinLong": "9722799217",
+                  "hearingDayId": 151,
+                  "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                  "hostPin": "6172491",
+                  "id": 302,
+                },
                 "isVirtual": false,
+                "readableRequestType": "Video",
                 "scheduledForIsPast": false,
+                "wasVirtual": false,
               }
             }
             isVirtual={true}
@@ -718,8 +908,23 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, pexip, and i
               hearing={
                 Object {
                   "conferenceProvider": "pexip",
+                  "dailyDocketConferenceLink": Object {
+                    "alias": "0000014",
+                    "aliasWithHost": "BVA0000014@example.va.gov",
+                    "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                    "conferenceDeleted": false,
+                    "conferenceId": null,
+                    "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                    "guestPinLong": "9722799217",
+                    "hearingDayId": 151,
+                    "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                    "hostPin": "6172491",
+                    "id": 302,
+                  },
                   "isVirtual": false,
+                  "readableRequestType": "Video",
                   "scheduledForIsPast": false,
+                  "wasVirtual": false,
                 }
               }
               isVirtual={true}
