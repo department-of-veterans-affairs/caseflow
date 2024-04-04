@@ -51,11 +51,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const fetchData = async () => {
     const correspondence = props;
-
+    const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-      const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
 
       setIsInboundOpsTeam(Boolean(inboundOpsTeam));
 
@@ -72,11 +71,11 @@ export const CorrespondenceReviewPackage = (props) => {
 
     // When a reassign package task is active and pending review, the page is read-only
     const hasAssignedReassignPackageTask = (tasks) => {
-      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' && task.type === 'ReassignPackageTask');
-      const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
+      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+          task.type === 'ReassignPackageTask');
 
       // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (typeof assignedReassignTask !== 'undefined') && isInboundOpsTeam;
+      return (typeof assignedReassignTask !== 'undefined') && inboundOpsTeam;
     };
 
     try {

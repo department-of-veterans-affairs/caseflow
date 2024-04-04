@@ -170,7 +170,7 @@ class ReassignPackageModal extends React.Component {
       this.setState({ selectedRequestChoice: selectedRequest });
     };
 
-    const approveElement = (<div style={{ width: '28vw' }}>
+    const approveElement = (<div style={{ width: '16vw' }}>
       <ReactSelectDropdown
         className="cf-margin-left-2rem img"
         label="Assign to person"
@@ -180,7 +180,7 @@ class ReassignPackageModal extends React.Component {
     </div>);
 
     const textAreaElement = (
-      <div style={{ width: '280%' }}>
+      <div style={{ width: '100%' }}>
         <TextareaField label="Provide a reason for rejection"
           onChange={handleDecisionReason}
           value={this.state.decisionReason} />
