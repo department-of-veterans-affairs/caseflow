@@ -4,7 +4,7 @@
 # when an Event is received using the data sent from VBMS
 class Events::DecisionReviewCreated::CreateRequestIssues
   class << self
-    def process!(event, parser, epe)
+    def process!(event:, parser:, epe:)
       create_request_issue_backfill(event, parser, epe)
     rescue Caseflow::Error::DecisionReviewCreatedRequestIssuesError => error
       raise error

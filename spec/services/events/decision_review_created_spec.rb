@@ -4,9 +4,9 @@ describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
   let!(:reference_id) { "2001" }
   let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
-  let!(:event) { instance_double(Event) }
   let!(:json_payload) { read_json_payload }
   let!(:headers) { sample_headers }
+  let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example}
 
 
   describe "#event_exists_and_is_completed?" do
@@ -56,10 +56,25 @@ describe Events::DecisionReviewCreated do
         subject
         expect(Event.where(reference_id: consumer_event_id).exists?).to eq(true)
       end
+
+      it "should create a new Event instance" do
+        event = Event.find_by(reference_id: consumer_event_id)
+        expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
+        # expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event, parser.css_id, parser.station_id).and_call_original
+        # expect(Events::CreateVeteranOnEvent).to receive(:handle_veteran_creation_on_event).with(event, anything).and_return([])
+        expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
+        expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateIntake).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateEpEstablishment).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateRequestIssues).to receive(:process!).and_call_original
+        subject
+      end
     end
 
     context 'when a StandardError occurs' do
       let(:error_message) { 'StandardError message' }
+      let!(:event) { instance_double(Event) }
 
       before do
         allow(DecisionReviewCreatedEvent).to receive(:create).and_raise(StandardError, error_message)
