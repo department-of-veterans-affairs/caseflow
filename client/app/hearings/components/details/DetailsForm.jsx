@@ -97,7 +97,8 @@ const DetailsForm = (props) => {
         </div>
       </ContentSection>
 
-      {((hearing?.isVirtual || hearing?.wasVirtual) || hearing.readableRequestType === 'Video') && (
+      {((hearing?.isVirtual || hearing?.wasVirtual) ||
+        (hearing.readableRequestType === 'Video' && hearing?.scheduledForIsPast)) && (
         <VirtualHearingFields
           errors={errors}
           hearing={hearing}
