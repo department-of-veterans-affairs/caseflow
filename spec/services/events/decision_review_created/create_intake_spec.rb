@@ -14,13 +14,13 @@ describe Events::DecisionReviewCreated::CreateIntake do
         .and_return(intake_double)
       expect(EventRecord).to receive(:create!).with(event: event_double, backfill_record: intake_double)
         .and_return(event_record_double)
-      described_class.process!(event_double, user_double, veteran_double)
+      described_class.process!(event: event_double, user: user_double, veteran: veteran_double)
     end
     context "when an error occurs" do
       let(:error) { Caseflow::Error::DecisionReviewCreatedIntakeError.new("Unable to create Intake") }
       it "raises the error" do
         allow(Intake).to receive(:create!).and_raise(error)
-        expect { described_class.process!(event_double, user_double, veteran_double) }.to raise_error(error)
+        expect { described_class.process!(event: event_double, user: user_double, veteran: veteran_double) }.to raise_error(error)
       end
     end
   end

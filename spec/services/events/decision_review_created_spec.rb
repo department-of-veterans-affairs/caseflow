@@ -2,9 +2,14 @@
 
 describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
-  let!(:reference_id) { "2001" }
-  let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
   let!(:event) { instance_double(Event) }
+  let!(:reference_id) { "2001" }
+  let(:event_created) { DecisionReviewCreatedEvent.create!(reference_id: consumer_event_id, completed_at: nil) }
+  let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
+  let!(:json_payload) { read_json_payload }
+  let!(:headers) { sample_headers }
+  let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example}
+
 
   describe "#event_exists_and_is_completed?" do
     subject { described_class.event_exists_and_is_completed?(consumer_event_id) }
@@ -23,7 +28,7 @@ describe Events::DecisionReviewCreated do
   end
 
   describe "#create!" do
-    subject { described_class.create!(consumer_event_id, reference_id) }
+    subject { described_class.create!(consumer_event_id, reference_id, headers, read_json_payload) }
 
     context "when lock acquisition fails" do
       before do
@@ -53,6 +58,18 @@ describe Events::DecisionReviewCreated do
         subject
         expect(Event.where(reference_id: consumer_event_id).exists?).to eq(true)
       end
+
+      it "should call all sub services" do
+        expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
+        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event: event_created, parser: parser.css_id, parser.station_id).and_call_original
+        expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
+        expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateIntake).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateEpEstablishment).to receive(:process!).and_call_original
+        expect(Events::DecisionReviewCreated::CreateRequestIssues).to receive(:process!).and_call_original
+        subject
+      end
     end
 
     context 'when a StandardError occurs' do
@@ -72,4 +89,22 @@ describe Events::DecisionReviewCreated do
       end
     end
   end
+end
+
+def read_json_payload
+JSON.generate(JSON.parse(File.read(Rails.root.join("app",
+                                                   "services",
+                                                   "events",
+                                                   "decision_review_created",
+                                                   "decision_review_created_example.json"))))
+end
+
+def sample_headers
+{
+  "X-VA-Vet-SSN" => "123456789",
+  "X-VA-File-Number" => "77799777",
+  "X-VA-Vet-First-Name" => "John",
+  "X-VA-Vet-Last-Name" => "Smith",
+  "X-VA-Vet-Middle-Name" => "Alexander"
+}
 end

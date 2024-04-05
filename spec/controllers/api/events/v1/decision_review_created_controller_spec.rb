@@ -9,13 +9,19 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     let!(:valid_params) do
       {
         event_id: "123",
-        claim_id: "9999"
+        claim_id: "9999",
+        payload: JSON.generate(json_payload)
       }
     end
 
     context "with a valid token" do
       it "returns success response" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
+        request.headers["X-VA-Vet-SSN"] = "123456789"
+        request.headers["X-VA-File-Number"] = "77799777"
+        request.headers["X-VA-Vet-First-Name"] = "John"
+        request.headers["X-VA-Vet-Last-Name"] = "Smith"
+        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
         post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:created)
       end
@@ -95,4 +101,12 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
       end
     end
   end
+end
+
+def json_payload
+  JSON.parse(File.read(Rails.root.join("app",
+                                       "services",
+                                       "events",
+                                       "decision_review_created",
+                                       "decision_review_created_example.json")))
 end

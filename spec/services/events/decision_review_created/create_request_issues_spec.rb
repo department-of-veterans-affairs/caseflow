@@ -13,7 +13,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       it "should create CF RequestIssues and backfill records" do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, get_payload)
 
-        backfilled_issues = subject.process!(event, parser, epe)
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe)
 
         expect(backfilled_issues.count).to eq(2)
         expect(RequestIssue.count).to eq(2)

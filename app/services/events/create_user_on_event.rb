@@ -4,7 +4,7 @@
 # when an Event is received and that specific User does not already exist in Caseflow
 class Events::CreateUserOnEvent
   class << self
-    def handle_user_creation_on_event(event, css_id, station_id)
+    def handle_user_creation_on_event(event:, css_id:, station_id:)
       unless user_exist?(css_id)
         create_inactive_user(event, css_id, station_id)
       end
@@ -18,6 +18,7 @@ class Events::CreateUserOnEvent
       user = User.create!(css_id: css_id.upcase, station_id: station_id, status: Constants.USER_STATUSES.inactive)
       # create Event record indicating this is a backfilled User
       EventRecord.create!(event: event, backfill_record: user)
+      user
     end
   end
 end

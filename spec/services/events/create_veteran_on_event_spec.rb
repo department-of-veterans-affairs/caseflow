@@ -30,7 +30,7 @@ describe Events::CreateVeteranOnEvent do
         payload = get_payload
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
-        backfilled_veteran = subject.handle_veteran_creation_on_event(event, parser)
+        backfilled_veteran = subject.handle_veteran_creation_on_event(event: event, parser: parser)
 
         expect(backfilled_veteran.ssn).to eq headers["X-VA-Vet-SSN"]
         expect(backfilled_veteran.file_number).to eq headers["X-VA-File-Number"]
