@@ -68,6 +68,8 @@ export class FlashAlerts extends React.PureComponent {
       } else if (flash[0] === 'mst_pact_edited') {
       // eslint-disable-next-line max-len
         flashMsg = <Alert key={idx} title="You have successfully updated issues on this appeal" type="success" lowerMargin>{listChanges(flash[1])}</Alert>;
+      } else if (flash[0] === 'custom') {
+        flashMsg = <Alert key={idx} title={flash[1].title} type="success" lowerMargin>{flash[1].message}</Alert>;
       } else if (flash[0] === 'show_vha_org_join_info') {
         flashMsg = <VhaJoinOrgAlert />;
       }
