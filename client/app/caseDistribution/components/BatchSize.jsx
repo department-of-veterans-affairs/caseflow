@@ -4,7 +4,7 @@ import cx from 'classnames';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
-import { updateNumberLever, validateLever } from '../reducers/levers/leversActions';
+import { updateLeverValue, validateLever } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { dynamicallyAddAsterisk } from '../utils';
@@ -30,7 +30,7 @@ const BatchSize = () => {
     const { lever_group, item } = lever;
 
     dispatch(validateLever(lever, item, event, leverErrors(item)));
-    dispatch(updateNumberLever(lever_group, item, event));
+    dispatch(updateLeverValue(lever_group, item, event));
   };
 
   return (
