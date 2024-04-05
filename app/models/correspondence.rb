@@ -56,4 +56,8 @@ class Correspondence < CaseflowRecord
   def veteran_full_name
     veteran.name
   end
+
+  def self.load_by_veteran_id_and_uuid(veteran_id, uuid)
+    where(veteran_id: veteran_id).where.not(uuid: uuid)
+  end
 end
