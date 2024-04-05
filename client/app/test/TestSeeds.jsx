@@ -12,6 +12,7 @@ import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import NumberField from '../components/NumberField';
+import cx from 'classnames';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -172,20 +173,22 @@ class TestSeeds extends React.PureComponent {
                       <h2 id="run_seeds">Run Seed Files</h2>
                       <ul>
                         {seedTypes.map((type) => (
-                          <li key={type} style={{ marginBottom: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <li key={type}>
+                            <div className={cx('lever-right', 'test-seeds-num-field')}>
                               <NumberField
                                 value={this.state.seedCounts[type]}
                                 onChange={(newValue) => this.handleSeedCountChange(type, newValue)}
                                 isInteger
                               />
                             </div>
-                            <Button
-                              onClick={() => this.reseed(type)}
-                              name={`Run Demo ${type} Seeds`}
-                              loading={this.state.reseedingStatus[type]}
-                              loadingText={`Reseeding ${type} Seeds`}
-                            />
+                            <div className="cf-btn-link">
+                              <Button
+                                onClick={() => this.reseed(type)}
+                                name={`Run Demo ${type} Seeds`}
+                                loading={this.state.reseedingStatus[type]}
+                                loadingText={`Reseeding ${type} Seeds`}
+                              />
+                            </div>
                           </li>
                         ))}
                       </ul>
