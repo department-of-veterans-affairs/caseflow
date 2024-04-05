@@ -2,7 +2,9 @@
 
 describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
+  let!(:event) { instance_double(Event) }
   let!(:reference_id) { "2001" }
+  let(:event_created) { DecisionReviewCreatedEvent.create!(reference_id: consumer_event_id, completed_at: nil) }
   let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
   let!(:json_payload) { read_json_payload }
   let!(:headers) { sample_headers }
@@ -57,11 +59,9 @@ describe Events::DecisionReviewCreated do
         expect(Event.where(reference_id: consumer_event_id).exists?).to eq(true)
       end
 
-      it "should create a new Event instance" do
-        event = Event.find_by(reference_id: consumer_event_id)
+      it "should call all sub services" do
         expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
-        # expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event, parser.css_id, parser.station_id).and_call_original
-        # expect(Events::CreateVeteranOnEvent).to receive(:handle_veteran_creation_on_event).with(event, anything).and_return([])
+        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event_created, parser.css_id, parser.station_id).and_call_original
         expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
         expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
         expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original
@@ -74,7 +74,6 @@ describe Events::DecisionReviewCreated do
 
     context 'when a StandardError occurs' do
       let(:error_message) { 'StandardError message' }
-      let!(:event) { instance_double(Event) }
 
       before do
         allow(DecisionReviewCreatedEvent).to receive(:create).and_raise(StandardError, error_message)
