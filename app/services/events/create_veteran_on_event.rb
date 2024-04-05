@@ -4,7 +4,7 @@
 # when an Event is received and that specific Veteran does not already exist in Caseflow
 class Events::CreateVeteranOnEvent
   class << self
-    def handle_veteran_creation_on_event(event, parser)
+    def handle_veteran_creation_on_event(event:, parser:)
       unless veteran_exist?(parser.veteran_ssn)
         create_backfill_veteran(event, parser)
       else

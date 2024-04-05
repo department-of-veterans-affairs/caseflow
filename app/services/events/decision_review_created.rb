@@ -33,10 +33,11 @@ class Events::DecisionReviewCreated
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
           # Note: createdByStation == station_id, createdByUsername == css_id
-          user = Events::CreateUserOnEvent.handle_user_creation_on_event(event, parser.css_id, parser.station_id)
+          user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
+                                                                         station_id: parser.station_id)
 
           # Create the Veteran. PII Info is stored in the headers
-          vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, parser)
+          vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
           decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)

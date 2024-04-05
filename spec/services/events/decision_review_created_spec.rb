@@ -61,7 +61,7 @@ describe Events::DecisionReviewCreated do
 
       it "should call all sub services" do
         expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
-        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event_created, parser.css_id, parser.station_id).and_call_original
+        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event: event_created, parser: parser.css_id, parser.station_id).and_call_original
         expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
         expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
         expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original

@@ -23,7 +23,7 @@ describe Events::CreateUserOnEvent do
   end
 
   describe "#handle_user_creation_on_event" do
-    subject { described_class.handle_user_creation_on_event(event, css_id, station_id) }
+    subject { described_class.handle_user_creation_on_event(event: event, css_id: css_id, station_id: station_id) }
 
     context "When an Event is received and no User exists" do
       it "should create an Inactive User and Event Record" do
