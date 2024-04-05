@@ -4,7 +4,9 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
-  attribute :daily_docket_conference_link
+  attribute :daily_docket_conference_link do |hearing|
+    ConferenceLinkSerializer.new(hearing.daily_docket_conference_link).serializable_hash[:data][:attributes]
+  end
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?
