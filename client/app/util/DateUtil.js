@@ -68,13 +68,10 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
 
 };
 
+// eslint-disable-next-line react/prop-types
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
   {formatDateStr(date, inputFormat, dateFormat)}
 </span>;
-
-export const formatDateStringForApi = (dateString) => (
-  formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')
-);
 
 const YEAR_INDEX = 0;
 const MONTH_INDEX = 1;
