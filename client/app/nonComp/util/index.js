@@ -2,18 +2,6 @@ import _ from 'lodash';
 
 import { FORM_TYPES } from '../../intake/constants';
 
-export const formatTasks = (serverTasks) => {
-  return (serverTasks || []).map((task) => {
-    return {
-      ...task,
-      assignedOn: task.assigned_on,
-      closedAt: task.closed_at,
-      veteranParticipantId: task.veteran_participant_id,
-      veteranSSN: task.veteran_ssn
-    };
-  });
-};
-
 export const longFormNameFromKey = (formNameKey) => {
   return _.find(FORM_TYPES, { key: formNameKey }).name;
 };
