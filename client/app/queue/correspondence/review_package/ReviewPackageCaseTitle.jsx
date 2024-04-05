@@ -59,17 +59,10 @@ const ReviewPackageCaseTitle = (props) => {
   return (
     <div>
       <CaseTitleScaffolding
-        correspondence_id = {props.correspondence.id}
-        isReadOnly={props.isReadOnly}
-        isReassignPackage={props.isReassignPackage}
-        mailTeamUsers={props.mailTeamUsers}
+        {...props}
       />
       <CaseSubTitleScaffolding
         {...props}
-        reviewDetails={props.reviewDetails}
-        correspondence_id={props.correspondence.id}
-        isReadOnly={props.isReadOnly}
-        isInboundOpsTeam={props.isInboundOpsTeam}
       />
     </div>
   );
