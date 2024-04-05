@@ -142,7 +142,7 @@ RSpec.feature("Search Bar for Correspondence") do
       find_by_id("searchBar").fill_in with: veteran.last_name
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
       expect(search_value.include?(veteran.last_name))
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(

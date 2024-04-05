@@ -11,21 +11,6 @@ class CorrespondenceController < ApplicationController
   before_action :auto_texts
   before_action :veteran_information
 
-  def correspondence_cases
-    if current_user.mail_supervisor?
-      redirect_to "/queue/correspondence/team"
-    elsif current_user.mail_superuser? || current_user.mail_team_user?
-      respond_to do |format|
-        format.html { "your_correspondence" }
-        format.json do
-          render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
-        end
-      end
-    else
-      redirect_to "/unauthorized"
-    end
-  end
-
   def mail_team_users
     mail_team_users = User.mail_team_users
     respond_to do |format|
@@ -36,6 +21,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def review_package
+    @mail_team_users = User.mail_team_users.pluck(:css_id)
     render "correspondence/review_package"
   end
 

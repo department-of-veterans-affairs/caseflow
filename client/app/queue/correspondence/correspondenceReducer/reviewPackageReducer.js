@@ -12,7 +12,8 @@ export const initialState = {
     isButtonDisabled: false,
     batchId: null,
     bannerAlert: {},
-  }
+  },
+  reasonForReassignPackage: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -101,6 +102,15 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
+  case ACTIONS.REASSIGN_PACKAGE_ACTION:
+    return update(state, {
+      lastAction: {
+        action_type: {
+          $set: action.payload.currentAction
+        }
+      }
+    });
+
   case ACTIONS.SET_AUTO_ASSIGN_BANNER:
     return update(state, {
       autoAssign: {
@@ -118,6 +128,13 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
         isButtonDisabled: {
           $set: action.payload.isButtonDisabled
         }
+      }
+    });
+
+  case ACTIONS.SET_REASON_REASSIGN_PACKAGE:
+    return update(state, {
+      reasonForReassignPackage: {
+        $set: action.payload.reasonForReassignPackage
       }
     });
 

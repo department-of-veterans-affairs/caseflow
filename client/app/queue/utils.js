@@ -84,6 +84,7 @@ const correspondenceTaskAttributesFromRawTask = (task) => {
     closedAt: task.attributes.closed_at,
     daysWaiting: task.attributes.days_waiting,
     vaDor: task.attributes.va_date_of_receipt,
+    nod: task.attributes.nod,
     label: task.attributes.label,
     taskUrl: task.attributes.task_url,
     parentTaskUrl: task.attributes.parent_task_url.parent_task_url,
@@ -560,6 +561,7 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      hasCompletedSctAssignTask: appeal.attributes.has_completed_sct_assign_task,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };

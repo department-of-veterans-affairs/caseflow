@@ -162,50 +162,50 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = current_date.strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses uses task filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[1].click
+      all(".unselected-filter-icon")[2].click
       find("label", text: "Review Package Task (1)").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
@@ -348,11 +348,11 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='Sort by Notes']").click
 
-      notes = all("tbody > tr > td:nth-child(4)").map(&:text)
+      notes = all("tbody > tr > td:nth-child(5)").map(&:text)
       expect(notes).to eq(notes.sort.reverse)
 
       find("[aria-label='Sort by Notes']").click
-      notes = all("tbody > tr > td:nth-child(4)").map(&:text)
+      notes = all("tbody > tr > td:nth-child(5)").map(&:text)
       expect(notes).to eq(notes.sort)
     end
   end
@@ -479,45 +479,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_action_required"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_action_required"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_action_required"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = (current_date - 4).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_action_required"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -632,45 +632,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-2").click
       current_date = Time.zone.today
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -796,47 +796,47 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-1").click
       current_date = Time.zone.today
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-2").click
       current_date = Time.zone.today
       my_date = (current_date - 5).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-3-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       click_button("Apply Filter")
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -1012,45 +1012,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = current_date.strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
   end
 
@@ -1130,45 +1130,45 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses receipt date between filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
       all("div.input-container > input")[0].fill_in(with: "10/09/2000")
       all("div.input-container > input")[1].fill_in(with: "10/11/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       all("div.input-container > input")[0].fill_in(with: "10/01/2001")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date after filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-2").click
       current_date = Time.zone.today
       my_date = (current_date - 3).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: my_date)
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses receipt date on filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[0].click
+      all(".unselected-filter-icon")[1].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
       all("div.input-container > input")[0].fill_in(with: "10/10/2000")
       find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(5)").length == 1)
     end
 
     it "uses days waiting sort correctly" do
@@ -1205,10 +1205,10 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "uses tasks filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_pending"
-      all(".unselected-filter-icon")[1].click
+      all(".unselected-filter-icon")[2].click
       all(".cf-filter-option-row")[1].click
       # find_by_id("0-CavcCorrespondenceCorrespondenceTask").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 5)
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(3)").length == 5)
     end
 
     it "uses assigned to sort correctly" do
@@ -1271,9 +1271,32 @@ RSpec.feature("The Correspondence Cases page") do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
       all("[aria-label='Reassign Package Task Link']")[0].click
       find('[for="vertical-radio_reject"]').click
-      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
       expect(page).to have_content("You have successfully rejected a package request for")
+    end
+
+    it "approve request to reassign in review_package view" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find("#Review-request-button-id-2").click
+      find("#button-Review-reassign-request").click
+      find('[for="merge-package_approve"]').click
+      find("#react-select-4-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
+      find("#react-select-4-option-0").click
+      click_button("Confirm")
+      expect(page).to have_content("You have successfully reassigned a mail record for")
+    end
+
+    it "deny request to reassign in review_package view" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find("#Review-request-button-id-2").click
+      find("#button-Review-reassign-request").click
+      find('[for="merge-package_reject"]').click
+      find(".cf-form-textarea", match: :first).fill_in with: "this is a rejection reason"
+      click_button("Confirm")
+      expect(page).to have_content("You have successfully rejected a package request")
     end
 
     it "approve request to remove" do
@@ -1288,7 +1311,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
       all("[aria-label='Remove Package Task Link']")[0].click
       find('[for="vertical-radio_reject"]').click
-      find(".cf-form-textarea", visible: false).find(:xpath, "./*").fill_in with: "this is a rejection reason"
+      all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
       expect(page).to have_content("You have successfully rejected a package request")
     end
@@ -1422,6 +1445,94 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: on_this_date)
       expect(page).to have_button("Apply filter", disabled: true)
       expect(page).to have_content("Date completed cannot be in the future.")
+    end
+  end
+
+  context "Package document type column" do
+    let(:current_user) { create(:user) }
+    let(:alt_user) { create(:user) }
+    let(:mail_team_user) { create(:user) }
+    before :each do
+      MailTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(alt_user)
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    before do
+      5.times do
+        corres_array = (1..2).map { |index| create(:correspondence, nod: index == 1) }
+        task_array = [ReassignPackageTask, RemovePackageTask]
+
+        corres_array.each_with_index do |corres, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          task_array[index].create!(
+            parent_id: rpt.id,
+            appeal_type: "Correspondence",
+            appeal_id: corres.id,
+            assigned_to: InboundOpsTeam.singleton,
+            instructions: ["This was the default"],
+            assigned_by_id: rpt.assigned_to_id
+          )
+        end
+      end
+    end
+
+    it "appears on each tab of team cases" do
+      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+    end
+
+    it "appears on each tab of individual queue" do
+      User.authenticate!(user: alt_user)
+      visit "queue/correspondence/?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+      visit "queue/correspondence/?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Package Document Type")
+    end
+
+    it "correctly sorts NOD type" do
+      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
+      # binding.pry
+      find("[aria-label='Package Document Type']").click
+      first_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
+      find("[aria-label='Package Document Type']").click
+      second_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
+      find("[aria-label='Package Document Type']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == first_task.text)
+      find("[aria-label='Package Document Type']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task.text)
+    end
+
+    it "correctly filters NOD type" do
+      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
+      find("[aria-label='packageDocTypeColumn']").click
+      all(".cf-filter-option-row")[1].click
+      expect(page).to_not have_content("Non-NOD")
+      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
+      find("[aria-label='packageDocTypeColumn']").click
+      all(".cf-filter-option-row")[1].click
+      find("[aria-label='packageDocTypeColumn. Filtering by true']").click
+      all(".cf-filter-option-row")[2].click
+      expect(page).to have_content("Package Document Type (2)")
+      expect(page).to have_content("Viewing 1-10 of 10 total")
+    end
+
+    it "correctly uses search bar" do
+      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
+      fill_in "searchBar", with: "-nod"
+      expect all("td", text: "Non-NOD").length == 5
     end
   end
 end

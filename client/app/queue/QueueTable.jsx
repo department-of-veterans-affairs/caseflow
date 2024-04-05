@@ -349,7 +349,7 @@ export default class QueueTable extends React.PureComponent {
     const firstResponse = {
       task_page_count: this.props.numberOfPages,
       tasks_per_page: this.props.casesPerPage,
-      total_task_count: this.props.rowObjects.length,
+      total_task_count: this.props.totalTaskCount,
       tasks: this.props.rowObjects
     };
 

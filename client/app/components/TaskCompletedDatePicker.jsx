@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
+import { css } from 'glamor';
 
 const dateDropdownMap = [
   { value: 0, label: 'Between these dates' },
@@ -45,6 +46,51 @@ const TaskCompletedDatePicker = (props) => {
     }
   };
 
+  const styles = {
+    optSelect: css({
+      '.receiptDate': {
+      },
+      '& .css-yk16xz-control': {
+        borderRadius: '0px'
+      },
+      '& .css-1pahdxg-control': {
+        borderColor: 'hsl(0, 0%, 100%)',
+        boxShadow: '0 0 0 1px #5B616B !important',
+        borderRadius: '0px !important',
+        ':hover': {
+          borderColor: 'hsl(0, 0%, 80%)',
+        }
+      }
+    })
+  };
+
+  const selectContainerStyles = css({
+    '& .data-css-1co2jut': {
+      margin: '0 5% 0 5%'
+    },
+    '& .cf-form-textinput.usa-input-error': {
+      borderLeft: '4px solid #cd2026',
+      marginTop: '0px',
+      paddingBottom: '0px',
+      paddingLeft: '0.5rem',
+      paddingTop: '0px',
+      position: 'relative',
+      right: '2px'
+    },
+    '& .usa-input-error input': {
+      width: 'inherit'
+    },
+    '& .cf-form-textinput': {
+      paddingTop: '11px !important',
+      marginBottom: 0,
+      '& .input-container': {
+        '& input': {
+          margin: 0
+        }
+      }
+    }
+  });
+
   const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
   const isApplyFilterButtonDisabled =
     props.taskCompletedDateState === taskCompletedDateFilterStates.BETWEEN ?
@@ -55,7 +101,7 @@ const TaskCompletedDatePicker = (props) => {
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
-      <div style={{ margin: '5% 5%' }}>
+      <div style={{ margin: '0 5%' }}>
         <DateSelector
           onChange={handleDateChange}
           label="From"
@@ -68,7 +114,7 @@ const TaskCompletedDatePicker = (props) => {
           errorMessage={errorMessagesNode(dateErrorsTo, 'toDate')} />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
-      <div style={{ margin: '5% 5%' }}>
+      <div style={{ margin: '0 5%' }} >
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -77,7 +123,7 @@ const TaskCompletedDatePicker = (props) => {
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
-      <div style={{ margin: '5% 5%' }}>
+      <div style={{ margin: '0 5%' }}>
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -86,7 +132,7 @@ const TaskCompletedDatePicker = (props) => {
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
-      <div style={{ margin: '5% 5%' }}>
+      <div style={{ margin: '0 5%' }}>
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -99,18 +145,23 @@ const TaskCompletedDatePicker = (props) => {
     }
   };
 
-  return <div id="dropdown">
-    <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+  return <div id="dropdown" {...selectContainerStyles}>
+    <div style={{ marginLeft: '5%', marginRight: '5%', marginTop: '3.5%' }}>
       <ReactSelectDropdown
+        className = {`receiptDate ${styles.optSelect}`}
         label="Date filter parameters"
         options={dateDropdownMap}
         onChangeMethod={props.onChangeMethod} />
     </div>
 
-    <div style={{ width: '100%', margin: 'auto' }}>
+    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.5%' }}>
       {getDatePickerElements()}
     </div>
-    <div style={{ margin: '10px 20px', display: 'flex', justifyContent: 'end', width: '190px' }}>
+    <div style={{ display: 'flex',
+      padding: '16.5px 10px 24px 0',
+      justifyContent: 'right',
+      width: '190px',
+      borderTop: '1px solid #d6d7d9' }}>
       <Button onClick={handleApplyFilter} disabled={isApplyFilterButtonDisabled}>Apply filter</Button>
     </div>
   </div>;

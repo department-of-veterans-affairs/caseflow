@@ -72,6 +72,37 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
   end
 
+  describe "GET #correspondence_team" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    it "returns a successful response" do
+      get :correspondence_team, params: { taskId: esw_tasks.first[:task_id],
+                                          veteranName: "Bob%20Smithwatsica",
+                                          userAction: "approve",
+                                          user: current_user.css_id,
+                                          decisionReason: "",
+                                          operation: "remove" }
+      expect(controller.view_assigns["response_header"]).to eq("You have successfully removed a mail package for Bob Smithwatsica")
+      expect(controller.view_assigns["response_message"]).to eq("The package has been removed from Caseflow and must be manually uploaded again\n     from the Centralized Mail Portal, if it needs to be processed.")
+    end
+
+    it "returns a failure response" do
+      allow(controller).to receive(:update_remove_task).and_raise(StandardError)
+      get :correspondence_team, params: { taskId: esw_tasks.first[:task_id],
+                                          veteranName: "Bob%20Smithwatsica",
+                                          userAction: "approve",
+                                          user: current_user.css_id,
+                                          decisionReason: "",
+                                          operation: "remove" }
+
+      expect(controller.view_assigns["response_header"]).to eq("Package request for Bob Smithwatsica could not be approved")
+      expect(controller.view_assigns["response_message"]).to eq("Please try again at a later time or contact the Help Desk.")
+    end
+  end
+
   describe "PATCH #update" do
     let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do

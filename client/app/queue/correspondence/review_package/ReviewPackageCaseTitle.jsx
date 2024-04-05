@@ -5,6 +5,7 @@ import COPY from 'app/../COPY';
 import Button from '../../../components/Button';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import RemovePackageModal from '../component/RemovePackageModal';
+import ReassignPackageModal from '../component/ReassignPackageModal';
 
 const containingDivStyling = css({
   display: 'block',
@@ -57,21 +58,32 @@ const ReviewPackageCaseTitle = (props) => {
 
   return (
     <div>
-      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
-      <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
+      <CaseTitleScaffolding
+        {...props}
+      />
+      <CaseSubTitleScaffolding
+        {...props}
+      />
     </div>
   );
 };
 
 const CaseTitleScaffolding = (props) => {
 
-  const [modalState, setModalState] = useState(false);
+  const [modalRemoveState, setRemoveModalState] = useState(false);
+  const [modalReassignState, setReassignModalState] = useState(false);
 
-  const openModal = () => {
-    setModalState(true);
+  const openRemoveModal = () => {
+    setRemoveModalState(true);
   };
-  const closeModal = () => {
-    setModalState(false);
+  const closeRemoveModal = () => {
+    setRemoveModalState(false);
+  };
+  const openReassignModal = () => {
+    setReassignModalState(true);
+  };
+  const closeReassignModal = () => {
+    setReassignModalState(false);
   };
 
   return (
@@ -79,23 +91,42 @@ const CaseTitleScaffolding = (props) => {
       <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
 
       <span {...removebotton}>
-        { props.isReadOnly &&
+        { (props.isReadOnly && !props.isReassignPackage && props.userIsCorrespondenceSupervisor) &&
           <Button
             name="Review removal request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
             classNames={['usa-button-primary']}
-            onClick={() => {
-              openModal();
-            }}
+            onClick={
+              openRemoveModal
+            }
+          />
+        }
+        { (props.isReadOnly && props.isReassignPackage && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)) &&
+          <Button
+            name="Review reassign request"
+            styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
+            classNames={['usa-button-primary']}
+            onClick={
+              openReassignModal
+            }
           />
         }
       </span>
-      { modalState &&
+      { modalRemoveState &&
       <RemovePackageModal
-        modalState={modalState}
-        setModalState={setModalState}
-        onCancel={closeModal}
+        modalState={modalRemoveState}
+        setModalState={setRemoveModalState}
+        onCancel={closeRemoveModal}
+        reviewDetails={props.reviewDetails}
         correspondence_id = {props.correspondence_id} />
+      }
+      { modalReassignState &&
+      <ReassignPackageModal
+        modalState={modalReassignState}
+        setModalState={setReassignModalState}
+        onCancel={closeReassignModal}
+        correspondence_id = {props.correspondence_id}
+        mailTeamUsers={props.mailTeamUsers} />
       }
     </div>
   );
@@ -129,20 +160,33 @@ const CaseSubTitleScaffolding = (props) => (
 );
 
 ReviewPackageCaseTitle.propTypes = {
+  reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
+  mailTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
-  isReadOnly: PropTypes.bool
+  isReadOnly: PropTypes.bool,
+  isReassignPackage: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
+  mailTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
-  isReadOnly: PropTypes.bool
+  isReadOnly: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseTitleScaffolding.propTypes = {
   correspondence_id: PropTypes.number,
-  isReadOnly: PropTypes.bool
+  mailTeamUsers: PropTypes.array,
+  reviewDetails: PropTypes.object,
+  isReadOnly: PropTypes.bool,
+  isReassignPackage: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;

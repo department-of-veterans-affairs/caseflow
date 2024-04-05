@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -323,7 +325,7 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
-    get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence', to: 'correspondence_queue#correspondence_cases'
     get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
     get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
@@ -354,7 +356,7 @@ Rails.application.routes.draw do
     get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
-  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
+  match '/explain/correspondence/:correspondence_uuid' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -397,6 +399,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 

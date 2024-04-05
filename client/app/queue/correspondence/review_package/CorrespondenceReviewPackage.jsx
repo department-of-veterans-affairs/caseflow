@@ -1,5 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
@@ -20,6 +21,7 @@ import {
   from '../../../../COPY';
 
 export const CorrespondenceReviewPackage = (props) => {
+  const history = useHistory();
   const [reviewDetails, setReviewDetails] = useState({
     veteran_name: {},
     dropdown_values: [],
@@ -36,6 +38,11 @@ export const CorrespondenceReviewPackage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isReassignPackage, setIsReassignPackage] = useState(false);
+  const [reviewPackageDetails, setReviewPackageDetails] = useState({
+    veteranName: '',
+    taksId: [],
+  });
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
@@ -43,14 +50,28 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const fetchData = async () => {
     const correspondence = props;
-
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-      const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
+
+      if (assignedRemoveTask) {
+        setReviewPackageDetails((prev) => {
+          return { ...prev, taskId: assignedRemoveTask.id };
+        }
+        );
+      }
 
       // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined') && isInboundOpsTeam;
+      return (typeof assignedRemoveTask !== 'undefined');
+    };
+
+    // When a reassign package task is active and pending review, the page is read-only
+    const hasAssignedReassignPackageTask = (tasks) => {
+      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+          task.type === 'ReassignPackageTask');
+
+      // Return true if a reassignPackageTask that is currently assigned is found, else false
+      return (typeof assignedReassignTask !== 'undefined') && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor);
     };
 
     try {
@@ -74,6 +95,11 @@ export const CorrespondenceReviewPackage = (props) => {
         correspondence_type_id: data.correspondence_type_id
       });
 
+      setReviewPackageDetails((prev) => {
+        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
+      }
+      );
+
       setEditableData({
         notes: data.notes,
         veteran_file_number: data.file_number,
@@ -84,9 +110,18 @@ export const CorrespondenceReviewPackage = (props) => {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
           message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
-          bannerType: 'warning'
+          bannerType: 'info'
         });
         setIsReadOnly(true);
+      }
+      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
+        setBannerInformation({
+          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          bannerType: 'info'
+        });
+        setIsReadOnly(true);
+        setIsReassignPackage(true);
       }
     } catch (error) {
       console.error(error);
@@ -101,7 +136,7 @@ export const CorrespondenceReviewPackage = (props) => {
     if (disableButton) {
       setShowModal(!showModal);
     } else {
-      history.push('/queue/correspondence');
+      history.goBack();
     }
   };
 
@@ -171,10 +206,15 @@ export const CorrespondenceReviewPackage = (props) => {
       <React.Fragment>
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
+            reviewDetails={reviewPackageDetails}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
+            isReassignPackage={isReassignPackage}
+            mailTeamUsers={props.mailTeamUsers}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
@@ -248,18 +288,15 @@ export const CorrespondenceReviewPackage = (props) => {
 
 CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
+  mailTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
-  organizations: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      url: PropTypes.string
-    })
-  )
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -267,7 +304,6 @@ const mapStateToProps = (state) => ({
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
-  organizations: state.ui.organizations
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -275,7 +311,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   doFileNumberSearch
 }, dispatch);
 
-export default connect(
+export default
+connect(
   mapStateToProps,
   mapDispatchToProps,
 )(CorrespondenceReviewPackage);

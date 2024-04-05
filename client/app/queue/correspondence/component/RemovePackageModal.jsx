@@ -90,11 +90,31 @@ class RemovePackageModal extends React.Component {
   render() {
     const { onCancel } = this.props;
     const submit = () => {
+      let selectedRequestChoice;
+
       if (this.state.reasonForRemove === 'Approve request') {
-        this.removePackage();
+        selectedRequestChoice = 'approve';
       } else {
-        this.completePackage();
+        selectedRequestChoice = 'reject';
       }
+      const newUrl = new URL(window.location.href);
+      const searchParams = new URLSearchParams(newUrl.search);
+      const taskId = this.props.reviewDetails.taskId;
+      const veteranName = this.props.reviewDetails.veteranName;
+
+      // Encode and set the query parameters
+      searchParams.set('taskId', encodeURIComponent(taskId));
+      searchParams.set('veteranName', encodeURIComponent(veteranName));
+      searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
+      searchParams.set('decisionReason', encodeURIComponent(this.state.reasonReject));
+      searchParams.set('operation', encodeURIComponent('remove'));
+      searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
+      searchParams.set('page', encodeURIComponent('1'));
+
+      // Construct the new URL with encoded query parameters
+      newUrl.search = searchParams.toString();
+      newUrl.pathname = '/queue/correspondence/team';
+      window.location.href = newUrl.href;
     };
 
     const removeReasonOptions = [
@@ -150,6 +170,7 @@ const mapStateToProps = (state) => {
 };
 
 RemovePackageModal.propTypes = {
+  reviewDetails: PropTypes.object,
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   setModalState: PropTypes.func,

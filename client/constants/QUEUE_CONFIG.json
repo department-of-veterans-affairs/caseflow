@@ -23,6 +23,10 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+  "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "sct_action_required",
+  "SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME": "sct_completed",
+  "SPECIALTY_CASE_TEAM_UNASSIGNED_TASKS_TAB_NAME": "sct_unassigned",
+
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL": "Your Correspondence",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES": "Correspondence Cases",
@@ -153,6 +157,10 @@
     "VETERAN_DETAILS": {
       "name": "veteranDetails"
     },
+    "PACKAGE_DOCUMENT_TYPE": {
+      "filterable": true,
+      "name": "packageDocTypeColumn"
+    },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },
@@ -240,5 +248,10 @@
     "IS_FORMER_TRAVEL": {
       "key": "former Travel"
     }
+  },
+
+  "PACKAGE_DOC_TYPE_FILTER_OPTIONS": {
+    "NOD": "NOD",
+    "NON_NOD": "Non-NOD"
   }
 }

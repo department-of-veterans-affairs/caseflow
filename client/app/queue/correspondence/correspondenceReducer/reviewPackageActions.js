@@ -92,6 +92,16 @@ export const setBatchAutoAssignmentAttemptId = (batchId) =>
     });
   };
 
+export const updateLastReassignAction = (currentAction) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REASSIGN_PACKAGE_ACTION,
+      payload: {
+        currentAction
+      }
+    });
+  };
+
 export const setAutoAssignmentAlertBanner = (bannerDetails) =>
   (dispatch) => {
     dispatch({
@@ -114,3 +124,12 @@ export const setAutoAssignButtonDisabled = (isButtonDisabled) =>
     });
   };
 
+export const setReasonReassignPackage = (reasonForReassign) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_REASON_REASSIGN_PACKAGE,
+      payload: {
+        reasonForReassign
+      }
+    });
+  };
