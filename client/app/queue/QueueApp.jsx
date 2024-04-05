@@ -633,11 +633,13 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReviewPackage = (props) => (
-    <ReviewPackageLoadingScreen mailTeamUsers= {props.mailTeamUsers} {...props.match.params}>
+    <ReviewPackageLoadingScreen
+      {...props.match.params}>
       <CorrespondenceReviewPackage
-        mailTeamUsers= {this.props.mailTeamUsers}
-        {...props.match.params}
-      />
+        mailTeamUsers={this.props.mailTeamUsers}
+        userIsCorrespondenceSuperuser={this.props.userIsCorrespondenceSuperuser}
+        userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
+        {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );
 
@@ -1531,6 +1533,8 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
