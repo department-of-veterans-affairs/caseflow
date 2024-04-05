@@ -6,7 +6,6 @@ describe HearingRequestTypeConcern do
   let(:readable_video) { LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:video] }
   let(:readable_virtual) { LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual] }
 
-
   context "with a legacy appeal" do
     let(:changed_hearing_request_type) { nil }
     let(:original_hearing_request_type) { nil }
