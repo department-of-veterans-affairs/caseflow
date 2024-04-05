@@ -218,6 +218,8 @@ class HearingDay < CaseflowRecord
   # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
   def conference_link
     @conference_link ||= find_or_create_conference_link!
+    # This method can probably be replaced by this, but haven't tested it.
+    # @conference_link ||= ConferenceLink.find_or_create_by(hearing_day_id: id)
   end
 
   private
@@ -233,7 +235,9 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      this.conference_link
+      # TODO: 'this' is not a method in ruby so this errors in factory bot. Is this a bug?
+      # this.conference_link
+      conference_link
     rescue StandardError => error
       log_error(error)
     end

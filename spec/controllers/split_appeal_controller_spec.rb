@@ -252,6 +252,35 @@ RSpec.describe SplitAppealController, type: :controller do
       end
     end
 
+    context "with an appeal that has a distribution task with many children including schedule_hearing_task" do
+      let(:appeal) do
+        create(:appeal,
+               :advanced_on_docket_due_to_motion,
+               :hearing_docket,
+               :with_post_intake_tasks,
+               :held_hearing_and_ready_to_distribute,
+               :with_request_issues,
+               issue_count: 2).reload
+      end
+
+      let(:appeal_split_issues) { [appeal.reload.request_issues.first.id.to_s] }
+
+      it "splits the appeal and keeps the new task tree including the distribution task in the same completed state" do
+        request_issue = appeal.request_issues.first
+        post :split_appeal, params: valid_params
+
+        sct_record = SplitCorrelationTable.find_by(original_appeal_id: appeal.id)
+        dup_appeal = Appeal.last
+        p sct_record
+        p request_issue
+        expect(SplitCorrelationTable.last.original_appeal_id).to eq(appeal.id)
+        expect(sct_record.appeal_id).to eq(dup_appeal.id)
+        expect(sct_record.split_reason).to eq(split_reason)
+        expect(sct_record.original_request_issue_id).to eq(request_issue.id)
+        expect(sct_record.split_request_issue_id).to eq(dup_appeal.request_issues.first.id)
+      end
+    end
+
     context "with appeals that have specialty case team issues" do
       before do
         FeatureToggle.enable!(:specialty_case_team_distribution)
