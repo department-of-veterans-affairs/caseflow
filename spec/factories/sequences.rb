@@ -6,9 +6,9 @@ FactoryBot.define do
     Time.now.to_i.to_s.split("")[3..7].join
   end
 
-  # returns digits 7-9 of epoch time for use in CSS_ID sequencing
+  # returns digits 7-10 of epoch time for use in CSS_ID sequencing
   def shortened_time
-    Time.now.to_i.to_s.split("")[6..8].join
+    Time.now.to_i.to_s.split("")[6..9].join
   end
 
   # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow
