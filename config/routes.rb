@@ -423,30 +423,10 @@ Rails.application.routes.draw do
 
   # test seed buttons routes
   get 'test/seeds', :to => 'test_seeds#seeds'
-  post 'run-demo-tasks-seeds', to: 'test_seeds#run_demo_tasks_seeds', as: "run-demo-tasks-seeds"
-  post 'run-demo-hearings-seeds', to: 'test_seeds#run_demo_hearings_seeds', as: "run-demo-hearings-seeds"
-  post 'run-demo-intake-seeds', to: 'test_seeds#run_demo_intake_seeds', as: "run-demo-intake-seeds"
-  post 'run-demo-dispatch-seeds', to: 'test_seeds#run_demo_dispatch_seeds', as: "run-demo-dispatch-seeds"
-  post 'run-demo-jobs-seeds', to: 'test_seeds#run_demo_jobs_seeds', as: "run-demo-jobs-seeds"
-  post 'run-demo-substitutions-seeds', to: 'test_seeds#run_demo_substitutions_seeds', as: "run-demo-substitutions-seeds"
-  post 'run-demo-decision-issues-seeds', to: 'test_seeds#run_demo_decision_issues_seeds', as: "run-demo-decision-issues-seeds"
-  post 'run-demo-cavc-ama-appeals-seeds', to: 'test_seeds#run_demo_cavc_ama_appeals_seeds', as: "run-demo-cavc-ama-appeals-seeds"
-  post 'run-demo-sanitized-json-seeds-seeds', to: 'test_seeds#run_demo_sanitized_json_seeds_seeds', as: "run-demo-sanitized-json-seeds-seeds"
-  post 'run-demo-veterans-health-administration-seeds', to: 'test_seeds#run_demo_veterans_health_administration_seeds', as: "run-demo-veterans-health-administration-seeds"
-  post 'run-demo-mtv-seeds', to: 'test_seeds#run_demo_mtv_seeds', as: "run-demo-mtv-seeds"
-  post 'run-demo-education-seeds', to: 'test_seeds#run_demo_education_seeds', as: "run-demo-education-seeds"
-  post 'run-demo-priority-distributions-seeds', to: 'test_seeds#run_demo_priority_distributions_seeds', as: "run-demo-priority-distributions-seeds"
-  post 'run-demo-test-case-data-seeds', to: 'test_seeds#run_demo_test_case_data_seeds', as: "run-demo-test-case-data-seeds"
-  post 'run-demo-case-distribution-audit-lever-entries-seeds', to: 'test_seeds#run_demo_case_distribution_audit_lever_entries_seeds', as: "run-demo-case-distribution-audit-lever-entries-seeds"
-  post 'run-demo-notifications-seeds', to: 'test_seeds#run_demo_notifications_seeds', as: "run-demo-notifications-seeds"
-  post 'run-demo-cavc-dashboard-data-seeds', to: 'test_seeds#run_demo_cavc_dashboard_data_seeds', as: "run-demo-cavc-dashboard-data-seeds"
-  post 'run-demo-run-demo-vbms-ext-claim-seeds', to: 'test_seeds#run_demo_vbms_ext_claim_seeds', as: "run-demo-vbms-ext-claim-seeds"
-  post 'run-demo-cases-tied-to-judges-no-longer-with-board-seeds', to: 'test_seeds#run_demo_cases_tied_to_judges_no_longer_with_board_seeds', as: "run-demo-cases-tied-to-judges-no-longer-with-board-seeds"
-  post 'run-demo-static-test-case-data-seeds', to: 'test_seeds#run_demo_static_test_case_data_seeds', as: "run-demo-static-test-case-data-seeds"
-  post 'run-demo-static-dispatched-appeals-test-data-seeds', to: 'test_seeds#run_demo_static_dispatched_appeals_test_data_seeds', as: "run-demo-static-dispatched-appeals-test-data-seeds"
-  post 'run-demo-remanded-ama-appeals-seeds', to: 'test_seeds#run_demo_remanded_ama_appeals_seeds', as: "run-demo-remanded-ama-appeals-seeds"
-  post 'run-demo-remanded-legacy-appeals-seeds', to: 'test_seeds#run_demo_remanded_legacy_appeals_seeds', as: "run-demo-remanded-legacy-appeals-seeds"
-  post 'run-demo-populate-caseflow-from-vacols-seeds', to: 'test_seeds#run_populate_caseflow_from_vacols_seeds', as: "run-demo-populate-caseflow-from-vacols-seeds"
+
+  scope path: 'seeds', as: 'seeds' do
+    post 'run-demo/:seed_type', to: 'test_seeds#run_demo', as: 'run_demo'
+  end
 
   # :nocov:
   namespace :test do

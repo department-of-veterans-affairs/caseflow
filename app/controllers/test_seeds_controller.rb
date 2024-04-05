@@ -12,209 +12,224 @@ class TestSeedsController < ApplicationController
     render "/test/seeds"
   end
 
-  def run_demo_aod_hearing_seeds
-    Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].reenable
-    Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].invoke
+  def run_demo
+    seed_type = params[:seed_type]
+    task_name = map_seed_type_to_task(seed_type)
 
-    head :ok
-  end
-
-  def run_demo_non_aod_hearing_seeds
-    Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].reenable
-    Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].invoke
-
-    head :ok
-  end
-
-  def run_demo_tasks_seeds
-    Rake::Task["db:seed:demo_tasks_seeds"].reenable
-    Rake::Task["db:seed:demo_tasks_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_intake_seeds
-    Rake::Task["db:seed:demo_intake_seeds"].reenable
-    Rake::Task["db:seed:demo_intake_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_dispatch_seeds
-    Rake::Task["db:seed:demo_dispatch_seeds"].reenable
-    Rake::Task["db:seed:demo_dispatch_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_jobs_seeds
-    Rake::Task["db:seed:demo_jobs_seeds"].reenable
-    Rake::Task["db:seed:demo_jobs_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_substitutions_seeds
-    Rake::Task["db:seed:demo_substitutions_seeds"].reenable
-    Rake::Task["db:seed:demo_substitutions_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_decision_issues_seeds
-    Rake::Task["db:seed:demo_decision_issues_seeds"].reenable
-    Rake::Task["db:seed:demo_decision_issues_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_cavc_ama_appeals_seeds
-    Rake::Task["db:seed:demo_cavc_ama_appeals_seeds"].reenable
-    Rake::Task["db:seed:demo_cavc_ama_appeals_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_sanitized_json_seeds_seeds
-    Rake::Task["db:seed:demo_sanitized_json_seeds_seeds"].reenable
-    Rake::Task["db:seed:demo_sanitized_json_seeds_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_veterans_health_administration_seeds
-    Rake::Task["db:seed:demo_veterans_health_administration_seeds"].reenable
-    Rake::Task["db:seed:demo_veterans_health_administration_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_mtv_seeds
-    Rake::Task["db:seed:demo_mtv_seeds"].reenable
-    Rake::Task["db:seed:demo_mtv_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_education_seeds
-    Rake::Task["db:seed:demo_education_seeds"].reenable
-    Rake::Task["db:seed:demo_education_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_priority_distributions_seeds
-    Rake::Task["db:seed:demo_priority_distributions_seeds"].reenable
-    Rake::Task["db:seed:demo_priority_distributions_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_test_case_data_seeds
-    Rake::Task["db:seed:demo_test_case_data_seeds"].reenable
-    Rake::Task["db:seed:demo_test_case_data_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_case_distribution_audit_lever_entries_seeds
-    Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].reenable
-    Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_notifications_seeds
-    Rake::Task["db:seed:demo_notifications_seeds"].reenable
-    Rake::Task["db:seed:demo_notifications_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_cavc_dashboard_data_seeds
-    Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].reenable
-    Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_demo_vbms_ext_claim_seeds
-    Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].reenable
-    Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_cases_tied_to_judges_no_longer_with_board_seeds
-    Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].reenable
-    Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_static_test_case_data_seeds
-    Rake::Task["db:seed:static_test_case_data_seeds"].reenable
-    Rake::Task["db:seed:static_test_case_data_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_static_dispatched_appeals_test_data_seeds
-    Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].reenable
-    Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_remanded_ama_appeals_seeds
-    Rake::Task["db:seed:remanded_ama_appeals_seeds"].reenable
-    Rake::Task["db:seed:remanded_ama_appeals_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_remanded_legacy_appeals_seeds
-    Rake::Task["db:seed:remanded_legacy_appeals_seeds"].reenable
-    Rake::Task["db:seed:remanded_legacy_appeals_seeds"].invoke
-
-    head :ok
-  end
-
-  def run_populate_caseflow_from_vacols_seeds
-    Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].reenable
-    Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].invoke
-
-    head :ok
-  end
-
-  def appeals_ready_to_distribute
-    csv_data = AppealsReadyForDistribution.process
-
-    # Get the current date and time for dynamic filename
-    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
-
-    # Set dynamic filename with current date and time
-    filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
-
-    # Send CSV as a response with dynamic filename
-    send_data csv_data, filename: filename
-  end
-
-  def appeals_distributed
-    # change this to the correct class
-    csv_data = AppealsDistributed.process
-
-    # Get the current date and time for dynamic filename
-    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
-
-    # Set dynamic filename with current date and time
-    filename = "distributed_appeals_#{current_datetime}.csv"
-
-    # Send CSV as a response with dynamic filename
-    send_data csv_data, filename: filename
+    if task_name
+      Rake::Task[task_name].reenable
+      Rake::Task[task_name].invoke
+      head :ok
+    else
+      render json: { error: 'Invalid seed type' }, status: :bad_request
+    end
   end
 
   private
+
+  # def run_demo_aod_hearing_seeds
+  #   Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].reenable
+  #   Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_non_aod_hearing_seeds
+  #   Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].reenable
+  #   Rake::Task["db:seed:demo_non_aod_hearing_case_lever_test_data"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_tasks_seeds
+  #   Rake::Task["db:seed:demo_tasks_seeds"].reenable
+  #   Rake::Task["db:seed:demo_tasks_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_intake_seeds
+  #   Rake::Task["db:seed:demo_intake_seeds"].reenable
+  #   Rake::Task["db:seed:demo_intake_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_dispatch_seeds
+  #   Rake::Task["db:seed:demo_dispatch_seeds"].reenable
+  #   Rake::Task["db:seed:demo_dispatch_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_jobs_seeds
+  #   Rake::Task["db:seed:demo_jobs_seeds"].reenable
+  #   Rake::Task["db:seed:demo_jobs_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_substitutions_seeds
+  #   Rake::Task["db:seed:demo_substitutions_seeds"].reenable
+  #   Rake::Task["db:seed:demo_substitutions_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_decision_issues_seeds
+  #   Rake::Task["db:seed:demo_decision_issues_seeds"].reenable
+  #   Rake::Task["db:seed:demo_decision_issues_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_cavc_ama_appeals_seeds
+  #   Rake::Task["db:seed:demo_cavc_ama_appeals_seeds"].reenable
+  #   Rake::Task["db:seed:demo_cavc_ama_appeals_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_sanitized_json_seeds_seeds
+  #   Rake::Task["db:seed:demo_sanitized_json_seeds_seeds"].reenable
+  #   Rake::Task["db:seed:demo_sanitized_json_seeds_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_veterans_health_administration_seeds
+  #   Rake::Task["db:seed:demo_veterans_health_administration_seeds"].reenable
+  #   Rake::Task["db:seed:demo_veterans_health_administration_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_mtv_seeds
+  #   Rake::Task["db:seed:demo_mtv_seeds"].reenable
+  #   Rake::Task["db:seed:demo_mtv_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_education_seeds
+  #   Rake::Task["db:seed:demo_education_seeds"].reenable
+  #   Rake::Task["db:seed:demo_education_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_priority_distributions_seeds
+  #   Rake::Task["db:seed:demo_priority_distributions_seeds"].reenable
+  #   Rake::Task["db:seed:demo_priority_distributions_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_test_case_data_seeds
+  #   Rake::Task["db:seed:demo_test_case_data_seeds"].reenable
+  #   Rake::Task["db:seed:demo_test_case_data_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_case_distribution_audit_lever_entries_seeds
+  #   Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].reenable
+  #   Rake::Task["db:seed:demo_case_distribution_audit_lever_entries_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_notifications_seeds
+  #   Rake::Task["db:seed:demo_notifications_seeds"].reenable
+  #   Rake::Task["db:seed:demo_notifications_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_cavc_dashboard_data_seeds
+  #   Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].reenable
+  #   Rake::Task["db:seed:demo_cavc_dashboard_data_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_demo_vbms_ext_claim_seeds
+  #   Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].reenable
+  #   Rake::Task["db:seed:demo_vbms_ext_claim_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_cases_tied_to_judges_no_longer_with_board_seeds
+  #   Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].reenable
+  #   Rake::Task["db:seed:cases_tied_to_judges_no_longer_with_board_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_static_test_case_data_seeds
+  #   Rake::Task["db:seed:static_test_case_data_seeds"].reenable
+  #   Rake::Task["db:seed:static_test_case_data_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_static_dispatched_appeals_test_data_seeds
+  #   Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].reenable
+  #   Rake::Task["db:seed:static_dispatched_appeals_test_data_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_remanded_ama_appeals_seeds
+  #   Rake::Task["db:seed:remanded_ama_appeals_seeds"].reenable
+  #   Rake::Task["db:seed:remanded_ama_appeals_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_remanded_legacy_appeals_seeds
+  #   Rake::Task["db:seed:remanded_legacy_appeals_seeds"].reenable
+  #   Rake::Task["db:seed:remanded_legacy_appeals_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def run_populate_caseflow_from_vacols_seeds
+  #   Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].reenable
+  #   Rake::Task["db:seed:populate_caseflow_from_vacols_seeds"].invoke
+
+  #   head :ok
+  # end
+
+  # def appeals_ready_to_distribute
+  #   csv_data = AppealsReadyForDistribution.process
+
+  #   # Get the current date and time for dynamic filename
+  #   current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+  #   # Set dynamic filename with current date and time
+  #   filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
+
+  #   # Send CSV as a response with dynamic filename
+  #   send_data csv_data, filename: filename
+  # end
+
+  # def appeals_distributed
+  #   # change this to the correct class
+  #   csv_data = AppealsDistributed.process
+
+  #   # Get the current date and time for dynamic filename
+  #   current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+  #   # Set dynamic filename with current date and time
+  #   filename = "distributed_appeals_#{current_datetime}.csv"
+
+  #   # Send CSV as a response with dynamic filename
+  #   send_data csv_data, filename: filename
+  # end
+
+  # private
 
   def check_environment
     return true if Rails.env.development?
@@ -240,4 +255,38 @@ class TestSeedsController < ApplicationController
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def map_seed_type_to_task(seed_type)
+    task_map = {
+      "aod-hearing-seeds" => "db:seed:demo_aod_hearing_case_lever_test_data",
+      "non-aod-hearing-seeds" => "db:seed:demo_non_aod_hearing_case_lever_test_data",
+      "tasks-seeds" => "db:seed:demo_tasks_seeds",
+      "hearings-seeds" => "db:seed:demo_hearings_seeds",
+      "dispatch-seeds" => "db:seed:demo_dispatch_seeds",
+      "jobs-seeds" => "db:seed:demo_jobs_seeds",
+      "substitutions-seeds" => "db:seed:demo_substitutions_seeds",
+      "decision-issues-seeds" => "db:seed:demo_decision_issues_seeds",
+      "cavc-ama-appeals-seeds" => "db:seed:demo_cavc_ama_appeals_seeds",
+      "sanitized-json-seeds-seeds" => "db:seed:demo_sanitized_json_seeds_seeds",
+      "veterans-health-administration-seeds" => "db:seed:demo_veterans_health_administration_seeds",
+      "mtv-seeds" => "db:seed:demo_mtv_seeds",
+      "education-seeds" => "db:seed:demo_education_seeds",
+      "priority-distributions-seeds" => "db:seed:demo_priority_distributions_seeds",
+      "test-case-data-seeds" => "db:seed:demo_test_case_data_seeds",
+      "case-distribution-audit-lever-entries-seeds" => "db:seed:demo_case_distribution_audit_lever_entries_seeds",
+      "notifications-seeds" => "db:seed:demo_notifications_seeds",
+      "cavc-dashboard-data-seeds" => "db:seed:demo_cavc_dashboard_data_seeds",
+      "vbms-ext-claim-seeds" => "db:seed:demo_vbms_ext_claim_seeds",
+      "cases-tied-to-judges-no-longer-with-board-seeds" => "db:seed:demo_cases_tied_to_judges_no_longer_with_board_seeds",
+      "static-test-case-data-seeds" => "db:seed:demo_static_test_case_data_seeds",
+      "static-dispatched-appeals-test-data-seeds" => "db:seed:demo_static_dispatched_appeals_test_data_seeds",
+      "remanded-ama-appeals-seeds" => "db:seed:demo_remanded_ama_appeals_seeds",
+      "remanded-legacy-appeals-seeds" => "db:seed:demo_remanded_legacy_appeals_seeds",
+      "populate-caseflow-from-vacols-seeds" => "db:seed:demo_populate_caseflow_from_vacols_seeds"
+    }
+
+    task_map[seed_type]
+  end
+  # rubocop:enable Metrics/MethodLength
 end
