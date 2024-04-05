@@ -423,6 +423,8 @@ Rails.application.routes.draw do
 
   # test seed buttons routes
   get 'test/seeds', :to => 'test_seeds#seeds'
+  get 'test/seeds/run-seed/:seed_classname', to: 'test_seeds#execute_seed'
+  # post 'test/seeds/run-seed/:seed_classname', to: 'test_seeds#execute_seed'
   post 'run-demo-tasks-seeds', to: 'test_seeds#run_demo_tasks_seeds', as: "run-demo-tasks-seeds"
   post 'run-demo-hearings-seeds', to: 'test_seeds#run_demo_hearings_seeds', as: "run-demo-hearings-seeds"
   post 'run-demo-intake-seeds', to: 'test_seeds#run_demo_intake_seeds', as: "run-demo-intake-seeds"

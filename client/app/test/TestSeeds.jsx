@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
@@ -17,47 +15,8 @@ class TestSeeds extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      reseedingStatus: {
-        Aod: false,
-        NonAod: false,
-        Tasks: false,
-        Hearings: false,
-        Intake: false,
-        Dispatch: false,
-        Jobs: false,
-        Substitutions: false,
-        DecisionIssues: false,
-        CavcAmaAppeals: false,
-        SanitizedJsonSeeds: false,
-        VeteransHealthAdministration: false,
-        MTV: false,
-        Education: false,
-        PriorityDistributions: false,
-        TestCaseData: false,
-        CaseDistributionAuditLeverEntries: false,
-        Notifications: false,
-        CavcDashboardData: false,
-        VbmsExtClaim: false,
-        CasesTiedToJudgesNoLongerWithBoard: false,
-        StaticTestCaseData: false,
-        StaticDispatchedAppealsTestData: false,
-        RemandedAmaAppeals: false,
-        RemandedLegacyAppeals: false,
-        PopulateCaseflowFromVacols: false
-      },
-      seedCounts: {
-        // Starting with a default value of 1
-        Aod: 1,
-        NonAod: 1,
-        Tasks: 1,
-        Hearings: 1,
-        Intake: 1,
-        Dispatch: 1,
-        Jobs: 1,
-        Substitutions: 1,
-        DecisionIssues: 1,
-        CavcAmaAppeals: 1,
-      }
+      reseedingStatus: {},
+      seedCounts: {}
     };
   }
 
@@ -69,45 +28,21 @@ class TestSeeds extends React.PureComponent {
     }));
   }
 
-  reseed = (type, count) => {
+  reseed = (type) => {
+    const { seedCounts } = this.state;
+    const count = seedCounts[type] || 1;
+
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpointMap = {
-      Aod: '/run-demo-aod-seeds',
-      NonAod: '/run-demo-non-aod-seeds',
-      Tasks: '/run-demo-tasks-seeds',
-      Hearings: '/run-demo-hearings-seeds',
-      Intake: '/run-demo-intake-seeds',
-      Dispatch: '/run-demo-dispatch-seeds',
-      Jobs: '/run-demo-jobs-seeds',
-      Substitutions: '/run-demo-substitutions-seeds',
-      DecisionIssues: '/run-demo-decision-issues-seeds',
-      CavcAmaAppeals: '/run-demo-cavc-ama-appeals-seeds',
-      SanitizedJsonSeeds: '/run-demo-sanitized-json-seeds-seeds',
-      VeteransHealthAdministration: '/run-demo-veterans-health-administration-seeds',
-      MTV: '/run-demo-mtv-seeds',
-      Education: '/run-demo-education-seeds',
-      PriorityDistributions: '/run-demo-priority-distributions-seeds',
-      TestCaseData: '/run-demo-priority-distributions-seeds',
-      CaseDistributionAuditLeverEntries: '/run-demo-case-distribution-audit-lever-entries-seeds',
-      Notifications: '/run-demo-notifications-seeds',
-      CavcDashboardData: '/run-demo-cavc-dashboard-data-seeds',
-      VbmsExtClaim: '/run-demo-vbms-ext-claim-seeds',
-      CasesTiedToJudgesNoLongerWithBoard: '/run-demo-cases-tied-to-judges-no-longer-with-board-seeds',
-      StaticTestCaseData: '/run-demo-static-test-case-data-seeds',
-      StaticDispatchedAppealsTestData: '/run-demo-static-dispatched-appeals-test-data-seeds',
-      RemandedAmaAppeals: '/run-demo-remanded-ama-appeals-seeds',
-      RemandedLegacyAppeals: '/run-demo-remanded-legacy-appeals-seeds',
-      PopulateCaseflowFromVacols: '/run-demo-populate-caseflow-from-vacols-seeds'
-    };
+    const endpoint = `seeds/run-seed/${type}`;
 
-    ApiUtil.post(endpointMap[type], { count }).then(() => {
+    ApiUtil.post(endpoint, { count }).then(() => {
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
       }));
-    }, (err) => {
+    }).catch((err) => {
       console.warn(err);
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
@@ -118,30 +53,12 @@ class TestSeeds extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
     const seedTypes = [
-      'Aod',
-      'NonAod',
-      'Tasks',
-      'Hearings',
-      'Intake',
-      'Dispatch',
-      'Jobs',
-      'Substitutions',
-      'DecisionIssues',
-      'CavcAmaAppeals',
-      'SanitizedJsonSeeds',
-      'VeteransHealthAdministration',
-      'MTV',
-      'Education',
-      'PriorityDistributions',
-      'TestCaseData',
-      'CaseDistributionAuditLeverEntries',
-      'Notifications',
-      'CavcDashboardData',
-      'CasesTiedToJudgesNoLongerWithBoard',
-      'StaticTestCaseData',
-      'StaticDispatchedAppealsTestData',
-      'RemandedAmaAppeals',
-      'RemandedLegacyAppeals',
+      'demo_aod_hearing_case_lever_test_data', 'NonAod', 'Tasks', 'Hearings', 'Intake', 'Dispatch', 'Jobs',
+      'Substitutions', 'DecisionIssues', 'CavcAmaAppeals', 'SanitizedJsonSeeds',
+      'VeteransHealthAdministration', 'MTV', 'Education', 'PriorityDistributions',
+      'TestCaseData', 'CaseDistributionAuditLeverEntries', 'Notifications',
+      'CavcDashboardData', 'CasesTiedToJudgesNoLongerWithBoard', 'StaticTestCaseData',
+      'StaticDispatchedAppealsTestData', 'RemandedAmaAppeals', 'RemandedLegacyAppeals',
       'PopulateCaseflowFromVacols'
     ];
 
@@ -150,11 +67,7 @@ class TestSeeds extends React.PureComponent {
         <div>
           <NavigationBar
             wideApp
-            defaultUrl={
-              this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
-                '/search' :
-                '/queue'
-            }
+            defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
             userDisplayName={this.props.userDisplayName}
             dropdownUrls={this.props.dropdownUrls}
             applicationUrls={this.props.applicationUrls}
@@ -164,7 +77,8 @@ class TestSeeds extends React.PureComponent {
             }}
             rightNavElement={<CaseSearchLink />}
             appName="Caseflow Admin"
-          >          <AppFrame>
+          >
+            <AppFrame>
               <AppSegment filledBackground>
                 <div>
                   <PageRoute exact path="/test/seeds" title="Caseflow Seeds" component={() => (
@@ -175,7 +89,7 @@ class TestSeeds extends React.PureComponent {
                           <li key={type} style={{ marginBottom: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                               <NumberField
-                                value={this.state.seedCounts[type]}
+                                value={this.state.seedCounts[type] || 1}
                                 onChange={(newValue) => this.handleSeedCountChange(type, newValue)}
                                 isInteger
                               />
