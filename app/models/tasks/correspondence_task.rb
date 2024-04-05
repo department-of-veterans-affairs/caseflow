@@ -67,14 +67,6 @@ class CorrespondenceTask < Task
     )
   end
 
-  def self.update_intake_appeal_tasks(correspondence)
-    correspondence.tasks.where(type: ReviewPackageTask.name).update_all(
-      instructions: "An appeal intake was started because this Correspondence is a 10182",
-      assigned_to_id: correspondence.assigned_by_id
-    )
-    correspondence.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
-  end
-
   def correspondence
     Correspondence.find(appeal_id)
   end

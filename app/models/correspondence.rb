@@ -41,6 +41,14 @@ class Correspondence < CaseflowRecord
     Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
   end
 
+  def cancel_task_tree_for_appeal_intake
+    self.tasks.where(type: ReviewPackageTask.name).update_all(
+      instructions: "An appeal intake was started because this Correspondence is a 10182",
+      assigned_to_id: self.assigned_by_id
+    )
+    self.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+  end
+
   # Methods below are included to allow Correspondences to render in explain page
 
   # Alias for cmp_packet_number
@@ -57,7 +65,8 @@ class Correspondence < CaseflowRecord
     veteran.name
   end
 
-  def self.load_by_veteran_id_and_uuid(veteran_id, uuid)
-    where(veteran_id: veteran_id).where.not(uuid: uuid)
+  def self.prior_mail(veteran_id, uuid)
+    includes([:veteran, :package_document_type, :correspondence_type])
+    .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
 end

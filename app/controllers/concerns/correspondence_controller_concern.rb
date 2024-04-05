@@ -8,10 +8,6 @@ module CorrespondenceControllerConcern
 
   MAX_QUEUED_ITEMS = 60
 
-  def current_correspondence
-    @current_correspondence ||= correspondence
-  end
-
   def veteran_information
     @veteran_information ||= veteran_by_correspondence
   end
@@ -305,15 +301,7 @@ module CorrespondenceControllerConcern
   end
 
   def correspondence
-    return @correspondence if @correspondence.present?
-
-    if params[:id].present?
-      @correspondence = Correspondence.find(params[:id])
-    elsif params[:correspondence_uuid].present?
-      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    end
-
-    @correspondence
+    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
   end
 
   def correspondence_load
