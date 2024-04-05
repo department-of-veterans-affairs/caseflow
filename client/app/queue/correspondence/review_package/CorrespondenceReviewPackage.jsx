@@ -2,7 +2,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import ReviewPackageData from './ReviewPackageData';
-import { withRouter } from 'react-router-dom';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
@@ -311,9 +310,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   doFileNumberSearch
 }, dispatch);
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(CorrespondenceReviewPackage)
-);
+export default
+connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CorrespondenceReviewPackage);
