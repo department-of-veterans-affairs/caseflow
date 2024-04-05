@@ -12,6 +12,24 @@ class TestSeedsController < ApplicationController
     render "/test/seeds"
   end
 
+  def execute_seed
+    seed_classname = params[:seed_classname]
+
+    # Ensure the provided seed_classname corresponds to a valid rake task
+    rake_task_name = "db:seed:#{seed_classname}"
+
+    if Rake::Task.task_defined?(rake_task_name)
+      # Reenable and invoke the specified rake task
+      Rake::Task[rake_task_name].reenable
+      Rake::Task[rake_task_name].invoke
+
+      head :ok
+    else
+      # Handle the case where the specified rake task is not found
+      render plain: "Rake task '#{seed_classname}' not found", status: :not_found
+    end
+  end
+
   def run_demo_aod_hearing_seeds
     Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].reenable
     Rake::Task["db:seed:demo_aod_hearing_case_lever_test_data"].invoke
