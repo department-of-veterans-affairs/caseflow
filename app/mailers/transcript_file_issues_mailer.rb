@@ -27,6 +27,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     end
   end
 
+
   def mailer_config(appeal_id)
     case Rails.deploy_env
     when :development, :demo, :test
