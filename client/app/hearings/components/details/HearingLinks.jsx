@@ -19,7 +19,6 @@ export const VirtualHearingLinkDetails = ({
   role,
   link,
   hearing,
-  wasVirtual,
   isVirtual,
   user,
   label,
@@ -54,13 +53,11 @@ export const VirtualHearingLinkDetails = ({
         {link}
       </div>
     )}
-    {!hearing?.scheduledForIsPast && !wasVirtual && (
-      <CopyTextButton
-        ariaLabel={`Copy ${role} Link`}
-        text={`Copy ${role} Link`}
-        textToCopy={link}
-      />
-    )}
+    <CopyTextButton
+      ariaLabel={`Copy ${role} Link`}
+      text={`Copy ${role} Link`}
+      textToCopy={link}
+    />
   </React.Fragment>
 );
 
@@ -93,7 +90,7 @@ export const LinkContainer = (
       return whichLink?.hostPin;
     }
 
-    return (whichLink?.guestPinLong || whichLink?.guestPin);
+    return (whichLink?.guestPin);
   };
 
   return (
@@ -108,8 +105,8 @@ export const LinkContainer = (
         hearing={hearing}
         link={link}
         role={role}
-        aliasWithHost={isVirtual ? virtualHearing?.aliasWithHost : links?.alias}
-        pin={getPin()}
+        aliasWithHost={isVirtual ? links?.aliasWithHost : links?.alias}
+        pin={links && getPin()}
       />
     </div>
   );
@@ -132,7 +129,9 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
   const getLinks = () => {
-    if (hearing.isVirtual) {
+    if (hearing.scheduledForIsPast) {
+      return null;
+    } else if (hearing.isVirtual) {
       return virtualHearing;
     } else if (hearing.conferenceProvider === 'pexip') {
       return hearing.dailyDocketConferenceLink;
@@ -142,6 +141,8 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   };
 
   const links = getLinks();
+
+  console.log(hearing);
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
@@ -177,7 +178,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
         hearing={hearing}
         isVirtual={isVirtual}
         label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-        link={links?.guestLink || links?.guestHearingLink}
+        link={links?.guestLink}
         linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
         role="Guest"
         user={user}
