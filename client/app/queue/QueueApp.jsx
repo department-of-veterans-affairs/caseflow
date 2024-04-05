@@ -688,7 +688,13 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+    <CorrespondenceIntake
+      {...props.match.params}
+      reduxStore={this.props.reduxStore}
+      autoTexts={this.props.autoTexts}
+      correspondence={this.props.correspondence}
+      priorMail={this.props.priorMail}
+    />
   );
 
   routedCorrespondenceCases = () => (
@@ -1532,8 +1538,8 @@ QueueApp.propTypes = {
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
   correspondence: PropTypes.object,
+  priorMail: PropTypes.array,
   autoTexts: PropTypes.array,
-  veteranInformation: PropTypes.object,
   reduxStore: PropTypes.object
 };
 
