@@ -81,3 +81,23 @@ export const setReasonRemovePackage = (reasonForRemove) =>
       }
     });
   };
+
+export const updateLastReassignAction = (currentAction) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REASSIGN_PACKAGE_ACTION,
+      payload: {
+        currentAction
+      }
+    });
+  };
+
+export const setReasonReassignPackage = (reasonForReassign) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_REASON_REASSIGN_PACKAGE,
+      payload: {
+        reasonForReassign
+      }
+    });
+  };

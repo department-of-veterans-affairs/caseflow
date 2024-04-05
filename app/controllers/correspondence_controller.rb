@@ -19,6 +19,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def review_package
+    @mail_team_users = User.mail_team_users.pluck(:css_id)
     render "correspondence/review_package"
   end
 
