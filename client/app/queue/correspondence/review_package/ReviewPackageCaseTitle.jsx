@@ -91,7 +91,7 @@ const CaseTitleScaffolding = (props) => {
       <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
 
       <span {...removebotton}>
-        { (props.isReadOnly && !props.isReassignPackage && props.userIsSupervisor) &&
+        { (props.isReadOnly && !props.isReassignPackage && props.userIsCorrespondenceSupervisor) &&
           <Button
             name="Review removal request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
@@ -101,7 +101,7 @@ const CaseTitleScaffolding = (props) => {
             }
           />
         }
-        { (props.isReadOnly && props.isReassignPackage && (props.userIsSuperuser || props.userIsSupervisor)) &&
+        { (props.isReadOnly && props.isReassignPackage && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)) &&
           <Button
             name="Review reassign request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
@@ -166,8 +166,8 @@ ReviewPackageCaseTitle.propTypes = {
   correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
-  userIsSupervisor: PropTypes.bool,
-  userIsSuperuser: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
@@ -175,8 +175,8 @@ CaseSubTitleScaffolding.propTypes = {
   mailTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
-  userIsSupervisor: PropTypes.bool,
-  userIsSuperuser: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseTitleScaffolding.propTypes = {
@@ -185,8 +185,8 @@ CaseTitleScaffolding.propTypes = {
   reviewDetails: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
-  userIsSupervisor: PropTypes.bool,
-  userIsSuperuser: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;

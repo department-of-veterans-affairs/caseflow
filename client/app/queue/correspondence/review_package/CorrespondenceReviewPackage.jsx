@@ -71,7 +71,7 @@ export const CorrespondenceReviewPackage = (props) => {
           task.type === 'ReassignPackageTask');
 
       // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (typeof assignedReassignTask !== 'undefined') && (props.userIsSuperuser || props.userIsSupervisor);
+      return (typeof assignedReassignTask !== 'undefined') && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor);
     };
 
     try {
@@ -212,8 +212,8 @@ export const CorrespondenceReviewPackage = (props) => {
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
-            userIsSupervisor={props.userIsSupervisor}
-            userIsSuperuser={props.userIsSuperuser}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
@@ -294,8 +294,8 @@ CorrespondenceReviewPackage.propTypes = {
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
-  userIsSupervisor: PropTypes.bool,
-  userIsSuperuser: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
