@@ -7,6 +7,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     let(:link) { "https://picsum.photos/200" }
     let(:hearing) { create(:hearing) }
     let(:docket_number) { hearing.docket_number }
+    let(:appeal_id) { hearing.appeal.uuid }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
     let(:tmp_location) { File.join(Rails.root, "tmp", "transcription_files", file_type, file_name) }
     let(:transcription_file) { TranscriptionFile.find_by(file_name: file_name) }
@@ -48,6 +49,14 @@ describe Hearings::DownloadTranscriptionFileJob do
       it "updates file_status of TranscriptionFile record" do
         subject
         expect(transcription_file.file_status).to eq(file_status)
+      end
+    end
+
+    shared_examples "sends correct email template" do
+      it "mailer receives correct params" do
+        expect(TranscriptFileIssuesMailer).to receive(:send_issue_details)
+          .with(error_details, appeal_id)
+        perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
       end
     end
 
@@ -218,6 +227,103 @@ describe Hearings::DownloadTranscriptionFileJob do
         it "updates file_status of TranscriptionFile record" do
           expect { subject }.to raise_error(conversion_error)
           expect(transcription_file.file_status).to eq(file_status)
+        end
+      end
+
+      context "job retries" do
+        let(:transcription_file) { create(:transcription_file) }
+        let(:upload_error) { TranscriptionFileUpload::FileUploadError.new("rtf") }
+        let(:download_error) { Hearings::DownloadTranscriptionFileJob::FileDownloadError }
+        let(:conversion_error) { TranscriptionTransformer::FileConversionError }
+        let(:file_name_error) { Hearings::DownloadTranscriptionFileJob::FileNameError }
+
+        before do
+          allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
+        end
+
+        context "failed upload" do
+          let(:error_details) do
+            {
+              action: "upload",
+              filetype: "rtf",
+              direction: "to",
+              provider: "S3",
+              error: upload_error.class,
+              docket_number: docket_number,
+              api_call: "upload_to_s3!"
+            }
+          end
+
+          before do
+            allow_any_instance_of(TranscriptionFile).to receive(:upload_to_s3!)
+              .and_raise(upload_error)
+          end
+
+          include_examples "sends correct email template"
+        end
+
+        context "failed download" do
+          let(:error_details) do
+            {
+              action: "retrieve",
+              filetype: "vtt",
+              direction: "from",
+              provider: "Webex",
+              error: download_error.class,
+              docket_number: docket_number,
+              api_call: "download_file_to_tmp!"
+            }
+          end
+
+          before do
+            allow_any_instance_of(Hearings::DownloadTranscriptionFileJob).to receive(:download_file_to_tmp!)
+              .and_raise(download_error)
+          end
+
+          include_examples "sends correct email template"
+        end
+
+        context "failed conversion" do
+          let(:error_details) do
+            {
+              action: "convert",
+              filetype: "vtt",
+              direction: "to",
+              provider: "rtf",
+              error: conversion_error.class,
+              docket_number: docket_number,
+              api_call: "convert_to_rtf_and_upload_to_s3!"
+            }
+          end
+
+          before do
+            allow_any_instance_of(Hearings::DownloadTranscriptionFileJob).to receive(:convert_to_rtf_and_upload_to_s3!)
+              .and_raise(conversion_error)
+          end
+
+          include_examples "sends correct email template"
+        end
+
+        context "failed to parse filename" do
+          let(:appeal_id) { "" }
+          let(:error_details) do
+            {
+              action: "retrieve",
+              filetype: "vtt",
+              direction: "from",
+              provider: "Webex",
+              error: file_name_error,
+              docket_number: "",
+              api_call: "parse_hearing"
+            }
+          end
+
+          before do
+            allow_any_instance_of(Hearings::DownloadTranscriptionFileJob).to receive(:parse_hearing)
+              .and_raise(file_name_error)
+          end
+
+          include_examples "sends correct email template"
         end
       end
     end
