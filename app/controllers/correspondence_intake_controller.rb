@@ -39,7 +39,7 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def intake_update
     begin
-      intake_appeal_update_tasks
+      CorrespondenceTask.update_intake_appeal_tasks(correspondence)
       upload_documents_to_claim_evidence if FeatureToggle.enabled?(:ce_api_demo_toggle)
       render json: { correspondence: correspondence }
     rescue StandardError => error
