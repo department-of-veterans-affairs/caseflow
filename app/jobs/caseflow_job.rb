@@ -11,22 +11,22 @@ class CaseflowJob < ApplicationJob
   # Note: This block is not called if an error occurs when `perform` is executed --
   # see https://stackoverflow.com/questions/50263787/does-active-job-call-after-perform-when-perform-raises-an-error
   after_perform do |job|
-    datadog_report_runtime(metric_group_name: job.class.name.underscore) unless @reported_to_datadog
+    metrics_service_report_runtime(metric_group_name: job.class.name.underscore) unless @reported_to_metrics_service
   end
 
-  def datadog_report_runtime(metric_group_name:)
-    DataDogService.record_runtime(
+  def metrics_service_report_runtime(metric_group_name:)
+    MetricsService.record_runtime(
       app_name: "caseflow_job",
       metric_group: metric_group_name,
       start_time: @start_time
     )
-    @reported_to_datadog = true
+    @reported_to_metrics_service = true
   end
 
-  def datadog_report_time_segment(segment:, start_time:)
+  def metrics_service_report_time_segment(segment:, start_time:)
     job_duration_seconds = Time.zone.now - start_time
 
-    DataDogService.emit_gauge(
+    MetricsService.emit_gauge(
       app_name: "caseflow_job_segment",
       metric_group: segment,
       metric_name: "runtime",
