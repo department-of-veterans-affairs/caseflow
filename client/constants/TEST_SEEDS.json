@@ -1,5 +1,5 @@
 {
-  "aod": "db:seed:demo_aod_hearing_case_lever_test_data",
+  "aod-seeds": "db:seed:demo_aod_hearing_case_lever_test_data",
   "non-aod-hearing-seeds":"db:seed:demo_non_aod_hearing_case_lever_test_data",
   "tasks-seeds": "db:seed:demo_tasks_seeds",
   "hearings-seeds": "db:seed:demo_hearings_seeds",
