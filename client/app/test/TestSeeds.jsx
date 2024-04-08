@@ -12,6 +12,7 @@ import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
 import NumberField from '../components/NumberField';
 import cx from 'classnames';
+import TEST_SEEDS from '../../constants/TEST_SEEDS';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -74,7 +75,7 @@ class TestSeeds extends React.PureComponent {
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpoint = `/run-demo/${type.toLowerCase()}-seeds`;
+    const endpoint = `/seeds/run-demo/${type}`;
 
     ApiUtil.post(endpoint, { count }).then(() => {
       this.setState((prevState) => ({
@@ -91,33 +92,7 @@ class TestSeeds extends React.PureComponent {
 
   render() {
     const Router = this.props.router || BrowserRouter;
-    const seedTypes = [
-      'Aod',
-      'NonAod',
-      'Tasks',
-      'Hearings',
-      'Intake',
-      'Dispatch',
-      'Jobs',
-      'Substitutions',
-      'DecisionIssues',
-      'CavcAmaAppeals',
-      'SanitizedJsonSeeds',
-      'VeteransHealthAdministration',
-      'MTV',
-      'Education',
-      'PriorityDistributions',
-      'TestCaseData',
-      'CaseDistributionAuditLeverEntries',
-      'Notifications',
-      'CavcDashboardData',
-      'CasesTiedToJudgesNoLongerWithBoard',
-      'StaticTestCaseData',
-      'StaticDispatchedAppealsTestData',
-      'RemandedAmaAppeals',
-      'RemandedLegacyAppeals',
-      'PopulateCaseflowFromVacols'
-    ];
+    const seedTypes = Object.keys(TEST_SEEDS);
 
     return (
       <Router {...this.props.routerTestProps}>
