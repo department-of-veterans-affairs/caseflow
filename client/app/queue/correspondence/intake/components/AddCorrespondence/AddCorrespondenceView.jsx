@@ -64,18 +64,16 @@ class AddCorrespondenceView extends React.Component {
 
   onChangeCheckbox = (correspondence, isChecked) => {
     this.props.saveCheckboxState(correspondence, isChecked);
-    let selectedCheckboxes = this.props.checkboxes;
+    let selectedCheckboxes = [...this.props.checkboxes];
 
     if (isChecked) {
-      selectedCheckboxes.push(correspondence.id);
+      selectedCheckboxes.push(correspondence);
     } else {
-      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== correspondence.id);
+      selectedCheckboxes = selectedCheckboxes.filter((checkbox) => checkbox.id !== correspondence.id);
     }
-
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
-
   }
 
   getKeyForRow = (index, { id }) => {

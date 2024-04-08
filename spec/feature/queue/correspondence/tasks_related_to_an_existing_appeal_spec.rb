@@ -47,7 +47,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         existing_appeal_radio_options[:yes].click
 
         using_wait_time(wait_time) do
-          expect(page).to have_content("Viewing 1-5 of 13 total")
+          expect(page).to have_content("Viewing 1-13 of 13 total")
         end
       end
 

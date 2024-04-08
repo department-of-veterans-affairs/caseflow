@@ -22,6 +22,7 @@ const customSelectStyless = {
 
   menu: () => ({
     boxShadow: '1px 1px 10px grey',
+    marginTop: '8px'
   }),
 
   valueContainer: (styles) => ({
@@ -51,9 +52,9 @@ const customSelectStyless = {
 
   option: (styles, { isFocused }) => ({
     color: 'black',
-    fontSize: '25px',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    fontSize: '17px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
     paddingLeft: '20px',
     backgroundColor: isFocused ? 'white' : 'null',
     ':hover': {

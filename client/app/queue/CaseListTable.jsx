@@ -141,15 +141,15 @@ class CaseListTable extends React.PureComponent {
         this.props.updatePageHandlerCallback(newCurrentPage);
       }
     };
-    const totalPages = Math.ceil(this.props.appeals.length / 5);
-    const startIndex = (this.state.currentPage * 5) - 5;
-    const endIndex = (this.state.currentPage * 5);
+    const totalPages = Math.ceil(this.props.appeals.length / 15);
+    const startIndex = (this.state.currentPage * 15) - 15;
+    const endIndex = (this.state.currentPage * 15);
 
     return (
       this.props.paginate ?
         <div>
           <Pagination
-            pageSize={5}
+            pageSize={15}
             currentPage={this.state.currentPage}
             currentCases={this.props.appeals.slice(startIndex, endIndex).length}
             totalPages={totalPages}
