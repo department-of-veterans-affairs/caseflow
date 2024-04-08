@@ -948,7 +948,8 @@ class Appeal < DecisionReview
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
         task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
         (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name)) ||
-        task.is_a?(VeteranRecordRequest)
+        task.is_a?(VeteranRecordRequest) ||
+        task.is_a?(QualityReviewTask)
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
