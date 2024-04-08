@@ -12,8 +12,8 @@ import { hideErrorMessage,
   setActiveOrganization } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
-import _ from 'lodash';
 import pluralize from 'pluralize';
+import { keyBy, pick } from 'lodash';
 
 export const onReceiveQueue = (
   { tasks, amaTasks, appeals }
@@ -25,6 +25,9 @@ export const onReceiveQueue = (
     appeals
   }
 });
+
+export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
+  payload: { config } });
 
 export const onReceiveAppealDetails = (
   { appeals, appealDetails }
@@ -64,7 +67,7 @@ export const onReceiveAmaTasks = (amaTasks) => ({
 
 export const fetchJudges = () => (dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
-    const judges = _.keyBy(response.body.judges, 'id');
+    const judges = keyBy(response.body.judges, 'id');
 
     dispatch({
       type: ACTIONS.RECEIVE_JUDGE_DETAILS,
@@ -465,7 +468,7 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
       const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
       const taskIds = tasks.map((task) => task.uniqueId);
 
-      dispatch(onReceiveTasks(_.pick(receievedTasks, ['tasks', 'amaTasks'])));
+      dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
 
       taskIds.forEach((taskId) => {
         dispatch(setSelectionOfTaskOfUser({
@@ -476,6 +479,50 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
       });
     });
 }));
+
+export const initialSpecialtyCaseTeamAssignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId, instructions
+}) => (dispatch) => {
+  const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
+
+  const amaParams = {
+    url: '/specialty_case_team_assign_tasks',
+    taskIds: amaTasks.map((oldTask) => oldTask.uniqueId),
+    requestParams: {
+      data: {
+        tasks: amaTasks.map((oldTask) => ({
+          external_id: oldTask.externalAppealId,
+          parent_id: oldTask.taskId,
+          assigned_to_id: assigneeId,
+          instructions
+        }))
+      }
+    }
+  };
+
+  const { requestParams, url, taskIds } = amaParams;
+
+  return ApiUtil.post(url, requestParams).
+    then((resp) => resp.body).
+    then((resp) => {
+      const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
+
+      dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
+
+      taskIds.forEach((taskId) => {
+        dispatch(setSelectionOfTaskOfUser({
+          userId: previousAssigneeId,
+          selected: false,
+          taskId
+        }));
+      });
+    });
+};
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
@@ -608,7 +655,7 @@ export const legacyReassignToJudge = ({
     then((resp) => {
       const allTasks = prepareAllTasksForStore([resp.task.data]);
 
-      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+      dispatch(onReceiveTasks(pick(allTasks, ['tasks', 'amaTasks'])));
 
       dispatch(showSuccessMessage(successMessage));
 
@@ -764,6 +811,26 @@ export const fetchCamoTasks = (userId) => (dispatch) => {
     });
 };
 
+export const fetchSpecialtyCaseTeamTasks = (userId) => (dispatch) => {
+  const url = '/organizations/specialty-case-team/tasks';
+
+  return ApiUtil.get(url).
+    then((resp) => {
+      dispatch(setActiveOrganization(resp.body.id,
+        resp.body.type,
+        resp.body.organization_name,
+        resp.body.is_vso,
+        resp.body.user_can_bulk_assign));
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    }).
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
+    });
+};
+
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
   payload: {
@@ -790,6 +857,3 @@ export const setAppealAod = (externalAppealId, granted) => ({
     granted
   }
 });
-
-export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
-  payload: { config } });

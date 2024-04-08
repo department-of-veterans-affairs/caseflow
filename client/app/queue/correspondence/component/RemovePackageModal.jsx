@@ -91,15 +91,17 @@ class RemovePackageModal extends React.Component {
     const { onCancel } = this.props;
     const submit = () => {
       let selectedRequestChoice;
+
       if (this.state.reasonForRemove === 'Approve request') {
-        selectedRequestChoice ='approve';
+        selectedRequestChoice = 'approve';
       } else {
-        selectedRequestChoice ='reject';
+        selectedRequestChoice = 'reject';
       }
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams(newUrl.search);
       const taskId = this.props.reviewDetails.taskId;
       const veteranName = this.props.reviewDetails.veteranName;
+
       // Encode and set the query parameters
       searchParams.set('taskId', encodeURIComponent(taskId));
       searchParams.set('veteranName', encodeURIComponent(veteranName));

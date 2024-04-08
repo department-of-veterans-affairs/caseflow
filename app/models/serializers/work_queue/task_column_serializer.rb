@@ -93,7 +93,7 @@ class WorkQueue::TaskColumnSerializer
       if object.appeal.is_a?(LegacyAppeal)
         object.appeal.issue_categories
       else
-        object.appeal.request_issues.map(&:nonrating_issue_category)
+        object.appeal.request_issues.active.map(&:nonrating_issue_category)
       end.join(",")
     end
   end
@@ -115,7 +115,7 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :label do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
 
     if serialize_attribute?(params, columns)
       object.label
@@ -170,7 +170,8 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
     ]
     assignee = object.assigned_to
 
@@ -361,6 +362,8 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :appeal_type
+
   # UNUSED
 
   attribute :assignee_name do
@@ -384,10 +387,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :closed_at do
-    nil
-  end
-
-  attribute :appeal_type do
     nil
   end
 

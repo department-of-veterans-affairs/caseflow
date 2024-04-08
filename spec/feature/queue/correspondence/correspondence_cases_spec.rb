@@ -1262,6 +1262,29 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("You have successfully rejected a package request for")
     end
 
+    it "approve request to reassign in review_package view" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find("#Review-request-button-id-2").click
+      find("#button-Review-reassign-request").click
+      find('[for="merge-package_approve"]').click
+      find("#react-select-4-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
+      find("#react-select-4-option-0").click
+      click_button("Confirm")
+      expect(page).to have_content("You have successfully reassigned a mail record for")
+    end
+
+    it "deny request to reassign in review_package view" do
+      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+      all("[aria-label='Reassign Package Task Link']")[0].click
+      find("#Review-request-button-id-2").click
+      find("#button-Review-reassign-request").click
+      find('[for="merge-package_reject"]').click
+      find(".cf-form-textarea", match: :first).fill_in with: "this is a rejection reason"
+      click_button("Confirm")
+      expect(page).to have_content("You have successfully rejected a package request")
+    end
+
     it "approve request to remove" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
       all("[aria-label='Remove Package Task Link']")[0].click

@@ -35,13 +35,13 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
     it "runs the job as expected" do
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job",
         metric_group: "update_appellant_representation_job",
         metric_name: "runtime",
         metric_value: anything
       )
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "queue_job",
         attrs: { endpoint: "AppellantNotification.appeal_mapper", service: "queue_job", uuid: anything },
         metric_group: "service",
@@ -82,7 +82,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "sends the correct number of messages to DataDog and not send a message to Slack" do
-      expect(DataDogService).to receive(:increment_counter).exactly(7).times
+      expect(MetricsService).to receive(:increment_counter).exactly(7).times
       expect_any_instance_of(SlackService).to_not receive(:send_notification)
 
       UpdateAppellantRepresentationJob.perform_now
@@ -131,7 +131,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
 
     it "the job still runs to completion but sends the errors to DataDog" do
       args = {}
-      allow(DataDogService).to receive(:emit_gauge) do |function_args|
+      allow(MetricsService).to receive(:emit_gauge) do |function_args|
         args = function_args
       end
 
@@ -160,7 +160,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job",
         metric_group: UpdateAppellantRepresentationJob.name.underscore,
         metric_name: "runtime",

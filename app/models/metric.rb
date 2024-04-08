@@ -5,7 +5,12 @@ class Metric < CaseflowRecord
   delegate :css_id, to: :user
 
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
-  LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
+  LOG_SYSTEMS = {
+    dynatrace: "dynatrace",
+    datadog: "datadog",
+    rails_console: "rails_console",
+    javascript_console: "javascript_console"
+  }.freeze
   PRODUCT_TYPES = {
     queue: "queue",
     hearings: "hearings",
@@ -14,7 +19,7 @@ class Metric < CaseflowRecord
     efolder: "efolder",
     reader: "reader",
     caseflow: "caseflow", # Default product
-    # Added below because MetricService has usages of this as a service
+    # Added below because MetricsService has usages of this as a service
     vacols: "vacols",
     bgs: "bgs",
     gov_delivery: "gov_delivery",
@@ -70,9 +75,10 @@ class Metric < CaseflowRecord
   # - end
   # - duration
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   # :reek:ControlParameter
   def self.default_object(klass, params, user)
+    product_types = PRODUCT_TYPES
     {
       uuid: params[:uuid],
       event_id: params[:event_id],
@@ -82,7 +88,7 @@ class Metric < CaseflowRecord
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],
-      metric_product: PRODUCT_TYPES[params[:product].to_sym] || PRODUCT_TYPES[:caseflow],
+      metric_product: product_types[params[:product].to_sym] || product_types[:caseflow],
       app_name: params[:app_name] || APP_NAMES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
@@ -94,7 +100,7 @@ class Metric < CaseflowRecord
       duration: calculate_duration(params[:start], params[:end], params[:duration])
     }
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   def self.calculate_duration(start, end_time, duration)
     return duration if duration || !start || !end_time

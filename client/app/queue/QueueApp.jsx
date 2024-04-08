@@ -23,6 +23,7 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setUserIsCamoEmployee,
+  setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
   setMailTeamUser,
@@ -136,6 +137,7 @@ class QueueApp extends React.PureComponent {
     this.props.setMailSuperUser(this.props.isMailSuperUser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
+    this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -473,6 +475,10 @@ class QueueApp extends React.PureComponent {
     <InProgressTaskModal {...props.match.params} />
   );
 
+  routedReturnToSctModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
     props
   ) => (
@@ -610,7 +616,7 @@ class QueueApp extends React.PureComponent {
     <OrganizationUsers {...props.match.params} />
   );
 
-  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} featureToggles={this.props.featureToggles} />;
 
   routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
@@ -633,8 +639,13 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReviewPackage = (props) => (
-    <ReviewPackageLoadingScreen {...props.match.params}>
-      <CorrespondenceReviewPackage {...props.match.params} />
+    <ReviewPackageLoadingScreen
+      {...props.match.params}>
+      <CorrespondenceReviewPackage
+        mailTeamUsers={this.props.mailTeamUsers}
+        userIsCorrespondenceSuperuser={this.props.userIsCorrespondenceSuperuser}
+        userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
+        {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );
 
@@ -705,13 +716,14 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     };
   };
 
@@ -1421,6 +1433,13 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
+                }`}
+              title="Return to SCT | Caseflow"
+              render={this.routedReturnToSctModal}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIDEO} | Caseflow`}
@@ -1511,11 +1530,14 @@ QueueApp.propTypes = {
   isMailTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
   isMailSuperUser: PropTypes.bool,
+  mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
   setUserIsCamoEmployee: PropTypes.func,
   userIsCamoEmployee: PropTypes.bool,
+  setUserIsSCTCoordinator: PropTypes.func,
+  userIsSCTCoordinator: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1527,6 +1549,8 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
@@ -1557,6 +1581,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setUserIsCamoEmployee,
+      setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
       setMailTeamUser,

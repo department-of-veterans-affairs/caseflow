@@ -885,6 +885,18 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def cancel_task_and_return_to_sct_action(task, _)
+      {
+        modal_title: COPY::RETURN_TO_SCT_MODAL_TITLE,
+        modal_body: COPY::RETURN_TO_SCT_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        show_instructions: true,
+        message_title: format(COPY::RETURN_TO_SCT_SUCCESS_BANNER_TITLE, task.appeal.claimant.name),
+        message_detail: COPY::RETURN_TO_SCT_SUCCESS_BANNER_DETAIL
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)

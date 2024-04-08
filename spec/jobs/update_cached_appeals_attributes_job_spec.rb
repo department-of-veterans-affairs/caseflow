@@ -64,7 +64,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       end
 
       it "records the jobs runtime" do
-        allow(DataDogService).to receive(:emit_gauge) do |args|
+        allow(MetricsService).to receive(:emit_gauge) do |args|
           emitted_gauges.push(args)
         end
 
@@ -79,7 +79,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       end
 
       it "records the number of appeals cached" do
-        allow(DataDogService).to receive(:increment_counter) do |args|
+        allow(MetricsService).to receive(:increment_counter) do |args|
           emitted_gauges.push(args)
         end
 
@@ -90,7 +90,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       end
 
       it "records a successful run of the job" do
-        allow(DataDogService).to receive(:increment_counter) do |args|
+        allow(MetricsService).to receive(:increment_counter) do |args|
           emitted_gauges.push(args)
         end
 
@@ -115,7 +115,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "increments the job error Datadog gauge" do
-      allow(DataDogService).to receive(:increment_counter) do |args|
+      allow(MetricsService).to receive(:increment_counter) do |args|
         emitted_gauges.push(args)
       end
 
