@@ -81,11 +81,12 @@ const TaskCompletedDatePicker = (props) => {
       width: 'inherit'
     },
     '& .cf-form-textinput': {
-      paddingTop: '11px !important',
+      paddingTop: '10px !important',
       marginBottom: 0,
       '& .input-container': {
         '& input': {
-          margin: 0
+          // margin: 0,
+          height: '39px'
         }
       }
     }
@@ -146,7 +147,7 @@ const TaskCompletedDatePicker = (props) => {
   };
 
   return <div id="dropdown" {...selectContainerStyles}>
-    <div style={{ marginLeft: '5%', marginRight: '5%', marginTop: '3.5%' }}>
+    <div style={{ marginLeft: '5%', marginRight: '5%', marginTop: '3.2%' }}>
       <ReactSelectDropdown
         className = {`receiptDate ${styles.optSelect}`}
         label="Date filter parameters"
@@ -154,11 +155,11 @@ const TaskCompletedDatePicker = (props) => {
         onChangeMethod={props.onChangeMethod} />
     </div>
 
-    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.5%' }}>
+    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.7%' }}>
       {getDatePickerElements()}
     </div>
     <div style={{ display: 'flex',
-      padding: '16.5px 10px 24px 0',
+      padding: '16px 10px 24px 0',
       justifyContent: 'right',
       width: '190px',
       borderTop: '1px solid #d6d7d9' }}>
