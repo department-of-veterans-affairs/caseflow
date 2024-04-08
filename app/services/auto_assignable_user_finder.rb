@@ -7,6 +7,10 @@
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
+  def initialize(current_user)
+    self.current_user = current_user
+  end
+
   def assignable_users_exist?
     return false if FeatureToggle.enabled?(:auto_assign_banner_max_queue)
 
@@ -21,15 +25,15 @@ class AutoAssignableUserFinder
 
   private
 
+  attr_accessor :current_user
+
   def run_auto_assign_algorithm(correspondence, vbms_id)
     assignable_users.each do |user|
       next if correspondence.nod && !user.nod?
 
-      user_obj = user.user_obj
-
       begin
-        if sensitivity_checker(user_obj).can_access?(vbms_id, user_to_check: user_obj)
-          return user_obj
+        if sensitivity_checker.can_access?(vbms_id)
+          return user.user_obj
         end
       rescue StandardError => error
         error_uuid = SecureRandom.uuid
@@ -115,14 +119,13 @@ class AutoAssignableUserFinder
       .references(:tasks, :organizations, :organization_user_permissions)
   end
 
-  def sensitivity_checker(user)
-    @sensitivity_checker ||= ActiveSupport::HashWithIndifferentAccess.new
+  def sensitivity_checker
+    return @sensitivity_checker if @sensitivity_checker.present?
 
-    return @sensitivity_checker[user.css_id] if @sensitivity_checker.key?(user.css_id)
+    # Set for use by BGSService
+    RequestStore.store[:current_user] ||= current_user
 
-    @sensitivity_checker[user.css_id] = BGSService.new(client: BGSService.init_client_for_user(user: user))
-
-    @sensitivity_checker[user.css_id]
+    @sensitivity_checker = BGSService.new
   end
 
   def permission_checker

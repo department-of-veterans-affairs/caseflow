@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 describe AutoAssignableUserFinder do
-  subject(:described) { described_class.new }
+  let!(:current_user) { create(:user) }
+  subject(:described) { described_class.new(current_user) }
 
   let(:veteran) { create(:veteran) }
 
@@ -194,7 +195,7 @@ describe AutoAssignableUserFinder do
       context "with no BGSService errors" do
         before do
           expect(mock_sensitivity_checker).to receive(:can_access?).twice.and_return(false)
-          expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
+          expect(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
         end
 
         it "does not allow access for users without the correct sensitivity level" do
@@ -206,7 +207,7 @@ describe AutoAssignableUserFinder do
         before do
           expect(mock_sensitivity_checker).to receive(:can_access?).once.and_raise("Test BGS error")
           expect(mock_sensitivity_checker).to receive(:can_access?).once.and_return(true)
-          expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
+          expect(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
         end
 
         it "continues iterating through all assignable users" do
