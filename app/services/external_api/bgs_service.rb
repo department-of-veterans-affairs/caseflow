@@ -24,6 +24,38 @@ class ExternalApi::BGSService
     @people_by_ssn = {}
   end
 
+  def sensitivity_level_for_user(user)
+    fail "Invalid user" if !user.instance_of?(User)
+
+    sensitivity_level_for_participant_id(get_participant_id_for_user(user))
+  end
+
+  def sensitivity_level_for_veteran(veteran)
+    fail "Invalid veteran" if !veteran.instance_of?(Veteran)
+
+    sensitivity_level_for_participant_id(veteran.participant_id)
+  end
+
+  def sensitivity_level_for_participant_id(participant_id)
+    fail "Invalid participant_id" if participant_id.blank?
+
+    Rails.cache.fetch("sensitivity_level_for_participant_id_#{participant_id}", expires_in: 1.hour) do
+      DBService.release_db_connections
+
+      MetricsService.record(
+        "BGS: sensitivity level for participant_id #{participant_id}",
+        service: :bgs,
+        name: "security.find_sensitivity_level_by_participant_id"
+      ) do
+        response = client.security.find_sensitivity_level_by_participant_id(participant_id)
+
+        response.key?(:scrty_level_type_cd) ? response[:scrty_level_type_cd] : 0
+      rescue BGS::ShareError
+        0
+      end
+    end
+  end
+
   # :nocov:
 
   def get_end_products(vbms_id)

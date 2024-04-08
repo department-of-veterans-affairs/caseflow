@@ -18,28 +18,21 @@ class AutoAssignableUserFinder
   end
 
   def get_first_assignable_user(correspondence:)
-    vbms_id = correspondence.veteran.file_number
-
-    run_auto_assign_algorithm(correspondence, vbms_id)
+    run_auto_assign_algorithm(correspondence)
   end
 
   private
 
   attr_accessor :current_user
 
-  def run_auto_assign_algorithm(correspondence, vbms_id)
+  def run_auto_assign_algorithm(correspondence)
     assignable_users.each do |user|
       next if correspondence.nod && !user.nod?
 
-      begin
-        if sensitivity_checker.can_access?(vbms_id)
-          return user.user_obj
-        end
-      rescue StandardError => error
-        error_uuid = SecureRandom.uuid
-        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+      user_obj = user.user_obj
 
-        next
+      if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
+        return user_obj
       end
     end
 
@@ -117,6 +110,18 @@ class AutoAssignableUserFinder
         }
       )
       .references(:tasks, :organizations, :organization_user_permissions)
+  end
+
+  def sensitivity_levels_compatible?(user:, veteran:)
+    begin
+      sensitivity_checker.sensitivity_level_for_user(user) >=
+        sensitivity_checker.sensitivity_level_for_veteran(veteran)
+    rescue StandardError => error
+      error_uuid = SecureRandom.uuid
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+
+      false
+    end
   end
 
   def sensitivity_checker

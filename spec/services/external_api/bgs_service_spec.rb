@@ -25,6 +25,51 @@ describe ExternalApi::BGSService do
     bgs.bust_fetch_veteran_info_cache(vbms_id)
   end
 
+  describe "#sensitivity_level_for_user" do
+    it "validates the user param" do
+      expect { bgs.sensitivity_level_for_user(nil) }.to raise_error(RuntimeError, "Invalid user")
+    end
+
+    it "wraps sensitivity_level_for_participant_id" do
+      expect(bgs).to receive(:get_participant_id_for_user).with(user).and_return("1234")
+      expect(bgs).to receive(:sensitivity_level_for_participant_id).with("1234")
+
+      bgs.sensitivity_level_for_user(user)
+    end
+  end
+
+  describe "#sensitivity_level_for_veteran" do
+    let(:veteran) { create(:veteran) }
+
+    it "validates the veteran param" do
+      expect { bgs.sensitivity_level_for_veteran(nil) }.to raise_error(RuntimeError, "Invalid veteran")
+    end
+
+    it "wraps sensitivity_level_for_participant_id" do
+      expect(bgs).to receive(:sensitivity_level_for_participant_id).with(veteran.participant_id)
+
+      bgs.sensitivity_level_for_veteran(veteran)
+    end
+  end
+
+  describe "#sensitivity_level_for_participant_id" do
+    it "validates the participant_id param" do
+      expect { bgs.sensitivity_level_for_participant_id(nil) }.to raise_error(RuntimeError, "Invalid participant_id")
+    end
+
+    it "calls the security service and caches the result" do
+      sensitivity_level = Random.new.rand(1..9)
+
+      expect(bgs_client).to receive(:security).and_return(bgs_security_service)
+      expect(bgs_security_service).to receive(:find_sensitivity_level_by_participant_id)
+        .with("1234").and_return({scrty_level_type_cd: sensitivity_level})
+
+      expect(bgs.sensitivity_level_for_participant_id("1234")).to eq(sensitivity_level)
+
+      expect(Rails.cache.exist?("sensitivity_level_for_participant_id_1234")).to be true
+    end
+  end
+
   describe "#fetch_poa_by_file_number" do
     let(:participant_id) { "1234" }
     let(:poa_participant_id) { "person-pid" }
