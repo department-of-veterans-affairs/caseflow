@@ -88,6 +88,5 @@ class Events::DecisionReviewCreated
     def find_or_create_event(consumer_event_id)
       DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
     end
-
   end
 end

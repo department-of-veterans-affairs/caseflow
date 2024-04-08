@@ -63,6 +63,14 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     @payload.dig(:station)
   end
 
+  def event_id
+    @payload.dig(:event_id)
+  end
+
+  def claim_id
+    @payload.dig(:claim_id)
+  end
+
   # Intake attributes
   def intake_started_at
     intake_started_at_milliseconds = @payload.dig(:intake, :started_at)
