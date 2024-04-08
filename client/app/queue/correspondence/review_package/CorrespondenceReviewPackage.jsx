@@ -39,7 +39,6 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
-  const [isInboundOpsTeam, setIsInboundOpsTeam] = useState(false);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taksId: [],
@@ -51,12 +50,9 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const fetchData = async () => {
     const correspondence = props;
-    const inboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-
-      setIsInboundOpsTeam(Boolean(inboundOpsTeam));
 
       if (assignedRemoveTask) {
         setReviewPackageDetails((prev) => {
@@ -75,7 +71,7 @@ export const CorrespondenceReviewPackage = (props) => {
           task.type === 'ReassignPackageTask');
 
       // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (typeof assignedReassignTask !== 'undefined') && inboundOpsTeam;
+      return (typeof assignedReassignTask !== 'undefined') && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor);
     };
 
     try {
@@ -216,7 +212,8 @@ export const CorrespondenceReviewPackage = (props) => {
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
-            isInboundOpsTeam={isInboundOpsTeam}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
@@ -297,12 +294,8 @@ CorrespondenceReviewPackage.propTypes = {
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
-  organizations: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      url: PropTypes.string
-    })
-  )
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -310,7 +303,6 @@ const mapStateToProps = (state) => ({
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
-  organizations: state.ui.organizations
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -318,7 +310,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   doFileNumberSearch
 }, dispatch);
 
-export default connect(
+export default
+connect(
   mapStateToProps,
   mapDispatchToProps,
 )(CorrespondenceReviewPackage);
