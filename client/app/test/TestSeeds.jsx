@@ -74,34 +74,7 @@ class TestSeeds extends React.PureComponent {
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpoint = `/run-demo/${type}`;
-    //   Aod: '/run-demo-aod-seeds',
-    //   NonAod: '/run-demo-non-aod-seeds',
-    //   Tasks: '/run-demo-tasks-seeds',
-    //   Hearings: '/run-demo-hearings-seeds',
-    //   Intake: '/run-demo-intake-seeds',
-    //   Dispatch: '/run-demo-dispatch-seeds',
-    //   Jobs: '/run-demo-jobs-seeds',
-    //   Substitutions: '/run-demo-substitutions-seeds',
-    //   DecisionIssues: '/run-demo-decision-issues-seeds',
-    //   CavcAmaAppeals: '/run-demo-cavc-ama-appeals-seeds',
-    //   SanitizedJsonSeeds: '/run-demo-sanitized-json-seeds-seeds',
-    //   VeteransHealthAdministration: '/run-demo-veterans-health-administration-seeds',
-    //   MTV: '/run-demo-mtv-seeds',
-    //   Education: '/run-demo-education-seeds',
-    //   PriorityDistributions: '/run-demo-priority-distributions-seeds',
-    //   TestCaseData: '/run-demo-priority-distributions-seeds',
-    //   CaseDistributionAuditLeverEntries: '/run-demo-case-distribution-audit-lever-entries-seeds',
-    //   Notifications: '/run-demo-notifications-seeds',
-    //   CavcDashboardData: '/run-demo-cavc-dashboard-data-seeds',
-    //   VbmsExtClaim: '/run-demo-vbms-ext-claim-seeds',
-    //   CasesTiedToJudgesNoLongerWithBoard: '/run-demo-cases-tied-to-judges-no-longer-with-board-seeds',
-    //   StaticTestCaseData: '/run-demo-static-test-case-data-seeds',
-    //   StaticDispatchedAppealsTestData: '/run-demo-static-dispatched-appeals-test-data-seeds',
-    //   RemandedAmaAppeals: '/run-demo-remanded-ama-appeals-seeds',
-    //   RemandedLegacyAppeals: '/run-demo-remanded-legacy-appeals-seeds',
-    //   PopulateCaseflowFromVacols: '/run-demo-populate-caseflow-from-vacols-seeds'
-    // };
+    const endpoint = `/run-demo/${type.toLowerCase()}-seeds`;
 
     ApiUtil.post(endpoint, { count }).then(() => {
       this.setState((prevState) => ({
