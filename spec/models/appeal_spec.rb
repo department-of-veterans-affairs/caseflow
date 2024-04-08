@@ -1640,6 +1640,21 @@ describe Appeal, :all_dbs do
       end
     end
 
+    context "when an appeal has an assigned DistributionTask and open VeteranRecordRequest task" do
+      let!(:appeal_ready_to_distribute) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+
+        VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
+                                     status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
+
+        appeal.reload
+      end
+
+      subject { appeal_ready_to_distribute.can_redistribute_appeal? }
+
+      it { is_expected.to eq true }
+    end
+
     context "when an appeal has an assigned DistributionTask and open QualityReviewTask task" do
       let!(:appeal_ready_to_distribute) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
