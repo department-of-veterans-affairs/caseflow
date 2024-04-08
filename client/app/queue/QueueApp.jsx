@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
+import CorrespondenceCases from './correspondence/CorrespondenceCases';
 
 import {
   setCanEditAod,
@@ -25,6 +26,9 @@ import {
   setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
+  setMailTeamUser,
+  setMailSupervisor,
+  setMailSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -35,6 +39,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/review_package/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -85,6 +90,8 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
+import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -93,6 +100,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
@@ -124,6 +132,9 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
+    this.props.setMailTeamUser(this.props.isMailTeamUser);
+    this.props.setMailSupervisor(this.props.isMailSupervisor);
+    this.props.setMailSuperUser(this.props.isMailSuperUser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
@@ -627,6 +638,17 @@ class QueueApp extends React.PureComponent {
     <PostponeHearingTaskModal {...props.match.params} />
   );
 
+  routedReviewPackage = (props) => (
+    <ReviewPackageLoadingScreen
+      {...props.match.params}>
+      <CorrespondenceReviewPackage
+        mailTeamUsers={this.props.mailTeamUsers}
+        userIsCorrespondenceSuperuser={this.props.userIsCorrespondenceSuperuser}
+        userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
+        {...props.match.params} />
+    </ReviewPackageLoadingScreen>
+  );
+
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
@@ -674,6 +696,14 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingPostponementRequest = (props) => (
     <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
+  routedCorrespondenceIntake = (props) => (
+    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+  );
+
+  routedCorrespondenceCases = () => (
+    <CorrespondenceCases {...this.props} />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
@@ -734,6 +764,21 @@ class QueueApp extends React.PureComponent {
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
             />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/team"
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
+            />
+
             <PageRoute
               exact
               path="/queue/:userId"
@@ -892,6 +937,13 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
+              path="/queue/correspondence/:correspondence_uuid/review_package"
+              title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
+              render={this.routedReviewPackage}
+            />
+
+            <PageRoute
+              exact
               path="/queue/appeals/:appealId/edit_poa_information"
               title={`${PAGE_TITLES.EDIT_POA_INFORMATION} | Caseflow`}
               render={this.routedEditPOAInformation}
@@ -906,6 +958,17 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
+            />
+
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
+              render={this.routedCorrespondenceIntake}
             />
 
             {motionToVacateRoutes.page}
@@ -1425,7 +1488,6 @@ class QueueApp extends React.PureComponent {
               path="/team_management/lookup_participant_id"
               render={this.routedLookupParticipantIdModal}
             />
-
             {motionToVacateRoutes.modal}
           </Switch>
         </div>
@@ -1462,6 +1524,13 @@ QueueApp.propTypes = {
   setUserCssId: PropTypes.func,
   setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
+  setMailTeamUser: PropTypes.func,
+  setMailSupervisor: PropTypes.func,
+  setMailSuperUser: PropTypes.func,
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
+  mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
@@ -1480,10 +1549,16 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  correspondence: PropTypes.object,
+  autoTexts: PropTypes.array,
+  veteranInformation: PropTypes.object,
+  reduxStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
@@ -1509,6 +1584,9 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
+      setMailTeamUser,
+      setMailSupervisor,
+      setMailSuperUser,
     },
     dispatch
   );

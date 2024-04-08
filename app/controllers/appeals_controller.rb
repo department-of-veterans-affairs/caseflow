@@ -187,6 +187,11 @@ class AppealsController < ApplicationController
     end
   end
 
+  def active_evidence_submissions
+    appeal = Appeal.find(params[:appeal_id])
+    render json: appeal.evidence_submission_task
+  end
+
   private
 
   def create_subtasks!
