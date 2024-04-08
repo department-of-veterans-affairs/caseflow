@@ -6,6 +6,7 @@ class Organization < CaseflowRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
   has_many :membership_requests
+  has_many :organization_permissions
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
   require_dependency "dvc_team"
 
@@ -142,6 +143,16 @@ class Organization < CaseflowRecord
     ]
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_unassigned_tasks_tab,
+      correspondence_action_required_tasks_tab,
+      correspondence_pending_tasks_tab,
+      correspondence_assigned_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def unassigned_tasks_tab
     ::OrganizationUnassignedTasksTab.new(
       assignee: self,
@@ -160,6 +171,26 @@ class Organization < CaseflowRecord
 
   def completed_tasks_tab
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def correspondence_unassigned_tasks_tab
+    ::OrganizationCorrespondenceUnassignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_action_required_tasks_tab
+    ::OrganizationCorrespondenceActionRequiredTasksTab.new(assignee: self)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::OrganizationCorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_pending_tasks_tab
+    ::OrganizationCorrespondencePendingTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::OrganizationCorrespondenceCompletedTasksTab.new(assignee: self)
   end
 
   def serialize

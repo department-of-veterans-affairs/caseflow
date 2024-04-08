@@ -23,23 +23,54 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL": "Your Correspondence",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES": "Correspondence Cases",
   "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "sct_action_required",
   "SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME": "sct_completed",
   "SPECIALTY_CASE_TEAM_UNASSIGNED_TASKS_TAB_NAME": "sct_unassigned",
-
   "EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME": "education_rpo_assigned",
   "EDUCATION_RPO_IN_PROGRESS_TASKS_TAB_NAME": "education_rpo_in_progress",
   "EDUCATION_RPO_COMPLETED_TASKS_TAB_NAME": "education_rpo_completed",
-
   "EDUCATION_EMO_UNASSIGNED_TASKS_TAB_NAME": "education_emo_unassigned",
   "EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME": "education_emo_assigned",
   "EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME": "education_emo_completed",
-
   "CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME": "vha_caregiver_support_unassigned",
   "CAREGIVER_SUPPORT_IN_PROGRESS_TASKS_TAB_NAME": "caregiver_support_in_progress",
   "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
-
+  "CORRESPONDENCE_ASSIGNED_TASKS_LABEL": "Assigned",
+  "CORRESPONDENCE_COMPLETED_TASKS_LABEL": "Completed",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_LABEL": "In Progress",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_LABEL": "Action Required",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_LABEL": "Assigned",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_LABEL": "Completed",
+  "CORRESPONDENCE_PENDING_TASKS_LABEL": "Pending",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_LABEL": "Unassigned",
+  "CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME": "correspondence_assigned",
+  "CORRESPONDENCE_COMPLETED_TASKS_TAB_NAME": "correspondence_completed",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_TAB_NAME": "correspondence_in_progress",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_TAB_NAME": "correspondence_action_required",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME": "correspondence_team_assigned",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_TAB_NAME": "correspondence_team_completed",
+  "CORRESPONDENCE_PENDING_TASKS_TAB_NAME": "correspondence_pending",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME": "correspondence_unassigned",
+  "CORRESPONDENCE_ASSIGNED_TASKS_DESCRIPTION": "Correspondence assigned to you:",
+  "CORRESPONDENCE_COMPLETED_TASKS_DESCRIPTION": "Completed correspondence:",
+  "CORRESPONDENCE_IN_PROGRESS_TASKS_DESCRIPTION": "Correspondence in progress that are assigned to you:",
+  "CORRESPONDENCE_ACTION_REQUIRED_TASKS_DESCRIPTION": "Correspondence with pending requests:",
+  "CORRESPONDENCE_TEAM_ASSIGNED_TASKS_DESCRIPTION": "Correspondence that is currently assigned to mail team users:",
+  "CORRESPONDENCE_TEAM_COMPLETED_TASKS_DESCRIPTION": "Completed correspondence:",
+  "CORRESPONDENCE_PENDING_TASKS_DESCRIPTION": "Correspondence that is currently assigned to non-mail team users:",
+  "CORRESPONDENCE_UNASSIGNED_TASKS_DESCRIPTION": "Correspondence owned by the Mail team are unassigned to an individual:",
+  "CORRESPONDENCE_ORG_TABLE_TITLE": "Correspondence Cases",
+  "CORRESPONDENCE_USER_TABLE_TITLE": "Your Correspondence",
   "COLUMNS": {
+    "ACTION_TYPE": {
+      "name": "actionType",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type"]
+    },
     "APPEAL_TYPE": {
       "filterable": true,
       "name": "typeColumn"
@@ -53,6 +84,9 @@
       "name": "detailsColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["veteran_name"]
+    },
+    "CHECKBOX_COLUMN": {
+      "name": "checkboxColumn"
     },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
@@ -72,6 +106,11 @@
     },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "DAYS_WAITING_CORRESPONDENCE": {
+      "name": "daysWaitingCorrespondence",
       "sorting_table": "tasks",
       "sorting_columns": ["assigned_at"]
     },
@@ -109,6 +148,19 @@
         "issue_types"
       ]
     },
+    "NOTES": {
+      "name": "notes"
+    },
+    "VA_DATE_OF_RECEIPT": {
+      "name": "vaDor"
+    },
+    "VETERAN_DETAILS": {
+      "name": "veteranDetails"
+    },
+    "PACKAGE_DOCUMENT_TYPE": {
+      "filterable": true,
+      "name": "packageDocTypeColumn"
+    },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },
@@ -138,6 +190,11 @@
     },
     "TASK_CLOSED_DATE": {
       "name": "completedDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["closed_at"]
+    },
+    "CORRESPONDENCE_TASK_CLOSED_DATE": {
+      "name": "correspondenceCompletedDateColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["closed_at"]
     },
@@ -173,21 +230,17 @@
       "sorting_columns": ["type", "action", "created_at"]
     }
   },
-
   "TAB_NAME_REQUEST_PARAM": "tab",
   "PAGE_NUMBER_REQUEST_PARAM": "page",
   "SORT_COLUMN_REQUEST_PARAM": "sort_by",
   "SORT_DIRECTION_REQUEST_PARAM": "order",
   "FILTER_COLUMN_REQUEST_PARAM": "filter",
   "SEARCH_QUERY_REQUEST_PARAM": "search_query",
-
   "COLUMN_SORT_ORDER_ASC": "asc",
   "COLUMN_SORT_ORDER_DESC": "desc",
-
   "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
   "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
   "BLANK_FILTER_KEY_VALUE": "None",
-
   "FILTER_OPTIONS": {
     "IS_AOD": {
       "key": "is_aod"
@@ -195,5 +248,10 @@
     "IS_FORMER_TRAVEL": {
       "key": "former Travel"
     }
+  },
+
+  "PACKAGE_DOC_TYPE_FILTER_OPTIONS": {
+    "NOD": "NOD",
+    "NON_NOD": "Non-NOD"
   }
 }
