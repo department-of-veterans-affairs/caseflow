@@ -154,7 +154,7 @@ class TestSeeds extends React.PureComponent {
                                 isInteger
                               />
                             </div>
-                            <div className="cf-btn-link">
+                            <div className="cf-btn-link test-seed-button-style">
                               <Button
                                 onClick={() => this.reseed(type)}
                                 name={`Run Demo ${type} Seeds`}
