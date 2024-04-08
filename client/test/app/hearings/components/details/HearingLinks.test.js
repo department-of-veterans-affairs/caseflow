@@ -127,7 +127,6 @@ describe('HearingLinks', () => {
   test('Matches snapshot when hearing is non-virtual, webex, and in progress', () => {
     const hearing = {
       scheduledForIsPast: false,
-      isVirtual: false,
       conferenceProvider: 'webex',
       nonVirtualConferenceLink: {
         alias: null,
@@ -144,7 +143,7 @@ describe('HearingLinks', () => {
       <Provider store={store}>
         <HearingLinks
           hearing={hearing}
-          isVirtual
+          isVirtual={false}
           user={anyUser}
         />
       </Provider>
@@ -161,7 +160,6 @@ describe('HearingLinks', () => {
   test('Matches snapshot when hearing is non-virtual, pexip, and in progress', () => {
     const hearing = {
       scheduledForIsPast: false,
-      isVirtual: false,
       wasVirtual: false,
       conferenceProvider: 'pexip',
       readableRequestType: 'Video',
@@ -182,7 +180,7 @@ describe('HearingLinks', () => {
       <Provider store={store}>
         <HearingLinks
           hearing={hearing}
-          isVirtual
+          isVirtual={false}
           user={anyUser}
         />
       </Provider>

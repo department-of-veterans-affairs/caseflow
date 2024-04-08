@@ -9,7 +9,6 @@ import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
 const VirtualHearingLink = ({
-  isVirtual,
   newWindow,
   link,
   label,
