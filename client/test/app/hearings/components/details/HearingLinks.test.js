@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
-import { virtualHearing, amaHearing, virtualWebexHearing, nonVirtualPexipHearing } from 'test/data/hearings';
+import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
 import { mount } from 'enzyme';
@@ -130,14 +130,14 @@ describe('HearingLinks', () => {
       isVirtual: false,
       conferenceProvider: 'webex',
       nonVirtualConferenceLink: {
-        hostPin: null,
-        hostLink: 'https://instant-usgov.webex.com/visit/3k8cjyd',
         alias: null,
+        coHostLink: 'https://instant-usgov.webex.com/visit/yqju5qi',
+        conferenceProvider: 'webex',
+        guestLink: 'https://instant-usgov.webex.com/visit/m9p1k56',
         guestPin: null,
-        guestLink: 'https://instant-usgov.webex.com/visit/4exy2vk',
-        coHostLink: 'https://instant-usgov.webex.com/visit/6yxtt4e',
-        type: 'WebexConferenceLink',
-        conferenceProvider: 'webex'
+        hostLink: 'https://instant-usgov.webex.com/visit/owhuy7m',
+        hostPin: null,
+        type: 'WebexConferenceLink'
       }
     };
     const form = mount(
@@ -166,17 +166,15 @@ describe('HearingLinks', () => {
       conferenceProvider: 'pexip',
       readableRequestType: 'Video',
       dailyDocketConferenceLink: {
-        alias: '0000014',
-        aliasWithHost: 'BVA0000014@example.va.gov',
-        coHostLink: 'https://instant-usgov.webex.com/visit/wz17ys8',
-        conferenceDeleted: false,
-        conferenceId: null,
-        guestHearingLink: 'https://instant-usgov.webex.com/visit/47imtxx',
-        guestPinLong: '9722799217',
+        alias: 'BVA0001094@example.va.gov',
+        coHostLink: null,
+        conferenceProvider: 'pexip',
+        guestLink: 'https://example.va.gov/sample/?conference=BVA0001094@example.va.gov&pin=1342380867&callType=video',
+        guestPin: '1342380867',
         hearingDayId: 151,
-        hostLink: 'https://instant-usgov.webex.com/visit/hu1swd0',
-        hostPin: '6172491',
-        id: 302
+        hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0001094@example.va.gov&pin=1073526&role=host',
+        hostPin: '1073526',
+        type: 'PexipConferenceLink'
       }
     };
 

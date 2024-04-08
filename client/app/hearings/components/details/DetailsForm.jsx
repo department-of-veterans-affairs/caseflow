@@ -95,16 +95,14 @@ const DetailsForm = (props) => {
         </div>
       </ContentSection>
 
-      {((hearing?.isVirtual || hearing?.wasVirtual) || hearing.readableRequestType === 'Video') && (
-        <VirtualHearingFields
-          errors={errors}
-          hearing={hearing}
-          initialHearing={initialHearing}
-          readOnly={readOnly}
-          virtualHearing={hearing?.virtualHearing}
-          update={update}
-        />
-      )}
+      <VirtualHearingFields
+        errors={errors}
+        hearing={hearing}
+        initialHearing={initialHearing}
+        readOnly={readOnly}
+        virtualHearing={hearing?.virtualHearing}
+        update={update}
+      />
 
       <EmailNotificationFields
         header="Email Notifications"

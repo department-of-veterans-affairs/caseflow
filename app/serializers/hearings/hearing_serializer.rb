@@ -5,7 +5,7 @@ class HearingSerializer
   include HearingSerializerBase
 
   attribute :daily_docket_conference_link do |hearing|
-    ConferenceLinkSerializer.new(hearing.daily_docket_conference_link).serializable_hash[:data][:attributes]
+    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
   end
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|

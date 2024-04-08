@@ -25,9 +25,7 @@ export const VirtualHearingLinkDetails = ({
   virtualHearing
 }) => (
   <React.Fragment>
-    {hearing?.scheduledForIsPast ? (
-      <span>N/A</span>
-    ) : (
+    {link ? (
       <VirtualHearingLink
         label={label}
         user={user}
@@ -36,6 +34,8 @@ export const VirtualHearingLinkDetails = ({
         link={link}
         hearing={hearing}
       />
+    ) : (
+      <span>N/A</span>
     )}
     {hearing.conferenceProvider === 'pexip' ? (
       <>
@@ -82,15 +82,9 @@ export const LinkContainer = (
 ) => {
   // The pin used depends on the role and link used depends on virtual or not
   const getPin = () => {
-    const whichLink = isVirtual ? virtualHearing : links;
-
     const isPexipHearingCoordinator = (hearing.conferenceProvider === 'pexip' && role === 'HC');
 
-    if (role === 'VLJ' || isPexipHearingCoordinator) {
-      return whichLink?.hostPin;
-    }
-
-    return (whichLink?.guestPin);
+    return (role === 'VLJ' || isPexipHearingCoordinator) ? links?.hostPin : links?.guestPin;
   };
 
   return (
@@ -126,23 +120,27 @@ LinkContainer.propTypes = {
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
+  const {
+    scheduledForIsPast,
+    conferenceProvider,
+    dailyDocketConferenceLink,
+    nonVirtualConferenceLink
+  } = hearing;
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
   const getLinks = () => {
-    if (hearing.scheduledForIsPast) {
+    if (scheduledForIsPast) {
       return null;
-    } else if (hearing.isVirtual) {
+    } else if (isVirtual) {
       return virtualHearing;
-    } else if (hearing.conferenceProvider === 'pexip') {
-      return hearing.dailyDocketConferenceLink;
-    } else if (hearing.conferenceProvider === 'webex') {
-      return hearing.nonVirtualConferenceLink;
+    } else if (conferenceProvider === 'pexip') {
+      return dailyDocketConferenceLink;
+    } else if (conferenceProvider === 'webex') {
+      return nonVirtualConferenceLink;
     }
   };
 
   const links = getLinks();
-
-  console.log(hearing);
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
@@ -164,7 +162,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-            link={hearing.conferenceProvider === 'webex' ? links?.coHostLink : links?.hostLink}
+            link={conferenceProvider === 'webex' ? links?.coHostLink : links?.hostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role="HC"
             user={user}

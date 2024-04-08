@@ -42,7 +42,7 @@ class LegacyHearingSerializer
   attribute :conference_provider
   attribute :current_issue_count
   attribute :daily_docket_conference_link do |hearing|
-    ConferenceLinkSerializer.new(hearing.daily_docket_conference_link).serializable_hash[:data][:attributes]
+    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
   end
   attribute :disposition
   attribute :disposition_editable
