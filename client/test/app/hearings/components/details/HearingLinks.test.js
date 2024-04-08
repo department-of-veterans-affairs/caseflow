@@ -4,53 +4,25 @@ import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
 import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
+import { mount } from 'enzyme';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
-import { mount } from 'enzyme';
-import { applyMiddleware, createStore, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
 
 describe('HearingLinks', () => {
-  const storeValues = {
-    dailyDocket: {
-      hearingDay: {
-        conferenceLink: {
-          hostPin: '2949749',
-          hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000031@example.va.gov&pin=2949749&role=host',
-          alias: 'BVA0000130@example.va.gov',
-          guestPin: '9523850278',
-          guestLink: 'https://example.va.gov/sample/?conference=BVA0000130@example.va.gov&pin=9523850278&callType=video',
-          coHostLink: null,
-          type: 'PexipConferenceLink',
-          conferenceProvider: 'pexip'
-        }
-      }
-    }
-  };
-  const createReducer = (values) => {
-    return function (state = values) {
-      return state;
-    };
-  };
-  const store = createStore(createReducer(storeValues), compose(applyMiddleware(thunk)));
-
   test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
     const hearing = {
       scheduledForIsPast: false,
-      isVirtual: true,
-      conferenceProvider: 'pexip'
+      conferenceProvider: 'pexip',
+      isVirtual: true
     };
 
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={hearing}
-          isVirtual
-          user={anyUser}
-          virtualHearing={inProgressvirtualHearing}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={hearing}
+        isVirtual
+        user={anyUser}
+        virtualHearing={inProgressvirtualHearing}
+      />
     );
 
     expect(form).toMatchSnapshot();
@@ -76,14 +48,12 @@ describe('HearingLinks', () => {
     };
 
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={hearing}
-          wasVirtual
-          user={anyUser}
-          virtualHearing={inProgressvirtualHearing}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={hearing}
+        wasVirtual
+        user={anyUser}
+        virtualHearing={inProgressvirtualHearing}
+      />
     );
 
     expect(form).toMatchSnapshot();
@@ -101,14 +71,12 @@ describe('HearingLinks', () => {
     };
 
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={hearing}
-          isVirtual
-          user={anyUser}
-          virtualHearing={virtualWebexHearing.virtualHearing}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={hearing}
+        isVirtual
+        user={anyUser}
+        virtualHearing={virtualWebexHearing.virtualHearing}
+      />
     );
 
     expect(form).toMatchSnapshot();
@@ -140,13 +108,11 @@ describe('HearingLinks', () => {
       }
     };
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={hearing}
-          isVirtual={false}
-          user={anyUser}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={hearing}
+        isVirtual={false}
+        user={anyUser}
+      />
     );
 
     expect(form).toMatchSnapshot();
@@ -177,13 +143,11 @@ describe('HearingLinks', () => {
     };
 
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={hearing}
-          isVirtual={false}
-          user={anyUser}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={hearing}
+        isVirtual={false}
+        user={anyUser}
+      />
     );
 
     expect(form).toMatchSnapshot();
@@ -196,14 +160,12 @@ describe('HearingLinks', () => {
 
   test('Only displays Guest Link when user is not a host', () => {
     const form = mount(
-      <Provider store={store}>
-        <HearingLinks
-          hearing={amaHearing}
-          isVirtual
-          user={vsoUser}
-          virtualHearing={virtualHearing.virtualHearing}
-        />
-      </Provider>
+      <HearingLinks
+        hearing={amaHearing}
+        isVirtual
+        user={vsoUser}
+        virtualHearing={virtualHearing.virtualHearing}
+      />
     );
 
     expect(form).toMatchSnapshot();
