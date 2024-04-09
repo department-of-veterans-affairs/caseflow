@@ -378,10 +378,10 @@ module Seeds
     end
 
     def create_inbound_ops_team_user
-      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
       InboundOpsTeam.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
-      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER",
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER",
                        full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
       InboundOpsTeam.singleton.add_user(u)
     end
