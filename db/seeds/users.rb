@@ -39,7 +39,6 @@ module Seeds
       create_dispatch_admin
       create_case_review_admin
       create_special_case_movement_user
-      create_special_case_movement_admin
       create_bvadwise #Intake Admin
       create_bva_intake_user
 
