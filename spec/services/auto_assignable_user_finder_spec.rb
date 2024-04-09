@@ -12,6 +12,14 @@ describe AutoAssignableUserFinder do
   before do
     allow(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
 
+    allow(mock_sensitivity_checker).to receive(:sensitivity_level_for_user) do |user|
+      bgs.sensitivity_level_for_user(user)
+    end
+
+    allow(mock_sensitivity_checker).to receive(:sensitivity_level_for_veteran) do |vet|
+      bgs.sensitivity_level_for_veteran(vet)
+    end
+
     allow(mock_sensitivity_checker).to receive(:fetch_person_info) do |vbms_id|
       bgs.fetch_person_info(vbms_id)
     end
@@ -188,13 +196,21 @@ describe AutoAssignableUserFinder do
     end
 
     context "with sensitivity level check" do
+      let(:high_sensitivity_level) { 9 }
+      let(:low_sensitivity_level) { 1 }
+
       let!(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
       let!(:user_1) { create(:correspondence_auto_assignable_user) }
       let!(:user_2) { create(:correspondence_auto_assignable_user) }
 
       context "with no BGSService errors" do
         before do
-          expect(mock_sensitivity_checker).to receive(:can_access?).twice.and_return(false)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_user)
+            .with(user_1).and_return(low_sensitivity_level)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_user)
+            .with(user_2).and_return(low_sensitivity_level)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_veteran)
+            .with(correspondence.veteran).twice.and_return(high_sensitivity_level)
           expect(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
         end
 
@@ -205,8 +221,12 @@ describe AutoAssignableUserFinder do
 
       context "when the BGSService raises an error" do
         before do
-          expect(mock_sensitivity_checker).to receive(:can_access?).once.and_raise("Test BGS error")
-          expect(mock_sensitivity_checker).to receive(:can_access?).once.and_return(true)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_user)
+            .with(user_1).and_raise("Test BGS error")
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_user)
+            .with(user_2).and_return(high_sensitivity_level)
+          expect(mock_sensitivity_checker).to receive(:sensitivity_level_for_veteran)
+            .with(correspondence.veteran).and_return(high_sensitivity_level)
           expect(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
         end
 
