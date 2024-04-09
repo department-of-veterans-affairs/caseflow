@@ -575,27 +575,37 @@ module Seeds
       )
     end
 
-    #######################################################################
     def create_qa_ssc_avlj_attorney
-      qa_ssc_avlj_attorney.create(
+      qa_ssc_avlj_attorney = User.create(
         css_id: "QSSCAVLJ",
         station_id: 101,
         full_name: "QA SSC_AVLJ Attorney",
         roles: ["Hearing Prep"]
       )
       SupervisorySeniorCouncil.singleton.add_user(qa_ssc_avlj_attorney)
+      VACOLS::Staff.create(
+        snamef: "QA_SSC_AVLJ",
+        snamel: "Attorney",
+        sdomainid: qa_ssc_avlj_attorney.css_id,
+        sattyid: "9999",
+        smemgrp: "9999"
+      )
     end
-    #######################################################################
 
-    #######################################################################
     def create_qa_nonssc_avlj_attorney
-      User.create(
+      qa_nonssc_avlj_attorney = User.create(
         css_id: "QNONSSCAVLJ",
         station_id: 101,
         full_name: "QA Non_SSC_AVLJ Attorney"
       )
+      VACOLS::Staff.create(
+        snamef: "QA_NonSSC_AVLJ",
+        snamel: "Attorney",
+        sdomainid: qa_nonssc_avlj_attorney.css_id,
+        sattyid: "9998",
+        smemgrp: "9998"
+      )
     end
-    #######################################################################
 
     def create_qa_cob_intake_clerk
       qa_cob_intake_clerk_user = User.create(
