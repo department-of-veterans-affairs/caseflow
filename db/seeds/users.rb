@@ -32,48 +32,19 @@ module Seeds
     private
 
     def create_users
-      User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
-      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
-      User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
-      User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
-      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
-      create_bvaebecker
-      create_bvakkeeling
-      User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
-      User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
-      User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
-      User.create(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
-
-      dispatch_admin = User.create(
-        css_id: "BVAGBLACK",
-        station_id: 101,
-        full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
-      )
-      OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
-
-      case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
-      OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
-
-      special_case_movement_user = User.create(css_id: "BVARDUNKLE",
-                                               station_id: 101,
-                                               full_name: "Rosalie SpecialCaseMovement Dunkle")
-      FactoryBot.create(:staff, user: special_case_movement_user)
-      SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
-
-      special_case_movement_admin = User.create(css_id: "BVAGBEEKMAN",
-                                                station_id: 101,
-                                                full_name: "Bryan SpecialCaseMovementAdmin Beekman")
-      FactoryBot.create(:staff, user: special_case_movement_admin)
-      OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
-
-      create_bvadwise
-
-      bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
-      BvaIntake.singleton.add_user(bva_intake_user)
+      create_batch_1_users
+      create_bvaebecker #Judge_CaseToAssign
+      create_bvakkeeling #Judge_CaseToAssign_NoTeam
+      create_batch_2_users
+      create_dispatch_admin
+      create_case_review_admin
+      create_special_case_movement_user
+      create_special_case_movement_admin
+      create_bvadwise #Intake Admin
+      create_bva_intake_user
 
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
+
       create_vha_admins
       create_team_admin
       create_colocated_users
@@ -101,6 +72,15 @@ module Seeds
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
       create_cda_control_group_users
+      create_qa_test_users
+    end
+
+    def create_batch_1_users
+      User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
+      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
+      User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
+      User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
+      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
     end
 
     def create_bvaebecker
@@ -111,6 +91,52 @@ module Seeds
     def create_bvakkeeling
       bvakkeeling = User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
       CDAControlGroup.singleton.add_user(bvakkeeling)
+    end
+
+    def create_batch_2_users
+      User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
+      User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
+      User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
+      User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.create(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
+    end
+
+    def create_dispatch_admin
+      dispatch_admin = User.create(
+        css_id: "BVAGBLACK",
+        station_id: 101,
+        full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
+      )
+      OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    end
+
+    def create_case_review_admin
+      case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
+      OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
+    end
+
+    def create_special_case_movement_user
+      special_case_movement_user = User.create(
+        css_id: "BVARDUNKLE",
+        station_id: 101,
+        full_name: "Rosalie SpecialCaseMovement Dunkle"
+      )
+      FactoryBot.create(:staff, user: special_case_movement_user)
+      SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
+    end
+
+    def special_case_movement_admin
+      special_case_movement_admin = User.create(css_id: "BVAGBEEKMAN",
+                                                station_id: 101,
+                                                full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+      FactoryBot.create(:staff, user: special_case_movement_admin)
+      OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
+    end
+
+    def create_bva_intake_user
+      bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
+      BvaIntake.singleton.add_user(bva_intake_user)
     end
 
     def create_bvadwise
@@ -496,7 +522,172 @@ module Seeds
                             roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(casey)
     end
+
+    def create_qa_test_users
+      create_qa_active_judge3
+      create_qa_active_judge2
+      create_qa_ineligible_judge
+      create_qa_solo_active_judge
+      create_qa_ssc_avlj_attorney
+      create_qa_nonssc_avlj_attorney
+      create_qa_cob_intake_clerk
+      create_qa_intake_clerk
+      create_qa_intake_admin
+      create_qa_hearing_admin
+      create_qa_case_movement_user
+      create_qa_attny_1
+      create_qa_attny_2
+      create_qa_attny_3
+      create_qa_judge_team_3
+      create_qa_judge_team_2
+    end
+
+    def create_qa_active_judge3
+      User.create(
+        css_id: "QACTIVEVLJ3",
+        station_id: 101,
+        full_name: "QA_Active_Judge With Team_of_3"
+      )
+    end
+
+    def create_qa_active_judge2
+      User.create(
+        css_id: "QACTIVEVLJ2",
+        station_id: 101,
+        full_name: "QA_Active_Judge With Team_of_2"
+      )
+    end
+
+    def create_qa_ineligible_judge
+      User.create(
+        css_id: "QINELIGVLJ",
+        station_id: 101,
+        full_name: "QA Ineligible Judge",
+        status: nil
+      )
+    end
+
+    def create_qa_solo_active_judge
+      User.create(
+        css_id: "QACTVLJNOTM",
+        station_id: 101,
+        full_name: "QA_Active_Judge With No_Team"
+      )
+    end
+
+    #######################################################################
+    def create_qa_ssc_avlj_attorney
+      qa_ssc_avlj_attorney.create(
+        css_id: "QSSCAVLJ",
+        station_id: 101,
+        full_name: "QA SSC_AVLJ Attorney",
+        roles: ["Hearing Prep"]
+      )
+      SupervisorySeniorCouncil.singleton.add_user(qa_ssc_avlj_attorney)
+    end
+    #######################################################################
+
+    #######################################################################
+    def create_qa_nonssc_avlj_attorney
+      User.create(
+        css_id: "QNONSSCAVLJ",
+        station_id: 101,
+        full_name: "QA Non_SSC_AVLJ Attorney"
+      )
+    end
+    #######################################################################
+
+    def create_qa_cob_intake_clerk
+      qa_cob_intake_clerk_user = User.create(
+        css_id: "QCOBINTAKE",
+        station_id: 101,
+        full_name: "QA Clerk_of_the_Board",
+        roles: ["Hearing Prep", "Mail Intake"]
+      )
+      ClerkOfTheBoard.singleton.add_user(qa_cob_intake_clerk_user)
+      OrganizationsUser.make_user_admin(qa_cob_intake_clerk_user, ClerkOfTheBoard.singleton)
+      BvaIntake.singleton.add_user(qa_cob_intake_clerk_user)
+    end
+
+    def create_qa_intake_clerk
+      qa_intake_clerk = User.create(
+        css_id: "QINTAKE",
+        station_id: 101,
+        full_name: "QA Intake Clerk",
+        roles: ["Mail Intake"]
+      )
+      BvaIntake.singleton.add_user(qa_intake_clerk)
+    end
+
+    def create_qa_intake_admin
+      qa_intake_admin_user = User.create(
+        css_id: "QINTAKEADMIN",
+        station_id: 101,
+        full_name: "QA Intake Admin"
+      )
+      OrganizationsUser.make_user_admin(qa_intake_admin_user, BvaIntake.singleton)
+      OrganizationsUser.make_user_admin(qa_intake_admin_user, CDAControlGroup.singleton)
+    end
+
+    def create_qa_hearing_admin
+      User.create(
+        css_id: "QHEARADMIN",
+        station_id: 343,
+        full_name: "QA Hearings Admin",
+        roles: ["Edit HearSched", "Build HearSched"]
+      )
+    end
+
+    def create_qa_case_movement_user
+      qa_case_movement_user = User.create(
+        css_id: "QCASEMVMT",
+        station_id: 101,
+        full_name: "QA Case Movement"
+      )
+      FactoryBot.create(:staff, user: qa_case_movement_user)
+      OrganizationsUser.make_user_admin(qa_case_movement_user, SpecialCaseMovementTeam.singleton)
+    end
+
+    def create_qa_attny_1
+      User.create(
+        css_id: "QATTY1",
+        station_id: 101,
+        full_name: "QA Attorney_1"
+      )
+    end
+
+    def create_qa_attny_2
+      User.create(
+        css_id: "QATTY2",
+        station_id: 101,
+        full_name: "QA Attorney_2"
+      )
+    end
+
+    def create_qa_attny_3
+      User.create(
+        css_id: "QATTY3",
+        station_id: 101,
+        full_name: "QA Attorney_3"
+      )
+    end
+
+    def create_qa_judge_team_3
+      qa_judge_3 = User.find_by(css_id: "QACTIVEVLJ3")
+      qa_judge_team_3 = JudgeTeam.create_for_judge(qa_judge_3)
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY1"))
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY2"))
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY3"))
+    end
+
+    def create_qa_judge_team_2
+      qa_judge_2 = User.find_by(css_id: "QACTIVEVLJ2")
+      qa_judge_team_2 = JudgeTeam.create_for_judge(qa_judge_2)
+      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY1"))
+      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY2"))
+    end
+
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 end
