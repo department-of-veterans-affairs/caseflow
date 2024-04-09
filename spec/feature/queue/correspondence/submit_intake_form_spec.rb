@@ -17,7 +17,7 @@ RSpec.feature("Correspondence Intake submission") do
         using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
-        expect(Correspondence.first.related_correspondences).to eq([Correspondence.second])
+        expect(Correspondence.first.related_correspondences).to eq([Correspondence.third])
       end
     end
   end
