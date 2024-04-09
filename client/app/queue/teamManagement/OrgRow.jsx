@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import TextField from 'app/components/TextField';
+import Checkbox from '../../components/Checkbox';
 import Button from 'app/components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
@@ -16,11 +17,19 @@ import {
 } from 'app/../COPY';
 
 const orgRowStyling = css({
-  '&:last_child': { textAlign: 'right' },
+  borderTop: '1px solid #d6d7d9'
+});
+
+const lastCellStyling = css({
+  textAlign: 'right',
 });
 
 const dropdownStyling = css({
-  width: '300px'
+  width: '225px'
+});
+
+const checkboxStyling = css({
+  width: '170px',
 });
 
 const statusIndicator = css({
@@ -61,6 +70,7 @@ export const OrgRow = React.memo((props) => {
   const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(
     props.ama_only_request ? 'amaOnly' : 'all'
   );
+  const [excludeFromAffinityCases, setExcludeFromAffinityCases] = useState(props.exclude_appeals_from_affinity);
 
   const handleUpdate = () => {
     const payload = {
@@ -84,6 +94,14 @@ export const OrgRow = React.memo((props) => {
     setRequestedCaseDistribution(value);
     const payload = {
       ama_only_request: ['amaOnly'].includes(value),
+    };
+
+    props.onUpdate?.(props.id, payload);
+  };
+  const handleExcludeFromAffinityCases = (value) => {
+    setExcludeFromAffinityCases(value);
+    const payload = {
+      exclude_appeals_from_affinity: value,
     };
 
     props.onUpdate?.(props.id, payload);
@@ -130,6 +148,17 @@ export const OrgRow = React.memo((props) => {
           </td>
         </>
       )}
+      {props.showExcludeFromAffinityToggles && (
+        <td className={checkboxStyling}>
+          <Checkbox
+            className={checkboxStyling}
+            label={<b>Exclude Judge</b>}
+            name={`excludeJudgeFromAffinityCases-${props.id}`}
+            value={excludeFromAffinityCases}
+            onChange={handleExcludeFromAffinityCases}
+          />
+        </td>
+      )}
       {props.isRepresentative && (
         <td>
           <TextField
@@ -162,7 +191,6 @@ export const OrgRow = React.memo((props) => {
           <Button
             name={TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
             id={`${props.id}`}
-            classNames={['usa-button-secondary']}
             onClick={handleUpdate}
           />
         </td>
@@ -179,7 +207,7 @@ export const OrgRow = React.memo((props) => {
           <span className="error" role="status"><i className="fa fa-times"></i> Error</span>
         )}
       </td>
-      <td>
+      <td colSpan={2} {...lastCellStyling}>
         {url && props.user_admin_path && (
           <Link to={props.user_admin_path}>
             <Button
@@ -196,6 +224,7 @@ export const OrgRow = React.memo((props) => {
 OrgRow.defaultProps = {
   isRepresentative: false,
   showDistributionToggles: false,
+  showExcludeFromAffinityToggles: false
 };
 
 OrgRow.propTypes = {
@@ -203,11 +232,13 @@ OrgRow.propTypes = {
   ama_only_push: PropTypes.bool,
   ama_only_request: PropTypes.bool,
   current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
+  exclude_appeals_from_affinity: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.string,
   isRepresentative: PropTypes.bool,
   showDistributionToggles: PropTypes.bool,
+  showExcludeFromAffinityToggles: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string,
   editableName: PropTypes.bool,

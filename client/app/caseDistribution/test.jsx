@@ -9,8 +9,46 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import ApiUtil from '../util/ApiUtil';
+import Button from '../components/Button';
 
 class CaseDistributionTest extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isReseedingAod: false,
+      isReseedingNonAod: false,
+    };
+  }
+
+  reseedAod = () => {
+    this.setState({ isReseedingAod: true });
+    ApiUtil.post('/run-demo-aod-seeds').then(() => {
+      this.setState({
+        isReseedingAod: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingAod: false,
+      });
+    });
+  };
+
+  reseedNonAod = () => {
+    this.setState({ isReseedingNonAod: true });
+    ApiUtil.post('/run-demo-non-aod-seeds').then(() => {
+      this.setState({
+        isReseedingNonAod: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingNonAod: false,
+      });
+    });
+  };
+
   render() {
     const Router = this.props.router || BrowserRouter;
     const appName = 'Case Distribution';
@@ -172,6 +210,32 @@ class CaseDistributionTest extends React.PureComponent {
                               <a href="/appeals-distributed?csv=1">
                                 <button className="btn btn-primary">Download Distributed Appeals CSV</button>
                               </a>
+                            </li>
+                          </ul>
+                          <hr />
+                          <h2 id="run_seeds">Run Seed Files</h2>
+                          <ul>
+                            <li>
+                              {/* <a href="/run-demo-aod-seeds">
+                                <button className="btn btn-primary">Run Demo AOD Hearing Held Seeds</button>
+                              </a> */}
+                              <Button
+                                onClick={this.reseedAod}
+                                name="Run Demo AOD Hearing Held Seeds"
+                                loading={this.state.isReseedingAod}
+                                loadingText="Reseeding AOD Hearing Held Seeds"
+                              />
+                            </li>
+                            <li>
+                              {/* <a href="/run-demo-non-aod-seeds">
+                                <button className="btn btn-primary">Run Demo Non-AOD Hearing Held Seeds</button>
+                              </a> */}
+                              <Button
+                                onClick={this.reseedNonAod}
+                                name="Run Demo NON AOD Hearing Held Seeds"
+                                loading={this.state.isReseedingNonAod}
+                                loadingText="Reseeding NON AOD Hearing Held Seeds"
+                              />
                             </li>
                           </ul>
                           <hr />

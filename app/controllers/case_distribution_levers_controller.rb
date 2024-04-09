@@ -12,6 +12,7 @@ class CaseDistributionLeversController < ApplicationController
     @acd_levers_for_store = grouped_levers
     @acd_history = CaseDistributionAuditLeverEntry.lever_history
     @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
+    @acd_exclude_from_affinity = FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
     render "index"
   end
@@ -46,7 +47,7 @@ class CaseDistributionLeversController < ApplicationController
   end
 
   def allowed_params
-    params.permit(current_levers: [:id, :value])
+    params.permit(current_levers: [:id, :value, :is_toggle_active])
   end
 
   def verify_access

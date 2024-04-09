@@ -9,25 +9,6 @@ export const clearCaseSelectSearch = () => ({
   type: Constants.CLEAR_CASE_SELECT_SEARCH
 });
 
-export const setCaseSelectSearch = (searchQuery) => ({
-  type: Constants.SET_CASE_SELECT_SEARCH,
-  payload: {
-    searchQuery
-  }
-});
-
-export const caseSelectAppeal = (appeal) => ({
-  type: Constants.CASE_SELECT_APPEAL,
-  payload: { appeal }
-});
-
-export const caseSelectModalSelectVacolsId = (vacolsId) => ({
-  type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
-  payload: {
-    vacolsId
-  }
-});
-
 export const requestAppealUsingVeteranId = () => ({
   type: Constants.REQUEST_APPEAL_USING_VETERAN_ID,
   meta: {
@@ -79,9 +60,4 @@ export const setViewedAssignment = (vacolsId) => ({
   payload: {
     vacolsId
   }
-});
-
-export const onReceiveAssignments = (assignments) => ({
-  type: Constants.RECEIVE_ASSIGNMENTS,
-  payload: { assignments }
 });

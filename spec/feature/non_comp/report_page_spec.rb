@@ -182,6 +182,28 @@ feature "NonComp Report Page", :postgres do
       number_of_rows = CSV.read(csv_file).length
       expect(number_of_rows).to eq(2)
     end
+
+    context "when request fails" do
+      # Force an error
+      before do
+        allow_any_instance_of(DecisionReviewsController).to receive(:generate_report) do
+          fail StandardError, "Error message"
+        rescue StandardError => error
+          { error: error.message }
+        end
+      end
+
+      it "should display an error banner if an error occurs" do
+        expect(page).to have_content("Generate task report")
+        click_dropdown(text: "Event / Action")
+        expect(page).to have_content("Timing specifications")
+
+        click_button "Generate task report"
+        expect(page).to have_content(
+          "An error occurred, please try again. If the problem persists, submit a help desk ticket."
+        )
+      end
+    end
   end
 
   def add_condition(type = nil)

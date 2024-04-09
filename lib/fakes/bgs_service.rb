@@ -992,6 +992,7 @@ class Fakes::BGSService
     RequestStore[:current_user]
   end
 
+  # even though this method hasn't been used currently i think its a useful method to have.
   def generate_random_file_number
     Kernel.srand(1)
     value = rand(700_000_000...733_792_224).to_s
