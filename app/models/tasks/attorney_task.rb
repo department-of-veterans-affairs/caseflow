@@ -149,8 +149,7 @@ class AttorneyTask < Task
   def assigned_to_sct_appeal?
     ama? &&
       appeal.specialty_case_team_assign_task? &&
-      appeal.sct_appeal? &&
-      FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore[:current_user])
+      appeal.sct_appeal?
   end
 
   def attorney_cancel_action
