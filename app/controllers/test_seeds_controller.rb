@@ -14,12 +14,15 @@ class TestSeedsController < ApplicationController
 
   def run_demo
     seed_type = params[:seed_type].to_sym
+    seed_count = params[:seed_count].to_i
     test_seed_list = Constants.TEST_SEEDS.to_h
     task_name = test_seed_list[seed_type]
 
     if task_name
       Rake::Task[task_name].reenable
-      Rake::Task[task_name].invoke
+      seed_count.times do
+        Rake::Task[task_name].invoke
+      end
       head :ok
     else
       render json: { error: "Invalid seed type" }, status: :bad_request

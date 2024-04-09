@@ -46,20 +46,29 @@ class TestSeeds extends React.PureComponent {
         RemandedLegacyAppeals: false,
         PopulateCaseflowFromVacols: false
       },
-      seedCounts: {
-        Aod: 1
-      }
+      seedCounts: {}
     };
   }
 
-  reseed = (type, count) => {
+  handleInputChange = (type, value) => {
+    this.setState((prevState) => ({
+      seedCounts: {
+        ...prevState.seedCounts,
+        [type]: value
+      }
+    }));
+  };
+
+  reseed = (type) => {
+    const seedCount = this.state.seedCounts[type] || 1;
+
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpoint = `/seeds/run-demo/${type}`;
+    const endpoint = `/seeds/run-demo/${type}/${seedCount}`;
 
-    ApiUtil.post(endpoint, { count }).then(() => {
+    ApiUtil.post(endpoint).then(() => {
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
       }));
@@ -112,21 +121,19 @@ class TestSeeds extends React.PureComponent {
                             <div className={cx('lever-right', 'test-seeds-num-field')}>
                               <input
                                 type="number"
-                                defaultValue="1"
+                                value={this.state.seedCounts[type] || 1}
                                 min="1"
                                 id={`count-${type}`}
+                                onChange={(event) => this.
+                                  handleInputChange(type, parseInt(event.target.value, 10) || 1)}
                               />
                             </div>
                             <div className="cf-btn-link test-seed-button-style">
                               <Button
-                                onClick={() => {
-                                  const count = document.getElementById(`count-${type}`).value;
-
-                                  this.reseed(type, parseInt(count, 10));
-                                }}
+                                onClick={() => this.reseed(type)}
                                 name={`Run Demo ${this.formatSeedName(type)}`}
                                 loading={this.state.reseedingStatus[type]}
-                                loadingText={`Reseeding ${this.formatSeedName(type)} Seeds`}
+                                loadingText={`Reseeding ${this.formatSeedName(type)}`}
                               />
                             </div>
                           </li>
