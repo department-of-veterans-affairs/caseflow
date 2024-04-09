@@ -123,17 +123,13 @@ class Fakes::BGSService
   def sensitivity_level_for_user(user)
     fail "Invalid user" if !user.instance_of?(User)
 
-    Random.new.rand(5..9)
+    Random.new.rand(4..9)
   end
 
   def sensitivity_level_for_veteran(veteran)
     fail "Invalid veteran" if !veteran.instance_of?(Veteran)
 
     Random.new.rand(1..4)
-  end
-
-  def sensitivity_level_for_participant_id(participant_id)
-    Random.new.rand(1..9)
   end
 
   def get_end_products(file_number)

@@ -27,29 +27,41 @@ class ExternalApi::BGSService
   def sensitivity_level_for_user(user)
     fail "Invalid user" if !user.instance_of?(User)
 
-    sensitivity_level_for_participant_id(get_participant_id_for_user(user))
+    participant_id = get_participant_id_for_user(user)
+
+    Rails.cache.fetch("sensitivity_level_for_user_id_#{user.id}", expires_in: 1.hour) do
+      DBService.release_db_connections
+
+      MetricsService.record(
+        "BGS: sensitivity level for user #{user.id}",
+        service: :bgs,
+        name: "security.find_person_scrty_log_by_ptcpnt_id"
+      ) do
+        response = client.security.find_person_scrty_log_by_ptcpnt_id(participant_id)
+
+        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
+      rescue BGS::ShareError
+        0
+      end
+    end
   end
 
   def sensitivity_level_for_veteran(veteran)
     fail "Invalid veteran" if !veteran.instance_of?(Veteran)
 
-    sensitivity_level_for_participant_id(veteran.participant_id)
-  end
+    participant_id = veteran.participant_id
 
-  def sensitivity_level_for_participant_id(participant_id)
-    fail "Invalid participant_id" if participant_id.blank?
-
-    Rails.cache.fetch("sensitivity_level_for_participant_id_#{participant_id}", expires_in: 1.hour) do
+    Rails.cache.fetch("sensitivity_level_for_veteran_id_#{veteran.id}", expires_in: 1.hour) do
       DBService.release_db_connections
 
       MetricsService.record(
-        "BGS: sensitivity level for participant_id #{participant_id}",
+        "BGS: sensitivity level for veteran #{veteran.id}",
         service: :bgs,
         name: "security.find_sensitivity_level_by_participant_id"
       ) do
         response = client.security.find_sensitivity_level_by_participant_id(participant_id)
 
-        response.key?(:scrty_level_type_cd) ? response[:scrty_level_type_cd] : 0
+        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
       rescue BGS::ShareError
         0
       end

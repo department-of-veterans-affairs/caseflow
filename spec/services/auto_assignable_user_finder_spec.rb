@@ -20,10 +20,6 @@ describe AutoAssignableUserFinder do
       bgs.sensitivity_level_for_veteran(vet)
     end
 
-    allow(mock_sensitivity_checker).to receive(:sensitivity_level_for_participant_id) do |participant_id|
-      bgs.sensitivity_level_for_participant_id(participant_id)
-    end
-
     allow(mock_sensitivity_checker).to receive(:fetch_person_info) do |vbms_id|
       bgs.fetch_person_info(vbms_id)
     end
