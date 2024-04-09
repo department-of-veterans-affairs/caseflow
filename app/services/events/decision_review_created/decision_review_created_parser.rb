@@ -33,21 +33,21 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def initialize(headers, payload_json)
-    @payload = JSON.parse(payload_json, symbolize_names: true)
+    @payload = payload_json.to_h.deep_transform_keys(&:to_sym)
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
 
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
-    Time.at(milliseconds / 1000).to_datetime
+    Time.at(milliseconds.to_i / 1000).to_datetime
   end
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    year = logical_date_int / 100_00
-    month = (logical_date_int % 100_00) / 100
-    day = logical_date_int % 100
+    year = logical_date_int.to_i / 100_00
+    month = (logical_date_int.to_i % 100_00) / 100
+    day = logical_date_int.to_i % 100
     Date.new(year, month, day)
   end
 

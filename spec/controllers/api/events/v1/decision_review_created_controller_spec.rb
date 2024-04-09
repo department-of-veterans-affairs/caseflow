@@ -6,35 +6,34 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
   describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
-    let!(:payload) { JSON.generate(json_payload) }
+    let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response}
     let!(:headers) { sample_headers }
-    let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload) }
-    let!(:valid_params) do
-     {
-        event_id: "123",
-        claim_id: "9999",
-        css_id: parser.css_id,
-        detail_type: parser.detail_type,
-        station: parser.station_id,
-        intake: parser.intake,
-        veteran: parser.veteran,
-        claimant: parser.claimant,
-        claim_review: parser.claim_review,
-        end_product_establishment: parser.epe,
-        request_issues: parser.request_issues
-    }
-    end
+    # let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload) }
+    # let!(:valid_params) do
+    #  {
+    #     event_id: "123",
+    #     claim_id: "9999",
+    #     css_id: parser.css_id,
+    #     detail_type: parser.detail_type,
+    #     station: parser.station_id,
+    #     intake: parser.intake,
+    #     veteran: parser.veteran,
+    #     claimant: parser.claimant,
+    #     claim_review: parser.claim_review,
+    #     end_product_establishment: parser.epe,
+    #     request_issues: parser.request_issues
+    # }
+    # end
 
     context "with a valid token" do
       it "returns success response" do
-        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
         request.headers["X-VA-Vet-SSN"] = "123456789"
         request.headers["X-VA-File-Number"] = "77799777"
         request.headers["X-VA-Vet-First-Name"] = "John"
         request.headers["X-VA-Vet-Last-Name"] = "Smith"
         request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
-        byebug
-        post :decision_review_created, params: valid_params
+        post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:created)
       end
     end

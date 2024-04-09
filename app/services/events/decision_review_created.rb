@@ -14,6 +14,7 @@ class Events::DecisionReviewCreated
 
   class << self
     def create!(consumer_event_id, reference_id, headers, payload)
+      byebug
       return if event_exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -35,7 +36,6 @@ class Events::DecisionReviewCreated
           # Note: createdByStation == station_id, createdByUsername == css_id
           user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
                                                                          station_id: parser.station_id)
-
           # Create the Veteran. PII Info is stored in the headers
           vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
@@ -50,6 +50,7 @@ class Events::DecisionReviewCreated
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: decision_review)
+
           # Note: event, user, and veteran need to be before this call.
           Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet)
 
@@ -59,6 +60,7 @@ class Events::DecisionReviewCreated
                                                                               user: user, event: event)
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
+          byebug
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe)
         end
       end
