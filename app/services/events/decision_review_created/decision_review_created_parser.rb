@@ -72,6 +72,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Intake attributes
+  def intake
+    @payload.dig(:intake)
+  end
+
   def intake_started_at
     intake_started_at_milliseconds = @payload.dig(:intake, :started_at)
     convert_milliseconds_to_datetime(intake_started_at_milliseconds)
@@ -100,6 +104,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Veteran attributes
+  def veteran
+    @payload.dig(:veteran)
+  end
+
   def veteran_file_number
     @veteran_file_number ||= @headers["X-VA-File-Number"].presence
   end
@@ -138,6 +146,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Claimant attributes
+  def claimant
+    @payload.dig(:claimant)
+  end
+
   def claimant_payee_code
     @payload.dig(:claimant, :payee_code)
   end
@@ -155,6 +167,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # ClaimReview attributes
+  def claim_review
+    @payload.dig(:claim_review)
+  end
+
   def claim_review_benefit_type
     @payload.dig(:claim_review, :benefit_type)
   end
@@ -205,6 +221,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # EndProductEstablishment attr
+  def epe
+    @payload.dig(:end_product_establishment)
+  end
+
   def epe_benefit_type_code
     @payload.dig(:end_product_establishment, :benefit_type_code)
   end

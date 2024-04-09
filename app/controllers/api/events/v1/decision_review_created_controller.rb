@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
+  skip_before_action :verify_authenticity_token
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
     claim_id = drc_params[:claim_id]
@@ -17,13 +18,15 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
       claim_review: drc_params[:claim_review],
       end_product_establishment: drc_params[:end_product_establishment],
       request_issues: drc_params[:request_issues]
-    }.as_json
+  }.to_json
+    byebug
     headers = request.headers
     ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, payload)
     render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
+    byebug
     render json: { message: error.message }, status: :unprocessable_entity
   end
 
@@ -46,8 +49,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   end
 
   def drc_params
-    # only receiving payload
     params.permit(:event_id, :claim_id, :css_id, :detail_type, :station, :intake, :veteran, :claimant, :claim_review,
-     :end_product_establishment, :request_issues)
+                  :end_product_establishment, :request_issues)
   end
 end
