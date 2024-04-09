@@ -1344,7 +1344,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: start_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'between' the date is older than today in 'to' field" do
@@ -1362,7 +1362,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[1].fill_in(with: end_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'between' the date in 'to' is older than 'from' field" do
@@ -1398,7 +1398,7 @@ RSpec.feature("The Correspondence Cases page") do
 
       all("div.input-container > input")[0].fill_in(with: start_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'after' this date" do
@@ -1414,7 +1414,7 @@ RSpec.feature("The Correspondence Cases page") do
       after_date = (current_date + 3).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: after_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'on' this date" do
