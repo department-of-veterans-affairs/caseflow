@@ -5,7 +5,6 @@ import Button from '../../../../../components/Button';
 import Select from 'react-select';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import 'app/styles/queue/_correspondence.scss';
 
 const customSelectStyless = {
   dropdownIndicator: () => ({

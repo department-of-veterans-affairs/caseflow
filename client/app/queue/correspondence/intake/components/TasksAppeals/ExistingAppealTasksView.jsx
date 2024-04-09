@@ -5,7 +5,6 @@ import AddEvidenceSubmissionTaskView from './AddEvidenceSubmissionTaskView';
 import Button from '../../../../../components/Button';
 import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import 'app/styles/queue/_correspondence.scss';
 
 const MAX_NUM_TASKS = 4;
 

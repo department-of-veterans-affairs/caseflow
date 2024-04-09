@@ -5,7 +5,6 @@ import Checkbox from '../../../../../components/Checkbox';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { COLORS } from '../../../../../constants/AppConstants';
-import 'app/styles/queue/_correspondence.scss';
 
 const AddEvidenceSubmissionTaskView = (props) => {
   const task = props.task;

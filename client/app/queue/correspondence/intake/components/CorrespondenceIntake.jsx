@@ -20,7 +20,6 @@ import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
 } from '../../../../../COPY';
-import 'app/styles/queue/_correspondence.scss';
 
 const progressBarSections = [
   {

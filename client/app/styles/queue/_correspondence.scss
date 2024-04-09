@@ -166,7 +166,10 @@
   max-width: 43rem;
 }
 
-.styling {
-  background-color: $color-GREY-BACKGROUND;
-  padding-top: '0px'
+.corr-confirm-tasks {
+  .td {
+    background-color: $color-grey-background;
+    border-top: 1px solid #dee2e6;
+    width: 20%;
+  }
 }

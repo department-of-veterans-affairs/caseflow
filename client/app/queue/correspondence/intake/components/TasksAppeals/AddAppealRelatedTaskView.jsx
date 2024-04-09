@@ -14,7 +14,7 @@ import {
   setTaskRelatedAppealIds,
   setWaivedEvidenceTasks
 } from '../../../correspondenceReducer/correspondenceActions';
-import 'app/styles/queue/_correspondence.scss';
+
 
 const RELATED_NO = '0';
 const RELATED_YES = '1';

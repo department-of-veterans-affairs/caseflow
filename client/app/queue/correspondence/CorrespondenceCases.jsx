@@ -15,7 +15,6 @@ import Modal from 'app/components/Modal';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 import TextareaField from '../../components/TextareaField';
-import 'app/styles/queue/_correspondence.scss';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();

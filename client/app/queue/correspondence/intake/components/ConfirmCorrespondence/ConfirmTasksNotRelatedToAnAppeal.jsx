@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { COLORS } from '../../../../../constants/AppConstants';
 import { css } from 'glamor';
-import 'app/styles/queue/_correspondence.scss';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '0px' };
 
@@ -13,7 +12,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
     return (
       <tr key={task.id}>
         <td
-          style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
+          className={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
           {task.label}
         </td>
         <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
