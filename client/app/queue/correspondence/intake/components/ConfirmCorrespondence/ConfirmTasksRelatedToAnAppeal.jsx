@@ -5,6 +5,7 @@ import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import 'app/styles/queue/_correspondence.scss';
 
 const borderlessTd = {
   borderTop: 'none',

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { COLORS } from '../../../../../constants/AppConstants';
 import { css } from 'glamor';
+import 'app/styles/queue/_correspondence.scss';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '0px' };
 

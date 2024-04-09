@@ -6,6 +6,7 @@ import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 import AddUnrelatedTaskView from './AddUnrelatedTaskView';
 import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
+import 'app/styles/queue/_correspondence.scss';
 
 const mailTasksLeft = [
   'Change of address',

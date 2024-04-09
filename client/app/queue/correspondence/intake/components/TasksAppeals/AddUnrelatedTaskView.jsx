@@ -5,6 +5,7 @@ import AddTaskView from './AddTaskView';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
 import { COLORS } from '../../../../../constants/AppConstants';
+import 'app/styles/queue/_correspondence.scss';
 
 const MAX_NUM_TASKS = 4;
 
