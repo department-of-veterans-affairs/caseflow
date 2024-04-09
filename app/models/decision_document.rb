@@ -65,7 +65,7 @@ class DecisionDocument < CaseflowRecord
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def process!(mail_package)
     return if valid_processed?
 
