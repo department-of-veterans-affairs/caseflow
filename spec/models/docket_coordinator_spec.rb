@@ -79,7 +79,7 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { CaseDistributionLever.days_before_goal_due_for_distribution }
+    let(:days_before_goal_due) { CaseDistributionLever.ama_direct_review_start_distribution_prior_to_goals }
     let(:days_to_decision_goal) { CaseDistributionLever.ama_direct_review_docket_time_goals }
 
     let!(:other_direct_review_cases) do
@@ -136,7 +136,6 @@ describe DocketCoordinator do
       end
 
       context "with appeals that have already been marked in range" do
-        let(:appeals_count) { docket_coordinator.dockets[:hearing].appeals.count }
         let(:number_of_appeals_in_range) { 2 }
 
         before do

@@ -125,14 +125,6 @@ export const setIssueSelected = (approxDecisionDate, issueId, isSelected) => ({
   }
 });
 
-export const newNonratingRequestIssue = (nonRatingRequestIssues) => ({
-  type: ACTIONS.NEW_NONRATING_REQUEST_ISSUE,
-  payload: {
-    nonRatingRequestIssues
-  },
-  meta: { analytics }
-});
-
 export const setIssueCategory = (issueId, category) => ({
   type: ACTIONS.SET_ISSUE_CATEGORY,
   payload: {
@@ -159,15 +151,3 @@ export const setIssueDescription = (issueId, description) => ({
   }
 });
 
-export const setIssueDecisionDate = (issueId, decisionDate) => ({
-  type: ACTIONS.SET_ISSUE_DECISION_DATE,
-  payload: {
-    issueId,
-    decisionDate
-  },
-  meta: {
-    analytics: {
-      label: decisionDate
-    }
-  }
-});

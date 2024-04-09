@@ -3,11 +3,6 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
-  def blur_from(locator)
-    field = find_field(locator)
-    field.native.send_keys :tab
-  end
-
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)
       safe_click ".cf-select"
@@ -496,10 +491,6 @@ module IntakeHelpers
   def expect_ineligible_issue(number)
     number = number.strip if number.is_a?(String)
     expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
-  end
-
-  def expect_eligible_issue(number)
-    expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
   end
 
   def setup_active_eligible_legacy_appeal(veteran_file_number)

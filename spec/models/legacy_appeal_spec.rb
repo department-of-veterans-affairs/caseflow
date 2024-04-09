@@ -84,7 +84,7 @@ describe LegacyAppeal, :all_dbs do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
 
       before do
-        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
+        allow(MetricsService).to receive(:increment_counter) { @datadog_called = true }
       end
 
       it "prefers the Caseflow Veteran.file_number" do
@@ -1896,7 +1896,6 @@ describe LegacyAppeal, :all_dbs do
       end
       let(:appellant_ssn) { "666001234" }
       let(:appellant_pid) { "1234" }
-      let(:poa_pid) { "600153863" } # defined in Fakes::BGSService
       let(:correspondent) do
         create(
           :correspondent,
