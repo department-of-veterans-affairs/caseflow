@@ -243,6 +243,31 @@ describe AttorneyTask, :all_dbs do
         expect(tasks.third.assigned_to).to eq judge
       end
 
+      context "when the attorney task is on an appeal with an sct benefit type but was not sent from the SCT org" do
+        before do
+          appeal = attorney_task.appeal
+          # Force it to be an SCT benefit type
+          appeal.request_issues = [create(:request_issue, benefit_type: "vha")]
+          appeal.save
+          appeal.reload
+        end
+        it "calls send_back_to_judge_assign!" do
+          tasks = subject
+
+          expect(tasks.first.type).to eq AttorneyTask.name
+          expect(tasks.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(tasks.first.closed_at).to_not be nil
+
+          expect(tasks.second.type).to eq JudgeDecisionReviewTask.name
+          expect(tasks.second.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(tasks.second.closed_at).to_not be nil
+
+          expect(tasks.third.type).to eq JudgeAssignTask.name
+          expect(tasks.third.status).to eq Constants.TASK_STATUSES.assigned
+          expect(tasks.third.assigned_to).to eq judge
+        end
+      end
+
       context "when attorney task is assigned from sct" do
         let(:sct_task) { create(:specialty_case_team_assign_task, :completed) }
         let(:appeal) { sct_task.appeal }
