@@ -21,7 +21,7 @@ const customSelectStyless = {
   },
 
   menu: () => ({
-    boxShadow: '1px 1px 10px grey',
+    boxShadow: '0 0 0 1px hsla(0,0%,0%,0.1), 0 4px 11px hsla(0,0%,0%,0.1)',
     marginTop: '8px'
   }),
 
@@ -53,14 +53,12 @@ const customSelectStyless = {
   option: (styles, { isFocused }) => ({
     color: 'black',
     fontSize: '17px',
-    paddingTop: '8px',
-    paddingBottom: '8px',
-    paddingLeft: '20px',
+    padding: '8px 12px',
     backgroundColor: isFocused ? 'white' : 'null',
     ':hover': {
       ...styles[':hover'],
-      backgroundColor: '#5c9ceb',
-      color: 'black',
+      backgroundColor: '#5b616b',
+      color: 'white',
     }
   })
 };
