@@ -225,8 +225,8 @@ class DecisionDocument < CaseflowRecord
         false # Indicate failure
       end
     rescue StandardError => error
-      update(error: error.message)
-      log_error(error)
+      update_error!(error.to_s)
+      raise error
     end
   end
 end
