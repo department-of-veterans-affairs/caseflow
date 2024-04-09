@@ -8,6 +8,7 @@ class BVAAppealStatus
   SORT_KEYS = {
     not_distributed: 1,
     distributed_to_judge: 2,
+    distributed_to_specialty_case_team: 2,
     assigned_to_attorney: 3,
     assigned_to_colocated: 4,
     in_progress: 5,
@@ -26,6 +27,7 @@ class BVAAppealStatus
   DEFINITIONS = {
     not_distributed: "1. Not distributed",
     distributed_to_judge: "2. Distributed to judge",
+    distributed_to_specialty_case_team: "2. Distributed to Specialty Case Team",
     assigned_to_attorney: "3. Assigned to attorney",
     assigned_to_colocated: "4. Assigned to colocated",
     in_progress: "5. Decision in progress",
@@ -93,10 +95,7 @@ class BVAAppealStatus
   attr_reader :appeal
 
   delegate :tasks, to: :appeal
-
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def compute
     if open_pre_docket_task?
       :pre_docketed
@@ -126,13 +125,13 @@ class BVAAppealStatus
       :misc
     elsif open_timed_hold_task?
       :on_hold
+    elsif active_specialty_case_team_assign_task?
+      :distributed_to_specialty_case_team
     else
       :unknown
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   def open_tasks
     @open_tasks ||= tasks.open
@@ -209,5 +208,9 @@ class BVAAppealStatus
 
   def misc_task?
     active_tasks.any? { |task| self.class.misc_task_names.include?(task.type) }
+  end
+
+  def active_specialty_case_team_assign_task?
+    active_tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }
   end
 end
