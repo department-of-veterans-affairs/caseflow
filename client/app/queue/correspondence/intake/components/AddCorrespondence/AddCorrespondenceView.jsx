@@ -86,13 +86,15 @@ class AddCorrespondenceView extends React.Component {
       {
         cellClass: 'checkbox-column',
         valueFunction: () => (
-          <Checkbox
-            name={correspondence.id.toString()}
-            id={correspondence.id.toString()}
-            hideLabel
-            defaultValue={this.props.checkboxes.some((el) => el.id === correspondence.id)}
-            onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
-          />
+          <div className="checkbox-column-inline-style">
+            <Checkbox
+              name={correspondence.id.toString()}
+              id={correspondence.id.toString()}
+              hideLabel
+              defaultValue={this.props.checkboxes.some((el) => el.id === correspondence.id)}
+              onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
+            />
+          </div>
         ),
       },
       {

@@ -33,13 +33,15 @@ class CaseListTable extends React.PureComponent {
           header: '',
           valueFunction: (appeal) => {
             return (
-              <Checkbox
-                name={`${appeal.id}`}
-                id={`${appeal.id}`}
-                defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
-                hideLabel
-                onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
-              />
+              <div className="checkbox-column-inline-style">
+                <Checkbox
+                  name={`${appeal.id}`}
+                  id={`${appeal.id}`}
+                  defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
+                  hideLabel
+                  onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
+                />
+              </div>
             );
           }
         }
