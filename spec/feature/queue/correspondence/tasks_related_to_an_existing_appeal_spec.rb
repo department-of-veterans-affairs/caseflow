@@ -34,7 +34,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         visit_intake_form_step_2_with_appeals
 
         existing_appeal_radio_options[:yes].click
-        page.all(".cf-form-checkbox").last.click
+        page.all(".checkbox-column-inline-style").last.click
 
         expect(page.has_button?("Continue")).to be(true)
       end
@@ -47,7 +47,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         existing_appeal_radio_options[:yes].click
 
         using_wait_time(wait_time) do
-          expect(page).to have_content("Viewing 1-13 of 13 total")
+          expect(page).to have_content("Viewing 1-15 of 20 total")
         end
       end
 
@@ -81,14 +81,14 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         end
       end
 
-      it "table displays 5 items per page" do
+      it "table displays 15 items per page" do
         visit_intake_form_step_2_with_appeals
 
         existing_appeal_radio_options[:yes].click
 
         using_wait_time(wait_time) do
           within(page.all(".cf-pagination")[0]) do
-            expect(find_all(".cf-form-checkbox").count).to eq(5)
+            expect(find_all(".checkbox-column-inline-style").count).to eq(15)
           end
         end
       end
@@ -106,14 +106,16 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         click_button("Next")
 
         expect(page.has_button?("Previous")).to be(true)
-        expect(page.has_button?("Next")).to be(true)
-        expect(page).to have_content("Viewing 6-10 of 13 total")
+        expect(page.has_button?("Next")).to be(false)
+        expect(page).to have_content("Viewing 16-20 of 20 total")
 
-        click_button("3")
+        click_button("2")
 
         expect(page.has_button?("Next")).to be(false)
         expect(page.has_button?("Previous")).to be(true)
-        expect(page).to have_content("Viewing 11-13 of 13 total")
+
+        click_button("1")
+        expect(page).to have_content("Viewing 1-15 of 20 total")
       end
 
       it "Checkbox values are reset if user clicks No and then Yes" do
