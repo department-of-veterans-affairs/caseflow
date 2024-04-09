@@ -23,6 +23,7 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setUserIsCamoEmployee,
+  setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
@@ -127,6 +128,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
+    this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -464,6 +466,10 @@ class QueueApp extends React.PureComponent {
     <InProgressTaskModal {...props.match.params} />
   );
 
+  routedReturnToSctModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
     props
   ) => (
@@ -603,7 +609,7 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} featureToggles={this.props.featureToggles} />;
 
   routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
@@ -684,13 +690,14 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     };
   };
 
@@ -1369,6 +1376,13 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
+                }`}
+              title="Return to SCT | Caseflow"
+              render={this.routedReturnToSctModal}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIDEO} | Caseflow`}
@@ -1459,6 +1473,8 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setUserIsCamoEmployee: PropTypes.func,
   userIsCamoEmployee: PropTypes.bool,
+  setUserIsSCTCoordinator: PropTypes.func,
+  userIsSCTCoordinator: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1499,6 +1515,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setUserIsCamoEmployee,
+      setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
     },

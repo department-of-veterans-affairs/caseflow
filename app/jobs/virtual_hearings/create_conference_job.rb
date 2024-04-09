@@ -138,7 +138,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference_datadog_tags
-    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+    custom_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def create_conference
@@ -171,11 +171,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def conference_creation_error(create_conference_response)
     error_display = error_display(create_conference_response)
 
-    Rails.logger.error("CreateConferenceJob failed: #{error_display}")
+    MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
     virtual_hearing.establishment.update_error!(error_display)
 
-    DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+    MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
     fail create_conference_response.error
   end
