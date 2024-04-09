@@ -26,6 +26,8 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :correspondence_appeals
+  has_many :correspondences, through: :correspondence_appeals
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -947,10 +949,15 @@ class Appeal < DecisionReview
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
         task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
-        (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name))
+        (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name)) ||
+        task.is_a?(VeteranRecordRequest) || task.is_a?(QualityReviewTask)
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   def is_legacy?

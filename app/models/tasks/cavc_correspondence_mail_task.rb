@@ -49,7 +49,7 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def open_cavc_task
-    CavcTask.open.where(appeal_id: appeal.id).any?
+    appeal.open_cavc_task
   end
 
   def organization_task_actions
@@ -76,5 +76,13 @@ class CavcCorrespondenceMailTask < MailTask
 
   def assigned_to_cavc_lit_team_member
     CavcLitigationSupport.singleton.users.include?(assigned_to)
+  end
+
+  def status_is_valid_on_create
+    unless [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.completed].include?(status)
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
   end
 end

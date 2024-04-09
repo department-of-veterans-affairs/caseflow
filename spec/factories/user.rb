@@ -39,6 +39,58 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :correspondence_auto_assignable_user do
+      after(:create) do |u|
+        # Member of InboundOpsTeam
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+        org_permission = OrganizationPermission.find_or_create_by!(
+          organization: InboundOpsTeam.singleton,
+          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
+        ) do |op|
+          op.enabled = true
+          op.description = Faker::Fantasy::Tolkien.poem
+        end
+
+        # Has auto-assign permission
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: org_permission,
+          organizations_user: org_user
+        ) do |oup|
+          oup.permitted = true
+        end
+      end
+
+      trait :super_user do
+        after(:create) do |u|
+          OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
+          OrganizationsUser.find_or_create_by!(organization: BvaIntake.singleton, user: u).update!(admin: true)
+          OrganizationsUser.find_or_create_by!(organization: MailTeam.singleton, user: u).update!(admin: true)
+        end
+      end
+
+      trait :nod_enabled do
+        after(:create) do |u|
+          org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+          org_permission = OrganizationPermission.find_or_create_by!(
+            organization: InboundOpsTeam.singleton,
+            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
+          ) do |op|
+            op.enabled = true
+            op.description = Faker::Fantasy::Tolkien.poem
+          end
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: org_permission,
+            organizations_user: org_user
+          ) do |oup|
+            oup.permitted = true
+          end
+        end
+      end
+    end
+
     trait :inactive do
       status { "inactive" }
     end
