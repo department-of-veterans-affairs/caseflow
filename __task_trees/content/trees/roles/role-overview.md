@@ -73,6 +73,13 @@ Functions encompass a number of actions within the application that a user can p
 - RO ViewHearSched
 - VSO (a misleading term, as PrivateBar Organization users also receive the VSO role)
 - Hearing Prep
+- Mail Intake
+- Admin Intake
+- Certify Appeal
+- Reader
+- Establish Claim
+- Manage Claim Establishme
+- Case Details
 
 [ar]: ./role-overview.md
 [ro]: ./Regional_Office_User.md
