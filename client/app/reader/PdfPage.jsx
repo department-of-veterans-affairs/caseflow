@@ -232,7 +232,7 @@ export class PdfPage extends React.PureComponent {
         message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
         product: 'reader',
         type: 'performance',
-        data: this.props.metricsAttributes,
+        data: this.metricsAttributes,
         eventId: this.props.metricsIdentifier
       };
 
@@ -249,7 +249,7 @@ export class PdfPage extends React.PureComponent {
             message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
             product: 'reader',
             type: 'performance',
-            data: this.props.metricsAttributes,
+            data: this.metricsAttributes,
             eventId: this.props.metricsIdentifier
           };
 
@@ -258,7 +258,7 @@ export class PdfPage extends React.PureComponent {
             message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
             type: 'performance',
             product: 'reader',
-            data: this.props.metricsAttributes,
+            data: this.metricsAttributes,
             eventId: this.props.metricsIdentifier
           };
 
