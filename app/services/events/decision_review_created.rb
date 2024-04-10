@@ -35,6 +35,7 @@ class Events::DecisionReviewCreated
           # Note: createdByStation == station_id, createdByUsername == css_id
           user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
                                                                          station_id: parser.station_id)
+
           # Create the Veteran. PII Info is stored in the headers
           vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
