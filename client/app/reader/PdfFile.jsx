@@ -55,7 +55,7 @@ export class PdfFile extends React.PureComponent {
       overscan: this.props.windowingOverscan,
       isPageVisible: this.props.isVisible,
       name: null,
-      slowPdfRender: this.props.featureToggles.slowPdfRender
+      readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText
     };
   }
 
