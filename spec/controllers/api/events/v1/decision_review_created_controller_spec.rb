@@ -7,16 +7,11 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
     let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
-    let!(:headers) { sample_headers }
 
     context "with a valid token" do
       it "returns success response" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-        request.headers["X-VA-Vet-SSN"] = "123456789"
-        request.headers["X-VA-File-Number"] = "77799777"
-        request.headers["X-VA-Vet-First-Name"] = "John"
-        request.headers["X-VA-Vet-Last-Name"] = "Smith"
-        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+        load_headers
         post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:created)
       end
@@ -25,11 +20,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     context "when claim_id is already in Redis Cache" do
       it "throws a Redis error and returns a 409 status" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"
-        request.headers["X-VA-Vet-SSN"] = "123456789"
-        request.headers["X-VA-File-Number"] = "77799777"
-        request.headers["X-VA-Vet-First-Name"] = "John"
-        request.headers["X-VA-Vet-Last-Name"] = "Smith"
-        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+        load_headers
         redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
         lock_key = "RedisMutex:EndProductEstablishment:123566"
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
@@ -111,12 +102,10 @@ def json_payload
                                        "decision_review_created_example.json")))
 end
 
-def sample_headers
-  {
-    "X-VA-Vet-SSN" => "123456789",
-    "X-VA-File-Number" => "77799777",
-    "X-VA-Vet-First-Name" => "John",
-    "X-VA-Vet-Last-Name" => "Smith",
-    "X-VA-Vet-Middle-Name" => "Alexander"
-  }
+def load_headers
+    request.headers["X-VA-Vet-SSN"] = "123456789"
+    request.headers["X-VA-File-Number"] = "77799777"
+    request.headers["X-VA-Vet-First-Name"] = "John"
+    request.headers["X-VA-Vet-Last-Name"] = "Smith"
+    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
 end
