@@ -36,6 +36,9 @@ class SplitAppealController < ApplicationController
     appeal.appeal_split_process = false
     dup_appeal.reload
     appeal.reload
+    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: current_user)
+      SpecialtyCaseTeamSplitAppealHandler.new(appeal, dup_appeal, current_user).handle_split_sct_appeals
+    end
     render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
   end
 
