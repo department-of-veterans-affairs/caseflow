@@ -133,6 +133,7 @@ export class PdfFile extends React.PureComponent {
         , (reason) => this.onRejected(reason, 'setPageDimensions')).
       then(() => {
         if (this.loadingTask.destroyed) {
+          this.pdfDocument.cleanup();
           return this.pdfDocument.destroy();
         }
         this.loadingTask = null;
@@ -222,6 +223,7 @@ export class PdfFile extends React.PureComponent {
       this.loadingTask.destroy();
     }
     if (this.pdfDocument) {
+      this.pdfDocument.cleanup();
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
