@@ -97,6 +97,7 @@ export const AddAppealRelatedTaskView = (props) => {
   useEffect(() => {
     let canContinue = true;
 
+    // Check if radio button is selected and at least one checkbox is selected
     if (existingAppealRadio !== '0' && taskRelatedAppeals.length > 0) {
       // Check the conditions for each task and waived task
       newTasks.forEach((task) => {
