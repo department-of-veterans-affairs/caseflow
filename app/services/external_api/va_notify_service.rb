@@ -33,12 +33,12 @@ class ExternalApi::VANotifyService
     # Return: email_response: JSON response from VA Notify API
     # rubocop:disable Metrics/ParameterLists
     def send_email_notifications(
-      participant_id,
-      notification_id,
-      email_template_id,
-      first_name,
-      docket_number,
-      status = ""
+      participant_id:,
+      notification_id:,
+      email_template_id:,
+      first_name:,
+      docket_number:,
+      status: ""
     )
       email_response = send_va_notify_request(
         email_request(participant_id, notification_id, email_template_id, first_name, docket_number, status)
@@ -57,9 +57,7 @@ class ExternalApi::VANotifyService
     #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-
-    # rubocop:disable Metrics/ParameterLists
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, docket_number, status = "")
+    def send_sms_notifications(participant_id:, notification_id:, sms_template_id:, first_name:, docket_number:, status: "")
       sms_response = send_va_notify_request(
         sms_request(participant_id, notification_id, sms_template_id, first_name, docket_number, status)
       )

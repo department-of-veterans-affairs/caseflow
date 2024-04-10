@@ -161,6 +161,7 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when message is nil" do
+        expect(Rails.logger).to receive(:send).with(:error, /Message argument of value nil supplied to job/)
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "There was no message passed into the " \
@@ -172,6 +173,7 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when appeals_id, appeals_type, or event_type is nil" do
+        expect(Rails.logger).to receive(:send).with(:error, /Nil message attribute\(s\): appeal_type/)
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "appeals_id or appeal_type or event_type was nil " \
@@ -185,6 +187,9 @@ describe SendNotificationJob, type: :job do
       it "logs error when audit record is nil" do
         allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
 
+        allow_any_instance_of(Notification).to receive(:nil?).and_return(true)
+        expect(Rails.logger).to receive(:send)
+          .with(:error, /Notification audit record was unable to be found or created/)
         perform_enqueued_jobs do
           expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
             expect(error_received.message).to eq "Audit record was unable to be found or created " \
@@ -269,10 +274,9 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  describe "#create_notification_audit_record" do
+  describe "#create_notification" do
     it "makes a new notification object" do
-      expect(Notification).to receive(:new)
-      SendNotificationJob.perform_now(good_message.to_json)
+      expect { SendNotificationJob.perform_now(good_message.to_json) }.to change(Notification, :count).by(1)
     end
   end
 
@@ -341,14 +345,7 @@ describe SendNotificationJob, type: :job do
       after { FeatureToggle.disable!(:va_notify_email) }
 
       it "is expected to send a generic saluation instead of a name" do
-        expect(VANotifyService).to receive(:send_email_notifications).with(
-          no_name_participant_id,
-          "",
-          notification_event.email_template_id,
-          "Appellant",
-          no_name_appeal.docket_number,
-          ""
-        )
+        expect(VANotifyService).to receive(:send_email_notifications).with(hash_including(first_name: "Appellant"))
 
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
@@ -359,14 +356,7 @@ describe SendNotificationJob, type: :job do
       after { FeatureToggle.disable!(:va_notify_sms) }
 
       it "is expected to send a generic saluation instead of a name" do
-        expect(VANotifyService).to receive(:send_sms_notifications).with(
-          no_name_participant_id,
-          "",
-          notification_event.sms_template_id,
-          "Appellant",
-          no_name_appeal.docket_number,
-          ""
-        )
+        expect(VANotifyService).to receive(:send_sms_notifications).with(hash_including(first_name: "Appellant"))
 
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
@@ -378,54 +368,47 @@ describe SendNotificationJob, type: :job do
       it "does not create multiple notification objects" do
         FeatureToggle.enable!(:va_notify_email)
         job = SendNotificationJob.new(good_message.to_json)
-        job.instance_variable_set(:@notification_audit_record, notification)
-        expect(Notification).not_to receive(:create)
-        job.perform_now
+        allow(job).to receive(:find_or_create_notification_audit).and_return(notification)
+        expect { job.perform_now }.not_to change(Notification, :count)
       end
     end
   end
 
   context "feature flags for setting notification type" do
     it "notification type should be email if only email flag is on" do
+      FeatureToggle.enable!(:va_notify_email)
       job = SendNotificationJob.new(good_message.to_json)
-      job.instance_variable_set(:@va_notify_email, true)
-      record = job.send(:create_notification_audit_record,
-                        notification.appeals_id,
-                        notification.appeals_type,
-                        notification.event_type,
-                        "123456789")
+      job.instance_variable_set(:@message, JSON.parse(job.arguments[0], object_class: OpenStruct))
+      record = job.send(:find_or_create_notification_audit)
       expect(record.notification_type).to eq("Email")
     end
 
     it "notification type should be sms if only sms flag is on" do
+      FeatureToggle.enable!(:va_notify_sms)
       job = SendNotificationJob.new(good_message.to_json)
-      job.instance_variable_set(:@va_notify_sms, true)
-      record = job.send(:create_notification_audit_record,
-                        notification.appeals_id,
-                        notification.appeals_type,
-                        notification.event_type,
-                        "123456789")
+      job.instance_variable_set(:@message, JSON.parse(job.arguments[0], object_class: OpenStruct))
+      record = job.send(:find_or_create_notification_audit)
       expect(record.notification_type).to eq("SMS")
     end
 
     it "notification type should be email and sms if both of those flags are on" do
+      FeatureToggle.enable!(:va_notify_email)
+      FeatureToggle.enable!(:va_notify_sms)
       job = SendNotificationJob.new(good_message.to_json)
-      job.instance_variable_set(:@va_notify_email, true)
-      job.instance_variable_set(:@va_notify_sms, true)
-      record = job.send(:create_notification_audit_record,
-                        notification.appeals_id,
-                        notification.appeals_type,
-                        notification.event_type,
-                        "123456789")
+      job.instance_variable_set(:@message, JSON.parse(job.arguments[0], object_class: OpenStruct))
+      record = job.send(:find_or_create_notification_audit)
       expect(record.notification_type).to eq("Email and SMS")
     end
   end
 
   context "feature flags for sending legacy notifications" do
+    let(:legacy_appeal) { create(:legacy_appeal) }
+
     it "should only send notifications when feature flag is turned on" do
       FeatureToggle.enable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@notification_audit_record, notification)
+      job.instance_variable_set(:@notification_audit, notification)
+      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(job).to receive(:send_to_va_notify)
       job.perform_now
     end
@@ -433,17 +416,21 @@ describe SendNotificationJob, type: :job do
     it "should not send notifications when feature flag is turned off" do
       FeatureToggle.disable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@notification_audit_record, notification)
+      job.instance_variable_set(:@notification_audit, notification)
+      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(job).not_to receive(:send_to_va_notify)
       job.perform_now
     end
   end
 
   context "feature flag testing for creating legacy appeal notification records" do
-    it "should only create an instance of a notification before saving if a notification was found" do
+    let(:legacy_appeal) { create(:legacy_appeal) }
+
+    it "should only create an instance of a notification before saving if a notification isn't found" do
       FeatureToggle.enable!(:appeal_docketed_event)
       job = SendNotificationJob.new(legacy_message.to_json)
-      expect(Notification).to receive(:new)
+      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
+      expect(Notification).to receive(:create)
       job.perform_now
     end
 
@@ -452,8 +439,7 @@ describe SendNotificationJob, type: :job do
       FeatureToggle.enable!(:appeal_docketed_event)
       FeatureToggle.enable!(:va_notify_sms)
       job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@va_notify_sms, true)
-      expect(Notification).not_to receive(:new)
+      expect(Notification).not_to receive(:create)
       job.perform_now
     end
   end

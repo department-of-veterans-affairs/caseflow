@@ -1457,6 +1457,8 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.string "sms_response_content", comment: "Message body of the sms notification response."
+    t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
