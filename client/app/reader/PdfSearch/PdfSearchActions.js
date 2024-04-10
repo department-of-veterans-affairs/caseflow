@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
 import * as Constants from './actionTypes';
+import { recordAsyncMetrics } from '../../util/Metrics';
+
 
 export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
@@ -8,7 +10,19 @@ export const getDocumentText = (pdfDocument, file) =>
       return pdfDocument.getPage(index + 1).then((page) => {
         // return page.getTextContent();
         const startTime = performance.now();
-        const pageText = page.getTextContent();
+        // const pageText = page.getTextContent();
+
+        const metricData = {
+          message: `PdfSearchActions Storing PDF page ${index + 1} text in Redux`,
+          product: 'reader',
+          type: 'performance',
+          data: {
+            file: file //not using the standardized metricsAttributes for now
+          },
+          eventId: null
+        };
+
+        const pageText = recordAsyncMetrics(page.getTextContent(), metricData, true);
 
         pageText.then((result) => {
           const endTime = performance.now();

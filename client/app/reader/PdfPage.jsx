@@ -46,7 +46,8 @@ export class PdfPage extends React.PureComponent {
       overscan: this.props.windowingOverscan,
       isPageVisible: this.props.isVisible,
       name: null,
-      readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText
+      readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText,
+      readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
     };
   }
 
@@ -164,10 +165,19 @@ export class PdfPage extends React.PureComponent {
       this.renderTask.cancel();
     }
 
-    if (this.page) {
-      this.page.cleanup();
+    if (this.props.page) {
+      this.props.page.cleanup();
       if (this.markInstance) {
         this.markInstance.unmark();
+      }
+    }
+
+    if (this.props.featureToggles.readerPrototypeCleanMemory) {
+      if (this.page) {
+        this.page.cleanup();
+        if (this.markInstance) {
+          this.markInstance.unmark();
+        }
       }
     }
   };
