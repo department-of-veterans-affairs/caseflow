@@ -33,7 +33,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def initialize(headers, payload_json)
-    @payload = payload_json.to_h.deep_transform_keys(&:to_sym)
+    @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
