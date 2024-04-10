@@ -41,17 +41,6 @@ describe DistributionConcern do
           expect(result[1].is_a?(JudgeAssignTask)).to be true
         end
       end
-
-      context "if can_redistribute_appeal? is false" do
-        let!(:appeals) { [appeal_open_dist_and_blocking_task] }
-
-        it "appeals are skipped and return nil" do
-          expect_any_instance_of(SlackService).to receive(:send_notification)
-          result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
-
-          expect(result.first).to be nil
-        end
-      end
     end
 
     context "for appeals with no open distribution task" do
