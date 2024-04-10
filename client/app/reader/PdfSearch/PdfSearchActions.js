@@ -6,7 +6,17 @@ export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
     const getTextForPage = (index) => {
       return pdfDocument.getPage(index + 1).then((page) => {
-        return page.getTextContent();
+        // return page.getTextContent();
+        const startTime = performance.now();
+        const pageText = page.getTextContent();
+
+        pageText.then((result) => {
+          const endTime = performance.now();
+
+          console.log(`READER_LOG PdfSearchActions ==== PAGE ${index + 1} | size: ${JSON.stringify(result).length} | page.getTextContent took ${endTime - startTime} milliseconds`);
+        });
+
+        return pageText;
       });
     };
     const getTextPromises = _.range(pdfDocument.numPages).map((index) => getTextForPage(index));

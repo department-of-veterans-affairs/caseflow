@@ -201,7 +201,15 @@ export class PdfPage extends React.PureComponent {
     });
   };
 
-  getText = (page) => page.getTextContent();
+  getText = (page) => {
+    const startTime = performance.now();
+
+    page.getTextContent().then((result) => {
+      const endTime = performance.now();
+
+      console.log(`READER_LOG PdfPage ==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(result).length} | page.getTextContent took ${endTime - startTime} milliseconds`);
+    });
+  }
 
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
