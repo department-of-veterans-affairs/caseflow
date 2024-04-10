@@ -194,27 +194,6 @@ def create_package_document_types
   end
 end
 
-# randomly generates notes for the correspondence
-def generate_notes(params)
-  note_type = params.sample
-
-  note = ""
-  # generate note from value pulled
-  case note_type
-  when PackageDocumentType
-    note = "Package Document Type is #{note_type&.name}"
-  when CorrespondenceType
-    note = "Correspondence Type is #{note_type&.name}"
-  when ActiveSupport::TimeWithZone
-    note = "Correspondence added to Caseflow on #{note_type&.strftime("%m/%d/%y")}"
-
-  when User
-    note = "This correspondence was originally assigned to and updated by #{note_type&.css_id}."
-  end
-
-  note
-end
-
 # default packet number to 1_000_000 or increment the list of current correspondences
 def create_cmp_packet_number
   packet_number = Correspondence.last.blank? ? 1_000_000_000 : (Correspondence.last.cmp_packet_number + 1)
