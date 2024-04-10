@@ -47,19 +47,23 @@ namespace :correspondence do
   desc "create mock CMP correspondence data for UAT testing"
   task :seed_cmp_correspondences, [:vet_file_number, :number_of_correspondence] => :environment do |_, args|
     catch(:error) do
-      NUM_COR = args.number_of_correspondence.to_i
+      num_cor = args.number_of_correspondence.to_i
       veteran = Veteran.find_by_file_number_or_ssn(args.vet_file_number.to_s)
       cmp_packet_number = create_cmp_packet_number
       user = RequestStore[:current_user]
 
-      throw :error, STDOUT.puts("Correspondences created must be greater than 0") if NUM_COR <= 0
+      throw :error, STDOUT.puts("Correspondences created must be greater than 0") if num_cor <= 0
       throw :error, STDOUT.puts("Veteran not found") if veteran.blank?
       throw :error, STDOUT.puts("No user in the request store") if user.blank?
 
-      (1..NUM_COR).each do |cmp_queue_id|
+      (1..num_cor).each do |cmp_queue_id|
         package_doc_type = PackageDocumentType.all.sample
         corr_type = CorrespondenceType.all.sample
         receipt_date = rand(1.month.ago..1.day.ago)
+
+        nod = [true, false].sample
+
+        doc_type = generate_vbms_doc_type(nod)
 
         cor = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
@@ -70,19 +74,19 @@ namespace :correspondence do
           cmp_queue_id: cmp_queue_id,
           cmp_packet_number: create_cmp_packet_number,
           va_date_of_receipt: receipt_date,
-          notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
+          notes: doc_type[:description],
           assigned_by_id: user.id,
           updated_by_id: user.id,
           veteran_id: veteran.id,
-          nod: [true, false].sample
+          nod: nod
         ).tap { cmp_packet_number += 1 }
 
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
+          vbms_document_type_id: doc_type[:id],
+          document_type: doc_type[:id],
+          pages: rand(1..30),
           correspondence_id: cor.id
         )
       end
@@ -211,9 +215,54 @@ def generate_notes(params)
   note
 end
 
-  # default packet number to 1_000_000
+# default packet number to 1_000_000 or increment the list of current correspondences
 def create_cmp_packet_number
   packet_number = Correspondence.last.blank? ? 1_000_000_000 : (Correspondence.last.cmp_packet_number + 1)
 
   packet_number
 end
+
+# generate the doctype and description from VBMS doc type list
+def generate_vbms_doc_type(nod)
+  return nod_doc if nod
+
+  non_nod_docs.sample
+end
+
+def nod_doc
+  {
+    id: 1250,
+    description: "VA Form 10182, Decision Review Request: Board Appeal (Notice of Disagreement)"
+  }
+end
+
+# rubocop:disable Metrics/MethodLength
+def non_nod_docs
+  [
+    {
+      id: 1419,
+      description: "Reissuance Beneficiary Notification Letter"
+    },
+    {
+      id: 1430,
+      description: "Bank Letter Beneficiary"
+    },
+    {
+      id: 1448,
+      description: "VR-69 Chapter 36 Decision Letter"
+    },
+    {
+      id: 1452,
+      description: "Apportionment - notice to claimant"
+    },
+    {
+      id: 1505,
+      description: "Higher-Level Review (HLR) Not Timely Letter"
+    },
+    {
+      id: 1578,
+      description: "Pension End of Day Letter"
+    }
+  ]
+end
+# rubocop:enable Metrics/MethodLength
