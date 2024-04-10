@@ -1,5 +1,6 @@
 <% content_for :full_page_content do %>
   <%= react_component("Queue", props: {
+    env: Rails.deploy_env,
     userDisplayName: current_user.display_name,
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
