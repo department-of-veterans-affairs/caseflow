@@ -118,18 +118,18 @@ class Fakes::BGSService
       vet_record[attr] = new_value
       store_veteran_record(file_number, vet_record)
     end
-
-    def init_client_for_user(user:)
-      BGSService.init_client_params(user: user)
-    end
-
-    def init_client_params(user:)
-      { user: user } if user.is_a?(User)
-    end
   end
 
-  def initialize(client: nil)
-    client
+  def sensitivity_level_for_user(user)
+    fail "Invalid user" if !user.instance_of?(User)
+
+    Random.new.rand(4..9)
+  end
+
+  def sensitivity_level_for_veteran(veteran)
+    fail "Invalid veteran" if !veteran.instance_of?(Veteran)
+
+    Random.new.rand(1..4)
   end
 
   def get_end_products(file_number)
@@ -609,11 +609,11 @@ class Fakes::BGSService
     (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
-  def can_access?(vbms_id, user_to_check: current_user)
+  def can_access?(vbms_id)
     is_accessible = !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
 
-    if user_to_check
-      Rails.cache.fetch(can_access_cache_key(user_to_check, vbms_id), expires_in: 1.minute) do
+    if current_user
+      Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
         is_accessible
       end
     else

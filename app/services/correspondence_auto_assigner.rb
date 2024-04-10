@@ -95,7 +95,7 @@ class CorrespondenceAutoAssigner
   end
 
   def assignable_user_finder
-    @assignable_user_finder ||= AutoAssignableUserFinder.new
+    @assignable_user_finder ||= AutoAssignableUserFinder.new(current_user)
   end
 
   def run_verifier
