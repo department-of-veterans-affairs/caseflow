@@ -35,6 +35,19 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: this.props.pageIndex,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null,
+      slowPdfRender: this.props.featureToggles.slowPdfRender
+    };
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -100,6 +113,8 @@ export class PdfPage extends React.PureComponent {
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
   drawPage = (page) => {
+    const drawPagestart = performance.now();
+
     if (this.isDrawing) {
       return Promise.resolve();
     }
@@ -129,6 +144,8 @@ export class PdfPage extends React.PureComponent {
         if (currentScale !== this.props.scale && page) {
           return this.drawPage(page);
         }
+
+        console.log(`READER_LOG PdfPage ==== PAGE ${this.props.pageIndex + 1} | drawPage() took ${performance.now() - drawPagestart} milliseconds`);
       }).
       catch((error) => {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
@@ -147,8 +164,8 @@ export class PdfPage extends React.PureComponent {
       this.renderTask.cancel();
     }
 
-    if (this.props.page) {
-      this.props.page.cleanup();
+    if (this.page) {
+      this.page.cleanup();
       if (this.markInstance) {
         this.markInstance.unmark();
       }
@@ -178,6 +195,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+    const drawTextStart = performance.now();
 
     if (!this.textLayer) {
       return;
@@ -199,6 +217,7 @@ export class PdfPage extends React.PureComponent {
         this.markText();
       }
     });
+    console.log(`READER_LOG PdfPage ==== PAGE ${this.props.pageIndex + 1} | drawText() took ${performance.now() - drawTextStart} milliseconds`);
   };
 
   getText = (page) => page.getTextContent();
@@ -225,33 +244,35 @@ export class PdfPage extends React.PureComponent {
       pageResult.then((page) => {
         this.page = page;
 
-        const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
-          product: 'reader',
-          type: 'performance',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
+        if (this.props.featureToggles.slowPdfRender) {
+          const textMetricData = {
+            message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+            product: 'reader',
+            type: 'performance',
+            data: this.props.metricsAttributes,
+            eventId: this.props.metricsIdentifier
+          };
 
-        const readerRenderText = {
-          uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
-          type: 'performance',
-          product: 'reader',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
+          const readerRenderText = {
+            uuid: uuidv4(),
+            message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+            type: 'performance',
+            product: 'reader',
+            data: this.props.metricsAttributes,
+            eventId: this.props.metricsIdentifier
+          };
 
-        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+          const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
-        const getTextStart = performance.now();
+          const getTextStart = performance.now();
 
-        textResult.then((text) => {
-          console.log(`READER_LOG PdfPage ==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(text).length} | page.getTextContent took ${performance.now() - getTextStart} milliseconds`);
+          textResult.then((text) => {
+            console.log(`READER_LOG PdfPage ==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(text).length} | getText() page.getTextContent took ${performance.now() - getTextStart} milliseconds`);
 
-          recordMetrics(this.drawText(page, text), readerRenderText,
-            this.props.featureToggles.metricsReaderRenderText);
-        });
+            recordMetrics(this.drawText(page, text), readerRenderText,
+              this.props.featureToggles.metricsReaderRenderText);
+          });
+        }
 
         this.drawPage(page).then();
 

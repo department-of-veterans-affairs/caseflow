@@ -53,7 +53,9 @@ export class PdfFile extends React.PureComponent {
       documentType: this.props.documentType,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
       overscan: this.props.windowingOverscan,
-      isPageVisible: this.props.isVisible
+      isPageVisible: this.props.isVisible,
+      name: null,
+      slowPdfRender: this.props.featureToggles.slowPdfRender
     };
   }
 
@@ -471,16 +473,16 @@ export class PdfFile extends React.PureComponent {
       const scrollStart = performance.now();
 
       this.scrollTimer = setTimeout(() => {
-
-        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
-        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
         const scrollEnd = performance.now();
+        const scrollMessage = `Scroll to position ${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)}, ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)}`;
+
+        this.metricsAttributes.name = scrollMessage;
 
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: `Scroll to position ${posx}, ${posy}`,
+            message: scrollMessage,
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + scrollStart),
@@ -596,11 +598,14 @@ export class PdfFile extends React.PureComponent {
         const renderEndTime = performance.now();
         const renderDuration = renderEndTime - this.props.renderStartTime;
 
+        const pdfRenderMessage = "PDF render time in Milliseconds";
+        this.metricsAttributes.name = pdfRenderMessage;
+
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: 'PDF render time in Milliseconds',
+            message: pdfRenderMessage,
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + this.props.renderStartTime),
