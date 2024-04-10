@@ -14,7 +14,6 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
     # iterate through the array of issues and create backfill object from each one
     def create_request_issue_backfill(event, parser, epe)
-      byebug
       request_issues = parser.request_issues
       newly_created_issues = []
 
