@@ -54,6 +54,40 @@ describe DistributionConcern do
         end
       end
     end
+
+    context "when an appeal has an assigned DistributionTask and open VeteranRecordRequest task" do
+      let!(:appeals) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+
+        VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
+                                     status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
+
+        [appeal.reload]
+      end
+
+      it "a JudgeAssignTask is created" do
+        result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
+
+        expect(result[0].is_a?(JudgeAssignTask)).to be true
+      end
+    end
+
+    context "when an appeal has an assigned DistributionTask and open QualityReviewTask task" do
+      let!(:appeals) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+
+        QualityReviewTask.create!(appeal: appeal, parent: appeal.root_task,
+                                  status: Constants.TASK_STATUSES.assigned, assigned_to: QualityReview.singleton)
+
+        [appeal.reload]
+      end
+
+      it "a JudgeAssignTask is created" do
+        result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
+
+        expect(result[0].is_a?(JudgeAssignTask)).to be true
+      end
+    end
   end
 
   context "#cancel_previous_judge_assign_task" do
