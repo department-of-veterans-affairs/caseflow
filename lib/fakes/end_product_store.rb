@@ -96,6 +96,14 @@ class Fakes::EndProductStore < Fakes::PersistentStore
     disposition_child_store(disposition).create
   end
 
+  def update_disposition(disposition)
+    disposition_child_store(disposition).update
+  end
+
+  def remove_disposition(disposition)
+    disposition_child_store(disposition).remove
+  end
+
   def inflated_dispositions_for(claim_id)
     children_to_structs(disposition_key(claim_id))
   end

@@ -540,6 +540,8 @@ describe EstablishClaim, :all_dbs do
     end
 
     context "when not complete" do
+      let(:aasm_status) { :unassigned }
+
       it { is_expected.to eq([]) }
     end
   end

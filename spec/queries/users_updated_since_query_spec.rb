@@ -6,6 +6,7 @@ describe UsersUpdatedSinceQuery, :all_dbs do
   end
 
   let(:since_date) { Time.zone.now }
+  let(:old_user) { create(:user, updated_at: since_date - 1.hour) }
 
   describe "#call" do
     subject { described_class.new(since_date: since_date).call }

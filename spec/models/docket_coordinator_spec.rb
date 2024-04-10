@@ -136,6 +136,7 @@ describe DocketCoordinator do
       end
 
       context "with appeals that have already been marked in range" do
+        let(:appeals_count) { docket_coordinator.dockets[:hearing].appeals.count }
         let(:number_of_appeals_in_range) { 2 }
 
         before do

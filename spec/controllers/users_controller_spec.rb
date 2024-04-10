@@ -193,6 +193,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
   end
 
   describe "GET /users?organization=<org_url | org_name>" do
+    let(:non_org_users) { create_list(:user, 4) }
     let(:org) { create(:organization) }
     let(:body) { JSON.parse(response.body) }
     let(:organization_param) { org.url }

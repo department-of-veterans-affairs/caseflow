@@ -2,7 +2,9 @@
 import { memoize } from 'lodash';
 
 // Local Dependencies
+import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { CATEGORIES } from 'store/constants/reader';
+import { setCategoryFilter } from 'store/reader/documentList';
 
 /**
  * Method to change to Single Document Mode
@@ -17,6 +19,31 @@ export const singleDocumentMode = memoize(() =>
  */
 export const showPdf = (history, vacolsId) => (documents, docId) =>
   documents[docId] && history.push(`/${vacolsId}/documents/${docId}`);
+
+/**
+ * Method to initialize the category Filters
+ * @param {array} categories -- The list of categories available
+ * @param {string} search -- The Query Search from the URL bar
+ * @param {function} dispatch -- The Redux Dispatcher
+ */
+export const initCategoryFilter = (categories, search, dispatch) => {
+  // Calculate the Query Params
+  const queryParams = getQueryParams(search);
+  const category = queryParams.category;
+
+  // If the category is available apply the filter to the store
+  if (categories[category]) {
+    dispatch(setCategoryFilter(category, true));
+
+    // Clear out the URI query string params after we determine the initial
+    // category filter so that we do not continue to attempt to set the
+    // category filter every time routedPdfListView renders.
+    return '';
+  }
+
+  // Default to return the search so we don't clear
+  return search;
+};
 
 /**
  * Helper Method to return the Annotation ID

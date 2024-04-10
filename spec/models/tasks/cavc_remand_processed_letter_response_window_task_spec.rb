@@ -10,6 +10,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
     let(:appeal) { create(:appeal) }
     let!(:parent_task) { create(:cavc_task, appeal: appeal) }
+    let(:parent_task_class) { CavcTask }
 
     it_behaves_like "task requiring specific parent"
 

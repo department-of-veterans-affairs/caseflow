@@ -41,6 +41,8 @@ describe Form8PdfService do
   end
 
   context ".save_pdf_for!" do
+    let(:final_location) { Form8PdfService.output_location_for(form8) }
+
     before do
       Form8PdfService.save_pdf_for!(form8)
     end

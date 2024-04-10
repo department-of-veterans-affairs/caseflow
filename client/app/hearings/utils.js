@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, max-lines */
+/* eslint-disable camelcase */
 import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
@@ -27,7 +27,7 @@ import {
 import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
-// How values determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
+// To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 import {
@@ -39,7 +39,6 @@ import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
-// eslint-disable-next-line import/extensions
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -171,7 +170,6 @@ export const isEdited = (init, current) => {
   // Empty strings should be treated the same as false and null
   case '':
   case false:
-    // eslint-disable-next-line eqeqeq
     return current != falsy;
     // Default to compare the initial with the current value
   default:
@@ -344,7 +342,6 @@ export const zoneName = (time, name, format) => {
  */
 export const shortZoneName = (name) => {
   const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
-  // eslint-disable-next-line no-shadow
   const zoneName = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone)[0];
 
   return zoneName?.split('Time')[0]?.trim();
@@ -733,9 +730,7 @@ export const setTimeSlots = ({
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(
-    `${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York'
-  );
+  const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
   const momentBeginsAt = moment(beginsAt).tz('America/New_York');
 
   const defaultSlotLengthMinutes = 60;
@@ -868,7 +863,6 @@ const generateTimes = (roTimezone, date, intervalMinutes = 15) => {
   // End at 23:59, the last minute of a day
   const elevenFiftyNine = moment.tz(`${date} 23:59`, 'YYYY-MM-DD HH:mm', roTimezone);
 
-  // eslint-disable-next-line no-shadow
   const times = [];
 
   // Go through the day in fifteen minute increments and store each increment
@@ -882,7 +876,6 @@ const generateTimes = (roTimezone, date, intervalMinutes = 15) => {
 };
 
 // Move the part of the arrawy after newFirstValue to the end of the array
-// eslint-disable-next-line no-shadow
 const moveTimesToEndOfArray = (newFirstValue, times) => {
   // Find the index of newFirstValue
   const firstValueIndex = times.findIndex((time) => time.isSame(newFirstValue));
@@ -895,7 +888,6 @@ const moveTimesToEndOfArray = (newFirstValue, times) => {
   return afterFirstValue.concat(beforeFirstValue);
 };
 // Convert each time in the array into the expected 'option' format for react-select
-// eslint-disable-next-line no-shadow
 const formatTimesToOptionObjects = (times) => {
   return times.map((time) => {
     return {
@@ -910,7 +902,6 @@ const formatTimesToOptionObjects = (times) => {
 // the array to beginsAt appears first.
 export const generateOrderedTimeOptions = (roTimezone, hearingDayDate) => {
   const beginsAt = moment.tz(`${hearingDayDate} 08:30`, 'YYYY-MM-DD HH:mm', roTimezone);
-  // eslint-disable-next-line no-shadow
   const times = generateTimes(roTimezone, hearingDayDate);
   const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
   const options = formatTimesToOptionObjects(reorderedTimes);
@@ -973,18 +964,6 @@ export const getTimezoneAbbreviation = (timezone) => {
   return moment.tz('00:00', 'HH:mm', timezone).format('z');
 };
 
-export const docketTypes = (originalType) => {
-  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
-
-  return [
-    option,
-    {
-      value: HEARING_REQUEST_TYPES.virtual,
-      label: VIRTUAL_HEARING_LABEL
-    }
-  ];
-};
-
 export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
   const poaLabel = virtual ? ', POA,' : ' and POA';
   const recipientLabel = hearing?.representative ? `${appellantTitle}${poaLabel}` : `${appellantTitle}`;
@@ -996,6 +975,18 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
     'Caseflow won’t send notifications immediately after scheduling.';
+};
+
+export const docketTypes = (originalType) => {
+  const [option] = REQUEST_TYPE_OPTIONS.filter((type) => type.value === originalType);
+
+  return [
+    option,
+    {
+      value: HEARING_REQUEST_TYPES.virtual,
+      label: VIRTUAL_HEARING_LABEL
+    }
+  ];
 };
 
 export const readableDocketType = (docketType) =>

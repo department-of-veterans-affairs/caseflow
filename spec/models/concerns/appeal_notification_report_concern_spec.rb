@@ -26,6 +26,16 @@ describe AppealNotificationReportConcern do
     "notification-report_700230001"
   }
   let(:legacy_notification) { Notification.find_by_appeals_id("2226048") }
+  let(:legacy_document_params) {
+    {
+      veteran_file_number: "213912991",
+      document_type: "BVA Letter",
+      document_subject: "notifications",
+      document_name: legacy_appeal_document_name_suffix,
+      application: "notification-report",
+      file: nil
+    }
+  }
   # rubocop:enable Style/BlockDelimiters
 
   context "AMA Appeal" do
