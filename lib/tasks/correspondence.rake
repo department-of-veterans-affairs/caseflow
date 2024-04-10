@@ -21,7 +21,7 @@ namespace :correspondence do
     create_package_document_types
   end
 
-  desc "create correspondence test data in UAT given a veteran file number"
+  desc "create correspondence test data in demo given a veteran file number (does not work in UAT due to FactoryBot)"
   task :create_correspondence_test_data, [] => :environment do |_|
     catch(:error) do
       throw :error, STDOUT.puts("Please add a user to the request store") if RequestStore[:current_user].blank?
@@ -41,6 +41,51 @@ namespace :correspondence do
       STDOUT.puts("Running queue_correspondences.rb")
       Seeds::QueueCorrespondences.new.seed!(RequestStore[:current_user], vet)
       STDOUT.puts("Success!! Correspondences have been seeded. Well done friend!")
+    end
+  end
+
+  desc "create mock CMP correspondence data for UAT testing"
+  task :seed_cmp_correspondences, [:vet_file_number, :number_of_correspondence] => :environment do |_, args|
+    catch(:error) do
+      NUM_COR = args.number_of_correspondence.to_i
+      veteran = Veteran.find_by_file_number_or_ssn(args.vet_file_number.to_s)
+      cmp_packet_number = create_cmp_packet_number
+      user = RequestStore[:current_user]
+
+      throw :error, STDOUT.puts("Correspondences created must be greater than 0") if NUM_COR <= 0
+      throw :error, STDOUT.puts("Veteran not found") if veteran.blank?
+      throw :error, STDOUT.puts("No user in the request store") if user.blank?
+
+      (1..NUM_COR).each do |cmp_queue_id|
+        package_doc_type = PackageDocumentType.all.sample
+        corr_type = CorrespondenceType.all.sample
+        receipt_date = rand(1.month.ago..1.day.ago)
+
+        cor = ::Correspondence.create!(
+          uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: package_doc_type&.id,
+          correspondence_type_id: corr_type&.id,
+          cmp_queue_id: cmp_queue_id,
+          cmp_packet_number: create_cmp_packet_number,
+          va_date_of_receipt: receipt_date,
+          notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
+          assigned_by_id: user.id,
+          updated_by_id: user.id,
+          veteran_id: veteran.id,
+          nod: [true, false].sample
+        ).tap { cmp_packet_number += 1 }
+
+        CorrespondenceDocument.find_or_create_by(
+          document_file_number: veteran.file_number,
+          uuid: SecureRandom.uuid,
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: cor.id
+        )
+      end
     end
   end
 end
@@ -143,4 +188,32 @@ def create_package_document_types
   ].each do |package_document_type|
     PackageDocumentType.find_or_create_by(name: package_document_type)
   end
+end
+
+# randomly generates notes for the correspondence
+def generate_notes(params)
+  note_type = params.sample
+
+  note = ""
+  # generate note from value pulled
+  case note_type
+  when PackageDocumentType
+    note = "Package Document Type is #{note_type&.name}"
+  when CorrespondenceType
+    note = "Correspondence Type is #{note_type&.name}"
+  when ActiveSupport::TimeWithZone
+    note = "Correspondence added to Caseflow on #{note_type&.strftime("%m/%d/%y")}"
+
+  when User
+    note = "This correspondence was originally assigned to and updated by #{note_type&.css_id}."
+  end
+
+  note
+end
+
+  # default packet number to 1_000_000
+def create_cmp_packet_number
+  packet_number = Correspondence.last.blank? ? 1_000_000_000 : (Correspondence.last.cmp_packet_number + 1)
+
+  packet_number
 end
