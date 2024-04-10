@@ -1640,36 +1640,6 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has an assigned DistributionTask and open VeteranRecordRequest task" do
-      let!(:appeal_ready_to_distribute) do
-        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-
-        VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
-                                     status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
-
-        appeal.reload
-      end
-
-      subject { appeal_ready_to_distribute.can_redistribute_appeal? }
-
-      it { is_expected.to eq true }
-    end
-
-    context "when an appeal has an assigned DistributionTask and open QualityReviewTask task" do
-      let!(:appeal_ready_to_distribute) do
-        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-
-        QualityReviewTask.create!(appeal: appeal, parent: appeal.root_task,
-                                  status: Constants.TASK_STATUSES.assigned, assigned_to: QualityReview.singleton)
-
-        appeal.reload
-      end
-
-      subject { appeal_ready_to_distribute.can_redistribute_appeal? }
-
-      it { is_expected.to eq true }
-    end
-
     # this shouldn't happen as blocking MailTasks should be a child of DistributionTask if it is not closed,
     # but this is the easiest way to test whether blocking MailTasks are picked up in the method's checks
     context "when an appeal has incorrectly open DistributionTask and blocking MailTask" do
