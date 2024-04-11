@@ -57,7 +57,8 @@ module CorrespondenceControllerConcern
   end
 
   def bulk_assignment_banner_text(user, task_count, action_prefix: "")
-    success_header_unassigned = "You have successfully #{action_prefix}assigned #{task_count} Correspondence to #{user.css_id}."
+    success_header_unassigned = "You have successfully #{action_prefix}"\
+      "assigned #{task_count} Correspondence to #{user.css_id}."
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
