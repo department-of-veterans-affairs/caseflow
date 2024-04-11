@@ -7,7 +7,6 @@ class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
-  before_action :veteran_information
 
   def mail_team_users
     mail_team_users = User.mail_team_users
@@ -105,46 +104,26 @@ class CorrespondenceController < ApplicationController
   end
 
   def correspondence_team_response
-    set_correspondence_props(current_user, params)
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
-    task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
+    task_ids = params[:task_ids]&.split(",") if params[:task_ids].present?
     tab = params[:tab] if params[:tab].present?
 
     respond_to do |format|
-      format.html { correspondence_team_html_response(mail_team_user, task_ids, tab) }
-      format.json { correspondence_team_json_response(mail_team_user, task_ids, tab) }
+      format.html do
+        @mail_team_users = User.mail_team_users.pluck(:css_id)
+        correspondence_team_html_response(mail_team_user, task_ids, tab)
+      end
+      format.json { correspondence_team_json_response }
     end
   end
 
-  def handle_reassign_or_remove_task(mail_team_user)
-    return unless @reassign_remove_task_id.present? && @action_type.present?
-
-    task = Task.find(@reassign_remove_task_id)
-    mail_team_user ||= task.assigned_by
-
-    reassign_remove_banner_action(mail_team_user)
-    render "correspondence_team"
-  end
-
-  def correspondence_team_json_response(mail_team_user, task_ids, tab)
-    if mail_team_user && task_ids.present?
-      set_banner_params(mail_team_user, task_ids&.count, tab)
-    else
-      render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
-    end
+  def correspondence_team_json_response
+    render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
   end
 
   def correspondence_team_html_response(mail_team_user, task_ids, tab)
-    if reassign_remove_task_id_and_action_type_present?
-      task = Task.find(@reassign_remove_task_id)
-      if mail_team_user.nil?
-        mail_team_user = task.assigned_by
-      end
-    end
-
-    if mail_team_user && (task_ids.present? || @reassign_remove_task_id.present?)
+    if mail_team_user && task_ids.present?
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
-      handle_reassign_or_remove_task(mail_team_user)
     end
   end
 

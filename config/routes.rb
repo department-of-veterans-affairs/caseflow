@@ -331,6 +331,7 @@ Rails.application.routes.draw do
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
     post '/correspondence/:id/completed_package', to: 'correspondence_tasks#completed_package'
+    patch '/correspondence/tasks/:task_id/update', to: 'correspondence_tasks#update'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'

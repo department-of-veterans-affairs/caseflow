@@ -1490,7 +1490,6 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "correctly sorts NOD type" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      # binding.pry
       find("[aria-label='Package Document Type']").click
       first_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
       find("[aria-label='Package Document Type']").click

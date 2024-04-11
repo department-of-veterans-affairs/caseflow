@@ -8,10 +8,6 @@ module CorrespondenceControllerConcern
 
   MAX_QUEUED_ITEMS = 60
 
-  def veteran_information
-    @veteran_information ||= veteran_by_correspondence
-  end
-
   def pdf
     # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
     document = Document.limit(200)[params[:pdf_id].to_i]
@@ -30,34 +26,6 @@ module CorrespondenceControllerConcern
     )
   end
 
-  def set_correspondence_props(current_user, params)
-    @mail_team_users = User.mail_team_users.pluck(:css_id)
-    @is_superuser = current_user.mail_superuser?
-    @is_supervisor = current_user.mail_supervisor?
-    @reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
-    @action_type = params[:userAction].strip if params[:userAction].present?
-    @veteran_name = URI.decode(params[:veteranName].strip) if params[:veteranName].present?
-  end
-
-  def reassign_remove_banner_action(mail_team_user)
-    operation_type = params[:operation]
-    begin
-      case operation_type
-      when "reassign"
-        update_reassign_task(mail_team_user)
-      when "remove"
-        update_remove_task(mail_team_user)
-      end
-      set_reassign_remove_banner_params(mail_team_user, operation_type)
-    rescue StandardError
-      handle_error_banner_params
-    end
-  end
-
-  def reassign_remove_task_id_and_action_type_present?
-    @reassign_remove_task_id.present? && @action_type.present?
-  end
-
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     return unless mail_team_user && task_ids.present?
 
@@ -72,83 +40,6 @@ module CorrespondenceControllerConcern
     tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
   end
 
-  def approve_reassign_task(task, current_user, mail_team_user)
-    task.update!(
-      completed_by: current_user,
-      assigned_to_id: current_user,
-      assigned_to: current_user,
-      closed_at: Time.zone.now,
-      status: "completed"
-    )
-    parent_task = ReviewPackageTask.find(task.parent_id)
-    parent_task.update!(
-      status: "completed",
-      closed_at: Time.zone.now,
-      completed_by: current_user
-    )
-    ReviewPackageTask.create!(
-      assigned_to: mail_team_user,
-      assigned_to_id: mail_team_user.id,
-      status: "assigned",
-      appeal_id: task.appeal_id,
-      appeal_type: "Correspondence"
-    )
-  end
-
-  def approve_remove_task(task_id, current_user, mail_team_user)
-    Task.find_by(id: task_id).update!(
-      completed_by_id: current_user,
-      assigned_to_id: mail_team_user,
-      assigned_to: mail_team_user,
-      status: "cancelled"
-    )
-  end
-
-  def reject_remove_task(task_id, current_user, decision_reason)
-    Task.find_by(id: task_id).update!(
-      completed_by_id: current_user,
-      closed_at: Time.zone.now,
-      status: "completed",
-      instructions: decision_reason
-    )
-    ReviewPackageTask.find(Task.find_by(id: task_id).parent_id).update!(status: "in_progress")
-  end
-
-  def reject_reassign_task(task, current_user)
-    decision_reason = params[:decisionReason].strip
-    task.update(
-      completed_by_id: current_user,
-      closed_at: Time.zone.now,
-      status: "completed",
-      instructions: decision_reason
-    )
-    parent_task = ReviewPackageTask.find(task.parent_id)
-    parent_task.update(assigned_to_type: "User", status: "in_progress")
-  end
-
-  def update_reassign_task(mail_team_user)
-    task_id = params[:taskId].strip
-
-    task = Task.find_by(id: task_id)
-    case @action_type
-    when "approve"
-      approve_reassign_task(task, current_user, mail_team_user)
-    when "reject"
-      reject_reassign_task(task, current_user)
-    end
-  end
-
-  def update_remove_task(mail_team_user)
-    task_id = params[:taskId].strip
-    decision_reason = params[:decisionReason].strip
-    case @action_type
-    when "approve"
-      approve_remove_task(task_id, current_user, mail_team_user)
-    when "reject"
-      reject_remove_task(task_id, current_user, decision_reason)
-    end
-  end
-
   def set_banner_params(user, task_count, tab)
     template = message_template(user, task_count, tab)
     response_type(user)
@@ -156,97 +47,24 @@ module CorrespondenceControllerConcern
     @response_message = template[:message]
   end
 
-  def set_reassign_remove_banner_params(user, operation_type)
-    case operation_type
-    when "remove"
-      template = remove_message_template
-      @response_header = template[:header]
-      @response_message = template[:message]
-      @response_type = "success"
-    when "reassign"
-      template = reassign_message_template(user)
-      @response_header = template[:header]
-      @response_message = template[:message]
-      @response_type = "success"
+  def message_template(user, task_count, tab)
+    case tab
+    when "correspondence_unassigned"
+      bulk_assignment_banner_text(user, task_count)
+    when "correspondence_team_assigned"
+      bulk_assignment_banner_text(user, task_count, action_prefix: "re")
     end
   end
 
-  def handle_error_banner_params
-    operation_verb = @action_type == "approve" ? "approved" : "rejected"
-    @response_header = "Package request for #{@veteran_name} could not be #{operation_verb}"
-    @response_message = "Please try again at a later time or contact the Help Desk."
-    @response_type = "error"
-  end
-
-  def handle_correspondence_unassigned_response(user, task_count)
-    success_header_unassigned = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence assignment to #{user.css_id} could not be completed"
+  def bulk_assignment_banner_text(user, task_count, action_prefix: "")
+    success_header_unassigned = "You have successfully #{action_prefix}assigned #{task_count} Correspondence to #{user.css_id}."
+    failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
     {
       header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
       message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
     }
-  end
-
-  def handle_correspondence_assigned_response(user, task_count)
-    success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_assigned = "Correspondence reassignment to #{user.css_id} could not be completed"
-    success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_message = "Queue volume has reached maximum capacity for this user."
-    {
-      header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
-      message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
-    }
-  end
-
-  def message_template(user, task_count, tab)
-    case tab
-    when "correspondence_unassigned"
-      handle_correspondence_unassigned_response(user, task_count)
-    when "correspondence_team_assigned"
-      handle_correspondence_assigned_response(user, task_count)
-    end
-  end
-
-  def reassign_message_template(user)
-    success_header_reassigned = "You have successfully reassigned a mail record for #{user.css_id}"
-    success_message_reassigned = "Please go to your individual queue to see any self assigned correspondence."
-    success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
-    success_message_rejected = "The package will be re-assigned to the user that sent the request."
-    case @action_type
-    when "approve"
-      {
-        header: success_header_reassigned,
-        message: success_message_reassigned
-      }
-    when "reject"
-      {
-        header: success_header_rejected,
-        message: success_message_rejected
-      }
-    end
-  end
-
-  def remove_message_template
-    success_header_approved = "You have successfully removed a mail package for #{@veteran_name}"
-    success_message_approved = "The package has been removed from Caseflow and must be manually uploaded again
-     from the Centralized Mail Portal, if it needs to be processed."
-    success_header_rejected = "You have successfully rejected a package request for #{@veteran_name}"
-    success_message_rejected = "The package will be re-assigned to the user that sent the request."
-
-    case @action_type
-    when "approve"
-      {
-        header: success_header_approved,
-        message: success_message_approved
-      }
-    when "reject"
-      {
-        header: success_header_rejected,
-        message: success_message_rejected
-      }
-    end
   end
 
   def response_type(user)
@@ -304,10 +122,6 @@ module CorrespondenceControllerConcern
     @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
   end
 
-  def correspondence_load
-    Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
-  end
-
   def veteran_by_correspondence
     return nil if correspondence&.veteran_id.blank?
 
@@ -344,14 +158,14 @@ module CorrespondenceControllerConcern
 
   # :reek:FeatureEnvy
   def intake_appeal_update_tasks
-    tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
+    tasks = CorrespondenceTask.where(appeal_id: correspondence.id)
     tasks.map do |task|
-      if task.type == "ReviewPackageTask"
+      if task.type == ReviewPackageTask.name
         task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
         task.assigned_to_id = correspondence.assigned_by_id
         task.assigned_to = User.find(correspondence.assigned_by_id)
       end
-      task.status = "cancelled"
+      task.status = Constants.TASK_STATUSES.cancelled
       task.save
     end
   end

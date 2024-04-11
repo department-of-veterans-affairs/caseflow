@@ -104,8 +104,8 @@ const CorrespondenceTableBuilder = (props) => {
       const taskIds = selectedTasks.map((task) => task);
       let newUrl = window.location.href;
 
-      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&taskIds=${taskIds}` :
-        `?user=${mailTeamUser}&taskIds=${taskIds}`;
+      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&task_ids=${taskIds}` :
+        `?user=${mailTeamUser}&task_ids=${taskIds}`;
       window.location.href = newUrl;
     }
   };
