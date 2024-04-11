@@ -91,8 +91,8 @@ describe('levers actions', () => {
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
-        optionItem: option.item,
-        optionValue: option.value
+        value: option.value,
+        optionValue: option.text
       }
     };
 
