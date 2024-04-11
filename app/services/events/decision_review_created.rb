@@ -45,14 +45,13 @@ class Events::DecisionReviewCreated
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
           Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
-          event.update!(completed_at: Time.now.in_time_zone, error: nil)
 
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: decision_review)
 
           # Note: event, user, and veteran need to be before this call.
-          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet)
+          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
@@ -62,6 +61,8 @@ class Events::DecisionReviewCreated
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe)
+          # Update the Event after all backfills have completed
+          event.update!(completed_at: Time.now.in_time_zone, error: nil)
         end
       end
     rescue Caseflow::Error::RedisLockFailed => error
