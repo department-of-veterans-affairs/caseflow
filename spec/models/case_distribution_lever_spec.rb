@@ -18,13 +18,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
   end
 
-  before do
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :bust_backlog)
-    create(:case_distribution_lever, :ama_hearings_start_distribution_prior_to_goals)
-    create(:case_distribution_lever, :minimum_legacy_proportion)
-  end
+  before { Seeds::CaseDistributionLevers.new.seed! }
 
   describe "validations" do
     it "requires a title" do
