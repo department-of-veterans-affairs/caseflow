@@ -5,7 +5,7 @@
   "license": "none",
   "version": "0.0.1",
   "engines": {
-    "node": "12.X"
+    "node": "12.13.0"
   },
   "scripts": {
     "analyze": "yarn run analyze:build && yarn run analyze:view",
