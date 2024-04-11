@@ -197,7 +197,6 @@ export const updateLeverGroupForRadioLever = (state, action) => {
     const isValueOption = radioValueOptionSelected(value);
     const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
     const leverValue = isValueOption ? optionValue : value;
-
     // Set all options to not selected
 
     lever.options.forEach((option) => option.selected = false);
