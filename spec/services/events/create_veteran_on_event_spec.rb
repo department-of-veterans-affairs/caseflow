@@ -4,6 +4,7 @@ describe Events::CreateVeteranOnEvent do
   let!(:veteran) { create(:veteran) }
   let!(:non_cf_veteran) { double("Veteran", file_number: "12345678X", participant_id: "1826209", bgs_last_synced_at: 1_708_533_584_000, name_suffix: nil, date_of_death: nil) }
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
+  let(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
 
   describe "#veteran_exist?" do
     subject { described_class }
@@ -27,8 +28,6 @@ describe Events::CreateVeteranOnEvent do
     context "when creating a new Veteran" do
       it "should create successfully without calling BGS and also create an EventRecord" do
         headers = get_headers
-        payload = get_payload
-        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
         backfilled_veteran = subject.handle_veteran_creation_on_event(event: event, parser: parser)
 
@@ -53,23 +52,11 @@ describe Events::CreateVeteranOnEvent do
     def get_headers
       {
         "X-VA-Vet-SSN" => "123456789",
-        "X-VA-File-Number" => "123456789",
+        "X-VA-File-Number" => "77799777",
         "X-VA-Vet-First-Name" => "John",
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"
       }
-    end
-
-    def get_payload
-      data = {
-        "veteran": {
-          "participant_id": "1826209",
-          "bgs_last_synced_at": 1_708_533_584_000,
-          "name_suffix": nil,
-          "date_of_death": nil
-        }
-      }
-      JSON.generate(data)
     end
   end
 end
