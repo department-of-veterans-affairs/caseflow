@@ -35,23 +35,10 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update
-    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
-    if veteran && correspondence.update(
-      correspondence_params.merge(
-        veteran_id: veteran.id,
-        updated_by_id: RequestStore.store[:current_user].id
-      )
-    )
-      correspondence.tasks.map do |task|
-        if task.type == "ReviewPackageTask"
-          task.status = "in_progress"
-          task.save
-        end
-      end
-      render json: { status: :ok }
-    else
-      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
+    unless update_veteran_on_correspondence
+      return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
+    update_open_review_package_tasks ? render(json: { status: :ok }) : render(json: { status: 500 })
   end
 
   def update_cmp
@@ -92,6 +79,22 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   private
+
+  def update_veteran_on_correspondence
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
+    )
+  end
+
+  def update_open_review_package_tasks
+    correspondence.tasks.open.where(type: ReviewPackageTask.name).each do |task|
+      task.update(status: Constants.TASK_STATUSES.in_progress)
+    end
+  end
 
   # :reek:FeatureEnvy
   def vbms_document_types
