@@ -91,11 +91,11 @@ describe Events::DecisionReviewCreated do
 end
 
 def read_json_payload
-  JSON.generate(JSON.parse(File.read(Rails.root.join("app",
+  JSON.parse(File.read(Rails.root.join("app",
                                                      "services",
                                                      "events",
                                                      "decision_review_created",
-                                                     "decision_review_created_example.json"))))
+                                                     "decision_review_created_example.json")))
 end
 
 def sample_headers

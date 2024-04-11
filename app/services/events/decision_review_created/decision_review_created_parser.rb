@@ -28,7 +28,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"
       }
-      new(sample_header, example_response)
+      new(sample_header, JSON.parse(example_response))
     end
   end
 
