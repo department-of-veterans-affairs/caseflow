@@ -13,6 +13,7 @@ import Button from '../components/Button';
 import NumberField from '../components/NumberField';
 import cx from 'classnames';
 import TEST_SEEDS from '../../constants/TEST_SEEDS';
+import Alert from 'app/components/Alert';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -46,7 +47,9 @@ class TestSeeds extends React.PureComponent {
         RemandedLegacyAppeals: false,
         PopulateCaseflowFromVacols: false
       },
-      seedCounts: {}
+      seedCounts: {},
+      seedRunningStatus: false,
+      seedRunningMsg: "Seed running"
     };
   }
 
@@ -61,7 +64,8 @@ class TestSeeds extends React.PureComponent {
 
   reseed = (type) => {
     const seedCount = this.state.seedCounts[type] || 1;
-
+    // ToDo
+    this.setState({seedRunning: true, seedRunningMsg: " "})
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
@@ -69,12 +73,14 @@ class TestSeeds extends React.PureComponent {
     const endpoint = `/seeds/run-demo/${type}/${seedCount}`;
 
     ApiUtil.post(endpoint).then(() => {
+      this.setState({seedRunning: false})
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
       }));
     }).
       catch((err) => {
         console.warn(err);
+        this.setState({seedRunning: false})
         this.setState((prevState) => ({
           reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
         }));
@@ -114,6 +120,16 @@ class TestSeeds extends React.PureComponent {
                 <div>
                   <PageRoute exact path="/test/seeds" title="Caseflow Seeds" component={() => (
                     <div>
+                      <>
+                      {this.state.seedRunning && (
+                        <Alert
+                          title={"Seed Running"}
+                          message={this.state.seedRunningMsg}
+                          type={"info"}
+                        />
+                      )}
+                      </>
+
                       <h2 id="run_seeds">Run Seed Files</h2>
                       <ul>
                         {seedTypes.map((type) => (
@@ -136,6 +152,13 @@ class TestSeeds extends React.PureComponent {
                                 loadingText={`Reseeding ${this.formatSeedName(type)}`}
                               />
                             </div>
+                            <>
+                              {this.state.reseedingStatus[type] && (
+                                <div className="test-seed-alert-message">
+                                  <span>{this.formatSeedName(type)} in progress</span>
+                                </div>
+                              )}
+                            </>
                           </li>
                         ))}
                       </ul>

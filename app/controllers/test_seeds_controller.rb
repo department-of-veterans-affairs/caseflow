@@ -20,8 +20,11 @@ class TestSeedsController < ApplicationController
 
     if task_name
       Rake::Task[task_name].reenable
+      index = 0
       seed_count.times do
-        Rake::Task[task_name].invoke
+      index = index + 1
+        puts "Rake run count #{index}"
+        Rake::Task[task_name].execute
       end
       head :ok
     else
