@@ -357,7 +357,7 @@ RSpec.feature("The Correspondence Intake page") do
       FeatureToggle.enable!(:correspondence_queue)
 
       correspondence = create(:correspondence)
-      parent_task = create_correspondence_intake(correspondence, current_user)
+      create_correspondence_intake(correspondence, current_user)
       @correspondence_uuid = correspondence.uuid
     end
 
@@ -415,13 +415,13 @@ RSpec.feature("The Correspondence Intake page") do
       FeatureToggle.enable!(:correspondence_queue)
     end
 
-
     it "successfully loads the in progress tab" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Correspondence in progress")
     end
 
-    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" do
+    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
+       " from the Centralized Mail Portal, if it needs to be processed." do
       visit "/queue/correspondence?tab=correspondence_in_progress"
       expect(page).to have_content("Correspondence in progress that are assigned to you:")
       find("tbody > tr:last-child > td:nth-child(1)").click

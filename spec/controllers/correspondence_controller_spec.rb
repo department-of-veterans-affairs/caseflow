@@ -85,8 +85,13 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
                                           user: current_user.css_id,
                                           decisionReason: "",
                                           operation: "remove" }
-      expect(controller.view_assigns["response_header"]).to eq("You have successfully removed a mail package for Bob Smithwatsica")
-      expect(controller.view_assigns["response_message"]).to eq("The package has been removed from Caseflow and must be manually uploaded again\n     from the Centralized Mail Portal, if it needs to be processed.")
+      expect(controller.view_assigns["response_header"]).to eq(
+        "You have successfully removed a mail package for Bob Smithwatsica"
+      )
+      expect(controller.view_assigns["response_message"]).to eq(
+        "The package has been removed from Caseflow and must be manually uploaded again\n" \
+        "     from the Centralized Mail Portal, if it needs to be processed."
+      )
     end
 
     it "returns a failure response" do
@@ -98,8 +103,12 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
                                           decisionReason: "",
                                           operation: "remove" }
 
-      expect(controller.view_assigns["response_header"]).to eq("Package request for Bob Smithwatsica could not be approved")
-      expect(controller.view_assigns["response_message"]).to eq("Please try again at a later time or contact the Help Desk.")
+      expect(controller.view_assigns["response_header"]).to eq(
+        "Package request for Bob Smithwatsica could not be approved"
+      )
+      expect(controller.view_assigns["response_message"]).to eq(
+        "Please try again at a later time or contact the Help Desk."
+      )
     end
   end
 
