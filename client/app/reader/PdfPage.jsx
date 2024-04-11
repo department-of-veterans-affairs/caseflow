@@ -146,7 +146,7 @@ export class PdfPage extends React.PureComponent {
           return this.drawPage(page);
         }
 
-        console.log(`READER_LOG PdfPage (removeGetText? ${this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawPage() took ${performance.now() - drawPagestart} milliseconds`);
+        console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawPage() took ${performance.now() - drawPagestart} milliseconds`);
       }).
       catch((error) => {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
@@ -227,7 +227,7 @@ export class PdfPage extends React.PureComponent {
         this.markText();
       }
     });
-    console.log(`READER_LOG PdfPage (removeGetText? ${this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawText() took ${performance.now() - drawTextStart} milliseconds`);
+    console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawText() took ${performance.now() - drawTextStart} milliseconds`);
   };
 
   getText = (page) => page.getTextContent();
@@ -254,7 +254,7 @@ export class PdfPage extends React.PureComponent {
       pageResult.then((page) => {
         this.page = page;
 
-        if (this.props.featureToggles.readerPrototypeRemoveGetText) {
+        if (!this.props.featureToggles.readerPrototypeRemoveGetText) {
           const textMetricData = {
             message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
             product: 'reader',
@@ -277,7 +277,7 @@ export class PdfPage extends React.PureComponent {
           const getTextStart = performance.now();
 
           textResult.then((text) => {
-            console.log(`READER_LOG PdfPage (removeGetText? ${this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(text).length} | getText() page.getTextContent took ${performance.now() - getTextStart} milliseconds`);
+            console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(text).length} | getText() page.getTextContent took ${performance.now() - getTextStart} milliseconds`);
 
             recordMetrics(this.drawText(page, text), readerRenderText,
               this.props.featureToggles.metricsReaderRenderText);

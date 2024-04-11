@@ -214,7 +214,13 @@ export class PdfFile extends React.PureComponent {
 
   setPageDimensions = (pages) => {
     const viewports = pages.map((page) => {
-      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+      const pageViewPorts = _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+
+      if (this.props.featureToggles.readerPrototypeCleanMemory) {
+        page.cleanup();
+      }
+
+      return pageViewPorts;
     });
 
     this.props.setPageDimensions(this.props.file, viewports);
@@ -230,7 +236,6 @@ export class PdfFile extends React.PureComponent {
       if (this.props.featureToggles.readerPrototypeCleanMemory) {
         this.pdfDocument.cleanup();
       }
-
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
