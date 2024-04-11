@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_27_154315) do
+ActiveRecord::Schema.define(version: 2024_04_11_185612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -848,12 +848,12 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   end
 
   create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
-    t.bigint "backfill_record_id", null: false
-    t.string "backfill_record_type", null: false
     t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
     t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.bigint "evented_record_id", null: false
+    t.string "evented_record_type", null: false
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
-    t.index ["backfill_record_type", "backfill_record_id"], name: "index_event_record_on_backfill_record"
+    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
   end
 
   create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
