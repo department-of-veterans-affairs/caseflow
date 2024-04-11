@@ -98,21 +98,14 @@ export const AddAppealRelatedTaskView = (props) => {
     let canContinue = true;
 
     // Check if radio button is selected
-    if (existingAppealRadio === '0') {
-      canContinue = true;
-    } else {
+    if (existingAppealRadio !== '0') {
       // Check if at least one checkbox is selected
       if (taskRelatedAppeals.length === 0) {
         canContinue = false;
       } else {
         // Check the conditions for each task and waived task
-        newTasks.forEach((task) => {
-          canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
-        });
-
-        waivedTasks.forEach((task) => {
-          canContinue = canContinue && (task.isWaived ? (task.waiveReason !== '') : true);
-        });
+        canContinue = newTasks.every((task) => task.content !== '' && task.type !== '') &&
+                waivedTasks.every((task) => task.isWaived ? task.waiveReason !== '' : true);
       }
     }
 

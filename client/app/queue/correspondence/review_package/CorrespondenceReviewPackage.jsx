@@ -16,6 +16,7 @@ import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
 import {
   CORRESPONDENCE_READONLY_BANNER_HEADER,
   CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+  CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE }
   from '../../../../COPY';
@@ -108,7 +109,7 @@ export const CorrespondenceReviewPackage = (props) => {
       if (isPageReadOnly(data.correspondence_tasks)) {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
           bannerType: 'info'
         });
         setIsReadOnly(true);
