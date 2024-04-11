@@ -114,8 +114,6 @@ export class PdfPage extends React.PureComponent {
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
   drawPage = (page) => {
-    const drawPagestart = performance.now();
-
     if (this.isDrawing) {
       return Promise.resolve();
     }
@@ -145,8 +143,6 @@ export class PdfPage extends React.PureComponent {
         if (currentScale !== this.props.scale && page) {
           return this.drawPage(page);
         }
-
-        console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawPage() took ${performance.now() - drawPagestart} milliseconds`);
       }).
       catch((error) => {
         console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
@@ -205,8 +201,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
-    const drawTextStart = performance.now();
-
     if (!this.textLayer) {
       return;
     }
@@ -227,7 +221,6 @@ export class PdfPage extends React.PureComponent {
         this.markText();
       }
     });
-    console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | drawText() took ${performance.now() - drawTextStart} milliseconds`);
   };
 
   getText = (page) => page.getTextContent();
@@ -274,11 +267,7 @@ export class PdfPage extends React.PureComponent {
 
           const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
-          const getTextStart = performance.now();
-
           textResult.then((text) => {
-            console.log(`READER_LOG PdfPage (removeGetText? ${!this.props.featureToggles.readerPrototypeRemoveGetText})==== PAGE ${this.props.pageIndex + 1} | size: ${JSON.stringify(text).length} | getText() page.getTextContent took ${performance.now() - getTextStart} milliseconds`);
-
             recordMetrics(this.drawText(page, text), readerRenderText,
               this.props.featureToggles.metricsReaderRenderText);
           });

@@ -3,34 +3,22 @@ import _ from 'lodash';
 import * as Constants from './actionTypes';
 import { recordAsyncMetrics } from '../../util/Metrics';
 
-
 export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
     const getTextForPage = (index) => {
       return pdfDocument.getPage(index + 1).then((page) => {
-        // return page.getTextContent();
-        const startTime = performance.now();
-        // const pageText = page.getTextContent();
-
         const metricData = {
           message: `PdfSearchActions Storing PDF page ${index + 1} text in Redux`,
           product: 'reader',
           type: 'performance',
           data: {
-            file: file //not using the standardized metricsAttributes for now
+            file, // not using the standardized metricsAttributes for now
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
           eventId: null
         };
 
-        const pageText = recordAsyncMetrics(page.getTextContent(), metricData, true);
-
-        pageText.then((result) => {
-          const endTime = performance.now();
-
-          console.log(`READER_LOG PdfSearchActions ==== PAGE ${index + 1} | size: ${JSON.stringify(result).length} | page.getTextContent took ${endTime - startTime} milliseconds`);
-        });
-
-        return pageText;
+        return recordAsyncMetrics(page.getTextContent(), metricData, this.props.featureToggles.metricsRecordDocumentSearch);
       });
     };
     const getTextPromises = _.range(pdfDocument.numPages).map((index) => getTextForPage(index));
