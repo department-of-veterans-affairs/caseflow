@@ -31,7 +31,7 @@ class Fakes::WebexService
     ExternalApi::WebexService::CreateResponse.new(
       HTTPI::Response.new(
         200,
-        {},
+        { virtual_hearing: virtual_hearing },
         build_meeting_response
       )
     )
@@ -47,7 +47,7 @@ class Fakes::WebexService
     ExternalApi::WebexService::DeleteResponse.new(
       HTTPI::Response.new(
         200,
-        {},
+        { virtual_hearing: virtual_hearing },
         build_meeting_response
       )
     )

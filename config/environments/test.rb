@@ -164,4 +164,7 @@ Rails.application.configure do
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"
+
+  # Dynatrace variables
+  ENV["STATSD_ENV"] = "test"
 end

@@ -8,8 +8,8 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   # Downloads file and sends to user's local computer
   def download_transcription_file
-    tmp_location = file.download_from_s3
-    File.open(tmp_location, "r") { |f| send_data f.read, filename: file.file_name }
+    tmp_location = file.fetch_file_from_s3!
+    File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
     file.clean_up_tmp_location
   end
 

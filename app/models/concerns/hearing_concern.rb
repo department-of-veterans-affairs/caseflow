@@ -112,7 +112,7 @@ module HearingConcern
   # Associate hearing with transcription files across multiple dockets and order accordingly
   def transcription_files_by_docket_number
     # Remove hyphen in case of counter at end of file name to allow for alphabetical sort
-    transcription_files.sort_by { |f| f.file_name.split("-").join }.group_by(&:docket_number).values
+    transcription_files.sort_by { |file| file.file_name.split("-").join }.group_by(&:docket_number).values
   end
 
   # Group transcription files by docket number before mapping through nested array and serializing
