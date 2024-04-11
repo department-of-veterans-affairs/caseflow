@@ -2,11 +2,11 @@
 
 class EventRecord < CaseflowRecord
   belongs_to :event
-  belongs_to :backfill_record, polymorphic: true
+  belongs_to :evented_record, polymorphic: true
 
-  validate :valid_backfill_record
+  validate :valid_evented_record
 
-  def valid_backfill_record
+  def valid_evented_record
     unless %w[
       Intake
       ClaimReview
@@ -20,9 +20,9 @@ class EventRecord < CaseflowRecord
       LegacyIssue
       LegacyIssueOptin
       User
-    ].include?(backfill_record_type)
+    ].include?(evented_record_type)
 
-      errors.add(:backfill_record_type, "is not a valid backfill record")
+      errors.add(:evented_record_type, "is not a valid backfill record")
     end
   end
 end

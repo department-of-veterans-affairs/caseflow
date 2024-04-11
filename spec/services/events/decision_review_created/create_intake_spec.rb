@@ -12,7 +12,7 @@ describe Events::DecisionReviewCreated::CreateIntake do
       allow(EventRecord).to receive(:create!).and_return(event_record_double)
       expect(Intake).to receive(:create!).with(veteran_file_number: "DCR02272024", user: user_double)
         .and_return(intake_double)
-      expect(EventRecord).to receive(:create!).with(event: event_double, backfill_record: intake_double)
+      expect(EventRecord).to receive(:create!).with(event: event_double, evented_record: intake_double)
         .and_return(event_record_double)
       described_class.process!(event: event_double, user: user_double, veteran: veteran_double)
     end
