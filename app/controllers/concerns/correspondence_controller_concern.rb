@@ -8,24 +8,6 @@ module CorrespondenceControllerConcern
 
   MAX_QUEUED_ITEMS = 60
 
-  def pdf
-    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[params[:pdf_id].to_i]
-
-    document_disposition = "inline"
-    if params[:download]
-      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
-    end
-
-    # The line below enables document caching for a month.
-    expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: document_disposition
-    )
-  end
-
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     return unless mail_team_user && task_ids.present?
 
@@ -70,22 +52,6 @@ module CorrespondenceControllerConcern
 
   def response_type(user)
     @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
-  end
-
-  # :reek:FeatureEnvy
-  def vbms_document_types
-    begin
-      data = ExternalApi::ClaimEvidenceService.document_types
-    rescue StandardError => error
-      Rails.logger.error(error.full_message)
-      data ||= demo_data
-    end
-    data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
-  end
-
-  def demo_data
-    json_file_path = "vbms doc types.json"
-    JSON.parse(File.read(json_file_path))
   end
 
   def set_flash_intake_success_message
