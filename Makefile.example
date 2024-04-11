@@ -116,7 +116,6 @@ realclean: clean ## TODO
 precompile: ## Precompiles assets for testing
 	bundle exec rake assets:precompile
 
-yeet: clean precompile ## Cleans and precompiles assets for testing
 
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
@@ -288,7 +287,7 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
 
-yeet-test: yeet one-test ## Cleans and precompiles assets for testing, then runs spec test passed in
+clean-test: clean precompile one-test ## Cleans and precompiles assets for testing, then runs spec test passed in
 
 run-all-queues: ## start shoryuken with all queues
 	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
