@@ -125,6 +125,7 @@ describe VirtualHearings::CreateConferenceJob do
           metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
           attrs: { hearing_id: hearing.id }
         )
+      )
 
         subject.perform_now
       end
