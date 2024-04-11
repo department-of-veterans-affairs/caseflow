@@ -22,7 +22,7 @@ class EventRecord < CaseflowRecord
       User
     ].include?(evented_record_type)
 
-      errors.add(:evented_record_type, "is not a valid backfill record")
+      errors.add(:evented_record_type, "is not a valid evented record")
     end
   end
 end
