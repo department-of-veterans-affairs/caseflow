@@ -156,8 +156,7 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
-    return not_found if appeal.is_a?(LegacyAppeal) &&
-                        !FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+    return not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -171,8 +170,8 @@ class AppealsController < ApplicationController
   end
 
   def update
-    if appeal.is_a?(LegacyAppeal) &&
-       FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+    if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
+
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -192,7 +191,8 @@ class AppealsController < ApplicationController
 
   def create_subtasks!
     # if cc appeal, create SendInitialNotificationLetterTask
-    if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+    if appeal.contested_claim? && feature_enabled?(:cc_appeal_workflow)
+
       # check if an existing letter task is open
       existing_letter_task_open = appeal.tasks.any? do |task|
         task.class == SendInitialNotificationLetterTask && task.status == "assigned"
@@ -328,6 +328,19 @@ class AppealsController < ApplicationController
     message << create_mst_pact_message_for_new_and_removed_issues(new_issues, "added") unless new_issues.empty?
     message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
 
+    # add in the Specialty Case Team messages, if any
+    if !appeal.is_legacy? && feature_enabled?(:specialty_case_team_distribution) && appeal.distributed?
+      if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+         (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
+         appeal.specialty_case_team_assign_task?
+        message << move_to_distribution_success_message
+      end
+
+      if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?)
+        message << move_to_specialty_case_team_success_message
+      end
+    end
+
     message.flatten
   end
   # rubocop:enable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
@@ -432,8 +445,6 @@ class AppealsController < ApplicationController
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_legacy_issue_update_task(before_issue, current_issue)
-    user = RequestStore[:current_user]
-
     # close out any tasks that might be open
     open_issue_task = Task.where(
       assigned_to: SpecialIssueEditTeam.singleton
@@ -444,8 +455,8 @@ class AppealsController < ApplicationController
       appeal: appeal,
       parent: appeal.root_task,
       assigned_to: SpecialIssueEditTeam.singleton,
-      assigned_by: user,
-      completed_by: user
+      assigned_by: current_user,
+      completed_by: current_user
     )
     # format the task instructions and close out
     set = CaseTimelineInstructionSet.new(
@@ -473,8 +484,8 @@ class AppealsController < ApplicationController
       appeal_type: "LegacyAppeal",
       task_id: task.id,
       created_at: Time.zone.now.utc,
-      created_by_id: RequestStore[:current_user].id,
-      created_by_css_id: RequestStore[:current_user].css_id,
+      created_by_id: current_user.id,
+      created_by_css_id: current_user.css_id,
       original_mst_status: before_issue.mst_status,
       original_pact_status: before_issue.pact_status,
       updated_mst_status: current_issue[:mst_status],
@@ -484,20 +495,77 @@ class AppealsController < ApplicationController
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
-  # rubocop:disable Layout/LineLength
-  def set_flash_success_message
-    return set_flash_mst_edit_message if mst_pact_changes? &&
-                                         (FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-                                         FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
-
-    set_flash_edit_message
+  def set_flash_move_to_sct_success_message
+    # If original issues were not SCT related, then that means it will be moved to the SCT queue
+    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
+       appeal.distributed? && feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+        message: move_to_specialty_case_team_success_message
+      }
+    end
   end
-  # rubocop:enable Layout/LineLength
+
+  def set_flash_move_to_distribution_success_message
+    # If the before issues had an SCT issue but the after issues don't then the appeal is moving to distribution
+    if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+       (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
+       appeal.distributed? && appeal.specialty_case_team_assign_task? &&
+       feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+        message: move_to_distribution_success_message
+      }
+    end
+  end
+
+  def move_to_distribution_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "regular distribution pool"
+    )
+  end
+
+  def move_to_specialty_case_team_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "SCT queue"
+    )
+  end
+
+  def set_flash_success_message
+    # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
+    return set_flash_mst_edit_message if mst_pact_changes? && (feature_enabled?(:mst_identification) ||
+                                        feature_enabled?(:pact_identification))
+
+    set_flash_specialty_case_team_message
+
+    set_flash_edit_message unless flash[:custom]
+  end
+
+  def set_flash_specialty_case_team_message
+    set_flash_move_to_sct_success_message
+    set_flash_move_to_distribution_success_message
+  end
 
   # create success message with added and removed issues
   def set_flash_mst_edit_message
     flash[:mst_pact_edited] = mst_and_pact_edited_issues
+  end
+
+  def flash_move_to_sct_success
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+        request_issues_update.review.claimant.name,
+        request_issues_update.veteran.file_number
+      )
+    }
   end
 
   def set_flash_edit_message
@@ -528,19 +596,19 @@ class AppealsController < ApplicationController
     # depending on the docket type, create cooresponding task as parent task
     case appeal.docket_type
     when "evidence_submission"
-      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+      parent_task = appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
     when "hearing"
-      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+      parent_task = appeal.tasks.find_by(type: "ScheduleHearingTask")
     when "direct_review"
-      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+      parent_task = appeal.tasks.find_by(type: "DistributionTask")
     end
     unless parent_task.nil?
-      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+      @send_initial_notification_letter ||= appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                             SendInitialNotificationLetterTask.create!(
-                                              appeal: @appeal,
+                                              appeal: appeal,
                                               parent: parent_task,
                                               assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                              assigned_by: RequestStore[:current_user]
+                                              assigned_by: current_user
                                             )
     end
   end

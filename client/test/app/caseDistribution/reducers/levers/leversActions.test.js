@@ -23,6 +23,20 @@ describe('levers actions', () => {
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
+  it('should create an action to set exclude from affinity', () => {
+    const acdExcludeFromAffinity = true;
+    const expectedAction = {
+      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
+      payload: { acdExcludeFromAffinity }
+    };
+
+    const dispatch = jest.fn();
+
+    actions.loadAcdExcludeFromAffinity(acdExcludeFromAffinity)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
   it('should create an action to load levers', () => {
     const expectedAction = {
       type: ACTIONS.LOAD_LEVERS,
@@ -84,7 +98,7 @@ describe('levers actions', () => {
 
     const dispatch = jest.fn();
 
-    actions.updateRadioLever(lever.lever_group, lever.item, option.item, option.value)(dispatch);
+    actions.updateRadioLever(lever.lever_group, lever.item, option.value, option.text)(dispatch);
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
