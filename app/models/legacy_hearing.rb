@@ -360,8 +360,8 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
-  def daily_docket_conference_links
-    hearing_day.conference_links
+  def daily_docket_conference_link
+    hearing_day.conference_link
   end
 
   class << self

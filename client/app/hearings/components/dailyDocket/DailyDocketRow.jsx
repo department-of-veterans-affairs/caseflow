@@ -274,9 +274,9 @@ class DailyDocketRow extends React.Component {
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
   conferenceLinkOnClick = () => {
-    const { conferenceLinks, hearing } = this.props;
+    const { conferenceLink, hearing } = this.props;
 
-    const link = hearing.conferenceProvider === 'webex' ? hearing.nonVirtualConferenceLink : conferenceLinks[0];
+    const link = hearing.conferenceProvider === 'webex' ? hearing.nonVirtualConferenceLink : conferenceLink;
 
     window.open(link.hostLink, 'Recording Session').focus();
   }
@@ -523,13 +523,13 @@ DailyDocketRow.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  conferenceLinks: PropTypes.object,
+  conferenceLink: PropTypes.object,
   conferenceLinkError: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => ({
   hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
-  conferenceLinks: state.dailyDocket.hearingDay.conferenceLinks,
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink,
   conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 

@@ -9,7 +9,6 @@ import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
 const VirtualHearingLink = ({
-  isVirtual,
   newWindow,
   link,
   label,
@@ -17,8 +16,7 @@ const VirtualHearingLink = ({
 }) => {
   return (
     <Link
-      // TODO: Update null for non virtual hearing link
-      href={isVirtual ? link : null}
+      href={link}
       target={newWindow ? '_blank' : '_self'}
     >
       <strong>{label}</strong>
@@ -49,7 +47,7 @@ VirtualHearingLink.propTypes = {
   }).isRequired,
   label: PropTypes.string,
   hearing: PropTypes.shape({
-    dailyDocketConferenceLinks: PropTypes.shape({
+    dailyDocketConferenceLink: PropTypes.shape({
       coHostLink: PropTypes.string
     })
   })

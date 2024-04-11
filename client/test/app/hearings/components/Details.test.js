@@ -27,7 +27,6 @@ import TranscriptionRequestInputs from 'app/hearings/components/details/Transcri
 import TranscriptionFilesTable from 'app/hearings/components/details/TranscriptionFilesTable';
 import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
-import { node } from 'prop-types';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -77,7 +76,9 @@ describe('Details', () => {
     expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
       null
     );
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
+    // VirtualHearingFields will always show for any virtual or non virtual hearing
+    // as we move forward with Webex integration
+    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
@@ -290,7 +291,9 @@ describe('Details', () => {
         expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
           null
         );
-        expect(details.find(VirtualHearingFields).children()).toHaveLength(0);
+        // VirtualHearingFields will always show for any virtual or non virtual hearing
+        // as we move forward with Webex integration
+        expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
 
         // Ensure the transcription form is not displayed for legacy hearings
         expect(details.find(TranscriptionFormSection)).toHaveLength(0);

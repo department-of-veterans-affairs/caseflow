@@ -142,5 +142,11 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_webex_non_virtual_conference_link do
+      after(:create) do |hearing, _evaluator|
+        create(:webex_conference_link, hearing_id: hearing.id, hearing_type: "Hearing")
+      end
+    end
   end
 end

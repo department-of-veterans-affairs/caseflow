@@ -313,17 +313,17 @@ describe Hearing, :postgres do
     include_examples "Conference provider values are transferred between base entity and new hearings"
   end
 
-  context "#daily_docket_conference_links" do
+  context "#daily_docket_conference_link" do
     let(:hearing_day) { create(:hearing_day) }
     let(:hearing) { create(:hearing, hearing_day: hearing_day) }
-    let(:conference_links) { "https://example.com" }
+    let(:conference_link) { "https://example.com" }
 
     before do
-      allow(hearing_day).to receive(:conference_links).and_return(conference_links)
+      allow(hearing_day).to receive(:conference_link).and_return(conference_link)
     end
 
     it "returns the conference links of the hearing day" do
-      expect(hearing.daily_docket_conference_links).to eq(conference_links)
+      expect(hearing.daily_docket_conference_link).to eq(conference_link)
     end
   end
 
