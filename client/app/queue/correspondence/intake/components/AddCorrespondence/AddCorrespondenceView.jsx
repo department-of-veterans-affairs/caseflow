@@ -64,18 +64,16 @@ class AddCorrespondenceView extends React.Component {
 
   onChangeCheckbox = (correspondence, isChecked) => {
     this.props.saveCheckboxState(correspondence, isChecked);
-    let selectedCheckboxes = this.props.checkboxes;
+    let selectedCheckboxes = [...this.props.checkboxes];
 
     if (isChecked) {
-      selectedCheckboxes.push(correspondence.id);
+      selectedCheckboxes.push(correspondence);
     } else {
-      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== correspondence.id);
+      selectedCheckboxes = selectedCheckboxes.filter((checkbox) => checkbox.id !== correspondence.id);
     }
-
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
-
   }
 
   getKeyForRow = (index, { id }) => {
@@ -88,13 +86,15 @@ class AddCorrespondenceView extends React.Component {
       {
         cellClass: 'checkbox-column',
         valueFunction: () => (
-          <Checkbox
-            name={correspondence.id.toString()}
-            id={correspondence.id.toString()}
-            hideLabel
-            defaultValue={this.props.checkboxes.some((el) => el.id === correspondence.id)}
-            onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
-          />
+          <div className="checkbox-column-inline-style">
+            <Checkbox
+              name={correspondence.id.toString()}
+              id={correspondence.id.toString()}
+              hideLabel
+              defaultValue={this.props.checkboxes.some((el) => el.id === correspondence.id)}
+              onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
+            />
+          </div>
         ),
       },
       {
