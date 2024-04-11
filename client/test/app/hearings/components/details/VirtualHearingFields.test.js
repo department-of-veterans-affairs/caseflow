@@ -31,7 +31,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.children()).toHaveLength(0);
+    expect(virtualHearingForm.children()).toHaveLength(1);
     expect(virtualHearingForm).toMatchSnapshot();
   });
 
@@ -41,6 +41,7 @@ describe('VirtualHearingFields', () => {
       <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
+        virtualHearing={amaHearing.virtualHearing}
       />,
 
       {

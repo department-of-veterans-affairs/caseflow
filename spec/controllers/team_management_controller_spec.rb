@@ -43,6 +43,7 @@ describe TeamManagementController, :postgres, type: :controller do
           expect(response_body["judge_teams"].first["user_admin_path"].present?).to be true
           expect(response_body["judge_teams"].first["accepts_priority_pushed_cases"]).to be true
           expect(response_body["judge_teams"].first["current_user_can_toggle_priority_pushed_cases"]).to be false
+          expect(response_body["judge_teams"].first["exclude_appeals_from_affinity"]).to be false
           expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["private_bars"].first["accepts_priority_pushed_cases"]).to be nil
           expect(response_body["other_orgs"].length).to eq(other_org_count)
@@ -67,6 +68,7 @@ describe TeamManagementController, :postgres, type: :controller do
           expect(response_body["judge_teams"].first["user_admin_path"].present?).to be false
           expect(response_body["judge_teams"].first["accepts_priority_pushed_cases"]).to be true
           expect(response_body["judge_teams"].first["current_user_can_toggle_priority_pushed_cases"]).to be true
+          expect(response_body["judge_teams"].first["exclude_appeals_from_affinity"]).to be false
           expect(response_body["vsos"]).to eq nil
           expect(response_body["private_bars"]).to eq nil
           expect(response_body["other_orgs"]).to eq nil
@@ -116,6 +118,20 @@ describe TeamManagementController, :postgres, type: :controller do
           expect(response.status).to eq(200)
           response_body = JSON.parse(response.body)
           expect(response_body["org"]["accepts_priority_pushed_cases"]).to be true
+        end
+      end
+      context "when toggling exclude appeals from affinity" do
+        let(:params) { { id: params_id, organization: { exclude_appeals_from_affinity: true } } }
+
+        it "updates the existing organization record and returns the expected structure" do
+          expect(org.exclude_appeals_from_affinity).to be false
+          patch(:update, params: params, format: :json)
+
+          expect(org.reload.exclude_appeals_from_affinity).to be true
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["org"]["exclude_appeals_from_affinity"]).to be true
         end
       end
     end

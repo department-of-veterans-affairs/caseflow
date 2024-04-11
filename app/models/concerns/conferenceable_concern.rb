@@ -48,10 +48,4 @@ module ConferenceableConcern
       reload_meeting_type
     end
   end
-
-  # Returns the new 1:1 conference link object for legacy and ama hearings
-  # that are non virtual and have a webex meeting type
-  def non_virtual_conference_link
-    ConferenceLink.find_by(hearing: self)
-  end
 end

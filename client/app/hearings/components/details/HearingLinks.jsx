@@ -19,16 +19,13 @@ export const VirtualHearingLinkDetails = ({
   role,
   link,
   hearing,
-  wasVirtual,
   isVirtual,
   user,
   label,
   virtualHearing
 }) => (
   <React.Fragment>
-    {hearing?.scheduledForIsPast || wasVirtual ? (
-      <span>N/A</span>
-    ) : (
+    {link ? (
       <VirtualHearingLink
         label={label}
         user={user}
@@ -37,16 +34,18 @@ export const VirtualHearingLinkDetails = ({
         link={link}
         hearing={hearing}
       />
+    ) : (
+      <span>N/A</span>
     )}
     {hearing.conferenceProvider === 'pexip' ? (
       <>
         <div {...labelPaddingFirst}>
           <strong>Conference Room: </strong>
-          {`${aliasWithHost}`}
+          {aliasWithHost || 'N/A'}
         </div>
         <div {...labelPadding}>
           <strong>PIN: </strong>
-          {pin}
+          {pin || 'N/A'}
         </div>
       </>
     ) : (
@@ -54,13 +53,11 @@ export const VirtualHearingLinkDetails = ({
         {link}
       </div>
     )}
-    {!hearing?.scheduledForIsPast && !wasVirtual && (
-      <CopyTextButton
-        ariaLabel={`Copy ${role} Link`}
-        text={`Copy ${role} Link`}
-        textToCopy={link}
-      />
-    )}
+    <CopyTextButton
+      ariaLabel={`Copy ${role} Link`}
+      text={`Copy ${role} Link`}
+      textToCopy={link}
+    />
   </React.Fragment>
 );
 
@@ -81,24 +78,33 @@ VirtualHearingLinkDetails.propTypes = {
 };
 
 export const LinkContainer = (
-  { link, linkText, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }
-) => (
-  <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
-    <strong>{label}: </strong>
-    <VirtualHearingLinkDetails
-      label={linkText}
-      user={user}
-      virtualHearing={virtualHearing}
-      isVirtual={isVirtual}
-      wasVirtual={wasVirtual}
-      hearing={hearing}
-      link={link}
-      role={role}
-      aliasWithHost={virtualHearing?.aliasWithHost}
-      pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
-    />
-  </div>
-);
+  { link, linkText, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label, links }
+) => {
+  // The pin used depends on the role and link used depends on virtual or not
+  const getPin = () => {
+    const isPexipHearingCoordinator = (hearing.conferenceProvider === 'pexip' && role === 'HC');
+
+    return (role === 'VLJ' || isPexipHearingCoordinator) ? links?.hostPin : links?.guestPin;
+  };
+
+  return (
+    <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
+      <strong>{label}: </strong>
+      <VirtualHearingLinkDetails
+        label={linkText}
+        user={user}
+        virtualHearing={virtualHearing}
+        isVirtual={isVirtual}
+        wasVirtual={wasVirtual}
+        hearing={hearing}
+        link={link}
+        role={role}
+        aliasWithHost={isVirtual ? links?.aliasWithHost : links?.alias}
+        pin={links && getPin()}
+      />
+    </div>
+  );
+};
 
 LinkContainer.propTypes = {
   hearing: PropTypes.object,
@@ -109,34 +115,32 @@ LinkContainer.propTypes = {
   role: PropTypes.string,
   user: PropTypes.object,
   virtualHearing: PropTypes.object,
-  wasVirtual: PropTypes.bool
+  wasVirtual: PropTypes.bool,
+  links: PropTypes.object
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
+  const {
+    scheduledForIsPast,
+    conferenceProvider,
+    dailyDocketConferenceLink,
+    nonVirtualConferenceLink
+  } = hearing;
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
-  if ((hearing.conferenceProvider === 'pexip') && !isVirtual && !wasVirtual) {
-    return null;
-  } else if ((hearing.conferenceProvider === 'webex') && !isVirtual && !wasVirtual) {
-    return (
-      <div {...rowThirds} {...hearingLinksContainer}>
-        {showHostLink && (
-          <LinkContainer
-            hearing={hearing}
-            isVirtual={isVirtual}
-            label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-            // TODO: update here for non virtual hearing links
-            link={null}
-            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-            role="HC"
-            user={user}
-            virtualHearing={virtualHearing}
-            wasVirtual={wasVirtual}
-          />
-        )}
-      </div>
-    );
-  }
+  const getLinks = () => {
+    if (scheduledForIsPast) {
+      return null;
+    } else if (isVirtual) {
+      return virtualHearing;
+    } else if (conferenceProvider === 'pexip') {
+      return dailyDocketConferenceLink;
+    } else if (conferenceProvider === 'webex') {
+      return nonVirtualConferenceLink;
+    }
+  };
+
+  const links = getLinks();
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
@@ -146,38 +150,39 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
-            link={virtualHearing?.hostLink}
+            link={links?.hostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role="VLJ"
             user={user}
             virtualHearing={virtualHearing}
             wasVirtual={wasVirtual}
+            links={links}
           />
-          {(hearing.conferenceProvider === 'webex') && (
-            <LinkContainer
-              hearing={hearing}
-              isVirtual={isVirtual}
-              label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-              link={virtualHearing?.coHostHearingLink}
-              linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-              role="HC"
-              user={user}
-              virtualHearing={virtualHearing}
-              wasVirtual={wasVirtual}
-            />
-          )}
+          <LinkContainer
+            hearing={hearing}
+            isVirtual={isVirtual}
+            label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
+            link={conferenceProvider === 'webex' ? links?.coHostLink : links?.hostLink}
+            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+            role="HC"
+            user={user}
+            virtualHearing={virtualHearing}
+            wasVirtual={wasVirtual}
+            links={links}
+          />
         </>
       )}
       <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
         label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-        link={virtualHearing?.guestLink}
+        link={links?.guestLink}
         linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
         role="Guest"
         user={user}
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
+        links={links}
       />
     </div>
   );

@@ -10,15 +10,11 @@ import StringUtil from '../../../util/StringUtil';
 export const VirtualHearingFields = (
   { hearing, virtualHearing }
 ) => {
-  if ((hearing?.conferenceProvider !== 'webex') && !hearing?.isVirtual && !hearing?.wasVirtual) {
-    return null;
-  }
-
   const user = useContext(HearingsUserContext);
 
   return (
     <ContentSection
-      header={`${hearing?.isVirtual ? 'Virtual ' : ''}Hearing Links`}
+      header="Hearing Links"
     >
       <div {...css({ marginTop: '1.5rem' })}>
         <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider)} Hearing</strong>

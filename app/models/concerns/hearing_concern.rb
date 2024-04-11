@@ -103,6 +103,12 @@ module HearingConcern
     end_date
   end
 
+  # Returns the new 1:1 conference link object for legacy and ama hearings
+  # that are non virtual and have a webex meeting type
+  def non_virtual_conference_link
+    ConferenceLink.find_by(hearing: self)
+  end
+
   # Associate hearing with transcription files across multiple dockets and order accordingly
   def transcription_files_by_docket_number
     # Remove hyphen in case of counter at end of file name to allow for alphabetical sort

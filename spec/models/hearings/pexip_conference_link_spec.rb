@@ -128,18 +128,17 @@ describe PexipConferenceLink do
 
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
-    let(:conference_links) { hearing_day.conference_links }
-    let(:pexip_link) { conference_links.detect { |link| link.type == PexipConferenceLink.name } }
+    let(:conference_link) { hearing_day.conference_link }
 
     context "guest_pin_long property already has a pin as a value" do
       it "Returns the guest_pin for the conference_link" do
-        expect(pexip_link.guest_pin_long).to eq(pexip_link.guest_pin)
+        expect(conference_link.guest_pin_long).to eq(conference_link.guest_pin)
       end
     end
     context "guest_pin_long property has a value of nil." do
       it "checks if property is nil. If so, a new pin is created. " do
-        pexip_link.update!(guest_pin_long: nil)
-        expect(pexip_link.guest_pin).not_to eq(nil)
+        conference_link.update!(guest_pin_long: nil)
+        expect(conference_link.guest_pin).not_to eq(nil)
       end
     end
   end
