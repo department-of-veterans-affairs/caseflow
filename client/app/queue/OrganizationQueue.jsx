@@ -23,12 +23,12 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    const { success } = this.props;
+    const { success, featureToggles } = this.props;
 
     return <React.Fragment>
       {success && <Alert styling={alertPaddingStyles} type="success" title={success.title} message={success.detail} />}
       <AppSegment filledBackground styling={containerStyles}>
-        <QueueTableBuilder />
+        <QueueTableBuilder featureToggles={featureToggles} />
       </AppSegment>
     </React.Fragment>;
   };
@@ -36,7 +36,8 @@ class OrganizationQueue extends React.PureComponent {
 
 OrganizationQueue.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
-  success: PropTypes.object
+  success: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({ success: state.ui.messages.success });
