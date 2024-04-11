@@ -5,7 +5,7 @@
   "license": "none",
   "version": "0.0.1",
   "engines": {
-    "node": "12.13.0"
+    "node": "14.X"
   },
   "scripts": {
     "analyze": "yarn run analyze:build && yarn run analyze:view",
@@ -98,7 +98,7 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.0",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "2.6.347",
     "pluralize": "^7.0.0",
