@@ -18,9 +18,6 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       }
     end
   end
-  let(:veteran) { create(:veteran) }
-  let(:valid_params) { { notes: "Updated notes", correspondence_type_id: correspondence_type.id } }
-  let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
 
