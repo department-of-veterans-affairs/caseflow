@@ -27,7 +27,6 @@ import {
   setOrganizations,
 } from './uiReducer/uiActions';
 
-import Alert from '../components/Alert';
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
@@ -717,10 +716,6 @@ class QueueApp extends React.PureComponent {
       appName="Queue"
     >
       <AppFrame wideApp>
-        {this.props.env === 'development' && (<Alert type="success">This is the {this.props.env} environment!</Alert>)}
-        {this.props.env === 'uat' && (<Alert type="info">This is the {this.props.env} environment!</Alert>)}
-        {this.props.env === 'preprod' && (<Alert type="warning">This is the {this.props.env} environment!</Alert>)}
-        {this.props.env === 'prodtest' && (<Alert type="error">This is the {this.props.env} environment!</Alert>)}
 
         <ScrollToTop />
         <div className="cf-wide-app">
@@ -1447,7 +1442,6 @@ class QueueApp extends React.PureComponent {
 }
 
 QueueApp.propTypes = {
-  env: PropTypes.object,
   userDisplayName: PropTypes.string.isRequired,
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
