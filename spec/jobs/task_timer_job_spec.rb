@@ -23,8 +23,22 @@ describe TaskTimerJob, :postgres do
     end
   end
 
+  let(:cob_team) { ClerkOfTheBoard.singleton }
   let(:timer_for_task) do
     task = TimedTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+    task_timer = TaskTimer.find_by(task: task)
+    task_timer.update(last_submitted_at: 1.day.ago)
+    task_timer.reload
+  end
+
+  let(:timer_for_task_with_child_letter_task) do
+    task = TimedTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+    SendInitialNotificationLetterTask.create!(
+      appeal: task.appeal,
+      parent: task,
+      assigned_to: cob_team,
+      assigned_by: RequestStore[:current_user] || User.system_user
+    )
     task_timer = TaskTimer.find_by(task: task)
     task_timer.update(last_submitted_at: 1.day.ago)
     task_timer.reload
@@ -59,6 +73,35 @@ describe TaskTimerJob, :postgres do
     expect(timer_for_task.canceled_at).to eq canceled_at
     expect(timer_for_task.attempted_at).to be_nil
     expect(timer_for_task.error).to eq("some error")
+  end
+
+  it "does not process timers that have open letter tasks as children" do
+    timer_for_task_with_child_letter_task.task.children
+      .find_by(type: SendInitialNotificationLetterTask.name)
+      .update_columns(status: Task.open_statuses.sample)
+
+    last_submitted_at = timer_for_task_with_child_letter_task.last_submitted_at
+
+    TaskTimerJob.perform_now
+
+    expect(timer_for_task_with_child_letter_task.error).to be_nil
+    expect(timer_for_task_with_child_letter_task.canceled_at).to be_nil
+    expect(timer_for_task_with_child_letter_task.reload.processed_at).to be_nil
+    expect(timer_for_task_with_child_letter_task.attempted_at).to be_nil
+    expect(timer_for_task_with_child_letter_task.last_submitted_at).not_to eq(last_submitted_at)
+  end
+
+  it "does process timers that have closed letter tasks as children" do
+    timer_for_task_with_child_letter_task.task.children
+      .find_by(type: SendInitialNotificationLetterTask.name)
+      .update_columns(status: Task.closed_statuses.sample)
+
+    TaskTimerJob.perform_now
+
+    expect(timer_for_task_with_child_letter_task.error).to be_nil
+    expect(timer_for_task_with_child_letter_task.canceled_at).to be_nil
+    expect(timer_for_task_with_child_letter_task.reload.processed_at).not_to be_nil
+    expect(timer_for_task_with_child_letter_task.attempted_at).not_to be_nil
   end
 
   it "handles errors arising from task objects and continues processing successful timers" do
@@ -98,7 +141,7 @@ describe TaskTimerJob, :postgres do
   end
 
   it "records the job's runtime with Datadog" do
-    expect(DataDogService).to receive(:emit_gauge).with(
+    expect(MetricsService).to receive(:emit_gauge).with(
       app_name: "caseflow_job",
       metric_group: TaskTimerJob.name.underscore,
       metric_name: "runtime",
