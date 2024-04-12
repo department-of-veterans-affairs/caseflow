@@ -62,8 +62,8 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
   end
 
   def webex_recording_list_issues
-    from = 2.hours.ago.in_time_zone("America/New_York")
-    to = 1.hour.ago.in_time_zone("America/New_York")
+    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour
+    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour
 
     details = {
       action: "retrieve",

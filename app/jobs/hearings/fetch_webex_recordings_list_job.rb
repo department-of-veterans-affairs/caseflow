@@ -9,8 +9,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   application_attr :hearing_schedule
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    from = 2.hours.ago.in_time_zone("America/New_York")
-    to = 1.hour.ago.in_time_zone("America/New_York")
+    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour
+    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour
     max = 100
     query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     details = {
@@ -45,8 +45,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   private
 
   def fetch_recordings_list
-    from = CGI.escape(2.hours.ago.in_time_zone("America/New_York").iso8601)
-    to = CGI.escape(1.hour.ago.in_time_zone("America/New_York").iso8601)
+    from = CGI.escape(2.hours.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601)
+    to = CGI.escape(1.hour.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601)
     max = 100
     query = { "from": from, "to": to, "max": max }
 
