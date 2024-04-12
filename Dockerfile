@@ -42,7 +42,7 @@ RUN apt -y update && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update && \
-    apt-get install nodejs={NODE} && \
+    apt-get install nodejs=${NODE} && \
     apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
