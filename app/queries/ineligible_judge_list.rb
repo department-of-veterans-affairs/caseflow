@@ -4,8 +4,8 @@ class IneligibleJudgeList
   # define CSV headers and use this to pull fields to maintain order
   HEADERS = {
     judge_user_id: "Judge User ID",
-    # judge_name: "Judge Name",
-    # reason_for_ineligibility: "Reason for Ineligibility"
+    judge_name: "Judge Name",
+    reason_for_ineligibility: "Reason for Ineligibility"
   }.freeze
 
   def self.generate_rows(record)
@@ -28,23 +28,20 @@ class IneligibleJudgeList
   end
 
   def self.ineligible_judges
-    binding.pry
-    puts("foo:", IneligibleJudgeList.fetch_ineligible_judge_ids)
     {
       judge_user_id: IneligibleJudgeList.fetch_ineligible_judge_ids,
-      judge_name: "Judge Name TEMPLATE",
+      judge_name: IneligibleJudgeList.fetch_ineligible_judge_names,
       reason_for_ineligibility: "Reason for Ineligibility TEMPLATE"
     }
   end
 
   def self.fetch_ineligible_judge_ids
-    # Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || [];
-    Rails.cache.fetch("case_distribution_ineligible_judges")
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || []
   end
 
-  # def self.fetch_ineligible_judge_names
-  #   Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || [];
-  # end
+  def self.fetch_ineligible_judge_names
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:css_id)&.reject(&:blank?) || []
+  end
 
   # Reason for Ineligibility - bfcurloc = 96
   # def self.fetch_reason_for_ineligibility
