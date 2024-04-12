@@ -16,6 +16,7 @@ import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 import TextareaField from '../../components/TextareaField';
 import AutoAssignAlertBanner from '../correspondence/component/AutoAssignAlertBanner';
+import { css } from 'glamor';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -91,10 +92,22 @@ const CorrespondenceCases = (props) => {
     return false;
   };
 
+  const styles = {
+    optSelect: css({
+      '.reassign': {
+      },
+      '& .css-yk16xz-control, .css-1pahdxg-control': {
+        borderRadius: '0px',
+        fontSize: '17px'
+      }
+    })
+  };
+
   const approveElement = (
     <div style={{ width: '250%' }}>
       <ReactSelectDropdown
-        className="cf-margin-left-2rem img"
+        // className="cf-margin-left-2rem img"
+        className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
         options={buildMailUserData(props.mailTeamUsers)}

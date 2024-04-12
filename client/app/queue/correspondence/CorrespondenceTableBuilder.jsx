@@ -40,7 +40,7 @@ const rootStyles = css({
   },
   '& .cf-tab-window-body-full-screen': {
     padding: '19px 30px 30px 30px',
-    '& #tasks-tabwindow-tabpanel-3': {
+    '& #tasks-tabwindow-tabpanel-0, #tasks-tabwindow-tabpanel-3': {
       '& p.cf-margin-bottom-0rem': {
         marginTop: 0
       }
@@ -225,7 +225,7 @@ const CorrespondenceTableBuilder = (props) => {
     const getBulkAssignArea = () => {
       return (<>
         <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-        <div style={{ display: 'flex', flexDirection: 'row', paddingBottom: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', paddingBottom: '15px' }}>
           <SearchableDropdown
             className="cf-dropdown"
             name="Assign to mail team user"
@@ -255,7 +255,7 @@ const CorrespondenceTableBuilder = (props) => {
             />
           }
         </div>
-        <hr></hr>
+        <hr style={{ marginBottom: '17px' }}></hr>
       </>);
 
     };
