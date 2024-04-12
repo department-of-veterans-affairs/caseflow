@@ -71,9 +71,10 @@ class Events::DecisionReviewCreated
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
     rescue StandardError => error
-      Rails.logger.error(error.message)
+      Rails.logger.error("#{error.message} : #{error.class}")
       event = Event.find_by(reference_id: consumer_event_id)
-      event&.update!(error: error.message, info: { "failed_claim_id" => reference_id })
+      event&.update!(error: "#{error.message} : #{error.class}", info: { "failed_claim_id" => reference_id })
+      byebug
       raise error
     end
 
