@@ -49,23 +49,33 @@ class TestSeeds extends React.PureComponent {
       },
       seedCounts: {},
       seedRunningStatus: false,
-      seedRunningMsg: "Seed running"
+      seedRunningMsg: 'Seed running'
     };
   }
 
-  handleInputChange = (type, value) => {
-    this.setState((prevState) => ({
-      seedCounts: {
-        ...prevState.seedCounts,
-        [type]: value
-      }
-    }));
+  handleInputChange = (type, newValue) => {
+    if (newValue === '') {
+      this.setState((prevState) => ({
+        seedCounts: {
+          ...prevState.seedCounts,
+          [type]: 1
+        }
+      }));
+    } else {
+      this.setState((prevState) => ({
+        seedCounts: {
+          ...prevState.seedCounts,
+          [type]: newValue
+        }
+      }));
+    }
   };
 
   reseed = (type) => {
     const seedCount = this.state.seedCounts[type] || 1;
     // ToDo
-    this.setState({seedRunning: true, seedRunningMsg: " "})
+
+    this.setState({ seedRunning: true, seedRunningMsg: '' });
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
@@ -73,14 +83,14 @@ class TestSeeds extends React.PureComponent {
     const endpoint = `/seeds/run-demo/${type}/${seedCount}`;
 
     ApiUtil.post(endpoint).then(() => {
-      this.setState({seedRunning: false})
+      this.setState({ seedRunning: false });
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
       }));
     }).
       catch((err) => {
         console.warn(err);
-        this.setState({seedRunning: false})
+        this.setState({ seedRunning: false });
         this.setState((prevState) => ({
           reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
         }));
@@ -121,27 +131,33 @@ class TestSeeds extends React.PureComponent {
                   <PageRoute exact path="/test/seeds" title="Caseflow Seeds" component={() => (
                     <div>
                       <>
-                      {this.state.seedRunning && (
-                        <Alert
-                          title={"Seed Running"}
-                          message={this.state.seedRunningMsg}
-                          type={"info"}
-                        />
-                      )}
+                        {this.state.seedRunning && (
+                          <Alert
+                            title="Seed Running"
+                            message={this.state.seedRunningMsg}
+                            type="info"
+                          />
+                        )}
                       </>
 
                       <h2 id="run_seeds">Run Seed Files</h2>
-                      <ul>
+                      <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
                         {seedTypes.map((type) => (
                           <li key={type}>
                             <div className={cx('lever-right', 'test-seeds-num-field')}>
-                              <input
+                              {/* <input
                                 type="number"
                                 value={this.state.seedCounts[type] || 1}
                                 min="1"
                                 id={`count-${type}`}
                                 onChange={(event) => this.
                                   handleInputChange(type, parseInt(event.target.value, 10) || 1)}
+                              /> */}
+                              <NumberField
+                                name=""
+                                isInteger
+                                value={this.state.seedCounts[type] || '1'}
+                                onChange={(newValue) => this.handleInputChange(type, newValue)}
                               />
                             </div>
                             <div className="cf-btn-link test-seed-button-style">
