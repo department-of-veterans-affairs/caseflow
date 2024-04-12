@@ -7,7 +7,7 @@ class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
-  application_attr :hearing_schedule
+  application_attr :va_notify
 
   class SendNotificationJobError < StandardError; end
 
@@ -71,17 +71,17 @@ class SendNotificationJob < CaseflowJob
   #
   # Returns: Appeal object
   def find_appeal_by_external_id
-    appeal = Appeal.find_by_uuid(@message.appeal_id) || LegacyAppeal.find_by_vacols_id(@message.appeal_id)
+    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(@message.appeal_id)
 
     return appeal unless appeal.nil?
 
-    fail SendNotificationJobError, "Associated appeal cannot be found"
+    fail SendNotificationJobError, "Associated appeal cannot be found for external ID #{@message.appeal_id}"
   end
 
   # Purpose: Determine if either a quarterly sms notification or non-quarterly sms notification
   #
   # Returns: Boolean
-  def sms_enabled
+  def sms_enabled?
     @sms_enabled ||= va_notify_sms_enabled? || va_notify_quarterly_sms_enabled?
   end
 
@@ -100,7 +100,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Determine if email notifications enabled
   #
   # Returns: Boolean
-  def email_enabled
+  def email_enabled?
     @email_enabled ||= FeatureToggle.enabled?(:va_notify_email)
   end
 
@@ -164,8 +164,8 @@ class SendNotificationJob < CaseflowJob
   def update_notification_statuses
     status = format_message_status
     params = {}
-    params[:email_notification_status] = status if email_enabled
-    params[:sms_notification_status] = status if sms_enabled
+    params[:email_notification_status] = status if email_enabled?
+    params[:sms_notification_status] = status if sms_enabled?
 
     @notification_audit.update(params)
   end
@@ -175,9 +175,6 @@ class SendNotificationJob < CaseflowJob
   # Response: Message string
   def format_message_status
     return @message.status if message_status_valid?
-
-    return "No Participant Id Found" if "No participant_id"
-    return "No Claimant Found" if "No claimant"
 
     (@message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
   end
