@@ -278,14 +278,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python2
 
-      - name: install node
-        run: |
-          set -ex
-          apt-get update
-          curl -o nodejs.deb https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.20.0-1nodesource1_amd64.deb
-          apt-get install -y ./nodejs.deb
-          rm nodejs.deb
-          rm -rf /var/lib/apt/lists/*
+      - name: install node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.20.0'
 
       - name: validate node version
         run: ./ci-bin/capture-log "node -v"
