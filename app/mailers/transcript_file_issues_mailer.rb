@@ -11,7 +11,8 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     @details = details
     @config = mailer_config(appeal_id)
     @case_link = @config[:link] if appeal_id
-    @subject = "File #{subject_action} Error - #{details[:provider]} #{details[:docket_number]}"
+    @subject = "File #{subject_action} Error - #{details[:provider]}"
+    @subject += " #{details[:docket_number]}" if details[:docket_number]
     mail(subject: @subject, to: @config[:to_email_address], cc: @config[:cc_email_address]) do |format|
       format.html { render "layouts/transcript_file_issues" }
     end
@@ -20,10 +21,10 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   private
 
   SUBJECT_ACTIONS = {
-    "download": "download",
-    "upload": "upload",
-    "convert": "conversion",
-    "retrieve": "retrieval"
+    download: "download",
+    upload: "upload",
+    convert: "conversion",
+    retrieve: "retrieval"
   }.freeze
 
   def subject_action

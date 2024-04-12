@@ -269,7 +269,8 @@ describe Hearings::DownloadTranscriptionFileJob do
               direction: "from",
               provider: "Webex",
               error: download_error.class,
-              docket_number: docket_number
+              docket_number: docket_number,
+              download_link: link
             }
           end
 

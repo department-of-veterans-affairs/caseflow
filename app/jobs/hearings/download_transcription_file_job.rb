@@ -18,12 +18,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
 
-  retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
+  retry_on(FileDownloadError, wait: 5.seconds) do |job, exception|
     action_hash = {
       action: "download",
       action_object: "a #{job.transcription_file.file_type} file",
       direction: "from",
-      provider: "Webex"
+      provider: "Webex",
+      download_link: job.arguments.first[:download_link]
     }
     details = job.build_error_details(action_hash, exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)

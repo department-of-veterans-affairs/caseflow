@@ -16,7 +16,8 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
       direction: "from",
       provider: "Webex",
       docket_number: "123456",
-      error: Hearings::DownloadTranscriptionFileJob::FileDownloadError
+      error: Hearings::DownloadTranscriptionFileJob::FileDownloadError,
+      download_link: "webex.com/temp_download_link"
     }
     appeal_id = "772f677a-b5fd-45f0-b74d-ecdd15da0730"
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
@@ -72,7 +73,6 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
       error: Caseflow::Error::WebexApiError,
       api_call: "GET webex.com?max=100?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}",
       response: { status: 400, message: "Sample error message" }.to_json,
-      docket_number: "N/A",
       times: "From: #{from}, To: #{to}"
     }
     TranscriptFileIssuesMailer.send_issue_details(details)
@@ -88,8 +88,7 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
       provider: "Webex",
       error: Caseflow::Error::WebexApiError,
       api_call: "GET webex.com/#{recording_id}",
-      response: { status: 400, message: "Sample error message" }.to_json,
-      docket_number: "N/A"
+      response: { status: 400, message: "Sample error message" }.to_json
     }
     TranscriptFileIssuesMailer.send_issue_details(details)
   end

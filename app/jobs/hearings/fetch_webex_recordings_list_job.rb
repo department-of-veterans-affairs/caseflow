@@ -21,7 +21,6 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       error: exception,
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      docket_number: "N/A",
       times: "From: #{from}, To: #{to}"
     }
     TranscriptFileIssuesMailer.send_issue_details(details)

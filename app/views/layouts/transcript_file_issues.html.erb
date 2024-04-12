@@ -19,7 +19,11 @@
         Expected File Name Format: [docket_number]_[internal_id]_[hearing_type].[file_type]
         <br>
       <% else %>
-        Docket Number: <%= @details[:docket_number] %>
+        <% if @details[:error] == Hearings::DownloadTranscriptionFileJob::FileDownloadError %>
+          Temporary Download Link: <a href="<%= @details[:download_link] %>"><%= @details[:download_link] %></a>
+          <br>
+        <% end %>
+        Docket Number: <%= @details[:docket_number] || "N/A" %>
           <br>
           <% if @details[:times].present? %>
             <%= @details[:times] %>
@@ -39,7 +43,7 @@
       <br>
       <% if @details[:error] == TranscriptionTransformer::FileConversionError ||
             @details[:error] == TranscriptionFileUpload::FileUploadError %>
-          Please investigate this issue further to ensure Caseflow supplied with necessary files. Direct any questions to OITAppealsHelpDesk@va.gov.
+          Please investigate this issue further to ensure Caseflow has been supplied with the necessary files. Direct any questions to OITAppealsHelpDesk@va.gov.
       <% else %>
           Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
       <% end %>
