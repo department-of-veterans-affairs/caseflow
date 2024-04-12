@@ -24,7 +24,7 @@ class SendNotificationJob < CaseflowJob
   ].freeze
 
   RETRY_ERRORS.each do |err|
-    retry_on(err, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    retry_on(err, attempts: 5, wait: :exponentially_longer) do |job, exception|
       Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
     end
   end
@@ -176,6 +176,9 @@ class SendNotificationJob < CaseflowJob
   def format_message_status
     return @message.status if message_status_valid?
 
+    return "No Participant Id Found" if "No participant_id"
+    return "No Claimant Found" if "No claimant"
+
     (@message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
   end
 
@@ -183,7 +186,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Boolean
   def message_status_valid?
-    ["No participant_id", "No claimant"].exclude?(@message.status)
+    ["No participant_id", "No claimant", "Failure Due to Deceased"].exclude?(@message.status)
   end
 
   # Purpose: Send message to VA Notify unless certain feature toggles are disabled
