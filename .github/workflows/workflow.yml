@@ -280,11 +280,11 @@ jobs:
 
       - name: install node
         run: |
-          set -ex \
-          apt-get update \
-          curl -o nodejs.deb https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.20.0-1nodesource1_amd64.deb \
-          apt-get install -y ./nodejs.deb \
-          rm nodejs.deb \
+          set -ex
+          apt-get update
+          curl -o nodejs.deb https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.20.0-1nodesource1_amd64.deb
+          apt-get install -y ./nodejs.deb
+          rm nodejs.deb
           rm -rf /var/lib/apt/lists/*
 
       - name: validate node version
