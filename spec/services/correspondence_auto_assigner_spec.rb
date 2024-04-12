@@ -25,30 +25,72 @@ describe CorrespondenceAutoAssigner do
       end
 
       context "with unassigned ReviewPackageTasks" do
-        let!(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
-
         context "when assignable users exist" do
           let(:intake_user) { create(:intake_user) }
           let!(:org_user) { create(:organizations_user, organization: InboundOpsTeam.singleton, user: intake_user) }
 
           before do
             expect(mock_assignable_user_finder).to receive(:assignable_users_exist?).and_return(true)
-            expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
           end
 
           it "assigns review package tasks to assignable users" do
+            correspondence = create(:correspondence, veteran_id: veteran.id, va_date_of_receipt: 1.day.ago)
+            expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
+
             described.perform(
               current_user_id: current_user.id,
               batch_auto_assignment_attempt_id: batch.id
             )
 
-            task = ReviewPackageTask.last
-            expect(task.assigned_to).to eq(intake_user)
-            expect(task.status).to eq("assigned")
+            expect(correspondence.review_package_task.assigned_to).to eq(intake_user)
+            expect(correspondence.review_package_task.status).to eq("assigned")
+          end
+
+          context "with varying va_date_of_receipt values" do
+            let!(:new_correspondence) { create(:correspondence, veteran_id: veteran.id, va_date_of_receipt: 1.day.ago) }
+            let!(:old_correspondence) do
+              create(:correspondence, veteran_id: veteran.id, va_date_of_receipt: 1.year.ago)
+            end
+
+            let(:mock_run_logger) { instance_double(CorrespondenceAutoAssignLogger, begin: nil, end: nil) }
+
+            before do
+              allow(CorrespondenceAutoAssignLogger).to receive(:new).and_return(mock_run_logger)
+            end
+
+            it "assigns the correspondence with the oldest va_date_of_receipt first" do
+              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
+              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(nil)
+
+              expect(mock_run_logger).to receive(:no_eligible_assignees)
+                .with(
+                  task: new_correspondence.review_package_task,
+                  started_at: instance_of(ActiveSupport::TimeWithZone)
+                )
+              expect(mock_run_logger).to receive(:assigned)
+                .with(
+                  task: old_correspondence.review_package_task,
+                  started_at: instance_of(ActiveSupport::TimeWithZone),
+                  assigned_to: intake_user
+                )
+
+              described.perform(
+                current_user_id: current_user.id,
+                batch_auto_assignment_attempt_id: batch.id
+              )
+
+              expect(old_correspondence.review_package_task.assigned_to).to eq(intake_user)
+              expect(old_correspondence.review_package_task.status).to eq("assigned")
+
+              expect(new_correspondence.review_package_task.assigned_to).to eq(InboundOpsTeam.singleton)
+              expect(new_correspondence.review_package_task.status).to eq("unassigned")
+            end
           end
         end
 
         context "when assignable users do NOT exist" do
+          let!(:correspondence) { create(:correspondence, veteran_id: veteran.id, va_date_of_receipt: 1.day.ago) }
+
           before do
             expect(mock_assignable_user_finder).to receive(:assignable_users_exist?).and_return(false)
           end
