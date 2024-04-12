@@ -47,33 +47,18 @@ class TestSeeds extends React.PureComponent {
         RemandedLegacyAppeals: false,
         PopulateCaseflowFromVacols: false
       },
-      seedCounts: {},
       seedRunningStatus: false,
       seedRunningMsg: 'Seed running'
     };
+    this.seedCountRefs = {};
   }
 
-  handleInputChange = (type, newValue) => {
-    if (newValue === '') {
-      this.setState((prevState) => ({
-        seedCounts: {
-          ...prevState.seedCounts,
-          [type]: 1
-        }
-      }));
-    } else {
-      this.setState((prevState) => ({
-        seedCounts: {
-          ...prevState.seedCounts,
-          [type]: newValue
-        }
-      }));
-    }
-  };
+  handleChange= (event, type) => {
+    this.seedCountRefs[type] = event.target.value;
+  }
 
   reseed = (type) => {
-    const seedCount = this.state.seedCounts[type] || 1;
-    // ToDo
+    const seedCount = parseInt(this.seedCountRefs[type], 10) || 1;
 
     this.setState({ seedRunning: true, seedRunningMsg: '' });
     this.setState((prevState) => ({
@@ -145,20 +130,18 @@ class TestSeeds extends React.PureComponent {
                         {seedTypes.map((type) => (
                           <li key={type}>
                             <div className={cx('lever-right', 'test-seeds-num-field')}>
-                              {/* <input
-                                type="number"
-                                value={this.state.seedCounts[type] || 1}
-                                min="1"
+                              <input
+                                type="text"
                                 id={`count-${type}`}
-                                onChange={(event) => this.
-                                  handleInputChange(type, parseInt(event.target.value, 10) || 1)}
-                              /> */}
-                              <NumberField
+                                onChange={(event) => this.handleChange(event, type)}
+                              />
+                              {/* <NumberField
+                                key={`number-field-${type}`}
                                 name=""
                                 isInteger
                                 value={this.state.seedCounts[type] || '1'}
                                 onChange={(newValue) => this.handleInputChange(type, newValue)}
-                              />
+                              /> */}
                             </div>
                             <div className="cf-btn-link test-seed-button-style">
                               <Button
