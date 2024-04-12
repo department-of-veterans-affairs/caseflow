@@ -4,7 +4,6 @@
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerUtil
-
   MAX_QUEUED_ITEMS = 60
 
   def current_correspondence
@@ -88,6 +87,10 @@ module CorrespondenceControllerUtil
     if mail_team_user && (task_ids.present? || @reassign_remove_task_id.present?)
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
       handle_reassign_or_remove_task(mail_team_user)
+    end
+
+    if %w[continue_later cancel_intake].include?(@action_type)
+      handle_return_to_queue_confirm
     end
   end
 
@@ -204,8 +207,19 @@ module CorrespondenceControllerUtil
     end
   end
 
-  def handle_error_banner_params(mail_team_user)
-    operation_verb = @action_type == "approve" ? "approved" : "rejected"
+  def set_handle_return_to_queue_params
+    if @action_type == "cancel_intake"
+      @response_header = "You have successfully cancelled the intake form"
+      @response_message = "#{@veteran_name}'s correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment."
+    else
+      @response_header = "You have successfully saved the intake form"
+      @response_message = "You can continue from step three of the intake form for #{@veteran_name}'s correspondence (ID: #{correspondence.id}) at a later date."
+    end
+    @response_type = "success"
+  end
+
+  def handle_error_banner_params(_mail_team_user)
+    operation_verb = (@action_type == "approve") ? "approved" : "rejected"
     @response_header = "Package request for #{@veteran_name} could not be #{operation_verb}"
     @response_message = "Please try again at a later time or contact the Help Desk."
     @response_type = "error"

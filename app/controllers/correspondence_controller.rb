@@ -108,6 +108,11 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def handle_return_to_queue_confirm
+    set_handle_return_to_queue_params
+    render "correspondence_team"
+  end
+
   def handle_reassign_or_remove_task(mail_team_user)
     return unless @reassign_remove_task_id.present? && @action_type.present?
 

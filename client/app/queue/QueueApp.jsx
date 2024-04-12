@@ -691,7 +691,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} isMailSupervisor={this.props.isMailSupervisor}/>
   );
 
   routedCorrespondenceCases = () => (
