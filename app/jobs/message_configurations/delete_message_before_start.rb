@@ -11,7 +11,7 @@ module MessageConfigurations::DeleteMessageBeforeStart
     # to prevent multiple instances of the job from being executed.
     #
     # See https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
-    def delete_sqs_message_before_start
+    def delete_sqs_message_before_start?
       true
     end
   end

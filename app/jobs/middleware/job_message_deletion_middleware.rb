@@ -7,7 +7,7 @@
 # which would potentially allow multiple instances of the same job to be executed.
 class JobMessageDeletionMiddleware
   def call(_worker, _queue, msg, body)
-    if body["job_class"].constantize.send(:delete_sqs_message_before_start)
+    if body["job_class"].constantize.send(:delete_sqs_message_before_start?)
       msg.client.delete_message(queue_url: msg.queue_url, receipt_handle: msg.data.receipt_handle)
     end
 
