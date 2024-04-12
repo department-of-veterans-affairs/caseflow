@@ -193,12 +193,12 @@ class AddCorrespondenceView extends React.Component {
     ];
 
     return (
-      <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-        <h1 style={{ marginBottom: '20px' }}>Add Related Correspondence</h1>
-        <p style={{ marginTop: '0px' }}>Add any related correspondence to the mail package that is in progress.</p>
-        <h2 style={{ margin: '30px auto 20px auto' }}>Associate with prior Mail</h2>
-        <p style={{ marginTop: '0px', marginBottom: '-7px' }}>Is this correspondence related to prior mail?</p>
-        <RadioField style={{}}
+      <div className="add-related-correspondence corr">
+        <h1 className="a-r-h1">Add Related Correspondence</h1>
+        <p className="a-r-p1">Add any related correspondence to the mail package that is in progress.</p>
+        <h2 className="a-r-h2">Associate with prior Mail</h2>
+        <p className="a-r-p2">Is this correspondence related to prior mail?</p>
+        <RadioField
           name=""
           options={priorMailAnswer}
           value={this.props.radioValue}

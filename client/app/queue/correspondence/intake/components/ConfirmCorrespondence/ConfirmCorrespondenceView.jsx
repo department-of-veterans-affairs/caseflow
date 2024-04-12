@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import { PencilIcon } from '../../../../../components/icons/PencilIcon';
 import Button from '../../../../../components/Button';
 import { useSelector } from 'react-redux';
@@ -8,22 +7,6 @@ import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
-import { COLORS } from '../../../../../constants/AppConstants';
-
-const bodyStyling = css({
-  '& > tr > td': {
-    backgroundColor: COLORS.GREY_BACKGROUND,
-    borderBottom: 'none',
-    borderColor: COLORS.GREY_LIGHT,
-    paddingTop: '0vh',
-    paddingBottom: '0vh',
-  },
-});
-
-const tableStyling = css({
-  marginBottom: '-1vh',
-  marginTop: '1vh'
-});
 
 export const ConfirmCorrespondenceView = (props) => {
 
@@ -125,45 +108,33 @@ export const ConfirmCorrespondenceView = (props) => {
 
   if (relatedCorrespondences.length === 0) {
     correspondenceTable =
-    <div {...css({
-      marginBottom: '150px',
-      fontWeight: 'bold'
-    })}> Correspondence is not related to prior mail </div>;
+    <div className= "associated-prior-mail-empty"> Correspondence is not related to prior mail </div>;
   } else {
 
     correspondenceTable = <Table
+      className= "table-latitude"
       columns={getDocumentColumns}
       // columnsToDisplay={15}
       rowObjects={relatedCorrespondences}
-      styling={tableStyling}
-      bodyStyling={bodyStyling}
     />;
   }
 
   if (checkedMailTasks.length === 0) {
-    mailTaskTable = <div {...css({
-      marginBottom: '150px',
-      fontWeight: 'bold'
-    })}>  </div>;
+    mailTaskTable = <div className= "completed-mail-tasks-empty"></div>;
   } else {
     mailTaskTable = checkedMailTasks.map((name, index) => (
-      <div
-        key={index}
-        {...css({
-          borderBottom: index === checkedMailTasks.length - 1 ? 'none' : '1px solid #d6d7d9',
-          padding: '10px 10px',
-          marginBottom: '10px',
-        })}
-      >
-        <span>{name}</span>
-      </div>
+      <ul key={index} className="completed-mail-tasks">
+
+        <li>{name}</li>
+
+      </ul>
     ));
   }
 
   return (
-    <div className="gray-border corr" style={{ marginBottom: '2rem' }}>
+    <div className="gray-border corr">
       <h1 className="corr-h1">Review and Confirm Correspondence</h1>
-      <p style={{ fontSize: '.85em' }}>
+      <p className="p-review-and-confirm">
         Review the details below to make sure the information is correct before submitting.
         If you need to make changes, please go back to the associated section.
       </p>
@@ -178,8 +149,8 @@ export const ConfirmCorrespondenceView = (props) => {
             </Button>
           </div>
         </div>
-        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
-          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
+        <div className= "review-and-confirm-title-div-color">
+          <div className="review-and-confirm-title-div-style">
             {correspondenceTable}
           </div>
         </div>
@@ -193,13 +164,9 @@ export const ConfirmCorrespondenceView = (props) => {
               <span className="corr-sectionlink">Edit Section</span>
             </Button>
           </div>
-        </div><div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
-          <div {...css({
-            borderBottom: '1px solid #d6d7d9',
-            padding: '10px 0px',
-            marginBottom: '20px',
-            fontWeight: 'bold'
-          })}>
+        </div>
+        <div className="review-and-confirm-title-div-style">
+          <div className="completed-mail-tasks-title">
             Completed Mail Tasks
           </div>
           {mailTaskTable}
