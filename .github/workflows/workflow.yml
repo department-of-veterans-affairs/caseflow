@@ -279,6 +279,9 @@ jobs:
           sudo apt-get install -y python2
 
       - name: set node version
+        run: nodenv local
+
+      - name: validate node version
         run: ./ci-bin/capture-log "node -v"
 
       - name: install_node_dependencies
