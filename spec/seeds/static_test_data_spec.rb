@@ -22,6 +22,7 @@ describe Seeds::StaticTestCaseData do
     # required because the judge team for user BVAGSPORER is used specifically in the described_class
     # and judge team attorneys need to be in VACOLS for creating the attorney tasks
     before do
+      create(:case_distribution_lever, :request_more_cases_minimum)
       { "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
         "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] } }.each_pair do |judge_css_id, h|
         judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
