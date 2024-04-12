@@ -93,15 +93,15 @@ export const AddUnrelatedTaskView = (props) => {
         className="gray-border"
         style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}
       >
-        <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
-          <div style={{ backgroundColor: COLORS.GREY_BACKGROUND, width: '100%', height: '50px', paddingTop: '1.5rem' }}>
-            <b style={{
+        <div className="area-under-add-tasks-button-not-related-to-appeal">
+          <div className="new-tasks-not-related-to-an-appeal-title" style={{ backgroundColor: COLORS.GREY_BACKGROUND, width: '100%', height: '50px', paddingTop: '1.5rem' }}>
+            <b className="new-tasks-title-not-related-to-appeal" style={{
               verticalAlign: 'center',
               paddingLeft: '2.5rem',
               paddingTop: '1.5rem',
               border: '0',
               paddingBottom: '1.5rem',
-              paddingRigfht: '5.5rem'
+              paddingRight: '5.5rem'
             }}>New Tasks</b>
           </div>
           <div style={{ width: '100%', height: '3rem' }} />

@@ -7,7 +7,6 @@ import AddUnrelatedTaskView from './AddUnrelatedTaskView';
 import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
 import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 
-
 const mailTasksLeft = [
   'Change of address',
   'Evidence or argument',

@@ -166,10 +166,241 @@
   max-width: 43rem;
 }
 
-.corr-confirm-tasks {
-  .td {
-    background-color: $color-grey-background;
+.corr {
+  .td1 {
+    background-color: #f9f9f9;
     border-top: 1px solid #dee2e6;
-    width: 20%;
+    width: 20%
+  }
+
+  .td2 {
+    background-color: #f9f9f9;
+    border-top: 1px solid #dee2e6
+  }
+
+  .div1 {
+    background: #f9f9f9;
+    padding: 2rem;
+    padding-top: .1rem;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .style-for-tasks-and-content {
+    background-color: #f9f9f9;
+    padding-top: 10px;
+  }
+
+  .unknown-div {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-right
+  }
+
+  .style-for-appeals-number-tasks {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+    padding-bottom: 0px;
+    padding-top: 35px;
+
+  }
+
+  .first-style-for-appeals-number-tasks {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+    padding-bottom: 0px;
+    padding-top: 5px;
+
+  }
+
+  .style-for-appeals-number-title {
+    line-height: 10%
+  }
+
+  .style-for-appeals-first-row {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+    padding-bottom: 10px
+  }
+
+  .style-for-appeals-first-row-title {
+    margin-top: 40px
+  }
+
+  .style-for-appeals-second-row {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .style-for-appeals-third-row {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .style-for-appeals-fourth-row{
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .linked-appeal-link-button {
+    width: fit-content;
+    padding: 3px;
+    background-color: white;
+    border: 1px solid #8ba6ca;
+    white-space: nowrap
+  }
+
+  .currently-active-task-answer {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .evidence-window-waived-answer {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .assigned-to-answer {
+    border-top: none;
+    border-bottom: none;
+    background-color: #f9f9f9;
+  }
+
+  .additional-tasks-row {
+    background-color: #f9f9f9;
+    border-top: none;
+    border-spacing: 0px
+  }
+
+  .tasks-instructions-or-context {
+    background-color: #f9f9f9;
+    border-top: none;
+    border-spacing: 0px
+  }
+
+  .additional-tasks-row-content {
+    background-color: #f9f9f9;
+    border-top: 1px solid #dee2e6;
+    width: 20%
+  }
+
+  .tasks-instructions-or-context {
+    background-color: #f9f9f9;
+    border-top: 1px solid #dee2e6
+  }
+
+  .correspondence-not-related-to-appeal {
+    padding-top: 20px;
+    margin-bottom: 150px;
+    font-weight: bold
+  }
+
+  .linked-appeal-and-new-tasks-box {
+    background: #f9f9f9;
+    padding: 2rem;
+    padding-top: 0.5rem;
+    margin-bottom: 2rem
+  }
+
+  .linked-appeals-and-new-tasks-margin {
+    margin-left: auto
+  }
+
+  .existing-appeals-box {
+    width: 100%;
+    height: auto;
+    background-color: white;
+    padding-bottom: 3rem
+  }
+
+  .bottom-of-existing-appeals-title {
+    background-color:#f9f9f9;
+    width: 100%;
+    height: 50px;
+    padding-top: 1.5rem
+  }
+
+  .existing-appeals-title {
+    vertical-align: center;
+    padding-left: 2.5rem;
+    padding-top: 1.5rem;
+    border: 0;
+    padding-bottom: 1.5rem;
+    padding-right: 50rem
+  }
+
+  .selection-for-prior-appeals-linked-to-corr {
+    padding-left: 2.5rem
+  }
+
+  .left-side-of-docket {
+    padding-left: 2.5rem
+  }
+
+  .right-side-of-assigned-to {
+    padding-right: 1rem
+  }
+
+  .entire-tasks-related-to-existing-appeals {
+    padding: 0rem 0rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column
+  }
+
+  .tasks-appeal-title {
+    margin-left: 2%;
+    margin-bottom: 2%
+  }
+
+  .evidence-window-submission-task{
+    display: flex;
+    flex-wrap: wrap
+  }
+
+  .area-around-add-tasks-button {
+    padding: 2.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between
+  }
+
+  .width-of-add-tasks-button {
+    width: 80%
+  }
+
+  .cursor-style-for-unlink-appeal-button {
+    cursor: pointer
+  }
+
+  .area-under-add-tasks-button-not-related-to-appeal {
+    width: 100%;
+    height: auto;
+    background-color: white;
+    padding-bottom: 3rem
+  }
+
+  .new-tasks-not-related-to-an-appeal-title{
+    background-color: #f9f9f9;
+    width: 100%;
+    height: 50px;
+    padding-top: 1.5rem
+  }
+
+  .new-tasks-title-not-related-to-appeal {
+    vertical-align: center;
+    padding-left: 2.5rem;
+    padding-top: 1.5rem;
+    border: 0;
+    padding-bottom: 1.5rem;
+    padding-right: 5.5rem
   }
 }
