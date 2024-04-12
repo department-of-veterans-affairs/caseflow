@@ -71,7 +71,7 @@ class CorrespondenceAutoAssigner
       .preload(:appeal, :assigned_by, :assigned_to, :parent)
       .includes(:correspondence, correspondence: :veteran)
       .references(:correspondence, correspondence: :veteran)
-      .merge(Correspondence.order(va_date_of_receipt: :desc))
+      .order(va_date_of_receipt: :asc)
   end
 
   def validate_run!(current_user_id, batch_auto_assignment_attempt_id)
