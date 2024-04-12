@@ -7,24 +7,27 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
 
   # Sends the correct variable data to the template based on environment. Kicks
   # off the template to the above recipients
-  def send_issue_details(details, appeal_id)
+  def send_issue_details(details, appeal_id = nil)
     @details = details
     @config = mailer_config(appeal_id)
-    @case_link = @config[:link]
-    @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
+    @case_link = @config[:link] if appeal_id
+    @subject = "File #{subject_action} Error - #{details[:provider]} #{details[:docket_number]}"
     mail(subject: @subject, to: @config[:to_email_address], cc: @config[:cc_email_address]) do |format|
       format.html { render "layouts/transcript_file_issues" }
     end
   end
 
-  # Handles specifically the transcript recording list issues
-  def webex_recording_list_issues(details)
-    @details = details
-    @config = mailer_config(nil)
-    @subject = "File #{details[:action]} Error - #{details[:provider]}"
-    mail(subject: @subject, to: @config[:to_email_address], cc: @config[:cc_email_address]) do |format|
-      format.html { render "layouts/transcript_file_issues" }
-    end
+  private
+
+  SUBJECT_ACTIONS = {
+    "download": "download",
+    "upload": "upload",
+    "convert": "conversion",
+    "retrieve": "retrieval"
+  }.freeze
+
+  def subject_action
+    SUBJECT_ACTIONS[@details[:action].to_sym].titlecase
   end
 
   def mailer_config(appeal_id)

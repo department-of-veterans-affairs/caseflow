@@ -15,7 +15,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     details = {
       action: "retrieve",
-      filetype: "vtt",
+      action_object: "recordings",
       direction: "from",
       provider: "Webex",
       error: exception,
@@ -24,7 +24,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       docket_number: "N/A",
       times: "From: #{from}, To: #{to}"
     }
-    TranscriptFileIssuesMailer.webex_recording_list_issues(details)
+    TranscriptFileIssuesMailer.send_issue_details(details)
     job.log_error(exception)
   end
 

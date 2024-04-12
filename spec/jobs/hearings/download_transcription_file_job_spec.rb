@@ -232,7 +232,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
       context "job retries" do
         let(:transcription_file) { create(:transcription_file) }
-        let(:upload_error) { TranscriptionFileUpload::FileUploadError.new("rtf") }
+        let(:upload_error) { TranscriptionFileUpload::FileUploadError }
         let(:download_error) { Hearings::DownloadTranscriptionFileJob::FileDownloadError }
         let(:conversion_error) { TranscriptionTransformer::FileConversionError }
         let(:file_name_error) { Hearings::DownloadTranscriptionFileJob::FileNameError }
@@ -245,12 +245,11 @@ describe Hearings::DownloadTranscriptionFileJob do
           let(:error_details) do
             {
               action: "upload",
-              filetype: "rtf",
+              action_object: "a vtt file",
               direction: "to",
               provider: "S3",
               error: upload_error.class,
-              docket_number: docket_number,
-              api_call: "upload_to_s3!"
+              docket_number: docket_number
             }
           end
 
@@ -265,13 +264,12 @@ describe Hearings::DownloadTranscriptionFileJob do
         context "failed download" do
           let(:error_details) do
             {
-              action: "retrieve",
-              filetype: "vtt",
+              action: "download",
+              action_object: "a vtt file",
               direction: "from",
               provider: "Webex",
               error: download_error.class,
-              docket_number: docket_number,
-              api_call: "download_file_to_tmp!"
+              docket_number: docket_number
             }
           end
 
@@ -287,12 +285,11 @@ describe Hearings::DownloadTranscriptionFileJob do
           let(:error_details) do
             {
               action: "convert",
-              filetype: "vtt",
+              action_object: "a vtt file",
               direction: "to",
-              provider: "rtf",
+              conversion_type: "rtf",
               error: conversion_error.class,
-              docket_number: docket_number,
-              api_call: "convert_to_rtf_and_upload_to_s3!"
+              docket_number: docket_number
             }
           end
 
@@ -305,16 +302,16 @@ describe Hearings::DownloadTranscriptionFileJob do
         end
 
         context "failed to parse filename" do
-          let(:appeal_id) { "" }
+          let(:appeal_id) { nil }
           let(:error_details) do
             {
-              action: "retrieve",
-              filetype: "vtt",
+              action: "download",
+              action_object: "a file",
               direction: "from",
               provider: "Webex",
-              error: file_name_error,
-              docket_number: "",
-              api_call: "parse_hearing"
+              error: file_name_error.class,
+              docket_number: nil,
+              file_name: file_name
             }
           end
 

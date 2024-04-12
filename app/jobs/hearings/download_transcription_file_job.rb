@@ -20,12 +20,12 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     action_hash = {
-      action: "retrieve",
+      action: "download",
+      action_object: "a #{job.transcription_file.file_type} file",
       direction: "from",
-      filetype: "vtt",
-      call: "download_file_to_tmp!"
+      provider: "Webex"
     }
-    details = job.build_error_details(action_hash, "Webex", exception.class)
+    details = job.build_error_details(action_hash, exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
     job.log_error(exception)
   end
@@ -33,11 +33,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
     action_hash = {
       action: "upload",
+      action_object: "a #{job.transcription_file.file_type} file",
       direction: "to",
-      filetype: exception.filetype,
-      call: "upload_to_s3!"
+      provider: "S3"
     }
-    details = job.build_error_details(action_hash, "S3", exception.class)
+    details = job.build_error_details(action_hash, exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
@@ -47,24 +47,25 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.transcription_file.clean_up_tmp_location
     action_hash = {
       action: "convert",
+      action_object: "a #{job.transcription_file.file_type} file",
       direction: "to",
-      filetype: "vtt",
-      call: "convert_to_rtf_and_upload_to_s3!"
+      conversion_type: "rtf"
     }
-    details = job.build_error_details(action_hash, "rtf", exception.class)
+    details = job.build_error_details(action_hash, exception.class)
     TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
     job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, error|
     action_hash = {
-      action: "retrieve",
+      action: "download",
+      action_object: "a file",
       direction: "from",
-      filetype: "vtt",
-      call: "parse_hearing"
+      provider: "Webex",
+      file_name: job.file_name
     }
-    details = job.build_error_details(action_hash, "Webex", error.class)
-    TranscriptFileIssuesMailer.send_issue_details(details, "")
+    details = job.build_error_details(action_hash, error.class)
+    TranscriptFileIssuesMailer.send_issue_details(details, nil)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
 
@@ -101,26 +102,24 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   # Purpose: Builds object detailing error for mail template
-  # Params:
-  #         hash - object, hash object for describing the action that was attempted
-  #         filetype - string, the filetype that was getting worked on
-  #         provider - string, either the destination or starting point
+  #
+  # Note: Public method to provide access during job retry
+  #
+  # Params: hash - object, hash object for describing the action that was attempted
   #         error - Exception - the error that was raised
   #
   # Returns: The hash for details on the error
-  def build_error_details(hash, provider, error)
-    {
-      action: hash[:action],
-      filetype: hash[:filetype],
-      direction: hash[:direction],
-      provider: provider,
+  def build_error_details(hash, error)
+    hash.merge(
       error: error,
-      docket_number: error != FileNameError ? hearing.docket_number : "",
-      api_call: hash[:call]
-    }
+      docket_number: error != FileNameError ? hearing.docket_number : nil
+    )
   end
 
   # Purpose: Get either the uuid or vacols id of the associated appeal
+  #
+  # Note: Public method to provide access during job retry
+  #
   # Returns: The uuid/vacols_id of the appeal
   def appeal_id
     hearing.appeal.external_id

@@ -10,29 +10,22 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   application_attr :hearing_schedule
   attr_reader :id
 
-  # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    file_name = @file_name || job.arguments&.first&.[](:file_name)
-    docket_number, hearing_id, class_name = file_name.split("_")
-    hearing = if class_name == "Hearing"
-                Hearing.find_by(id: hearing_id)
-              else
-                LegacyHearing.find_by(id: hearing_id)
-              end
+    recording_id = job.arguments&.first&.[](:id)
     details = {
       action: "retrieve",
-      filetype: "vtt",
+      action_object: "recording details",
+      action_object_id: recording_id,
       direction: "from",
       provider: "Webex",
       error: exception,
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{job.arguments&.first&.[](:id)}",
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{recording_id}",
       response: { status: exception.code, message: exception.message }.to_json,
-      docket_number: docket_number
+      docket_number: "N/A"
     }
-    TranscriptFileIssuesMailer.send_issue_details(details, hearing.appeal.external_id)
+    TranscriptFileIssuesMailer.send_issue_details(details)
     job.log_error(exception)
   end
-  # rubocop:enable Layout/LineLength
 
   def perform(id:, file_name:)
     ensure_current_user_is_set
