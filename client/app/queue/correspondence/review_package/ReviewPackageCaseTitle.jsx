@@ -126,6 +126,7 @@ const CaseTitleScaffolding = (props) => {
         setModalState={setReassignModalState}
         onCancel={closeReassignModal}
         correspondence_id = {props.correspondence_id}
+        reviewDetails={props.reviewDetails}
         mailTeamUsers={props.mailTeamUsers} />
       }
     </div>

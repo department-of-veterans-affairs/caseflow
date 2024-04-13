@@ -42,7 +42,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
-    taksId: [],
+    taskId: [],
   });
 
   // Banner Information takes in the following object:
@@ -70,6 +70,10 @@ export const CorrespondenceReviewPackage = (props) => {
     const hasAssignedReassignPackageTask = (tasks) => {
       const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
           task.type === 'ReassignPackageTask');
+
+      if (assignedReassignTask) {
+        setReviewPackageDetails({ taskId: assignedReassignTask.id });
+      }
 
       // Return true if a reassignPackageTask that is currently assigned is found, else false
       return (typeof assignedReassignTask !== 'undefined') && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor);

@@ -72,12 +72,12 @@ export const updateLastAction = (currentAction) =>
     });
   };
 
-export const setReasonRemovePackage = (reasonForRemove) =>
+export const setTaskInstructions = (taskInstructions) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.SET_REASON_REMOVE_PACKAGE,
+      type: ACTIONS.SET_TASK_INSTRUCTIONS,
       payload: {
-        reasonForRemove
+        taskInstructions
       }
     });
   };
@@ -88,16 +88,6 @@ export const updateLastReassignAction = (currentAction) =>
       type: ACTIONS.REASSIGN_PACKAGE_ACTION,
       payload: {
         currentAction
-      }
-    });
-  };
-
-export const setReasonReassignPackage = (reasonForReassign) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_REASON_REASSIGN_PACKAGE,
-      payload: {
-        reasonForReassign
       }
     });
   };

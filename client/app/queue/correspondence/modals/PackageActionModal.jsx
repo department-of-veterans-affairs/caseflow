@@ -7,7 +7,7 @@ import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { bindActionCreators } from 'redux';
-import { setReasonRemovePackage } from '../correspondenceReducer/reviewPackageActions';
+import { setTaskInstructions } from '../correspondenceReducer/reviewPackageActions';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
 
@@ -125,7 +125,7 @@ const PackageActionModal = (props) => {
       props.closeHandler(null);
       if (response.ok) {
         if (packageActionModal === 'removePackage') {
-          props.setReasonRemovePackage(textInputReason);
+          props.setTaskInstructions(textInputReason);
         }
         history.push('/queue/correspondence');
       }
@@ -204,7 +204,7 @@ PackageActionModal.propTypes = {
   modalInfo: PropTypes.object,
   packageActionModal: PropTypes.string,
   closeHandler: PropTypes.func,
-  setReasonRemovePackage: PropTypes.func
+  setTaskInstructions: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -214,7 +214,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setReasonRemovePackage
+  setTaskInstructions
 }, dispatch);
 
 export default connect(
