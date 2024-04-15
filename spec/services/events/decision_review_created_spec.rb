@@ -8,8 +8,7 @@ describe Events::DecisionReviewCreated do
   let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
   let!(:json_payload) { read_json_payload }
   let!(:headers) { sample_headers }
-  let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example}
-
+  let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
 
   describe "#event_exists_and_is_completed?" do
     subject { described_class.event_exists_and_is_completed?(consumer_event_id) }
@@ -61,7 +60,7 @@ describe Events::DecisionReviewCreated do
 
       it "should call all sub services" do
         expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
-        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event: event_created, parser: parser.css_id, parser.station_id).and_call_original
+        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event: event_created, css_id: parser.css_id, station_id: parser.station_id).and_call_original
         expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
         expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
         expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original
@@ -72,8 +71,8 @@ describe Events::DecisionReviewCreated do
       end
     end
 
-    context 'when a StandardError occurs' do
-      let(:error_message) { 'StandardError message' }
+    context "when a StandardError occurs" do
+      let(:error_message) { "StandardError message" }
 
       before do
         allow(DecisionReviewCreatedEvent).to receive(:create).and_raise(StandardError, error_message)
@@ -81,7 +80,7 @@ describe Events::DecisionReviewCreated do
         allow(event).to receive(:update!)
       end
 
-      it 'logs the error and updates the event' do
+      it "logs the error and updates the event" do
         expect(Rails.logger).to receive(:error).with(error_message)
         expect(event).to receive(:update!).with(error: error_message, info: { "failed_claim_id" => reference_id })
 
@@ -92,19 +91,19 @@ describe Events::DecisionReviewCreated do
 end
 
 def read_json_payload
-JSON.generate(JSON.parse(File.read(Rails.root.join("app",
-                                                   "services",
-                                                   "events",
-                                                   "decision_review_created",
-                                                   "decision_review_created_example.json"))))
+  JSON.parse(File.read(Rails.root.join("app",
+                                                     "services",
+                                                     "events",
+                                                     "decision_review_created",
+                                                     "decision_review_created_example.json")))
 end
 
 def sample_headers
-{
-  "X-VA-Vet-SSN" => "123456789",
-  "X-VA-File-Number" => "77799777",
-  "X-VA-Vet-First-Name" => "John",
-  "X-VA-Vet-Last-Name" => "Smith",
-  "X-VA-Vet-Middle-Name" => "Alexander"
-}
+  {
+    "X-VA-Vet-SSN" => "123456789",
+    "X-VA-File-Number" => "77799777",
+    "X-VA-Vet-First-Name" => "John",
+    "X-VA-Vet-Last-Name" => "Smith",
+    "X-VA-Vet-Middle-Name" => "Alexander"
+  }
 end
