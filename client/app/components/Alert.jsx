@@ -17,15 +17,25 @@ export default class Alert extends React.Component {
   }
 
   render() {
+    // eslint-disable-next-line no-process-env
+    const env = process.env.NODE_ENV;
+
     const { fixed, title, type, styling, lowerMargin } = this.props;
 
     const typeClass = `usa-alert-${type}`;
 
-    const className = classnames('usa-alert', typeClass, {
-      'usa-alert-slim': !title,
-      fixed,
-      'cf-margin-bottom-2rem': lowerMargin,
-    });
+    const className = classnames('usa-alert',
+      typeClass,
+      {
+        'usa-alert-slim': !title,
+        fixed,
+        'cf-margin-bottom-2rem': lowerMargin,
+        'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
+        'dev-env-alert': env !== 'prod' && env === 'development',
+        'uat-env-alert': env !== 'prod' && env === 'uat',
+        'demo-env-alert': env !== 'prod' && env === 'demo',
+      },
+    );
 
     return (
       <div role="alert" className={className} {...styling}>

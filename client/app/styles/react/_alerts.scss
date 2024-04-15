@@ -10,9 +10,45 @@
     transform: translate(-50%, 0);
   }
 
+  &.usa-alert-warning {
+    &.dev-env-alert {
+      background-color: $color-green-lightest;
+      border: 5px solid $color-green-lighter;
+      background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+      &::before {
+        background-color: $color-green-lightest;
+      }
+    }
+    &.uat-env-alert {
+      background-color: $color-primary-alt-lightest;
+      border: 5px solid $color-primary-alt-light;
+      background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+      &::before {
+        background-color: $color-primary-alt-lightest;
+      }
+    }
+    &.demo-env-alert {
+      background-color: $color-cool-blue-lightest;
+      border: 5px solid $color-cool-blue-lighter;
+      background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+      &::before {
+        background-color: $color-cool-blue-lightest;
+      }
+    }
+    &.prodtest-env-alert {
+      background-color: $color-secondary-light;
+      border: 5px solid $color-secondary-darkest;
+      background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+      &::before {
+        background-color: $color-secondary-light;
+      }
+    }
+  }
+
   // Remove after USWDS V.2.0
   &.usa-alert-slim {
     background-size: 4rem;
+
 
     .usa-alert-body {
       padding-left: 3.5rem;
