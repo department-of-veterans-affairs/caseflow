@@ -18,13 +18,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
   end
 
-  before do
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :bust_backlog)
-    create(:case_distribution_lever, :ama_hearings_start_distribution_prior_to_goals)
-    create(:case_distribution_lever, :minimum_legacy_proportion)
-  end
+  before { Seeds::CaseDistributionLevers.new.seed! }
 
   describe "validations" do
     it "requires a title" do
@@ -193,6 +187,21 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       errors = CaseDistributionLever.update_acd_levers(current_levers, nil)
       expect(errors.size).to eq(2)
       expect(errors.last.to_s).to include("PG::NotNullViolation: ERROR")
+    end
+  end
+
+  context "snapshot" do
+    it "should return hash with item keys and values objects of value and is_toggle_active" do
+      snapshot_hash = {}
+
+      Seeds::CaseDistributionLevers.levers.each_with_object(snapshot_hash) do |lever, s_hash|
+        s_hash[lever[:item]] = {
+          value: lever[:value].to_s,
+          is_toggle_active: lever[:is_toggle_active]
+        }
+      end
+
+      expect(CaseDistributionLever.snapshot).to eq(snapshot_hash)
     end
   end
 end

@@ -4,7 +4,6 @@ export const findOption = (lever, value) => lever.options.find((option) => optio
 export const findSelectedOption = (lever) => lever.options.find((option) => option.selected);
 export const findValueOption = (lever) => findOption(lever, ACD_LEVERS.value);
 export const radioValueOptionSelected = (item) => ACD_LEVERS.value === item;
-
 /**
  * Add backendValue attributes to each lever
  * For radio and combination levers add currentValue
