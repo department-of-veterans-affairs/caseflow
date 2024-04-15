@@ -1,101 +1,78 @@
-# frozen_string_literal: true
-
 require "json"
 
 class ExternalApi::WebexService
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query:)
+  BASE_URL = "#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
+  AUTH_URL = "/v1/access_token"
+  GRANT_TYPE = "refresh_token"
+  CLIENT_ID = ENV["WEBEX_CLIENT_ID"]
+  CLIENT_SECRET = ENV["WEBEX_CLIENT_SECRET"]
+  REFRESH_TOKEN = ENV["WEBEX_REFRESH_TOKEN"]
+  HEADERS = {
+    "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json"
+  }.freeze
+
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
     @host = host
     @port = port
     @aud = aud
     @apikey = apikey
     @domain = domain
     @api_endpoint = api_endpoint
-    @query = query
   end
-
-  def create_conference(conferenced_item)
+  def create_conference(virtual_hearing)
     body = {
       "jwt": {
-        "sub": conferenced_item.subject_for_conference,
-        "nbf": conferenced_item.nbf,
-        "exp": conferenced_item.exp
+        "sub": virtual_hearing.subject_for_conference,
+        "Nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
+        "Exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
       },
       "aud": @aud,
-      "numHost": 2,
-      "provideShortUrls": true,
-      "verticalType": "gen"
+      "numGuest": 1,
+      "numHost": 1,
+      "provideShortUrls": true
     }
-
-    method = "POST"
-
-    resp = send_webex_request(body, method)
+    resp = send_webex_request(body: body)
     return if resp.nil?
-
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
-
-  def delete_conference(conferenced_item)
+  def delete_conference(virtual_hearing)
     body = {
       "jwt": {
-        "sub": conferenced_item.subject_for_conference,
-        "nbf": 0,
-        "exp": 0
+        "sub": virtual_hearing.subject_for_conference,
+        "Nbf": 0,
+        "Exp": 0
       },
       "aud": @aud,
-      "numHost": 2,
-      "provideShortUrls": true,
-      "verticalType": "gen"
+      "numGuest": 1,
+      "numHost": 1,
+      "provideShortUrls": true
     }
-
-    method = "POST"
-
-    resp = send_webex_request(body, method)
+    resp = send_webex_request(body: body)
     return if resp.nil?
-
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
-  def get_recordings_list
-    body = nil
-    method = "GET"
-    resp = send_webex_request(body, method)
-    return if resp.nil?
-
-    ExternalApi::WebexService::RecordingsListResponse.new(resp)
-  end
-
-  def get_recording_details
-    body = nil
-    method = "GET"
-    resp = send_webex_request(body, method)
-    return if resp.nil?
-
-    ExternalApi::WebexService::RecordingDetailsResponse.new(resp)
+  # Purpose: Refreshing the access token to access the API
+  # Return: The response body
+  def refresh_access_token
+    url = URI::DEFAULT_PARSER.escape(BASE_URL + AUTH_URL)
+    params = {
+      grant_type: GRANT_TYPE,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      refresh_token: REFRESH_TOKEN
+    }
+    encoded_params = URI.encode_www_form(params)
+    response = Faraday.post(url, encoded_params)
+    caseflow_res = ExternalApi::WebexService::Response.new(response)
+    caseflow_res.resp unless caseflow_res.error
   end
 
   private
 
   # :nocov:
-  def send_webex_request(body, method)
-    url = "https://#{@host}#{@domain}#{@api_endpoint}"
-    request = HTTPI::Request.new(url)
-    request.open_timeout = 300
-    request.read_timeout = 300
-    request.body = body.to_json unless body.nil?
-    request.query = @query
-    request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
-
-    MetricsService.record(
-      "#{@host} #{method} request to #{url}",
-      service: :webex,
-      name: @api_endpoint
-    ) do
-      case method
-      when "POST"
-        HTTPI.post(request)
-      when "GET"
-        HTTPI.get(request)
-      end
+@@ -69,5 +95,4 @@ def send_webex_request(body: nil)
+      HTTPI.post(request)
     end
   end
   # :nocov:
