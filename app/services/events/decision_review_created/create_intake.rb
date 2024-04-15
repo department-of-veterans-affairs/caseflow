@@ -17,10 +17,12 @@ module Events::DecisionReviewCreated::CreateIntake
                             detail_type: parser.intake_detail_type)
     # create EventRecord
     EventRecord.create!(event: event, evented_record: intake)
+
     intake
 
-  # Error Handling
-  rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
-    raise error
-  end
+    # Error Handling
+
+    rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
+      raise error
+    end
 end
