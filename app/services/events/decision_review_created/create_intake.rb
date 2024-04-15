@@ -18,7 +18,8 @@ module Events::DecisionReviewCreated::CreateIntake
     # create EventRecord
     EventRecord.create!(event: event, evented_record: intake)
     intake
-    # Error Handling
+
+  # Error Handling
   rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
     raise error
   end
