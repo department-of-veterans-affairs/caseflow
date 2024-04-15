@@ -9,6 +9,7 @@ module CorrespondenceControllerConcern
   MAX_QUEUED_ITEMS = 60
 
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
+    # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
 
     set_banner_params(mail_team_user, task_ids.count, tab)
@@ -45,13 +46,13 @@ module CorrespondenceControllerConcern
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
     {
-      header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-      message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+      header: (user&.tasks&.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+      message: (user&.tasks&.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
     }
   end
 
   def response_type(user)
-    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
+    @response_type = (user&.tasks&.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   def set_flash_intake_success_message

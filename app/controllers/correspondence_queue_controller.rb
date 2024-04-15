@@ -48,6 +48,7 @@ class CorrespondenceQueueController < CorrespondenceController
 
   def correspondence_team_html_response(mail_team_user, task_ids, tab)
     if mail_team_user && task_ids.present?
+      # candidate for refactor using PATCH request
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
     end
   end

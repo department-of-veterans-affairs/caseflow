@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceReviewPackageController < CorrespondenceController
-
   def review_package
     @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
     render "correspondence/review_package"
@@ -36,6 +35,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     unless update_veteran_on_correspondence
       return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
+
     update_open_review_package_tasks ? render(json: { status: :ok }) : render(json: { status: 500 })
   end
 
@@ -104,5 +104,4 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
     data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
   end
-
 end

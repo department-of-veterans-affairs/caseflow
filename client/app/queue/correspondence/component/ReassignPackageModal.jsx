@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
 import { useSelector } from 'react-redux';
-// import { bindActionCreators } from 'redux';
-// import { updateLastReassignAction } from '../correspondenceReducer/reviewPackageActions';
 import TextareaField from '../../../components/TextareaField';
 import ReactSelectDropdown from '../../../components/ReactSelectDropdown';
 import COPY from '../../../../COPY';

@@ -140,7 +140,6 @@ export const CorrespondenceIntake = (props) => {
         correspondence={props.correspondence}
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
-        // veteranInformation={props.veteranInformation}
       />
     }
     {currentStep === 3 &&
