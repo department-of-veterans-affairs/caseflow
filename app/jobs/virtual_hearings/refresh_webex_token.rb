@@ -13,7 +13,7 @@ class RefreshWebexAccessTokenJob < ApplicationJob
     else
       # Retry logic here
   end
-
+  
   rescue => e
     # Error handler logic here
   ensure
