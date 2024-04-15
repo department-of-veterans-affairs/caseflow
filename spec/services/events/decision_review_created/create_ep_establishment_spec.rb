@@ -47,7 +47,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         user_id: 1
       ).and_return(parser_double)
       expect(EventRecord).to receive(:create!)
-        .with(event: event_double, backfill_record: parser_double).and_return(event_record_double)
+        .with(event: event_double, evented_record: parser_double).and_return(event_record_double)
       described_class.process!(parser: parser_double, claim_review: claim_review, user: user_double, event: event_double)
     end
 

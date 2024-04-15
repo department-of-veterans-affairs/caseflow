@@ -9,7 +9,7 @@ module Events::DecisionReviewCreated::CreateIntake
     # create Intake
     intake = Intake.create!(veteran_file_number: veteran.file_number, user: user)
     # create EventRecord
-    EventRecord.create!(event: event, backfill_record: intake)
+    EventRecord.create!(event: event, evented_record: intake)
     # Error Handling
   rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
     raise error
