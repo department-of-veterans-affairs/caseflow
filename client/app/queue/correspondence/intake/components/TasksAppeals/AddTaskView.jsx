@@ -112,7 +112,7 @@ const AddTaskView = (props) => {
   };
 
   return (
-    <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
+    <div className="new-tasks-gray-border-styling" key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       {modalVisible &&
         <CheckboxModal
           checkboxData={props.autoTexts}
@@ -122,11 +122,11 @@ const AddTaskView = (props) => {
           handleClear={props.handleClear}
         />
       }
-      <div className="gray-border"
+      <div className="gray-border task-selection-box-for-new-tasks"
         style={
           { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
         }>
-        <div
+        <div className="task-selection-dropdown-box"
           style={
             { width: '45rem' }
           }
@@ -135,7 +135,7 @@ const AddTaskView = (props) => {
           <div id="reactSelectContainer"
             {...selectContainerStyless}>
 
-            <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
+            <label className="task-selection-title" style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
             <Select
               placeholder="Select..."
               options={props.availableTaskTypeOptions}
@@ -146,7 +146,7 @@ const AddTaskView = (props) => {
               aria-label="dropdown"
             />
           </div>
-          <div style={{ padding: '1.5rem' }} />
+          <div className="provide-context-text-styling" style={{ padding: '1.5rem' }} />
           <TextareaField
             name="content"
             label="Provide context and instruction on this task"
