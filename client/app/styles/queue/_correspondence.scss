@@ -123,12 +123,12 @@
 
   .corr-icon {
     position: absolute;
-}
+  }
 
   .corr-sectionlink {
     margin-left: 20px;
     margin-right: 10px;
-}
+  }
 
   .corr-flex {
     display: flex;
@@ -136,9 +136,9 @@
 
   .corr-autoleft {
     margin-left: auto;
-}
+  }
 
-// Alternate Borderless (no bottom border)
+  // Alternate Borderless (no bottom border)
   .corr-table-borderless {
     background-color: $caseflow-background;
 
