@@ -91,8 +91,9 @@ module HearingRequestTypeConcern
     return nil if request_type_index.blank?
 
     # support versions that were recorded before the column name changed
-    versions[request_type_index].changeset["changed_hearing_request_type"] ||
-      versions[request_type_index].changeset["changed_request_type"]
+    versions[request_type_index] &&
+      (versions[request_type_index].changeset["changed_hearing_request_type"] ||
+        versions[request_type_index].changeset["changed_request_type"])
   end
 
   def format_or_formatted_original_hearing_request_type(request_type)
