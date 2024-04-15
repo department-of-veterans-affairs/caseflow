@@ -10,10 +10,10 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import CaseSearchLink from '../components/CaseSearchLink';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
-import NumberField from '../components/NumberField';
 import cx from 'classnames';
 import TEST_SEEDS from '../../constants/TEST_SEEDS';
 import Alert from 'app/components/Alert';
+import COPY from '../../COPY';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -50,15 +50,15 @@ class TestSeeds extends React.PureComponent {
       seedRunningStatus: false,
       seedRunningMsg: 'Seed running'
     };
-    this.seedCountRefs = {};
+    this.seedCounts = {};
   }
 
   handleChange= (event, type) => {
-    this.seedCountRefs[type] = event.target.value;
+    this.seedCounts[type] = event.target.value;
   }
 
   reseed = (type) => {
-    const seedCount = parseInt(this.seedCountRefs[type], 10) || 1;
+    const seedCount = parseInt(this.seedCounts[type], 10) || 1;
 
     this.setState({ seedRunning: true, seedRunningMsg: '' });
     this.setState((prevState) => ({
@@ -124,8 +124,7 @@ class TestSeeds extends React.PureComponent {
                           />
                         )}
                       </>
-
-                      <h2 id="run_seeds">Run Seed Files</h2>
+                      <h2 id="run_seeds">{COPY.TEST_SEEDS_RUN_SEEDS}</h2>
                       <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
                         {seedTypes.map((type) => (
                           <li key={type}>
@@ -135,13 +134,6 @@ class TestSeeds extends React.PureComponent {
                                 id={`count-${type}`}
                                 onChange={(event) => this.handleChange(event, type)}
                               />
-                              {/* <NumberField
-                                key={`number-field-${type}`}
-                                name=""
-                                isInteger
-                                value={this.state.seedCounts[type] || '1'}
-                                onChange={(newValue) => this.handleInputChange(type, newValue)}
-                              /> */}
                             </div>
                             <div className="cf-btn-link test-seed-button-style">
                               <Button
@@ -154,7 +146,7 @@ class TestSeeds extends React.PureComponent {
                             <>
                               {this.state.reseedingStatus[type] && (
                                 <div className="test-seed-alert-message">
-                                  <span>{this.formatSeedName(type)} in progress</span>
+                                  <span>{this.formatSeedName(type)} {COPY.TEST_SEEDS_ALERT_MESSAGE}</span>
                                 </div>
                               )}
                             </>
