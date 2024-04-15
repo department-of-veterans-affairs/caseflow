@@ -40,7 +40,7 @@ class Events::CreateVeteranOnEvent
         vet.update_cached_attributes!
       end
       # create EventRecord indicating this is a backfilled Veteran
-      EventRecord.create!(event: event, backfill_record: vet)
+      EventRecord.create!(event: event, evented_record: vet)
 
       vet
     end
