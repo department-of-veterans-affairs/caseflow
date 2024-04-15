@@ -16,7 +16,8 @@ const ALTERNATE_COLUMN_NAMES = {
   suggestedLocation: 'Suggested Location',
   hearingLocation: 'Hearing Location',
   readableEventType: 'Actvitity',
-  eventUser: 'User'
+  eventUser: 'User',
+  'Receipt Date': 'VA DOR'
 };
 
 const FilterSummary = ({ filteredByList, clearFilteredByList }) => {

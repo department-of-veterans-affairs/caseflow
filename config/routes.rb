@@ -200,6 +200,8 @@ Rails.application.routes.draw do
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
+  get '/appeals/:appeal_id/active_evidence_submissions' => 'appeals#active_evidence_submissions'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
@@ -323,13 +325,38 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence_queue#correspondence_cases'
+    get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence_intake#current_step', as: :queue_correspondence_intake_current_step
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
+    post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
+    post '/correspondence/:id/completed_package', to: 'correspondence_tasks#completed_package'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence_review_package#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence_review_package#document_type_correspondence'
+    patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
+    get '/correspondence/team', to: 'correspondence#correspondence_team'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence_review_package#update_cmp'
+    get '/correspondence/packages', to: 'correspondence_review_package#package_documents'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence_review_package#pdf'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
+    patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
+    post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post '/correspondence_response_letters', to: 'correspondence_response_letters#create'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
+    get 'correspondence/users/:user_id(*rest)', to: 'correspondence_task_pages#index'
+    get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -412,6 +439,8 @@ Rails.application.routes.draw do
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
+
+  get "under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code

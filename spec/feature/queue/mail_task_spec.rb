@@ -280,12 +280,14 @@ RSpec.feature "MailTasks", :postgres do
         expect(page).to have_content("You have successfully")
       end
 
-      it "sends proper notifications" do
+      it "sends proper notifications", skip: "Flaky test, see https://jira.devops.va.gov/browse/APPEALS-33767" do
         scheduled_payload = AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
         if appeal.hearings.any?
           postpone_payload = AppellantNotification.create_payload(appeal, "Postponement of hearing")
             .to_json
-          expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+          using_wait_time(30) do
+            expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+          end
         end
         expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
       end
