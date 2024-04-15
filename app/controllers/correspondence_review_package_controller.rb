@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceReviewPackageController < CorrespondenceController
-
   def review_package
     render "correspondence/review_package"
   end
@@ -103,5 +102,4 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
     data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
   end
-
 end

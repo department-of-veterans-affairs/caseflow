@@ -2,39 +2,25 @@
 
 class CorrespondenceTaskFilter < TaskFilter
   def filtered_tasks
-    va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
-    date_completed_params = filter_params.select { |param| param.include?("col=correspondenceCompletedDateColumn") }
-    task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
-    nod_column_params = filter_params.select { |param| param.include?("col=packageDocTypeColumn") }
-
-    # task_column_params comes in as a single string, delimited by |. Updates task_column_params
-    # to be an array of the incoming values.
-    unless task_column_params == []
-      task_column_params[0].slice!("col=taskColumn&val=")[0]
-      task_column_params = task_column_params[0].split("|")
-    end
-
     result = tasks.all
-    va_dor_params.each do |param|
-      value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      result = result.merge(filter_by_va_dor(value_hash[:val]))
-    end
 
-    unless nod_column_params.empty?
-      nod_column_params.each do |param|
+    filter_params.each do |param|
+      case param
+      when /col=vaDor/
+        value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
+        result = result.merge(filter_by_va_dor(value_hash[:val]))
+      when /col=packageDocTypeColumn/
         value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
         result = result.merge(filter_by_nod(value_hash[:val]))
+      when /col=taskColumn/
+        task_column_params = param.sub("col=taskColumn&val=", "").split("|")
+        result = result.merge(filter_by_task(task_column_params))
+      when /col=correspondenceCompletedDateColumn/
+        value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
+        result = result.merge(filter_by_date_completed(value_hash[:val]))
       end
     end
 
-    unless task_column_params.empty?
-      result = result.merge(filter_by_task(task_column_params))
-    end
-
-    unless date_completed_params.empty?
-      date_completed_params[0].slice!("col=correspondenceCompletedDateColumn&val=")
-      result = result.merge(filter_by_date_completed(date_completed_params[0]))
-    end
     result
   end
 

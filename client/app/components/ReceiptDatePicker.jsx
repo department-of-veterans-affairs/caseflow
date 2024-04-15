@@ -4,7 +4,6 @@ import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropd
 import DateSelector from './DateSelector';
 import Button from './Button';
 import { css } from 'glamor';
-import { he } from 'date-fns/locale';
 
 const dateDropdownMap = [
   { value: 0, label: 'Between these dates' },
