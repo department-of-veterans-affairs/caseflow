@@ -58,6 +58,8 @@ export class PdfFile extends React.PureComponent {
       readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText,
       readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
     };
+
+    this.prototypeReader = false;
   }
 
   componentDidMount = () => {
@@ -74,6 +76,11 @@ export class PdfFile extends React.PureComponent {
     window.addEventListener('keydown', this.keyListener);
 
     this.props.clearDocumentLoadError(this.props.file);
+
+    // if (this.prototypeReader) {
+    //   console.log("READER_LOG component did mount!")
+    //   return this.getPrototypeDocument(requestOptions);
+    // }
 
     return this.getDocument(requestOptions);
   }
@@ -595,9 +602,79 @@ export class PdfFile extends React.PureComponent {
     overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
   })
 
+
+  renderPrototypePage = (page) => {
+    options = options || { scale: 1 };
+
+    const viewport = page.getViewport(options.scale);
+    const wrapper = document.createElement("div");
+    wrapper.className = "canvas-wrapper";
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    wrapper.appendChild(canvas)
+    canvasContainer.appendChild(wrapper);
+
+    page.render(renderContext);
+  }
+
+  renderPrototypeReader(){
+    console.log("READER_LOG renderPrototypeReader!")
+    let requestOptions = {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer',
+      metricsLogRestError: this.props.featureToggles.metricsLogRestError,
+      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled
+    };
+
+    window.addEventListener('keydown', this.keyListener);
+
+    // ApiUtil.get(this.props.file, requestOptions)
+    //   .then((resp) => PDFJS.getDocument({ data: resp.body })
+    //   .then(pdfDocument => {
+    //     const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+
+    //     return pdfDocument.getPage(pageNumberOfPageIndex(index));
+    //   })
+
+    //   return Promise.all(promises)
+    // })
+    // .then(pages => {
+    //   pages.map(page => {
+    //     this.renderPrototypePage(page);
+    //   })
+    // })
+
+    const url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+    PDFJS.disableWorker = true;
+    PDFJS.getDocument(url)
+      .then(pdfDocument => {
+        for(var num = 1; num <= pdfDocument.numPages; num++)
+          pdfDocument.getPage(num).then(this.renderPrototypePage(page));
+        })
+  }
+
   render() {
     if (this.props.loadError) {
       return <div>{this.displayErrorMessage()}</div>;
+    }
+
+    if (this.prototypeReader) {
+      return (
+        <div id="prototype-reader">
+        hello!
+          {this.renderPrototypeReader}
+        </div>
+      );
     }
 
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
