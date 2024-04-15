@@ -132,7 +132,7 @@ export const ConfirmCorrespondenceView = (props) => {
   }
 
   return (
-    <div className="gray-border corr">
+    <div className="confirm-correspondence-view-border corr">
       <h1 className="corr-h1">Review and Confirm Correspondence</h1>
       <p className="p-review-and-confirm">
         Review the details below to make sure the information is correct before submitting.
