@@ -31,8 +31,8 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
       )
       EventRecord.create!(event: event, backfill_record: end_product_establishment)
       end_product_establishment
-    rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
-      raise error
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedEpEstablishmentError, error.message
     end
     # rubocop:enable Metrics/MethodLength
   end

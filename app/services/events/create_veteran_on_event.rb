@@ -11,6 +11,8 @@ class Events::CreateVeteranOnEvent
         # return existing Veteran
         Veteran.find_by(ssn: parser.veteran_ssn)
       end
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedVeteranError, error.message
     end
 
     def veteran_exist?(veteran_ssn)

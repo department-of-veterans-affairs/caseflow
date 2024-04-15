@@ -9,7 +9,7 @@ module Events::DecisionReviewCreated::UpdateVacolsOnOptin
       LegacyOptinManager.new(decision_review: decision_review).process!
     end
   # Catch the error and raise
-  rescue Caseflow::Error::DecisionReviewCreateVacolsOnOptinError => error
-    raise error
+  rescue StandardError => error
+    raise Caseflow::Error::DecisionReviewCreateVacolsOnOptinError, error.message
   end
 end

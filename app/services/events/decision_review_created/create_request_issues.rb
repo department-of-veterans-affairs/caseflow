@@ -6,8 +6,8 @@ class Events::DecisionReviewCreated::CreateRequestIssues
   class << self
     def process!(event:, parser:, epe:)
       create_request_issue_backfill(event, parser, epe)
-    rescue Caseflow::Error::DecisionReviewCreatedRequestIssuesError => error
-      raise error
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedRequestIssuesError, error.message
     end
 
     private

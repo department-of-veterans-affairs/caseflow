@@ -12,6 +12,8 @@ class Events::CreateClaimantOnEvent
         EventRecord.create!(event: event, backfill_record: claimant)
         claimant
       end
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedClaimantError, error.message
     end
   end
 end

@@ -9,7 +9,6 @@ class Events::CreateUserOnEvent
         create_inactive_user(event, css_id, station_id)
       end
     rescue StandardError => error
-      byebug
       raise Caseflow::Error::DecisionReviewCreatedUserError, error.message
     end
 
