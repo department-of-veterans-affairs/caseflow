@@ -5,13 +5,10 @@
 class Events::CreateUserOnEvent
   class << self
     def handle_user_creation_on_event(event:, css_id:, station_id:)
-      unless user_exist?(css_id)
-        create_inactive_user(event, css_id, station_id)
-      end
-    end
+      user = User.find_by(css_id: css_id)
+      return user if user
 
-    def user_exist?(css_id)
-      User.where(css_id: css_id).exists?
+      create_inactive_user(event, css_id, station_id)
     end
 
     def create_inactive_user(event, css_id, station_id)

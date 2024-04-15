@@ -6,7 +6,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
   let(:parser) do
     instance_double("ParserDouble",
                     claim_review_veteran_is_not_claimant: true,
-                    veteran_participant_id: "7479234",
+                    claimant_participant_id: "7479234",
                     claimant_payee_code: "0002")
   end
 
