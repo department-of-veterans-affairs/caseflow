@@ -381,6 +381,13 @@
     cursor: pointer
   }
 
+  .area-above-add-tasks-button-not-related{
+    padding: 0rem 0rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column
+  }
+
   .area-under-add-tasks-button-not-related-to-appeal {
     width: 100%;
     height: auto;
@@ -404,12 +411,26 @@
     padding-right: 5.5rem
   }
 
+  .area-under-new-tasks-title {
+    width: 100%;
+    height: 3rem
+  }
+
   .evidence-window-submission-box {
     display: block;
     padding: 2rem 2rem;
     margin-left: 3rem;
     margin-bottom: 3rem;
     width: 50rem
+  }
+
+  .add-tasks-button-for-unrelated-appeals {
+    padding: 2.5rem 2.5rem
+  }
+
+  .area-above-add-task-view {
+    display: flex;
+    flex-wrap: wrap
   }
 
   .evidence-window-submission-task-dropdown {
@@ -451,4 +472,66 @@
   .provide-context-text-styling {
     padding: 1.5rem
   }
+}
+
+.add-autotext-button {
+  padding-left: 0rem;
+  padding-right: 0rem
+}
+
+.remove-task-button {
+  padding-left: 0rem;
+  padding-right: 0rem
+}
+
+.review-tasks-and-appeals-title {
+    margin-bottom: 10px
+}
+
+.review-tasks-and-appeal-box {
+  margin-bottom: 2rem;
+  padding: 3rem 4rem
+}
+
+.mail-tasks-title {
+  margin: 30px auto 20px auto
+}
+
+.area-above-select-completed-tasks {
+  padding: 0rem 2rem
+}
+
+.select-completed-mail-tasks-for-correspondence {
+  margin-bottom: 0.5rem
+}
+
+.mail-tasks-option-left-styling {
+  display: inline-block;
+  margin-right: 14rem
+}
+
+.mail-tasks-option-right-styling {
+  display: inline-block
+}
+
+.tasks-related-to-an-appeal-title {
+  margin: 30px auto 20px auto
+}
+
+.is-correspondence-related-to-existing-appeals {
+  margin-bottom: -7px
+}
+
+.tasks-not-related-to-an-appeal-title {
+  margin: 30px auto 20px auto
+}
+
+.add-new-tasks-related-to-correspondence {
+  margin-top: 0rem;
+  margin-bottom: 2rem
+}
+
+.progress-bar-styling {
+  margin-bottom: 5rem;
+  float: right
 }

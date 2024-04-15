@@ -120,8 +120,7 @@ export const CorrespondenceIntake = (props) => {
     }
     <ProgressBar
       sections={sections}
-      classNames={['cf-progress-bar', 'cf-']}
-      styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
+      classNames={['cf-progress-bar', 'cf-', 'progress-bar-styling']} />
     {currentStep === 1 &&
       <AddCorrespondenceView
         correspondenceUuid={props.correspondence_uuid}

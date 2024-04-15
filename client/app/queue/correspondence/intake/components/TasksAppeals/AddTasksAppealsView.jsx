@@ -72,72 +72,75 @@ export const AddTasksAppealsView = (props) => {
   }, [relatedTasksCanContinue, unrelatedTasksCanContinue]);
 
   return (
-    <div className="gray-border " style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-      <h1 style={{ marginBottom: '10px' }}>Review Tasks & Appeals</h1>
-      <p>Review any previously completed tasks by the mail team and add new tasks for
+    <div className="gray-border" >
+      <div className="review-tasks-and-appeal-box">
+        <h1 className="review-tasks-and-appeals-title">Review Tasks & Appeals</h1>
+        <p>Review any previously completed tasks by the mail team and add new tasks for
       either the mail package or for linked appeals, if any.</p>
-      <div>
-        <h2 style={{ margin: '30px auto 20px auto' }}>Mail Tasks</h2>
-        <div className="gray-border" style={{ padding: '0rem 2rem' }}>
-          <p style={{ marginBottom: '0.5rem' }}>Select any tasks completed by the Mail team for this correspondence.</p>
-          <div id="mail-tasks-left" style={{ display: 'inline-block', marginRight: '14rem' }}>
-            {mailTasksLeft.map((name, index) => {
-              return (
-                <Checkbox
-                  key={index}
-                  name={name}
-                  label={name}
-                  defaultValue={mailTasks.includes(name)}
-                  onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
-                />
-              );
-            })}
+        <div>
+          <h2 className="mail-tasks-title">Mail Tasks</h2>
+          <div className="gray-border">
+            <div className="area-above-select-completed-tasks">
+              <p className="select-completed-mail-tasks-for-correspondence">Select any tasks completed by the Mail team for this correspondence.</p>
+              <div className="mail-tasks-option-left-styling" id="mail-tasks-left">
+                {mailTasksLeft.map((name, index) => {
+                  return (
+                    <Checkbox
+                      key={index}
+                      name={name}
+                      label={name}
+                      defaultValue={mailTasks.includes(name)}
+                      onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
+                    />
+                  );
+                })}
+              </div>
+              <div className="mail-tasks-option-right-styling" id="mail-tasks-right">
+                {mailTasksRight.map((name, index) => {
+                  return (
+                    <Checkbox
+                      key={index}
+                      name={name}
+                      label={name}
+                      defaultValue={mailTasks.includes(name)}
+                      onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          <div id="mail-tasks-right" style={{ display: 'inline-block' }}>
-            {mailTasksRight.map((name, index) => {
-              return (
-                <Checkbox
-                  key={index}
-                  name={name}
-                  label={name}
-                  defaultValue={mailTasks.includes(name)}
-                  onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
-                />
-              );
-            })}
-          </div>
-        </div>
 
-        <div id="task-related-to-an-appeal">
-          <h2 style={{ margin: '30px auto 20px auto' }}>Tasks related to an existing Appeal</h2>
-          <p style={{ marginBottom: '-7px' }}>Is this correspondence related to an existing appeal?</p>
-          <AddAppealRelatedTaskView
-            correspondenceUuid={props.correspondenceUuid}
-            setRelatedTasksCanContinue={setRelatedTasksCanContinue}
-            filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-            allTaskTypeOptions={relatedTaskTypes}
-            autoTexts={props.autoTexts}
-            veteranInformation={props.veteranInformation}
-          />
-        </div>
-
-        <hr />
-
-        <div id="task-not-related-to-an-appeal">
-          <h2 style={{ margin: '30px auto 20px auto' }}>Tasks not related to an Appeal</h2>
-          <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
-            Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
-          </p>
-          <div>
-            <AddUnrelatedTaskView
-              setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
+          <div id="task-related-to-an-appeal">
+            <h2 className="tasks-related-to-an-appeal-title">Tasks related to an existing Appeal</h2>
+            <p className="is-correspondence-related-to-existing-appeals">Is this correspondence related to an existing appeal?</p>
+            <AddAppealRelatedTaskView
+              correspondenceUuid={props.correspondenceUuid}
+              setRelatedTasksCanContinue={setRelatedTasksCanContinue}
               filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-              allTaskTypeOptions={unrelatedTaskTypes}
+              allTaskTypeOptions={relatedTaskTypes}
               autoTexts={props.autoTexts}
+              veteranInformation={props.veteranInformation}
             />
           </div>
-        </div>
 
+          <hr />
+
+          <div id="task-not-related-to-an-appeal">
+            <h2 className="tasks-not-related-to-an-appeal-title">Tasks not related to an Appeal</h2>
+            <p className="add-new-tasks-related-to-correspondence">
+            Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
+            </p>
+            <div>
+              <AddUnrelatedTaskView
+                setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
+                filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+                allTaskTypeOptions={unrelatedTaskTypes}
+                autoTexts={props.autoTexts}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -135,7 +135,7 @@ const AddTaskView = (props) => {
           <div id="reactSelectContainer"
             {...selectContainerStyless}>
 
-            <label className="task-selection-title" style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
+            <label className="task-selection-title">Task</label>
             <Select
               placeholder="Select..."
               options={props.availableTaskTypeOptions}
@@ -146,7 +146,7 @@ const AddTaskView = (props) => {
               aria-label="dropdown"
             />
           </div>
-          <div className="provide-context-text-styling" style={{ padding: '1.5rem' }} />
+          <div className="provide-context-text-styling" />
           <TextareaField
             name="content"
             label="Provide context and instruction on this task"
@@ -156,8 +156,7 @@ const AddTaskView = (props) => {
           <Button
             id="addAutotext"
             name="Add"
-            styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            classNames={['cf-btn-link', 'cf-left-side']}
+            classNames={['cf-btn-link', 'cf-left-side', 'add-autotext-button']}
             onClick={handleModalToggle}
           >
             Add autotext
@@ -165,9 +164,8 @@ const AddTaskView = (props) => {
           {props.displayRemoveCheck &&
             <Button
               name="Remove"
-              styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
               onClick={() => props.removeTask(task.id)}
-              classNames={['cf-btn-link', 'cf-right-side']}
+              classNames={['cf-btn-link', 'cf-right-side', 'remove-task-button']}
             >
               <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
             </Button>
