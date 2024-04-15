@@ -144,10 +144,8 @@ RSpec.feature("The Correspondence Review Package page") do
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
-    #this is possible deprecated?
     it "Checking VADOR field is enabled for Mail Supervisor" do
       click_button "Edit"
-      binding.pry
       expect(page).to have_field("VA DOR", readonly: false)
     end
   end
