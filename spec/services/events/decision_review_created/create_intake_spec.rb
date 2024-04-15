@@ -21,7 +21,7 @@ describe Events::DecisionReviewCreated::CreateIntake do
                                                type: parser.intake_type,
                                                detail_type: parser.intake_detail_type)
         .and_return(intake_double)
-      expect(EventRecord).to receive(:create!).with(event: event_double, backfill_record: intake_double)
+      expect(EventRecord).to receive(:create!).with(event: event_double, evented_record: intake_double)
         .and_return(event_record_double)
       described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser)
     end

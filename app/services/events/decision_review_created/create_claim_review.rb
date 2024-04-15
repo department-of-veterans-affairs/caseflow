@@ -49,7 +49,7 @@ class Events::DecisionReviewCreated::CreateClaimReview
     end
 
     def create_event_record(event, claim)
-      EventRecord.create!(event: event, backfill_record: claim)
+      EventRecord.create!(event: event, evented_record: claim)
     end
   end
 end

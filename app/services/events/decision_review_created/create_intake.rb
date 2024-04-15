@@ -16,7 +16,7 @@ module Events::DecisionReviewCreated::CreateIntake
                             type: parser.intake_type,
                             detail_type: parser.intake_detail_type)
     # create EventRecord
-    EventRecord.create!(event: event, backfill_record: intake)
+    EventRecord.create!(event: event, evented_record: intake)
 
     intake
     # Error Handling
