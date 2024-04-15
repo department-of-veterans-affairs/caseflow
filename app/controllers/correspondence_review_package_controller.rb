@@ -12,6 +12,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def show
+    binding.pry
     corres_docs = correspondence.correspondence_documents
     task_instructions = CorrespondenceTask.package_action_tasks.open
       .find_by(appeal_id: correspondence.id)&.instructions || ""

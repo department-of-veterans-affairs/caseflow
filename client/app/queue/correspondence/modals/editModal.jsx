@@ -173,7 +173,7 @@ class EditModal extends React.Component {
                 <DateSelector
                   name="va-dor-input"
                   label="VA DOR"
-                  readOnly={this.state.canEditVADOR}
+                  readOnly={false}
                   value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
