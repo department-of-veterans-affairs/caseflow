@@ -48,7 +48,7 @@ class TestSeeds extends React.PureComponent {
         PopulateCaseflowFromVacols: false
       },
       seedRunningStatus: false,
-      seedRunningMsg: 'Seed running'
+      seedRunningMsg: 'Seeds running'
     };
     this.seedCounts = {};
   }
