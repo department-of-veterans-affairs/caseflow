@@ -8,8 +8,9 @@ class Events::CreateUserOnEvent
       unless user_exist?(css_id)
         create_inactive_user(event, css_id, station_id)
       end
-    rescue StandardError => e
-      raise Caseflow::Error::DecisionReviewCreatedUserError, e.message
+    rescue StandardError => error
+      byebug
+      raise Caseflow::Error::DecisionReviewCreatedUserError, error.message
     end
 
     def user_exist?(css_id)
@@ -21,8 +22,6 @@ class Events::CreateUserOnEvent
       # create Event record indicating this is a backfilled User
       EventRecord.create!(event: event, backfill_record: user)
       user
-    rescue StandardError => e
-      raise Caseflow::Error::DecisionReviewCreatedUserError, e.message
     end
   end
 end
