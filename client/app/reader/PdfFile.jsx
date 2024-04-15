@@ -59,7 +59,7 @@ export class PdfFile extends React.PureComponent {
       readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
     };
 
-    this.prototypeReader = false;
+    this.prototypeReader = true;
   }
 
   componentDidMount = () => {
@@ -77,10 +77,12 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    // if (this.prototypeReader) {
-    //   console.log("READER_LOG component did mount!")
-    //   return this.getPrototypeDocument(requestOptions);
-    // }
+    if (this.prototypeReader) {
+      console.log('READER_LOG component did mount!');
+
+      return this.getPrototypeDocument();
+
+    }
 
     return this.getDocument(requestOptions);
   }
@@ -602,30 +604,24 @@ export class PdfFile extends React.PureComponent {
     overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
   })
 
+  getCanvasRef = (canvas) => (this.canvas = canvas);
+  getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
 
   renderPrototypePage = (page) => {
-    options = options || { scale: 1 };
-
-    const viewport = page.getViewport(options.scale);
-    const wrapper = document.createElement("div");
-    wrapper.className = "canvas-wrapper";
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const renderContext = {
-      canvasContext: ctx,
-      viewport: viewport
+    const viewport = page.getViewport({ scale: 1 });
+    const options = {
+      canvasContext: this.canvas.getContext('2d', { alpha: false }),
+      viewport
     };
 
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    wrapper.appendChild(canvas)
-    canvasContainer.appendChild(wrapper);
+    this.renderTask = page.render(options);
 
-    page.render(renderContext);
+    return this.renderTask.promise.then();
+
   }
 
-  renderPrototypeReader(){
-    console.log("READER_LOG renderPrototypeReader!")
+  getPrototypeDocument() {
+
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -638,29 +634,56 @@ export class PdfFile extends React.PureComponent {
 
     window.addEventListener('keydown', this.keyListener);
 
-    // ApiUtil.get(this.props.file, requestOptions)
-    //   .then((resp) => PDFJS.getDocument({ data: resp.body })
-    //   .then(pdfDocument => {
-    //     const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+    ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        const metricData = {
+          message: `Getting PDF document: "${this.props.file}"`,
+          type: 'performance',
+          product: 'reader',
+          data: this.metricsAttributes,
+          eventId: this.metricsIdentifier,
+        };
+        const src = {
+          data: resp.body,
+          verbosity: 5,
+          stopAtErrors: false,
+          pdfBug: true,
+        };
 
-    //     return pdfDocument.getPage(pageNumberOfPageIndex(index));
-    //   })
+        this.loadingTask = PDFJS.getDocument(src);
 
-    //   return Promise.all(promises)
-    // })
-    // .then(pages => {
-    //   pages.map(page => {
-    //     this.renderPrototypePage(page);
-    //   })
-    // })
+        return recordAsyncMetrics(this.loadingTask.promise, metricData,
+          this.props.featureToggles.metricsRecordPDFJSGetDocument);
+      }).
+      then((pdfDocument) => {
+        console.log('READER_LOG then pdfDocument=====');
+        this.pdfDocument = pdfDocument;
 
-    const url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
-    PDFJS.disableWorker = true;
-    PDFJS.getDocument(url)
-      .then(pdfDocument => {
-        for(var num = 1; num <= pdfDocument.numPages; num++)
-          pdfDocument.getPage(num).then(this.renderPrototypePage(page));
-        })
+        return this.getPages(pdfDocument);
+      }).
+      then((pages) => {
+        pages.map((page) => {
+
+          const viewport = page.getViewport({ scale: this.props.scale });
+          // const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="overflow-y:scroll;"><canvas></canvas></div>`.repeat(pages.length);
+
+          const pagesHTML = "<canvas></canvas>".repeat(pages.length);
+
+          viewport.innerHTML = pagesHTML;
+          this.canvas.height = viewport.height;
+          this.canvas.width = viewport.width;
+          const options = {
+            canvasContext: this.canvas.getContext('2d', { alpha: false }),
+            viewport
+          };
+
+          this.renderTask = page.render(options);
+
+          return this.renderTask.promise.then();
+
+        });
+      });
+
   }
 
   render() {
@@ -670,10 +693,7 @@ export class PdfFile extends React.PureComponent {
 
     if (this.prototypeReader) {
       return (
-        <div id="prototype-reader">
-        hello!
-          {this.renderPrototypeReader}
-        </div>
+        <canvas ref={this.getCanvasRef} className="canvasWrapper" />
       );
     }
 
@@ -689,7 +709,8 @@ export class PdfFile extends React.PureComponent {
         const renderEndTime = performance.now();
         const renderDuration = renderEndTime - this.props.renderStartTime;
 
-        const pdfRenderMessage = "PDF render time in Milliseconds";
+        const pdfRenderMessage = 'PDF render time in Milliseconds';
+
         this.metricsAttributes.name = pdfRenderMessage;
 
         storeMetrics(
