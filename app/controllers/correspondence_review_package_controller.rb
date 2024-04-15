@@ -12,6 +12,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def show
+    binding.pry
     corres_docs = correspondence.correspondence_documents
     task_instructions = CorrespondenceTask.package_action_tasks.open
       .find_by(appeal_id: correspondence.id)&.instructions || ""
@@ -19,7 +20,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: InboundOpsTeam.singleton.user_is_admin?(current_user),
+      user_can_edit_vador: current_user.mail_supervisor?,
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
