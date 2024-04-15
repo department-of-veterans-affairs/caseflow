@@ -1267,7 +1267,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("[aria-label='Reassign Package Task Link']")[0].click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
-      find('[for="merge-package_approve"]').click
+      find('[for="reassign-package_approve"]').click
       find("#react-select-4-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
       find("#react-select-4-option-0").click
       click_button("Confirm")
@@ -1279,7 +1279,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("[aria-label='Reassign Package Task Link']")[0].click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
-      find('[for="merge-package_reject"]').click
+      find('[for="reassign-package_reject"]').click
       find(".cf-form-textarea", match: :first).fill_in with: "this is a rejection reason"
       click_button("Confirm")
       expect(page).to have_content("You have successfully rejected a package request")
