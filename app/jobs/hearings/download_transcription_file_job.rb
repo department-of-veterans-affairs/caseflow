@@ -18,56 +18,43 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
 
-  retry_on(FileDownloadError, wait: 5.seconds) do |job, exception|
-    action_hash = {
-      action: "download",
-      action_object: "a #{job.transcription_file.file_type} file",
-      direction: "from",
-      provider: "Webex",
-      download_link: job.arguments.first[:download_link]
+  retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
+    details_hash = {
+      error: { type: "download" },
+      provider: "webex",
+      temporary_download_link: job.arguments.first[:download_link]
     }
-    details = job.build_error_details(action_hash, exception.class)
-    TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
-    action_hash = {
-      action: "upload",
-      action_object: "a #{job.transcription_file.file_type} file",
-      direction: "to",
-      provider: "S3"
-    }
-    details = job.build_error_details(action_hash, exception.class)
-    TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
+    details_hash = { error: { type: "upload" }, provider: "S3" }
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
-    action_hash = {
-      action: "convert",
-      action_object: "a #{job.transcription_file.file_type} file",
-      direction: "to",
-      conversion_type: "rtf"
-    }
-    details = job.build_error_details(action_hash, exception.class)
-    TranscriptFileIssuesMailer.send_issue_details(details, job.appeal_id)
+    details_hash = { error: { type: "conversion" }, conversion_type: "rtf" }
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 
-  discard_on(FileNameError) do |job, error|
-    action_hash = {
-      action: "download",
-      action_object: "a file",
-      direction: "from",
-      provider: "Webex",
-      file_name: job.file_name
+  discard_on(FileNameError) do |job, exception|
+    details_hash = {
+      error: { type: "download" },
+      provider: "webex",
+      reason: "unable to parse hearing information from file name: #{job.file_name}",
+      expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
-    details = job.build_error_details(action_hash, error.class)
-    TranscriptFileIssuesMailer.send_issue_details(details, nil)
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{exception}")
   end
 
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
@@ -85,6 +72,24 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @transcription_file.clean_up_tmp_location
   end
 
+  # Purpose: Builds hash of values to be listed in mail template
+  #
+  # Note: Public method to provide access during job retry
+  #
+  # Params: error - Instance of error
+  #         details_hash - hash of attributes and values to be listed in mail template
+  #
+  # Returns: The hash for details on the error
+  def build_error_details(error, details_hash)
+    details_hash.merge(
+      docket_number: !error.is_a?(FileNameError) ? hearing.docket_number : nil,
+      appeal_id: !error.is_a?(FileNameError) ? hearing.appeal.external_id : nil,
+      error: details_hash[:error].merge(
+        explanation: build_error_explanation(details_hash)
+      )
+    )
+  end
+
   # Purpose: Logs error and captures exception
   #
   # Note: Public method to provide access during job retry
@@ -100,30 +105,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       job_id: job_id
     }
     Raven.capture_exception(error, extra: extra)
-  end
-
-  # Purpose: Builds object detailing error for mail template
-  #
-  # Note: Public method to provide access during job retry
-  #
-  # Params: hash - object, hash object for describing the action that was attempted
-  #         error - Exception - the error that was raised
-  #
-  # Returns: The hash for details on the error
-  def build_error_details(hash, error)
-    hash.merge(
-      error: error,
-      docket_number: error != FileNameError ? hearing.docket_number : nil
-    )
-  end
-
-  # Purpose: Get either the uuid or vacols id of the associated appeal
-  #
-  # Note: Public method to provide access during job retry
-  #
-  # Returns: The uuid/vacols_id of the appeal
-  def appeal_id
-    hearing.appeal.external_id
   end
 
   private
@@ -233,5 +214,25 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Params: message - string
   def log_info(message)
     Rails.logger.info(message)
+  end
+
+  JOB_ACTIONS = {
+    download: "download",
+    upload: "upload",
+    conversion: "convert"
+  }.freeze
+
+  # Purpose: Builds error message to be printed in email notifications
+  #
+  # Params: details_hash - hash of attributes and values to be listed in mail template
+  #
+  # Returns: String message
+  def build_error_explanation(details_hash)
+    action = JOB_ACTIONS[details_hash[:error][:type].to_sym]
+    direction = action == "download" ? "from" : "to"
+    action_recipient = details_hash[:provider]&.titlecase || details_hash.delete(:conversion_type)
+    file_type = @transcription_file ? "#{@transcription_file.file_type} " : ""
+
+    "#{action} a #{file_type}file #{direction} #{action_recipient}"
   end
 end

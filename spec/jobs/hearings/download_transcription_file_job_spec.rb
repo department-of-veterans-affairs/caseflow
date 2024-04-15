@@ -52,14 +52,6 @@ describe Hearings::DownloadTranscriptionFileJob do
       end
     end
 
-    shared_examples "sends correct email template" do
-      it "mailer receives correct params" do
-        expect(TranscriptFileIssuesMailer).to receive(:send_issue_details)
-          .with(error_details, appeal_id)
-        perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
-      end
-    end
-
     shared_context "failed download from Webex" do
       let(:link) { "https://picsum.photos/broken" }
       let(:download_error) { Hearings::DownloadTranscriptionFileJob::FileDownloadError }
@@ -231,7 +223,7 @@ describe Hearings::DownloadTranscriptionFileJob do
       end
 
       context "job retries" do
-        let(:transcription_file) { create(:transcription_file) }
+        let(:file_type) { "vtt" }
         let(:upload_error) { TranscriptionFileUpload::FileUploadError }
         let(:download_error) { Hearings::DownloadTranscriptionFileJob::FileDownloadError }
         let(:conversion_error) { TranscriptionTransformer::FileConversionError }
@@ -241,15 +233,21 @@ describe Hearings::DownloadTranscriptionFileJob do
           allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
         end
 
+        shared_examples "sends correct email template" do
+          it "mailer receives correct params" do
+            expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
+              .with(error_details)
+            perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
+          end
+        end
+
         context "failed upload" do
           let(:error_details) do
             {
-              action: "upload",
-              action_object: "a vtt file",
-              direction: "to",
+              error: { type: "upload", explanation: "upload a #{file_type} file to S3" },
               provider: "S3",
-              error: upload_error.class,
-              docket_number: docket_number
+              docket_number: docket_number,
+              appeal_id: appeal_id
             }
           end
 
@@ -264,13 +262,11 @@ describe Hearings::DownloadTranscriptionFileJob do
         context "failed download" do
           let(:error_details) do
             {
-              action: "download",
-              action_object: "a vtt file",
-              direction: "from",
-              provider: "Webex",
-              error: download_error.class,
+              error: { type: "download", explanation: "download a #{file_type} file from Webex" },
+              provider: "webex",
+              temporary_download_link: link,
               docket_number: docket_number,
-              download_link: link
+              appeal_id: appeal_id
             }
           end
 
@@ -285,12 +281,9 @@ describe Hearings::DownloadTranscriptionFileJob do
         context "failed conversion" do
           let(:error_details) do
             {
-              action: "convert",
-              action_object: "a vtt file",
-              direction: "to",
-              conversion_type: "rtf",
-              error: conversion_error.class,
-              docket_number: docket_number
+              error: { type: "conversion", explanation: "convert a #{file_type} file to #{conversion_type}" },
+              docket_number: docket_number,
+              appeal_id: appeal_id
             }
           end
 
@@ -306,13 +299,12 @@ describe Hearings::DownloadTranscriptionFileJob do
           let(:appeal_id) { nil }
           let(:error_details) do
             {
-              action: "download",
-              action_object: "a file",
-              direction: "from",
-              provider: "Webex",
-              error: file_name_error.class,
+              error: { type: "download", explanation: "download a file from Webex" },
+              provider: "webex",
+              reason: "unable to parse hearing information from file name: #{file_name}",
+              expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]",
               docket_number: nil,
-              file_name: file_name
+              appeal_id: nil
             }
           end
 

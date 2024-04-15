@@ -12,17 +12,15 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     recording_id = job.arguments&.first&.[](:id)
-    details = {
-      action: "retrieve",
-      action_object: "recording details",
-      action_object_id: recording_id,
-      direction: "from",
-      provider: "Webex",
-      error: exception,
+    error_details = {
+      error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
+      provider: "webex",
+      recording_id: recording_id,
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{recording_id}",
-      response: { status: exception.code, message: exception.message }.to_json
+      response: { status: exception.code, message: exception.message }.to_json,
+      docket_number: nil
     }
-    TranscriptFileIssuesMailer.send_issue_details(details)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 

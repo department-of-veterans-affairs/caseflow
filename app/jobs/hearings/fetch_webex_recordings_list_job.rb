@@ -13,17 +13,14 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour
     max = 100
     query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
-    details = {
-      action: "retrieve",
-      action_object: "recordings",
-      direction: "from",
-      provider: "Webex",
-      error: exception,
+    error_details = {
+      error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      times: "From: #{from}, To: #{to}"
+      times: "From: #{from}, To: #{to}",
+      docket_number: nil
     }
-    TranscriptFileIssuesMailer.send_issue_details(details)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 

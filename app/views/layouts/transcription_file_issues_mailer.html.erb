@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+
+    </style>
+  </head>
+
+  <body>
+    <%= yield %>
+    <%= yield :intro %>
+    <ul>
+      <% if @download_link %>
+        <%= yield :download_link %>
+      <% end %>
+      <%= yield :content %>
+      <% if @case_link %>
+        <%= yield :case_details_link %>
+      <% end %>
+    </ul>
+    <%= yield :signature %>
+  </body>
+</html>
