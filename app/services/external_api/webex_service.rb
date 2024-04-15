@@ -71,9 +71,19 @@ class ExternalApi::WebexService
   private
 
   # :nocov:
-@@ -69,5 +95,4 @@ def send_webex_request(body: nil)
+  def send_webex_request(body: nil)
+    url = "https://#{@host}#{@domain}#{@api_endpoint}"
+    request = HTTPI::Request.new(url)
+    request.open_timeout = 300
+    request.read_timeout = 300
+    request.body = body.to_json unless body.nil?
+    request.headers["Authorization"] = "Bearer #{@apikey}"
+    MetricsService.record(
+      "#{@host} POST request to #{url}",
+      service: :webex,
+      name: @api_endpoint
+    ) do
       HTTPI.post(request)
     end
   end
-  # :nocov:
 end
