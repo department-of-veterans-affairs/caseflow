@@ -4,7 +4,6 @@
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerUtil
-
   MAX_QUEUED_ITEMS = 60
 
   def current_correspondence
@@ -204,7 +203,7 @@ module CorrespondenceControllerUtil
     end
   end
 
-  def handle_error_banner_params(mail_team_user)
+  def handle_error_banner_params(_mail_team_user)
     operation_verb = @action_type == "approve" ? "approved" : "rejected"
     @response_header = "Package request for #{@veteran_name} could not be #{operation_verb}"
     @response_message = "Please try again at a later time or contact the Help Desk."

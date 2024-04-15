@@ -236,7 +236,7 @@ const CorrespondenceTableBuilder = (props) => {
             </span>
           }
         </div>
-        <hr></hr>
+        <hr style={{ marginBottom: '17px' }}></hr>
       </>);
 
     };
