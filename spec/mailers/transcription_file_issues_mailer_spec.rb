@@ -56,7 +56,8 @@ RSpec.describe TranscriptionFileIssuesMailer, type: :mailer do
     end
 
     it "assigns case details link for demo environment" do
-      allow(Rails).to receive(:deploy_env?).with(:demo).and_return(true)
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with("DEPLOY_ENV").and_return("demo")
       mail = described_class.issue_notification(details).deliver_now
       expect(mail.body.encoded).to match("https://demo.appeals.va.gov/queue/appeals/#{appeal_id}")
     end
@@ -97,18 +98,28 @@ RSpec.describe TranscriptionFileIssuesMailer, type: :mailer do
       expect(mail.to).to eq(["Caseflow@test.com"])
     end
 
+    it "assigns to email address for prodtest environment" do
+      allow(Rails).to receive(:deploy_env).and_return(:prodtest)
+      expect(mail.to).to eq(["VHACHABID_Appeals_ProdTest@va.gov"])
+    end
+
+    it "assigns to email address for prodtest environment" do
+      allow(Rails).to receive(:deploy_env).and_return(:uat)
+      expect(mail.to).to eq(["BID_Appeals_UAT@bah.com"])
+    end
+
     it "assigns to email address for prod environment" do
       allow(Rails).to receive(:deploy_env).and_return(:prod)
       expect(mail.to).to eq(["BVAHearingTeam@VA.gov"])
     end
 
-    it "assigns cc email address for non prod environment" do
-      expect(mail.cc).to eq(nil)
-    end
-
     it "assigns cc email address for prod environment" do
       allow(Rails).to receive(:deploy_env).and_return(:prod)
       expect(mail.cc).to eq(["OITAppealsHelpDesk@va.gov"])
+    end
+
+    it "assigns cc email address for non prod environment" do
+      expect(mail.cc).to eq(nil)
     end
 
     it "renders the sender email" do

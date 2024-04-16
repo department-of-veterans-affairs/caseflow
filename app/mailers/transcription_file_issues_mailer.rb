@@ -40,7 +40,6 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
   end
 
   def mailer_config
-    byebug
     case Rails.deploy_env
     when :development, :test
       { base_url: non_external_link,
@@ -49,7 +48,8 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
       { base_url: "https://appeals.cf.uat.ds.va.gov",
         emails: { to: "BID_Appeals_UAT@bah.com" } }
     when :prodtest
-      { base_url: "https://appeals.cf.prodtest.ds.va.gov" }
+      { base_url: "https://appeals.cf.prodtest.ds.va.gov",
+        emails: { to: "VHACHABID_Appeals_ProdTest@va.gov" } }
     when :preprod
       { base_url: "https://appeals.cf.preprod.ds.va.gov" }
     when :prod
@@ -61,8 +61,8 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
 
   # The link for the case details page when not in prod or uat
   def non_external_link
-    # Rails.deploy_env returns :development for both development and demo envs, use #deploy_env?(environment)
-    return "https://demo.appeals.va.gov" if Rails.deploy_env?(:demo)
+    # Rails.deploy_env returns :development for both development and demo envs, use ENV["DEPLOY_ENV"]
+    return "https://demo.appeals.va.gov" if ENV["DEPLOY_ENV"] == "demo"
 
     "localhost:3000"
   end

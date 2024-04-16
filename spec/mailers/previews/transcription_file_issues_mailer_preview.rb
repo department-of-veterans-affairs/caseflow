@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # preview mailer html
-#   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_download_issues
+#   EN
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_upload_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_conversion_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_name_issues
