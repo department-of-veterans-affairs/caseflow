@@ -42,7 +42,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     super(props);
 
     this.state = {
-      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || ''
+      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || '',
+      clearAttorney: false
     };
   }
 
@@ -89,11 +90,16 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
+  toggleClearAttorney = () => {
+    this.setState({ clearAttorney: true });
+  };
+
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages?.();
     this.props.resetErrorMessages?.();
+    this.toggleClearAttorney();
 
     if (this.props.isModal) {
       // QueueFlowModal will call validateForm
@@ -221,7 +227,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       secondaryAssignDropdownLabel,
       pathAfterSubmit
     } = this.props;
-    const { instructions } = this.state;
+    const { instructions, clearAttorney } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
@@ -268,7 +274,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         value={selectedOption}
         styling={css({ width: '30rem' })} />
       }
-      {selectedAssignee === OTHER &&
+      {selectedAssignee === OTHER && !clearAttorney &&
         <React.Fragment>
           <div {...fullWidth} {...css({ marginBottom: '0' })} />
           {!secondaryAssignDropdownLabel && <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>}
