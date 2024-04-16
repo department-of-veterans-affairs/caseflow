@@ -680,11 +680,27 @@ export class PdfFile extends React.PureComponent {
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
           if (this.prototypeReader) {
-            {/* this.getRowPage; */}
 
-            const readerRow = ({ index, style }) => (
-              <canvas style={{ ...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
-            );
+            const readerRow = ({ index, style }) => {
+              this.props.pdfDocument.getPage(index + 1).
+                then((page) => {
+                  const viewport = page.getViewport({ scale: this.props.scale });
+
+                  this.canvas.height = viewport.height;
+                  this.canvas.width = viewport.width;
+
+                  const options = {
+                    canvasContext: this.canvas.getContext('2d', { alpha: false }),
+                    viewport
+                  };
+
+                  this.renderTask = page.render(options);
+                });
+
+              return (
+                <canvas style={{ ...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index + 1}`} ref={this.getCanvasRef} className="canvasWrapper" />
+              );
+            };
 
             return (
               <FixedSizeList

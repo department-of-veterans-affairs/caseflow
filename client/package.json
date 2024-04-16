@@ -112,6 +112,7 @@
     "react-hook-form": "^6.14.2",
     "react-markdown": "^5.0.2",
     "react-on-rails": "11.3.0",
+    "react-pdf": "^5.7.2",
     "react-polling": "^1.0.5",
     "react-redux": "^7.2.0",
     "react-router": "^5.1.2",
