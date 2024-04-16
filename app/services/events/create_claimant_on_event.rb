@@ -11,7 +11,7 @@ class Events::CreateClaimantOnEvent
           participant_id: parser.claimant_participant_id,
           payee_code: parser.claimant_payee_code
         )
-        EventRecord.create!(event: event, backfill_record: claimant)
+        EventRecord.create!(event: event, evented_record: claimant)
         claimant
       end
     end

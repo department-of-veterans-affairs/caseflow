@@ -29,7 +29,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         synced_status: parser.epe_synced_status,
         user_id: user.id
       )
-      EventRecord.create!(event: event, backfill_record: end_product_establishment)
+      EventRecord.create!(event: event, evented_record: end_product_establishment)
       end_product_establishment
     rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
       raise error

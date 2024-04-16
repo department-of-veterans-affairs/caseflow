@@ -28,26 +28,26 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"
       }
-      new(sample_header, example_response)
+      new(sample_header, JSON.parse(example_response))
     end
   end
 
   def initialize(headers, payload_json)
-    @payload = JSON.parse(payload_json, symbolize_names: true)
+    @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
 
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
-    Time.at(milliseconds / 1000).to_datetime
+    Time.at(milliseconds.to_i / 1000).to_datetime
   end
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    year = logical_date_int / 100_00
-    month = (logical_date_int % 100_00) / 100
-    day = logical_date_int % 100
+    year = logical_date_int.to_i / 100_00
+    month = (logical_date_int.to_i % 100_00) / 100
+    day = logical_date_int.to_i % 100
     Date.new(year, month, day)
   end
 
@@ -63,7 +63,19 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     @payload.dig(:station)
   end
 
+  def event_id
+    @payload.dig(:event_id)
+  end
+
+  def claim_id
+    @payload.dig(:claim_id)
+  end
+
   # Intake attributes
+  def intake
+    @payload.dig(:intake)
+  end
+
   def intake_started_at
     intake_started_at_milliseconds = @payload.dig(:intake, :started_at)
     convert_milliseconds_to_datetime(intake_started_at_milliseconds)
@@ -92,6 +104,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Veteran attributes
+  def veteran
+    @payload.dig(:veteran)
+  end
+
   def veteran_file_number
     @veteran_file_number ||= @headers["X-VA-File-Number"].presence
   end
@@ -154,6 +170,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Claimant attributes
+  def claimant
+    @payload.dig(:claimant)
+  end
+
   def claimant_payee_code
     @payload.dig(:claimant, :payee_code)
   end
@@ -171,6 +191,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # ClaimReview attributes
+  def claim_review
+    @payload.dig(:claim_review)
+  end
+
   def claim_review_benefit_type
     @payload.dig(:claim_review, :benefit_type)
   end
@@ -221,6 +245,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # EndProductEstablishment attr
+  def epe
+    @payload.dig(:end_product_establishment)
+  end
+
   def epe_benefit_type_code
     @payload.dig(:end_product_establishment, :benefit_type_code)
   end

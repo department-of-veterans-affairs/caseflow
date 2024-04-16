@@ -6,34 +6,25 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
   describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
-    let!(:valid_params) do
-      {
-        event_id: "123",
-        claim_id: "9999",
-        payload: JSON.generate(json_payload)
-      }
-    end
+    let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
 
     context "with a valid token" do
       it "returns success response" do
-        request.headers["Authorization"] = "Token #{api_key.key_string}"
-        request.headers["X-VA-Vet-SSN"] = "123456789"
-        request.headers["X-VA-File-Number"] = "77799777"
-        request.headers["X-VA-Vet-First-Name"] = "John"
-        request.headers["X-VA-Vet-Last-Name"] = "Smith"
-        request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
-        post :decision_review_created, params: valid_params
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
+        post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:created)
       end
     end
 
     context "when claim_id is already in Redis Cache" do
       it "throws a Redis error and returns a 409 status" do
-        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
         redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
-        lock_key = "RedisMutex:EndProductEstablishment:9999"
+        lock_key = "RedisMutex:EndProductEstablishment:123566"
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
-        post :decision_review_created, params: valid_params
+        post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:conflict)
         redis.del(lock_key)
       end
@@ -42,7 +33,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     context "with an invalid token" do
       it "returns unauthorized response" do
         request.headers["Authorization"] = "invalid_token"
-        post :decision_review_created, params: valid_params
+        post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -50,7 +41,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     context "without a token" do
       it "returns unauthorized response" do
         # Omitting Authorization header to simulate missing token
-        post :decision_review_created, params: valid_params
+        post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -109,4 +100,12 @@ def json_payload
                                        "events",
                                        "decision_review_created",
                                        "decision_review_created_example.json")))
+end
+
+def load_headers
+    request.headers["X-VA-Vet-SSN"] = "123456789"
+    request.headers["X-VA-File-Number"] = "77799777"
+    request.headers["X-VA-Vet-First-Name"] = "John"
+    request.headers["X-VA-Vet-Last-Name"] = "Smith"
+    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
 end

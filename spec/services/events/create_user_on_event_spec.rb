@@ -19,7 +19,7 @@ describe Events::CreateUserOnEvent do
         expect(user2.event_record).to eq(user_event_record)
         expect(EventRecord.count).to eq(1)
         expect(EventRecord.first).to eq(user_event_record)
-        expect(user_event_record.backfill_record).to eq(user2)
+        expect(user_event_record.evented_record).to eq(user2)
       end
     end
   end

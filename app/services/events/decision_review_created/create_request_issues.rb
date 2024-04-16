@@ -53,7 +53,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     end
 
     def create_request_issue_event_record(event, issue)
-      EventRecord.create!(event: event, backfill_record: issue)
+      EventRecord.create!(event: event, evented_record: issue)
     end
   end
 end

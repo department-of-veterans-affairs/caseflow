@@ -100,7 +100,6 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
           }
         ]
       }
-      JSON.generate(data)
     end
   end
 end

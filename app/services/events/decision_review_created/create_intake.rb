@@ -5,13 +5,24 @@
 module Events::DecisionReviewCreated::CreateIntake
   # This starts the process of the Intake creation and EventRecord backfill by passing in the event, user, and veteran
   # that was created in the DecisionReviewCreated Service.
-  def self.process!(event:, user:, veteran:)
+  def self.process!(event:, user:, veteran:, parser:)
     # create Intake
-    intake = Intake.create!(veteran_file_number: veteran.file_number, user: user)
+    intake = Intake.create!(veteran_file_number: veteran.file_number,
+                            user: user,
+                            started_at: parser.intake_started_at,
+                            completion_started_at: parser.intake_completion_started_at,
+                            completed_at: parser.intake_completed_at,
+                            completion_status: parser.intake_completion_status,
+                            type: parser.intake_type,
+                            detail_type: parser.intake_detail_type)
     # create EventRecord
-    EventRecord.create!(event: event, backfill_record: intake)
+    EventRecord.create!(event: event, evented_record: intake)
+
+    intake
+
     # Error Handling
-  rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
-    raise error
-  end
+
+    rescue Caseflow::Error::DecisionReviewCreatedIntakeError => error
+      raise error
+    end
 end

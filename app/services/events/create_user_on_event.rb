@@ -14,7 +14,7 @@ class Events::CreateUserOnEvent
     def create_inactive_user(event, css_id, station_id)
       user = User.create!(css_id: css_id.upcase, station_id: station_id, status: Constants.USER_STATUSES.inactive)
       # create Event record indicating this is a backfilled User
-      EventRecord.create!(event: event, backfill_record: user)
+      EventRecord.create!(event: event, evented_record: user)
       user
     end
   end
