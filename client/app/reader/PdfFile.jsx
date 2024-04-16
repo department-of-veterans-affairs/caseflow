@@ -78,12 +78,12 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    if (this.prototypeReader) {
-      console.log('READER_LOG component did mount!');
+    // if (this.prototypeReader) {
+    //   console.log('READER_LOG component did mount!');
 
-      return this.getPrototypeDocument();
+    //   return this.getPrototypeDocument();
 
-    }
+    // }
 
     return this.getDocument(requestOptions);
   }
@@ -694,28 +694,27 @@ export class PdfFile extends React.PureComponent {
       return <div>{this.displayErrorMessage()}</div>;
     }
 
-    if (this.prototypeReader) {
+    // if (this.prototypeReader) {
 
+    //   const Row = ({ index, style }) => (
 
-      const Row = ({ index, style }) => (
+    //     <div id={`pageContainer${pageNumberOfPageIndex(index)}`} style={style} ref={this.getPageContainerRef}>
+    //     <canvas style={{ backgroundColor: 'blue', color: 'white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
+    //     </div>
+    //   );
 
-        <div id={`pageContainer${pageNumberOfPageIndex(index)}`} style={style} ref={this.getPageContainerRef}>
-        <canvas style={{ backgroundColor: 'blue', color: 'white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
-        </div>
-      );
-
-      return (
-        <FixedSizeList
-          height={600}
-          itemCount={2}
-          itemSize={35}
-          width="100%"
-          style={{ backgroundColor: 'red', color: 'white' }}
-        >
-          {Row}
-        </FixedSizeList>
-      );
-    }
+    //   return (
+    //     <FixedSizeList
+    //       height={600}
+    //       itemCount={2}
+    //       itemSize={35}
+    //       width="100%"
+    //       style={{ backgroundColor: 'red', color: 'white' }}
+    //     >
+    //       {Row}
+    //     </FixedSizeList>
+    //   );
+    // }
 
     // }
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
@@ -771,6 +770,36 @@ export class PdfFile extends React.PureComponent {
           console.log('READER_LOG 764');
 
           console.log(`READER_LOG ${this.props.pdfDocument.numPages}`);
+
+          if (this.prototypeReader) {
+
+            const Row = ({ index, style }) => (
+              <div id={`pageContainer${pageNumberOfPageIndex(index)}`} width={width} height={height} style={style} ref={this.getPageContainerRef}>
+                <canvas height={height} width={width} style={{ backgroundColor: 'blue', color: 'white', border: '1px solid' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
+                Row {index}
+              </div>
+
+            );
+
+            const Row1 = ({ index, style }) => (
+              <canvas height={height} width={width} style={{...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
+            )
+
+            return (
+              <FixedSizeList
+                height={height}
+                itemCount={this.props.pdfDocument.numPages}
+                itemSize={35}
+                width={width}
+                style={{ backgroundColor: 'red', color: 'white' }}
+              >
+                {Row1}
+
+
+              </FixedSizeList>
+            );
+
+          }
 
           return <Grid
             ref={this.getGrid}
