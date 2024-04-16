@@ -7,24 +7,18 @@
   </p>
 <% end %>
 
-<%= content_for :download_link do %>
-  <li>
-    <a href=<%= @download_link %>>Temporary Download Link</a>
-  </li>
-<% end %>
-
 <%= content_for :content do %>
+  <ul>
   <% @details.each do |key, value|%>
-  <li>
-    <%= key.to_s.gsub("_", " ") %>: <%= value || "N/A" %>
-  </li>
+    <li>
+    <% if value.respond_to?(:has_key?) && value[:link] %>
+      <a href=<%= value[:link] %>><%= key.to_s.titlecase %></a>
+    <% else %>
+      <%= key.to_s.titlecase %>: <%= value || "N/A" %>
+    <% end %>
+    </li>
   <% end %>
-<% end %>
-
-<%= content_for :case_details_link do %>
-  <li>
-    <a href=<%= @case_link %>>Case Details</a>
-  </li>
+  </ul>
 <% end %>
 
 <%= content_for :signature do %>

@@ -10,15 +10,7 @@
   <body>
     <%= yield %>
     <%= yield :intro %>
-    <ul>
-      <% if @download_link %>
-        <%= yield :download_link %>
-      <% end %>
-      <%= yield :content %>
-      <% if @case_link %>
-        <%= yield :case_details_link %>
-      <% end %>
-    </ul>
+    <%= yield :content %>
     <%= yield :signature %>
   </body>
 </html>

@@ -12,7 +12,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     details = {
       error: { type: "download", explanation: "download a mp3 file from Webex" },
       provider: "webex",
-      temporary_download_link: "webex.com/download_link",
+      temporary_download_link: { link: "webex.com/download_link" },
       docket_number: "123456",
       appeal_id: "772f677a-b5fd-45f0-b74d-ecdd15da0730"
     }
@@ -42,7 +42,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     details = {
       error: { type: "download", explanation: "download a file from Webex" },
       provider: "webex",
-      reason: "unable to parse hearing information from file name: 240322-2489_441_WrongHearingType.mp3",
+      reason: "Unable to parse hearing information from file name: 240322-2489_441_WrongHearingType.mp3",
       expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]",
       docket_number: nil,
       appeal_id: nil

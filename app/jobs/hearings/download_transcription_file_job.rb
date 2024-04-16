@@ -20,9 +20,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     details_hash = {
+      temporary_download_link: { link: job.arguments.first[:download_link] }
       error: { type: "download" },
       provider: "webex",
-      temporary_download_link: job.arguments.first[:download_link]
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
@@ -49,7 +49,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     details_hash = {
       error: { type: "download" },
       provider: "webex",
-      reason: "unable to parse hearing information from file name: #{job.file_name}",
+      reason: "Unable to parse hearing information from file name: #{job.file_name}",
       expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
     error_details = job.build_error_details(exception, details_hash)
