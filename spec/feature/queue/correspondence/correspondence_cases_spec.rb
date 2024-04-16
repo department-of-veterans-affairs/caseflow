@@ -1382,7 +1382,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[1].fill_in(with: end_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("End date must be greater than the start date")
+      expect(page).to have_content("To date cannot occur before from date")
     end
 
     it "filters date column with 'before' this date" do
@@ -1430,7 +1430,7 @@ RSpec.feature("The Correspondence Cases page") do
       on_this_date = (current_date + 1).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: on_this_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
   end
 

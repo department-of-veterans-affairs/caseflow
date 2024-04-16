@@ -139,7 +139,6 @@ RSpec.feature("The Correspondence Review Package page") do
     before do
       FeatureToggle.enable!(:correspondence_queue)
       InboundOpsTeam.singleton.add_user(current_user)
-      mail_team_org.add_user(mail_team_user)
       User.authenticate!(user: current_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end

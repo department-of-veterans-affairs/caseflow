@@ -25,7 +25,7 @@ class EditModal extends React.Component {
       defaultVADORDate: '',
       defaultPackageDocument: '',
       saveButtonDisabled: true,
-      canEditVADOR: true
+      isVaDorReadOnly: true
     };
   }
 
@@ -45,7 +45,7 @@ class EditModal extends React.Component {
 
       if (response.body.user_can_edit_vador) {
         this.setState({
-          canEditVADOR: false
+          isVaDorReadOnly: false
         });
       }
 
@@ -173,7 +173,7 @@ class EditModal extends React.Component {
                 <DateSelector
                   name="va-dor-input"
                   label="VA DOR"
-                  readOnly={false}
+                  readOnly={this.state.isVaDorReadOnly}
                   value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}

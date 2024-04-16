@@ -52,5 +52,4 @@ class CorrespondenceQueueController < CorrespondenceController
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
     end
   end
-
 end
