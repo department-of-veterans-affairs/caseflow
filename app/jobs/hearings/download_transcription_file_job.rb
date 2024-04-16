@@ -22,7 +22,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     details_hash = {
       temporary_download_link: { link: job.arguments.first[:download_link] },
       error: { type: "download" },
-      provider: "webex",
+      provider: "webex"
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
