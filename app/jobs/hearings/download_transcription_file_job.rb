@@ -22,17 +22,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     details_hash = {
       temporary_download_link: { link: job.arguments.first[:download_link] },
       error: { type: "download" },
-      provider: "webex"
+      provider: "webex",
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    extra = {
-      application: self.class.name,
-      hearing_id: hearing.id,
-      file_name: file_name,
-      job_id: job_id
-    }
-    job.log_error(exception, extra)
+    job.log_error(exception)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
@@ -40,13 +34,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
-    extra = {
-      application: self.class.name,
-      hearing_id: hearing.id,
-      file_name: file_name,
-      job_id: job_id
-    }
-    job.log_error(exception, extra)
+    job.log_error(exception)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
@@ -55,13 +43,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
 
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    extra = {
-      application: self.class.name,
-      hearing_id: hearing.id,
-      file_name: file_name,
-      job_id: job_id
-    }
-    job.log_error(exception, extra)
+    job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, exception|
@@ -107,6 +89,21 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
         explanation: build_error_explanation(details_hash)
       )
     )
+  end
+
+  # Purpose: Logs error and captures exception
+  #
+  # Note: Public method to provide access during job retry
+  #
+  # Params: error - Error object
+  def log_error(error)
+    extra = {
+      application: self.class.name,
+      hearing_id: hearing.id,
+      file_name: file_name,
+      job_id: job_id
+    }
+    super(error, extra: extra)
   end
 
   private
