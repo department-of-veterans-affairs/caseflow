@@ -6,13 +6,26 @@ import getAppWidthStyling from
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-const env = process.env.NODE_ENV;
+const env = process.env.DEPLOY_ENV;
+
+console.log(`ENV!: ${ env}`);
 
 const AppFrame = ({ children, wideApp }) =>
   <main {...getAppWidthStyling(wideApp)} role="main" id="Main">
-    {env !== 'prod' && (<Alert type="warning">This is the {env} environment!</Alert>)}
-    {(env !== 'prod' && env === 'demo') && (<Alert type="warning">This is a {env} environment!</Alert>)}
-
+    {
+      // eslint-disable-next-line no-undefined
+      (env !== 'prod' && env === undefined) &&
+      (<Alert type="warning">This is the development environment!</Alert>)
+    }
+    {
+      // eslint-disable-next-line no-undefined
+      (env !== 'prod' && env !== undefined) &&
+      (<Alert type="warning">This is the {env} environment!</Alert>)
+    }
+    {
+      (env !== 'prod' && env === 'demo') &&
+      (<Alert type="warning">This is a {env} environment!</Alert>)
+    }
     {children}
   </main>;
 
