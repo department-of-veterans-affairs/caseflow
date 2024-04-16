@@ -13,24 +13,6 @@ const flexDivStyling = css({
   display: 'flex',
 });
 
-const mainDiv = css(flexDivStyling, {
-  justifyContent: 'space-between',
-  width: '100%',
-  gap: '3%',
-  '@media (max-width: 600px)': {
-    flexDirection: 'column'
-  }
-});
-
-const divideStyling = css(flexDivStyling, {
-  width: '50%',
-  flexDirection: 'column',
-  gap: '12%',
-  '@media (max-width: 600px)': {
-    width: '100%'
-  }
-});
-
 const divideTextareaStyling = css(flexDivStyling, {
   width: '50%',
   flexDirection: 'column',
@@ -181,8 +163,8 @@ export const ReviewForm = (props) => {
         />
       </div>
       <AppSegment filledBackground noMarginTop>
-        <main {...mainDiv}>
-          <div {...divideStyling}>
+        <main className="main-div-review-form">
+          <div className="divide-styling-review-form">
             <div {...inputStyling}>
               <div {...props.errorMessage ? { ...errorVeternalFileStyling } : { ...veternalFileStyling }}>
                 <TextField

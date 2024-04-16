@@ -187,3 +187,25 @@
 .correspondence-intake-appeal-button {
   margin-right: 2rem !important
 }
+
+.main-div-review-form {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 3%;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+
+}
+
+.divide-styling-review-form {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  gap: 12%;
+  @media (max-width: 600px) {
+    width: 100%
+  }
+}
