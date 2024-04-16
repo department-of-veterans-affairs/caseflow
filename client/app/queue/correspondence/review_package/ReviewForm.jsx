@@ -9,61 +9,8 @@ import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 
-const flexDivStyling = css({
-  display: 'flex',
-});
-
-const divideTextareaStyling = css(flexDivStyling, {
-  width: '50%',
-  flexDirection: 'column',
-  '@media (max-width: 600px)': {
-    width: '100%'
-  }
-});
-
-const veternalFileStyling = css({
-  width: '40%',
-  '@media (max-width: 1081px)': {
-    width: '100%',
-  }
-});
-
-const errorVeternalFileStyling = css({
-  width: '48%',
-  marginTop: '-6.4rem',
-  '@media (max-width: 1599px)': {
-    width: '58%'
-  }
-});
-
-const veternalNameStyling = css({
-  width: '60%',
-  '@media (max-width: 1081px)': {
-    width: '100%'
-  }
-});
-
-const inputStyling = css(flexDivStyling, {
-  gap: '5%',
-  '@media (max-width: 1081px)': {
-    flexDirection: 'column'
-  },
-});
-
-const tagStyling = css({
-  '& .cf-select__control': {
-    maxWidth: '63rem !important',
-  },
-});
-
 const textareaStyling = css({
   maxWidth: '60rem'
-
-});
-
-const textareaWidth = css({
-  height: '15rem',
-  resize: 'none'
 
 });
 
@@ -150,9 +97,38 @@ export const ReviewForm = (props) => {
     }
   };
 
+  const veteranFileNumStyle = () => {
+    if (props.errorMessage) {
+      return <div className="error-veternal-file-styling-review-form">
+        <TextField
+          label="Veteran file number"
+          value={props.editableData.veteran_file_number}
+          onChange={handleFileNumber}
+          name="veteran-file-number-input"
+          useAriaLabel
+          errorMessage={props.errorMessage}
+          readOnly={props.isReadOnly}
+        />
+      </div>;
+    }
+
+    return <div className="veternal-file-styling-review-form">
+      <TextField
+        label="Veteran file number"
+        value={props.editableData.veteran_file_number}
+        onChange={handleFileNumber}
+        name="veteran-file-number-input"
+        useAriaLabel
+        errorMessage={props.errorMessage}
+        readOnly={props.isReadOnly}
+      />
+    </div>;
+
+  };
+
   return (
     <React.Fragment>
-      <div {...flexDivStyling} style={{ gap: '20px', marginTop: '20px' }}>
+      <div className="review-form-title-style">
         <h2>General Information</h2>
         <Button
           name="Save changes"
@@ -165,20 +141,9 @@ export const ReviewForm = (props) => {
       <AppSegment filledBackground noMarginTop>
         <main className="main-div-review-form">
           <div className="divide-styling-review-form">
-            <div {...inputStyling}>
-              <div {...props.errorMessage ? { ...errorVeternalFileStyling } : { ...veternalFileStyling }}>
-                <TextField
-                  label="Veteran file number"
-                  value={props.editableData.veteran_file_number}
-                  onChange={handleFileNumber}
-                  name="veteran-file-number-input"
-                  useAriaLabel
-                  errorMessage={props.errorMessage}
-                  readOnly={props.isReadOnly}
-                />
-              </div>
-
-              <div {...veternalNameStyling}>
+            <div className="input-styling-review-form" >
+              {veteranFileNumStyle()}
+              <div className="veternal-name-styling-review-form ">
                 <TextField
                   label="Veteran name"
                   value={fullName(props.reviewDetails.veteran_name)}
@@ -189,12 +154,11 @@ export const ReviewForm = (props) => {
               </div>
 
             </div>
-            <div >
+            <div className= "tag-styling-review-form">
 
               <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
-                styling={tagStyling}
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelect}
                 readOnly={props.isReadOnly}
@@ -203,12 +167,13 @@ export const ReviewForm = (props) => {
             </div>
 
           </div>
-          <div {...divideTextareaStyling}>
-            <div>
+          <div className="divide-textarea-styling-review-form">
+            <div >
               <TextareaField
-                name="Notes"
+                id= "textarea-styling-review-form"
                 styling={textareaStyling}
-                textAreaStyling={textareaWidth}
+                // textAreaStyling={textareaWidth}
+                name="Notes"
                 value={props.editableData.notes}
                 onChange={handleChangeNotes}
                 disabled={props.isReadOnly}
@@ -230,7 +195,7 @@ export const ReviewForm = (props) => {
               ]}
               title="Return to queue"
               closeHandler={props.handleModalClose}>
-              <span className="usa-input" style={{ marginBottom: '5px' }} tabIndex={0}>
+              <span tabIndex={0}>
                 All unsaved changes made to this mail package will be lost<br />upon returning to your queue.
               </span>
             </Modal>
