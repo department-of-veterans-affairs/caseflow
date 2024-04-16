@@ -33,7 +33,7 @@ const AppFrame = ({ children, wideApp }) =>
     }
     {
       // eslint-disable-next-line no-undefined
-      (env !== 'prod' && env !== undefined) &&
+      (env !== 'prod' && env !== undefined && env !== 'demo') &&
       (<div className={className}>
         <Alert type="warning">This is the {env} environment!</Alert>
       </div>)
