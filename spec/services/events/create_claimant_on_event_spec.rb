@@ -14,6 +14,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
                     claimant_name_suffix: "",
                     claim_review_veteran_is_not_claimant: true,
                     claimant_participant_id: "7479234",
+                    claimant_type: "Claimant",
                     claimant_payee_code: "0002")
   end
 
