@@ -282,7 +282,8 @@ module CorrespondenceControllerUtil
   end
 
   def response_type(user)
-    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
+    tasks_assigned = CorrespondenceTask.where(assigned_to: User.find_by(css_id: user.css_id)).count
+    @response_type = (user.tasks.length + task_assigned <= MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   # :reek:FeatureEnvy
