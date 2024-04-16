@@ -4,6 +4,10 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
   describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
+    let!(:person) do
+      Person.create(participant_id: "1826209", first_name: "Jimmy", last_name: "Longstocks",
+                    middle_name: "Goob", ssn: "989773212", name_suffix: "")
+    end
 
     def json_payload
       {
@@ -98,7 +102,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
 
     context "with a valid token and user exists" do
-      it "returns success response when user exists, veteran exists, is claimant, is HLR and request issues exist" do
+      it "returns success response when user exists, veteran exists, is claimant,
+      is HLR, person exists and request issues exist" do
         vet = Veteran.create!(
           file_number: "77799777",
           ssn: "123456789",
@@ -111,12 +116,20 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
           date_of_death: nil
         )
         user = User.create(css_id: "BVADWISE", station_id: 101, status: Constants.USER_STATUSES.inactive)
+        expect(Person.find_by(participant_id: "1826209")).to be_present
+        expect(Person.count).to eq(1)
         request.headers["Authorization"] = "Token #{api_key.key_string}"
         request.headers["X-VA-Vet-SSN"] = "123456789"
         request.headers["X-VA-File-Number"] = "77799777"
         request.headers["X-VA-Vet-First-Name"] = "John"
         request.headers["X-VA-Vet-Last-Name"] = "Smith"
         request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+        request.headers["date_of_birth"] = DateTime.now - 30.years
+        request.headers["email_address"] = "jim@google.com"
+        request.headers["first_name"] = "Jimmy"
+        request.headers["last_name"] = "Longstocks"
+        request.headers["middle_name"] = "Goob"
+        request.headers["ssn"] = "989773212"
         post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:created)
         expect(User.find_by(css_id: "BVADWISE")).to eq(user)
@@ -124,6 +137,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         expect(Claimant.find_by(participant_id: "1826209")).to be_present
         expect(HigherLevelReview.find_by(veteran_file_number: vet.file_number)).to be_present
         expect(RequestIssue.find_by(contention_reference_id: 7905752)).to be_present
+        expect(Person.count).to eq(1)
       end
     end
   end

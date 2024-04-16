@@ -98,7 +98,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
 
     context "with a valid token and user exists" do
-      it "returns success response when veteran exists, is claimant, is HLR, Person does not exist and request issues exist" do
+      it "returns success response when veteran exists, is claimant, is HLR,
+       Person does not exist and request issues exist" do
         vet = Veteran.create!(
           file_number: "77799777",
           ssn: "123456789",
@@ -116,10 +117,18 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         request.headers["X-VA-Vet-First-Name"] = "John"
         request.headers["X-VA-Vet-Last-Name"] = "Smith"
         request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+        request.headers["date_of_birth"] = DateTime.now - 30.years
+        request.headers["email_address"] = "jim@google.com"
+        request.headers["first_name"] = "Jimmy"
+        request.headers["last_name"] = "Longstocks"
+        request.headers["middle_name"] = "Goob"
+        request.headers["ssn"] = "989773212"
+        expect(Person.find_by(participant_id: "1826209")).to eq(nil)
         post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:created)
         expect(Veteran.find_by(file_number: "77799777")).to eq(vet)
         expect(Claimant.find_by(participant_id: "1826209")).to be_present
+        expect(Person.find_by(participant_id: "1826209")).to be_present
         expect(HigherLevelReview.find_by(veteran_file_number: vet.file_number)).to be_present
         expect(RequestIssue.find_by(contention_reference_id: 7905752)).to be_present
       end

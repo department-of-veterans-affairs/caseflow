@@ -112,6 +112,30 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     @headers["X-VA-Vet-Middle-Name"]
   end
 
+  def person_date_of_birth
+    @headers["date_of_birth"]
+  end
+
+  def person_email_address
+    @headers["email_address"]
+  end
+
+  def person_first_name
+    @headers["first_name"]
+  end
+
+  def person_last_name
+    @headers["last_name"]
+  end
+
+  def person_middle_name
+    @headers["middle_name"]
+  end
+
+  def person_ssn
+    @headers["ssn"]
+  end
+
   def veteran_participant_id
     @payload.dig(:veteran, :participant_id)
   end
