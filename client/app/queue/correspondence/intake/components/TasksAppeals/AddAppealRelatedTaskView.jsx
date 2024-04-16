@@ -112,7 +112,7 @@ export const AddAppealRelatedTaskView = (props) => {
     props.setRelatedTasksCanContinue(canContinue);
   }, [existingAppealRadio, newTasks, waivedTasks, taskRelatedAppeals]);
 
-  const veteranFileNumber = props.veteranInformation.file_number;
+  const veteranFileNumber = props.correspondence.veteranFileNumber;
 
   useEffect(() => {
   // Don't refetch (use cache)
@@ -214,12 +214,11 @@ export const AddAppealRelatedTaskView = (props) => {
 };
 
 AddAppealRelatedTaskView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired,
+  correspondence: PropTypes.object.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddAppealRelatedTaskView;

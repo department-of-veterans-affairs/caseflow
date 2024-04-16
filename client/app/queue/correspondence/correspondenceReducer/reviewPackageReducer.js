@@ -7,8 +7,7 @@ export const initialState = {
   packageDocumentType: {},
   veteranInformation: {},
   lastAction: {},
-  reasonForRemovePackage: {},
-  reasonForReassignPackage: {}
+  taskInstructions: [],
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -81,10 +80,10 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.SET_REASON_REMOVE_PACKAGE:
+  case ACTIONS.SET_TASK_INSTRUCTIONS:
     return update(state, {
-      reasonForRemovePackage: {
-        $set: action.payload.reasonForRemove
+      taskInstructions: {
+        $set: action.payload.taskInstructions
       }
     });
 
@@ -94,13 +93,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
         action_type: {
           $set: action.payload.currentAction
         }
-      }
-    });
-
-  case ACTIONS.SET_REASON_REASSIGN_PACKAGE:
-    return update(state, {
-      reasonForReassignPackage: {
-        $set: action.payload.reasonForReassignPackage
       }
     });
 

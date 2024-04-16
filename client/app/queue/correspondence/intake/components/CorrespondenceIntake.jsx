@@ -124,6 +124,7 @@ export const CorrespondenceIntake = (props) => {
       styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
     {currentStep === 1 &&
       <AddCorrespondenceView
+        priorMail={props.priorMail}
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
         onCheckboxChange={handleCheckboxChange}
@@ -136,20 +137,20 @@ export const CorrespondenceIntake = (props) => {
         disableContinue={handleContinueStatusChange}
         unrelatedTasks={props.unrelatedTasks}
         setUnrelatedTasks={props.setUnrelatedTasks}
-        correspondenceUuid={props.correspondence_uuid}
+        correspondence={props.correspondence}
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
-        veteranInformation={props.veteranInformation}
       />
     }
     {currentStep === 3 &&
       <div>
         <ConfirmCorrespondenceView
+          correspondence={props.correspondence}
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
           toggledCorrespondences={props.toggledCorrespondences}
-          selectedCorrespondences={props.correspondences.filter((currentCorrespondence) =>
-            props.toggledCorrespondences.indexOf(String(currentCorrespondence.id)) !== -1)}
+          selectedCorrespondences={props.priorMail.filter((correspondence) =>
+            props.toggledCorrespondences.indexOf(String(correspondence.uuid)) !== -1)}
         />
       </div>
     }
@@ -189,6 +190,7 @@ export const CorrespondenceIntake = (props) => {
       </Button>}
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
+          correspondence={props.correspondence}
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
           setErrorBannerVisible={handleBannerState}
         />
@@ -199,10 +201,9 @@ export const CorrespondenceIntake = (props) => {
 
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
-  currentCorrespondence: PropTypes.object,
-  veteranInformation: PropTypes.object,
+  correspondence: PropTypes.object,
   toggledCorrespondences: PropTypes.array,
-  correspondences: PropTypes.array,
+  priorMail: PropTypes.array,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.arrayOf(PropTypes.string),
@@ -213,7 +214,6 @@ CorrespondenceIntake.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  correspondences: state.intakeCorrespondence.correspondences,
   unrelatedTasks: state.intakeCorrespondence.unrelatedTasks,
   mailTasks: state.intakeCorrespondence.mailTasks,
   toggledCorrespondences: state.intakeCorrespondence.relatedCorrespondences

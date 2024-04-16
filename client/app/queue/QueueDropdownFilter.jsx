@@ -100,7 +100,7 @@ class QueueDropdownFilter extends React.PureComponent {
 
     // Prevent the date from being picked past the current day.
     if (convertStringToDate(date) > new Date()) {
-      foundErrors = [...foundErrors, { key: type, message: `${messageText} cannot occur in the the future.` }];
+      foundErrors = [...foundErrors, { key: type, message: `${messageText} cannot occur in the future.` }];
     }
 
     if (type === 'fromDate') {

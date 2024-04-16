@@ -3,6 +3,7 @@
 RSpec.feature("The Correspondence Intake page") do
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:correspondence) { create :correspondence }
 
   before do
     organization.add_user(mail_user)
@@ -12,12 +13,11 @@ RSpec.feature("The Correspondence Intake page") do
   context "intake form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      @correspondence_uuid = "123456789"
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      visit "/queue/correspondence/#{correspondence.uuid}/intake"
     end
 
     it "the intake page exists" do
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/intake")
     end
 
     it "displays the correspondence header" do
