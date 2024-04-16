@@ -17,10 +17,6 @@ export default class Alert extends React.Component {
   }
 
   render() {
-    // eslint-disable-next-line no-process-env
-    const env = process.env.DEPLOY_ENV;
-
-    console.log(`alert eNV: ${env}`);
 
     const { fixed, title, type, styling, lowerMargin } = this.props;
 
@@ -32,12 +28,6 @@ export default class Alert extends React.Component {
         'usa-alert-slim': !title,
         fixed,
         'cf-margin-bottom-2rem': lowerMargin,
-        // eslint-disable-next-line no-undefined
-        'dev-env-alert': env !== 'prod' && env === undefined,
-        'prodtest-env-alert': env !== 'prod' && env === 'prodtest',
-        'preprod-env-alert': env !== 'prod' && env === 'preprod',
-        'uat-env-alert': env !== 'prod' && env === 'uat',
-        'demo-env-alert': env !== 'prod' && env === 'demo',
       },
     );
 
