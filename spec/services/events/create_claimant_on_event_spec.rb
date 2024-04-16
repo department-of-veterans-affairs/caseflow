@@ -24,7 +24,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
         expect(Person.find_by(participant_id: parser.claimant_participant_id)).to eq(nil)
         expect {
           described_class.process!(event: event, parser: parser, decision_review: decision_review)
-        }.to change { EventRecord.count }.by(1).and change { Claimant.count }.by(1)
+        }.to change { EventRecord.count }.by(2).and change { Claimant.count }.by(1)
 
         expect(described_class.process!(event: event, parser: parser, decision_review: decision_review)).to eq(Claimant.last)
         expect(Person.find_by(participant_id: parser.claimant_participant_id)).to be_present
