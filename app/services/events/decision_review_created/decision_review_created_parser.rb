@@ -391,7 +391,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def params_valid?
     event_id.present? &&
     css_id.present? &&
-    detail_type.present?
+    detail_type.present? &&
+    station_id.present?
   end
 
   def intake_valid?
@@ -434,6 +435,9 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def ri_valid?
-    request_issues.present?
+    request_issues.each do |issue|
+      return false unless ri_benefit_type(issue).present?
+    end
+    true
   end
 end
