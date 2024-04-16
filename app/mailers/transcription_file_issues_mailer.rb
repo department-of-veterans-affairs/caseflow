@@ -20,11 +20,11 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
   private
 
   def build_mailer_params
-    @provider ||= @details.delete(:provider)
+    @provider = @details.delete(:provider)
     @details[:case_details] = build_case_details_link(@details.delete(:appeal_id))
-    @error_type ||= @details[:error][:type]
-    @explanation ||= @details.delete(:error)&.dig(:explanation)
-    @outro ||= build_outro
+    @error_type = @details[:error][:type]
+    @explanation = @details.delete(:error)&.dig(:explanation)
+    @outro = build_outro
   end
 
   def build_case_details_link(appeal_id)

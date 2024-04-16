@@ -41,8 +41,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   # Retry if Pexip returns an invalid response.
   retry_on(Caseflow::Error::PexipApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
-
     kwargs = job.arguments.first
     extra = {
       application: job.class.app_name.to_s,
@@ -50,13 +48,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       hearing_type: kwargs[:hearing_type]
     }
 
-    Raven.capture_exception(exception, extra: extra)
+    job.log_error(exception, extra: extra)
   end
 
   # Retry if Webex returns an invalid response.
   retry_on(Caseflow::Error::WebexApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
-
     kwargs = job.arguments.first
     extra = {
       application: job.class.app_name.to_s,
@@ -64,7 +60,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       hearing_type: kwargs[:hearing_type]
     }
 
-    Raven.capture_exception(exception, extra: extra)
+    job.log_error(exception, extra: extra)
   end
 
   # Log the timezone of the job. This is primarily used for debugging context around times
@@ -137,7 +133,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
   end
 
-  def create_conference_datadog_tags
+  def create_conference_metrics_tags
     custom_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
@@ -159,7 +155,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     conference_creation_error(create_webex_conference_response) if create_webex_conference_response.error
 
-    DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+    MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_metrics_tags)
 
     virtual_hearing.update(
       host_hearing_link: create_webex_conference_response.host_link,
@@ -171,11 +167,9 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def conference_creation_error(create_conference_response)
     error_display = error_display(create_conference_response)
 
-    MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+    MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_metrics_tags)
 
     virtual_hearing.establishment.update_error!(error_display)
-
-    MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
     fail create_conference_response.error
   end
@@ -188,7 +182,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       ).call
     rescue StandardError => error
       extra = { application: "hearings", email_type: email_type, virtual_hearing_id: virtual_hearing.id }
-      Raven.capture_exception(error, extra: extra)
+      log_error(error, extra: extra)
     end
   end
 
@@ -232,7 +226,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         alias_with_host: link_service.alias_with_host
       )
     rescue StandardError => error
-      Raven.capture_exception(error: error)
+      log_error(error)
       raise VirtualHearingLinkGenerationFailed
     end
   end

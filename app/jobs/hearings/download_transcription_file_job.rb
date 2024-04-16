@@ -22,11 +22,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     details_hash = {
       temporary_download_link: { link: job.arguments.first[:download_link] },
       error: { type: "download" },
-      provider: "webex",
+      provider: "webex"
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception)
+    log_error(exception, extra)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
@@ -34,7 +34,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
-    job.log_error(exception)
+    log_error(exception, extra)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
@@ -43,7 +43,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
 
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception)
+    log_error(exception, extra)
   end
 
   discard_on(FileNameError) do |job, exception|
@@ -91,21 +91,16 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     )
   end
 
-  # Purpose: Logs error and captures exception
+  # Purpose: Extras to be provided with captured exception
   #
   # Note: Public method to provide access during job retry
-  #
-  # Params: exception - Error object
-  #         send_email - boolean, whether or not error should be emailed to VA Operations Team
-  def log_error(error)
-    Rails.logger.error("#{self.class.name} failed with error: #{error}")
-    extra = {
+  def extra
+    {
       application: self.class.name,
       hearing_id: hearing.id,
       file_name: file_name,
       job_id: job_id
     }
-    Raven.capture_exception(error, extra: extra)
   end
 
   private

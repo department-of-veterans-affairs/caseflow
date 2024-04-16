@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VirtualHearings::ConferenceJob < ApplicationJob
+class VirtualHearings::ConferenceJob < CaseflowJob
   include VirtualHearings::ConferenceClient
 
   private

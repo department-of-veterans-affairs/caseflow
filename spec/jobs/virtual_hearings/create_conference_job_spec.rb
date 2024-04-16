@@ -118,7 +118,7 @@ describe VirtualHearings::CreateConferenceJob do
         expect(virtual_hearing.guest_hearing_link).to include(base_url)
       end
 
-      it "logs success to datadog" do
+      it "logs success to metrics service" do
         expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "created_conference.successful",
@@ -142,7 +142,7 @@ describe VirtualHearings::CreateConferenceJob do
         end
 
         it "job goes back on queue and logs if error", :aggregate_failures do
-          expect(Rails.logger).to receive(:error).exactly(11).times
+          expect(Rails.logger).to receive(:error).exactly(2).times
 
           expect do
             perform_enqueued_jobs do
@@ -160,8 +160,8 @@ describe VirtualHearings::CreateConferenceJob do
           expect(virtual_hearing.establishment.processed?).to eq(false)
         end
 
-        it "logs failure to datadog" do
-          expect(DataDogService).to receive(:increment_counter).with(
+        it "logs failure to metrics service" do
+          expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "created_conference.failed",
               metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
