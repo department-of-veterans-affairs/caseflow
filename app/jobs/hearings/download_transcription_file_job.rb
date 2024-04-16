@@ -26,7 +26,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception, job.extra)
+    extra = {
+      application: self.class.name,
+      hearing_id: hearing.id,
+      file_name: file_name,
+      job_id: job_id
+    }
+    job.log_error(exception, extra)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
@@ -34,7 +40,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
-    job.log_error(exception, job.extra)
+    extra = {
+      application: self.class.name,
+      hearing_id: hearing.id,
+      file_name: file_name,
+      job_id: job_id
+    }
+    job.log_error(exception, extra)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
@@ -43,7 +55,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
 
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception, job.extra)
+    extra = {
+      application: self.class.name,
+      hearing_id: hearing.id,
+      file_name: file_name,
+      job_id: job_id
+    }
+    job.log_error(exception, extra)
   end
 
   discard_on(FileNameError) do |job, exception|
@@ -89,18 +107,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
         explanation: build_error_explanation(details_hash)
       )
     )
-  end
-
-  # Purpose: Extras to be provided with captured exception
-  #
-  # Note: Public method to provide access during job retry
-  def extra
-    {
-      application: self.class.name,
-      hearing_id: hearing.id,
-      file_name: file_name,
-      job_id: job_id
-    }
   end
 
   private
