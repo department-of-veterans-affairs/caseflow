@@ -27,12 +27,12 @@
         background-color: $color-primary-alt-lightest;
       }
     }
-    &.demo-env-alert {
-      background-color: $color-cool-blue-lightest;
-      border: 5px solid $color-cool-blue-lighter;
+    &.dev-env-alert {
+      background-color: $color-gray-cool-light;
+      border: 5px solid $color-primary-darkest;
       background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
       &::before {
-        background-color: $color-cool-blue-lightest;
+        background-color: $color-gray-cool-light;
       }
     }
     &.prodtest-env-alert {
