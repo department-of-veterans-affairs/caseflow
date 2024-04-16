@@ -446,23 +446,6 @@
     padding: 3rem 4rem
   }
 
-  .new-tasks-gray-border-styling {
-    display: block;
-    margin-right: 2rem
-  }
-
-  .task-selection-box-for-new-tasks {
-    display: block;
-    padding: 2rem 2rem;
-    margin-left: 3rem;
-    margin-bottom: 3rem;
-    width: 50rem
-  }
-
-  .task-selection-dropdown-box {
-    width: 45rem
-  }
-
   .task-selection-title {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -535,3 +518,36 @@
   margin-bottom: 5rem;
   float: right
 }
+
+.styling-for-approve-element-assign-to-person {
+  width: 250%
+}
+
+.styling-for-text-area-reason-for-rejection {
+  width: 280%
+}
+
+.radio-field-styling-for-removal {
+  width: 180px
+}
+
+.radio-field-styling-for-reassignment {
+  width: 180px
+}
+
+.task-selection-box-for-new-tasks {
+    display: block;
+    padding: 2rem 2rem;
+    margin-left: 3rem;
+    margin-bottom: 3rem;
+    width: 50rem
+  }
+
+.task-selection-dropdown-box {
+    width: 45rem
+  }
+
+.new-tasks-gray-border-styling {
+    display: block;
+    margin-right: 2rem
+  }
