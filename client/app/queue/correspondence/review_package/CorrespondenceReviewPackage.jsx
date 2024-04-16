@@ -77,8 +77,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
       // Return true if a reassignPackageTask that is currently assigned is found, else false
       return (
-        (typeof assignedReassignTask !== 'undefined') &&
-        (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)
+        (typeof assignedReassignTask !== 'undefined')
       );
     };
 
