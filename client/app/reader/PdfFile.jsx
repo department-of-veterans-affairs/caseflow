@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { FixedSizeList } from 'react-window';
 
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -604,7 +605,9 @@ export class PdfFile extends React.PureComponent {
     overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
   })
 
-  getCanvasRef = (canvas) => (this.canvas = canvas);
+  getCanvasRef = (canvas) => {
+    this.canvas = canvas;
+  }
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
 
   renderPrototypePage = (page) => {
@@ -667,7 +670,7 @@ export class PdfFile extends React.PureComponent {
           const viewport = page.getViewport({ scale: this.props.scale });
           // const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="overflow-y:scroll;"><canvas></canvas></div>`.repeat(pages.length);
 
-          const pagesHTML = "<canvas></canvas>".repeat(pages.length);
+          const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas></canvas></div>`.repeat(pages.length);
 
           viewport.innerHTML = pagesHTML;
           this.canvas.height = viewport.height;
@@ -692,11 +695,29 @@ export class PdfFile extends React.PureComponent {
     }
 
     if (this.prototypeReader) {
+
+
+      const Row = ({ index, style }) => (
+
+        <div id={`pageContainer${pageNumberOfPageIndex(index)}`} style={style} ref={this.getPageContainerRef}>
+        <canvas style={{ backgroundColor: 'blue', color: 'white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
+        </div>
+      );
+
       return (
-        <canvas ref={this.getCanvasRef} className="canvasWrapper" />
+        <FixedSizeList
+          height={600}
+          itemCount={2}
+          itemSize={35}
+          width="100%"
+          style={{ backgroundColor: 'red', color: 'white' }}
+        >
+          {Row}
+        </FixedSizeList>
       );
     }
 
+    // }
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
     // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
@@ -732,6 +753,8 @@ export class PdfFile extends React.PureComponent {
 
       return <AutoSizer>{
         ({ width, height }) => {
+          console.log('READER_LOG 751');
+
           if (this.clientHeight !== height) {
             _.defer(this.onPageChange, this.currentPage, height);
             this.clientHeight = height;
@@ -744,6 +767,10 @@ export class PdfFile extends React.PureComponent {
             this.props.pdfDocument.numPages);
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
+
+          console.log('READER_LOG 764');
+
+          console.log(`READER_LOG ${this.props.pdfDocument.numPages}`);
 
           return <Grid
             ref={this.getGrid}
