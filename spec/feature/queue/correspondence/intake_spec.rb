@@ -403,7 +403,8 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("Correspondence in progress")
     end
 
-    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" do
+    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
+       " from the Centralized Mail Portal, if it needs to be processed." do
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
       using_wait_time(15) do
