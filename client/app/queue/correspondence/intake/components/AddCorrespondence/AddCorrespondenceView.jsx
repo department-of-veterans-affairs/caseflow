@@ -5,12 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
-import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import {
-  loadCurrentCorrespondence,
-  loadCorrespondences,
-  loadVeteranInformation,
   updateRadioValue,
   saveCheckboxState,
   clearCheckboxState
@@ -23,37 +19,14 @@ class AddCorrespondenceView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      veteran_id: '',
-      va_date_of_receipt: '',
-      source_type: '',
-      package_document_type: '',
-      correspondence_type_id: '',
+      veteranId: '',
+      vaDateOfReceipt: '',
+      sourceType: '',
+      packageDocumentType: '',
+      correspondenceType: '',
       notes: '',
       selectedCheckboxes: []
     };
-  }
-
-  // grabs correspondences and loads into intakeCorrespondence redux store.
-  getRowObjects(correspondenceUuid) {
-    return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
-      const returnedObject = response.body;
-      const currentCorrespondence = returnedObject.currentCorrespondence;
-      const correspondences = returnedObject.correspondence;
-      const veteranInformation = returnedObject.veteranInformation;
-
-      this.props.loadCurrentCorrespondence(currentCorrespondence);
-      this.props.loadCorrespondences(correspondences);
-      this.props.loadVeteranInformation(veteranInformation);
-
-    }).
-      catch((err) => {
-        // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/correspondence/${correspondenceUuid}/intake?json ${err}`));
-      });
-  }
-
-  componentDidMount() {
-    this.getRowObjects(this.props.correspondenceUuid);
   }
 
   onChange = (value) => {
@@ -108,7 +81,7 @@ class AddCorrespondenceView extends React.Component {
           </div>
         ),
         valueFunction: () => {
-          const date = new Date(correspondence.va_date_of_receipt);
+          const date = new Date(correspondence.vaDateOfReceipt);
 
           return (
             <span className="va-dor-item">
@@ -129,7 +102,7 @@ class AddCorrespondenceView extends React.Component {
         ),
         valueFunction: () => (
           <span className="va-source-type-item">
-            <p>{correspondence.source_type}</p>
+            <p>{correspondence.sourceType}</p>
           </span>
         )
       },
@@ -145,7 +118,7 @@ class AddCorrespondenceView extends React.Component {
         ),
         valueFunction: () => (
           <span className="va-package-document-type-item">
-            <p>{correspondence.package_document_type_id}</p>
+            <p>{correspondence.packageDocumentType}</p>
           </span>
         )
       },
@@ -161,7 +134,7 @@ class AddCorrespondenceView extends React.Component {
         ),
         valueFunction: () => (
           <span className="va-correspondence-type-item">
-            <p>{correspondence.correspondence_type_id}</p>
+            <p>{correspondence.correspondenceType}</p>
           </span>
         )
       },
@@ -206,12 +179,11 @@ class AddCorrespondenceView extends React.Component {
         {this.props.radioValue === RELATED_YES && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            {/* <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p> */}
             <div>
               <CorrespondencePaginationWrapper
                 columns={this.getDocumentColumns}
                 columnsToDisplay={15}
-                rowObjects={this.props.correspondences}
+                rowObjects={this.props.priorMail}
                 summary="Correspondence list"
                 className="correspondence-table"
                 headerClassName="cf-correspondence-list-header-row"
@@ -229,16 +201,13 @@ class AddCorrespondenceView extends React.Component {
 }
 
 AddCorrespondenceView.propTypes = {
-  correspondence: PropTypes.arrayOf(PropTypes.object),
+  correspondence: PropTypes.object,
+  priorMail: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
-  loadVeteranInformation: PropTypes.func,
-  loadCurrentCorrespondence: PropTypes.func,
-  loadCorrespondences: PropTypes.func,
   updateRadioValue: PropTypes.func,
   radioValue: PropTypes.string,
   saveCheckboxState: PropTypes.func,
-  correspondences: PropTypes.array,
   onContinueStatusChange: PropTypes.func,
   onCheckboxChange: PropTypes.func.isRequired,
   clearCheckboxState: PropTypes.func.isRequired,
@@ -246,18 +215,12 @@ AddCorrespondenceView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  currentCorrespondence: state.intakeCorrespondence.currentCorrespondence,
-  veteranInformation: state.intakeCorrespondence.veteranInformation,
-  correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
   checkboxes: state.intakeCorrespondence.relatedCorrespondences,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadCurrentCorrespondence,
-    loadCorrespondences,
-    loadVeteranInformation,
     updateRadioValue,
     saveCheckboxState,
     clearCheckboxState

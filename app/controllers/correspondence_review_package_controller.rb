@@ -2,6 +2,7 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
+    @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
     render "correspondence/review_package"
   end
 
@@ -12,45 +13,30 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def show
     corres_docs = correspondence.correspondence_documents
-    reason_remove = if RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).nil?
-                      ""
-                    else
-                      RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
-                    end
+    task_instructions = CorrespondenceTask.package_action_tasks.open
+      .find_by(appeal_id: correspondence.id)&.instructions || ""
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: InboundOpsTeam.singleton.user_is_admin?(current_user),
+      user_can_edit_vador: current_user.mail_supervisor?,
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
       efolder_upload_failed_before: EfolderUploadFailedTask.where(
         appeal_id: correspondence.id, type: "EfolderUploadFailedTask"
       ),
-      reasonForRemovePackage: reason_remove
+      taskInstructions: task_instructions
     }
     render({ json: response_json }, status: :ok)
   end
 
   def update
-    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
-    if veteran && correspondence.update(
-      correspondence_params.merge(
-        veteran_id: veteran.id,
-        updated_by_id: RequestStore.store[:current_user].id
-      )
-    )
-      correspondence.tasks.map do |task|
-        if task.type == "ReviewPackageTask"
-          task.status = "in_progress"
-          task.save
-        end
-      end
-      render json: { status: :ok }
-    else
-      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
+    unless update_veteran_on_correspondence
+      return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
+
+    update_open_review_package_tasks ? render(json: { status: :ok }) : render(json: { status: 500 })
   end
 
   def update_cmp
@@ -91,6 +77,22 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   private
+
+  def update_veteran_on_correspondence
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
+    )
+  end
+
+  def update_open_review_package_tasks
+    correspondence.tasks.open.where(type: ReviewPackageTask.name).each do |task|
+      task.update(status: Constants.TASK_STATUSES.in_progress)
+    end
+  end
 
   # :reek:FeatureEnvy
   def vbms_document_types

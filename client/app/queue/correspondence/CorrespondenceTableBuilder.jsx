@@ -76,13 +76,14 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleAssignButtonClick = () => {
     // Logic to handle assigning tasks to the selected mail team user
+    // candidate for refactor using PATCH request
     if (selectedMailTeamUser && isDropdownItemSelected && isAnyCheckboxSelected) {
       const mailTeamUser = selectedMailTeamUser.value;
       const taskIds = selectedTasks.map((task) => task);
       let newUrl = window.location.href;
 
-      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&taskIds=${taskIds}` :
-        `?user=${mailTeamUser}&taskIds=${taskIds}`;
+      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&task_ids=${taskIds}` :
+        `?user=${mailTeamUser}&task_ids=${taskIds}`;
       window.location.href = newUrl;
     }
   };

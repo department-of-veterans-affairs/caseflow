@@ -30,7 +30,7 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         ),
         valueFunction: () => {
-          const date = new Date(correspondence.va_date_of_receipt);
+          const date = new Date(correspondence.vaDateOfReceipt);
 
           return (
             <span className="va-dor-item">
@@ -51,7 +51,7 @@ export const ConfirmCorrespondenceView = (props) => {
         ),
         valueFunction: () => (
           <span className="va-source-type-item">
-            <p>{correspondence.source_type}</p>
+            <p>{correspondence.sourceType}</p>
           </span>
         )
       },
@@ -67,7 +67,7 @@ export const ConfirmCorrespondenceView = (props) => {
         ),
         valueFunction: () => (
           <span className="va-package-document-type-item">
-            <p>{correspondence.package_document_type_id}</p>
+            <p>{correspondence.packageDocumentType}</p>
           </span>
         )
       },
@@ -83,7 +83,7 @@ export const ConfirmCorrespondenceView = (props) => {
         ),
         valueFunction: () => (
           <span className="va-correspondence-type-item">
-            <p>{correspondence.correspondence_type_id}</p>
+            <p>{correspondence.correspondenceType}</p>
           </span>
         )
       },
@@ -114,7 +114,6 @@ export const ConfirmCorrespondenceView = (props) => {
     correspondenceTable = <Table
       className= "table-latitude"
       columns={getDocumentColumns}
-      // columnsToDisplay={15}
       rowObjects={relatedCorrespondences}
     />;
   }
@@ -138,7 +137,7 @@ export const ConfirmCorrespondenceView = (props) => {
         Review the details below to make sure the information is correct before submitting.
         If you need to make changes, please go back to the associated section.
       </p>
-      <CorrespondenceDetailsTable />
+      <CorrespondenceDetailsTable correspondence={props.correspondence} />
       <div>
         <div className="corr-flex">
           <h2 className="corr-h2">Associated Prior Mail</h2>
@@ -201,6 +200,7 @@ export const ConfirmCorrespondenceView = (props) => {
 
 ConfirmCorrespondenceView.propTypes = {
   goToStep: PropTypes.func,
+  correspondence: PropTypes.object,
   mailTasks: PropTypes.arrayOf(PropTypes.string)
 };
 export default ConfirmCorrespondenceView;

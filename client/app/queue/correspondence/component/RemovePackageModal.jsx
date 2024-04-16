@@ -97,24 +97,22 @@ class RemovePackageModal extends React.Component {
       } else {
         selectedRequestChoice = 'reject';
       }
-      const newUrl = new URL(window.location.href);
-      const searchParams = new URLSearchParams(newUrl.search);
-      const taskId = this.props.reviewDetails.taskId;
-      const veteranName = this.props.reviewDetails.veteranName;
 
-      // Encode and set the query parameters
-      searchParams.set('taskId', encodeURIComponent(taskId));
-      searchParams.set('veteranName', encodeURIComponent(veteranName));
-      searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
-      searchParams.set('decisionReason', encodeURIComponent(this.state.reasonReject));
-      searchParams.set('operation', encodeURIComponent('remove'));
-      searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
-      searchParams.set('page', encodeURIComponent('1'));
+      try {
+        const data = {
+          action_type: 'remove',
+          decision: selectedRequestChoice,
+          decision_reason: this.state.reasonReject,
+        };
 
-      // Construct the new URL with encoded query parameters
-      newUrl.search = searchParams.toString();
-      newUrl.pathname = '/queue/correspondence/team';
-      window.location.href = newUrl.href;
+        ApiUtil.patch(`/queue/correspondence/tasks/${this.props.reviewDetails.taskId}/update`, { data }).
+          then(() => {
+            window.location.href = '/queue/correspondence/team';
+          });
+
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     const removeReasonOptions = [
@@ -138,12 +136,12 @@ class RemovePackageModal extends React.Component {
       >
         <p>
           <span className="modal-fwb">{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span><br />
-          {this.props.reasonRemovePackage[0]}
+          {this.props.taskInstructions[0]}
         </p>
 
         <RadioField
           vertical
-          label= {sprintf(COPY.CORRRESPONDENCE_LABEL_OPTION_REMOVE_PACKAGE)}
+          label={sprintf(COPY.CORRRESPONDENCE_LABEL_OPTION_REMOVE_PACKAGE)}
           name="merge-package"
           value={this.state.reasonForRemove}
           options={removeReasonOptions}
@@ -166,7 +164,7 @@ class RemovePackageModal extends React.Component {
 
 const mapStateToProps = (state) => {
   return { vetInfo: state.reviewPackage.lastAction,
-    reasonRemovePackage: state.reviewPackage.reasonForRemovePackage };
+    taskInstructions: state.reviewPackage.taskInstructions };
 };
 
 RemovePackageModal.propTypes = {
@@ -176,7 +174,7 @@ RemovePackageModal.propTypes = {
   setModalState: PropTypes.func,
   correspondence_id: PropTypes.number,
   vetInfo: PropTypes.object,
-  reasonRemovePackage: PropTypes.object,
+  taskInstructions: PropTypes.array,
   updateLastAction: PropTypes.func,
 };
 
