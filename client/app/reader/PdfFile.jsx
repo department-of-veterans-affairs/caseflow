@@ -665,7 +665,6 @@ export class PdfFile extends React.PureComponent {
 
       return <AutoSizer>{
         ({ width, height }) => {
-          console.log('READER_LOG 751');
 
           if (this.clientHeight !== height) {
             _.defer(this.onPageChange, this.currentPage, height);
