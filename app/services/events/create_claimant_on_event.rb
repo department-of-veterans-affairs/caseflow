@@ -9,7 +9,8 @@ class Events::CreateClaimantOnEvent
         claimant = Claimant.find_or_create_by!(
           decision_review: decision_review,
           participant_id: parser.claimant_participant_id,
-          payee_code: parser.claimant_payee_code
+          payee_code: parser.claimant_payee_code,
+          type: parser.claimant_type
         )
         EventRecord.create!(event: event, evented_record: claimant)
         claimant
