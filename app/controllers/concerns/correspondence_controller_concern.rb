@@ -124,20 +124,6 @@ module CorrespondenceControllerConcern
     @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
   end
 
-  # :reek:FeatureEnvy
-  def intake_appeal_update_tasks
-    tasks = CorrespondenceTask.where(appeal_id: correspondence.id)
-    tasks.map do |task|
-      if task.type == ReviewPackageTask.name
-        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
-        task.assigned_to_id = correspondence.assigned_by_id
-        task.assigned_to = User.find(correspondence.assigned_by_id)
-      end
-      task.status = Constants.TASK_STATUSES.cancelled
-      task.save
-    end
-  end
-
   def upload_documents_to_claim_evidence
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
     correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
