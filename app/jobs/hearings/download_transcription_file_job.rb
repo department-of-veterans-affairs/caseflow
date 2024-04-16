@@ -20,7 +20,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     details_hash = {
-      temporary_download_link: { link: job.arguments.first[:download_link] }
+      temporary_download_link: { link: job.arguments.first[:download_link] },
       error: { type: "download" },
       provider: "webex",
     }
@@ -41,6 +41,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.transcription_file.clean_up_tmp_location
     details_hash = { error: { type: "conversion" }, conversion_type: "rtf" }
     error_details = job.build_error_details(exception, details_hash)
+
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
