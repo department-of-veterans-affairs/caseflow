@@ -43,7 +43,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     this.state = {
       instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || '',
-      clearAttorney: false
+      selectedOptionOther: null
     };
   }
 
@@ -90,8 +90,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
-  toggleClearAttorney = () => {
-    this.setState({ clearAttorney: true });
+  toggleSelectedOptionOther = (value) => {
+    this.setState({ selectedOptionOther: value });
   };
 
   submit = () => {
@@ -99,7 +99,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     this.props.resetSuccessMessages?.();
     this.props.resetErrorMessages?.();
-    this.toggleClearAttorney();
+    this.toggleSelectedOptionOther(null);
 
     if (this.props.isModal) {
       // QueueFlowModal will call validateForm
@@ -227,7 +227,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       secondaryAssignDropdownLabel,
       pathAfterSubmit
     } = this.props;
-    const { instructions, clearAttorney } = this.state;
+    const { instructions, selectedOptionOther } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
@@ -237,7 +237,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
-    let selectedOptionOther = null;
 
     if (attorneys.error) {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
@@ -255,7 +254,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     if (optionsOther?.length) {
       placeholderOther = hidePrimaryAssignDropdown ?
         COPY.SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER : COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary) || null;
+      const selectedOptionOtherValue = optionsOther.find((option) => option.value === selectedAssigneeSecondary) || null;
+
+      this.toggleSelectedOptionOther(selectedOptionOtherValue);
     }
 
     const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
@@ -274,7 +275,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         value={selectedOption}
         styling={css({ width: '30rem' })} />
       }
-      {selectedAssignee === OTHER && !clearAttorney &&
+      {selectedAssignee === OTHER &&
         <React.Fragment>
           <div {...fullWidth} {...css({ marginBottom: '0' })} />
           {!secondaryAssignDropdownLabel && <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>}
