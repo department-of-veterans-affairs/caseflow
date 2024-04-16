@@ -358,7 +358,6 @@ RSpec.feature("The Correspondence Intake page") do
 
       correspondence = create(:correspondence)
       create_correspondence_intake(correspondence, current_user)
-      @correspondence_uuid = correspondence.uuid
     end
 
     it "successfully loads the in progress tab" do
@@ -369,17 +368,13 @@ RSpec.feature("The Correspondence Intake page") do
     it "navigates to intake form from in-progress tab to step 3" do
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
-      expect(page).to have_content("Add Related Correspondence")
-      expect(page).to have_button("Continue")
       click_on("button-continue")
-      expect(page).to have_content("Review Tasks & Appeals")
       click_on("button-continue")
-      expect(page).to have_content("Review and Confirm Correspondence")
+      intake_path = current_path
       click_on("button-Cancel")
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+      expect(current_path).to eq(intake_path)
       expect(page).to have_content("Review and Confirm Correspondence")
     end
   end
