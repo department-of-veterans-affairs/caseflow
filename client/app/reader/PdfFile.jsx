@@ -78,13 +78,6 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    // if (this.prototypeReader) {
-    //   console.log('READER_LOG component did mount!');
-
-    //   return this.getPrototypeDocument();
-
-    // }
-
     return this.getDocument(requestOptions);
   }
 
@@ -610,83 +603,26 @@ export class PdfFile extends React.PureComponent {
   }
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
 
-  renderPrototypePage = (page) => {
-    const viewport = page.getViewport({ scale: 1 });
-    const options = {
-      canvasContext: this.canvas.getContext('2d', { alpha: false }),
-      viewport
-    };
+  getRowPage(index) {
+    this.pdfDocument.getPage(index + 1).then((page) => {
+      const viewport = page.getViewport({ scale: this.props.scale });
 
-    this.renderTask = page.render(options);
+      const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas></canvas></div>`;
 
-    return this.renderTask.promise.then();
+      viewport.innerHTML = pagesHTML;
 
-  }
+      this.canvas.height = viewport.height;
+      this.canvas.width = viewport.width;
 
-  getPrototypeDocument() {
+      const options = {
+        canvasContext: this.canvas.getContext('2d', { alpha: false }),
+        viewport
+      };
 
-    let requestOptions = {
-      cache: true,
-      withCredentials: true,
-      timeout: true,
-      responseType: 'arraybuffer',
-      metricsLogRestError: this.props.featureToggles.metricsLogRestError,
-      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled
-    };
+      this.renderTask = page.render(options);
 
-    window.addEventListener('keydown', this.keyListener);
-
-    ApiUtil.get(this.props.file, requestOptions).
-      then((resp) => {
-        const metricData = {
-          message: `Getting PDF document: "${this.props.file}"`,
-          type: 'performance',
-          product: 'reader',
-          data: this.metricsAttributes,
-          eventId: this.metricsIdentifier,
-        };
-        const src = {
-          data: resp.body,
-          verbosity: 5,
-          stopAtErrors: false,
-          pdfBug: true,
-        };
-
-        this.loadingTask = PDFJS.getDocument(src);
-
-        return recordAsyncMetrics(this.loadingTask.promise, metricData,
-          this.props.featureToggles.metricsRecordPDFJSGetDocument);
-      }).
-      then((pdfDocument) => {
-        console.log('READER_LOG then pdfDocument=====');
-        this.pdfDocument = pdfDocument;
-
-        return this.getPages(pdfDocument);
-      }).
-      then((pages) => {
-        pages.map((page) => {
-
-          const viewport = page.getViewport({ scale: this.props.scale });
-          // const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="overflow-y:scroll;"><canvas></canvas></div>`.repeat(pages.length);
-
-          const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas></canvas></div>`.repeat(pages.length);
-
-          viewport.innerHTML = pagesHTML;
-          this.canvas.height = viewport.height;
-          this.canvas.width = viewport.width;
-          const options = {
-            canvasContext: this.canvas.getContext('2d', { alpha: false }),
-            viewport
-          };
-
-          this.renderTask = page.render(options);
-
-          return this.renderTask.promise.then();
-
-        });
-      });
-
+      return this.renderTask.promise.then();
+    });
   }
 
   render() {
@@ -694,29 +630,6 @@ export class PdfFile extends React.PureComponent {
       return <div>{this.displayErrorMessage()}</div>;
     }
 
-    // if (this.prototypeReader) {
-
-    //   const Row = ({ index, style }) => (
-
-    //     <div id={`pageContainer${pageNumberOfPageIndex(index)}`} style={style} ref={this.getPageContainerRef}>
-    //     <canvas style={{ backgroundColor: 'blue', color: 'white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
-    //     </div>
-    //   );
-
-    //   return (
-    //     <FixedSizeList
-    //       height={600}
-    //       itemCount={2}
-    //       itemSize={35}
-    //       width="100%"
-    //       style={{ backgroundColor: 'red', color: 'white' }}
-    //     >
-    //       {Row}
-    //     </FixedSizeList>
-    //   );
-    // }
-
-    // }
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
     // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
@@ -767,38 +680,24 @@ export class PdfFile extends React.PureComponent {
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
-          console.log('READER_LOG 764');
-
-          console.log(`READER_LOG ${this.props.pdfDocument.numPages}`);
-
           if (this.prototypeReader) {
+            {/* this.getRowPage; */}
 
-            const Row = ({ index, style }) => (
-              <div id={`pageContainer${pageNumberOfPageIndex(index)}`} width={width} height={height} style={style} ref={this.getPageContainerRef}>
-                <canvas height={height} width={width} style={{ backgroundColor: 'blue', color: 'white', border: '1px solid' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
-                Row {index}
-              </div>
-
+            const readerRow = ({ index, style }) => (
+              <canvas style={{ ...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
             );
-
-            const Row1 = ({ index, style }) => (
-              <canvas height={height} width={width} style={{...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index}`} ref={this.getCanvasRef} className="canvasWrapper" />
-            )
 
             return (
               <FixedSizeList
                 height={height}
                 itemCount={this.props.pdfDocument.numPages}
-                itemSize={35}
+                itemSize={900} // page.height
                 width={width}
                 style={{ backgroundColor: 'red', color: 'white' }}
               >
-                {Row1}
-
-
+                {readerRow}
               </FixedSizeList>
             );
-
           }
 
           return <Grid
