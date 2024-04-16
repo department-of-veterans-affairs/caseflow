@@ -60,7 +60,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
       provider: "webex",
       api_call: "GET webex.com/recordings/list/#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
-      times: "From: #{from}, To: #{to}",
+      times: { from: from, to: to },
       docket_number: nil
     }
     TranscriptionFileIssuesMailer.issue_notification(details)

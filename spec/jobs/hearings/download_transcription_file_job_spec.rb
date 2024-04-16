@@ -264,7 +264,7 @@ describe Hearings::DownloadTranscriptionFileJob do
             {
               error: { type: "download", explanation: "download a #{file_type} file from Webex" },
               provider: "webex",
-              temporary_download_link: link,
+              temporary_download_link: { link: link },
               docket_number: docket_number,
               appeal_id: appeal_id
             }
@@ -301,7 +301,7 @@ describe Hearings::DownloadTranscriptionFileJob do
             {
               error: { type: "download", explanation: "download a file from Webex" },
               provider: "webex",
-              reason: "unable to parse hearing information from file name: #{file_name}",
+              reason: "Unable to parse hearing information from file name: #{file_name}",
               expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]",
               docket_number: nil,
               appeal_id: nil

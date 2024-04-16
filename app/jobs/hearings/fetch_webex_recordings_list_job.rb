@@ -17,7 +17,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      times: "From: #{from}, To: #{to}",
+      times: { from: from, to: to },
       docket_number: nil
     }
     TranscriptionFileIssuesMailer.issue_notification(error_details)

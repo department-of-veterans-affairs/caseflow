@@ -30,7 +30,7 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
   def build_case_details_link(appeal_id)
     return unless appeal_id
 
-    { link: mailer_config[:base_url] + "appeals/#{appeal_id}" }
+    { link: mailer_config[:base_url] + "/queue/appeals/#{appeal_id}" }
   end
 
   def build_subject
@@ -40,19 +40,20 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
   end
 
   def mailer_config
+    byebug
     case Rails.deploy_env
-    when :development, :demo, :test
+    when :development, :test
       { base_url: non_external_link,
         emails: { to: "Caseflow@test.com" } }
     when :uat
-      { base_url: "https://appeals.cf.uat.ds.va.gov/queue/",
+      { base_url: "https://appeals.cf.uat.ds.va.gov",
         emails: { to: "BID_Appeals_UAT@bah.com" } }
     when :prodtest
-      { base_url: "https://appeals.cf.prodtest.ds.va.gov/queue/" }
+      { base_url: "https://appeals.cf.prodtest.ds.va.gov" }
     when :preprod
-      { base_url: "https://appeals.cf.preprod.ds.va.gov/queue/" }
+      { base_url: "https://appeals.cf.preprod.ds.va.gov" }
     when :prod
-      { base_url: "https://appeals.cf.ds.va.gov/queue/",
+      { base_url: "https://appeals.cf.ds.va.gov",
         emails: { to: "BVAHearingTeam@VA.gov",
                   cc: "OITAppealsHelpDesk@va.gov" } }
     end
@@ -60,9 +61,10 @@ class TranscriptionFileIssuesMailer < ActionMailer::Base
 
   # The link for the case details page when not in prod or uat
   def non_external_link
-    return "https://demo.appeals.va.gov/" if Rails.deploy_env == :demo
+    # Rails.deploy_env returns :development for both development and demo envs, use #deploy_env?(environment)
+    return "https://demo.appeals.va.gov" if Rails.deploy_env?(:demo)
 
-    "localhost:3000/queue/"
+    "localhost:3000"
   end
 
   def build_outro

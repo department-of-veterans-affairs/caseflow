@@ -28,7 +28,7 @@ RSpec.describe TranscriptionFileIssuesMailer, type: :mailer do
       {
         error: { type: "download", explanation: "download a mp3 file from Webex" },
         provider: "webex",
-        temporary_download_link: "webex.com/download_link",
+        temporary_download_link: { link: "webex.com/download_link" },
         docket_number: "123456",
         appeal_id: appeal_id
       }
@@ -51,23 +51,23 @@ RSpec.describe TranscriptionFileIssuesMailer, type: :mailer do
 
     include_examples "mail assignment"
 
-    it "assigns @case_link" do
+    it "assigns case details link" do
       expect(mail.body.encoded).to match("localhost:3000/queue/appeals/#{appeal_id}")
     end
 
-    it "assigns @case_link for demo environment" do
-      allow(Rails).to receive(:deploy_env).and_return(:demo)
+    it "assigns case details link for demo environment" do
+      allow(Rails).to receive(:deploy_env?).with(:demo).and_return(true)
       mail = described_class.issue_notification(details).deliver_now
-      expect(mail.body.encoded).to match("https://demo.appeals.va.gov/appeals/#{appeal_id}")
+      expect(mail.body.encoded).to match("https://demo.appeals.va.gov/queue/appeals/#{appeal_id}")
     end
 
-    it "assigns @case_link for staging environment" do
+    it "assigns case details link for staging environment" do
       allow(Rails).to receive(:deploy_env).and_return(:uat)
       mail = described_class.issue_notification(details).deliver_now
       expect(mail.body.encoded).to match("https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}")
     end
 
-    it "assigns @case_link for prod environment" do
+    it "assigns case details link for prod environment" do
       allow(Rails).to receive(:deploy_env).and_return(:prod)
       mail = described_class.issue_notification(details).deliver_now
       expect(mail.body.encoded).to match("https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}")
