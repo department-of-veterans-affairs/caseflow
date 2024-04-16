@@ -33,8 +33,8 @@ class IneligibleJudgeList
     sdomainid_value = record.key?(:sdomainid) ? record[:sdomainid] : "No Key Present"
 
     {
-      judge_user_id: record[:id],
-      judge_name: "Test Name",
+      judge_user_id: record[:sattyid],
+      judge_name: get_judge_name(css_id_value, record[:sattyid]),
       judge_css_id: css_id_value,
       judge_sdomain_id: sdomainid_value,
       reason_for_ineligibility: get_reason_for_ineligibility(css_id_value, sdomainid_value)
@@ -58,5 +58,15 @@ class IneligibleJudgeList
       reason = "CASEFLOW"
     end
     reason
+  end
+
+  def self.get_judge_name(css_id_value, sattyid_value)
+    judge_name = ""
+    if css_id_value != "No Key Present" && !css_id_value.nil?
+      judge_name = User.find_by(css_id: css_id_value).full_name
+    elsif sattyid_value != "No Key Present" && !sattyid_value.nil?
+      judge_name = VACOLS::Staff.find_by(sattyid: sattyid_value).snamef
+    end
+    judge_name
   end
 end
