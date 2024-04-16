@@ -11,6 +11,7 @@ const env = process.env.NODE_ENV;
 const AppFrame = ({ children, wideApp }) =>
   <main {...getAppWidthStyling(wideApp)} role="main" id="Main">
     {env !== 'prod' && (<Alert type="warning">This is the {env} environment!</Alert>)}
+    {(env !== 'prod' && env === 'demo') && (<Alert type="warning">This is a {env} environment!</Alert>)}
 
     {children}
   </main>;
