@@ -129,27 +129,27 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def person_date_of_birth
-    @headers["date_of_birth"]
+    @headers["X-VA-Claimant-DOB"]
   end
 
   def person_email_address
-    @headers["email_address"]
+    @headers["X-VA-Claimant-Email"]
   end
 
   def person_first_name
-    @headers["first_name"]
+    @headers["X-VA-Claimant-First-Name"]
   end
 
   def person_last_name
-    @headers["last_name"]
+    @headers["X-VA-Claimant-Last-Name"]
   end
 
   def person_middle_name
-    @headers["middle_name"]
+    @headers["X-VA-Claimant-Middle-Name"]
   end
 
   def person_ssn
-    @headers["ssn"]
+    @headers["X-VA-Claimant-SSN"]
   end
 
   def veteran_participant_id

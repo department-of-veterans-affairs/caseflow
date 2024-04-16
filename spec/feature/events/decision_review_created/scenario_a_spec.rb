@@ -11,6 +11,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
 
     def json_payload
       {
+        "event_id": "123",
+        "claim_id": "9999",
         "css_id": "BVADWISE",
         "detail_type": "HigherLevelReview",
         "station": "101",
@@ -94,11 +96,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
 
     let!(:valid_params) do
-      {
-        event_id: "123",
-        claim_id: "9999",
-        payload: JSON.generate(json_payload)
-      }
+      json_payload
     end
 
     context "with a valid token and user exists" do
@@ -124,12 +122,12 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         request.headers["X-VA-Vet-First-Name"] = "John"
         request.headers["X-VA-Vet-Last-Name"] = "Smith"
         request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
-        request.headers["date_of_birth"] = DateTime.now - 30.years
-        request.headers["email_address"] = "jim@google.com"
-        request.headers["first_name"] = "Jimmy"
-        request.headers["last_name"] = "Longstocks"
-        request.headers["middle_name"] = "Goob"
-        request.headers["ssn"] = "989773212"
+        request.headers["X-VA-Claimant-DOB"] = DateTime.now - 30.years
+        request.headers["X-VA-Claimant-Email"] = "jim@google.com"
+        request.headers["X-VA-Claimant-First-Name"] = "Jimmy"
+        request.headers["X-VA-Claimant-Last-Name"] = "Longstocks"
+        request.headers["X-VA-Claimant-Middle-Name"] = "Goob"
+        request.headers["X-VA-Claimant-SSN"] = "989773212"
         post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:created)
         expect(User.find_by(css_id: "BVADWISE")).to eq(user)
