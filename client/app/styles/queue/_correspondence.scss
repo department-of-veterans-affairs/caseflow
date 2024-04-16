@@ -165,3 +165,21 @@
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
   max-width: 43rem;
 }
+
+.cmp-document-border {
+  border: 1px solid #dee2e6
+}
+.cmp-document-pagination-style {
+  margin-top: 2%;
+  margin-left: 1.5%;
+}
+
+.correspondence-document-table-data-filled {
+  background: #0071bc;
+  color: white;
+}
+
+.correspondence-document-table-data-empty {
+  background: white;
+  color: #0071bc;
+}
