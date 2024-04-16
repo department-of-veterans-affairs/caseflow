@@ -26,7 +26,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     }
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    log_error(exception, job.extra)
+    job.log_error(exception, job.extra)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
@@ -34,7 +34,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
-    log_error(exception, job.extra)
+    job.log_error(exception, job.extra)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
@@ -43,7 +43,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     error_details = job.build_error_details(exception, details_hash)
 
     TranscriptionFileIssuesMailer.issue_notification(error_details)
-    log_error(exception, job.extra)
+    job.log_error(exception, job.extra)
   end
 
   discard_on(FileNameError) do |job, exception|
