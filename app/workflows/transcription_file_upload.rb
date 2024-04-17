@@ -31,7 +31,7 @@ class TranscriptionFileUpload
     Rails.logger.info("File #{file_name} successfully uploaded to S3 location: #{s3_location}")
   rescue StandardError => error
     @transcription_file.update_status!(process: :upload, status: :failure)
-    raise FileUploadError, "Amazon S3 service responded with error: #{error}"
+    raise FileUploadError "Amazon S3 service responded with error: #{error}"
   end
 
   private

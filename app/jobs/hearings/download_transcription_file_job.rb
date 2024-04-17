@@ -19,49 +19,47 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class HearingAssociationError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
-    action_hash = {
-      action: "retrieve",
-      direction: "from",
-      filetype: "vtt",
-      call: "download_file_to_tmp!"
+    details_hash = {
+      temporary_download_link: { link: job.arguments.first[:download_link] },
+      error: { type: "download" },
+      provider: "webex"
     }
-    details = build_error_details(action_hash, "Webex", exception)
-    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
+    details_hash = { error: { type: "upload" }, provider: "S3" }
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
-    action_hash = {
-      action: "convert",
-      direction: "to",
-      filetype: "vtt",
-      call: "convert_to_rtf_and_upload_to_s3!"
-    }
-    details = build_error_details(action_hash, "rtf", exception)
-    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
+    details_hash = { error: { type: "conversion" }, conversion_type: "rtf" }
+    error_details = job.build_error_details(exception, details_hash)
+
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
   end
 
-  discard_on(FileNameError) do |job, error|
-    action_hash = {
-      action: "retrieve",
-      direction: "from",
-      filetype: "vtt",
-      call: "parse_hearing"
+  discard_on(FileNameError) do |job, exception|
+    details_hash = {
+      error: { type: "download" },
+      provider: "webex",
+      reason: "Unable to parse hearing information from file name: #{job.file_name}",
+      expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
-    details = build_error_details(action_hash, "Webex", error)
-    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
+    error_details = job.build_error_details(exception, details_hash)
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{exception}")
   end
 
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
-  #          uploads the file to corresponding S3 loccation. If file is vtt, kicks off conversion of vtt to rtf
+  #          uploads the file to corresponding S3 location. If file is vtt, kicks off conversion of vtt to rtf
   #          and uploads rtf file to S3.
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
@@ -75,21 +73,37 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @transcription_file.clean_up_tmp_location
   end
 
+  # Purpose: Builds hash of values to be listed in mail template
+  #
+  # Note: Public method to provide access during job retry
+  #
+  # Params: error - Instance of error
+  #         details_hash - hash of attributes and values to be listed in mail template
+  #
+  # Returns: The hash for details on the error
+  def build_error_details(error, details_hash)
+    details_hash.merge(
+      docket_number: !error.is_a?(FileNameError) ? hearing.docket_number : nil,
+      appeal_id: !error.is_a?(FileNameError) ? hearing.appeal.external_id : nil,
+      error: details_hash[:error].merge(
+        explanation: build_error_explanation(details_hash)
+      )
+    )
+  end
+
   # Purpose: Logs error and captures exception
   #
   # Note: Public method to provide access during job retry
   #
-  # Params: exception - Error object
-  #         send_email - boolean, whether or not error should be emailed to VA Operations Team
+  # Params: error - Error object
   def log_error(error)
-    Rails.logger.error("#{self.class.name} failed with error: #{error}")
     extra = {
       application: self.class.name,
       hearing_id: hearing.id,
       file_name: file_name,
       job_id: job_id
     }
-    Raven.capture_exception(error, extra: extra)
+    super(error, extra: extra)
   end
 
   private
@@ -201,29 +215,22 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     Rails.logger.info(message)
   end
 
-  # Purpose: Builds object detailing error for mail template
-  # Params:
-  #         action_hash - object, hash object for describing the action that was attempted
-  #         filetype - string, the filetype that was getting worked on
-  #         provider - string, either the destination or starting point
-  #         error - Exception - the error that was raised
-  #
-  # Returns: The hash for details on the error
-  def build_error_details(action_hash, provider, error)
-    {
-      action: action_hash[:action],
-      filetype: action[:filetype],
-      direction: action_hash[:direction],
-      provider: provider,
-      error: error,
-      docket_number: hearing.docket_number,
-      api_call: action_hash[:call]
-    }
-  end
+  JOB_ACTIONS = {
+    download: { verb: "download", direction: "from" },
+    upload: { verb: "upload", direction: "to" },
+    conversion: { verb: "convert", direction: "to" }
+  }.freeze
 
-  # Purpose: Get either the uuid or vacols id of the associated appeal
-  # Returns: The uuid/vacols_id of the appeal
-  def appeal_id
-    hearing.appeal.external_id
+  # Purpose: Builds error message to be printed in email notifications
+  #
+  # Params: details_hash - hash of attributes and values to be listed in mail template
+  #
+  # Returns: String message
+  def build_error_explanation(details_hash)
+    action = JOB_ACTIONS[details_hash[:error][:type].to_sym]
+    action_recipient = details_hash[:provider]&.titlecase || details_hash.delete(:conversion_type)
+    file_type = @transcription_file ? "#{@transcription_file.file_type} " : ""
+
+    "#{action[:verb]} a #{file_type}file #{action[:direction]} #{action_recipient}"
   end
 end
