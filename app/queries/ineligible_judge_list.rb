@@ -10,6 +10,10 @@ class IneligibleJudgeList
     reason_for_ineligibility: "Reason for Ineligibility"
   }.freeze
 
+  EMPTY_KEY_VALUE = "No Key Present"
+  INACTIVE_VACOLS = CaseDistributionIneligibleJudges.ineligible_vacols_judges
+  INACTIVE_CASEFLOW = CaseDistributionIneligibleJudges.ineligible_caseflow_judges
+
   def self.generate_rows(record)
     HEADERS.keys.map { |key| record[key] }
   end
@@ -29,8 +33,8 @@ class IneligibleJudgeList
   end
 
   def self.parse_record(record)
-    css_id_value = record.key?(:css_id) ? record[:css_id] : "No Key Present"
-    sdomainid_value = record.key?(:sdomainid) ? record[:sdomainid] : "No Key Present"
+    css_id_value = record.key?(:css_id) ? record[:css_id] : EMPTY_KEY_VALUE
+    sdomainid_value = record.key?(:sdomainid) ? record[:sdomainid] : EMPTY_KEY_VALUE
 
     {
       judge_user_id: record[:sattyid],
@@ -45,28 +49,23 @@ class IneligibleJudgeList
   # if CSS_ID and SDomainID keys are BOTH present, the ineligibility originates form BOTH
   # if CSS_ID key is present without SDomainID key then it originates from caseflow
   def self.get_reason_for_ineligibility(css_id_value, sdomainid_value)
-    reason = ""
-    if css_id_value == "No Key Present"
-      if sdomainid_value != "No Key Present"
-        reason = "VACOLS"
-      end
-    end
-    if css_id_value != "No Key Present"
-      if sdomainid_value != "No Key Present"
-        reason = "BOTH"
-      end
-      reason = "CASEFLOW"
-    end
-    reason
+    @reason = if INACTIVE_CASEFLOW.find { |o| o[:css_id] == css_id_value }
+                if INACTIVE_VACOLS.find { |o| o[:sdomainid] == sdomainid_value }
+                  "BOTH"
+                else
+                  "CASEFLOW"
+                end
+              elsif INACTIVE_VACOLS.find { |o| o[:sdomainid] == sdomainid_value }
+                "VACOLS"
+              end
   end
 
   def self.get_judge_name(css_id_value, sattyid_value)
-    judge_name = ""
-    if css_id_value != "No Key Present" && !css_id_value.nil?
-      judge_name = User.find_by(css_id: css_id_value).full_name
-    elsif sattyid_value != "No Key Present" && !sattyid_value.nil?
-      judge_name = VACOLS::Staff.find_by(sattyid: sattyid_value).snamef
+    @judge_name = ""
+    if css_id_value != EMPTY_KEY_VALUE && !css_id_value.nil?
+      @judge_name = User.find_by(css_id: css_id_value).full_name
+    elsif sattyid_value != EMPTY_KEY_VALUE && !sattyid_value.nil?
+      @judge_name = VACOLS::Staff.find_by(sattyid: sattyid_value).snamef
     end
-    judge_name
   end
 end
