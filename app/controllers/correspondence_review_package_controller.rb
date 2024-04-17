@@ -3,7 +3,6 @@
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
     @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
-    render "correspondence/review_package"
   end
 
   def package_documents
