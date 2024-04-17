@@ -60,14 +60,23 @@ class ExternalApi::WebexService
   # Return: The response body
   def refresh_access_token
     url = URI::DEFAULT_PARSER.escape("#{BASE_URL}/v1/access_token")
-    params = {
+
+    body = {
       grant_type: "refresh_token",
       client_id: ENV["WEBEX_CLIENT_ID"],
       client_secret: ENV["WEBEX_CLIENT_SECRET"],
-      refresh_token: CredStash.get("webex_refresh_token", version: 1)
+      refresh_token: CredStash.get(:webex_refresh_token)
     }
-    encoded_params = URI.encode_www_form(params)
-    response = Faraday.post(url, encoded_params)
+
+    headers = {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json",
+      Authorization: CredStash.get(:webex_access_token)
+    }
+
+    encoded_body = URI.encode_www_form(body)
+    response = Faraday.post(url, encoded_body, headers)
+
     ExternalApi::WebexService::Response.new(response)
   end
 
