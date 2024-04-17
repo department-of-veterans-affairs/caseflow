@@ -43,7 +43,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     this.state = {
       instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || '',
-      selectedOptionOther: null
+      selectedOptionOther: null,
+      selectedOption: null
     };
   }
 
@@ -90,16 +91,11 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
-  toggleSelectedOptionOther = (value) => {
-    this.setState({ selectedOptionOther: value });
-  };
-
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages?.();
     this.props.resetErrorMessages?.();
-    this.toggleSelectedOptionOther(null);
 
     if (this.props.isModal) {
       // QueueFlowModal will call validateForm
@@ -176,6 +172,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         }
 
         this.props.resetAssignees();
+        this.setState({ selectedOptionOther: null, selectedOption: null });
 
         return this.props.showSuccessMessage({
           title: titleString
@@ -217,7 +214,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       attorneysOfJudge,
       currentUser,
       selectedAssignee,
-      selectedAssigneeSecondary,
       selectedTasks,
       savePending,
       highlightFormItems,
@@ -227,14 +223,13 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       secondaryAssignDropdownLabel,
       pathAfterSubmit
     } = this.props;
-    const { instructions, selectedOptionOther } = this.state;
+    const { instructions, selectedOption, selectedOptionOther } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
     const judgeOpt = currentUser ? { label: currentUser.fullName, value: currentUser.id } : null;
     const options = [...attorneysOfJudge.map(optionFromAttorney), ...(judgeOpt ? [judgeOpt] : []), otherOpt];
 
-    const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
 
@@ -254,9 +249,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     if (optionsOther?.length) {
       placeholderOther = hidePrimaryAssignDropdown ?
         COPY.SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER : COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      const selectedOptionOtherValue = optionsOther.find((option) => option.value === selectedAssigneeSecondary) || null;
-
-      this.toggleSelectedOptionOther(selectedOptionOtherValue);
     }
 
     const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
@@ -271,7 +263,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
-        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
+        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
+         this.setState({ selectedOption: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
       }
@@ -287,7 +280,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
-            onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
+            onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) &&
+             this.setState({ selectedOptionOther: option.value })}
             value={selectedOptionOther}
             styling={css({ width: otherDropdownWidth })} />
         </React.Fragment>}
