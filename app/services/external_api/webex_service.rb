@@ -60,13 +60,13 @@ class ExternalApi::WebexService
       grant_type: "refresh_token",
       client_id: ENV["WEBEX_CLIENT_ID"],
       client_secret: ENV["WEBEX_CLIENT_SECRET"],
-      refresh_token: CredStash.get(:webex_refresh_token)
+      refresh_token: CredStash.get("webex_#{Rails.deploy_env}_refresh_token")
     }
 
     headers = {
       "Content-Type" => "application/x-www-form-urlencoded",
       "Accept" => "application/json",
-      "Authorization" => CredStash.get(:webex_access_token)
+      "Authorization" => CredStash.get("webex_#{Rails.deploy_env}_access_token")
     }
 
     request = HTTPI::Request.new
