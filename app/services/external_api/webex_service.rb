@@ -6,11 +6,6 @@ require "rcredstash"
 class ExternalApi::WebexService
   BASE_URL = "#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
 
-  REFRESH_TOKEN = CredStash.get("webex_refresh_token", version: 1)
-  HEADERS = {
-    "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json"
-  }.freeze
-
   def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
     @host = host
     @port = port
