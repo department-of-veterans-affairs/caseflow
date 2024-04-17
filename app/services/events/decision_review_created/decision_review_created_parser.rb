@@ -140,7 +140,6 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   def veteran_date_of_death
     date_of_death = @payload.dig(:veteran, :date_of_death)
-    byebug
     logical_date_converter(date_of_death)
   end
 
