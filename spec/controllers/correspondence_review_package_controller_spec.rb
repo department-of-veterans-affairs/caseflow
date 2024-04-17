@@ -33,6 +33,22 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
   end
 
+  describe "PUT #update_cmp" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      put :update_cmp, params: {
+        correspondence_uuid: correspondence.uuid,
+        VADORDate: Time.now,
+        packageDocument: { value: "1" }
+      }
+    end
+
+    it "returns 200 status" do
+      expect(response.status).to eq 200
+    end
+  end
+
   describe "GET #package_documents" do
     before do
       MailTeam.singleton.add_user(current_user)
@@ -173,12 +189,16 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
 
     before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
       allow(ExternalApi::ClaimEvidenceService).to receive(:document_types).and_return(document_types_response)
     end
 
     it "returns an array of hashes with id and name" do
-      result = controller.send(:vbms_document_types)
-      expect(result).to eq(
+      get :document_type_correspondence
+      body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(body[:data]).to eq(
         [
           { id: 150, name: "VA Form 21-8056" },
           { id: 152, name: "VA Form 21-8358" }
