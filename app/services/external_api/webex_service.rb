@@ -76,7 +76,7 @@ class ExternalApi::WebexService
 
     response = HTTPI.post(request)
 
-    ExternalApi::WebexService::Response.new(response)
+    ExternalApi::WebexService::AccessTokenRefreshResponse.new(response)
   end
 
   private
