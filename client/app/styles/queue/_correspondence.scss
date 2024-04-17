@@ -205,9 +205,68 @@
   width: 50%;
   flex-direction: column;
   gap: 12%;
+
   @media (max-width: 600px) {
     width: 100%
   }
+}
+
+.divide-textarea-styling-review-form {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+
+  @media (max-width: 600px) {
+    width: '100%'
+  }
+}
+
+.veternal-file-styling-review-form {
+  width: 40%;
+  @media (max-width: 1081px) {
+    width: 100%;
+  }
+}
+
+.error-veternal-file-styling-review-form {
+  width: 48%;
+  margin-top: -6.4rem;
+  @media (max-width: 1599px) {
+    width: 58%;
+  }
+}
+
+.veternal-name-styling-review-form {
+  width: 60%;
+  @media (max-width: 1081px) {
+    width: 100%;
+  }
+}
+
+.input-styling-review-form {
+  display: flex;
+  gap: 5%;
+  @media (max-width: 1081px) {
+    flex-direction: column;
+  }
+}
+
+.tag-styling-review-form {
+  & .cf-select__control {
+    max-width: 63rem !important;
+  }
+}
+
+#textarea-styling-review-form {
+  width: 50rem !important;
+  height: 15rem;
+  resize: none;
+}
+
+.review-form-title-style {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px
 }
 
 .correspondence-case-title-header-containing-div-styling{
