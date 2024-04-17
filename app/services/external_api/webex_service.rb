@@ -66,11 +66,9 @@ class ExternalApi::WebexService
       client_secret: ENV["WEBEX_CLIENT_SECRET"],
       refresh_token: CredStash.get("webex_refresh_token", version: 1),
     }
-
     encoded_params = URI.encode_www_form(params)
     response = Faraday.post(url, encoded_params)
-    caseflow_res = ExternalApi::WebexService::Response.new(response)
-    caseflow_res.resp unless caseflow_res.error
+    ExternalApi::WebexService::Response.new(response)
   end
 
   private
