@@ -102,6 +102,33 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         end
       end
     end
+
+    it "redirects to unauthorized without valid correspondence access" do
+      current_user = create(:user)
+      User.authenticate!(user: current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/unauthorized")).to be true
+    end
+
+    it "redirects while feature flag disabled" do
+      # redirects to unauthorized without valid correspondence access
+      FeatureToggle.disable!(:correspondence_queue)
+      current_user = create(:user)
+      User.authenticate!(user: current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/unauthorized")).to be true
+
+      # redirects to under_construction with valid correspondence access
+      MailTeam.singleton.add_user(current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/under_construction")).to be true
+    end
   end
 
   describe "correspondence_team" do
@@ -145,6 +172,10 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         end
       end
     end
+  end
+
+  describe "#veteran" do
+    it ""
   end
 
   describe "#process_intake" do
