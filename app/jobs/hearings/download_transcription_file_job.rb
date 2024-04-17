@@ -54,6 +54,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
     error_details = job.build_error_details(exception, details_hash)
+    byebug
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{exception}")
   end
@@ -216,9 +217,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   JOB_ACTIONS = {
-    download: "download",
-    upload: "upload",
-    conversion: "convert"
+    download: { verb: "download", direction: "from" },
+    upload: { verb: "upload", direction: "to" },
+    conversion: { verb: "convert", direction: "to" }
   }.freeze
 
   # Purpose: Builds error message to be printed in email notifications
@@ -228,10 +229,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: String message
   def build_error_explanation(details_hash)
     action = JOB_ACTIONS[details_hash[:error][:type].to_sym]
-    direction = action == "download" ? "from" : "to"
     action_recipient = details_hash[:provider]&.titlecase || details_hash.delete(:conversion_type)
     file_type = @transcription_file ? "#{@transcription_file.file_type} " : ""
 
-    "#{action} a #{file_type}file #{direction} #{action_recipient}"
+    "#{action[:verb]} a #{file_type}file #{action[:direction]} #{action_recipient}"
   end
 end
