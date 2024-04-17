@@ -89,7 +89,7 @@ export const AddUnrelatedTaskView = (props) => {
           + Add tasks
       </Button>}
       {addTasksVisible && <div
-        className="gray-border ">
+        className="gray-border">
         <div className="area-above-add-tasks-button-not-related">
           <div className="area-under-add-tasks-button-not-related-to-appeal">
             <div className="new-tasks-not-related-to-an-appeal-title">
