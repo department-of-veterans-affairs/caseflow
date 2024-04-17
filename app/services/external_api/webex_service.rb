@@ -64,13 +64,17 @@ class ExternalApi::WebexService
     }
 
     headers = {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Accept: "application/json",
-      Authorization: CredStash.get(:webex_access_token)
+      "Content-Type" => "application/x-www-form-urlencoded",
+      "Accept" => "application/json",
+      "Authorization" => CredStash.get(:webex_access_token)
     }
 
-    encoded_body = URI.encode_www_form(body)
-    response = Faraday.post(url, encoded_body, headers)
+    request = HTTPI::Request.new
+    request.url = url
+    request.body = URI.encode_www_form(body)
+    request.headers = headers
+
+    response = HTTPI.post(request)
 
     ExternalApi::WebexService::Response.new(response)
   end
