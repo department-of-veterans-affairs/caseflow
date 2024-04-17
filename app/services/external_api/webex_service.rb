@@ -59,13 +59,14 @@ class ExternalApi::WebexService
   # Purpose: Refreshing the access token to access the API
   # Return: The response body
   def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape(BASE_URL + AUTH_URL)
+    url = URI::DEFAULT_PARSER.escape(BASE_URL + "/v1/access_token")
     params = {
-      grant_type: GRANT_TYPE,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      refresh_token: REFRESH_TOKEN
+      grant_type: "refresh_token",
+      client_id: ENV["WEBEX_CLIENT_ID"],
+      client_secret: ENV["WEBEX_CLIENT_SECRET"],
+      refresh_token: CredStash.get("webex_refresh_token", version: 1),
     }
+
     encoded_params = URI.encode_www_form(params)
     response = Faraday.post(url, encoded_params)
     caseflow_res = ExternalApi::WebexService::Response.new(response)
