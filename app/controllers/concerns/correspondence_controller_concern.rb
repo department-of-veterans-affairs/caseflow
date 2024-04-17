@@ -25,7 +25,7 @@ module CorrespondenceControllerConcern
 
   def set_banner_params(user, task_count, tab)
     template = message_template(user, task_count, tab)
-    response_type(user)
+    response_type(user, task_count)
     @response_header = template[:header]
     @response_message = template[:message]
   end
@@ -51,8 +51,8 @@ module CorrespondenceControllerConcern
     }
   end
 
-  def response_type(user)
-    @response_type = (user&.tasks&.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
+  def response_type(user, task_count)
+    @response_type = (user&.tasks&.length + task_count <= MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   def set_flash_intake_success_message
