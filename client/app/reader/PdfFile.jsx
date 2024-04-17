@@ -711,7 +711,6 @@ export class PdfFile extends React.PureComponent {
                 itemCount={this.props.pdfDocument.numPages}
                 itemSize={900} // page.height
                 width={width}
-                style={{ backgroundColor: 'red', color: 'white' }}
               >
                 {readerRow}
               </FixedSizeList>
