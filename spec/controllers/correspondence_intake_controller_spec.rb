@@ -82,6 +82,45 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
     end
   end
 
+  describe "PATCH #intake_update" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    it "returns 200 - happy path" do
+      patch :intake_update, params: { correspondence_uuid: correspondence.uuid }
+
+      expect(response.status).to eq 200
+    end
+
+    it "cancels the task tree and returns the correspondence" do
+      # initial state
+      task_statuses = correspondence.tasks.map { |task| task.status }
+      expect(task_statuses.any?(Constants.TASK_STATUSES.cancelled)).to eq false
+
+      patch :intake_update, params: { correspondence_uuid: correspondence.uuid }
+
+      # updated state after the request
+      task_statuses = correspondence.tasks.map { |task| task.status }
+      expect(task_statuses.all?(Constants.TASK_STATUSES.cancelled)).to eq true
+
+      body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(body[:correspondence]).to be_a(Hash)
+      expect(body[:correspondence].empty?).to eq false
+    end
+
+    it "returns bad request code if error - sad path" do
+      allow_any_instance_of(Correspondence)
+        .to receive(:cancel_task_tree_for_appeal_intake).and_raise(StandardError)
+
+      patch :intake_update, params: { correspondence_uuid: correspondence.uuid }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
   describe "POST #process_intake sad path" do
     before do
       MailTeam.singleton.add_user(current_user)
