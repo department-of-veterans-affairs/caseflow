@@ -4,7 +4,7 @@ require "json"
 require "rcredstash"
 
 class ExternalApi::WebexService
-  BASE_URL = "#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
+  BASE_URL = "https://#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
 
   def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
     @host = host
