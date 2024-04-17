@@ -1,20 +1,27 @@
 # frozen_string_literal: true
+
 class ExternalApi::WebexService::Response
   attr_reader :resp, :code
   def initialize(resp)
     @resp = resp
     @code = @resp.code
   end
+
   def data; end
+
   def error
     check_for_errors
   end
+
   def success?
     !resp.error?
   end
+
   private
+
   def check_for_errors
     return if success?
+
     msg = error_message
     case code
     when 400
@@ -29,6 +36,7 @@ class ExternalApi::WebexService::Response
       Caseflow::Error::WebexApiError.new(code: code, message: msg)
     end
   end
+
   def error_message
     return "No error message from Webex" if resp.raw_body.empty?
 
