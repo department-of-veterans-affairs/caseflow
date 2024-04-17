@@ -54,7 +54,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
     error_details = job.build_error_details(exception, details_hash)
-    byebug
     TranscriptionFileIssuesMailer.issue_notification(error_details)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{exception}")
   end
