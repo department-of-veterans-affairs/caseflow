@@ -147,10 +147,9 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired,
+  correspondence: PropTypes.object.isRequired,
   onContinueStatusChange: PropTypes.func.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;

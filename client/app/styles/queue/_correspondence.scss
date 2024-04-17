@@ -1,3 +1,10 @@
+$background: #efefef;
+$lfs-blue: #006ac6;
+$lfs-yellow: #fab700;
+$lfs-grey: #75787b;
+$transform: scale(1.3);
+$translate: 11%;
+
 .cf-pdf-preview-header {
   opacity: 1;
   padding: 15px 23px 15px 15px;
@@ -104,6 +111,11 @@
     color: $color-black;
   }
 
+  .p-review-and-confirm {
+    color: $color-black;
+    font-size: .85em;
+  }
+
   h1 {
     text-align: left;
     margin-bottom: 20px;
@@ -160,6 +172,21 @@
       padding-bottom: 25px;
       }
   }
+
+}
+
+.a-r-h1{
+  margin-bottom: 20px
+}
+.a-r-p1{
+  margin-top: 0px
+}
+.a-r-h2{
+  margin: 30px auto 20px auto
+}
+.a-r-p2{
+  margin-top: 0px;
+  margin-bottom: -7px
 }
 
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {

@@ -87,6 +87,32 @@
   "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY": "Submitting the correspondence record will upload the mail package to the eFolder.  Make sure that all information is correct before submitting.",
   "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE": "The correspondence's documents have failed to upload to the eFolder",
   "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "CORRESPONDENCE_QUEUE_PACKAGE_ACTION_SUCCESS": {
+    "REASSIGN": {
+      "APPROVE": {
+        "TITLE": "You have successfully reassigned a mail record for %s",
+        "MESSAGE": "Please go to your individual queue to see any self assigned correspondence."
+      },
+      "REJECT": {
+        "TITLE": "You have successfully rejected a package request for %s",
+        "MESSAGE": "The package will be re-assigned to the user that sent the request."
+      }
+    },
+    "REMOVE": {
+      "APPROVE": {
+        "TITLE": "You have successfully removed a mail package for %s",
+        "MESSAGE": "The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed."
+      },
+      "REJECT": {
+        "TITLE": "You have successfully rejected a package request for %s",
+        "MESSAGE": "The package will be re-assigned to the user that sent the request."
+      }
+    }
+  },
+  "CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS": {
+    "APPROVE": "approve",
+    "REJECT": "reject"
+  },
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
@@ -1462,6 +1488,7 @@
   "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction.",
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
+  "CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor reviews the request.",
   "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",

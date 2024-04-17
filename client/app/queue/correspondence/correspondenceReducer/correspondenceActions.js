@@ -1,26 +1,6 @@
 import { ACTIONS } from './correspondenceConstants';
 import ApiUtil from '../../../util/ApiUtil';
 
-export const loadCurrentCorrespondence = (currentCorrespondence) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CURRENT_CORRESPONDENCE,
-      payload: {
-        currentCorrespondence
-      }
-    });
-  };
-
-export const loadCorrespondences = (correspondences) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCES,
-      payload: {
-        correspondences
-      }
-    });
-  };
-
 export const loadSavedIntake = (savedStore) =>
   (dispatch) => {
     dispatch({

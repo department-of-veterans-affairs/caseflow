@@ -1267,7 +1267,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("[aria-label='Reassign Package Task Link']")[0].click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
-      find('[for="merge-package_approve"]').click
+      find('[for="reassign-package_approve"]').click
       find("#react-select-4-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
       find("#react-select-4-option-0").click
       click_button("Confirm")
@@ -1279,7 +1279,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("[aria-label='Reassign Package Task Link']")[0].click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
-      find('[for="merge-package_reject"]').click
+      find('[for="reassign-package_reject"]').click
       find(".cf-form-textarea", match: :first).fill_in with: "this is a rejection reason"
       click_button("Confirm")
       expect(page).to have_content("You have successfully rejected a package request")
@@ -1344,7 +1344,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[0].fill_in(with: start_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'between' the date is older than today in 'to' field" do
@@ -1362,7 +1362,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[1].fill_in(with: end_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'between' the date in 'to' is older than 'from' field" do
@@ -1382,7 +1382,7 @@ RSpec.feature("The Correspondence Cases page") do
       all("div.input-container > input")[1].fill_in(with: end_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("End date must be greater than the start date")
+      expect(page).to have_content("To date cannot occur before from date")
     end
 
     it "filters date column with 'before' this date" do
@@ -1398,7 +1398,7 @@ RSpec.feature("The Correspondence Cases page") do
 
       all("div.input-container > input")[0].fill_in(with: start_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'after' this date" do
@@ -1414,7 +1414,7 @@ RSpec.feature("The Correspondence Cases page") do
       after_date = (current_date + 3).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: after_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
 
     it "filters date column with 'on' this date" do
@@ -1430,7 +1430,7 @@ RSpec.feature("The Correspondence Cases page") do
       on_this_date = (current_date + 1).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: on_this_date)
       expect(page).to have_button("Apply filter", disabled: true)
-      expect(page).to have_content("Date completed cannot be in the future.")
+      expect(page).to have_content("Date completed cannot occur in the future.")
     end
   end
 
@@ -1490,7 +1490,6 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "correctly sorts NOD type" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      # binding.pry
       find("[aria-label='Package Document Type']").click
       first_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
       find("[aria-label='Package Document Type']").click

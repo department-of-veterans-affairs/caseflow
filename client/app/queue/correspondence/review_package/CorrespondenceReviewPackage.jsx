@@ -16,6 +16,7 @@ import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
 import {
   CORRESPONDENCE_READONLY_BANNER_HEADER,
   CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+  CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE }
   from '../../../../COPY';
@@ -41,7 +42,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
-    taksId: [],
+    taskId: [],
   });
 
   // Banner Information takes in the following object:
@@ -70,8 +71,14 @@ export const CorrespondenceReviewPackage = (props) => {
       const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
           task.type === 'ReassignPackageTask');
 
+      if (assignedReassignTask) {
+        setReviewPackageDetails({ taskId: assignedReassignTask.id });
+      }
+
       // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (typeof assignedReassignTask !== 'undefined') && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor);
+      return (
+        (typeof assignedReassignTask !== 'undefined')
+      );
     };
 
     try {
@@ -108,7 +115,7 @@ export const CorrespondenceReviewPackage = (props) => {
       if (isPageReadOnly(data.correspondence_tasks)) {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
           bannerType: 'info'
         });
         setIsReadOnly(true);

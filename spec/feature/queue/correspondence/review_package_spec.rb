@@ -59,20 +59,14 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     context "when remove package task is pending review" do
-      let(:review_package_task) { ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name) }
-
       before do
-        task_params = {
-          parent_id: review_package_task.id,
-          instructions: ["test remove", "test"],
-          assigned_to: InboundOpsTeam.singleton,
-          appeal_id: correspondence.id,
-          appeal_type: "Correspondence",
-          status: Constants.TASK_STATUSES.assigned,
-          type: "RemovePackageTask"
-        }
-        ReviewPackageTask.create_from_params(task_params, mail_team_supervisor_user)
-        review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
+        parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
+        RemovePackageTask.create!(
+          parent_id: parent_task&.id,
+          appeal_id: correspondence&.id,
+          appeal_type: Correspondence.name,
+          assigned_to: InboundOpsTeam.singleton
+        )
         visit "/queue/correspondence/#{correspondence.uuid}/review_package"
       end
 
@@ -143,9 +137,8 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
       using_wait_time(10) do
-        expect(page).to have_text `#{veteran.file_number}`
-        expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
-        # expect(page).to have_current_path("/intake/review_request")
+        expect(page).to have_text "#{veteran.file_number}"
+        expect(page).to have_text "Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182"
       end
     end
   end

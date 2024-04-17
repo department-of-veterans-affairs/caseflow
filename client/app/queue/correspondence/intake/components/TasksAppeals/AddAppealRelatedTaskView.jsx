@@ -98,18 +98,22 @@ export const AddAppealRelatedTaskView = (props) => {
   useEffect(() => {
     let canContinue = true;
 
-    newTasks.forEach((task) => {
-      canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
-    });
-
-    waivedTasks.forEach((task) => {
-      canContinue = canContinue && (task.isWaived ? (task.waiveReason !== '') : true);
-    });
+    // Check if radio button is selected
+    if (existingAppealRadio !== '0') {
+      // Check if at least one checkbox is selected
+      if (taskRelatedAppeals.length === 0) {
+        canContinue = false;
+      } else {
+        // Check the conditions for each task and waived task
+        canContinue = newTasks.every((task) => task.content !== '' && task.type !== '') &&
+                waivedTasks.every((task) => task.isWaived ? task.waiveReason !== '' : true);
+      }
+    }
 
     props.setRelatedTasksCanContinue(canContinue);
-  }, [newTasks, waivedTasks]);
+  }, [existingAppealRadio, newTasks, waivedTasks, taskRelatedAppeals]);
 
-  const veteranFileNumber = props.veteranInformation.file_number;
+  const veteranFileNumber = props.correspondence.veteranFileNumber;
 
   useEffect(() => {
   // Don't refetch (use cache)
@@ -201,12 +205,11 @@ export const AddAppealRelatedTaskView = (props) => {
 };
 
 AddAppealRelatedTaskView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired,
+  correspondence: PropTypes.object.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddAppealRelatedTaskView;
