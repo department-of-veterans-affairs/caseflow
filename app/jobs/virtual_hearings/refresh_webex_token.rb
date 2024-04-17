@@ -6,7 +6,14 @@ class RefreshWebexAccessTokenJob < CaseflowJob
   queue_as :low_priority
 
   def perform
-    webex_service = WebexService.new(host: ENV["WEBEX_HOST"], port: ENV["WEBEX_PORT"], aud: ENV["WEBEX_AUD"], apikey: ENV["WEBEX_API_KEY"], domain: ENV["WEBEX_DOMAIN"], api_endpoint: ENV["WEBEX_API_ENDPOINT"])
+    webex_service = WebexService.new(
+      host: ENV["WEBEX_HOST"],
+      port: ENV["WEBEX_PORT"],
+      aud: ENV["WEBEX_AUD"],
+      apikey: ENV["WEBEX_API_KEY"],
+      domain: ENV["WEBEX_DOMAIN"],
+      api_endpoint: ENV["WEBEX_API_ENDPOINT"]
+    )
     response = webex_service.refresh_access_token
 
     if response.success?
