@@ -319,3 +319,28 @@
   flex-grow: 1;
   max-width: 25%;
 }
+
+// PDF Document Viewer is 800px wide or less.
+.correspondence-pdf-tool-bar{
+
+  width: 33%;
+
+  &.toolbar-left{
+    @media(max-width: 1165px) {
+      width: 18%;
+    }
+
+  }
+  &.toolbar-center{
+    @media(max-width: 1165px) {
+      width: 18%;
+    }
+
+  }
+  &.toolbar-right{
+    text-align: right;
+    @media(max-width: 1165px){
+      width: 44%;
+        & .cf-pdf-button-text { display: none } }
+  }
+}
