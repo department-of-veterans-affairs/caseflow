@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/NumericLiterals
+
 RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controller do
   describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
@@ -133,3 +135,5 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
   end
 end
+
+# rubocop:enable Style/NumericLiterals
