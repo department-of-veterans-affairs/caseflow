@@ -38,6 +38,7 @@ describe('Lever reducer', () => {
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
     isUserAcdAdmin: false,
+    acdExcludeFromAffinity: false
   };
 
   afterEach(() => {
@@ -184,7 +185,7 @@ describe('Lever reducer', () => {
       payload: {
         leverGroup: ACD_LEVERS.lever_groups.affinity,
         leverItem: 'ama_hearing_case_affinity_days',
-        optionItem: ACD_LEVERS.value,
+        value: '0',
         optionValue: 0
       }
     };

@@ -11,7 +11,7 @@ import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIMENSION_SCALE, PAGE_MARGIN
 } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
-  setPageDimensions } from '../reader/Pdf/PdfActions';
+  setPageDimensions, setRenderStartTime } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -43,10 +42,21 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.metricsIdentifier = null;
+    this.scrollTimer = null;
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: null,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan
+    };
   }
 
   componentDidMount = () => {
-
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -72,22 +82,21 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
-    const documentData = {
-      documentId: this.props.documentId,
-      documentType: this.props.documentType,
-      file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled
-    };
+    this.metricsIdentifier = uuid.v4();
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        pdfPageRenderTimeInMsStart = performance.now();
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
           product: 'reader',
-          data: documentData,
+          data: this.metricsAttributes,
+          eventId: this.metricsIdentifier,
         };
+
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `${resp.header['x-document-source']}` });
+        }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
@@ -132,6 +141,13 @@ export class PdfFile extends React.PureComponent {
 
         console.error(message);
 
+        const documentData = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        };
+
         if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
           storeMetrics(
             logId,
@@ -140,7 +156,8 @@ export class PdfFile extends React.PureComponent {
               type: 'error',
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            }
+            },
+            this.metricsIdentifier
           );
         }
 
@@ -171,7 +188,8 @@ export class PdfFile extends React.PureComponent {
         message: `Getting PDF document: "${file}"`,
         type: 'error',
         product: 'reader'
-      });
+      },
+      this.metricsIdentifier);
     }
 
     throw reason;
@@ -204,6 +222,12 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+
+    this.metricsIdentifier = null;
+
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -213,17 +237,23 @@ export class PdfFile extends React.PureComponent {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
+    const calculatedPageIndex = (rowIndex * this.columnCount) + columnIndex;
+
+    this.metricsAttributes.pageIndex = calculatedPageIndex;
+    this.metricsAttributes.numPagesInDoc = this.props.pdfDocument.numPages;
+
     return <div key={pageIndex} style={style}>
       <PdfPage
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
-        pageIndex={(rowIndex * this.columnCount) + columnIndex}
+        pageIndex={calculatedPageIndex}
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={pdfPageRenderTimeInMsStart}
+        metricsIdentifier={this.metricsIdentifier}
+        metricsAttributes={this.metricsAttributes}
       />
     </div>;
   }
@@ -432,6 +462,41 @@ export class PdfFile extends React.PureComponent {
       });
 
       this.onPageChange(minIndex, clientHeight);
+
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+      }
+
+      this.scrollTimer = setTimeout(() => {
+        const scrollStart = performance.now();
+
+        const data = {
+          overscan: this.props.windowingOverscan,
+          documentType: this.props.documentType,
+          pageCount: this.props.pdfDocument.numPages,
+          pageIndex: this.pageIndex,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          start: scrollStart,
+          end: performance.now()
+        };
+
+        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
+        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
+
+        storeMetrics(
+          this.props.documentId,
+          this.metricsAttributes,
+          {
+            message: `Scroll to position ${posx}, ${posy}`,
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + data.start),
+            end: new Date(performance.timeOrigin + data.end),
+            duration: data.start ? data.end - data.start : 0
+          },
+          this.metricsIdentifier,
+        );
+      }, 300);
     }
   }
 
@@ -533,6 +598,28 @@ export class PdfFile extends React.PureComponent {
     // before trying to render the page.
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
+
+      if (this.props.renderStartTime) {
+        const renderEndTime = performance.now();
+        const renderDuration = renderEndTime - this.props.renderStartTime;
+
+        storeMetrics(
+          this.props.documentId,
+          this.metricsAttributes,
+          {
+            message: 'PDF render time in Milliseconds',
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + this.props.renderStartTime),
+            end: new Date(performance.timeOrigin + renderEndTime),
+            duration: renderDuration
+          },
+          this.metricsIdentifier
+        );
+
+        this.props.setRenderStartTime(null);
+      }
+
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
@@ -617,7 +704,9 @@ PdfFile.propTypes = {
   updateSearchIndexPage: PropTypes.func,
   updateSearchRelativeIndex: PropTypes.func,
   windowingOverscan: PropTypes.number,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  setRenderStartTime: PropTypes.func,
+  renderStartTime: PropTypes.any
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -633,7 +722,8 @@ const mapDispatchToProps = (dispatch) => ({
     setDocScrollPosition,
     updateSearchIndexPage,
     updateSearchRelativeIndex,
-    setPageDimensions
+    setPageDimensions,
+    setRenderStartTime
   }, dispatch)
 });
 
@@ -647,7 +737,8 @@ const mapStateToProps = (state, props) => {
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],
     windowingOverscan: state.pdfViewer.windowingOverscan,
-    rotation: _.get(state.documents, [props.documentId, 'rotation'])
+    rotation: _.get(state.documents, [props.documentId, 'rotation']),
+    renderStartTime: state.pdf.renderStartTime
   };
 };
 

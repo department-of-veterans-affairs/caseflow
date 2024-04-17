@@ -481,7 +481,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             case_id: SecureRandom.uuid,
             docket: Constants.AMA_DOCKETS.direct_review,
             ready_at: Time.zone.now,
-            priority: true
+            priority: true,
+            sct_appeal: false
           )
         end
         distribution
@@ -1155,10 +1156,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
       allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
+      allow(Raven).to receive(:capture_exception) { @raven_called = true }
+
       described_class.perform_now
 
       expected_msg = "<!here>\n .ERROR. after running for .*: #{error_msg}"
       expect(slack_msg).to match(/^#{expected_msg}/)
+      expect(@raven_called).to eq true
     end
   end
 end
