@@ -76,7 +76,7 @@ class EditDocumentTypeModal extends React.Component {
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
         <p>{sprintf(COPY.TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</p>
-        <div style={{ fontWeight: 'bold' }}>
+        <div className="modal-fwb">
           {sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         </div>
         <p>{originalDocumentTitle}</p>
