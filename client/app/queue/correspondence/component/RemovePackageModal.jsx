@@ -135,7 +135,7 @@ class RemovePackageModal extends React.Component {
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
         <p>
-          <span style= {{ fontWeight: 'bold' }}>{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span><br />
+          <span className="modal-fwb">{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span><br />
           {this.props.taskInstructions[0]}
         </p>
 

@@ -8,6 +8,6 @@ class InboundOpsTeam < Organization
 
   # :reek:UtilityFunction
   def selectable_in_queue?
-    FeatureToggle.enabled?(:correspondence_queue, user: RequestStore.store[:current_user])
+    false
   end
 end
