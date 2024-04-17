@@ -40,12 +40,12 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
-    Time.at(milliseconds.to_i / 1000).to_datetime
+    milliseconds.nil? ? nil : Time.at(milliseconds.to_i / 1000).to_datetime
   end
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    date = Time.at(logical_date_int.to_i).to_date
+    logical_date_int.nil? ? nil : Time.at(logical_date_int.to_i).to_date
   end
 
   def css_id
@@ -140,6 +140,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   def veteran_date_of_death
     date_of_death = @payload.dig(:veteran, :date_of_death)
+    byebug
     logical_date_converter(date_of_death)
   end
 

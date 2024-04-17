@@ -5,18 +5,18 @@
 class Events::CreateVeteranOnEvent
   class << self
     def handle_veteran_creation_on_event(event:, parser:)
-      unless veteran_exist?(parser.veteran_ssn)
+      unless veteran_exist?(parser.veteran_file_number)
         create_backfill_veteran(event, parser)
       else
         # return existing Veteran
-        Veteran.find_by(ssn: parser.veteran_ssn)
+        Veteran.find_by(ssn: parser.veteran_file_number)
       end
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedVeteranError, error.message
     end
 
-    def veteran_exist?(veteran_ssn)
-      Veteran.where(ssn: veteran_ssn).exists?
+    def veteran_exist?(veteran_file_number)
+      Veteran.where(file_number: veteran_file_number).exists?
     end
 
     private

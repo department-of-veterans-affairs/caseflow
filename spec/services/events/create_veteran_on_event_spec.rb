@@ -17,7 +17,7 @@ describe Events::CreateVeteranOnEvent do
 
     context "when a Veteran already exists" do
       it "should return true" do
-        expect(subject.veteran_exist?(veteran.ssn)).to be_truthy
+        expect(subject.veteran_exist?(veteran.file_number)).to be_truthy
       end
     end
   end
