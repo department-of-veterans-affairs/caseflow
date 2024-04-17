@@ -174,10 +174,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     end
   end
 
-  describe "#veteran" do
-    it ""
-  end
-
   describe "#process_intake" do
     context "tasks_not_related_to_appeal" do
       shared_examples "successful unrelated task creation" do |klass_name, assignee|
