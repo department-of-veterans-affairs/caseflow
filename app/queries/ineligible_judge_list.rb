@@ -45,9 +45,6 @@ class IneligibleJudgeList
     }
   end
 
-  # if CSS_ID key is NOT present and SDomainID key IS present, it originates from VACOLS
-  # if CSS_ID and SDomainID keys are BOTH present, the ineligibility originates form BOTH
-  # if CSS_ID key is present without SDomainID key then it originates from caseflow
   def self.get_reason_for_ineligibility(css_id_value, sdomainid_value)
     @reason = if INACTIVE_CASEFLOW.find { |o| o[:css_id] == css_id_value }
                 if INACTIVE_VACOLS.find { |o| o[:sdomainid] == sdomainid_value }
@@ -61,11 +58,10 @@ class IneligibleJudgeList
   end
 
   def self.get_judge_name(css_id_value, sattyid_value)
-    @judge_name = ""
-    if css_id_value != EMPTY_KEY_VALUE && !css_id_value.nil?
-      @judge_name = User.find_by(css_id: css_id_value).full_name
-    elsif sattyid_value != EMPTY_KEY_VALUE && !sattyid_value.nil?
-      @judge_name = VACOLS::Staff.find_by(sattyid: sattyid_value).snamef
-    end
+    @judge_name = if css_id_value != EMPTY_KEY_VALUE && !css_id_value.nil?
+                    User.find_by(css_id: css_id_value).full_name
+                  elsif sattyid_value != EMPTY_KEY_VALUE && !sattyid_value.nil?
+                    VACOLS::Staff.find_by(sattyid: sattyid_value).snamef
+                  end
   end
 end
