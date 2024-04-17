@@ -8,7 +8,7 @@ class CorrespondenceQueueController < CorrespondenceController
       @action_type = params[:userAction].strip if params[:userAction].present?
       set_banner_params if %w[continue_later cancel_intake].include?(@action_type)
       respond_to do |format|
-        format.html { "your_correspondence" }
+        format.html {}
         format.json do
           render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
         end
@@ -18,8 +18,40 @@ class CorrespondenceQueueController < CorrespondenceController
     end
   end
 
-  def set_banner_params
-    @veteran_name = URI.decode(params[:veteranName].strip) if params[:veteranName].present?
-    set_handle_return_to_queue_params
+  def correspondence_team
+    if current_user.mail_superuser? || current_user.mail_supervisor?
+      correspondence_team_response
+    elsif current_user.mail_team_user?
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
+    end
+  end
+
+  private
+
+  def correspondence_team_response
+    mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
+    task_ids = params[:task_ids]&.split(",") if params[:task_ids].present?
+    tab = params[:tab] if params[:tab].present?
+
+    respond_to do |format|
+      format.html do
+        @mail_team_users = User.mail_team_users.pluck(:css_id)
+        correspondence_team_html_response(mail_team_user, task_ids, tab)
+      end
+      format.json { correspondence_team_json_response }
+    end
+  end
+
+  def correspondence_team_json_response
+    render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
+  end
+
+  def correspondence_team_html_response(mail_team_user, task_ids, tab)
+    if mail_team_user && task_ids.present?
+      # candidate for refactor using PATCH request
+      process_tasks_if_applicable(mail_team_user, task_ids, tab)
+    end
   end
 end

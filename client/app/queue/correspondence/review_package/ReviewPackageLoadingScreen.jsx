@@ -12,7 +12,7 @@ import {
   setCorrespondenceDocuments,
   setPackageDocumentType,
   setVeteranInformation,
-  setReasonRemovePackage
+  setTaskInstructions
 } from '../correspondenceReducer/reviewPackageActions';
 import WindowUtil from '../../../util/WindowUtil';
 
@@ -28,14 +28,14 @@ class ReviewPackageLoadingScreen extends React.PureComponent {
           correspondence_documents,
           package_document_type,
           general_information,
-          reasonForRemovePackage
+          taskInstructions
         } = response.body;
 
         this.props.setCorrespondence(correspondence);
         this.props.setCorrespondenceDocuments(correspondence_documents);
         this.props.setPackageDocumentType(package_document_type);
         this.props.setVeteranInformation(general_information);
-        this.props.setReasonRemovePackage(reasonForRemovePackage);
+        this.props.setTaskInstructions(taskInstructions);
       }
     );
   }
@@ -72,7 +72,7 @@ ReviewPackageLoadingScreen.propTypes = {
   setCorrespondenceDocuments: PropTypes.func,
   setPackageDocumentType: PropTypes.func,
   setVeteranInformation: PropTypes.func,
-  setReasonRemovePackage: PropTypes.func
+  settaskInstructions: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -80,7 +80,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCorrespondenceDocuments,
   setPackageDocumentType,
   setVeteranInformation,
-  setReasonRemovePackage
+  setTaskInstructions
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(ReviewPackageLoadingScreen));

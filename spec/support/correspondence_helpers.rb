@@ -33,24 +33,23 @@ module CorrespondenceHelpers
         assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+        va_date_of_receipt: Time.zone.local(2023, 1, 1),
+        package_document_type: create(:package_document_type, name: "0304" )
       )
     end
-    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
   end
 
   def visit_intake_form
-    setup_access
-    uuid = SecureRandom.uuid
-    visit "/queue/correspondence/#{uuid}/intake"
+    correspondence = create :correspondence
+    visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
 
   def visit_intake_form_step_2_with_appeals
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-    appeals = (1..13).map { create(:appeal, veteran_file_number: veteran.file_number, docket_type: "direct_review") }
+    appeals = (1..20).map { create(:appeal, veteran_file_number: veteran.file_number, docket_type: "direct_review") }
     appeals.each do |appeal|
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
@@ -64,7 +63,6 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
@@ -85,7 +83,6 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    allow_any_instance_of(CorrespondenceIntakeController).to receive(:correspondence_load).and_return(Correspondence.all)
 
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 

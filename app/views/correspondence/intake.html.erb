@@ -11,10 +11,10 @@
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     },
+    priorMail: @prior_mail,
     correspondence: @correspondence,
     isMailSupervisor: current_user.mail_supervisor?,
     reduxStore: @redux_store,
     autoTexts: @auto_texts,
-    veteranInformation: @veteran_information
   }) %>
 <% end %>

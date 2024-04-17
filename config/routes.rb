@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -329,16 +331,17 @@ Rails.application.routes.draw do
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
     post '/correspondence/:id/completed_package', to: 'correspondence_tasks#completed_package'
-    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
-    get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
+    patch '/correspondence/tasks/:task_id/update', to: 'correspondence_tasks#update'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence_review_package#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence_review_package#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
-    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
-    get '/correspondence/packages', to: 'correspondence#package_documents'
-    get '/correspondence/team', to: 'correspondence#correspondence_team'
-    get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
-    get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
-    patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
+    get '/correspondence/team', to: 'correspondence_queue#correspondence_team'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence_review_package#update_cmp'
+    get '/correspondence/packages', to: 'correspondence_review_package#package_documents'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence_review_package#pdf'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
     patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
     post '/correspondence/:correspondence_uuid/cancel_intake', to: 'correspondence_intake#cancel_intake', as: :queue_correspondence_intake_cancel_intake
@@ -395,6 +398,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 

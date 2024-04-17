@@ -59,17 +59,10 @@ const ReviewPackageCaseTitle = (props) => {
   return (
     <div>
       <CaseTitleScaffolding
-        correspondence_id = {props.correspondence.id}
-        isReadOnly={props.isReadOnly}
-        isReassignPackage={props.isReassignPackage}
-        mailTeamUsers={props.mailTeamUsers}
+        {...props}
       />
       <CaseSubTitleScaffolding
         {...props}
-        reviewDetails={props.reviewDetails}
-        correspondence_id={props.correspondence.id}
-        isReadOnly={props.isReadOnly}
-        isInboundOpsTeam={props.isInboundOpsTeam}
       />
     </div>
   );
@@ -98,7 +91,7 @@ const CaseTitleScaffolding = (props) => {
       <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
 
       <span {...removebotton}>
-        { (props.isReadOnly && !props.isReassignPackage && props.isInboundOpsTeam) &&
+        { (props.isReadOnly && !props.isReassignPackage && props.userIsCorrespondenceSupervisor) &&
           <Button
             name="Review removal request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
@@ -108,7 +101,8 @@ const CaseTitleScaffolding = (props) => {
             }
           />
         }
-        { (props.isReadOnly && props.isReassignPackage) &&
+        { (props.isReadOnly && props.isReassignPackage &&
+          (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)) &&
           <Button
             name="Review reassign request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
@@ -133,6 +127,7 @@ const CaseTitleScaffolding = (props) => {
         setModalState={setReassignModalState}
         onCancel={closeReassignModal}
         correspondence_id = {props.correspondence_id}
+        reviewDetails={props.reviewDetails}
         mailTeamUsers={props.mailTeamUsers} />
       }
     </div>
@@ -173,7 +168,8 @@ ReviewPackageCaseTitle.propTypes = {
   correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
-  isInboundOpsTeam: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
@@ -181,7 +177,8 @@ CaseSubTitleScaffolding.propTypes = {
   mailTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
-  isInboundOpsTeam: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 CaseTitleScaffolding.propTypes = {
@@ -190,7 +187,8 @@ CaseTitleScaffolding.propTypes = {
   reviewDetails: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
-  isInboundOpsTeam: PropTypes.bool
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;

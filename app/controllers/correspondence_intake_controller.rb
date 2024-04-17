@@ -5,23 +5,18 @@ class CorrespondenceIntakeController < CorrespondenceController
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
     @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
-                                                  correspondence: current_correspondence)&.redux_store
-
-    respond_to do |format|
-      format.html { return render "correspondence/intake" }
-      format.json do
-        render json: {
-          currentCorrespondence: current_correspondence,
-          correspondence: correspondence_load,
-          veteranInformation: veteran_information
-        }
-      end
+                                                  correspondence: correspondence)&.redux_store
+    @prior_mail = prior_mail.map do |correspondence|
+      WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
+    @correspondence = WorkQueue::CorrespondenceSerializer
+      .new(correspondence)
+      .serializable_hash[:data][:attributes]
   end
 
   def current_step
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
-             CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence) ||
+             CorrespondenceIntake.new(user: current_user, correspondence: correspondence)
 
     intake.update(
       current_step: params[:current_step],
@@ -39,7 +34,7 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def intake_update
     begin
-      intake_appeal_update_tasks
+      correspondence.cancel_task_tree_for_appeal_intake
       upload_documents_to_claim_evidence if FeatureToggle.enabled?(:ce_api_demo_toggle)
       render json: { correspondence: correspondence }
     rescue StandardError => error
@@ -78,7 +73,7 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   private
 
-  def correspondence_load
-    Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
+  def prior_mail
+    Correspondence.prior_mail(veteran_by_correspondence.id, params[:correspondence_uuid])
   end
 end

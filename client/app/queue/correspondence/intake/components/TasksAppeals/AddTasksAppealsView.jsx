@@ -112,12 +112,11 @@ export const AddTasksAppealsView = (props) => {
           <h2 style={{ margin: '30px auto 20px auto' }}>Tasks related to an existing Appeal</h2>
           <p style={{ marginBottom: '-7px' }}>Is this correspondence related to an existing appeal?</p>
           <AddAppealRelatedTaskView
-            correspondenceUuid={props.correspondenceUuid}
+            correspondence={props.correspondence}
             setRelatedTasksCanContinue={setRelatedTasksCanContinue}
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
             allTaskTypeOptions={relatedTaskTypes}
             autoTexts={props.autoTexts}
-            veteranInformation={props.veteranInformation}
           />
         </div>
 
@@ -144,10 +143,9 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired,
+  correspondence: PropTypes.object.isRequired,
   onContinueStatusChange: PropTypes.func.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;
