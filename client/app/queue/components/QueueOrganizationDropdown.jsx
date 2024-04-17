@@ -18,13 +18,7 @@ export default class QueueOrganizationDropdown extends React.Component {
     let correspondenceItems = {};
 
     const isMailTeamAffiliated = () => {
-      if (isMailSuperUser) {
-        return true;
-      }
-      if (isMailSupervisor) {
-        return true;
-      }
-      if (isMailTeamUser) {
+      if (isMailSuperUser || isMailSupervisor || isMailTeamUser) {
         return true;
       }
 
