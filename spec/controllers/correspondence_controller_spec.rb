@@ -101,6 +101,24 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(controller.view_assigns["response_header"]).to eq("Package request for Bob Smithwatsica could not be approved")
       expect(controller.view_assigns["response_message"]).to eq("Please try again at a later time or contact the Help Desk.")
     end
+
+    it "returns cancel intake response" do
+      get :correspondence_team, params: { veteranName: "Bob%20Smithwatsica",
+                                          userAction: "cancel_intake",
+                                          user: current_user.css_id,
+                                          id: correspondence.id }
+      expect(controller.view_assigns["response_header"]).to eq("You have successfully cancelled the intake form")
+      expect(controller.view_assigns["response_message"]).to eq("Bob Smithwatsica's correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment.")
+    end
+
+    it "returns intake continue later response" do
+      get :correspondence_team, params: { veteranName: "Bob%20Smithwatsica",
+                                          userAction: "continue_later",
+                                          user: current_user.css_id,
+                                          id: correspondence.id }
+      expect(controller.view_assigns["response_header"]).to eq("You have successfully saved the intake form")
+      expect(controller.view_assigns["response_message"]).to eq("You can continue from step three of the intake form for Bob Smithwatsica's correspondence (ID: #{correspondence.id}) at a later date.")
+    end
   end
 
   describe "PATCH #update" do

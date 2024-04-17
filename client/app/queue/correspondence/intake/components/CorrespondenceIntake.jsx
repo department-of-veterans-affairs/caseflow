@@ -107,16 +107,16 @@ export const CorrespondenceIntake = (props) => {
 
   const handleCancelIntake = () => {
     ApiUtil.post(`/queue/correspondence/${exportStoredata.correspondence_uuid}/cancel_intake`, { exportStoredata }).
-    then((response) => {
-      if (!response.ok) {
-        console.error(response);
-      }
-     redirectToPage('cancel_intake');
+      then((response) => {
+        if (!response.ok) {
+          console.error(response);
+        }
+        redirectToPage('cancel_intake');
 
-    }).
-    catch((err) => {
-      console.error(new Error(`Problem with GET ${intakeCorrespondence} ${err}`));
-    });
+      }).
+      catch((err) => {
+        console.error(new Error(`Problem with GET ${intakeCorrespondence} ${err}`));
+      });
   };
 
   const prevStep = () => {
