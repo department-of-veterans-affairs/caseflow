@@ -13,8 +13,8 @@ class VirtualHearings::RefreshWebexAccessTokenJob < CaseflowJob
       new_access_token = response.access_token
       new_refresh_token = response.refresh_token
 
-      CredStash.put("webex_access_token", new_access_token)
-      CredStash.put("webex_refresh_token", new_refresh_token)
+      CredStash.put("webex_#{Rails.deploy_env}_access_token", new_access_token)
+      CredStash.put("webex_#{Rails.deploy_env}_refresh_token", new_refresh_token)
 
     end
   rescue StandardError => error
