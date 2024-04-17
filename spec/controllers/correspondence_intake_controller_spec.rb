@@ -33,6 +33,17 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
     allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
+  describe "GET #intake" do
+    it "returns 200 status" do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      3.times { create(:correspondence, veteran: veteran) }
+      get :intake, params: { correspondence_uuid: correspondence.uuid}
+
+      expect(response.status).to eq 200
+    end
+  end
+
   describe "POST #process_intake" do
     before do
       MailTeam.singleton.add_user(current_user)
