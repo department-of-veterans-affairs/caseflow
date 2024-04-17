@@ -121,38 +121,37 @@ const AddTaskView = (props) => {
           handleClear={props.handleClear}
         />
       }
-      <div className="gray-border ">
-        <div className="task-selection-box-for-new-tasks">
-          <div className="task-selection-dropdown-box">
-            <div id="reactSelectContainer"
-              {...selectContainerStyless}>
-              <label className="task-selection-title">Task</label>
-              <Select
-                placeholder="Select..."
-                options={props.availableTaskTypeOptions}
-                defaultValue={objectForSelectedTaskType()}
-                onChange={(selectedOption) => updateTaskType(selectedOption)}
-                styles={customSelectStyless}
-                className="add-task-dropdown-style"
-                aria-label="dropdown"
-              />
-            </div>
-            <div className="provide-context-text-styling" />
-            <TextareaField
-              name="content"
-              label="Provide context and instruction on this task"
-              value={task.content}
-              onChange={updateTaskContent}
+      <div className="gray-border task-selection-box-for-new-tasks">
+        <div className="task-selection-dropdown-box">
+          <div id="reactSelectContainer"
+            {...selectContainerStyless}>
+            <label className="task-selection-title">Task</label>
+            <Select
+              placeholder="Select..."
+              options={props.availableTaskTypeOptions}
+              defaultValue={objectForSelectedTaskType()}
+              onChange={(selectedOption) => updateTaskType(selectedOption)}
+              styles={customSelectStyless}
+              className="add-task-dropdown-style"
+              aria-label="dropdown"
             />
-            <Button
-              id="addAutotext"
-              name="Add"
-              classNames={['cf-btn-link', 'cf-left-side', 'add-autotext-button']}
-              onClick={handleModalToggle}
-            >
+          </div>
+          <div className="provide-context-text-styling" />
+          <TextareaField
+            name="content"
+            label="Provide context and instruction on this task"
+            value={task.content}
+            onChange={updateTaskContent}
+          />
+          <Button
+            id="addAutotext"
+            name="Add"
+            classNames={['cf-btn-link', 'cf-left-side', 'add-autotext-button']}
+            onClick={handleModalToggle}
+          >
             Add autotext
-            </Button>
-            {props.displayRemoveCheck &&
+          </Button>
+          {props.displayRemoveCheck &&
             <Button
               name="Remove"
               onClick={() => props.removeTask(task.id)}
@@ -160,8 +159,7 @@ const AddTaskView = (props) => {
             >
               <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
             </Button>
-            }
-          </div>
+          }
         </div>
       </div>
     </div>
