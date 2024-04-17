@@ -166,7 +166,7 @@ class AddCorrespondenceView extends React.Component {
     ];
 
     return (
-      <div className="add-related-correspondence corr">
+      <div className="add-related-correspondence">
         <h1 className="a-r-h1">Add Related Correspondence</h1>
         <p className="a-r-p1">Add any related correspondence to the mail package that is in progress.</p>
         <h2 className="a-r-h2">Associate with prior Mail</h2>
