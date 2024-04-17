@@ -19,8 +19,6 @@ def perform
         end
       end
     end
-  else
-    # Retry logic here
   end
 rescue StandardError => e
   log_error(e)
