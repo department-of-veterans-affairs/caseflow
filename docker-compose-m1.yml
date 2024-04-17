@@ -21,10 +21,10 @@ services:
     container_name: localstack
     image: localstack/localstack:0.11.4
     ports:
-      - "4567-4583:4567-4583"
+      - "4566-4583:4566-4583"
       - "8082:${PORT_WEB_UI-8080}"
     environment:
-      - SERVICES=sqs
+      - SERVICES=sqs,dynamodb,kms
     volumes:
       - ./local/sqs/conf:/conf
 
