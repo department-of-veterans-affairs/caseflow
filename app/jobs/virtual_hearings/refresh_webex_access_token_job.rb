@@ -3,7 +3,7 @@
 require "rcredstash"
 
 class VirtualHearings::RefreshWebexAccessTokenJob < CaseflowJob
-  queue_as :low_priority
+  queue_with_priority :low_priority
 
   def perform
     webex_service = WebexService.new
