@@ -103,4 +103,9 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
     data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
   end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
+  end
 end
