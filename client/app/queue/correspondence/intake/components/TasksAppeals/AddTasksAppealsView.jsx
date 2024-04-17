@@ -81,7 +81,9 @@ export const AddTasksAppealsView = (props) => {
           <h2 className="mail-tasks-title">Mail Tasks</h2>
           <div className="gray-border">
             <div className="area-above-select-completed-tasks">
-              <p className="select-completed-mail-tasks-for-correspondence">Select any tasks completed by the Mail team for this correspondence.</p>
+              <p className="select-completed-mail-tasks-for-correspondence">
+              Select any tasks completed by the Mail team for this correspondence.
+              </p>
               <div className="mail-tasks-option-left-styling" id="mail-tasks-left">
                 {mailTasksLeft.map((name, index) => {
                   return (
@@ -110,35 +112,36 @@ export const AddTasksAppealsView = (props) => {
               </div>
             </div>
           </div>
+        </div>
 
-          <div id="task-related-to-an-appeal">
-            <h2 className="tasks-related-to-an-appeal-title">Tasks related to an existing Appeal</h2>
-            <p className="is-correspondence-related-to-existing-appeals">Is this correspondence related to an existing appeal?</p>
-            <AddAppealRelatedTaskView
-              correspondenceUuid={props.correspondenceUuid}
-              setRelatedTasksCanContinue={setRelatedTasksCanContinue}
-              filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-              allTaskTypeOptions={relatedTaskTypes}
-              autoTexts={props.autoTexts}
-              veteranInformation={props.veteranInformation}
-            />
-          </div>
+        <div id="task-related-to-an-appeal">
+          <h2 className="tasks-related-to-an-appeal-title">Tasks related to an existing Appeal</h2>
+          <p className="is-correspondence-related-to-existing-appeals">
+          Is this correspondence related to an existing appeal?
+          </p>
+          <AddAppealRelatedTaskView
+            correspondence={props.correspondence}
+            setRelatedTasksCanContinue={setRelatedTasksCanContinue}
+            filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+            allTaskTypeOptions={relatedTaskTypes}
+            autoTexts={props.autoTexts}
+          />
+        </div>
 
-          <hr />
+        <hr />
 
-          <div id="task-not-related-to-an-appeal">
-            <h2 className="tasks-not-related-to-an-appeal-title">Tasks not related to an Appeal</h2>
-            <p className="add-new-tasks-related-to-correspondence">
+        <div id="task-not-related-to-an-appeal">
+          <h2 className="tasks-not-related-to-an-appeal-title">Tasks not related to an Appeal</h2>
+          <p className="add-new-tasks-related-to-correspondence">
             Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
-            </p>
-            <div>
-              <AddUnrelatedTaskView
-                setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
-                filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-                allTaskTypeOptions={unrelatedTaskTypes}
-                autoTexts={props.autoTexts}
-              />
-            </div>
+          </p>
+          <div>
+            <AddUnrelatedTaskView
+              setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
+              filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+              allTaskTypeOptions={unrelatedTaskTypes}
+              autoTexts={props.autoTexts}
+            />
           </div>
         </div>
       </div>
@@ -147,10 +150,9 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired,
+  correspondence: PropTypes.object.isRequired,
   onContinueStatusChange: PropTypes.func.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;

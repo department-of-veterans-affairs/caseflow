@@ -8,6 +8,7 @@ import {
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes, { string } from 'prop-types';
 import COPY from '../../../COPY';
+import ApiUtil from '../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
@@ -15,6 +16,8 @@ import Modal from 'app/components/Modal';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 import TextareaField from '../../components/TextareaField';
+import { css } from 'glamor';
+import WindowUtil from '../../util/WindowUtil';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -90,10 +93,22 @@ const CorrespondenceCases = (props) => {
     return false;
   };
 
+  const styles = {
+    optSelect: css({
+      '.reassign': {
+      },
+      '& .css-yk16xz-control, .css-1pahdxg-control': {
+        borderRadius: '0px',
+        fontSize: '17px'
+      }
+    })
+  };
+
   const approveElement = (
     <div className="styling-for-approve-element-assign-to-person">
       <ReactSelectDropdown
-        className="cf-margin-left-2rem img"
+        // className="cf-margin-left-2rem img"
+        className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
         options={buildMailUserData(props.mailTeamUsers)}
@@ -139,23 +154,23 @@ const CorrespondenceCases = (props) => {
       displayElement: selectedRequestChoice === 'reject'
     }
   ];
-  const handleConfirmReassignRemoveClick = (operation) => {
-    const newUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams(newUrl.search);
-    // Encode and set the query parameters
+  const handleConfirmReassignRemoveClick = (actionType) => {
+    try {
+      const data = {
+        action_type: actionType,
+        new_assignee: selectedMailTeamUser,
+        decision: selectedRequestChoice,
+        decision_reason: decisionReason,
+      };
 
-    searchParams.set('user', encodeURIComponent(selectedMailTeamUser));
-    searchParams.set('taskId', encodeURIComponent(currentSelectedVeteran.uniqueId));
-    searchParams.set('veteranName', encodeURIComponent(currentSelectedVeteran.veteranDetails.split('(')[0].trim()));
-    searchParams.set('userAction', encodeURIComponent(selectedRequestChoice));
-    searchParams.set('decisionReason', encodeURIComponent(decisionReason));
-    searchParams.set('operation', encodeURIComponent(operation));
-    searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
-    searchParams.set('page', encodeURIComponent('1'));
+      ApiUtil.patch(`/queue/correspondence/tasks/${currentSelectedVeteran.uniqueId}/update`, { data }).
+        then(() => {
+          WindowUtil.reloadPage();
+        });
 
-    // Construct the new URL with encoded query parameters
-    newUrl.search = searchParams.toString();
-    window.location.href = newUrl.href;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const reassignModalButtons = [

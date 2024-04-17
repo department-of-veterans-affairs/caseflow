@@ -146,8 +146,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
 };
 
 ConfirmTasksRelatedToAnAppeal.propTypes = {
-  bottonStyling: PropTypes.object,
-  goToStepTwo: PropTypes.func.isRequired
+  bottonStyling: PropTypes.object
 };
 
 export default ConfirmTasksRelatedToAnAppeal;
