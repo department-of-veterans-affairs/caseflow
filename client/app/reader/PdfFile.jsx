@@ -607,7 +607,7 @@ export class PdfFile extends React.PureComponent {
     this.pdfDocument.getPage(index + 1).then((page) => {
       const viewport = page.getViewport({ scale: this.props.scale });
 
-      const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas></canvas></div>`;
+      const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas id=canvas-${index + 1}></canvas></div>`;
 
       viewport.innerHTML = pagesHTML;
 
@@ -685,6 +685,9 @@ export class PdfFile extends React.PureComponent {
               this.props.pdfDocument.getPage(index + 1).
                 then((page) => {
                   const viewport = page.getViewport({ scale: this.props.scale });
+                  const canvas = document.getElementById(`canvas-${index + 1}`);
+
+                  this.canvas = canvas;
 
                   this.canvas.height = viewport.height;
                   this.canvas.width = viewport.width;
