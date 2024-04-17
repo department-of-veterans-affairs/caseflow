@@ -1,4 +1,5 @@
 require "json"
+require 'rcredstash'
 
 class ExternalApi::WebexService
   BASE_URL = "#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
@@ -6,7 +7,7 @@ class ExternalApi::WebexService
   GRANT_TYPE = "refresh_token"
   CLIENT_ID = ENV["WEBEX_CLIENT_ID"]
   CLIENT_SECRET = ENV["WEBEX_CLIENT_SECRET"]
-  REFRESH_TOKEN = ENV["WEBEX_REFRESH_TOKEN"]
+  REFRESH_TOKEN = CredStash.get("webex_refresh_token", version: 1)
   HEADERS = {
     "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json"
   }.freeze
@@ -19,6 +20,7 @@ class ExternalApi::WebexService
     @domain = domain
     @api_endpoint = api_endpoint
   end
+
   def create_conference(virtual_hearing)
     body = {
       "jwt": {
@@ -35,6 +37,7 @@ class ExternalApi::WebexService
     return if resp.nil?
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
+
   def delete_conference(virtual_hearing)
     body = {
       "jwt": {
@@ -49,6 +52,7 @@ class ExternalApi::WebexService
     }
     resp = send_webex_request(body: body)
     return if resp.nil?
+
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 

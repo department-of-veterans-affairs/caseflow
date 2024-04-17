@@ -53,5 +53,6 @@ SCHEDULED_JOBS = {
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
-    "get_webex_recordings_list_job" => Hearings::GetWebexRecordingsListJob
+    "get_webex_recordings_list_job" => Hearings::GetWebexRecordingsListJob,
+    "refresh_webex_tokens_job" => RefreshWebexAccessTokenJob
 }.freeze
