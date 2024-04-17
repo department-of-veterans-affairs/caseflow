@@ -4,7 +4,7 @@ class ExternalApi::WebexService::Response
   attr_reader :resp, :code
   def initialize(resp)
     @resp = resp
-    @code = @resp.status
+    @code = @resp.code
   end
 
   def data; end
