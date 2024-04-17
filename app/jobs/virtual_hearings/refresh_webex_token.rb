@@ -9,6 +9,7 @@ def perform
     credstash = Rcredstash::Client.new
     credstash.put('webex_access_token', new_access_token, context: {}, version: 1)
     credstash.put('webex_refresh_token', new_refresh_token, context: {}, version: 1)
+    
 
     # Delete old versions of the secrets
     dynamodb = Aws::DynamoDB::Client.new
