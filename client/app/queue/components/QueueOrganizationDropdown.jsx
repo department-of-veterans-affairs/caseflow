@@ -72,13 +72,6 @@ export default class QueueOrganizationDropdown extends React.Component {
       const items2 = items.slice(1);
 
       items = [...items1, correspondenceItems, ...items2];
-
-      // const browserLocation = useLocation();
-
-      // console.log(browserLocation);
-      // if (browserLocation === '/queue/correspondence/team') {
-      //   return <Redirect to= "/queue/correspondence" />;
-      // }
     }
 
     return <QueueSelectorDropdown items={items} />;
