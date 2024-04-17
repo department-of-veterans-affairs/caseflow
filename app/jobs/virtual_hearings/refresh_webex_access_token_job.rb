@@ -6,7 +6,7 @@ class VirtualHearings::RefreshWebexAccessTokenJob < CaseflowJob
   queue_with_priority :low_priority
 
   def perform
-    webex_service = WebexService.new
+    webex_service = WebexService.new(host: nil, port: nil, aud: nil, apikey: nil, domain: nil, api_endpoint: nil)
     response = webex_service.refresh_access_token
 
     if response.success?
