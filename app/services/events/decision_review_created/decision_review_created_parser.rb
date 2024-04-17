@@ -45,10 +45,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    year = logical_date_int.to_i / 100_00
-    month = (logical_date_int.to_i % 100_00) / 100
-    day = logical_date_int.to_i % 100
-    Date.new(year, month, day)
+    date = Time.at(logical_date_int.to_i).to_date
   end
 
   def css_id
@@ -142,7 +139,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def veteran_date_of_death
-    @payload.dig(:veteran, :date_of_death)
+    date_of_death = @payload.dig(:veteran, :date_of_death)
+    logical_date_converter(date_of_death)
   end
 
   # Claimant attributes
