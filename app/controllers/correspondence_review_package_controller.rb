@@ -2,8 +2,7 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
-    @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
-    render "correspondence/review_package"
+    @mail_team_users = User.mail_team_users.select(:css_id).pluck(:css_id)
   end
 
   def package_documents
@@ -103,5 +102,10 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       data ||= demo_data
     end
     data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+  end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
   end
 end

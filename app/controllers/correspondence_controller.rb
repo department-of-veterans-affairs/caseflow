@@ -8,10 +8,6 @@ class CorrespondenceController < ApplicationController
   before_action :correspondence
   before_action :auto_texts
 
-  def veteran
-    render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
-  end
-
   private
 
   def verify_correspondence_access

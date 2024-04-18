@@ -45,10 +45,10 @@ module CorrespondenceControllerConcern
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
-    current_user_tasks = user&.tasks&.length
+    user_tasks = user&.tasks&.length
     {
-      header: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-      message: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
+      header: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+      message: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
     }
   end
 

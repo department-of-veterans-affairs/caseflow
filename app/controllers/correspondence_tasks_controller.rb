@@ -99,7 +99,7 @@ class CorrespondenceTasksController < TasksController
         task.reject(current_user, params[:decision_reason])
       end
       package_action_flash(decision.upcase, requesting_user_name)
-    rescue
+    rescue StandardError
       flash_error_banner(requesting_user_name)
     end
   end
