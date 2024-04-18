@@ -53,6 +53,24 @@ class CorrespondenceIntakeController < CorrespondenceController
     end
   end
 
+  def cancel_intake
+    begin
+      intake_task = Task.where("appeal_id = ? and appeal_type = 'Correspondence' and type = 'CorrespondenceIntakeTask'",
+                               correspondence.id).first
+      intake_task.update!(status: "cancelled")
+      ReviewPackageTask.create!(
+        assigned_to: User.find(correspondence.assigned_by_id),
+        assigned_to_id: correspondence.assigned_by_id,
+        status: "assigned",
+        appeal_id: correspondence.id,
+        appeal_type: "Correspondence"
+      )
+      render json: {}, status: :ok
+    rescue StandardError
+      render json: { error: "Failed to update records" }, status: :bad_request
+    end
+  end
+
   private
 
   def prior_mail
