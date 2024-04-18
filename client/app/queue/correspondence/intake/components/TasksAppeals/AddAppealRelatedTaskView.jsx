@@ -5,7 +5,6 @@ import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForSearchStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
-import { COLORS, LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
@@ -14,7 +13,6 @@ import {
   setTaskRelatedAppealIds,
   setWaivedEvidenceTasks
 } from '../../../correspondenceReducer/correspondenceActions';
-
 
 const RELATED_NO = '0';
 const RELATED_YES = '1';
@@ -152,31 +150,33 @@ export const AddAppealRelatedTaskView = (props) => {
         </LoadingContainer>
       }
       {existingAppealRadio === RELATED_YES && !loading &&
-        <div className="gray-border corr entire-tasks-related-to-existing-appeals"
+        <div className="gray-border corr"
           style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
-          <div className="existing-appeals-box">
-            <div className="bottom-of-existing-appeals-title">
-              <b className="existing-appeals-title">Existing Appeals</b>
-            </div>
-            <ul className="selection-for-prior-appeals-linked-to-corr">
-              Please select prior appeal(s) to link to this correspondence
-            </ul>
-            <ul className="left-side-of-docket">
-              <div className="right-side-of-assigned-to" >
-                <CaseListTable
-                  // Need to use this as key to force React to re-render checkboxes
-                  key={tableUpdateTrigger}
-                  appeals={appeals}
-                  showCheckboxes
-                  paginate
-                  linkOpensInNewTab
-                  checkboxOnChange={appealCheckboxOnChange}
-                  taskRelatedAppealIds={taskRelatedAppeals}
-                  currentPage={currentAppealPage}
-                  updatePageHandlerCallback={appealsPageUpdateHandler}
-                />
+          <div className="entire-tasks-related-to-existing-appeals">
+            <div className="existing-appeals-box">
+              <div className="bottom-of-existing-appeals-title">
+                <b className="existing-appeals-title">Existing Appeals</b>
               </div>
-            </ul>
+              <ul className="selection-for-prior-appeals-linked-to-corr">
+              Please select prior appeal(s) to link to this correspondence
+              </ul>
+              <ul className="left-side-of-docket">
+                <div className="right-side-of-assigned-to" >
+                  <CaseListTable
+                  // Need to use this as key to force React to re-render checkboxes
+                    key={tableUpdateTrigger}
+                    appeals={appeals}
+                    showCheckboxes
+                    paginate
+                    linkOpensInNewTab
+                    checkboxOnChange={appealCheckboxOnChange}
+                    taskRelatedAppealIds={taskRelatedAppeals}
+                    currentPage={currentAppealPage}
+                    updatePageHandlerCallback={appealsPageUpdateHandler}
+                  />
+                </div>
+              </ul>
+            </div>
           </div>
           <div>
             {taskRelatedAppeals.toSorted().map((appealId, index) => {

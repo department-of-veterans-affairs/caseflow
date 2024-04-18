@@ -153,7 +153,7 @@ export const CorrespondenceIntake = (props) => {
         />
       </div>
     }
-    <div>
+    <div className="margin-top-for-add-task-view">
       <a href="/queue/correspondence">
         <Button
           name="Cancel"

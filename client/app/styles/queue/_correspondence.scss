@@ -400,9 +400,7 @@ $translate: 11%;
     justify-content: space-between
   }
 
-  .width-of-add-tasks-button {
-    width: 80%
-  }
+
 
   .cursor-style-for-unlink-appeal-button {
     cursor: pointer
@@ -546,7 +544,8 @@ $translate: 11%;
 
 .new-tasks-gray-border-styling {
     display: block;
-    margin-right: 2rem
+    margin-right: 2rem;
+    margin-bottom: 2rem
   }
 
 .area-above-add-tasks-button-not-related{
@@ -755,3 +754,15 @@ $translate: 11%;
 .checkbox-column-inline-style {
   margin-top: -1rem;
 }
+
+.margin-top-for-add-task-view {
+  padding-top: 20px
+}
+
+.width-of-add-tasks-button-text {
+  width: 110px
+}
+
+.width-of-add-tasks-button {
+    width: 50%
+  }

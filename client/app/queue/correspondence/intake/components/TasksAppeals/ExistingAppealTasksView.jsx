@@ -113,7 +113,7 @@ export const ExistingAppealTasksView = (props) => {
             onClick={addTask}
             disabled={getTasksForAppeal().length === MAX_NUM_TASKS}
             name="addTasks"
-            className={['cf-left-side']}>
+            classNames={['cf-left-side', 'width-of-add-tasks-button-text']}>
           + Add tasks
           </Button>
         </div>
