@@ -51,7 +51,8 @@ class Events::DecisionReviewCreated
                                                  decision_review: decision_review)
 
           # Note: event, user, and veteran need to be before this call.
-          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser)
+          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
+           decision_review: decision_review)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim

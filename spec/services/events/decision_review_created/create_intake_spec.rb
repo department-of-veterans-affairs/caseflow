@@ -8,6 +8,7 @@ describe Events::DecisionReviewCreated::CreateIntake do
     let(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
     let(:intake_double) { double("Intake") }
     let(:event_record_double) { double("EventRecord") }
+    let(:decision_review_double) { double("DecisionReview", id: "1") }
 
     it "creates an intake and event record" do
       allow(Intake).to receive(:create!).and_return(intake_double)
@@ -19,17 +20,19 @@ describe Events::DecisionReviewCreated::CreateIntake do
                                                completed_at: parser.intake_completed_at,
                                                completion_status: parser.intake_completion_status,
                                                type: parser.intake_type,
-                                               detail_type: parser.intake_detail_type)
+                                               detail_type: parser.intake_detail_type,
+                                               detail_id: decision_review_double.id)
         .and_return(intake_double)
       expect(EventRecord).to receive(:create!).with(event: event_double, evented_record: intake_double)
         .and_return(event_record_double)
-      described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser)
+      described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser,
+       decision_review: decision_review_double)
     end
     context "when an error occurs" do
-      let(:error) { Caseflow::Error::DecisionReviewCreatedIntakeError.new("Unable to create Intake") }
       it "raises the error" do
-        allow(Intake).to receive(:create!).and_raise(error)
-        expect { described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser) }.to raise_error(error)
+        allow(Intake).to receive(:create!).and_raise(Caseflow::Error::DecisionReviewCreatedIntakeError)
+        expect { described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser,
+        decision_review: decision_review_double) }.to raise_error(Caseflow::Error::DecisionReviewCreatedIntakeError)
       end
     end
   end
