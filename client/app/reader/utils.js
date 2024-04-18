@@ -1,7 +1,7 @@
 import { clamp, compact, get, isEmpty, sortBy, some } from 'lodash';
-import React from 'react';
-import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-import { update } from '../util/ReducerUtil';
+const React = require('./react');
+const { ANNOTATION_ICON_SIDE_LENGTH } = require('./constants');
+const { update } = require('../util/ReducerUtil');
 
 export const categoryFieldNameOfCategoryName = (categoryName) => `category_${categoryName}`;
 
