@@ -45,10 +45,10 @@ module CorrespondenceControllerConcern
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
-    current_user_tasks = user&.tasks&.length
+    user_tasks = user&.tasks&.length
     {
-      header: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-      message: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
+      header: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+      message: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
     }
   end
 
@@ -64,6 +64,18 @@ module CorrespondenceControllerConcern
       "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
       "The mail package has been uploaded to the Veteran's eFolder as well."
     ]
+  end
+
+  def intake_cancel_message(action_type)
+    vet = veteran_by_correspondence
+    if action_type == "cancel_intake"
+      @response_header = "You have successfully cancelled the intake form"
+      @response_message = "#{vet.name}'s correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment."
+    else
+      @response_header = "You have successfully saved the intake form"
+      @response_message = "You can continue from step three of the intake form for #{vet.name}'s correspondence (ID: #{correspondence.id}) at a later date."
+    end
+    @response_type = "success"
   end
 
   def general_information
