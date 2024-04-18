@@ -130,6 +130,7 @@ class TestSeeds extends React.PureComponent {
                           <li key={type}>
                             <div className={cx('lever-right', 'test-seeds-num-field')}>
                               <input
+                                aria-label={`count-${type}`}
                                 type="text"
                                 id={`count-${type}`}
                                 onChange={(event) => this.handleChange(event, type)}
