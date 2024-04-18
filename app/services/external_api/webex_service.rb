@@ -34,12 +34,12 @@ class ExternalApi::WebexService
   end
   # rubocop:enable Metrics/ParameterLists
 
-  def create_conference(virtual_hearing)
+  def create_conference(hearing)
     body = {
       "jwt": {
-        "sub": virtual_hearing.subject_for_conference,
-        "nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
-        "exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
+        "sub": hearing.subject_for_conference,
+        "nbf": hearing.hearing.scheduled_for.beginning_of_day.to_i,
+        "exp": hearing.hearing.scheduled_for.end_of_day.to_i
       },
       "aud": @aud,
       "numGuest": 1,
@@ -53,10 +53,10 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
 
-  def delete_conference(virtual_hearing)
+  def delete_conference(hearing)
     body = {
       "jwt": {
-        "sub": virtual_hearing.subject_for_conference,
+        "sub": hearing.subject_for_conference,
         "nbf": 0,
         "exp": 0
       },
