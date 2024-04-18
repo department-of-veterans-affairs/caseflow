@@ -1,5 +1,22 @@
 # frozen_string_literal: true
 
+# This file defines the ExternalApi::WebexService class, which is responsible for interacting
+# with the Webex API. This service is used for creating and deleting conferences, refreshing
+# access tokens, and fetching recording details.
+#
+# Key behaviors include:
+# 1. The initialize method sets up the service with necessary parameters like host, port, aud,
+#    apikey, domain, api_endpoint, and query.
+# 2. The create_conference method sends a POST request to the Webex API to create a new conference.
+# 3. The delete_conference method sends a POST request to the Webex API to delete a conference.
+# 4. The refresh_access_token method sends a POST request to the Webex API to refresh the access token.
+# 5. The fetch_recordings_list method sends a GET request to the Webex API to fetch a list of recordings.
+# 6. The fetch_recording_details method sends a GET request to the Webex API to fetch details of a recording.
+# 7. The send_webex_request method is a private method used to send requests to the Webex API
+#    with the specified body and method.
+#
+# All requests to the Webex API are recorded using the MetricsService.
+
 require "json"
 require "rcredstash"
 
