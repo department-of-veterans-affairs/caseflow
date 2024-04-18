@@ -25,7 +25,7 @@ module CorrespondenceControllerConcern
 
   def set_banner_params(user, task_count, tab)
     template = message_template(user, task_count, tab)
-    response_type(user)
+    response_type(user, task_count)
     @response_header = template[:header]
     @response_message = template[:message]
   end
@@ -45,14 +45,16 @@ module CorrespondenceControllerConcern
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
+    current_user_tasks = user&.tasks&.length
     {
-      header: (user&.tasks&.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-      message: (user&.tasks&.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+      header: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+      message: (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
     }
   end
 
-  def response_type(user)
-    @response_type = (user&.tasks&.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
+  def response_type(user, task_count)
+    current_user_tasks = user&.tasks&.length
+    @response_type = (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   def set_flash_intake_success_message
