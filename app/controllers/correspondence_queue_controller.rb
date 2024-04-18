@@ -5,6 +5,7 @@ class CorrespondenceQueueController < CorrespondenceController
     if current_user.mail_supervisor?
       redirect_to "/queue/correspondence/team"
     elsif current_user.mail_superuser? || current_user.mail_team_user?
+      intake_cancel_message(action_type) if %w[continue_later cancel_intake].include?(action_type)
       respond_to do |format|
         format.html {}
         format.json do
@@ -50,6 +51,12 @@ class CorrespondenceQueueController < CorrespondenceController
     if mail_team_user && task_ids.present?
       # candidate for refactor using PATCH request
       process_tasks_if_applicable(mail_team_user, task_ids, tab)
+    elsif %w[continue_later cancel_intake].include?(action_type)
+      intake_cancel_message(action_type)
     end
+  end
+
+  def action_type
+    params[:userAction].strip if params[:userAction].present?
   end
 end

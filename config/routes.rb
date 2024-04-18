@@ -343,6 +343,7 @@ Rails.application.routes.draw do
     patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
     patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
+    post '/correspondence/:correspondence_uuid/cancel_intake', to: 'correspondence_intake#cancel_intake', as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
