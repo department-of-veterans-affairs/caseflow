@@ -60,7 +60,12 @@ export class PdfFile extends React.PureComponent {
       readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
     };
 
-    this.prototypeReader = true;
+    // this.readerPrototype = this.props.featureToggles.readerPrototype
+
+    this.readerPrototype = true;
+    this.canvasHeight = null;
+    this.canvasWidth = null;
+    this.renderTask = null;
   }
 
   componentDidMount = () => {
@@ -78,7 +83,47 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
+    if (this.readerPrototype) {
+
+      return this.getPdfDocument(requestOptions);
+    }
+
     return this.getDocument(requestOptions);
+  }
+
+  getPdfDocument = (requestOptions) => {
+    console.log('READER_LOG getPdfDocument ');
+
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        console.log('READER_LOG getPdfDocument | retrieveDocument ');
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+
+        return this.loadingTask.promise;
+      }).
+      then((pdfDocument) => {
+        console.log('READER_LOG getPdfDocument | pdfDocument ');
+
+        this.pdfDocument = pdfDocument;
+
+        return this.getPages(pdfDocument);
+      }).
+      then(() => {
+        console.log('READER_LOG getPdfDocument | THEN ');
+
+        if (this.loadingTask.destroyed) {
+          this.pdfDocument.cleanup();
+
+          return this.pdfDocument.destroy();
+        }
+        this.loadingTask = null;
+        console.log('READER_LOG getPdfDocument | THEN  setPdfDocument');
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(error);
+      });
   }
 
   /**
@@ -598,33 +643,6 @@ export class PdfFile extends React.PureComponent {
     overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
   })
 
-  getCanvasRef = (canvas) => {
-    this.canvas = canvas;
-  }
-  getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
-
-  getRowPage(index) {
-    this.pdfDocument.getPage(index + 1).then((page) => {
-      const viewport = page.getViewport({ scale: this.props.scale });
-
-      const pagesHTML = `<div classname="cf-pdf-pdfjs-container";ref=${this.getPageContainerRef}; style="background-color: black;"><canvas id=canvas-${index + 1}></canvas></div>`;
-
-      viewport.innerHTML = pagesHTML;
-
-      this.canvas.height = viewport.height;
-      this.canvas.width = viewport.width;
-
-      const options = {
-        canvasContext: this.canvas.getContext('2d', { alpha: false }),
-        viewport
-      };
-
-      this.renderTask = page.render(options);
-
-      return this.renderTask.promise.then();
-    });
-  }
-
   render() {
     if (this.props.loadError) {
       return <div>{this.displayErrorMessage()}</div>;
@@ -664,6 +682,7 @@ export class PdfFile extends React.PureComponent {
       }
 
       return <AutoSizer>{
+
         ({ width, height }) => {
 
           if (this.clientHeight !== height) {
@@ -672,6 +691,7 @@ export class PdfFile extends React.PureComponent {
           }
           if (this.clientWidth !== width) {
             this.clientWidth = width;
+
           }
 
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
@@ -679,29 +699,87 @@ export class PdfFile extends React.PureComponent {
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
-          if (this.prototypeReader) {
+          if (this.readerPrototype) {
+
+            console.log('READER_LOG render() readerPrototype \n--');
 
             const readerRow = ({ index, style }) => {
               this.props.pdfDocument.getPage(index + 1).
                 then((page) => {
-                  const viewport = page.getViewport({ scale: this.props.scale });
+
+                  const viewport = page.getViewport({ scale: 1 });
+
                   const canvas = document.getElementById(`canvas-${index + 1}`);
+                  {/* let canvas = document.getElementById(`canvas-${index + 1}`); */}
+
 
                   this.canvas = canvas;
+                  let canvasContext = canvas.getContext('2d', { alpha: false });
+                  {/* const canvasContext = canvas.getContext('2d', { alpha: false }); */}
+
+                  canvasContext.clearRect(0, 0, canvas.width, canvas.height); //doesnt work and idk why
+                  canvasContext.reset();
 
                   this.canvas.height = viewport.height;
                   this.canvas.width = viewport.width;
 
+                  {/* canvas = null; */}
                   const options = {
-                    canvasContext: this.canvas.getContext('2d', { alpha: false }),
+                    canvasContext,
                     viewport
                   };
 
-                  this.renderTask = page.render(options);
+                  const renderTask = page.render(options);
+
+                  console.log(`READER_LOG render() PAGE ${index + 1}\n^^^^`);
+
+                  canvasContext.clearRect(0, 0, canvas.width, canvas.height); //doesnt work and idk why, but
+                  //need to clear the context after rendering page, or before. what happens now is page 1, 2, 3
+                  //then 1, 2, 3 <- throws error
+
+
+                  renderTask.promise.
+                    then(() => {
+
+                      //doesnt reach here if let canvas =  instead of const canvas
+                      console.log(`READER_LOG render() PAGE then  & cleanup ${index + 1}\n***************************`);
+                      page.cleanup();
+                      //page.cleanup doesnt work? page still exists here?
+                    }).
+                    catch((error) => {
+                      console.error(`READER_LOG render() PAGE ${index + 1}\n***********ERROR: ${error} **************`);
+                      //need to clear canvas here
+                      const viewport = page.getViewport({ scale: 1 });
+                      canvasContext.clearRect(0, 0, viewport.width, viewport.height);
+                      //doesnt work
+
+                      if (renderTask) {
+
+                        console.error(`READER_LOG render() PAGE ${index + 1}\n
+                        renderTask.cancel()`);
+                        renderTask.cancel();
+
+                        {/* renderTask still exists here, cancel doesn't work and idk why */}
+                      }
+
+                    });
+
                 });
 
               return (
-                <canvas style={{ ...style, backgroundColor: 'black', color: 'white', border: '1px solid white' }} id={`canvas-${index + 1}`} ref={this.getCanvasRef} className="canvasWrapper" />
+                <canvas
+                  style={{
+                    ...style,
+                    width: `${this.canvasWidth}`,
+                    height: `${this.canvasHeight}`,
+                    left: '50%',
+                    transform: 'translate(-50%, 10%)'
+                  }}
+                  id={`canvas-${index + 1}`}
+                  ref={this.getCanvasRef}
+                  className="canvasWrapper"
+                />
+
               );
             };
 
@@ -709,38 +787,42 @@ export class PdfFile extends React.PureComponent {
               <FixedSizeList
                 height={height}
                 itemCount={this.props.pdfDocument.numPages}
-                itemSize={900} // page.height
+                itemSize={height + 50} // page.height
                 width={width}
               >
                 {readerRow}
               </FixedSizeList>
+
             );
           }
 
-          return <Grid
-            ref={this.getGrid}
-            containerStyle={{
-              visibility: `${visibility}`,
-              margin: '0 auto',
-              marginBottom: `-${PAGE_MARGIN}px`
-            }}
-            overscanIndicesGetter={this.overscanIndicesGetter}
-            estimatedRowSize={
-              (this.pageHeight(0) + PAGE_MARGIN) * this.props.scale
-            }
-            overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
-            onScroll={this.onScroll}
-            height={height}
-            rowCount={Math.ceil(this.props.pdfDocument.numPages / this.columnCount)}
-            rowHeight={this.getRowHeight}
-            cellRenderer={this.getPage}
-            scrollToAlignment="start"
-            width={width}
-            columnWidth={this.getColumnWidth}
-            columnCount={this.columnCount}
-            scale={this.props.scale}
-            tabIndex={this.props.isVisible ? 0 : -1}
-          />;
+          if (!this.readerPrototype) {
+            return <Grid
+              ref={this.getGrid}
+              containerStyle={{
+                visibility: `${visibility}`,
+                margin: '0 auto',
+                marginBottom: `-${PAGE_MARGIN}px`
+              }}
+              overscanIndicesGetter={this.overscanIndicesGetter}
+              estimatedRowSize={
+                (this.pageHeight(0) + PAGE_MARGIN) * this.props.scale
+              }
+              overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
+              onScroll={this.onScroll}
+              height={height}
+              rowCount={Math.ceil(this.props.pdfDocument.numPages / this.columnCount)}
+              rowHeight={this.getRowHeight}
+              cellRenderer={this.getPage}
+              scrollToAlignment="start"
+              width={width}
+              columnWidth={this.getColumnWidth}
+              columnCount={this.columnCount}
+              scale={this.props.scale}
+              tabIndex={this.props.isVisible ? 0 : -1}
+            />;
+          }
+
         }
       }
       </AutoSizer>;
