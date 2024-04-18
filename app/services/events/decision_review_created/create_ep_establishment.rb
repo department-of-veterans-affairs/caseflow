@@ -28,7 +28,8 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         reference_id: parser.epe_reference_id,
         station: parser.station_id,
         synced_status: parser.epe_synced_status,
-        user_id: user.id
+        user_id: user.id,
+        claimant_participant_id: parser.claimant_participant_id
       )
       EventRecord.create!(event: event, evented_record: end_product_establishment)
       end_product_establishment

@@ -24,7 +24,8 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
              epe_reference_id: "337534",
              epe_synced_status: "RW",
              epe_benefit_type_code: "1",
-             epe_development_item_reference_id: nil)
+             epe_development_item_reference_id: nil,
+             claimant_participant_id: "1826209")
     end
     let(:event_record_double) { double("EventRecord") }
     it "creates an a End Product Establishment and Event Record" do
@@ -47,7 +48,8 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         station: "101",
         synced_status: "RW",
         user_id: 1,
-        development_item_reference_id: nil
+        development_item_reference_id: nil,
+        claimant_participant_id: "1826209"
       ).and_return(parser_double)
       expect(EventRecord).to receive(:create!)
         .with(event: event_double, evented_record: parser_double).and_return(event_record_double)
