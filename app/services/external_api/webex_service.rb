@@ -98,14 +98,14 @@ class ExternalApi::WebexService
 
   private
 
-  def send_webex_request(body: nil, method: nil)  # Added method argument with a default value
+  def send_webex_request(body: nil, method: nil)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
     request.headers["Authorization"] = "Bearer #{@apikey}"
-    request.method = method.downcase.to_sym  # This line sets the method on the HTTPI request
+    request.method = method.downcase.to_sym 
 
     MetricsService.record(
       "#{@host} #{method} request to #{url}",
