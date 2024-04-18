@@ -367,13 +367,13 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "navigates to intake form from in-progress tab to step 3" do
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      find("#task-link").click
       click_on("button-continue")
       click_on("button-continue")
       intake_path = current_path
       click_on("button-Cancel")
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      find("#task-link").click
       expect(current_path).to eq(intake_path)
       expect(page).to have_content("Review and Confirm Correspondence")
     end

@@ -34,7 +34,7 @@ module CorrespondenceHelpers
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1),
-        package_document_type: create(:package_document_type, name: "0304" )
+        package_document_type: create(:package_document_type, name: "0304")
       )
     end
 
