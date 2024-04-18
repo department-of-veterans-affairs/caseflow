@@ -246,10 +246,9 @@ RSpec.feature("The Correspondence Intake page") do
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
-      correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{correspondence_uuid}/intake"
+      @correspondence_uuid = Correspondence.first.uuid
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
-      binding.pry
       click_on("+ Add tasks")
     end
 
@@ -260,14 +259,13 @@ RSpec.feature("The Correspondence Intake page") do
       end
     end
 
-    it "The user can close the modal with the return to queue button." do
-      binding.pry
+    it "The user can close the modal with the cancel button." do
       find_by_id("addAutotext").click
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Return-to-queue").length
+      cancel_count = all("#button-Cancel").length
       expect(cancel_count).to eq 1
     end
 
@@ -277,7 +275,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-close").click
-      cancel_count = all("#button-Return-to-queue").length
+      cancel_count = all("#button-Cancel").length
       expect(cancel_count).to eq 1
     end
 
@@ -375,8 +373,10 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       click_on("button-continue")
       intake_path = current_path
-      binding.pry
       click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[3].click
+      click_on("Return-To-Queue-button-id-1")
+      expect(page).to have_content("You have successfully saved the intake form")
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("#task-link").click
       expect(current_path).to eq(intake_path)
@@ -415,7 +415,6 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("Confirm")
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
-      binding.pry
       click_on("button-Return-to-queue")
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
