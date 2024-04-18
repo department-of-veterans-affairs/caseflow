@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
+
 RSpec.describe Events::CreateClaimantOnEvent do
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
   let(:decision_review) { create(:higher_level_review, veteran_file_number: create(:veteran).file_number) }
@@ -44,3 +46,5 @@ RSpec.describe Events::CreateClaimantOnEvent do
     end
   end
 end
+
+# rubocop:enable Layout/LineLength
