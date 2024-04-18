@@ -93,7 +93,7 @@ export const CorrespondenceIntake = (props) => {
     newUrl.search = searchParams.toString();
     newUrl.pathname = props.isMailSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
     window.location.href = newUrl.href;
-  }
+  };
 
   const handleContinueIntakeLater = () => {
     props.saveCurrentIntake(intakeCorrespondence, exportStoredata, () => {
