@@ -18,9 +18,7 @@ import {
   judgeAssignTasksSelector,
   camoAssignTasksSelector,
   getTasksByUserId,
-  specialtyCaseTeamAssignTasksSelector,
-  isVhaCamoOrg,
-  isSpecialtyCaseTeamOrg
+  specialtyCaseTeamAssignTasksSelector
 } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -136,11 +134,11 @@ const mapStateToProps = (state) => {
 
   let taskSelector = judgeAssignTasksSelector(state);
 
-  if (userIsCamoEmployee && isVhaCamoOrg(state)) {
+  if (userIsCamoEmployee) {
     taskSelector = camoAssignTasksSelector(state);
   }
 
-  if (userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state)) {
+  if (userIsSCTCoordinator) {
     taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
 
@@ -150,9 +148,7 @@ const mapStateToProps = (state) => {
     targetUserId: state.ui.targetUser?.id,
     targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge,
-    userIsSCTCoordinator: userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state),
-    userIsCamoEmployee: userIsCamoEmployee && isVhaCamoOrg(state),
+    attorneysOfJudge
   };
 };
 
