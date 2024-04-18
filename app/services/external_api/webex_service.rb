@@ -82,14 +82,14 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::AccessTokenRefreshResponse.new(response)
   end
 
-  def get_recordings_list
+  def fetch_recordings_list
     body = nil
     method = "GET"
     resp = send_webex_request(body: body, method: method)
     ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
   end
 
-  def get_recording_details
+  def fetch_recording_details
     body = nil
     method = "GET"
     resp = send_webex_request(body: body, method: method)
@@ -105,7 +105,7 @@ class ExternalApi::WebexService
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
     request.headers["Authorization"] = "Bearer #{@apikey}"
-    request.method = method.downcase.to_sym 
+    request.method = method.downcase.to_sym
 
     MetricsService.record(
       "#{@host} #{method} request to #{url}",
