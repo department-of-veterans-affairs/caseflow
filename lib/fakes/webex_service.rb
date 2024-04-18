@@ -86,7 +86,27 @@ class Fakes::WebexService
   end
 
   def refresh_access_token
-    "1234567890abcdef"
+    ExternalApi::WebexService::AccessTokenRefreshResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_webex_access_token_data.to_json
+      )
+    )
+  end
+
+  def fake_webex_access_token_data
+    {
+      "access_token" => "token1",
+      "expires_in" => 1_209_599,
+      "refresh_token" => "token2",
+      "refresh_token_expires_in" => 7_757_533,
+      "token_type" => "Bearer",
+      "scope" => "meeting:admin_preferences_write spark:kms
+    meeting:admin_preferences_read meeting:admin_schedule_write meeting:admin_recordings_write
+    meeting:admin_participants_read meeting:admin_recordings_read meeting:admin_schedule_read
+    meeting:admin_transcripts_read"
+    }
   end
 
   # rubocop:disable Metrics/MethodLength
