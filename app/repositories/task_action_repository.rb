@@ -46,7 +46,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
@@ -110,6 +110,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           task.appeal.veteran_full_name
         )
       }
+    end
+
+    def format_cancel_body(task, text, name)
+      if task.is_a?(MailTask)
+        ""
+      else
+        format(text, name)
+      end
     end
 
     def assign_to_hearings_user_data(task, user = nil)
@@ -877,10 +885,26 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def cancel_task_and_return_to_sct_action(task, _)
+      {
+        modal_title: COPY::RETURN_TO_SCT_MODAL_TITLE,
+        modal_body: COPY::RETURN_TO_SCT_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        show_instructions: true,
+        message_title: format(COPY::RETURN_TO_SCT_SUCCESS_BANNER_TITLE, task.appeal.claimant.name),
+        message_detail: COPY::RETURN_TO_SCT_SUCCESS_BANNER_DETAIL
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      # route to decision if mst/pact toggles are enabled.
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if
+        FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end

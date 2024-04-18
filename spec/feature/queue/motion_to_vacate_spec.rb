@@ -504,6 +504,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         end
       end
 
+      # rubocop:disable Metrics/AbcSize
       def return_to_lit_support(disposition:)
         address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
         find("label[for=disposition_#{disposition}]").click
@@ -537,6 +538,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
                                 return_to_lit_support_instructions
         expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 
@@ -858,7 +860,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Add remand reasons for issue 2
           within all("div.remand-reasons-form")[1] do
-            find_field("Medical examinations", visible: false).sibling("label").click
+            find_field("No medical examination", visible: false).sibling("label").click
             find_field("Pre AOJ", visible: false).sibling("label").click
           end
 
@@ -901,7 +903,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           expect(vacate_stream.decision_issues.size).to eq(6)
 
-          remanded = vacate_stream.decision_issues.select { |di| di.remanded? }
+          remanded = vacate_stream.decision_issues.select(&:remanded?)
           remanded1 = remanded.find { |di| di.description.eql? "remanded test" }
           remanded2 = remanded.find { |di| di.description.eql? "remanded test 2" }
 
@@ -909,7 +911,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           expect(remanded1.remand_reasons.first).to have_attributes(code: "service_treatment_records")
 
           expect(remanded2.remand_reasons.size).to eq(1)
-          expect(remanded2.remand_reasons.first).to have_attributes(code: "medical_examinations")
+          expect(remanded2.remand_reasons.first).to have_attributes(code: "no_medical_examination")
         end
       end
 
@@ -1030,7 +1032,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "sent to #{judge.full_name} for review."
         )
 
-        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+        judge_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
 
         expect(vacate_stream.decision_issues.size).to eq(3)
         expect(vacate_stream.tasks.size).to eq(4)
@@ -1143,6 +1145,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find("div", class: "cf-select__option", text: "Ready for Dispatch").click
   end
 
+  # rubocop:disable Metrics/AbcSize
   def complete_motion_to_vacate(user:, appeal:, task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
@@ -1164,6 +1167,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(abstract_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.completed
     expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.completed
   end
+  # rubocop:enable Metrics/AbcSize
 
   def check_cavc_alert
     expect(page).to have_css(".usa-alert-warning")

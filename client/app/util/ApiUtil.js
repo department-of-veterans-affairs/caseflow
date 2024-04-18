@@ -8,10 +8,13 @@ import { timeFunctionPromise } from '../util/PerfDebug';
 import moment from 'moment';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
+export const DEMO_API_TIMEOUT_MILLISECONDS = 2 * STANDARD_API_TIMEOUT_MILLISECONDS;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
+// eslint-disable-next-line no-process-env
+const onDemo = process.env.DEPLOY_ENV === 'demo';
 
 const defaultTimeoutSettings = {
-  response: STANDARD_API_TIMEOUT_MILLISECONDS,
+  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS,
   deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
 };
 
@@ -256,9 +259,15 @@ const ApiUtil = {
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
         let snakeKey = StringUtil.camelCaseToSnakeCase(key);
+        let value = data[key];
 
-        // assign value to new object
-        result[snakeKey] = this.convertToSnakeCase(data[key]);
+        // Check if the current value is a Date object
+        if (value instanceof Date) {
+          result[snakeKey] = value.toISOString();
+        } else {
+          // Recursively convert non-Date objects
+          result[snakeKey] = this.convertToSnakeCase(value);
+        }
       }
     }
 
@@ -273,10 +282,16 @@ const ApiUtil = {
 
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
-        let camelCase = StringUtil.snakeCaseToCamelCase(key);
+        let snakeKey = StringUtil.snakeCaseToCamelCase(key);
+        let value = data[key];
 
-        // assign value to new object
-        result[camelCase] = this.convertToCamelCase(data[key]);
+        // Check if the current value is a Date object
+        if (value instanceof Date) {
+          result[snakeKey] = value.toISOString();
+        } else {
+          // Recursively convert non-Date objects
+          result[snakeKey] = this.convertToCamelCase(value);
+        }
       }
     }
 

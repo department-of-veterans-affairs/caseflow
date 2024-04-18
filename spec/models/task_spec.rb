@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 describe Task, :all_dbs do
+  # @note Ideally, we would execute the following shared examples, "Task belongs_to polymorphic appeal", for each
+  #   subclass of Task. However, this has proven to be impractical due to the differences in validations across Task
+  #   subclasses and also their sheer number (120 as of this writing).
+  it_behaves_like "Task belongs_to polymorphic appeal"
+
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
       let(:root_task) { create(:root_task) }
@@ -1029,7 +1034,7 @@ describe Task, :all_dbs do
         FeatureToggle.enable!(:overtime_revamp)
       end
 
-      let(:user) { create(:user) }  #Let user be someone that is no registered to the toggle feature list
+      let(:user) { create(:user) } # Let user be someone that is no registered to the toggle feature list
       shared_examples "overtime status is changed because user is not on the feature toggle list" do
         it "clears overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true

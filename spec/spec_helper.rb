@@ -12,7 +12,7 @@ else
 end
 if ENV["CI"]
   require "rspec/retry"
-  require 'rspec/github' #GitHub Action Formatter
+  require "rspec/github" # GitHub Action Formatter
 
   # Repeat all failed feature tests in CI twice
   RSpec.configure do |config|
@@ -25,7 +25,7 @@ if ENV["CI"]
       ex.run_with_retry retry: 2
     end
 
-    #Github Actions Formatter
+    # Github Actions Formatter
     config.add_formatter RSpec::Github::Formatter
   end
 end
@@ -57,12 +57,11 @@ require "rspec/rails"
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
 
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
+  # allows test suite to only run tests tagged with :focus for specific testing
+  config.filter_run_when_matching :focus
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

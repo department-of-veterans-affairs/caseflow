@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# This is needed for the generate_report action since the testing environment does not eager load service files
+require Rails.root.join("app", "services", "claim_change_history", "change_history_reporter.rb")
+require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_filter_parser.rb")
+require Rails.root.join("app", "services", "claim_change_history", "claim_history_event.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_event_serializer.rb")
+
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -674,6 +681,163 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expected_email = "jamie.fakerton@caseflowdemo.com"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
+      end
+    end
+  end
+
+  describe "#history" do
+    before do
+      Timecop.travel(1.day.ago)
+    end
+
+    let(:task) { create(:higher_level_review_task) }
+
+    context "task is in VHA" do
+      let(:vha_org) { VhaBusinessLine.singleton }
+
+      context "and user is not an admin" do
+        before do
+          vha_org.add_user(user)
+        end
+
+        it "returns unauthorized" do
+          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/unauthorized/)
+        end
+      end
+
+      context "and user is an admin" do
+        before do
+          OrganizationsUser.make_user_admin(user, vha_org)
+        end
+
+        let!(:task_event) do
+          create(:higher_level_review_vha_task_with_decision)
+        end
+
+        it "should return task details" do
+          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
+                        format: :json
+
+          expect(response.status).to eq 200
+
+          res = JSON.parse(response.body)
+
+          expected_events = [
+            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+              "readableEventType" => "Added issue" },
+            { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
+            { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+          ]
+
+          expected_events.each do |expected_attributes|
+            expect(res).to include(
+              a_hash_including("attributes" => a_hash_including(expected_attributes))
+            )
+          end
+        end
+      end
+    end
+
+    context "task is not in VHA" do
+      before do
+        non_comp_org.add_user(user)
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+      it "returns unauthorized" do
+        get :history, params: { task_id: task.id, decision_review_business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+  end
+  describe "#generate_report" do
+    let(:non_comp_org) { VhaBusinessLine.singleton }
+
+    context "business-line-slug is not found" do
+      it "returns 404" do
+        get :generate_report, params: { business_line_slug: "foobar" }
+
+        expect(response.status).to eq 404
+      end
+    end
+
+    context "user is not an org admin" do
+      it "returns unauthorized" do
+        get :generate_report, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user is an org admin" do
+      let(:generate_report_filters) do
+        {
+          "report_type" => "event_type_action",
+          "timing" => {
+            "range" => "after",
+            "start_date" => Time.zone.now
+          },
+          "days_waiting" => {
+            "comparison_operator" => "moreThan",
+            "value_one" => "6"
+          },
+          "personnel" => {
+            "0" => "CAREGIVERADMIN",
+            "1" => "VHAPOADMIN",
+            "2" => "THOMAW2VACO"
+          },
+          "decision_review_type" => {
+            "0" => "HigherLevelReview",
+            "1" => "SupplementalClaim"
+          },
+          "business_line_slug" => "vha"
+        }
+      end
+
+      before do
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+
+      it "renders the report generation template in HTML format" do
+        get :generate_report, format: :html, params: { business_line_slug: non_comp_org.url }
+
+        expect(response).to have_http_status(:success)
+        expect(response.headers["Content-Type"]).to eq("text/html; charset=utf-8")
+      end
+
+      it "renders the report generation action in a css format" do
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url }.merge(generate_report_filters)
+
+        expect(response.headers["Content-Type"]).to eq("text/csv")
+        expect(response.headers["Content-Disposition"]).to match(
+          /^attachment; filename=\"taskreport-20180101_0700.csv\"/
+        )
+      end
+
+      it "calls MetricsService to record metrics" do
+        expect(MetricsService).to receive(:store_record_metric)
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url }.merge(generate_report_filters)
+
+        expect(response.status).to eq 200
+      end
+
+      context "missing report parameter" do
+        it "raises a param is missing error when report type is missing from filters" do
+          params = { business_line_slug: non_comp_org.url }.merge(generate_report_filters.except("report_type"))
+          get :generate_report, format: :csv, params: params
+          expect(response).to have_http_status(:bad_request)
+          expect(response.content_type).to eq("application/json")
+          json_response = JSON.parse(response.body)
+          expect(json_response["error"]).to eq("param is missing or the value is empty: reportType")
+        end
       end
     end
   end

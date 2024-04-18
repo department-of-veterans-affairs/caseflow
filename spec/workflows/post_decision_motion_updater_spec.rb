@@ -234,6 +234,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
     Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def verify_vacate_stream
     expect(vacate_stream).to_not be_nil
     expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)
@@ -253,6 +254,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
     motion = PostDecisionMotion.first
     expect(motion.appeal).to eq(vacate_stream)
   end
+  # rubocop:enable Metrics/AbcSize
 
   def verify_decision_issues_created
     motion = PostDecisionMotion.first

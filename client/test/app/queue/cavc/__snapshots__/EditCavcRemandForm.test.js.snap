@@ -3008,6 +3008,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           class="input-container"
         >
           <input
+            aria-readonly="true"
             class="cf-form-textinput"
             id="decisionTypeDisplay"
             name="decisionTypeDisplay"
@@ -3038,6 +3039,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           class="input-container"
         >
           <input
+            aria-readonly="true"
             class="cf-form-textinput"
             id="remandTypeDisplay"
             name="remandTypeDisplay"

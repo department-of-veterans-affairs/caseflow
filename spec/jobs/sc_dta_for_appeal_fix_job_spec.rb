@@ -30,6 +30,8 @@ describe ScDtaForAppealFixJob, :postgres do
 
   subject { described_class.new }
 
+  it_behaves_like "a Master Scheduler serializable object", ScDtaForAppealFixJob
+
   context "#sc_dta_for_appeal_fix" do
     context "when payee_code is nil" do
       before do
@@ -40,13 +42,13 @@ describe ScDtaForAppealFixJob, :postgres do
         it "updates payee_code to 00" do
           decision_doc_with_error_2.appeal.claimant.update(payee_code: nil)
 
-          subject.sc_dta_for_appeal_fix
+          subject.perform
           expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
           expect(decision_doc_with_error_2.appeal.claimant.payee_code).to eq("00")
         end
 
         it "clears error column" do
-          subject.sc_dta_for_appeal_fix
+          subject.perform
           expect(decision_doc_with_error.reload.error).to be_nil
         end
       end
@@ -54,13 +56,13 @@ describe ScDtaForAppealFixJob, :postgres do
       describe "claimant.type is DependentClaimant" do
         it "updates payee_code to 10" do
           decision_doc_with_error.appeal.claimant.update(type: "DependentClaimant")
-          subject.sc_dta_for_appeal_fix
+          subject.perform
           expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("10")
         end
 
         it "clears error column" do
           decision_doc_with_error.appeal.claimant.update(type: "DependentClaimant")
-          subject.sc_dta_for_appeal_fix
+          subject.perform
           expect(decision_doc_with_error.reload.error).to be_nil
         end
       end
@@ -69,11 +71,11 @@ describe ScDtaForAppealFixJob, :postgres do
     context "when payee_code is populated" do
       it "does not update payee_code" do
         expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
-        subject.sc_dta_for_appeal_fix
+        subject.perform
         expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
       end
       it "does not clear error field" do
-        subject.sc_dta_for_appeal_fix
+        subject.perform
         expect(decision_doc_with_error.error).to eq(sc_dta_for_appeal_error)
       end
     end
