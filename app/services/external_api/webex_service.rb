@@ -19,15 +19,16 @@ class ExternalApi::WebexService
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
-        "Exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
+        "nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
+        "exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
       },
       "aud": @aud,
       "numGuest": 1,
-      "numHost": 1,
-      "provideShortUrls": true
+      "numHost": 2,
+      "provideShortUrls": true,
+      "verticalType": "gen"
     }
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body: body, method: "POST")
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
@@ -37,15 +38,16 @@ class ExternalApi::WebexService
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": 0,
-        "Exp": 0
+        "nbf": 0,
+        "exp": 0
       },
       "aud": @aud,
       "numGuest": 1,
-      "numHost": 1,
-      "provideShortUrls": true
+      "numHost": 2,
+      "provideShortUrls": true,
+      "verticalType": "gen"
     }
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body: body, method: "POST")
     return if resp.nil?
 
     ExternalApi::WebexService::DeleteResponse.new(resp)
@@ -79,22 +81,37 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::AccessTokenRefreshResponse.new(response)
   end
 
+  def get_recordings_list
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body: body, method: method)
+    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
+  end
+
+  def get_recording_details
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body: body, method: method)
+    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
+  end
+
   private
 
-  # :nocov:
-  def send_webex_request(body: nil)
+  def send_webex_request(body: nil, method: nil)  # Added method argument with a default value
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
     request.headers["Authorization"] = "Bearer #{@apikey}"
+    request.method = method.downcase.to_sym  # This line sets the method on the HTTPI request
+
     MetricsService.record(
-      "#{@host} POST request to #{url}",
+      "#{@host} #{method} request to #{url}",
       service: :webex,
       name: @api_endpoint
     ) do
-      HTTPI.post(request)
+      HTTPI.request(method.downcase.to_sym, request)
     end
   end
 end
