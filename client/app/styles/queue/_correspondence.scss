@@ -126,13 +126,6 @@ $translate: 11%;
     margin-bottom: 20px;
   }
 
-  button {
-    display: inline-block;
-    margin-top: 30px;
-    margin-right: 10px;
-    padding-right: 0;
-  }
-
   .corr-icon {
     position: absolute;
 }
@@ -400,21 +393,9 @@ $translate: 11%;
     justify-content: space-between
   }
 
-
-
   .cursor-style-for-unlink-appeal-button {
     cursor: pointer
   }
-
-
-
-
-
-
-
-
-
-
 
   .evidence-window-submission-box {
     display: block;
@@ -423,10 +404,6 @@ $translate: 11%;
     margin-bottom: 3rem;
     width: 50rem
   }
-
-
-
-
 
   .evidence-window-submission-task-dropdown {
     width: 45rem
@@ -764,8 +741,8 @@ $translate: 11%;
 }
 
 .add-existing-appeal-button {
-  width: 90px;
-  padding-left: 3px;
+  width: 120px;
+  padding-left: 15px;
 }
 
 .width-of-add-tasks-button {
