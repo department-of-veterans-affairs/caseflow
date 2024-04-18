@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes, { string } from 'prop-types';
 import Modal from '../../../../components/Modal';
 import Checkbox from '../../../../components/Checkbox';
-import { css } from 'glamor';
 
 const CheckboxModal = (props) => {
 
@@ -25,16 +24,11 @@ const CheckboxModal = (props) => {
     setToggledCheckboxes([]);
   };
 
-  const checkboxSizeStyling = css({
-    transform: 'scale(1.3)',
-    translate: '11%',
-  });
-
   return (
     <Modal
+      className= "checkbox-modal-style"
       id="autotextModal"
       title="Add autotext"
-      customStyles={{ style: { width: '50%', minWidth: '750px' } }}
       closeHandler={props.closeHandler}
       buttons={[
         {
@@ -59,20 +53,10 @@ const CheckboxModal = (props) => {
           disabled: false,
         }
       ]}>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'scroll',
-        maxHeight: '500px',
-        paddingLeft: '5%',
-        marginLeft: '1%',
-        paddingRight: '5%',
-        width: '100%',
-        overflowX: 'hidden' }}>
+      <div className="checkbox-modal-size">
         {props.checkboxData.map((checkboxText, index) => (
           <Checkbox
             name={checkboxText}
-            styling={checkboxSizeStyling}
             onChange={() => handleToggleCheckbox(index)}
             value={toggledCheckBoxes.indexOf(index) > -1}
           />))

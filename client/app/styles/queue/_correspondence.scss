@@ -1,3 +1,10 @@
+$background: #efefef;
+$lfs-blue: #006ac6;
+$lfs-yellow: #fab700;
+$lfs-grey: #75787b;
+$transform: scale(1.3);
+$translate: 11%;
+
 .cf-pdf-preview-header {
   opacity: 1;
   padding: 15px 23px 15px 15px;
@@ -104,6 +111,11 @@
     color: $color-black;
   }
 
+  .p-review-and-confirm {
+    color: $color-black;
+    font-size: .85em;
+  }
+
   h1 {
     text-align: left;
     margin-bottom: 20px;
@@ -160,6 +172,21 @@
       padding-bottom: 25px;
       }
   }
+
+}
+
+.a-r-h1{
+  margin-bottom: 20px
+}
+.a-r-p1{
+  margin-top: 0px
+}
+.a-r-h2{
+  margin: 30px auto 20px auto
+}
+.a-r-p2{
+  margin-top: 0px;
+  margin-bottom: -7px
 }
 
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
@@ -368,4 +395,168 @@
 
 .correspondence-rp-outer-div-style{
   display: inline-flex;
+
+}
+.add-related-correspondence {
+  border: 2px solid $color-gray-lighter;
+
+    margin-bottom: 5rem;
+    padding: 3rem 4rem
+
+}
+
+.modal-fwb{
+  font-weight: bold
+}
+
+.associated-prior-mail-empty{
+  margin-bottom: 150px;
+  font-weight: bold
+}
+
+
+.table-latitude {
+  width: 100%;
+  padding-top: 1px;
+  margin: 0px;
+
+  thead {
+      th {
+          padding-inline-end: 15px;
+          padding-top: 10px;
+      }
+  }
+  tbody {
+      tr {
+          td {
+              padding-left: 15px;
+              background-color: #f9f9f9;
+              border-bottom: none;
+              border-color: #d6d7d9;
+              padding-top: 0vh;
+              padding-bottom: 0vh;
+          }
+      }
+  }
+}
+
+.completed-mail-tasks-empty {
+  margin-bottom: 150px;
+  font-weight: bold;
+}
+
+.completed-mail-tasks {
+  border-bottom: 1px solid #d6d7d9;
+  padding-left: 0px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  list-style-type: none;
+
+  &:last-child{
+    border: none;
+  }
+}
+
+.somthing-new {
+  padding-bottom: 0px;
+  padding-top: 0px;
+  width: 100%;
+
+  &:first-child{
+    padding-top: 5px;
+  }
+}
+
+.completed-mail-tasks-title {
+
+  border-bottom: 1px solid #d6d7d9;
+  padding: 10px 0px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.review-and-confirm-title-div-style {
+
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.review-and-confirm-title-div-style {
+
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.review-and-confirm-title-div-color {
+
+  background-color: #f9f9f9;
+}
+
+.correspondence-table-builder-margin {
+  margin-bottom: 0rem;
+  margin-top: 0px;
+}
+
+.correspondence-table-builder-filter-style {
+  display: flex;
+  flex-direction: row;
+}
+
+.correspondence-table-builder-searchable-dropdown-position {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 16px;
+}
+
+.correspondence-table-builder-searchable-button-position {
+  margin-left: 2rem
+}
+
+.correspondence-table-builder-searchable-auto-assign-button-position {
+  margin-left: auto
+}
+
+.correspondence-table-builder-searchable-dropdown-style .cf-select .cf-select__value-container {
+  padding-right: 100px;
+}
+
+.correspondence-table-builder-title {
+  display: inline-block;
+}
+
+.correspondence-table-builder-filter-bar-position {
+  display: flex;
+  flex-direction: row
+}
+
+.checkbox-modal-style .cf-modal-body{
+  width: 50%;
+  min-width: 750px;
+}
+
+.checkbox-modal-size {
+  display: flex;
+  flex-direction: column;
+  overflow-y:  scroll;
+  max-height: 400px;
+  padding-left: 1%;
+  margin-left: 100px;
+  padding-right: 10px;
+  padding-top: 0%;
+  width: 73%;
+  overflow-x: hidden;
+  transform: scale(1.3);
+  translate: 0%;
+  margin-top: 80px;
+  margin-bottom: 50px;
+}
+
+.confirm-correspondence-view-border {
+  border: 2px solid $color-gray-lighter;
+  margin-bottom: 20px;
+}
+
+.checkbox-column-inline-style {
+  margin-top: -1rem;
 }

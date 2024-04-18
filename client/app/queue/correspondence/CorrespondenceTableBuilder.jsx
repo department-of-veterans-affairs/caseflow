@@ -30,30 +30,7 @@ import { tasksWithCorrespondenceFromRawTasks } from '../utils';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
-import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../selectors';
-
-const rootStyles = css({
-  '.usa-alert + &': {
-    marginTop: '1.5em'
-  },
-  '& .cf-tab-window-body-full-screen': {
-    padding: '19px 30px 30px 30px',
-    '& #tasks-tabwindow-tabpanel-0, #tasks-tabwindow-tabpanel-3': {
-      '& p.cf-margin-bottom-0rem': {
-        marginTop: 0
-      }
-    }
-  },
-  '& #case-table-description': {
-    '& tr td:nth-child(1):focus': {
-      outline: 'none',
-    },
-    '& .cf-form-checkboxes': {
-      marginLeft: '0.5rem'
-    }
-  }
-});
 
 /**
  * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
@@ -99,13 +76,14 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleAssignButtonClick = () => {
     // Logic to handle assigning tasks to the selected mail team user
+    // candidate for refactor using PATCH request
     if (selectedMailTeamUser && isDropdownItemSelected && isAnyCheckboxSelected) {
       const mailTeamUser = selectedMailTeamUser.value;
       const taskIds = selectedTasks.map((task) => task);
       let newUrl = window.location.href;
 
-      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&taskIds=${taskIds}` :
-        `?user=${mailTeamUser}&taskIds=${taskIds}`;
+      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&task_ids=${taskIds}` :
+        `?user=${mailTeamUser}&task_ids=${taskIds}`;
       window.location.href = newUrl;
     }
   };
@@ -223,25 +201,26 @@ const CorrespondenceTableBuilder = (props) => {
 
     const getBulkAssignArea = () => {
       return (<>
-        <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-        <div style={{ display: 'flex', flexDirection: 'row', paddingBottom: '15px' }}>
-          <SearchableDropdown
-            className="cf-dropdown"
-            name="Assign to mail team user"
-            hideLabel
-            styling={{ width: '200px', marginRight: '2rem' }}
-            dropdownStyling={{ width: '200px' }}
-            options={buildMailUserData(props.mailTeamUsers)}
-            onChange={handleMailTeamUserChange}
-          />
+        <p className="correspondence-table-builder-margin">Assign to mail team user</p>
+        <div className="correspondence-table-builder-searchable-dropdown-position">
+          <div className= "correspondence-table-builder-searchable-dropdown-style">
+            <SearchableDropdown
+              name="Assign to mail team user"
+              hideLabel
+              options={buildMailUserData(props.mailTeamUsers)}
+              onChange={handleMailTeamUserChange}
+            />
+          </div>
           {tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME &&
               <>
-                <Button
-                  name="Assign"
-                  onClick={handleAssignButtonClick}
-                  disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
-                />
-                <span style={{ marginLeft: 'auto' }}>
+                <span className="correspondence-table-builder-searchable-button-position">
+                  <Button
+                    name="Assign"
+                    onClick={handleAssignButtonClick}
+                    disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
+                  />
+                </span>
+                <span className="correspondence-table-builder-searchable-auto-assign-button-position">
                   <Button
                     name="Auto assign correspondence"
                   />
@@ -249,11 +228,13 @@ const CorrespondenceTableBuilder = (props) => {
               </>
           }
           {tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME &&
-            <Button
-              name="Reassign"
-              onClick={handleAssignButtonClick}
-              disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
-            />
+            <span className="correspondence-table-builder-searchable-button-position">
+              <Button
+                name="Reassign"
+                onClick={handleAssignButtonClick}
+                disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
+              />
+            </span>
           }
         </div>
         <hr style={{ marginBottom: '17px' }}></hr>
@@ -288,11 +269,11 @@ const CorrespondenceTableBuilder = (props) => {
           </>
 
           }
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <p className="cf-margin-top-0" style={{ float: 'left' }}>
+          <div className="correspondence-table-builder-filter-bar-position">
+            <p className="correspondence-table-builder-margin">
               {noCasesMessage || tabConfig.description}
             </p>
-            <div className="cf-noncomp-search" style={{ marginLeft: 'auto' }}>
+            <div className="cf-noncomp-search">
               <SearchBar
                 id="searchBar"
                 size="small"
@@ -343,8 +324,8 @@ const CorrespondenceTableBuilder = (props) => {
 
   const config = queueConfig();
 
-  return <div className={rootStyles}>
-    <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
+  return <div>
+    <h1 className="correspondence-table-builder-title">{config.table_title}</h1>
     <QueueOrganizationDropdown
       isMailTeamUser={props.isMailTeamUser}
       isMailSupervisor={props.isMailSupervisor}

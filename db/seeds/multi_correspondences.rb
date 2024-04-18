@@ -58,14 +58,14 @@ module Seeds
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def build_correspondences(veteran, user, iterations = 10)
-      5.times do
+      15.times do
         appeal = create(
           :appeal,
           veteran_file_number: veteran.file_number
         )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      5.times do
+      15.times do
         appeal = create(
           :appeal,
           veteran_file_number: veteran.file_number,
