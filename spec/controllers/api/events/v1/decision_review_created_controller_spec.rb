@@ -103,9 +103,9 @@ def json_payload
 end
 
 def load_headers
-    request.headers["X-VA-Vet-SSN"] = "123456789"
-    request.headers["X-VA-File-Number"] = "77799777"
-    request.headers["X-VA-Vet-First-Name"] = "John"
-    request.headers["X-VA-Vet-Last-Name"] = "Smith"
-    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+  request.headers["X-VA-Vet-SSN"] = "123456789"
+  request.headers["X-VA-File-Number"] = "77799777"
+  request.headers["X-VA-Vet-First-Name"] = "John"
+  request.headers["X-VA-Vet-Last-Name"] = "Smith"
+  request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
 end
