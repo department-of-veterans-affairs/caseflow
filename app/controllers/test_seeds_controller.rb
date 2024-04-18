@@ -22,8 +22,8 @@ class TestSeedsController < ApplicationController
       Rake::Task[task_name].reenable
       index = 0
       seed_count.times do
-      index = index + 1
-        puts "Rake run count #{index}"
+        index += 1
+        Rails.logger.info "Rake run count #{index}"
         Rake::Task[task_name].execute
       end
       head :ok
