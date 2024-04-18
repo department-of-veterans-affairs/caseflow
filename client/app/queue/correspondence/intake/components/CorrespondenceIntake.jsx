@@ -83,11 +83,8 @@ export const CorrespondenceIntake = (props) => {
     const newUrl = new URL(window.location.href);
     const searchParams = new URLSearchParams(newUrl.search);
 
-    const veteranName = `${props.veteranInformation.first_name} ${props.veteranInformation.last_name}`;
-
     // Encode and set the query parameters
-    searchParams.set('id', encodeURIComponent(intakeCorrespondence.currentCorrespondence.id));
-    searchParams.set('veteranName', encodeURIComponent(veteranName));
+    searchParams.set('correspondence_uuid', encodeURIComponent(exportStoredata.correspondence_uuid));
     searchParams.set('userAction', encodeURIComponent(userAction));
     searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
     searchParams.set('page', encodeURIComponent('1'));
