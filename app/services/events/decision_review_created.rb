@@ -61,7 +61,8 @@ class Events::DecisionReviewCreated
                                                                               user: user, event: event)
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
-          Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe)
+          Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
+            decision_review: decision_review)
           # Update the Event after all backfills have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil)
         end

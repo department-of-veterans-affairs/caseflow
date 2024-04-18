@@ -4,8 +4,8 @@
 # when an Event is received using the data sent from VBMS
 class Events::DecisionReviewCreated::CreateRequestIssues
   class << self
-    def process!(event:, parser:, epe:)
-      create_request_issue_backfill(event, parser, epe)
+    def process!(event:, parser:, epe:, decision_review:)
+      create_request_issue_backfill(event, parser, epe, decision_review)
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedRequestIssuesError, error.message
     end
@@ -13,7 +13,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     private
 
     # iterate through the array of issues and create backfill object from each one
-    def create_request_issue_backfill(event, parser, epe)
+    def create_request_issue_backfill(event, parser, epe, decision_review)
       request_issues = parser.request_issues
       newly_created_issues = []
 
@@ -44,7 +44,9 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           ramp_claim_id: parser.ri_ramp_claim_id(issue),
           rating_issue_associated_at: parser.ri_rating_issue_associated_at(issue),
           nonrating_issue_bgs_id: parser.ri_nonrating_issue_bgs_id(issue),
-          end_product_establishment_id: epe.id
+          end_product_establishment_id: epe.id,
+          veteran_participant_id: parser.veteran_participant_id,
+          decision_review: decision_review
         )
         create_request_issue_event_record(event, ri)
         newly_created_issues.push(ri)
