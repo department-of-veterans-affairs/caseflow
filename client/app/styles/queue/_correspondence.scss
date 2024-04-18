@@ -143,6 +143,8 @@ $translate: 11%;
     margin-left: auto;
 }
 
+
+
 // Alternate Borderless (no bottom border)
   .corr-table-borderless {
     background-color: $caseflow-background;
@@ -510,9 +512,9 @@ $translate: 11%;
 .task-selection-box-for-new-tasks {
     display: block;
     padding: 2rem 2rem;
-    margin-left: 3rem;
     margin-bottom: 3rem;
-    width: 50rem
+    width: 50rem;
+
   }
 
 .task-selection-dropdown-box {
@@ -564,6 +566,10 @@ $translate: 11%;
     display: flex;
     flex-wrap: wrap
   }
+
+.add-task-container {
+  margin-left: 5%;
+}
 
 .add-tasks-button-for-unrelated-appeals {
     padding: 2.5rem 2.5rem

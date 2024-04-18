@@ -123,7 +123,7 @@ const AddTaskView = (props) => {
         />
         }
 
-        <div>
+        <div className={"gray-border add-task-container"}>
           <div className=" task-selection-box-for-new-tasks">
             <div className="task-selection-dropdown-box">
               <div id="reactSelectContainer"
