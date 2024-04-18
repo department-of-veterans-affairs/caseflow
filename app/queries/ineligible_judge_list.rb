@@ -3,7 +3,8 @@
 class IneligibleJudgeList
   # define CSV headers and use this to pull fields to maintain order
   HEADERS = {
-    judge_user_id: "Judge User ID",
+    caseflow_user_id: "Caseflow User ID",
+    satty_id: "satty ID",
     judge_name: "Judge Name",
     judge_css_id: "CSS ID",
     judge_sdomain_id: "Judge SDomain ID",
@@ -37,7 +38,8 @@ class IneligibleJudgeList
     sdomainid_value = record.key?(:sdomainid) ? record[:sdomainid] : EMPTY_KEY_VALUE
 
     {
-      judge_user_id: record.key?(:sattyid) ? record[:sattyid] : record[:id],
+      caseflow_user_id: record.key?(:id) ? record[:id] : nil,
+      satty_id: record.key?(:sattyid) ? record[:sattyid] : nil,
       judge_name: get_judge_name(css_id_value, record[:sattyid]),
       judge_css_id: css_id_value,
       judge_sdomain_id: sdomainid_value,
