@@ -85,6 +85,10 @@ class Fakes::WebexService
     )
   end
 
+  def refresh_access_token
+    "1234567890abcdef"
+  end
+
   # rubocop:disable Metrics/MethodLength
   def fake_recordings_list_data
     {
