@@ -6,6 +6,7 @@ require "rcredstash"
 class ExternalApi::WebexService
   BASE_URL = "https://#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query:)
     @host = host
     @port = port
@@ -15,6 +16,7 @@ class ExternalApi::WebexService
     @api_endpoint = api_endpoint
     @query = query
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def create_conference(virtual_hearing)
     body = {
