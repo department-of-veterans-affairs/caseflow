@@ -1,7 +1,7 @@
-const webpack = require('webpack');
-const path = require('path');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+import { EnvironmentPlugin, HotModuleReplacementPlugin } from 'webpack';
+import { join, resolve as _resolve } from 'path';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 const testBuild = process.env.NODE_ENV === 'test'; // eslint-disable-line no-process-env
@@ -12,12 +12,12 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/javascripts'),
+    path: join(__dirname, '../app/assets/javascripts'),
     publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/'
   },
   plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
-    devBuild && new webpack.HotModuleReplacementPlugin(),
+    new EnvironmentPlugin({ NODE_ENV: 'development' }),
+    devBuild && new HotModuleReplacementPlugin(),
     devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
     // See https://github.com/mrsteele/dotenv-webpack/blob/master/README.md#properties
     new Dotenv({
@@ -46,17 +46,17 @@ const config = {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
       ie: 'component-ie',
-      app: path.resolve('app'),
-      constants: path.resolve('constants'),
-      layouts: path.resolve('app/2.0/layouts'),
-      routes: path.resolve('app/2.0/routes'),
-      store: path.resolve('app/2.0/store'),
-      screens: path.resolve('app/2.0/screens'),
-      components: path.resolve('app/2.0/components'),
-      utils: path.resolve('app/2.0/utils'),
-      styles: path.resolve('app/2.0/styles'),
-      common: path.resolve('app/components/common'),
-      test: path.resolve('test'),
+      app: _resolve('app'),
+      constants: _resolve('constants'),
+      layouts: _resolve('app/2.0/layouts'),
+      routes: _resolve('app/2.0/routes'),
+      store: _resolve('app/2.0/store'),
+      screens: _resolve('app/2.0/screens'),
+      components: _resolve('app/2.0/components'),
+      utils: _resolve('app/2.0/utils'),
+      styles: _resolve('app/2.0/styles'),
+      common: _resolve('app/components/common'),
+      test: _resolve('test'),
     },
   },
   module: {
@@ -126,4 +126,4 @@ if (devBuild) {
   config.devtool = 'source-map';
 }
 
-module.exports = config;
+export default config;
