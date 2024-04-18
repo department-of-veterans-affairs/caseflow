@@ -2068,6 +2068,35 @@ describe Task, :all_dbs do
     end
 
     context "package action tasks" do
+
+      describe "reassign package tasks" do
+        it "approve" do
+          correspondence = create(:correspondence)
+          user = create(:user)
+          user2 = create(:user)
+          reassign_pt = ReassignPackageTask.create!(
+            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+
+          expect(reassign_pt.status).to eq "assigned"
+          expect(reassign_pt.closed_at).to eq nil
+          expect(reassign_pt.completed_by).to eq nil
+          expect(reassign_pt.assigned_to_id).to eq Organization.first.id
+          expect(reassign_pt.assigned_to).to eq Organization.first
+
+          reassign_pt.approve(user, user2)
+
+          expect(reassign_pt.completed_by).to eq user
+          expect(reassign_pt.assigned_to_id).to eq user.id
+          expect(reassign_pt.assigned_to).to eq user
+          expect(reassign_pt.closed_at).to_not eq nil
+          expect(reassign_pt.status).to eq Constants.TASK_STATUSES.completed
+
+        end
+      end
       it "verifies no other open package action task on correspondence before creation" do
         correspondence = create(:correspondence)
         parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
