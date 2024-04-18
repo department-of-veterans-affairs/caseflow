@@ -38,7 +38,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       3.times { create(:correspondence, veteran: veteran) }
-      get :intake, params: { correspondence_uuid: correspondence.uuid}
+      get :intake, params: { correspondence_uuid: correspondence.uuid }
 
       expect(response.status).to eq 200
     end
@@ -96,13 +96,13 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
 
     it "cancels the task tree and returns the correspondence" do
       # initial state
-      task_statuses = correspondence.tasks.map { |task| task.status }
+      task_statuses = correspondence.tasks.map &:status
       expect(task_statuses.any?(Constants.TASK_STATUSES.cancelled)).to eq false
 
       patch :intake_update, params: { correspondence_uuid: correspondence.uuid }
 
       # updated state after the request
-      task_statuses = correspondence.tasks.map { |task| task.status }
+      task_statuses = correspondence.tasks.map &:status
       expect(task_statuses.all?(Constants.TASK_STATUSES.cancelled)).to eq true
 
       body = JSON.parse(response.body, symbolize_names: true)

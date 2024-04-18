@@ -52,7 +52,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
       get :correspondence_team
 
       body = JSON.parse(response.body, symbolize_names: true)
-      expect(body.keys.include?(:correspondence_config)).to eq true
+      expect(body.key?(:correspondence_config)).to eq true
     end
   end
 end

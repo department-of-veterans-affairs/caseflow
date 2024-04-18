@@ -2,7 +2,7 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
-    @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
+    @mail_team_users = User.mail_team_users.select(:css_id).pluck(:css_id)
   end
 
   def package_documents
