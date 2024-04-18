@@ -260,6 +260,7 @@ RSpec.describe SplitAppealController, type: :controller do
                :with_post_intake_tasks,
                :held_hearing_and_ready_to_distribute,
                :with_request_issues,
+               :at_attorney_drafting,
                issue_count: 2).reload
       end
 
@@ -267,6 +268,7 @@ RSpec.describe SplitAppealController, type: :controller do
 
       it "splits the appeal and keeps the new task tree including the distribution task in the same completed state" do
         request_issue = appeal.request_issues.first
+        p appeal.treee
         post :split_appeal, params: valid_params
 
         sct_record = SplitCorrelationTable.find_by(original_appeal_id: appeal.id)
@@ -278,6 +280,7 @@ RSpec.describe SplitAppealController, type: :controller do
         expect(sct_record.split_reason).to eq(split_reason)
         expect(sct_record.original_request_issue_id).to eq(request_issue.id)
         expect(sct_record.split_request_issue_id).to eq(dup_appeal.request_issues.first.id)
+        p dup_appeal.treee
       end
     end
 
