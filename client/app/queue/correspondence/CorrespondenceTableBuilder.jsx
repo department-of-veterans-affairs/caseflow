@@ -272,7 +272,7 @@ const CorrespondenceTableBuilder = (props) => {
         <>
           {/* this setup should prevent a double render of the bulk assign area if a
           user is a superuser and also a supervisor */}
-          {(props.isMailSupervisor || (props.isMailSupervisor && props.isMailSuperUser)) &&
+          {(props.isMailSupervisor || (props.isMailSupervisor && props.isInboundOpsTeamSuperUser)) &&
             (tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME ||
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
             <>
@@ -280,7 +280,7 @@ const CorrespondenceTableBuilder = (props) => {
             </>
           }
           {
-            (props.isMailSuperUser && !props.isMailSupervisor &&
+            (props.isInboundOpsTeamSuperUser && !props.isMailSupervisor &&
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
           <>
             {getBulkAssignArea()}
@@ -347,7 +347,7 @@ const CorrespondenceTableBuilder = (props) => {
     <QueueOrganizationDropdown
       isMailTeamUser={props.isMailTeamUser}
       isMailSupervisor={props.isMailSupervisor}
-      isMailSuperUser={props.isMailSuperUser}
+      isInboundOpsTeamSuperUser={props.isInboundOpsTeamSuperUser}
       organizations={props.organizations}
       featureToggles={props.featureToggles}
     />
@@ -381,7 +381,7 @@ CorrespondenceTableBuilder.propTypes = {
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
   isMailTeamUser: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+  isInboundOpsTeamSuperUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool
 };
 

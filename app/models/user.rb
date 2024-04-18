@@ -98,8 +98,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def inbound_ops_team_superuser?
-    member_of_organization?(InboundOpsTeam.singleton) &&
-      (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
+    (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
   end
 
   def mail_team_user?
@@ -108,10 +107,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def mail_supervisor?
     organizations.include?(InboundOpsTeam.singleton)
-  end
-
-  def mail_superuser?
-    organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
   end
 
   def can_assign_hearing_schedule?

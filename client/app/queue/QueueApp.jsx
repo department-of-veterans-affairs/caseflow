@@ -28,7 +28,7 @@ import {
   setOrganizations,
   setMailTeamUser,
   setMailSupervisor,
-  setMailSuperUser
+  setInboundOpsTeamSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -134,7 +134,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setMailTeamUser(this.props.isMailTeamUser);
     this.props.setMailSupervisor(this.props.isMailSupervisor);
-    this.props.setMailSuperUser(this.props.isMailSuperUser);
+    this.props.setInboundOpsTeamSuperUser(this.props.isInboundOpsTeamSuperUser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
@@ -1526,10 +1526,10 @@ QueueApp.propTypes = {
   setOrganizations: PropTypes.func,
   setMailTeamUser: PropTypes.func,
   setMailSupervisor: PropTypes.func,
-  setMailSuperUser: PropTypes.func,
+  setInboundOpsTeamSuperUser: PropTypes.func,
   isMailTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+  isInboundOpsTeamSuperUser: PropTypes.bool,
   mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
@@ -1586,7 +1586,7 @@ const mapDispatchToProps = (dispatch) =>
       setOrganizations,
       setMailTeamUser,
       setMailSupervisor,
-      setMailSuperUser,
+      setInboundOpsTeamSuperUser,
     },
     dispatch
   );

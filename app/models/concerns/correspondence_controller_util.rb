@@ -33,9 +33,9 @@ module CorrespondenceControllerUtil
     )
   end
 
-  def set_handle_mail_superuser_or_supervisor_params(current_user, params)
+  def set_handle_inbound_ops_team_superuser_or_supervisor_params(current_user, params)
     @mail_team_users = User.mail_team_users.pluck(:css_id)
-    @is_superuser = current_user.mail_superuser?
+    @is_superuser = current_user.inbound_ops_team_superuser?
     @is_supervisor = current_user.mail_supervisor?
     @reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
     @action_type = params[:userAction].strip if params[:userAction].present?
@@ -43,8 +43,8 @@ module CorrespondenceControllerUtil
   end
 
   def correspondence_team
-    if current_user.mail_superuser? || current_user.mail_supervisor?
-      handle_mail_superuser_or_supervisor
+    if current_user.inbound_ops_team_superuser? || current_user.mail_supervisor?
+      handle_inbound_ops_team_superuser_or_supervisor
     elsif current_user.mail_team_user?
       redirect_to "/queue/correspondence/team"
     else

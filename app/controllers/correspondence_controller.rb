@@ -32,8 +32,8 @@ class CorrespondenceController < ApplicationController
     @veteran_information ||= veteran_by_correspondence
   end
 
-  def handle_mail_superuser_or_supervisor
-    set_handle_mail_superuser_or_supervisor_params(current_user, params)
+  def handle_inbound_ops_team_superuser_or_supervisor
+    set_handle_inbound_ops_team_superuser_or_supervisor_params(current_user, params)
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     tab = params[:tab] if params[:tab].present?
