@@ -101,7 +101,10 @@ const CaseTitleScaffolding = (props) => {
             }
           />
         }
-        { (props.isReadOnly && props.isReassignPackage && (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)) &&
+        { (props.isReadOnly &&
+           props.isReassignPackage &&
+           (props.userIsCorrespondenceSuperuser ||
+            props.userIsCorrespondenceSupervisor)) &&
           <Button
             name="Review reassign request"
             styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
