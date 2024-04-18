@@ -12,7 +12,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class ReaderLoadingScreen extends React.Component {
-  createLoadPromise = () => {
+  createLoadPromise = async () => {
     if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
       return Promise.resolve();
     }
@@ -21,20 +21,20 @@ export class ReaderLoadingScreen extends React.Component {
       timeout: { response: getMinutesToMilliseconds(5) }
     };
 
-    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents?json`, reqOptions, ENDPOINT_NAMES.DOCUMENTS).
-      then((response) => {
-        const returnedObject = response.body;
-        const documents = returnedObject.appealDocuments;
-        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+    try {
+      // eslint-disable-next-line max-len
+      const response = await ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents?json`, reqOptions, ENDPOINT_NAMES.DOCUMENTS);
+      const returnedObject = response.body;
+      const documents = returnedObject.appealDocuments;
+      const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-        this.props.onReceiveDocs(documents, this.props.vacolsId);
-        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-        this.props.onReceiveAnnotations(annotations);
-      }).
-      catch((err) => {
-        // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json ${err}`));
-      });
+      this.props.onReceiveDocs(documents, this.props.vacolsId);
+      this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+      this.props.onReceiveAnnotations(annotations);
+    } catch (err) {
+      // allow HTTP errors to fall on the floor via the console.
+      console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json ${err}`));
+    }
   }
 
   render() {
