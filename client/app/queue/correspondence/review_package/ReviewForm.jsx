@@ -1,6 +1,5 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React from 'react';
-import { css } from 'glamor';
 import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TextareaField from '../../../components/TextareaField';
@@ -8,11 +7,6 @@ import Button from '../../../components/Button';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
-
-const textareaStyling = css({
-  maxWidth: '60rem'
-
-});
 
 export const ReviewForm = (props) => {
   const handleFileNumber = (value) => {
@@ -171,8 +165,6 @@ export const ReviewForm = (props) => {
             <div >
               <TextareaField
                 id= "textarea-styling-review-form"
-                styling={textareaStyling}
-                // textAreaStyling={textareaWidth}
                 name="Notes"
                 value={props.editableData.notes}
                 onChange={handleChangeNotes}
