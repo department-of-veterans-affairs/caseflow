@@ -11,7 +11,7 @@ export const loadSavedIntake = (savedStore) =>
     });
   };
 
-export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
+export const saveCurrentIntake = (currentIntake, data, onSave) => (dispatch) => {
   ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
     then((response) => {
       if (!response.ok) {
@@ -24,6 +24,9 @@ export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
           currentIntake
         }
       });
+      if (onSave) {
+        onSave();
+      }
     }).
     catch((err) => {
       console.error(new Error(`Problem with GET ${currentIntake} ${err}`));

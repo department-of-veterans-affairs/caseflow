@@ -20,6 +20,8 @@ import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
 } from '../../../../../COPY';
+import ReturnToQueueModal from './ReturnToQueueModal';
+import ApiUtil from '../../../../util/ApiUtil';
 
 const progressBarSections = [
   {
@@ -43,6 +45,7 @@ export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [returnToQueueModal, setReturnToQueueModal] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const history = useHistory();
 
@@ -64,13 +67,6 @@ export const CorrespondenceIntake = (props) => {
     setContinueEnabled(isSelected);
   };
 
-  const handleCancel = () => {
-    // Redirect the user to the previous page
-    // then needed to allow POST to complete first
-    props.saveCurrentIntake(intakeCorrespondence, exportStoredata).
-      then(history.goBack());
-  };
-
   const nextStep = () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
@@ -81,6 +77,43 @@ export const CorrespondenceIntake = (props) => {
 
   const handleContinueAfterBack = () => {
     setContinueEnabled(true);
+  };
+
+  const redirectToPage = (userAction) => {
+    const newUrl = new URL(window.location.href);
+    const searchParams = new URLSearchParams(newUrl.search);
+
+    // Encode and set the query parameters
+    searchParams.set('correspondence_uuid', encodeURIComponent(exportStoredata.correspondence_uuid));
+    searchParams.set('userAction', encodeURIComponent(userAction));
+    searchParams.set('tab', encodeURIComponent('correspondence_unassigned'));
+    searchParams.set('page', encodeURIComponent('1'));
+
+    // Construct the new URL with encoded query parameters
+    newUrl.search = searchParams.toString();
+    newUrl.pathname = props.isMailSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
+    window.location.href = newUrl.href;
+  };
+
+  const handleContinueIntakeLater = () => {
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata, () => {
+      redirectToPage('continue_later');
+    });
+
+  };
+
+  const handleCancelIntake = () => {
+    ApiUtil.post(`/queue/correspondence/${exportStoredata.correspondence_uuid}/cancel_intake`, { exportStoredata }).
+      then((response) => {
+        if (!response.ok) {
+          console.error(response);
+        }
+        redirectToPage('cancel_intake');
+
+      }).
+      catch((err) => {
+        console.error(new Error(`Problem with GET ${intakeCorrespondence} ${err}`));
+      });
   };
 
   const prevStep = () => {
@@ -155,14 +188,18 @@ export const CorrespondenceIntake = (props) => {
       </div>
     }
     <div>
-      <a href="/queue/correspondence">
-        <Button
-          name="Cancel"
-          styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-          href="/queue/correspondence"
-          classNames={['cf-btn-link', 'cf-left-side']}
-          onClick={handleCancel} />
-      </a>
+      {returnToQueueModal &&
+        <ReturnToQueueModal
+          onCancel={() => setReturnToQueueModal(false)}
+          handleContinueIntakeLater={handleContinueIntakeLater}
+          handleCancelIntake={handleCancelIntake}
+        />
+      }
+      <Button
+        name="Return to queue"
+        styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+        classNames={['cf-btn-link', 'cf-left-side']}
+        onClick={() => setReturnToQueueModal(true)} />
       {currentStep < 3 &&
       <Button
         type="button"
@@ -209,6 +246,7 @@ CorrespondenceIntake.propTypes = {
   mailTasks: PropTypes.arrayOf(PropTypes.string),
   autoTexts: PropTypes.arrayOf(PropTypes.string),
   reduxStore: PropTypes.object,
+  isMailSupervisor: PropTypes.bool,
   loadSavedIntake: PropTypes.func,
   saveCurrentIntake: PropTypes.func
 };
