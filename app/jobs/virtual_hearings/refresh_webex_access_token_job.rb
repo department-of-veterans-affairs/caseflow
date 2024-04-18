@@ -14,8 +14,6 @@
 # This job is queued with low priority, indicating that it does not need to be run immediately
 # and can wait until the system is less busy.
 
-require "rcredstash"
-
 class VirtualHearings::RefreshWebexAccessTokenJob < CaseflowJob
   queue_with_priority :low_priority
 

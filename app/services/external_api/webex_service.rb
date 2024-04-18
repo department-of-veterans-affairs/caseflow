@@ -18,7 +18,6 @@
 # All requests to the Webex API are recorded using the MetricsService.
 
 require "json"
-require "rcredstash"
 
 class ExternalApi::WebexService
   BASE_URL = "https://#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
