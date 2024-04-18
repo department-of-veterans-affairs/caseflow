@@ -10,6 +10,7 @@ class HearingTask < Task
   has_one :hearing_task_association
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
+  validate :only_open_task_of_type, on: :create, unless: :skip_check_for_only_open_task_of_type
 
   class ExistingOpenHearingTaskOnAppeal < StandardError; end
 
@@ -22,15 +23,13 @@ class HearingTask < Task
   end
 
   def cancel_and_recreate
-    hearing_task = HearingTask.create!(
+    cancel_task_and_child_subtasks
+
+    HearingTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_to: Bva.singleton
     )
-
-    cancel_task_and_child_subtasks
-
-    hearing_task
   end
 
   def verify_org_task_unique

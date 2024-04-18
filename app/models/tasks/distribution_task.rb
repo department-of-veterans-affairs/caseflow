@@ -13,6 +13,7 @@
 
 class DistributionTask < Task
   before_validation :set_assignee
+  validate :only_open_task_of_type, on: :create, unless: :skip_check_for_only_open_task_of_type
 
   def actions_available?(user)
     SpecialCaseMovementTeam.singleton.user_has_access?(user)
