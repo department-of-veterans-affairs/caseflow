@@ -15,7 +15,8 @@ module Events::DecisionReviewCreated::CreateIntake
                             completion_status: parser.intake_completion_status,
                             type: parser.intake_type,
                             detail_type: parser.intake_detail_type,
-                            detail_id: decision_review.id)
+                            detail_id: decision_review.id,
+                            veteran: veteran)
     # create EventRecord
     EventRecord.create!(event: event, evented_record: intake)
 

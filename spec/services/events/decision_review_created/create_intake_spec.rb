@@ -4,7 +4,7 @@ describe Events::DecisionReviewCreated::CreateIntake do
   context "Events::DecisionReviewCreated::CreateIntake.process!" do
     let(:event_double) { double("Event") }
     let(:user_double) { double("User") }
-    let(:veteran_double) { double("Veteran", file_number: "DCR02272024") }
+    let(:veteran_double) { double("Veteran", file_number: "DCR02272024", id: "2000932150") }
     let(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
     let(:intake_double) { double("Intake") }
     let(:event_record_double) { double("EventRecord") }
@@ -21,7 +21,8 @@ describe Events::DecisionReviewCreated::CreateIntake do
                                                completion_status: parser.intake_completion_status,
                                                type: parser.intake_type,
                                                detail_type: parser.intake_detail_type,
-                                               detail_id: decision_review_double.id)
+                                               detail_id: decision_review_double.id,
+                                               veteran: veteran_double)
         .and_return(intake_double)
       expect(EventRecord).to receive(:create!).with(event: event_double, evented_record: intake_double)
         .and_return(event_record_double)
