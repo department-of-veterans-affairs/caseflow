@@ -17,6 +17,7 @@ describe ExternalApi::WebexService do
       aud: aud,
       apikey: apikey,
       port: port,
+      query: query
     )
   end
 

@@ -6,13 +6,14 @@ require "rcredstash"
 class ExternalApi::WebexService
   BASE_URL = "https://#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
 
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query:)
     @host = host
     @port = port
     @aud = aud
     @apikey = apikey
     @domain = domain
     @api_endpoint = api_endpoint
+    @query = query
   end
 
   def create_conference(virtual_hearing)
