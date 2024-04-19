@@ -126,7 +126,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def person_date_of_birth
-    @headers["X-VA-Claimant-DOB"]
+    dob = @headers["X-VA-Claimant-DOB"]
+    convert_milliseconds_to_datetime(dob)
   end
 
   def person_email_address
