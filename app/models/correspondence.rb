@@ -41,6 +41,10 @@ class Correspondence < CaseflowRecord
     Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
   end
 
+  def open_intake_task
+    CorrespondenceIntakeTask.open.find_by(appeal_id: id)
+  end
+
   def cancel_task_tree_for_appeal_intake
     tasks.where(type: ReviewPackageTask.name).update_all(
       instructions: "An appeal intake was started because this Correspondence is a 10182",

@@ -4,8 +4,7 @@ class CorrespondenceIntakeController < CorrespondenceController
   def intake
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
-    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
-                                                  correspondence: correspondence)&.redux_store
+    @redux_store ||= CorrespondenceIntake.find_by(task_id: correspondence&.open_intake_task&.id)&.redux_store
     @prior_mail = prior_mail.map do |correspondence|
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
@@ -15,8 +14,8 @@ class CorrespondenceIntakeController < CorrespondenceController
   end
 
   def current_step
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence) ||
-             CorrespondenceIntake.new(user: current_user, correspondence: correspondence)
+    intake = CorrespondenceIntake.find_by(task: correspondence&.open_intake_task) ||
+             CorrespondenceIntake.new(task: correspondence&.open_intake_task)
 
     intake.update(
       current_step: params[:current_step],
