@@ -40,15 +40,12 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
-    Time.at(milliseconds.to_i / 1000).to_datetime
+    milliseconds.nil? ? nil : Time.at(milliseconds.to_i / 1000).to_datetime
   end
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    year = logical_date_int.to_i / 100_00
-    month = (logical_date_int.to_i % 100_00) / 100
-    day = logical_date_int.to_i % 100
-    Date.new(year, month, day)
+    logical_date_int.nil? ? nil : Time.at(logical_date_int.to_i).to_date
   end
 
   def css_id
@@ -129,7 +126,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def person_date_of_birth
-    @headers["X-VA-Claimant-DOB"]
+    dob = @headers["X-VA-Claimant-DOB"]
+    convert_milliseconds_to_datetime(dob)
   end
 
   def person_email_address
@@ -166,7 +164,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def veteran_date_of_death
-    @payload.dig(:veteran, :date_of_death)
+    date_of_death = @payload.dig(:veteran, :date_of_death)
+    logical_date_converter(date_of_death)
   end
 
   # Claimant attributes

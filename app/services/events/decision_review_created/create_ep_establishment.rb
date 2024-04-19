@@ -15,10 +15,11 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         payee_code: parser.epe_payee_code,
         source: claim_review,
         veteran_file_number: claim_review.veteran_file_number,
-        benefit_type_code: claim_review.benefit_type,
+        benefit_type_code: parser.epe_benefit_type_code,
         claim_date: parser.epe_claim_date,
         code: parser.epe_code,
         committed_at: parser.epe_committed_at,
+        development_item_reference_id: parser.epe_development_item_reference_id,
         established_at: parser.epe_established_at,
         last_synced_at: parser.epe_last_synced_at,
         limited_poa_access: parser.epe_limited_poa_access,
@@ -27,12 +28,13 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         reference_id: parser.epe_reference_id,
         station: parser.station_id,
         synced_status: parser.epe_synced_status,
-        user_id: user.id
+        user_id: user.id,
+        claimant_participant_id: parser.claimant_participant_id
       )
       EventRecord.create!(event: event, evented_record: end_product_establishment)
       end_product_establishment
-    rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
-      raise error
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedEpEstablishmentError, error.message
     end
     # rubocop:enable Metrics/MethodLength
   end

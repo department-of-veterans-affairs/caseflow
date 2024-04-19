@@ -29,7 +29,9 @@ class Events::DecisionReviewCreated::CreateClaimReview
         establishment_last_submitted_at: parser.claim_review_establishment_last_submitted_at,
         establishment_processed_at: parser.claim_review_establishment_processed_at,
         establishment_submitted_at: parser.claim_review_establishment_submitted_at,
-        veteran_file_number: parser.veteran_file_number
+        veteran_file_number: parser.veteran_file_number,
+        informal_conference: parser.claim_review_informal_conference,
+        same_office: parser.claim_review_same_office
       )
     end
 

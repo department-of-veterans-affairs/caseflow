@@ -5,6 +5,7 @@ require "json"
 describe Events::DecisionReviewCreated::CreateRequestIssues do
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
   let!(:epe) { create(:end_product_establishment) }
+  let!(:higher_level_review) { create(:higher_level_review) }
 
   describe "#process!" do
     subject { described_class }
@@ -13,7 +14,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       it "should create CF RequestIssues and backfill records" do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
 
-        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe)
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
 
         expect(backfilled_issues.count).to eq(2)
         expect(RequestIssue.count).to eq(2)
@@ -32,6 +33,9 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri1.decision_date).to eq(parser.logical_date_converter(20_240_314))
         expect(ri1.nonrating_issue_bgs_id).to eq("12")
         expect(ri1.end_product_establishment_id).to eq(epe.id)
+        expect(ri1.decision_review_id).to eq(higher_level_review.id)
+        expect(ri1.decision_review_type).to eq("HigherLevelReview")
+        expect(ri1.veteran_participant_id).to eq(parser.veteran_participant_id)
 
         expect(ri2.benefit_type).to eq("pension")
         expect(ri2.contested_issue_description).to eq("PTSD")
@@ -40,6 +44,9 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri2.decision_date).to eq(parser.logical_date_converter(20_240_314))
         expect(ri2.nonrating_issue_bgs_id).to eq(nil)
         expect(ri2.end_product_establishment_id).to eq(epe.id)
+        expect(ri2.decision_review_id).to eq(higher_level_review.id)
+        expect(ri2.decision_review_type).to eq("HigherLevelReview")
+        expect(ri2.veteran_participant_id).to eq(parser.veteran_participant_id)
       end
     end
 

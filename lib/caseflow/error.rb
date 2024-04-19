@@ -483,9 +483,12 @@ module Caseflow::Error
   class RedisLockFailed < StandardError; end
 
   # Event Decision Review Create Errors
+  class DecisionReviewCreatedUserError < StandardError; end
+  class DecisionReviewCreatedVeteranError < StandardError; end
   class DecisionReviewCreateVacolsOnOptinError < StandardError; end
+  class DecisionReviewCreatedClaimantError < StandardError; end
   class DecisionReviewCreatedIntakeError < StandardError; end
   class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
   class DecisionReviewCreatedEpEstablishmentError < StandardError; end
-  class DecisionReviewCreatedRequestIssuesError< StandardError; end
+  class DecisionReviewCreatedRequestIssuesError < StandardError; end
 end

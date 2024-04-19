@@ -24,7 +24,10 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
              epe_limited_poa_code: nil,
              epe_modifier: "030",
              epe_reference_id: "337534",
-             epe_synced_status: "RW")
+             epe_synced_status: "RW",
+             epe_benefit_type_code: "1",
+             epe_development_item_reference_id: nil,
+             claimant_participant_id: "1826209")
     end
     let(:event_record_double) { double("EventRecord") }
     it "creates an a End Product Establishment and Event Record" do
@@ -34,7 +37,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         payee_code: "00",
         source: claim_review,
         veteran_file_number: claim_review.veteran_file_number,
-        benefit_type_code: "compensation",
+        benefit_type_code: "1",
         claim_date: converted_claim_date,
         code: "030HLRRPMC",
         committed_at: converted_long,
@@ -46,7 +49,9 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         reference_id: "337534",
         station: "101",
         synced_status: "RW",
-        user_id: 1
+        user_id: 1,
+        development_item_reference_id: nil,
+        claimant_participant_id: "1826209"
       ).and_return(parser_double)
       expect(EventRecord).to receive(:create!)
         .with(event: event_double, evented_record: parser_double).and_return(event_record_double)
@@ -64,15 +69,12 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
     end
 
     context "when an error occurs" do
-      let(:error) do
-        Caseflow::Error::DecisionReviewCreatedEpEstablishmentError.new("Unable to create End Product Establishement")
-      end
       it "raises the error" do
-        allow(EndProductEstablishment).to receive(:create!).and_raise(error)
+        allow(EndProductEstablishment).to receive(:create!).and_raise(Caseflow::Error::DecisionReviewCreatedEpEstablishmentError)
         expect do
           described_class.process!(parser: parser_double,
                                    claim_review: claim_review, user: user_double, event: event_double)
-        end.to raise_error(error)
+        end.to raise_error(Caseflow::Error::DecisionReviewCreatedEpEstablishmentError)
       end
     end
   end

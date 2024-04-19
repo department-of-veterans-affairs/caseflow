@@ -51,7 +51,8 @@ class Events::DecisionReviewCreated
                                                  decision_review: decision_review)
 
           # Note: event, user, and veteran need to be before this call.
-          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser)
+          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
+           decision_review: decision_review)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
@@ -60,7 +61,8 @@ class Events::DecisionReviewCreated
                                                                               user: user, event: event)
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
-          Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe)
+          Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
+            decision_review: decision_review)
           # Update the Event after all backfills have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil)
         end
@@ -74,9 +76,9 @@ class Events::DecisionReviewCreated
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
     rescue StandardError => error
-      Rails.logger.error(error.message)
+      Rails.logger.error("#{error.class} : #{error.message}")
       event = Event.find_by(reference_id: consumer_event_id)
-      event&.update!(error: error.message, info: { "failed_claim_id" => reference_id })
+      event&.update!(error: "#{error.class} : #{error.message}", info: { "failed_claim_id" => reference_id })
       raise error
     end
 

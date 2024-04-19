@@ -14,7 +14,9 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
                     claim_review_establishment_last_submitted_at: nil,
                     claim_review_establishment_processed_at: nil,
                     claim_review_establishment_submitted_at: nil,
-                    veteran_file_number: "7479234")
+                    veteran_file_number: "7479234",
+                    claim_review_informal_conference: nil,
+                    claim_review_same_office: nil)
   end
 
   describe ".process" do

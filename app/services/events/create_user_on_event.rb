@@ -9,6 +9,8 @@ class Events::CreateUserOnEvent
       return user if user
 
       create_inactive_user(event, css_id, station_id)
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedUserError, error.message
     end
 
     def create_inactive_user(event, css_id, station_id)

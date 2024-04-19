@@ -15,6 +15,8 @@ class Events::CreateClaimantOnEvent
         EventRecord.create!(event: event, evented_record: claimant)
         claimant
       end
+    rescue StandardError => error
+      raise Caseflow::Error::DecisionReviewCreatedClaimantError, error.message
     end
 
     def create_person(event, parser)
