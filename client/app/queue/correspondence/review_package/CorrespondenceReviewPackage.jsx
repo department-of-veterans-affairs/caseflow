@@ -271,8 +271,7 @@ export const CorrespondenceReviewPackage = (props) => {
             { (props.packageDocumentType.name === '10182') && (
               <Button
                 name="Intake appeal"
-                styling={{ style: { marginRight: '2rem' } }}
-                classNames={['usa-button-secondary']}
+                classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
                 disabled={disableButton || isReadOnly}
               />
