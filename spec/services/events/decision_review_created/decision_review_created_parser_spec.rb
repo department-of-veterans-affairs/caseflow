@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
+
 require "ostruct"
 
 describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
@@ -143,3 +145,5 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
     }
   end
 end
+
+# rubocop:enable Layout/LineLength
