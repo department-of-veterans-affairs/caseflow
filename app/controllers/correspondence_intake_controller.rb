@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceIntakeController < CorrespondenceController
+  before_action :verify_correspondence_intake_access
   def intake
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
@@ -55,16 +56,18 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def cancel_intake
     begin
-      intake_task = Task.where("appeal_id = ? and appeal_type = 'Correspondence' and type = 'CorrespondenceIntakeTask'",
-                               correspondence.id).first
+      intake_task = CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id,
+                                                          assigned_to: current_user)
       intake_task.update!(status: "cancelled")
       ReviewPackageTask.create!(
+        parent_id: intake_task.parent_id,
         assigned_to: User.find(correspondence.assigned_by_id),
         assigned_to_id: correspondence.assigned_by_id,
         status: "assigned",
         appeal_id: correspondence.id,
         appeal_type: "Correspondence"
       )
+
       render json: {}, status: :ok
     rescue StandardError
       render json: { error: "Failed to update records" }, status: :bad_request
@@ -75,5 +78,18 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def prior_mail
     Correspondence.prior_mail(veteran_by_correspondence.id, params[:correspondence_uuid])
+  end
+
+  def verify_correspondence_intake_access
+    return true if CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id,
+                                                         assigned_to: current_user)
+
+    if current_user.mail_supervisor?
+      redirect_to "/queue/correspondence/team"
+    elsif current_user.mail_superuser? || current_user.mail_team_user?
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
+    end
   end
 end
