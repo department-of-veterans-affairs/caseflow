@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '../../../components/Link';
@@ -17,40 +16,6 @@ const CorrespondencePdfToolBar = (props) => {
     handleDocumentRotation
   } = props;
 
-  // In-Line CSS Styles
-  // PDF Document Viewer is 800px wide or less.
-  const pdfWrapperSmall = 1165;
-  const pdfToolbarStyles = {
-    toolbar: css({ width: '33%' }),
-    toolbarLeft: css({
-      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '18%' }
-      }
-    }),
-    toolbarCenter: css({
-      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '24%' }
-      }
-    }),
-    toolbarRight: css({
-      textAlign: 'right',
-      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        width: '44%',
-        '& .cf-pdf-button-text': { display: 'none' } }
-      }
-    }),
-    footer: css({
-      position: 'absolute',
-      bottom: 0,
-      display: 'flex',
-      alignItems: 'center',
-      '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-        '& .left-button-label': { display: 'none' },
-        '& .right-button-label': { display: 'none' }
-      } }
-    })
-  };
-
   return (
     <div className="cf-pdf-preview-header cf-pdf-toolbar">
       <span className="cf-pdf-preview-doc-type-button-container">
@@ -66,7 +31,7 @@ const CorrespondencePdfToolBar = (props) => {
           </h1>
         </Link>
       </span>
-      <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
+      <span className="correspondence-pdf-tool-bar toolbar-right">
         <span className="cf-pdf-button-text">Zoom:</span>
         <Button
           name="zoomOut"
