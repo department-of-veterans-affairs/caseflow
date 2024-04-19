@@ -2118,7 +2118,6 @@ describe Task, :all_dbs do
           expect(reassign_pt.parent.assigned_to_type).to eq("Organization")
           expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.unassigned
 
-          binding.pry
           rejection_reason = "testo debuggo reason for rejection"
           reassign_pt.reject(user, rejection_reason)
 
@@ -2128,8 +2127,54 @@ describe Task, :all_dbs do
           expect(reassign_pt.instructions).to eq [rejection_reason]
           expect(reassign_pt.parent.assigned_to_type).to eq("User")
           expect(reassign_pt.parent.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+      end
 
+      describe "remove package tasks" do
+        it "approve" do
+          correspondence = create(:correspondence)
+          user = create(:user)
 
+          remove_pt = RemovePackageTask.create!(
+            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+
+          expect(remove_pt.completed_by_id).to eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
+
+          remove_pt.approve(user)
+          expect(remove_pt.completed_by_id).to eq user.id
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.cancelled
+        end
+
+        it "reject" do
+          correspondence = create(:correspondence)
+          user = create(:user)
+
+          remove_pt = RemovePackageTask.create!(
+            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: InboundOpsTeam.singleton
+          )
+
+          expect(remove_pt.completed_by_id).to eq nil
+          expect(remove_pt.closed_at).to eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
+          expect(remove_pt.instructions).to eq []
+          expect(remove_pt.parent.status).to eq Constants.TASK_STATUSES.unassigned
+
+          rejection_reason = "testo debuggo reason for rejection"
+          remove_pt.reject(user, rejection_reason)
+
+          expect(remove_pt.completed_by_id).to eq user.id
+          expect(remove_pt.closed_at).to_not eq nil
+          expect(remove_pt.status).to eq Constants.TASK_STATUSES.completed
+          expect(remove_pt.instructions).to eq [rejection_reason]
+          expect(remove_pt.parent.status).to eq Constants.TASK_STATUSES.in_progress
         end
       end
       it "verifies no other open package action task on correspondence before creation" do
