@@ -8,6 +8,13 @@ export const initialState = {
   veteranInformation: {},
   lastAction: {},
   taskInstructions: [],
+  reasonForRemovePackage: {},
+  autoAssign: {
+    isButtonDisabled: false,
+    batchId: null,
+    bannerAlert: {},
+  },
+  reasonForReassignPackage: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -87,11 +94,40 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
+  case ACTIONS.SET_BATCH_AUTO_ASSIGN_ATTEMPT_ID:
+    return update(state, {
+      autoAssign: {
+        batchId: {
+          $set: action.payload.batchId
+        }
+      }
+    });
+
   case ACTIONS.REASSIGN_PACKAGE_ACTION:
     return update(state, {
       lastAction: {
         action_type: {
           $set: action.payload.currentAction
+        }
+      }
+    });
+
+  case ACTIONS.SET_AUTO_ASSIGN_BANNER:
+    return update(state, {
+      autoAssign: {
+        bannerAlert: {
+          title: { $set: action.payload.title },
+          message: { $set: action.payload.message },
+          type: { $set: action.payload.type }
+        }
+      }
+    });
+
+  case ACTIONS.SET_AUTO_ASSIGN_BUTTON_DISABLED:
+    return update(state, {
+      autoAssign: {
+        isButtonDisabled: {
+          $set: action.payload.isButtonDisabled
         }
       }
     });

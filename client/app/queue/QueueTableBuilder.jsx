@@ -276,6 +276,7 @@ const mapStateToProps = (state) => {
     isMailSuperUser: state.ui.isMailSuperUser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
@@ -292,7 +293,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);

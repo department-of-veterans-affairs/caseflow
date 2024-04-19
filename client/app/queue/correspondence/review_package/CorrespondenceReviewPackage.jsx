@@ -99,6 +99,7 @@ export const CorrespondenceReviewPackage = (props) => {
       setReviewDetails({
         veteran_name: data.veteran_name || {},
         dropdown_values: data.correspondence_types || [],
+        correspondence_type_id: data.correspondence_type_id
       });
 
       setReviewPackageDetails((prev) => {

@@ -6,10 +6,12 @@ import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
+import { AddLetter } from '../AddCorrespondence/AddLetter';
 import {
   updateRadioValue,
   saveCheckboxState,
-  clearCheckboxState
+  clearCheckboxState,
+  setResponseLetters
 } from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
@@ -169,6 +171,12 @@ class AddCorrespondenceView extends React.Component {
       <div className="add-related-correspondence">
         <h1 className="a-r-h1">Add Related Correspondence</h1>
         <p className="a-r-p1">Add any related correspondence to the mail package that is in progress.</p>
+        <h2 style={{ margin: '0px', padding: '0px' }}>Response Letter</h2>
+        {/* add letter here */}
+        <AddLetter
+          onContinueStatusChange={this.props.onContinueStatusChange}
+        />
+        <hr style={{ borderTop: '1px solid #d6d7d9' }} />
         <h2 className="a-r-h2">Associate with prior Mail</h2>
         <p className="a-r-p2">Is this correspondence related to prior mail?</p>
         <RadioField
@@ -211,19 +219,23 @@ AddCorrespondenceView.propTypes = {
   onContinueStatusChange: PropTypes.func,
   onCheckboxChange: PropTypes.func.isRequired,
   clearCheckboxState: PropTypes.func.isRequired,
-  checkboxes: PropTypes.array
+  checkboxes: PropTypes.array,
+  setResponseLetters: PropTypes.func,
+  currentLetters: PropTypes.number
 };
 
 const mapStateToProps = (state) => ({
   radioValue: state.intakeCorrespondence.radioValue,
   checkboxes: state.intakeCorrespondence.relatedCorrespondences,
+  currentLetters: state.intakeCorrespondence.responseLetters,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     updateRadioValue,
     saveCheckboxState,
-    clearCheckboxState
+    clearCheckboxState,
+    setResponseLetters
   }, dispatch)
 );
 

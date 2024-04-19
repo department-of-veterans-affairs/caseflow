@@ -16,6 +16,7 @@ import Modal from 'app/components/Modal';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 import TextareaField from '../../components/TextareaField';
+import AutoAssignAlertBanner from '../correspondence/component/AutoAssignAlertBanner';
 import { css } from 'glamor';
 import WindowUtil from '../../util/WindowUtil';
 
@@ -240,6 +241,7 @@ const CorrespondenceCases = (props) => {
         />
       )}
       <AppSegment filledBackground>
+        {props.featureToggles.correspondence_queue && <AutoAssignAlertBanner />}
         {(veteranInformation?.veteranName?.firstName && veteranInformation?.veteranName?.lastName) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
           <Alert
@@ -311,8 +313,8 @@ CorrespondenceCases.propTypes = {
   taskIds: PropTypes.array,
   isMailTeamUser: PropTypes.bool,
   isMailSuperUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool
-
+  isMailSupervisor: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
 
 export default CorrespondenceCases;

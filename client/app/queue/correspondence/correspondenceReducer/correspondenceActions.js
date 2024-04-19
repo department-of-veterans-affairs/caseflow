@@ -167,6 +167,26 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
   });
 };
 
+export const setResponseLetters = (responseLetters) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RESPONSE_LETTERS,
+      payload: {
+        responseLetters
+      }
+    });
+  };
+
+export const removeResponseLetters = (index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_RESPONSE_LETTERS,
+      payload: {
+        index
+      }
+    });
+  };
+
 export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
@@ -193,6 +213,7 @@ export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) 
     }
   });
 };
+
 export const setErrorBanner = (isVisible) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,

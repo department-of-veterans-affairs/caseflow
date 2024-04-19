@@ -33,7 +33,7 @@ export const ReviewForm = (props) => {
 
   const generateOptions = (options) =>
     options.map((option) => ({
-      value: option.name,
+      value: option.id,
       label: option.name,
       id: option.id,
     }));
@@ -206,6 +206,7 @@ ReviewForm.propTypes = {
       last_name: PropTypes.string,
     }),
     dropdown_values: PropTypes.array,
+    correspondence_type_id: PropTypes.number
   }),
   editableData: PropTypes.shape({
     notes: PropTypes.string,

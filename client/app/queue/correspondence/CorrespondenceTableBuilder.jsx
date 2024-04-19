@@ -12,6 +12,7 @@ import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import SearchBar from '../../components/SearchBar';
+import BatchAutoAssignButton from './component/BatchAutoAssignButton';
 import {
   actionType,
   assignedToColumn,
@@ -221,9 +222,7 @@ const CorrespondenceTableBuilder = (props) => {
                   />
                 </span>
                 <span className="correspondence-table-builder-searchable-auto-assign-button-position">
-                  <Button
-                    name="Auto assign correspondence"
-                  />
+                  <BatchAutoAssignButton />
                 </span>
               </>
           }
