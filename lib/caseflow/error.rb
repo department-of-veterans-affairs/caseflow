@@ -431,6 +431,7 @@ module Caseflow::Error
   class WebexNotFoundError < WebexApiError; end
   class WebexBadRequestError < WebexApiError; end
   class WebexMethodNotAllowedError < WebexApiError; end
+  class WebexInvalidTokenError < ConferenceCreationError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
 
