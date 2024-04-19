@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
+
 describe Events::DecisionReviewCreated::CreateIntake do
   context "Events::DecisionReviewCreated::CreateIntake.process!" do
     let(:event_double) { double("Event") }
@@ -38,3 +40,5 @@ describe Events::DecisionReviewCreated::CreateIntake do
     end
   end
 end
+
+# rubocop:enable Layout/LineLength

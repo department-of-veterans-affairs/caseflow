@@ -6,22 +6,6 @@ describe Events::CreateUserOnEvent do
   let!(:station_id) { "101" }
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
 
-  describe "#user_exist?" do
-    subject { described_class }
-
-    context "When there is no previous User" do
-      it "should return false" do
-        expect(subject.user_exist?(css_id)).to be_falsey
-      end
-    end
-
-    context "When a User already exists" do
-      it "should return true" do
-        expect(subject.user_exist?(old_user.css_id)).to be_truthy
-      end
-    end
-  end
-
   describe "#handle_user_creation_on_event" do
     subject { described_class.handle_user_creation_on_event(event: event, css_id: css_id, station_id: station_id) }
 

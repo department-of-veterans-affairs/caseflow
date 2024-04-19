@@ -17,7 +17,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       request_issues = parser.request_issues
       newly_created_issues = []
 
-      request_issues.each do |issue|
+      request_issues&.each do |issue|
         # create backfill RI object using extracted values
         ri = RequestIssue.create!(
           benefit_type: parser.ri_benefit_type(issue),

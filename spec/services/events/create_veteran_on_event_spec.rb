@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
+
 describe Events::CreateVeteranOnEvent do
   let!(:veteran) { create(:veteran) }
   let!(:non_cf_veteran) { double("Veteran", file_number: "12345678X", participant_id: "1826209", bgs_last_synced_at: 1_708_533_584_000, name_suffix: nil, date_of_death: nil) }
@@ -27,7 +29,7 @@ describe Events::CreateVeteranOnEvent do
 
     context "when creating a new Veteran" do
       it "should create successfully without calling BGS and also create an EventRecord" do
-        headers = get_headers
+        headers = retrieve_headers
 
         backfilled_veteran = subject.handle_veteran_creation_on_event(event: event, parser: parser)
 
@@ -49,7 +51,7 @@ describe Events::CreateVeteranOnEvent do
       end
     end
 
-    def get_headers
+    def retrieve_headers
       {
         "X-VA-Vet-SSN" => "123456789",
         "X-VA-File-Number" => "77799777",
@@ -60,3 +62,5 @@ describe Events::CreateVeteranOnEvent do
     end
   end
 end
+
+# rubocop:enable Layout/LineLength

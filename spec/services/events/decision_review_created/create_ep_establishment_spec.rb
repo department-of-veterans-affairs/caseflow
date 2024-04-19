@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
+
 describe Events::DecisionReviewCreated::CreateEpEstablishment do
   context "Events::DecisionReviewCreated::CreateEpEstablishment.process!" do
     # set up variables station_id, end_product_establishment, claim_review, user, event
@@ -77,3 +79,5 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
     end
   end
 end
+
+# rubocop:enable Layout/LineLength

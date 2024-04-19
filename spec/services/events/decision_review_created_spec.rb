@@ -59,8 +59,10 @@ describe Events::DecisionReviewCreated do
       end
 
       it "should call all sub services" do
-        expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new).with(headers, json_payload).and_call_original
-        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).with(event: event_created, css_id: parser.css_id, station_id: parser.station_id).and_call_original
+        expect(Events::DecisionReviewCreated::DecisionReviewCreatedParser).to receive(:new)
+          .with(headers, json_payload).and_call_original
+        expect(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event)
+          .with(event: event_created, css_id: parser.css_id, station_id: parser.station_id).and_call_original
         expect(Events::DecisionReviewCreated::CreateClaimReview).to receive(:process!).and_call_original
         expect(Events::DecisionReviewCreated::UpdateVacolsOnOptin).to receive(:process!).and_call_original
         expect(Events::CreateClaimantOnEvent).to receive(:process!).and_call_original
@@ -92,10 +94,10 @@ end
 
 def read_json_payload
   JSON.parse(File.read(Rails.root.join("app",
-                                                     "services",
-                                                     "events",
-                                                     "decision_review_created",
-                                                     "decision_review_created_example.json")))
+                                       "services",
+                                       "events",
+                                       "decision_review_created",
+                                       "decision_review_created_example.json")))
 end
 
 def sample_headers

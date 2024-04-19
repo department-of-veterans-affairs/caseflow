@@ -12,7 +12,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
 
     context "when receiving an Event with request_issues" do
       it "should create CF RequestIssues and backfill records" do
-        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, get_payload)
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
 
         backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
 
@@ -50,8 +50,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
-    def get_payload
-      data = {
+    def retrieve_payload
+      {
         "request_issues": [
           {
             "benefit_type": "pension",

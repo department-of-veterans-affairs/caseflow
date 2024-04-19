@@ -5,18 +5,12 @@
 class Events::CreateUserOnEvent
   class << self
     def handle_user_creation_on_event(event:, css_id:, station_id:)
-      # # set fields to nil if they come in as empty string
-      # css_id = nil if css_id.blank?
-      # station_id = nil if station_id.blank?
-      unless user_exist?(css_id)
-        create_inactive_user(event, css_id, station_id)
-      end
+      user = User.find_by(css_id: css_id)
+      return user if user
+
+      create_inactive_user(event, css_id, station_id)
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedUserError, error.message
-    end
-
-    def user_exist?(css_id)
-      User.where(css_id: css_id).exists?
     end
 
     def create_inactive_user(event, css_id, station_id)
