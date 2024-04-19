@@ -37,7 +37,10 @@ class CorrespondenceTasksController < TasksController
     return render json: { message: "Correspondence Root Task not found" }, status: :not_found unless review_package_task
 
     current_parent = review_package_task.parent
-    current_cit = CorrespondenceIntakeTask.find_by(parent_id: current_parent.id, type: CorrespondenceIntakeTask.name)
+    current_cit = CorrespondenceIntakeTask.open.find_by(
+      parent_id: current_parent.id,
+      type: CorrespondenceIntakeTask.name
+    )
 
     if current_cit.present?
       review_package_task.update!(assigned_to: current_user)

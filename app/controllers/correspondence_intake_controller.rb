@@ -4,7 +4,7 @@ class CorrespondenceIntakeController < CorrespondenceController
   def intake
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
-    @redux_store ||= CorrespondenceIntake.find_by(task_id: correspondence&.open_intake_task&.id)&.redux_store
+    @redux_store ||= CorrespondenceIntake.find_by(task: correspondence&.open_intake_task)&.redux_store
     @prior_mail = prior_mail.map do |correspondence|
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
@@ -54,16 +54,14 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def cancel_intake
     begin
-      intake_task = Task.where("appeal_id = ? and appeal_type = 'Correspondence' and type = 'CorrespondenceIntakeTask'",
-                               correspondence.id).first
-      intake_task.update!(status: "cancelled")
-      ReviewPackageTask.create!(
-        assigned_to: User.find(correspondence.assigned_by_id),
-        assigned_to_id: correspondence.assigned_by_id,
-        status: "assigned",
+      correspondence&.open_intake_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+      ReviewPackageTask.find_or_create_by!(
+        assigned_to: current_user,
+        status: Constants.TASK_STATUSES.assigned,
         appeal_id: correspondence.id,
-        appeal_type: "Correspondence"
+        appeal_type: Correspondence.name
       )
+
       render json: {}, status: :ok
     rescue StandardError
       render json: { error: "Failed to update records" }, status: :bad_request
