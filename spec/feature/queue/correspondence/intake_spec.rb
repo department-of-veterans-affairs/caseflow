@@ -70,9 +70,11 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
     end
 
-    it "successfully navigates on cancel link click" do
-      click_on("button-Cancel")
-      expect(page).to have_content("Correspondence assigned to you:")
+    it "successfully navigates on return to queue and save intake" do
+      click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[3].click
+      click_on("Return-To-Queue-button-id-1")
+      expect(page).to have_content("You have successfully saved the intake form")
     end
 
     it "successfully advances to the second step" do
@@ -367,13 +369,16 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "navigates to intake form from in-progress tab to step 3" do
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      find("#task-link").click
       click_on("button-continue")
       click_on("button-continue")
       intake_path = current_path
-      click_on("button-Cancel")
+      click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[3].click
+      click_on("Return-To-Queue-button-id-1")
+      expect(page).to have_content("You have successfully saved the intake form")
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      find("#task-link").click
       expect(current_path).to eq(intake_path)
       expect(page).to have_content("Review and Confirm Correspondence")
     end
@@ -410,7 +415,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("Confirm")
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
-      click_on("button-Cancel")
+      click_on("button-Return-to-queue")
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end

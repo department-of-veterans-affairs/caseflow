@@ -1,25 +1,11 @@
 /* eslint-disable camelcase */
 
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
 import EditDocumentTypeModal from '../component/EditDocumentTypeModal';
 import CorrespondencePdfUI from '../pdfPreview/CorrespondencePdfUI';
-
-const cmpDocumentStyling = css({
-  marginTop: '2%'
-});
-
-const correspondenceStyling = css({
-  border: '1px solid #dee2e6'
-});
-
-const paginationStyle = css({
-  marginTop: '2%',
-  marginLeft: '1.5%'
-});
 
 export const CmpDocuments = (props) => {
   const { documents, isReadOnly } = props;
@@ -41,11 +27,23 @@ export const CmpDocuments = (props) => {
     setModalState(false);
   };
 
+  const tableStyle = (index, document) => {
+    if (selectedId === index) {
+      return <td className="correspondence-document-table-data-filled"
+        onClick={() => setCurrentDocument(index)}> {document?.document_title}
+      </td>;
+    }
+
+    return <td className="correspondence-document-table-data-empty"
+      onClick={() => setCurrentDocument(index)}> {document?.document_title}
+    </td>;
+  };
+
   return (
-    <div {...cmpDocumentStyling} >
+    <div>
       <h2> {COPY.DOCUMENT_PREVIEW} </h2>
-      <div {...correspondenceStyling}>
-        <div {...paginationStyle}> {paginationText} </div>
+      <div className="cmp-document-border">
+        <div className="cmp-document-pagination-style"> {paginationText} </div>
         <table className="correspondence-document-table">
           <tbody>
             <tr>
@@ -66,10 +64,7 @@ export const CmpDocuments = (props) => {
             return (
               <tbody key={index}>
                 <tr>
-                  <td style={{ background: selectedId === index ? '#0071bc' : 'white',
-                    color: selectedId === index ? 'white' : '#0071bc' }}
-                  onClick={() => setCurrentDocument(index)}> {document?.document_title}
-                  </td>
+                  {tableStyle(index, document)}
                   <td className="cf-txt-c">
                     <Button
                       disabled={isReadOnly}
