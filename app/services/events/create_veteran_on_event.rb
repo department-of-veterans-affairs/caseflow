@@ -9,7 +9,7 @@ class Events::CreateVeteranOnEvent
         create_backfill_veteran(event, parser)
       else
         # return existing Veteran
-        Veteran.find_by(ssn: parser.veteran_file_number)
+        Veteran.find_by(file_number: parser.veteran_file_number)
       end
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedVeteranError, error.message
