@@ -59,6 +59,7 @@ class CorrespondenceIntakeController < CorrespondenceController
         assigned_to: current_user,
         status: Constants.TASK_STATUSES.assigned,
         appeal_id: correspondence.id,
+        parent_id: correspondence.root_task&.id,
         appeal_type: Correspondence.name
       )
 
