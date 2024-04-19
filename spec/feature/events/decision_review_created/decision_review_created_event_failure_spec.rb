@@ -54,19 +54,60 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
 
     context "when there are missing Claimant params" do
-
+      it "raises an error when trying to create a Claimant" do
+        hash = JSON.parse(payload)
+        load_headers
+        hash["claim_review"]["veteran_is_not_claimant"] = true
+        hash["claimant"]["participant_id"] = nil
+        post :decision_review_created, params: hash, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(EventRecord.count).to eq(0)
+        expect(Event.count).to eq(1)
+        event = Event.last
+        expect(event.error).to include("DecisionReviewCreatedClaimantError")
+      end
     end
 
-    context "when there are missing Intake params" do
-
+    context "when there is bad data in Intake params" do
+      it "raises an error when trying to create an Intake" do
+        hash = JSON.parse(payload)
+        load_headers
+        hash["intake"]["type"] = 999
+        post :decision_review_created, params: hash, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(EventRecord.count).to eq(0)
+        expect(Event.count).to eq(1)
+        event = Event.last
+        expect(event.error).to include("DecisionReviewCreatedIntakeError")
+      end
     end
 
     context "when there are missing EPE params" do
-
+      it "raises an error when trying to create an EPE" do
+        hash = JSON.parse(payload)
+        load_headers
+        hash["end_product_establishment"]["payee_code"] = nil
+        post :decision_review_created, params: hash, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(EventRecord.count).to eq(0)
+        expect(Event.count).to eq(1)
+        event = Event.last
+        expect(event.error).to include("DecisionReviewCreatedEpEstablishmentError")
+      end
     end
 
     context "when there are missing Request Issue params" do
-
+      it "raises an error when trying to create Request Issues" do
+        hash = JSON.parse(payload)
+        load_headers
+        hash["request_issues"][0]["benefit_type"] = nil
+        post :decision_review_created, params: hash, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(EventRecord.count).to eq(0)
+        expect(Event.count).to eq(1)
+        event = Event.last
+        expect(event.error).to include("DecisionReviewCreatedRequestIssuesError")
+      end
     end
   end
 end
