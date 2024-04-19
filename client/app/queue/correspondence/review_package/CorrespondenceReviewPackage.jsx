@@ -40,6 +40,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
+  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -81,6 +82,16 @@ export const CorrespondenceReviewPackage = (props) => {
       );
     };
 
+    const hasEfolderUploadTask = (tasks) => {
+      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
+      task.type === 'EfolderUploadFailedTask');
+
+      if (existEfolderUploadTask) {
+        setIsEfolderUploadFailedTask(false);
+      }
+
+    };
+
     try {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
@@ -89,12 +100,15 @@ export const CorrespondenceReviewPackage = (props) => {
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
 
+      hasEfolderUploadTask(data.correspondence_tasks);
+
       if (response.body.efolder_upload_failed_before.length > 0) {
         setBannerInformation({
           title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
           message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
           bannerType: 'error'
         });
+
       }
       setReviewDetails({
         veteran_name: data.veteran_name || {},
@@ -120,6 +134,7 @@ export const CorrespondenceReviewPackage = (props) => {
         });
         setIsReadOnly(true);
       }
+
       if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -213,6 +228,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             reviewDetails={reviewPackageDetails}
+            Efolder={isEfolderUploadFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
