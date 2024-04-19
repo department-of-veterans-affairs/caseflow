@@ -39,7 +39,6 @@ class CorrespondenceTasksController < TasksController
     current_parent = review_package_task.parent
     current_cit = CorrespondenceIntakeTask.open.find_by(
       parent_id: current_parent.id,
-      type: CorrespondenceIntakeTask.name
     )
 
     if current_cit.present?
