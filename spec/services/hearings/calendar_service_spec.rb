@@ -53,8 +53,12 @@ describe Hearings::CalendarService do
 
         ical_event = Icalendar::Calendar.parse(confirmation_calendar_invite).first.events.first
 
-        expect(ical_event.url.to_s).to eq("https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA@care.evn.va.gov&pin=&role=guest")
-        expect(ical_event.location).to eq("https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA@care.evn.va.gov&pin=&role=guest")
+        expect(ical_event.url.to_s).to eq(
+          "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA@care.evn.va.gov&pin=&role=guest"
+        )
+        expect(ical_event.location).to eq(
+          "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA@care.evn.va.gov&pin=&role=guest"
+        )
         expect(ical_event.status).to eq("CONFIRMED")
         expect(ical_event.summary).to be_nil
         expect(ical_event.description).to eq(expected_description)

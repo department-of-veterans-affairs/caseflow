@@ -16,7 +16,7 @@ module DisallowedDeprecations
   RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
     /update_attributes is deprecated and will be removed from Rails 6\.1/,
     /ActionView::Base instances should be constructed with a lookup context, assignments, and a controller./,
-    /ActionView::Base instances must implement `compiled_method_container` or use the class method `with_empty_template_cache`/,
+    /ActionView::Base instances must implement `compiled_method_container`/,
     /render file: should be given the absolute path to a file/
   ].freeze
 
