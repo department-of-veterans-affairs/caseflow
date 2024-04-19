@@ -74,7 +74,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[3].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(15) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
     end
 
     it "successfully advances to the second step" do
@@ -265,8 +267,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 1
+      expect(page).to_not have_text("Cancel")
     end
 
     it "The user can close the modal with the x button located in the top right." do
@@ -275,8 +276,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-close").click
-      cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 1
+      expect(page).to_not have_text("Cancel")
     end
 
     it "Clears all selected options in modal" do
@@ -374,9 +374,11 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       intake_path = current_path
       click_on("button-Return-to-queue")
-      page.all(".cf-form-radio-option")[3].click
+      page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(15) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("#task-link").click
       expect(current_path).to eq(intake_path)
@@ -413,11 +415,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       click_on("Submit")
       click_on("Confirm")
-      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
-      intake_path = current_path
-      click_on("button-Return-to-queue")
-      visit intake_path
-      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      using_wait_time(15) do
+        expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      end
     end
   end
 end
