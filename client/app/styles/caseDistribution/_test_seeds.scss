@@ -1,5 +1,5 @@
 .test-seeds-num-field {
-  width: auto;
+  // width: auto;
 
   .cf-form-int-input {
     width: auto;
@@ -21,9 +21,14 @@
 }
 
 .test-seed-button-style {
+  width: 20%;
   button {
     padding-top: 14px;
     padding-bottom: 20px;
     height: 45px;
   }
+}
+
+.seed-col {
+  width: 15%;
 }

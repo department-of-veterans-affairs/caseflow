@@ -14,6 +14,8 @@ import cx from 'classnames';
 import TEST_SEEDS from '../../constants/TEST_SEEDS';
 import Alert from 'app/components/Alert';
 import COPY from '../../COPY';
+import NumberField from 'app/components/NumberField';
+import TextField from 'app/components/TextField';
 
 class TestSeeds extends React.PureComponent {
   constructor(props) {
@@ -57,15 +59,30 @@ class TestSeeds extends React.PureComponent {
     this.seedCounts[type] = event.target.value;
   }
 
+  onChangeCountField = (type, value) =>  {
+    this.seedCounts[type] = value;
+  };
+
+  onChangeDaysAgeField = (type, value) =>  {
+    this.seedCounts["days-ago-"+type] = value;
+  };
+
+  onChangeCssIdField = (type, value) =>  {
+    this.seedCounts["css-id-"+type] = value;
+  };
+
   reseed = (type) => {
     const seedCount = parseInt(this.seedCounts[type], 10) || 1;
+    const daysAge = parseInt(this.seedCounts["days-ago-"+type], 10);
+    const cssId = this.seedCounts["css-id-"+type];
 
     this.setState({ seedRunning: true, seedRunningMsg: '' });
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpoint = `/seeds/run-demo/${type}/${seedCount}`;
+    // const endpoint = `/seeds/run-demo/${type}/${seedCount}`;
+    const endpoint = `/seeds/run-demo/${type}/${seedCount}?days_age=${daysAge}&css_id=${cssId}`;
 
     ApiUtil.post(endpoint).then(() => {
       this.setState({ seedRunning: false });
@@ -124,6 +141,87 @@ class TestSeeds extends React.PureComponent {
                           />
                         )}
                       </>
+                      <table >
+                        <thead>
+                          <tr>
+                            <th className={cx('table-header-styling')}>
+                              Case Type
+                            </th>
+                            <th className={cx('table-header-styling')}>
+                              Number of cases to create
+                            </th>
+                            <th className={cx('table-header-styling')}>
+                              Days Ago
+                            </th>
+                            <th className={cx('table-header-styling')}>
+                              Judge CSS_ID<br />(optional)
+                            </th>
+                            <th className={cx('table-header-styling')}>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {seedTypes.map((type) => (
+                            <tr>
+                              <td>
+                                {type}
+                              </td>
+                              <td>
+                                <div className={cx('lever-right', 'test-seeds-num-field')}>
+                                  <NumberField
+                                    ariaLabelText={`count-${type}`}
+                                    inputID={`count-${type}`}
+                                    onChange={(value) => {
+                                      this.onChangeCountField(type, value);
+                                    }}
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                <div className={cx('lever-right', 'test-seeds-num-field')}>
+                                  <NumberField
+                                    ariaLabelText={`days-ago-${type}`}
+                                    inputID={`days-ago-${type}`}
+                                    onChange={(value) => {
+                                      this.onChangeDaysAgeField(type, value);
+                                    }}
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                <div className={cx('lever-right', 'test-seeds-num-field')}>
+                                  <TextField
+                                    ariaLabelText={`css-id-${type}`}
+                                    inputID={`css-id-${type}`}
+                                    onChange={(value) => {
+                                      this.onChangeCssIdField(type, value);
+                                    }}
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                <div className="cf-btn-link lever-right test-seed-button-style">
+                                  <Button
+                                    onClick={() => this.reseed(type)}
+                                    // name={`Run Demo ${this.formatSeedName(type)}`}
+                                    name='create'
+                                    loading={this.state.reseedingStatus[type]}
+                                    loadingText={`Reseeding ${this.formatSeedName(type)}`}
+                                  />
+                                </div>
+                                <>
+                                  {this.state.reseedingStatus[type] && (
+                                    <div className="test-seed-alert-message">
+                                      <span>{this.formatSeedName(type)} {COPY.TEST_SEEDS_ALERT_MESSAGE}</span>
+                                    </div>
+                                  )}
+                                </>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <hr />
                       <h2 id="run_seeds">{COPY.TEST_SEEDS_RUN_SEEDS}</h2>
                       <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
                         {seedTypes.map((type) => (
@@ -154,7 +252,6 @@ class TestSeeds extends React.PureComponent {
                           </li>
                         ))}
                       </ul>
-                      <hr />
                     </div>
                   )} />
                 </div>
