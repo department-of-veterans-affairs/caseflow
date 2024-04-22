@@ -6,6 +6,7 @@ export const CorrespondenceDetailsTable = () => {
 
   const currentCorrespondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const veteranInformation = useSelector((state) => state.intakeCorrespondence.veteranInformation);
+  const correspondenceInformation = useSelector((state) => state.intakeCorrespondence.correspondenceInformation);
 
   return (
     <div>
@@ -36,7 +37,7 @@ export const CorrespondenceDetailsTable = () => {
             <td colSpan={2}>
               {veteranInformation.first_name} {veteranInformation.last_name} ({veteranInformation.file_number})
             </td>
-            <td>{currentCorrespondence.correspondence_type_id}</td>
+            <td>{correspondenceInformation.name}</td>
           </tr>
           <tr>
             <th colSpan={6}><strong>Notes</strong></th>

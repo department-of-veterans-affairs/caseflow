@@ -17,6 +17,13 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
   const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const tasksNotRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
   const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
+  const responseLettersHash = useSelector((state) => state.intakeCorrespondence.responseLetters);
+  let responseLetters = [];
+
+  if (responseLettersHash && Object.values(responseLettersHash).length > 0) {
+    responseLetters = Object.values(responseLettersHash);
+  }
+
   const [loading, setLoading] = useState(false);
 
   const onCancel = () => {
@@ -57,7 +64,8 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
       waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks,
       related_appeal_ids: relatedAppealIds,
       tasks_not_related_to_appeal: serializedTasksNotRelatedToAppeal,
-      mail_tasks: mailTasks
+      mail_tasks: mailTasks,
+      response_letters: responseLetters
     };
 
     setLoading(true);
