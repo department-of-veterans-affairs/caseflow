@@ -53,6 +53,7 @@ class TestSeeds extends React.PureComponent {
       seedRunningMsg: 'Seeds running'
     };
     this.seedCounts = {};
+    this.seedByType = {};
   }
 
   handleChange= (event, type) => {
@@ -63,13 +64,12 @@ class TestSeeds extends React.PureComponent {
     this.seedCounts[type] = value;
   };
 
-  onChangeDaysAgeField = (type, value) =>  {
-    this.seedCounts["days-ago-"+type] = value;
-  };
-
-  onChangeCssIdField = (type, value) =>  {
-    this.seedCounts["css-id-"+type] = value;
-  };
+  onChangeCaseType = (type, inputKey, value) => {
+    if(typeof this.seedByType[type] !== 'object'){
+      this.seedByType[type] = {};
+    }
+    this.seedByType[type][inputKey] = [value];
+  }
 
   reseed = (type) => {
     const seedCount = parseInt(this.seedCounts[type], 10) || 1;
@@ -85,6 +85,29 @@ class TestSeeds extends React.PureComponent {
     const endpoint = `/seeds/run-demo/${type}/${seedCount}?days_age=${daysAge}&css_id=${cssId}`;
 
     ApiUtil.post(endpoint).then(() => {
+      this.setState({ seedRunning: false });
+      this.setState((prevState) => ({
+        reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
+      }));
+    }).
+      catch((err) => {
+        console.warn(err);
+        this.setState({ seedRunning: false });
+        this.setState((prevState) => ({
+          reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
+        }));
+      });
+  };
+
+  reseedByCaseType = (type) => {
+    const caseType = this.seedByType[type];
+
+    this.setState({ seedRunning: true, seedRunningMsg: '' });
+    this.setState((prevState) => ({
+      reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
+    }));
+
+    ApiUtil.post(`/seeds/individual_case_type`, { data: caseType }).then(() => {
       this.setState({ seedRunning: false });
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }
@@ -169,10 +192,10 @@ class TestSeeds extends React.PureComponent {
                               <td>
                                 <div className={cx('lever-right', 'test-seeds-num-field')}>
                                   <NumberField
-                                    ariaLabelText={`count-${type}`}
-                                    inputID={`count-${type}`}
+                                    ariaLabelText={`case-count-${type}`}
+                                    inputID={`case-count-${type}`}
                                     onChange={(value) => {
-                                      this.onChangeCountField(type, value);
+                                      this.onChangeCaseType(type, 'case_count', value);
                                     }}
                                   />
                                 </div>
@@ -183,7 +206,7 @@ class TestSeeds extends React.PureComponent {
                                     ariaLabelText={`days-ago-${type}`}
                                     inputID={`days-ago-${type}`}
                                     onChange={(value) => {
-                                      this.onChangeDaysAgeField(type, value);
+                                      this.onChangeCaseType(type, 'days_ago', value);
                                     }}
                                   />
                                 </div>
@@ -194,7 +217,7 @@ class TestSeeds extends React.PureComponent {
                                     ariaLabelText={`css-id-${type}`}
                                     inputID={`css-id-${type}`}
                                     onChange={(value) => {
-                                      this.onChangeCssIdField(type, value);
+                                      this.onChangeCaseType(type, 'css_id', value);
                                     }}
                                   />
                                 </div>
@@ -202,20 +225,12 @@ class TestSeeds extends React.PureComponent {
                               <td>
                                 <div className="cf-btn-link lever-right test-seed-button-style">
                                   <Button
-                                    onClick={() => this.reseed(type)}
-                                    // name={`Run Demo ${this.formatSeedName(type)}`}
+                                    onClick={() => this.reseedByCaseType(type)}
                                     name='create'
                                     loading={this.state.reseedingStatus[type]}
                                     loadingText={`Reseeding ${this.formatSeedName(type)}`}
                                   />
                                 </div>
-                                <>
-                                  {this.state.reseedingStatus[type] && (
-                                    <div className="test-seed-alert-message">
-                                      <span>{this.formatSeedName(type)} {COPY.TEST_SEEDS_ALERT_MESSAGE}</span>
-                                    </div>
-                                  )}
-                                </>
                               </td>
                             </tr>
                           ))}
