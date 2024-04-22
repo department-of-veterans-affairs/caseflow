@@ -20,17 +20,8 @@ const className = classnames(
   },
 );
 
-console.log(`ENV!: ${ env}`);
-
 const AppFrame = ({ children, wideApp }) =>
   <main {...getAppWidthStyling(wideApp)} role="main" id="Main">
-    {
-      // eslint-disable-next-line no-undefined
-      (env !== 'prod' && env === undefined) &&
-      (<div className={className}>
-        <Alert type="warning">This is the development environment!</Alert>
-      </div>)
-    }
     {
       // eslint-disable-next-line no-undefined
       (env !== 'prod' && env !== undefined && env !== 'demo') &&

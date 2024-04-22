@@ -1,14 +1,3 @@
-
-.dev-env-alert {
-  .usa-alert {
-  background-color: $color-green-lightest;
-  border: 5px solid $color-green-lighter;
-  background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
-  &::before {
-    background-color: $color-green-lightest;
-  }
-  }
-}
 .prodtest-env-alert {
   .usa-alert{
     background-color: $color-gold-lightest;
