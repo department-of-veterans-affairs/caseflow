@@ -103,6 +103,18 @@ module HearingConcern
     end_date
   end
 
+  def subject_for_conference
+    "#{docket_number}_#{id}_#{self.class}"
+  end
+
+  def nbf
+    scheduled_for.beginning_of_day.to_i
+  end
+
+  def exp
+    scheduled_for.end_of_day.to_i
+  end
+
   # Returns the new 1:1 conference link object for legacy and ama hearings
   # that are non virtual and have a webex meeting type
   def non_virtual_conference_link

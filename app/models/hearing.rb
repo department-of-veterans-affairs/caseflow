@@ -287,18 +287,6 @@ class Hearing < CaseflowRecord
     end
   end
 
-  def subject_for_conference
-    "#{docket_number}_#{id}_#{self.class}"
-  end
-
-  def nbf
-    scheduled_for.beginning_of_day.to_i
-  end
-
-  def exp
-    scheduled_for.end_of_day.to_i
-  end
-
   private
 
   def update_appeal_states_on_hearing_create
