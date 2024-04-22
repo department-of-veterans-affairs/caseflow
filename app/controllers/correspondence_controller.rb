@@ -2,6 +2,8 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -27,6 +29,123 @@ class CorrespondenceController < ApplicationController
 
   def veteran_information
     @veteran_information ||= veteran_by_correspondence
+  end
+
+  def show
+    corres_docs = correspondence.correspondence_documents
+    reason_remove = if RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).nil?
+                      ""
+                    else
+                      RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
+                    end
+    response_json = {
+      correspondence: correspondence,
+      package_document_type: correspondence&.package_document_type,
+      general_information: general_information,
+      user_can_edit_vador: InboundOpsTeam.singleton.user_is_admin?(current_user),
+      correspondence_documents: corres_docs.map do |doc|
+        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+      end,
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(
+        appeal_id: correspondence.id, type: "EfolderUploadFailedTask"
+      ),
+      reasonForRemovePackage: reason_remove
+    }
+    render({ json: response_json }, status: :ok)
+  end
+
+  def update
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    if veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
+    )
+      correspondence.tasks.map do |task|
+        if task.type == "ReviewPackageTask"
+          task.status = "in_progress"
+          task.save
+        end
+      end
+      render json: { status: :ok }
+    else
+      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
+    end
+  end
+
+  def update_cmp
+    correspondence.update(
+      va_date_of_receipt: params["VADORDate"].in_time_zone,
+      package_document_type_id: params["packageDocument"]["value"].to_i
+    )
+    correspondence.tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.status = "in_progress"
+        task.save
+      end
+    end
+    render json: { status: 200, correspondence: correspondence }
+  end
+
+  def document_type_correspondence
+    data = vbms_document_types
+    render json: { data: data }
+  end
+
+  def pdf
+    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
+    document = Document.limit(200)[params[:pdf_id].to_i]
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
+  end
+
+  def auto_assign_correspondences
+    batch = BatchAutoAssignmentAttempt.create!(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
+
+    job_args = {
+      current_user_id: current_user.id,
+      batch_auto_assignment_attempt_id: batch.id
+    }
+
+    begin
+      perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+    ensure
+      render json: { batch_auto_assignment_attempt_id: batch&.id }, status: :ok
+    end
+  end
+
+  def auto_assign_status
+    batch = BatchAutoAssignmentAttempt.includes(:individual_auto_assignment_attempts)
+      .find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+
+    num_assigned = batch.individual_auto_assignment_attempts
+      .where(status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed).count
+
+    status_details = {
+      error_message: batch.error_info,
+      status: batch.status,
+      number_assigned: num_assigned,
+      number_attempted: batch.individual_auto_assignment_attempts.count
+    }
+
+    render json: status_details, status: :ok
   end
 
   private

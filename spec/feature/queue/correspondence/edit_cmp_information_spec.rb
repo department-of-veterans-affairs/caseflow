@@ -133,7 +133,7 @@ RSpec.feature("The Correspondence Review Package page") do
     end
   end
 
-  context "Checking VADOR field is enable for Mail Supervisor" do
+  context "Checking VADOR field is enable for InboundOpsTeam" do
     before do
       FeatureToggle.enable!(:correspondence_queue)
       InboundOpsTeam.singleton.add_user(current_user)
