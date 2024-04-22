@@ -78,7 +78,50 @@ class CorrespondenceTasksController < TasksController
     review_package_task.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 
+  def update
+    process_package_action_decision(params[:decision])
+  end
+
   private
+
+  def process_package_action_decision(decision)
+    task = CorrespondenceTask.find(params[:task_id])
+    requesting_user_name = task.assigned_by&.display_name
+    begin
+      case decision
+      when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["APPROVE"]
+        if task.is_a?(ReassignPackageTask)
+          task.approve(current_user, User.find_by(css_id: params[:new_assignee]))
+        elsif task.is_a?(RemovePackageTask)
+          task.approve(current_user)
+        end
+      when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["REJECT"]
+        task.reject(current_user, params[:decision_reason])
+      end
+      package_action_flash(decision.upcase, requesting_user_name)
+    rescue StandardError
+      flash_error_banner(requesting_user_name)
+    end
+  end
+
+  def package_action_flash(decision, user_name)
+    action = params[:action_type].upcase
+    flash[:custom] = {
+      title: format(
+        COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_SUCCESS[action][decision]["TITLE"],
+        user_name
+      ),
+      message: COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_SUCCESS[action][decision]["MESSAGE"]
+    }
+  end
+
+  def flash_error_banner(user_name)
+    operation_verb = params[:action_type] == "approve" ? "approved" : "rejected"
+    flash[:custom_error] = {
+      title: "Package request for #{user_name} could not be #{operation_verb}",
+      message: "Please try again at a later time or contact the Help Desk."
+    }
+  end
 
   def task_to_create
     case params[:type]

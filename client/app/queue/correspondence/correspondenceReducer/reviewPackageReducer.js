@@ -7,6 +7,7 @@ export const initialState = {
   packageDocumentType: {},
   veteranInformation: {},
   lastAction: {},
+  taskInstructions: [],
   reasonForRemovePackage: {},
   autoAssign: {
     isButtonDisabled: false,
@@ -86,10 +87,10 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.SET_REASON_REMOVE_PACKAGE:
+  case ACTIONS.SET_TASK_INSTRUCTIONS:
     return update(state, {
-      reasonForRemovePackage: {
-        $set: action.payload.reasonForRemove
+      taskInstructions: {
+        $set: action.payload.taskInstructions
       }
     });
 
@@ -128,13 +129,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
         isButtonDisabled: {
           $set: action.payload.isButtonDisabled
         }
-      }
-    });
-
-  case ACTIONS.SET_REASON_REASSIGN_PACKAGE:
-    return update(state, {
-      reasonForReassignPackage: {
-        $set: action.payload.reasonForReassignPackage
       }
     });
 

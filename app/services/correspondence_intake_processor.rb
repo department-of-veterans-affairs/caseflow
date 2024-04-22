@@ -162,45 +162,43 @@ class CorrespondenceIntakeProcessor
     mail_task_types[task_type]&.constantize
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def task_class_for_type(task_type)
-    task_types = {
-      "AddressChangeMailTask": AddressChangeMailTask.name,
-      "AodMotionMailTask": AodMotionMailTask.name,
-      "AppealWithdrawalMailTask": AppealWithdrawalMailTask.name,
-      "CavcCorrespondenceMailTask": CavcCorrespondenceMailTask.name,
-      "ClearAndUnmistakeableErrorMailTask": ClearAndUnmistakeableErrorMailTask.name,
-      "CongressionalInterestMailTask": CongressionalInterestMailTask.name,
-      "ControlledCorrespondenceMailTask": ControlledCorrespondenceMailTask.name,
-      "DeathCertificateMailTask": DeathCertificateMailTask.name,
-      "DocketSwitchMailTask": DocketSwitchMailTask.name,
-      "EvidenceOrArgumentMailTask": EvidenceOrArgumentMailTask.name,
-      "ExtensionRequestMailTask": ExtensionRequestMailTask.name,
-      "FoiaRequestMailTask": FoiaRequestMailTask.name,
-      "HearingPostponementRequestMailTask": HearingPostponementRequestMailTask.name,
-      "HearingRelatedMailTask": HearingRelatedMailTask.name,
-      "HearingWithdrawalRequestMailTask": HearingWithdrawalRequestMailTask.name,
-      "OtherMotionMailTask": OtherMotionMailTask.name,
-      "PowerOfAttorneyRelatedMailTask": PowerOfAttorneyRelatedMailTask.name,
-      "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
-      "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
-      "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
-      "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
-      "StatusInquiryMailTask": StatusInquiryMailTask.name,
-      "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
-      "FoiaRequestCorrespondenceTask": FoiaRequestCorrespondenceTask.name,
-      "StatusInquiryCorrespondenceTask": StatusInquiryCorrespondenceTask.name,
-      "OtherMotionCorrespondenceTask": OtherMotionCorrespondenceTask.name,
-      "PrivacyComplaintCorrespondenceTask": PrivacyComplaintCorrespondenceTask.name,
-      "PowerOfAttorneyRelatedCorrespondenceTask": PowerOfAttorneyRelatedCorrespondenceTask.name,
-      "CavcCorrespondenceCorrespondenceTask": CavcCorrespondenceCorrespondenceTask.name,
-      "CongressionalInterestCorrespondenceTask": CongressionalInterestCorrespondenceTask.name,
-      "PrivacyActRequestCorrespondenceTask": PrivacyActRequestCorrespondenceTask.name
-    }.with_indifferent_access
+  TASK_TYPE_MAPPINGS = {
+    "AddressChangeMailTask": AddressChangeMailTask.name,
+    "AodMotionMailTask": AodMotionMailTask.name,
+    "AppealWithdrawalMailTask": AppealWithdrawalMailTask.name,
+    "CavcCorrespondenceMailTask": CavcCorrespondenceMailTask.name,
+    "ClearAndUnmistakeableErrorMailTask": ClearAndUnmistakeableErrorMailTask.name,
+    "CongressionalInterestMailTask": CongressionalInterestMailTask.name,
+    "ControlledCorrespondenceMailTask": ControlledCorrespondenceMailTask.name,
+    "DeathCertificateMailTask": DeathCertificateMailTask.name,
+    "DocketSwitchMailTask": DocketSwitchMailTask.name,
+    "EvidenceOrArgumentMailTask": EvidenceOrArgumentMailTask.name,
+    "ExtensionRequestMailTask": ExtensionRequestMailTask.name,
+    "FoiaRequestMailTask": FoiaRequestMailTask.name,
+    "HearingPostponementRequestMailTask": HearingPostponementRequestMailTask.name,
+    "HearingRelatedMailTask": HearingRelatedMailTask.name,
+    "HearingWithdrawalRequestMailTask": HearingWithdrawalRequestMailTask.name,
+    "OtherMotionMailTask": OtherMotionMailTask.name,
+    "PowerOfAttorneyRelatedMailTask": PowerOfAttorneyRelatedMailTask.name,
+    "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
+    "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
+    "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
+    "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
+    "StatusInquiryMailTask": StatusInquiryMailTask.name,
+    "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
+    "FoiaRequestCorrespondenceTask": FoiaRequestCorrespondenceTask.name,
+    "StatusInquiryCorrespondenceTask": StatusInquiryCorrespondenceTask.name,
+    "OtherMotionCorrespondenceTask": OtherMotionCorrespondenceTask.name,
+    "PrivacyComplaintCorrespondenceTask": PrivacyComplaintCorrespondenceTask.name,
+    "PowerOfAttorneyRelatedCorrespondenceTask": PowerOfAttorneyRelatedCorrespondenceTask.name,
+    "CavcCorrespondenceCorrespondenceTask": CavcCorrespondenceCorrespondenceTask.name,
+    "CongressionalInterestCorrespondenceTask": CongressionalInterestCorrespondenceTask.name,
+    "PrivacyActRequestCorrespondenceTask": PrivacyActRequestCorrespondenceTask.name
+  }.with_indifferent_access
 
-    task_types[task_type]&.constantize
+  def task_class_for_type(task_type)
+    TASK_TYPE_MAPPINGS[task_type]&.constantize
   end
-  # rubocop:enable Metrics/MethodLength
 
   def class_for_assigned_to(assigned_to)
     available_assignees = {

@@ -8,9 +8,12 @@ import {
   CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY,
 } from 'app/../COPY';
 
-export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible, setErrorBannerVisible }) => {
+export const SubmitCorrespondenceModal = ({
+  setSubmitCorrespondenceModalVisible,
+  setErrorBannerVisible,
+  correspondence
+}) => {
 
-  const correspondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
   const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
   const relatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
@@ -32,7 +35,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const handleRouting = (status) => {
     if (status === 201) {
-      window.location.href = '/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc';
+      window.location.href = '/queue/correspondence';
     } else {
       setErrorBannerVisible(true);
       onCancel();
@@ -112,6 +115,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 };
 
 SubmitCorrespondenceModal.propTypes = {
+  correspondence: PropTypes.object,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,

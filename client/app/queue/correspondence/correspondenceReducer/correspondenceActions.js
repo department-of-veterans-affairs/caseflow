@@ -1,35 +1,6 @@
 import { ACTIONS } from './correspondenceConstants';
 import ApiUtil from '../../../util/ApiUtil';
 
-export const loadCurrentCorrespondence = (currentCorrespondence) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CURRENT_CORRESPONDENCE,
-      payload: {
-        currentCorrespondence
-      }
-    });
-  };
-
-export const loadCorrespondences = (correspondences) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCES,
-      payload: {
-        correspondences
-      }
-    });
-  };
-
-export const loadCorrespondenceInformation = (correspondenceInformation) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCE_INFORMATION,
-      payload: {
-        correspondenceInformation
-      }
-    })
-  };
 export const loadSavedIntake = (savedStore) =>
   (dispatch) => {
     dispatch({
@@ -40,7 +11,7 @@ export const loadSavedIntake = (savedStore) =>
     });
   };
 
-export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
+export const saveCurrentIntake = (currentIntake, data, onSave) => (dispatch) => {
   ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
     then((response) => {
       if (!response.ok) {
@@ -53,6 +24,9 @@ export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
           currentIntake
         }
       });
+      if (onSave) {
+        onSave();
+      }
     }).
     catch((err) => {
       console.error(new Error(`Problem with GET ${currentIntake} ${err}`));

@@ -1,12 +1,8 @@
 import React from 'react';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 
-export const CorrespondenceDetailsTable = () => {
-
-  const currentCorrespondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
-  const veteranInformation = useSelector((state) => state.intakeCorrespondence.veteranInformation);
-  const correspondenceInformation = useSelector((state) => state.intakeCorrespondence.correspondenceInformation);
+export const CorrespondenceDetailsTable = (props) => {
 
   return (
     <div>
@@ -22,12 +18,12 @@ export const CorrespondenceDetailsTable = () => {
             <th><strong>VA DOR</strong></th>
           </tr>
           <tr>
-            <td>{moment(currentCorrespondence.portal_entry_date).format('MM/DD/YYYY')}</td>
-            <td>{currentCorrespondence.source_type}</td>
-            <td>{currentCorrespondence.package_document_type_id}</td>
-            <td>{currentCorrespondence.cmp_packet_number}</td>
-            <td>{currentCorrespondence.cmp_queue_id}</td>
-            <td>{moment(currentCorrespondence.va_date_of_receipt).format('MM/DD/YYYY')}</td>
+            <td>{moment(props.correspondence.portalEntryDate).format('MM/DD/YYYY')}</td>
+            <td>{props.correspondence.sourceType}</td>
+            <td>{props.correspondence.packageDocumentType}</td>
+            <td>{props.correspondence.cmpPacketNumber}</td>
+            <td>{props.correspondence.cmpQueueId}</td>
+            <td>{moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}</td>
           </tr>
           <tr>
             <th colSpan={2}><strong>Veteran</strong></th>
@@ -35,20 +31,24 @@ export const CorrespondenceDetailsTable = () => {
           </tr>
           <tr>
             <td colSpan={2}>
-              {veteranInformation.first_name} {veteranInformation.last_name} ({veteranInformation.file_number})
+              {props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})
             </td>
-            <td>{correspondenceInformation.name}</td>
+            <td>{props.correspondence.correspondenceType}</td>
           </tr>
           <tr>
             <th colSpan={6}><strong>Notes</strong></th>
           </tr>
           <tr>
-            <td colSpan={6}>{currentCorrespondence.notes}</td>
+            <td colSpan={6}>{props.correspondence.notes}</td>
           </tr>
         </tbody>
       </table>
     </div>
   );
+};
+
+CorrespondenceDetailsTable.propTypes = {
+  correspondence: PropTypes.object
 };
 
 export default CorrespondenceDetailsTable;

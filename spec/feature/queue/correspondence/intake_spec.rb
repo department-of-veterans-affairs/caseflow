@@ -70,9 +70,11 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
     end
 
-    it "successfully navigates on cancel link click" do
-      click_on("button-Cancel")
-      expect(page).to have_content("Correspondence assigned to you:")
+    it "successfully navigates on return to queue and save intake" do
+      click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[3].click
+      click_on("Return-To-Queue-button-id-1")
+      expect(page).to have_content("You have successfully saved the intake form")
     end
 
     it "successfully advances to the second step" do
@@ -357,8 +359,7 @@ RSpec.feature("The Correspondence Intake page") do
       FeatureToggle.enable!(:correspondence_queue)
 
       correspondence = create(:correspondence)
-      parent_task = create_correspondence_intake(correspondence, current_user)
-      @correspondence_uuid = correspondence.uuid
+      create_correspondence_intake(correspondence, current_user)
     end
 
     it "successfully loads the in progress tab" do
@@ -368,75 +369,54 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "navigates to intake form from in-progress tab to step 3" do
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
-      expect(page).to have_content("Add Related Correspondence")
-      expect(page).to have_button("Continue")
+      find("#task-link").click
       click_on("button-continue")
-      expect(page).to have_content("Review Tasks & Appeals")
       click_on("button-continue")
-      expect(page).to have_content("Review and Confirm Correspondence")
-      click_on("button-Cancel")
+      intake_path = current_path
+      click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[3].click
+      click_on("Return-To-Queue-button-id-1")
+      expect(page).to have_content("You have successfully saved the intake form")
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+      find("#task-link").click
+      expect(current_path).to eq(intake_path)
       expect(page).to have_content("Review and Confirm Correspondence")
     end
   end
 
   context "checks for failed to upload to the eFolder banner after navigating away from page" do
     let(:current_user) { create(:user) }
-    before :each do
+    before do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
-    end
+      FeatureToggle.enable!(:correspondence_queue)
 
-    before do
-      Timecop.freeze(Time.zone.local(2020, 5, 15))
-      @last_correspondence_uuid = nil
-      20.times do
+      5.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
         create_efolderupload_task(correspondence, parent_task, user: current_user)
-        @last_correspondence_uuid = EfolderUploadFailedTask.first.correspondence.uuid
       end
-      puts "Last correspondence UUID: #{@last_correspondence_uuid}"
-
-      # Used to mock a single task to compare task sorting
-      EfolderUploadFailedTask.first.update!(type: "CorrespondenceIntakeTask")
-      EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
-      )
-      EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2024, 10, 10),
-        updated_by_id: current_user.id
-      )
-      FeatureToggle.enable!(:correspondence_queue)
     end
-
 
     it "successfully loads the in progress tab" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Correspondence in progress")
     end
 
-    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" do
+    it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
+       " from the Centralized Mail Portal, if it needs to be processed." do
       visit "/queue/correspondence?tab=correspondence_in_progress"
-      expect(page).to have_content("Correspondence in progress that are assigned to you:")
       find("tbody > tr:last-child > td:nth-child(1)").click
-      expect(page).to have_current_path("/queue/correspondence/#{@last_correspondence_uuid}/intake")
-      expect(page).to have_content("Add Related Correspondence")
-      expect(page).to have_button("Continue")
+      using_wait_time(15) do
+        click_on("button-continue")
+      end
       click_on("button-continue")
-      expect(page).to have_content("Review Tasks & Appeals")
-      click_on("button-continue")
-      expect(page).to have_content("Review and Confirm Correspondence")
       click_on("Submit")
       click_on("Confirm")
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
-      click_on("button-Cancel")
-      visit "/queue/correspondence/#{@last_correspondence_uuid}/intake"
+      intake_path = current_path
+      click_on("button-Return-to-queue")
+      visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end
   end

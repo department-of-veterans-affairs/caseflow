@@ -5,11 +5,13 @@ class CorrespondenceTask < Task
   self.abstract_class = true
 
   before_create :verify_org_task_unique
-  belongs_to :appeal, class_name: "Correspondence", foreign_key: :appeal_id
+  belongs_to :appeal, class_name: "Correspondence"
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
 
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
+
+  delegate :nod, to: :correspondence
 
   def self.package_action_task_names
     [
@@ -18,10 +20,6 @@ class CorrespondenceTask < Task
       SplitPackageTask.name,
       MergePackageTask.name
     ]
-  end
-
-  def nod
-    correspondence.nod
   end
 
   def verify_org_task_unique

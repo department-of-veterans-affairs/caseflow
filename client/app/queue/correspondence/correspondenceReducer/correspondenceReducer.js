@@ -5,13 +5,11 @@ export const initialState = {
   taskRelatedAppealIds: [],
   newAppealRelatedTasks: [],
   fetchedAppeals: [],
-  correspondences: [],
   radioValue: '0',
   relatedCorrespondences: [],
   selectedTasks: [],
   mailTasks: [],
   unrelatedTasks: [],
-  currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: {},
@@ -24,26 +22,6 @@ export const initialState = {
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case ACTIONS.LOAD_CURRENT_CORRESPONDENCE:
-    return update(state, {
-      currentCorrespondence: {
-        $set: action.payload.currentCorrespondence
-      }
-    });
-
-  case ACTIONS.LOAD_CORRESPONDENCES:
-    return update(state, {
-      correspondences: {
-        $set: action.payload.correspondences
-      }
-    });
-
-  case ACTIONS.LOAD_CORRESPONDENCE_INFORMATION:
-    return update(state, {
-      correspondenceInformation: {
-        $set: action.payload.correspondenceInformation
-      }
-    });
   case ACTIONS.LOAD_SAVED_INTAKE:
     return action.payload.savedStore;
 
@@ -96,7 +74,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
 
     return update(state, {
       relatedCorrespondences: {
-        $set: state.relatedCorrespondences.filter((corr) => corr.id !== action.payload.correspondence.id)
+        $set: state.relatedCorrespondences.filter((corr) => corr.uuid !== action.payload.correspondence.uuid)
       }
     });
 

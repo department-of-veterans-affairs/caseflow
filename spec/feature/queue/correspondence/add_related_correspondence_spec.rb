@@ -7,6 +7,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   before(:each) do
+    FeatureToggle.enable!(:correspondence_queue)
     organization.add_user(bva_user)
     bva_user.reload
   end
@@ -66,7 +67,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
         associate_with_prior_mail_radio_options[:yes].click
 
-        expect(page).to have_content("Viewing 1-15 of 54 total")
+        expect(page).to have_content("Viewing 1-15 of 53 total")
       end
 
       it "table has column headers" do
@@ -89,7 +90,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         expect(page).to have_content("1/1/2023")
         expect(page).to have_content("Mail")
         expect(page).to have_content("15")
-        expect(page).to have_content("9")
+        expect(page).to have_content("0304")
         expect(page).to have_content("This is a test note")
       end
 
@@ -112,13 +113,13 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
         expect(page.has_button?("Previous")).to be(true)
         expect(page.has_button?("Next")).to be(true)
-        expect(page).to have_content("Viewing 16-30 of 54 total")
+        expect(page).to have_content("Viewing 16-30 of 53 total")
 
         click_button("4")
 
         expect(page.has_button?("Next")).to be(false)
         expect(page.has_button?("Previous")).to be(true)
-        expect(page).to have_content("Viewing 46-54 of 54 total")
+        expect(page).to have_content("Viewing 46-53 of 53 total")
       end
 
       it "Checkbox values persist through page navigation" do

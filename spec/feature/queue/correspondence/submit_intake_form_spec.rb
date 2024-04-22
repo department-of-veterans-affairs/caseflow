@@ -17,7 +17,7 @@ RSpec.feature("Correspondence Intake submission") do
         using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
-        expect(Correspondence.first.related_correspondences).to eq([Correspondence.second])
+        expect(Correspondence.first.related_correspondences).to eq([Correspondence.third])
       end
     end
   end
@@ -115,7 +115,9 @@ RSpec.feature("Correspondence Intake submission") do
         using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
-        expect(Correspondence.first.appeals).to eq([Appeal.fifth])
+        # The interactions above chose last checkbox on the table which is the 15th appeal due to pagination settings.
+        # If the pagination requirements change, this expectation will need to be updated.
+        expect(Correspondence.first.appeals).to eq([Appeal.find(15)])
         expect(Correspondence.first.appeals[0].tasks.pluck(:type)).to include("ClearAndUnmistakeableErrorMailTask")
       end
     end
@@ -185,7 +187,9 @@ RSpec.feature("Correspondence Intake submission") do
         using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
-        expect(Correspondence.first.appeals).to eq([Appeal.fifth])
+        # The interactions above chose last checkbox on the table which is the 15th appeal due to pagination settings.
+        # If the pagination requirements change, this expectation will need to be updated.
+        expect(Correspondence.first.appeals).to eq([Appeal.find(15)])
       end
     end
   end
