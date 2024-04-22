@@ -249,11 +249,12 @@ describe Task, :all_dbs do
     context "when there is an attorney_case_review" do
       let!(:child) { create(:task, type: Task.name, parent: task) }
       let!(:attorney_case_reviews) do
-        create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
+        create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith")).reload
       end
 
       it "should return the most recent attorney case review" do
-        expect(task.prepared_by_display_name).to eq(%w[Bob Smith])
+        child.reload
+        expect(task.reload.prepared_by_display_name).to eq(%w[Bob Smith])
       end
     end
   end

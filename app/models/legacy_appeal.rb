@@ -5,8 +5,6 @@
 # guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
-
-# rubocop:disable Metrics/ClassLength
 class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
@@ -83,6 +81,12 @@ class LegacyAppeal < CaseflowRecord
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
                 :created_at, :document_id, :assigned_by, :updated_at, :attorney_id, :appeal_split_process
 
+  # TODO: Testing bulk preloading veterans. Also for serialization
+  attr_writer :veteran
+
+  # Testing attributes for serialization of veteran by bypassing BGS for speed
+  attr_accessor :veteran_file_number_fast, :veteran_date_of_death_fast
+
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher
 
@@ -112,7 +116,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
-  # rubocop:disable Layout/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
@@ -140,7 +143,6 @@ class LegacyAppeal < CaseflowRecord
     vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
-  # rubocop:enable Layout/LineLength
 
   # Codes for Appeals Status API
   TYPE_CODES = {
@@ -203,6 +205,7 @@ class LegacyAppeal < CaseflowRecord
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def vbms_id
     super || begin
+      # puts "so basically I should never see this"
       check_and_load_vacols_data!
       save if persisted?
       super
@@ -398,6 +401,8 @@ class LegacyAppeal < CaseflowRecord
       VACOLS::Representative::CONTESTED_REPTYPES.values.pluck(:code).include?(r.reptype)
     end
   end
+
+  alias contested_claim? contested_claim
 
   def claimant
     if appellant_is_not_veteran
@@ -633,8 +638,9 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
-                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+    # Note: FeatureToggle is insanely slow. I would say forgo feature toggle and just hope the frontend is okay.
+    # return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
+    #                     FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
     issues.any?(&:mst_status) ||
       (special_issue_list &&
@@ -643,8 +649,9 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def pact?
-    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) &&
-                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+    # TODO: Note: FeatureToggle is insanely slow. I would say forgo feature toggle and just hope the frontend is okay.
+    # return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) &&
+    #                     FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
     issues.any?(&:pact_status)
   end
@@ -718,9 +725,12 @@ class LegacyAppeal < CaseflowRecord
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
+    # puts "how many times do I see this???"
     # If testing against a local eFolder express instance then we want to pass DEMO
     # values, so we should not sanitize the vbms_id.
     return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+
+    # puts "do I ever get here????????"
 
     LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
@@ -730,23 +740,61 @@ class LegacyAppeal < CaseflowRecord
   # Prefer what we have in the Veteran record since that originates from VBMS
   # and therefore should be valid for external use.
   def veteran_file_number
-    vacols_file_number = sanitized_vbms_id
+    @veteran_file_number ||= begin
+      # This is dramatically faster so it's veteran.file_number that triggers Redis somewhere in the callstack
+      # TODO: Figure out a way around this without circumventing the veteran model
+      # return sanitized_vbms_id
+      # Testing to see if this is why it's so slow?
+      # Is preloading veteran actually the problem???? Is it a bgs call because of veteran.file_number???
+      # I can't figure this crap out. Where are the bgs calls??????
+      # This is somehow even slower
+      # There's not really a way to speed this up unless you either forgo bgs calls during group serialization
+      # Or just accept that every now and then someone is going to get a slow load while the cache updates.
+      # Even if the cache hits/misses it's still expensive to check it hundreds of times
+      # I don't understand why redis is triggered here since it's already preloaded in legacy_work_queue
+      # It even references veteran.file_number when building the veteran hash, so it makes even less sense
+      # return veteran.file_number if veteran
 
-    return vacols_file_number unless veteran
+      vacols_file_number = sanitized_vbms_id
 
-    caseflow_file_number = veteran.file_number
-    if vacols_file_number != caseflow_file_number
-      MetricsService.increment_counter(
-        metric_group: "database_disagreement",
-        metric_name: "file_number",
-        app_name: RequestStore[:application],
-        attrs: {
-          appeal_id: external_id
-        }
-      )
+      # puts "legacy_appeal.rb in veteran_file_number"
+
+      return vacols_file_number unless veteran
+
+      caseflow_file_number = veteran.file_number
+      if vacols_file_number != caseflow_file_number
+        # puts "I shouldn't be seeing this right?????"
+        MetricsService.increment_counter(
+          metric_group: "database_disagreement",
+          metric_name: "file_number",
+          app_name: RequestStore[:application],
+          attrs: {
+            appeal_id: external_id
+          }
+        )
+      end
+      caseflow_file_number
     end
-    caseflow_file_number
   end
+
+  # def veteran_file_number
+  #   vacols_file_number = sanitized_vbms_id
+
+  #   return vacols_file_number unless veteran
+
+  #   caseflow_file_number = veteran.file_number
+  #   if vacols_file_number != caseflow_file_number
+  #     DataDogService.increment_counter(
+  #       metric_group: "database_disagreement",
+  #       metric_name: "file_number",
+  #       app_name: RequestStore[:application],
+  #       attrs: {
+  #         appeal_id: external_id
+  #       }
+  #     )
+  #   end
+  #   caseflow_file_number
+  # end
 
   def pending_eps
     end_products&.select(&:dispatch_conflict?)
@@ -792,6 +840,8 @@ class LegacyAppeal < CaseflowRecord
   def matchable_to_request_issue?(receipt_date)
     return false unless issues.any?
     return true if active?
+
+    # puts "in matchable to request_issue in legacy_appeal.rb?"
 
     covid_flag = FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user])
 
@@ -955,11 +1005,9 @@ class LegacyAppeal < CaseflowRecord
     Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  # rubocop:disable Naming/PredicateName
   def is_legacy?
     true
   end
-  # rubocop:enable Naming/PredicateName
 
   private
 
@@ -1285,4 +1333,3 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

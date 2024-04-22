@@ -11,7 +11,8 @@ describe PostDecisionMotionUpdater, :all_dbs do
     JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
-  let(:appeal) { create(:appeal) }
+  # Same factory issue
+  let(:appeal) { create(:appeal).reload }
   let!(:orig_decision_issues) do
     Array.new(3) do
       create(

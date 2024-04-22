@@ -553,9 +553,12 @@ module Seeds
 
       atty = User.find_by(full_name: attorney_name) || create(:user, station_id: 101, full_name: attorney_name)
       create(:staff, :attorney_role, user: atty)
-      atty_task_params = { appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }
+      atty_task_params = { appeal: appeal, parent: judge_task, assigned_to: atty, assigned_by: judge }
       atty_task = AttorneyTask.create!(atty_task_params)
-
+      # This stupid comment in judge assign task is causing issues
+      # Tell sentry so we know this is still happening. Remove this in a month
+      # The atty task update function changes the type of the JudgeAssignTask to
+      # a JudgeDecisionReviewTask.name which is a bit of a rough situation
       atty_task.update!(status: Constants.TASK_STATUSES.completed)
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
       distribution_task.update!(status: Constants.TASK_STATUSES.completed)

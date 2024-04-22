@@ -23,6 +23,7 @@ import { setMostRecentlyHeldHearingForAppeal } from 'app/queue/QueueActions';
 
 class HearingBadge extends React.PureComponent {
   componentDidMount = () => {
+    // TODO: Turn this back on eventually. It just clogs up the logs for now with hearings requests
     if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
       ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
         this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, response.body);

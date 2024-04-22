@@ -205,7 +205,9 @@ class BulkTaskReassignment
 
       if !dry_run
         judge_review_tasks.each do |task|
-          attorney_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+          # attorney_task = task.children_attorney_tasks.not_cancelled.order(:assigned_at).last
+          # Added the old attorney tasks query back in here
+          attorney_task = task.children.where(type: AttorneyTask.name).not_cancelled.order(:assigned_at).last
           reassign_judge_review_task(task, attorney_task)
         end
       end

@@ -194,7 +194,7 @@ feature "Unrecognized appellants", :postgres do
         expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_TITLE)
         expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_MESSAGE)
 
-        appellant = appeal_with_no_poa.claimant.unrecognized_appellant
+        appellant = appeal_with_no_poa.reload.claimant.unrecognized_appellant
         expect(appellant).to have_attributes(poa_participant_id: nil)
 
         expect(appellant.power_of_attorney).to have_attributes(
@@ -225,7 +225,7 @@ feature "Unrecognized appellants", :postgres do
         expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_TITLE)
         expect(page).to have_content(COPY::EDIT_POA_SUCCESS_ALERT_MESSAGE)
 
-        appellant = appeal_with_no_poa.claimant.unrecognized_appellant
+        appellant = appeal_with_no_poa.reload.claimant.unrecognized_appellant
         expect(appellant).to have_attributes(poa_participant_id: attorney.participant_id)
       end
     end

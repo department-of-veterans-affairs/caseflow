@@ -9,7 +9,19 @@ class QueueController < ApplicationController
   end
 
   def index
-    render "queue/index"
+    puts "---------------------------------- queue index -----------------------------------"
+    start_time1 = Time.zone.now
+    render_block = nil
+    StackProf.run(mode: :wall, out: "queue_index.dump") do
+      # primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+      # primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks_in_queue(tasks, testing_appeal_includes)
+      render_block = render("queue/index")
+    end
+    end_time1 = Time.zone.now
+    puts "Queue index render took: #{(end_time1 - start_time1) * 1000}"
+    # render "queue/index"
+    # byebug
+    render_block
   end
 
   def check_queue_out_of_service

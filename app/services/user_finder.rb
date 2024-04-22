@@ -36,9 +36,21 @@ class UserFinder
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       User.list_hearing_coordinators
     when "non_judges"
-      User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id))
+      # Less loops
+      judge_ids = JudgeTeam.all.each_with_object([]) do |team, ids|
+        judge = team.judge
+        ids << judge.id if judge
+      end
+      # User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id))
+      User.where.not(id: judge_ids)
     when "non_dvcs"
-      User.where.not(id: DvcTeam.all.map(&:dvc).reject(&:nil?).map(&:id))
+      # Should be less looping
+      dvc_ids = DvcTeam.all.each_with_object([]) do |team, ids|
+        dvc = team.dvc
+        ids << dvc.id if dvc
+      end
+      # User.where.not(id: DvcTeam.all.map(&:dvc).reject(&:nil?).map(&:id))
+      User.where.not(id: dvc_ids)
     else
       []
     end

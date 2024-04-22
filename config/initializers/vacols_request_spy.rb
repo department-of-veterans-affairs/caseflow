@@ -38,6 +38,8 @@ if DatabaseRequestCounter.valid_env?
     sleep(latency / 1000.0)
   end
 
+  # This is a cool monkey patch.
+  # Does it actually do anything without the ENV variable set though
   class ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter
     def execute(*args)
       vacols_request_spy(args.first)

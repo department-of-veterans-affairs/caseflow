@@ -78,8 +78,12 @@ class Claimant < CaseflowRecord
     false
   end
 
+  # Why is there a getter defined here???? so it auto creates it?
   def person
-    @person ||= Person.find_or_create_by_participant_id(participant_id)
+    # puts "is this method being called instead of using the association????"
+    # @person ||= Person.find_or_create_by_participant_id(participant_id)
+    # This should fix it so that it uses the association instead of always doing a database call
+    super || Person.find_or_create_by_participant_id(participant_id)
   end
 
   def find_power_of_attorney

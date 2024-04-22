@@ -41,9 +41,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
   }
 
-  def username
-    css_id
-  end
+  alias_attribute :name, :css_id
+  alias_attribute :username, :css_id
+
+  # def username
+  #   css_id
+  # end
 
   def roles
     (self[:roles] || []).inject([]) do |result, role|
@@ -104,7 +107,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_edit_nod_date?
-    ClerkOfTheBoard.singleton.users.include?(self) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+    # ClerkOfTheBoard.singleton.users.include?(self) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+    member_of_organization?(ClerkOfTheBoard) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?
@@ -112,11 +116,13 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def in_hearing_or_transcription_organization?
-    HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
+    # HearingsManagement.singleton.users.include?(self) || TranscriptionTeam.singleton.users.include?(self)
+    in_hearing_management_team? || member_of_organization?(TranscriptionTeam)
   end
 
   def can_withdraw_issues?
-    CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+    # CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+    member_of_organization?(CaseReview) || %w[NWQ VACO].exclude?(regional_office)
   end
 
   def can_split_appeal?(appeal)
@@ -124,31 +130,36 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def member_of_cob_or_ssc?
-    member_of_organization?(ClerkOfTheBoard.singleton) || member_of_organization?(SupervisorySeniorCouncil.singleton)
+    member_of_organization?(ClerkOfTheBoard) || member_of_organization?(SupervisorySeniorCouncil)
   end
 
   def can_edit_issues?
-    CaseReview.singleton.users.include?(self) || can_intake_appeals?
+    # CaseReview.singleton.users.include?(self) || can_intake_appeals?
+    member_of_organization?(CaseReview) || can_intake_appeals?
   end
 
   def can_edit_cavc_remands?
-    CavcLitigationSupport.singleton.admins.include?(self)
+    # CavcLitigationSupport.singleton.admins.include?(self)
+    check_for_org_admin?(CavcLitigationSupport)
   end
 
   def can_edit_cavc_dashboards?
-    OaiTeam.singleton.users.include?(self)
+    # OaiTeam.singleton.users.include?(self)
+    member_of_organization?(OaiTeam)
   end
 
   def can_view_cavc_dashboards?
-    OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+    # OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+    can_edit_cavc_dashboards? || member_of_organization?(OccTeam)
   end
 
   def can_intake_appeals?
-    BvaIntake.singleton.users.include?(self)
+    # BvaIntake.singleton.users.include?(self)
+    member_of_organization?(BvaIntake)
   end
 
   def administer_org_users?
-    admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva)
   end
 
   # editing logic for MST and PACT
@@ -157,7 +168,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
                         FeatureToggle.enabled?(:pact_identification) ||
                         FeatureToggle.enabled?(:legacy_mst_pact_identification)
 
-    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
+    # BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard)
+    # BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard)
+    check_for_org_admin?(BvaIntake) || member_of_organization?(ClerkOfTheBoard)
   end
 
   def can_view_overtime_status?
@@ -279,15 +292,19 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def camo_employee?
-    member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
+    member_of_organization?(VhaCamo) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
+  end
+
+  def aod_team_member?
+    member_of_organization?(AodTeam)
   end
 
   def vha_employee?
-    member_of_organization?(VhaBusinessLine.singleton)
+    member_of_organization?(VhaBusinessLine)
   end
 
   def specialty_case_team_coordinator?
-    member_of_organization?(SpecialtyCaseTeam.singleton)
+    member_of_organization?(SpecialtyCaseTeam)
   end
 
   def organization_queue_user?
@@ -332,7 +349,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def administered_teams
+    # Try memo here to see if it can cut out some db calls
+    # @administered_teams ||= organizations_users.includes(:organization).admin.map(&:organization).compact
+    # Memoing on this seems to causes problems, but it should be possile
     organizations_users.includes(:organization).admin.map(&:organization).compact
+  end
+
+  def check_for_org_admin?(org)
+    administered_teams.any? { |team| team.is_a?(org) }
+    # organizations_users.includes(:organization).admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -395,7 +420,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
   # rubocop:enable Metrics/MethodLength
 
+  # This makes this method a bit less safe to use now. It won't work for subclasses or "teams" like
+  # JudgeTeams or VhaProgramOffices, but it removes a lot of DB calls for singletons when is_a? is good enough
+  # Might make a seperate method that is more specific that uses the old .include? check
   def member_of_organization?(org)
+    # organizations.include?(org)
+    organizations.any? { |organization| organization.is_a?(org) }
+  end
+
+  # This is the old method and should be used for NonSingleton Organizations
+  def member_of_team?(org)
     organizations.include?(org)
   end
 
@@ -453,38 +487,44 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_edit_unrecognized_poa?
-    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners, BvaIntake].map(&:singleton)
-    colocated_in_vacols? || allowed_orgs.any? { |org| org.user_has_access?(self) }
+    # allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners, BvaIntake].map(&:singleton)
+    # colocated_in_vacols? || allowed_orgs.any? { |org| org.user_has_access?(self) }
+    allowed_orgs = [LitigationSupport, ClerkOfTheBoard, BoardProductOwners, BvaIntake]
+    colocated_in_vacols? || allowed_orgs.any? { |org| member_of_organization?(org) }
   end
 
   def can_act_on_behalf_of_judges?
-    member_of_organization?(SpecialCaseMovementTeam.singleton)
+    member_of_organization?(SpecialCaseMovementTeam)
   end
 
   def can_view_team_management?
-    member_of_organization?(Bva.singleton)
+    member_of_organization?(Bva)
   end
 
   def in_hearing_management_team?
-    member_of_organization?(HearingsManagement.singleton)
+    member_of_organization?(HearingsManagement)
   end
 
   # Purpose: Checks if current user is a hearing admin user
   # Returns: Boolean for whether or not the user is a hearing admin
   def in_hearing_admin_team?
-    member_of_organization?(HearingAdmin.singleton)
+    member_of_organization?(HearingAdmin)
   end
 
   def can_view_judge_team_management?
-    DvcTeam.for_dvc(self).present?
+    # DvcTeam.for_dvc(self).present?
+    # In theory this should be the same thing?
+    check_for_org_admin?(DvcTeam)
   end
 
   def can_view_user_management?
-    member_of_organization?(Bva.singleton)
+    member_of_organization?(Bva)
   end
 
   def show_regional_office_in_queue?
-    HearingsManagement.singleton.user_has_access?(self)
+    # HearingsManagement.singleton.user_has_access?(self)
+    # member_of_organization?(HearingsManagement)
+    in_hearing_management_team?
   end
 
   def can_be_assigned_legacy_tasks?
@@ -549,7 +589,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
     # :nocov:
 
-    ### Desciption: Retrieves the system user based on the current raisl environment
+    ### Desciption: Retrieves the system user based on the current rails environment
     ### Environments are listed here config/environments
     ### The Rails.current_env name comes from the environment file name
     ### Example: if development.rb is the current environment then Rails.current_env == development

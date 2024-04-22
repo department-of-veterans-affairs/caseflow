@@ -7,8 +7,8 @@
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
     userIsCamoEmployee: current_user.camo_employee?,
+    canEditAod: current_user.aod_team_member?,
     userIsSCTCoordinator: current_user.specialty_case_team_coordinator?,
-    canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
@@ -24,7 +24,7 @@
     canEditCavcRemands: current_user.can_edit_cavc_remands?,
     canEditCavcDashboards: current_user.can_edit_cavc_dashboards?,
     canViewCavcDashboards: current_user.can_view_cavc_dashboards?,
-    userIsCobAdmin: ClerkOfTheBoard.singleton.admins.include?(current_user),
+    userIsCobAdmin: current_user.check_for_org_admin?(ClerkOfTheBoard),
     featureToggles: {
       collect_video_and_central_emails: FeatureToggle.enabled?(:collect_video_and_central_emails, user: current_user),
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),

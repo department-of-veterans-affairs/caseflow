@@ -174,6 +174,7 @@ class QueueTab
   # remove PostSendInitialNotificationLetterHoldingTasks so that they only show in on_hold tab
   def parents_with_child_timed_hold_task_ids
     on_hold_task_ids = on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
+    # ????????????????????????????????????????? This is weird
     on_hold_task_ids.delete_if { |id| Task.find(id).class == PostSendInitialNotificationLetterHoldingTask }
     on_hold_task_ids
   end
@@ -203,7 +204,16 @@ class QueueTab
 
   def task_includes
     [
-      { appeal: [:available_hearing_locations, :claimants, :work_mode, :latest_informal_hearing_presentation_task] },
+      {
+        appeal: [
+          :available_hearing_locations,
+          :claimants,
+          :work_mode,
+          :latest_informal_hearing_presentation_task,
+          :appeal_views,
+          :special_issue_list
+        ]
+      },
       :assigned_by,
       :assigned_to,
       :children,

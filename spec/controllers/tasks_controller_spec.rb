@@ -1351,7 +1351,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
              vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
     end
     let!(:appeal) do
-      create(:appeal, veteran: create(:veteran))
+      create(:appeal, veteran: create(:veteran)).reload
     end
 
     let!(:colocated_task) { create(:colocated_task, :ihp, appeal: legacy_appeal, assigned_by: assigning_user) }
@@ -1373,6 +1373,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
 
+        # TODO: Investigate why this is 22 instead of 16 now???
         expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(16)
       end
     end

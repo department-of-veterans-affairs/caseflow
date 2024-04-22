@@ -5,7 +5,8 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
     context "request to create as aod" do
       let(:aod) { AodTeam.singleton }
       let(:aod_user) { create(:user) }
-      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      # Same problem
+      let(:appeal) { create(:appeal, veteran: create(:veteran)).reload }
 
       before do
         aod.add_user(aod_user)

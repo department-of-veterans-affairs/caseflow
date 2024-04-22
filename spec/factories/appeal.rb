@@ -74,6 +74,7 @@ FactoryBot.define do
           type: "VeteranClaimant"
         )
       end
+      appeal.reload
     end
 
     transient do

@@ -64,6 +64,11 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
         )
       end
 
+      before do
+        # TODO: Look into whether or not this is actually a problem
+        allow_any_instance_of(Person).to receive(:name).and_return(nil)
+      end
+
       it "returns placeholder 'Unknown'" do
         serializable_hash = {
           id: task.id.to_s,
@@ -105,6 +110,9 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             business_line: non_comp_org.url
           }
         }
+        # puts appeal.inspect
+        # puts task.appeal.inspect
+        p task.appeal.claimants
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
       end
     end

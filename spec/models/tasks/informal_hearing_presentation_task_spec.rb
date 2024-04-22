@@ -77,13 +77,15 @@ describe InformalHearingPresentationTask, :postgres do
   describe ".when poa is updated" do
     let(:old_poa) { create(:vso, name: "Old POA") }
     let(:appeal) do
-      create(:appeal, veteran: create(:veteran)) do |appeal|
+      new_appeal = create(:appeal, veteran: create(:veteran)) do |appeal|
         create(
           :informal_hearing_presentation_task,
           appeal: appeal,
           assigned_to: old_poa
         )
       end
+      # Same factory problem
+      new_appeal.reload
     end
 
     context "update to new IHP writing POA" do

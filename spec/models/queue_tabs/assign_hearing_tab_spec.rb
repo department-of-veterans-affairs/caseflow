@@ -183,6 +183,8 @@ describe AssignHearingTab do
 
     describe ".power_of_attorney_name_options" do
       before do
+        # Same factory caching issue
+        appeal.reload
         create(
           :bgs_power_of_attorney,
           :with_name_cached,

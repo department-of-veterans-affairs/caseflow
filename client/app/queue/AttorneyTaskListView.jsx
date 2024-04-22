@@ -48,6 +48,8 @@ class AttorneyTaskListView extends React.PureComponent {
   render = () => {
     const { error, success } = this.props;
 
+    console.log(this.props.workableTasks);
+
     return <AppSegment filledBackground styling={containerStyles}>
       {error && <Alert type="error" title={error.title}>
         {error.detail}

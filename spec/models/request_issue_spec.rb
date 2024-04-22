@@ -332,6 +332,8 @@ describe RequestIssue, :all_dbs do
     let(:folder_date) { 5.days.ago.to_date }
     subject { rating_request_issue.handle_legacy_issues! }
     it "saves legacy appeal disposition and decision date " do
+      review.reload
+      rating_request_issue.reload
       subject
       expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
       expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)

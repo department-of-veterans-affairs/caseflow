@@ -50,7 +50,7 @@ RSpec.feature "VhaTeamManagement" do
       expect(page).to have_content("#{requestor.full_name} (#{requestor.css_id})")
 
       # Verify the user was added to the vha org
-      expect(requestor.reload.member_of_organization?(requested_org)).to eq(true)
+      expect(requestor.reload.member_of_organization?(requested_org.class)).to eq(true)
 
       # Verify the request data
       expect(vha_request.reload.status).to eq("approved")
@@ -139,8 +139,8 @@ RSpec.feature "VhaTeamManagement" do
       expect(page).to have_content("#{requestor.full_name} (#{requestor.css_id})")
 
       # Verify the user was added to the camo org and also the vha organization
-      expect(requestor.reload.member_of_organization?(requested_org)).to eq(true)
-      expect(requestor.member_of_organization?(vha_business_line)).to eq(true)
+      expect(requestor.reload.member_of_organization?(requested_org.class)).to eq(true)
+      expect(requestor.member_of_organization?(vha_business_line.class)).to eq(true)
 
       # Verify the request data
       expect(vha_request.reload.status).to eq("approved")
@@ -174,8 +174,8 @@ RSpec.feature "VhaTeamManagement" do
         expect(page).to_not have_content("#{requestor.full_name} (#{requestor.css_id})")
 
         # Verify the user was not added to the camo org and also not added to the vha org
-        expect(requestor.reload.member_of_organization?(requested_org)).to eq(false)
-        expect(requestor.member_of_organization?(vha_business_line)).to eq(false)
+        expect(requestor.reload.member_of_organization?(requested_org.class)).to eq(false)
+        expect(requestor.member_of_organization?(vha_business_line.class)).to eq(false)
 
         # Verify the request data
         expect(vha_request.reload.status).to eq("denied")

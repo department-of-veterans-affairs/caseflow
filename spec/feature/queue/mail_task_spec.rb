@@ -9,6 +9,7 @@ RSpec.feature "MailTasks", :postgres do
   before do
     User.authenticate!(user: user)
     Seeds::NotificationEvents.new.seed!
+    BvaIntake.singleton
   end
 
   describe "Assigning a mail team task to a team member" do

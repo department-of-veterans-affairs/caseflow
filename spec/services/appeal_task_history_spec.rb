@@ -9,6 +9,7 @@ describe AppealTaskHistory, :postgres do
 
   before do
     PaperTrail.request.whodunnit = user.id
+
     Timecop.freeze(Time.zone.now) # don't bother tracking timestamp changes in specs
   end
 
@@ -37,13 +38,13 @@ describe AppealTaskHistory, :postgres do
         expect(appeal_event).to be_a(TaskEvent)
         expect(appeal_event.who).to eq(user)
         expect(appeal_event.summary).to match(/\[#{user.css_id}\]/)
-        expect(appeal_event.diff).to eq(diff)
+        expect(appeal_event.diff).to match(diff)
 
         legacy_appeal_event = legacy_appeal_history.events[1]
         expect(legacy_appeal_event).to be_a(TaskEvent)
         expect(legacy_appeal_event.who).to eq(user)
         expect(legacy_appeal_event.summary).to match(/\[#{user.css_id}\]/)
-        expect(legacy_appeal_event.diff).to eq(diff)
+        expect(legacy_appeal_event.diff).to match(diff)
       end
     end
   end

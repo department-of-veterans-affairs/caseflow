@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
 describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
-  let!(:appeal_with_zero_tasks) { create(:appeal) }
+  let!(:appeal_with_zero_tasks) { create(:appeal).reload }
   let!(:appeal_with_one_task) { create(:root_task, :assigned).appeal }
   let!(:appeal_with_only_active_track_veteran_task) do
-    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal = create(:appeal, :with_post_intake_tasks).reload
     appeal.tasks.find_by(type: :DistributionTask).descendants.each(&:cancelled!)
     create(:track_veteran_task, :assigned, parent: appeal.root_task)
     appeal
   end
   let!(:appeal_with_two_tasks_not_distribution) do
-    appeal = create(:appeal)
+    appeal = create(:appeal).reload
     create(:root_task, appeal: appeal)
     create(:track_veteran_task, :assigned, parent: appeal.root_task)
     appeal
   end
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
   let!(:appeal_with_all_tasks_on_hold) do
-    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal = create(:appeal, :with_post_intake_tasks).reload
     hearing_task = create(:hearing_task, parent: appeal.root_task)
     schedule_hearing_task = create(:schedule_hearing_task, parent: hearing_task)
     appeal.root_task.descendants.each(&:on_hold!)
-    schedule_hearing_task.completed!
+    schedule_hearing_task.reload.completed!
     appeal
   end
   let!(:appeal_with_fully_on_hold_subtree) do
-    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal = create(:appeal, :with_post_intake_tasks).reload
     task = create(:privacy_act_task, appeal: appeal, parent: appeal.root_task)
     task.descendants.each(&:on_hold!)
     appeal
@@ -39,18 +39,19 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     appeal
   end
   let!(:appeal_with_decision_documents) do
-    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal = create(:appeal, :with_post_intake_tasks).reload
     create(:decision_document, appeal: appeal)
     appeal
   end
   let!(:dispatched_appeal_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
     create(:bva_dispatch_task, :completed, appeal: appeal)
+    appeal.reload
     create(:decision_document, citation_number: "A18123456", appeal: appeal)
     appeal
   end
   let!(:incompletely_dispatched_appeal_on_hold) do
-    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal = create(:appeal, :with_post_intake_tasks).reload
     create(:bva_dispatch_task, :completed, appeal: appeal)
     appeal
   end
@@ -65,6 +66,7 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
         appeal_with_one_task,
         appeal_with_all_tasks_on_hold,
         appeal_with_fully_on_hold_subtree,
+        # This is the one that is now failing for some reason and I have no idea why
         appeal_with_failed_reactivated_task,
         appeal_with_two_tasks_not_distribution,
         dispatched_appeal_on_hold
@@ -72,6 +74,8 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     end
 
     it "returns array of appeals that look stuck" do
+      puts appeal_with_failed_reactivated_task.treee
+      # The appeal_with_failed_reactivated_task is supposed to be assigned instead of on_hold. That's why
       expect(subject).to match_array(stuck_appeals)
     end
   end

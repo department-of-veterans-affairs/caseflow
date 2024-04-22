@@ -21,7 +21,8 @@ RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, type: :contro
       let!(:ama_poa) do
         create(
           :bgs_power_of_attorney,
-          claimant_participant_id: ama_hearing.appeal.claimant.participant_id,
+          # Same factory reloading issue
+          claimant_participant_id: ama_hearing.appeal.reload.claimant.participant_id,
           representative_name: ama_poa_name
         )
       end

@@ -103,6 +103,8 @@ describe AppellantSubstitution do
         expect(subject.target_appeal.docket_number).to eq subject.source_appeal.docket_number
         expect(subject.substitute_claimant.participant_id).to eq subject.substitute_participant_id
         expect(subject.target_appeal.claimant.participant_id).to eq subject.substitute_participant_id
+        # This has to be reloaded now that claimant is cached as an association
+        subject.source_appeal.reload
         expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
         expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
 

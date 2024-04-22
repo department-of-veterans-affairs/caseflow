@@ -64,6 +64,8 @@ class QueueLoadingScreen extends React.PureComponent {
       timeout: { response: getMinutesToMilliseconds(5) }
     };
 
+    console.log(`In queue loading screen in loadLegacyQueue for url: ${urlToLoad}`);
+
     return ApiUtil.get(urlToLoad, requestOptions).then((response) => {
       this.props.onReceiveQueue({
         amaTasks: {},

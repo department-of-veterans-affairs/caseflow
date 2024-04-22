@@ -62,6 +62,7 @@ class ScheduleHearingTask < Task
   end
 
   def update_from_params(params, current_user)
+    # current_user.reload
     multi_transaction do
       if current_user.vso_employee?
         verify_vso_can_change_hearing_to_virtual!(params)
@@ -78,6 +79,7 @@ class ScheduleHearingTask < Task
         change_hearing_request_type(params, current_user)
       else
         created_tasks = create_schedule_hearing_tasks(params)
+        reload
 
         # super returns [self]
         super(params, current_user) + created_tasks.compact
@@ -220,6 +222,8 @@ class ScheduleHearingTask < Task
       parent: self
     )
 
+    # Reload self because of task caching reasons
+    reload
     # Call the child method so that we follow that workflow when changing the hearing request type
     change_hearing_request_type_task.update_from_params(params, current_user)
   end

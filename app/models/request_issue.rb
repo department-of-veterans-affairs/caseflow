@@ -516,6 +516,7 @@ class RequestIssue < CaseflowRecord
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
 
+    # p "when is vacols_issue first called???"
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
@@ -762,10 +763,17 @@ class RequestIssue < CaseflowRecord
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id
     )
+    # reload
   end
 
   def create_legacy_issue_optin!
     return unless legacy_issue_opted_in?
+
+    p "******************inside create legacy_issue optin**********************"
+    p "--------------self---------------"
+    p self
+    p "-------------------- the vacols issue----------------"
+    p vacols_issue
 
     LegacyIssueOptin.create!(
       request_issue: self,

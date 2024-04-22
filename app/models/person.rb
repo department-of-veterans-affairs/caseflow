@@ -19,6 +19,9 @@ class Person < CaseflowRecord
     :participant_id
   ].freeze
 
+  # TODO: Pulling out the creation of the timestamp might make it faster?
+  ADVANCE_ON_DOCKET_AGE = 75.years.ago.freeze
+
   class << self
     def find_or_create_by_participant_id(participant_id)
       person = find_by(participant_id: participant_id)
@@ -51,6 +54,7 @@ class Person < CaseflowRecord
   end
 
   def advanced_on_docket?(appeal)
+    puts "in the person.rb file for advanced_on_docket?"
     advanced_on_docket_based_on_age? || advanced_on_docket_motion_granted?(appeal)
   end
 
@@ -104,11 +108,14 @@ class Person < CaseflowRecord
   end
 
   def advanced_on_docket_based_on_age?
-    date_of_birth && date_of_birth < 75.years.ago
+    # date_of_birth && date_of_birth < 75.years.ago
+    date_of_birth && date_of_birth < ADVANCE_ON_DOCKET_AGE
   end
 
-  def advanced_on_docket_motion_granted?(appeal)
-    AdvanceOnDocketMotion.granted_for_person?(id, appeal)
+  def advanced_on_docket_motion_granted?(_appeal)
+    # TODO: This is an association but it doesn't use it?
+    # AdvanceOnDocketMotion.granted_for_person?(id, appeal)
+    advance_on_docket_motions.any?(&:granted)
   end
 
   def found?

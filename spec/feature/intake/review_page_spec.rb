@@ -728,6 +728,7 @@ def check_claimant_address_error(review, benefit_type, error_text)
 end
 
 def check_edited_claimant(review)
+  review.reload
   visit "/intake"
   click_intake_continue
 

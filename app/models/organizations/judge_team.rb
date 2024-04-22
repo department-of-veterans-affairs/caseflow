@@ -21,6 +21,12 @@ class JudgeTeam < Organization
       end
     end
 
+    def all_judge_team_attorneys
+      Rails.cache.fetch("#{Rails.env}_list_of_all_judge_team_attorneys") do
+        JudgeTeam.all.map(&:attorneys).flatten
+      end
+    end
+
     def judges_with_exclude_appeals_from_affinity
       return [] unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 

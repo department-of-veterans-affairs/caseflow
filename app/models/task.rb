@@ -390,7 +390,8 @@ class Task < CaseflowRecord
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
+    # return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
+    return false if status == Constants::TASK_STATUSES["on_hold"] && !on_timed_hold?
 
     actions_allowable?(user)
   end
@@ -399,7 +400,12 @@ class Task < CaseflowRecord
     return false if !open?
 
     # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
+    # TODO: This is probably a DB call because of .open?
+    # return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
+
+    # TODO: The child.assigned_to probably can't be avoided see if it's possible since this sucks
+    return false if assigned_to.is_a?(Organization) &&
+                    children.any? { |child| child.open? && child.assigned_to == user }
 
     true
   end
@@ -421,19 +427,29 @@ class Task < CaseflowRecord
   end
 
   def children_attorney_tasks
-    children.where(type: AttorneyTask.name)
+    # Can't preload this
+    # children.where(type: AttorneyTask.name)
+    children.select { |child| child.type == AttorneyTask.name }
   end
 
   def on_timed_hold?
     !active_child_timed_hold_task.nil? || type == PostSendInitialNotificationLetterHoldingTask.name
   end
 
+  # This one is better for serialization because it can be preloaded
   def active_child_timed_hold_task
+    # Can't preload with this since I think it forces a DB call.
+    # children.open.find { |task| task.type == TimedHoldTask.name }
+    children.find { |task| task.open? && task.type == TimedHoldTask.name }
+  end
+
+  # This one seems to work better for after save hooks because they weren't designed around caching apparently
+  def active_child_timed_hold_task_no_cache
     children.open.find { |task| task.type == TimedHoldTask.name }
   end
 
   def cancel_timed_hold
-    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+    active_child_timed_hold_task_no_cache&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def calculated_placed_on_hold_at
@@ -559,19 +575,36 @@ class Task < CaseflowRecord
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
+  # def latest_attorney_case_review
+  #   # Should be the same as calling: appeal.latest_attorney_case_review
+  #   # @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+
+  #   # Except you can't preload it if you call it like that
+  #   # @latest_attorney_case_review ||= appeal.latest_attorney_case_review
+  #   appeal.latest_attorney_case_review
+  # end
+
+  # delegate :latest_attorney_case_review, to: :appeal
+
   def latest_attorney_case_review
-    # Should be the same as calling: appeal.latest_attorney_case_review
-    @latest_attorney_case_review ||= AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+    # TODO: see if this can still be preloaded after adding the fallback
+    # This isn't 100% exactly the same as it was since the last one was ordered by the query
+    @latest_attorney_case_review ||= begin
+      appeal.latest_attorney_case_review ||
+        AttorneyCaseReview.where(appeal: appeal).order(:created_at).last
+    end
   end
 
   def prepared_by_display_name
     return nil unless latest_attorney_case_review
 
-    if latest_attorney_case_review.attorney.try(:full_name)
-      return latest_attorney_case_review.attorney.full_name.split(" ")
-    end
+    # if latest_attorney_case_review.attorney.try(:full_name)
+    #   return latest_attorney_case_review.attorney.full_name.split(" ")
+    # end
 
-    ["", ""]
+    latest_attorney_case_review.try(:attorney).try(:full_name)&.split(" ") || ["", ""]
+
+    # ["", ""]
   end
 
   def when_child_task_completed(child_task)
@@ -841,15 +874,40 @@ class Task < CaseflowRecord
   end
 
   def update_parent_status
+    # Fix caching errors on save hooks
+    # TODO: This destroys the save_changes hash and I don't know how to overcome that right now
+    # while also making sure this works on the correct parent tasks and children tasks
+    # puts "what type of task is it now???"
+    # puts parent.inspect
+    # Added an error handling block here in case the task was mutated and it's no longer the same task type or id
+    # This always happens in the attorney task update parent change hook.
+    # begin
+    #   # Attempt to find a record
+    #   # record = Model.find(id
+    #   parent.reload
+    #   parent.when_child_task_completed(self)
+    #   # Do something with the record
+    # rescue ActiveRecord::RecordNotFound => error
+    #   # Handle the error
+    #   puts "Record not found it must have been mutated: #{error.message}"
+    #   new_parent = Task.find(parent_id)
+    #   new_parent.when_child_task_completed(self)
+    # end
+    # parent.when_child_task_completed(self)
+    # parent.reload unless parent.is_a?(JudgeAssignTask)
+    # This is pretty bad though
     parent.when_child_task_completed(self)
   end
 
   def tell_parent_task_child_task_created
+    # Need to reload now that caching is being used
+    # parent&.reload && parent&.when_child_task_created(self)
     parent&.when_child_task_created(self)
   end
 
   def update_children_status_after_closed
-    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+    # children&.reload
+    active_child_timed_hold_task_no_cache&.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def cancel_task_timers

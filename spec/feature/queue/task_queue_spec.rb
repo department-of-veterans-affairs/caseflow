@@ -148,6 +148,8 @@ feature "Task queue", :all_dbs do
     end
 
     it "supports custom sorting" do
+      puts "attorney tasks"
+      puts attorney_user.tasks.inspect
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[4]/span/span[1]")
       docket_number_column_header.click
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[5]/span[3]")
@@ -1066,6 +1068,7 @@ feature "Task queue", :all_dbs do
       it "should be able to add admin actions from case details" do
         Colocated.singleton.add_user(create(:user))
         visit("/queue")
+
         click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
         # On case details page select the "Add admin action" option
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)

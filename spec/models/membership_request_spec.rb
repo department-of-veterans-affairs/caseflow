@@ -198,8 +198,8 @@ describe MembershipRequest do
         expect(jobs.length).to eq(1)
         expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
         expect(jobs[0][:args][0]).to eq "VhaBusinessLineApproved"
-        expect(requestor.member_of_organization?(organization)).to be true
-        expect(requestor.member_of_organization?(vha_business_line)).to be false
+        expect(requestor.member_of_team?(organization)).to be true
+        expect(requestor.member_of_organization?(vha_business_line.class)).to be false
       end
     end
 
@@ -221,8 +221,8 @@ describe MembershipRequest do
         expect(jobs.length).to eq(1)
         expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
         expect(jobs[0][:args][0]).to eq "VhaPredocketApproved"
-        expect(requestor.member_of_organization?(organization)).to be true
-        expect(requestor.member_of_organization?(vha_business_line)).to be true
+        expect(requestor.member_of_team?(organization)).to be true
+        expect(requestor.member_of_organization?(vha_business_line.class)).to be true
       end
     end
     context "when status is updated to cancelled" do
@@ -240,8 +240,8 @@ describe MembershipRequest do
         expect(jobs.length).to eq(1)
         expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
         expect(jobs[0][:args][0]).to eq "VhaBusinessLineApproved"
-        expect(requestor.member_of_organization?(organization)).to be false
-        expect(requestor.member_of_organization?(vha_business_line)).to be false
+        expect(requestor.member_of_team?(organization)).to be false
+        expect(requestor.member_of_organization?(vha_business_line.class)).to be false
       end
     end
 
@@ -263,8 +263,8 @@ describe MembershipRequest do
         expect(jobs.length).to eq(1)
         expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
         expect(jobs[0][:args][0]).to eq "VhaPredocketApproved"
-        expect(requestor.member_of_organization?(organization)).to be false
-        expect(requestor.member_of_organization?(vha_business_line)).to be true
+        expect(requestor.member_of_team?(organization)).to be false
+        expect(requestor.member_of_organization?(vha_business_line.class)).to be true
       end
     end
 

@@ -41,7 +41,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
 
   context "with an AMA hearing" do
     let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
-    let!(:person) { Person.find_by(participant_id: hearing.appeal.appellant.participant_id) }
+    # TODO: Investigate why factories don't work with association preloading
+    let!(:person) { Person.find_by(participant_id: hearing.appeal.reload.appellant.participant_id) }
 
     scenario "User can update hearing prep fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s

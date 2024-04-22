@@ -779,6 +779,8 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     url = url.concat(`&type=${type}`);
   }
 
+  console.log(`In fetchAmaTasksOfUser loading tasks to load: ${url}`);
+
   return ApiUtil.get(url).
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));

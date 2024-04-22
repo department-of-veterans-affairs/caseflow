@@ -13,7 +13,8 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:cotb_org) { ClerkOfTheBoard.singleton }
   let(:orig_receipt_date) { Time.zone.today - 20 }
   let(:appeal) do
-    create(:appeal, receipt_date: orig_receipt_date)
+    # Same factory caching issue
+    create(:appeal, receipt_date: orig_receipt_date).reload
   end
 
   let(:appeal_with_unrecognized_appellant) do
@@ -21,7 +22,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       :appeal,
       has_unrecognized_appellant: true,
       veteran_is_not_claimant: true
-    )
+    ).reload
   end
 
   let!(:request_issues) do

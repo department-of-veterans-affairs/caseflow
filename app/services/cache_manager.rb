@@ -16,7 +16,9 @@ class CacheManager
     vacols: [
       "#{Rails.env}_list_of_judges_from_vacols",
       "#{Rails.env}_list_of_judges_from_vacols_with_name_and_id",
+      "#{Rails.env}_hashes_of_judges_from_vacols",
       "#{Rails.env}_list_of_attorneys_from_vacols",
+      "#{Rails.env}_hashes_of_attorneys_from_vacols",
       "#{Rails.env}_list_of_hearing_coordinators_from_vacols",
       "#{Rails.env}_staff_record_*"
     ],
@@ -28,7 +30,8 @@ class CacheManager
       "RoSchedulePeriod-*-cached-*",
       "RampElectionIntake-*-cached-*",
       "Efolder-document-count-*",
-      "IntakeStats-last-calculated-timestamp"
+      "IntakeStats-last-calculated-timestamp",
+      "#{Rails.env}_list_of_all_judge_team_attorneys"
     ]
   }.freeze
 

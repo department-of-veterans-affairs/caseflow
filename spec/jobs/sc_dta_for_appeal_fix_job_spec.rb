@@ -6,8 +6,8 @@ describe ScDtaForAppealFixJob, :postgres do
   let!(:veteran_file_number_2) { "999999999" }
 
   # let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
-  let(:appeal) { create(:appeal, veteran_file_number: veteran_file_number) }
-  let(:appeal_2) { create(:appeal, veteran_file_number: veteran_file_number_2) }
+  let(:appeal) { create(:appeal, veteran_file_number: veteran_file_number).reload }
+  let(:appeal_2) { create(:appeal, veteran_file_number: veteran_file_number_2).reload }
   let!(:decision_doc_with_error) do
     create(
       :decision_document,
@@ -43,8 +43,8 @@ describe ScDtaForAppealFixJob, :postgres do
           decision_doc_with_error_2.appeal.claimant.update(payee_code: nil)
 
           subject.perform
-          expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
-          expect(decision_doc_with_error_2.appeal.claimant.payee_code).to eq("00")
+          expect(decision_doc_with_error.appeal.claimant.reload.payee_code).to eq("00")
+          expect(decision_doc_with_error_2.appeal.claimant.reload.payee_code).to eq("00")
         end
 
         it "clears error column" do
@@ -57,7 +57,7 @@ describe ScDtaForAppealFixJob, :postgres do
         it "updates payee_code to 10" do
           decision_doc_with_error.appeal.claimant.update(type: "DependentClaimant")
           subject.perform
-          expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("10")
+          expect(decision_doc_with_error.appeal.reload.claimant.payee_code).to eq("10")
         end
 
         it "clears error column" do

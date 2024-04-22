@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository # rubocop:disable Metrics/ClassLength
+class TaskActionRepository
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -161,7 +161,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def reassign_to_judge_data(task, _user = nil)
       {
         selected: nil,
-        options: users_to_options(Judge.list_all),
+        # Judge.list_all is cached but doesn't happen on local unless you have the cache file that turns it on
+        # It's probably better to cache the built hashes themselves since that is probably a
+        # Decent amount of garbage collection for a list that never changes.
+        # options: users_to_options(Judge.list_all),
+        options: Judge.list_all_hashes,
         type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
@@ -186,7 +190,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
+        options: user.can_act_on_behalf_of_judges? ? Attorney.list_all_hashes : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -219,6 +223,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def address_motion_to_vacate_data(task, _user = nil)
+      puts "in address motion to vacate"
+      byebug
       attorney = task.appeal.assigned_attorney
       judge_attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys
       {
@@ -325,11 +331,24 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: ColocatedTask.find_subclass_by_action(key).name
+            value: ColocatedTask.find_subclass_by_action_new(key).name
           }
         end
       }
     end
+
+    # def legacy_and_colocated_task_add_admin_action_data_new(_task, _user)
+    #   {
+    #     redirect_after: "/queue",
+    #     selected: nil,
+    #     options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+    #       {
+    #         label: value,
+    #         value: ColocatedTask.find_subclass_by_action_new(key).name
+    #       }
+    #     end
+    #   }
+    # end
 
     def cancel_convert_hearing_request_type_data(task, _user = nil)
       {
@@ -449,12 +468,19 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
     def return_to_attorney_data(task, _user = nil)
       assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+      # judge_team = JudgeTeam.for_judge(task.assigned_to)
 
-      judge_team = JudgeTeam.for_judge(task.assigned_to)
-
+      # puts "before first attorneys call"
+      # judge_team_attorneys = judge_team&.attorneys || []
+      # byebug
       # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to
       # attorneys who are not on their judge team.
-      attorneys = (judge_team&.attorneys || []) + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
+      # puts "before all other attorneys call"
+      # Actually this is dumb. This is no different from JudgeTeam.all
+      # attorneys = judge_team_attorneys + JudgeTeam.where.not(id: judge_team&.id).map(&:attorneys).flatten
+      # attorneys = JudgeTeam.all.map(&:attorneys).flatten
+      attorneys = JudgeTeam.all_judge_team_attorneys
+      # byebug
       attorneys |= [assignee] if assignee.present?
       {
         selected: assignee,
@@ -560,6 +586,18 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def toggle_timed_hold(task, user)
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+      # puts "in toggle timed hold in task_action_repository"
+      # puts task.inspect
+      # puts user.inspect
+      # puts task.on_timed_hold?
+      # TODO: Figure out how this seraialization works so we can avoid subconstants since it's slow
+      # action =
+      #   if task.on_timed_hold?
+      #     Constants::TASK_ACTIONS["END_TIMED_HOLD"]
+      #   else
+      #     Constants::TASK_ACTIONS["PLACE_TIMED_HOLD"]
+      #   end
+      # puts action.inspect
 
       task_helper = TaskActionHelper.build_hash(action, task, user).merge(
         returns_complete_hash: true

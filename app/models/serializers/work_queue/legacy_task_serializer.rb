@@ -27,7 +27,7 @@ class WorkQueue::LegacyTaskSerializer
 
   attribute :previous_task do |object|
     {
-      assigned_on: object.previous_task.try(:assigned_at)
+      assigned_on: object.previous_task&.assigned_at
     }
   end
 
@@ -73,7 +73,14 @@ class WorkQueue::LegacyTaskSerializer
   end
 
   attribute :veteran_appellant_deceased do |object|
-    object.appeal.veteran_appellant_deceased?
+    # object.appeal.veteran_appellant_deceased?
+
+    # If it didn't match to a veteran in the legacy work queue this will be incorrect.
+    # I'm scared to check the veteran accessor though
+    # TODO: See if you can set a variable like is_collection? or reference if it is a collection
+    # to Switch the fast accessors vs the slow accessors on and off
+    # Taken from appeal_concern.rb
+    (object.appeal.veteran_date_of_death_fast && object.appeal.appellant_is_veteran)
   end
 
   attribute :external_appeal_id do |object|
@@ -89,7 +96,28 @@ class WorkQueue::LegacyTaskSerializer
   end
 
   attribute :veteran_file_number do |object|
-    object.appeal.veteran_file_number
+    # object.appeal.veteran_file_number_fast || object.appeal.veteran_file_number
+    # Same thing as veteran death date. I would like a fallback, but it slows things down
+    # file_number = object.appeal.veteran_file_number_fast
+
+    # object.appeal.veteran_file_number_fast || object.veteran_file_number
+    # puts "in veteran file number serialize field block"
+    # puts object.appeal.veteran_file_number_fast.inspect
+    # puts object.appeal.sanitized_vbms_id
+    # puts "Dying after calling veteran_file_number"
+
+    # puts object.appeal.veteran_file_number.inspect
+    # puts "makes it past veteran_file_number"
+    # puts object.sanitized_vbms_id.inspect
+
+    object.appeal.veteran_file_number_fast || object.appeal.veteran_file_number
+
+    # if file_number
+    #   file_number
+    # else
+    #   object.appeal_veteran_file_number
+    # end
+    # object.appeal.veteran_file_number
   end
 
   attribute :issue_count do |object|
@@ -97,7 +125,7 @@ class WorkQueue::LegacyTaskSerializer
   end
 
   attribute :paper_case do |object|
-    object.appeal.file_type.eql? "Paper"
+    object.appeal.paper_case?
   end
 
   attribute :available_actions do |object, params|

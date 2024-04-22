@@ -374,7 +374,9 @@ describe JudgeTask, :all_dbs do
            "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938",
           extra: { application: "tasks" }
         )
+        puts judge_task.inspect
         subject
+        puts judge_task.inspect
         expect(Task.find(judge_task.id).type).to eq(JudgeDecisionReviewTask.name)
       end
     end
