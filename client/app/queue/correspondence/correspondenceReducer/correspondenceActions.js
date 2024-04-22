@@ -20,6 +20,16 @@ export const loadCorrespondences = (correspondences) =>
     });
   };
 
+export const loadCorrespondenceInformation = (correspondenceInformation) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_CORRESPONDENCE_INFORMATION,
+      payload: {
+        correspondenceInformation
+      }
+    });
+  };
+
 export const loadVeteranInformation = (veteranInformation) =>
   (dispatch) => {
     dispatch({
@@ -123,3 +133,23 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
     }
   });
 };
+
+export const setResponseLetters = (responseLetters) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RESPONSE_LETTERS,
+      payload: {
+        responseLetters
+      }
+    });
+  };
+
+export const removeResponseLetters = (index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_RESPONSE_LETTERS,
+      payload: {
+        index
+      }
+    });
+  };
