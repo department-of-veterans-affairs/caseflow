@@ -1,9 +1,9 @@
 import { ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 import {
-  createUpdatedLever,
-  createUpdatedRadioLever,
-  createUpdatedCombinationLever
+  updateLeverGroupForValue,
+  updateLeverGroupForRadioLever,
+  updateLeverGroupForIsToggleActive
 } from './leversSelector';
 import {
   createUpdatedLeversWithValues,
@@ -48,10 +48,8 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.acdExcludeFromAffinity
       }
     });
-  case ACTIONS.UPDATE_BOOLEAN_LEVER:
-  case ACTIONS.UPDATE_NUMBER_LEVER:
-  case ACTIONS.UPDATE_TEXT_LEVER: {
-    const leverGroup = createUpdatedLever(state, action);
+  case ACTIONS.UPDATE_LEVER_VALUE: {
+    const leverGroup = updateLeverGroupForValue(state, action);
 
     return {
       ...state,
@@ -61,8 +59,8 @@ const leversReducer = (state = initialState, action = {}) => {
       },
     };
   }
-  case ACTIONS.UPDATE_COMBINATION_LEVER: {
-    const leverGroup = createUpdatedCombinationLever(state, action);
+  case ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE: {
+    const leverGroup = updateLeverGroupForIsToggleActive(state, action);
 
     return {
       ...state,
@@ -73,7 +71,7 @@ const leversReducer = (state = initialState, action = {}) => {
     };
   }
   case ACTIONS.UPDATE_RADIO_LEVER: {
-    const leverGroup = createUpdatedRadioLever(state, action);
+    const leverGroup = updateLeverGroupForRadioLever(state, action);
 
     return {
       ...state,

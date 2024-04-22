@@ -3,5 +3,6 @@
     "judge": "Judge",
     "colocated": "Colocated",
     "hearing_coordinator": "HearingCoordinator",
-    "camo": "CAMO"
+    "camo": "CAMO",
+    "sct_coordinator": "SpecialtyCaseTeamCoordinator"
 }

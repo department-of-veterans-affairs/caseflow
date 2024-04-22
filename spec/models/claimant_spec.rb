@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 describe Claimant, :postgres do
+  # Execute block for all Claimant subclasses...
+  Dir[Rails.root.join("app/models/**/*.rb")].sort.each { |f| require f } # load all models (for Claimant subclasses)
+  described_class.descendants.each do |claimant_subclass|
+    context claimant_subclass.to_s do
+      it_behaves_like "Claimant belongs_to polymorphic appeal", claimant_subclass
+    end
+  end
+
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:payee_code) { nil }
@@ -163,10 +171,13 @@ describe Claimant, :postgres do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
-      it "returns false" do
+      it "returns false when based on age" do
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
-        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
+      end
+
+      it "returns true when motion is granted" do
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
       end
     end
   end

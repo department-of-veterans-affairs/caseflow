@@ -10,13 +10,18 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call
+  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
-      return [not_genpop_appeals, only_genpop_appeals].flatten if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
-                                                                  judge.present?
+      include_feature = FeatureToggle.enabled?(:acd_exclude_from_affinity) ||
+                        (CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit &&
+                        CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit)
 
+      return [*not_genpop_appeals, *only_genpop_appeals] if include_feature &&
+                                                            judge.present?
+
+      # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
       return only_genpop_appeals
     end
 
@@ -42,58 +47,136 @@ class HearingRequestDistributionQuery
   attr_reader :base_relation, :genpop, :judge
 
   def not_genpop_appeals
-    base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
+    ama_non_aod_hearing_query = generate_ama_not_genpop_non_aod_hearing_query(base_relation)
+    ama_aod_hearing_query = generate_ama_not_genpop_aod_hearing_query(base_relation)
+
+    ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end
 
   def only_genpop_appeals
-    no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+    ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
+    ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
+    hearings_with_no_judge = base_relation.most_recent_hearings.not_tied_to_any_judge
 
-    # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    if @use_by_docket_date &&
-       !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
-        FeatureToggle.enabled?(:acd_exclude_from_affinity))
-      return [
-        with_held_hearings,
-        no_hearings_or_no_held_hearings
-      ].flatten.uniq
+    result = ama_non_aod_hearing_query.or(ama_aod_hearing_query).or(hearings_with_no_judge)
+
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      result = result.or(
+        base_relation
+          .most_recent_hearings
+          .tied_to_ineligible_judge
+      )
     end
 
-    # We are combining two queries using an array because using `or` doesn't work
-    # due to incompatibilities between the two queries.
-    [
-      most_recent_held_hearings_not_tied_to_any_judge,
-      most_recent_held_hearings_exceeding_affinity_threshold,
-      most_recent_held_hearings_tied_to_ineligible_judge,
-      no_hearings_or_no_held_hearings,
-      most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
-    ].flatten.uniq
+    if FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      result = result.or(
+        base_relation
+          .most_recent_hearings
+          .tied_to_judges_with_exclude_appeals_from_affinity
+      )
+    end
+
+    # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
+    # yet, so we add with_no_hearings to retrieve those appeals
+    no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+
+    [*result, *no_hearings_or_no_held_hearings].uniq
   end
 
-  def most_recent_held_hearings_exceeding_affinity_threshold
-    base_relation.most_recent_hearings.exceeding_affinity_threshold
+  def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_hearing_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_hearing_appeals
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
+      end
+
+    query
   end
 
-  def most_recent_held_hearings_not_tied_to_any_judge
-    base_relation.most_recent_hearings.not_tied_to_any_judge
+  def generate_ama_not_genpop_aod_hearing_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_aod_hearing_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_aod_hearing_appeals
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
+      end
+
+    query
   end
 
-  def with_no_hearings
-    base_relation.with_no_hearings
+  def generate_ama_only_genpop_non_aod_hearing_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .ama_non_aod_hearing_appeals
+          .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
+      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .with_held_hearings
+          .ama_non_aod_hearing_appeals
+      end
+
+    query
   end
 
-  def with_no_held_hearings
-    base_relation.with_no_held_hearings
+  def generate_ama_only_genpop_aod_hearing_query(base_relation)
+    query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .ama_aod_hearing_appeals
+          .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .with_held_hearings
+          .ama_aod_hearing_appeals
+      end
+
+    query
   end
 
-  def with_held_hearings
-    base_relation.most_recent_hearings.with_held_hearings
-  end
-
-  def most_recent_held_hearings_tied_to_ineligible_judge
-    base_relation.most_recent_hearings.tied_to_ineligible_judge
-  end
-
-  def most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
-    base_relation.most_recent_hearings.tied_to_judges_with_exclude_appeals_from_affinity
-  end
+  delegate :with_no_hearings, to: :base_relation
+  delegate :with_no_held_hearings, to: :base_relation
 end

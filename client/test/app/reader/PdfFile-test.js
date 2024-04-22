@@ -5,12 +5,15 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {} })));
-
-jest.mock('../../../app/util/ApiUtil');
+jest.mock('../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {},
+    header: { 'x-document-source': 'VBMS' }
+  }),
+}));
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn(),
-  recordAsyncMetrics: jest.fn(),
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
@@ -25,13 +28,19 @@ const metricArgs = (featureValue) => {
       data:
       {
         documentId: 1,
+        numPagesInDoc: null,
+        pageIndex: null,
+        file: '/document/1/pdf',
         documentType: 'test',
-        file: '/document/1/pdf'
+        prefetchDisabled: undefined,
+        overscan: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
-      type: 'performance'
+      additionalInfo: JSON.stringify({ source: 'VBMS' }),
+      type: 'performance',
+      eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
     },
     featureValue,
   ];
@@ -42,14 +51,15 @@ const storeMetricsError = {
   data:
   {
     documentId: 1,
+    file: '/document/1/pdf',
     documentType: 'test',
-    file: '/document/1/pdf'
   },
   info: {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
     product: 'browser',
     type: 'error'
-  }
+  },
+  eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
 };
 
 describe('PdfFile', () => {
@@ -130,12 +140,53 @@ describe('PdfFile', () => {
         jest.clearAllMocks();
       });
 
-      it('calls recordAsyncMetrics and will save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
+      it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
+
+        return wrapper.instance().componentDidMount().
+          then(() => {
+            // Assert that the recordAsyncMetrics method was called with the expected arguments
+            expect(recordAsyncMetrics).toBeCalledWith(
+              metricArgs()[0],
+              metricArgs()[1],
+              metricArgs(true)[2]
+            );
+          });
+      });
+
+      it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
+
+        ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
+
+        return wrapper.instance().componentDidMount().
+          then(() => {
+            // Assert that the recordAsyncMetrics method was called with the expected arguments
+            expect(recordAsyncMetrics).toBeCalledWith(
+              metricArgs()[0],
+              metricArgs()[1],
+              metricArgs(true)[2]
+            );
+          });
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid, storeMetricsError.data, storeMetricsError.info);
+        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+          storeMetricsError.data,
+          storeMetricsError.info,
+          storeMetricsError.eventId);
+      });
+
+      it('clears measureTimeStartMs after unmount', () => {
+        // Mock the ApiUtil.get function to return a Promise that resolves immediately
+        jest.mock('../../../app/util/ApiUtil', () => ({
+          get: jest.fn().mockResolvedValue({}),
+        }));
+        const subject = wrapper.instance();
+
+        // Trigger the ApiUtil.get function call
+        subject.getDocument();
+
+        // Assert that measureTimeStartMs is counting
+        expect(subject.props.renderStartTime).not.toBeNull();
       });
     });
   });

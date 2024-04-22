@@ -236,7 +236,7 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |hlr|
-        css_id = "CSS_ID#{generate :css_id}"
+        css_id = "CSSID#{generate :css_id}"
 
         intake_user = User.find_by(css_id: css_id)
 
@@ -254,7 +254,8 @@ FactoryBot.define do
                decision_review: hlr,
                request_issues: hlr.request_issues,
                benefit_type: hlr.benefit_type,
-               disposition: "Granted")
+               disposition: "Granted",
+               caseflow_decision_date: 5.days.ago.to_date)
       end
     end
 

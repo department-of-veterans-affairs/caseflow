@@ -102,33 +102,12 @@ describe('levers actions', () => {
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  it('should create an action to update a combination lever', () => {
-    const leverIndex = 9;
-    const lever = levers[leverIndex];
-
-    const expectedAction = {
-      type: ACTIONS.UPDATE_COMBINATION_LEVER,
-      payload: {
-        leverGroup: lever.lever_group,
-        leverItem: lever.item,
-        value: lever.value,
-        toggleValue: lever.is_toggle_active
-      }
-    };
-
-    const dispatch = jest.fn();
-
-    actions.updateCombinationLever(lever.lever_group, lever.item, lever.value, lever.is_toggle_active)(dispatch);
-
-    expect(dispatch).toHaveBeenCalledWith(expectedAction);
-  });
-
   it('should create an action to update a boolean lever', () => {
     const leverIndex = 0;
     const lever = levers[leverIndex];
 
     const expectedAction = {
-      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
+      type: ACTIONS.UPDATE_LEVER_VALUE,
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
@@ -138,46 +117,27 @@ describe('levers actions', () => {
 
     const dispatch = jest.fn();
 
-    actions.updateBooleanLever(lever.lever_group, lever.item, lever.value)(dispatch);
+    actions.updateLeverValue(lever.lever_group, lever.item, lever.value)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
 
-  it('should create an action to update a text lever', () => {
+  it('should create an action to update a combination lever', () => {
     const leverIndex = 0;
     const lever = levers[leverIndex];
 
     const expectedAction = {
-      type: ACTIONS.UPDATE_TEXT_LEVER,
+      type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
       payload: {
         leverGroup: lever.lever_group,
         leverItem: lever.item,
-        value: lever.value
+        toggleValue: lever.value
       }
     };
 
     const dispatch = jest.fn();
 
-    actions.updateTextLever(lever.lever_group, lever.item, lever.value)(dispatch);
-
-    expect(dispatch).toHaveBeenCalledWith(expectedAction);
-  });
-
-  it('should create an action to update a number lever', () => {
-    const leverIndex = 0;
-    const lever = levers[leverIndex];
-    const expectedAction = {
-      type: ACTIONS.UPDATE_NUMBER_LEVER,
-      payload: {
-        leverGroup: lever.lever_group,
-        leverItem: lever.item,
-        value: lever.value
-      }
-    };
-
-    const dispatch = jest.fn();
-
-    actions.updateNumberLever(lever.lever_group, lever.item, lever.value)(dispatch);
+    actions.updateLeverIsToggleActive(lever.lever_group, lever.item, lever.value)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
@@ -272,7 +232,8 @@ describe('levers actions', () => {
     const lever = alternativeBatchSize;
     const dispatch = jest.fn();
 
-    actions.validateLever(lever, lever.item, -1, [])(dispatch);
+    actions.validateLever(lever, lever.item, '', [])(dispatch);
+    actions.validateLever(lever, lever.item, null, [])(dispatch);
 
     expect(dispatch).toHaveBeenLastCalledWith(expect.any(Function));
   });

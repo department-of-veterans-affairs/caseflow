@@ -53,7 +53,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def genpop
-    joins(with_assigned_distribution_task_sql)
+    join_distribution_tasks
       .with_original_appeal_and_judge_task
       .where(
         "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
@@ -63,19 +63,31 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
+  def ama_non_aod_hearing_appeals
+    where("advance_on_docket_motions.person_id IS NULL")
+      .where("people.date_of_birth > ?", 75.years.ago)
+  end
+
+  def ama_aod_hearing_appeals
+    where("advance_on_docket_motions.person_id IS NOT NULL")
+      .or(where("people.date_of_birth <= ?", 75.years.ago))
+  end
+
   def with_original_appeal_and_judge_task
     joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
       .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
       .joins(
         "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
-         AND original_judge_task.type = 'JudgeDecisionReviewTask'
-         AND original_judge_task.status = 'completed'"
+        AND original_judge_task.appeal_type = 'Appeal'
+        AND original_judge_task.type = 'JudgeDecisionReviewTask'
+        AND original_judge_task.status = 'completed'"
       )
   end
 
+  # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge)
-    joins(with_assigned_distribution_task_sql)
+    join_distribution_tasks
       .with_original_appeal_and_judge_task
       .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
@@ -115,32 +127,39 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    joins(with_assigned_distribution_task_sql)
+    join_distribution_tasks
       .where(hearings: { disposition: "held", judge_id: judge.id })
-      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   def tied_to_ineligible_judge
-    where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
-      .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
+    join_distribution_tasks
+      .where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity
-    where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
-      .where("1 = ?", FeatureToggle.enabled?(:acd_exclude_from_affinity) ? 1 : 0)
+    join_distribution_tasks
+      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
-  def exceeding_affinity_threshold
+  def expired_ama_affinity_cases(lever_days)
+    where(hearings: { disposition: "held" })
+      .where("distribution_task.assigned_at <= ?", lever_days.to_i.days.ago)
+  end
+
+  def affinitized_ama_affinity_cases(lever_days)
+    where("distribution_task.assigned_at > ?", lever_days.to_i.days.ago)
+  end
+
+  def join_distribution_tasks
     joins(with_assigned_distribution_task_sql)
-      .where(hearings: { disposition: "held" })
-      .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
-    where(hearings: { disposition: "held", judge_id: nil })
+    join_distribution_tasks
+      .where(hearings: { disposition: "held", judge_id: nil })
   end
 
   def with_no_hearings
@@ -153,5 +172,15 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def with_held_hearings
     where(hearings: { disposition: "held" })
+  end
+
+  def lever_omitted?(lever)
+    CaseDistributionLever.send(lever) == "omit"
+  end
+
+  def case_affinity_days_lever_value_is_selected?(lever_value)
+    return false if lever_value == "omit" || lever_value == "infinite"
+
+    true
   end
 end

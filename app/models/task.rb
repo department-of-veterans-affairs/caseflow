@@ -22,8 +22,7 @@ class Task < CaseflowRecord
   belongs_to :cancelled_by, class_name: "User"
   belongs_to :completed_by, class_name: "User"
 
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
+  include TaskBelongsToPolymorphicAppealConcern
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -89,6 +88,8 @@ class Task < CaseflowRecord
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+
+  scope :last_14_days_completed, -> { completed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
