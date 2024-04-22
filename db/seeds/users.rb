@@ -27,6 +27,7 @@ module Seeds
 
     def seed!
       create_users
+      create_singleton_organizations
     end
 
     private
@@ -101,6 +102,11 @@ module Seeds
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
       create_cda_control_group_users
+    end
+
+    def create_singleton_organizations
+      singletons = Organization.subclasses.filter { |s| s.public_methods.include? :singleton }
+      singletons.map(&:singleton)
     end
 
     def create_bvaebecker

@@ -45,7 +45,9 @@ class SeedDB
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
+    call_and_log_seed_step Seeds::Veterans
     # End of required to exist dependencies (other seeds should go in ./optional.rb)
+
 
     Judge.list_all
     Attorney.list_all
