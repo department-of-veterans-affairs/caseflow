@@ -7,6 +7,7 @@ if defined? OCI8
   OCI8.properties[:connect_timeout] = 10
   OCI8.properties[:send_timeout] = 10
   OCI8.properties[:recv_timeout] = 20
+  OCI8.properties[:tcp_keepalive] = true
 end
 
 WARMUP_TABLES = ["vacols.brieff", "vacols.corres", "vacols.folder"]
