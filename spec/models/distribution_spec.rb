@@ -145,12 +145,7 @@ describe Distribution, :all_dbs do
         algorithm: "proportions", sct_appeals: 0
       }
     end
-    let(:result_stats) do
-      {
-        batch_size: 0,
-        info: "See related row in distribution_stats for additional stats"
-      }
-    end
+
     let(:result_stats) do
       {
         batch_size: 0,
