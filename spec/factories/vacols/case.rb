@@ -245,6 +245,11 @@ FactoryBot.define do
       bfac { "7" }
     end
 
+    trait :legacy_cavc_appeal do
+      bfmpro { "HIS" }
+      bfddec { 1.day.ago }
+    end
+
     trait :certified do
       transient do
         certification_date { 1.day.ago }
