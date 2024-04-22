@@ -3,7 +3,9 @@
 class VACOLS::Record < ApplicationRecord
   self.abstract_class = true
 
-  establish_connection "#{Rails.env}_vacols".to_sym
+  DATABASE_NAME = "#{Rails.env}_vacols".to_sym
+  connects_to database: { writing: DATABASE_NAME, reading: DATABASE_NAME }
+
   ActiveSupport.run_load_hooks(:active_record_vacols, VACOLS::Record)
 
   # This method calculates the appropriate date & timezone
