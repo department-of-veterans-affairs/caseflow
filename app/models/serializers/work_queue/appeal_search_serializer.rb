@@ -8,6 +8,10 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :contested_claim, &:contested_claim?
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
@@ -18,7 +22,11 @@ class WorkQueue::AppealSearchSerializer
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
         closed_status: issue.closed_status,
-        decision_date: issue.decision_date
+        decision_date: issue.decision_date,
+        mst_status: FeatureToggle.enabled?(:mst_identification) ? issue.mst_status : false,
+        pact_status: FeatureToggle.enabled?(:pact_identification) ? issue.pact_status : false,
+        mst_justification: issue&.mst_status_update_reason_notes,
+        pact_justification: issue&.pact_status_update_reason_notes
       }
     end
   end
@@ -39,7 +47,9 @@ class WorkQueue::AppealSearchSerializer
         benefit_type: issue.benefit_type,
         remand_reasons: issue.remand_reasons,
         diagnostic_code: issue.diagnostic_code,
-        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id),
+        mst_status: FeatureToggle.enabled?(:mst_identification) ? issue.mst_status : false,
+        pact_status: FeatureToggle.enabled?(:pact_identification) ? issue.pact_status : false
       }
     end
   end
