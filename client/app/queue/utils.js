@@ -573,6 +573,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       vacateType: appeal.attributes.vacate_type,
       evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
       hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -603,6 +605,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;

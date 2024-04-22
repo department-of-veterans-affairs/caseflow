@@ -21,19 +21,11 @@ class WorkQueue::LegacyAppealSearchSerializer
 
   attribute :completed_hearing_on_previous_appeal?
 
-  attribute :appellant_is_not_veteran, &:appellant_is_not_veteran
-
   attribute :appellant_full_name, &:appellant_name
 
-  attribute :appellant_address, &:appellant_address
-
-  attribute :appellant_tz, &:appellant_tz
-
-  attribute :appellant_relationship
   attribute :assigned_to_location
   attribute :vbms_id, &:sanitized_vbms_id
   attribute :veteran_full_name
-  attribute :veteran_death_date
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number, &:sanitized_vbms_id
@@ -59,25 +51,14 @@ class WorkQueue::LegacyAppealSearchSerializer
     object.veteran ? object.veteran.id : nil
   end
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
     "legacy"
-  end
-
-  attribute :document_id do |object|
-    latest_vacols_attorney_case_review(object)&.document_id
-  end
-
-  attribute :can_edit_document_id do |object, params|
-    LegacyDocumentIdPolicy.new(
-      user: params[:user],
-      case_review: latest_vacols_attorney_case_review(object)
-    ).editable?
-  end
-
-  attribute :attorney_case_review_id do |object|
-    latest_vacols_attorney_case_review(object)&.vacols_id
   end
 
   attribute :current_user_email do |_, params|
@@ -92,9 +73,5 @@ class WorkQueue::LegacyAppealSearchSerializer
     object.location_history.map do |location|
       WorkQueue::PriorlocSerializer.new(location).serializable_hash[:data][:attributes]
     end
-  end
-
-  def self.latest_vacols_attorney_case_review(object)
-    VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end
 end
