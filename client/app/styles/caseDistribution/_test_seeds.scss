@@ -21,7 +21,7 @@
 }
 
 .test-seed-button-style {
-  width: 20%;
+  width: auto;
   button {
     padding-top: 14px;
     padding-bottom: 20px;
@@ -31,4 +31,19 @@
 
 .seed-col {
   width: 15%;
+}
+
+.seed-table-style tr th {
+  background: transparent;
+}
+
+.seed-table-style tr td {
+  border: 0;
+  padding: 1rem 3rem;
+}
+
+.test-seeds-cssid-field {
+  input {
+    width: 110px;
+  }
 }
