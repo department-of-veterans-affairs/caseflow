@@ -89,7 +89,6 @@ class Distribution < CaseflowRecord
   end
 
   def judge_legacy_tasks
-
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
 
     @judge_legacy_tasks ||= legacy_tasks.select { |task| task.assigned_to_attorney_date.nil? }
