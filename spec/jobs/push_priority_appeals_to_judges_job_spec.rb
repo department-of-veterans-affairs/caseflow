@@ -1150,6 +1150,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       expected_msg = "<!here>\n .ERROR. after running for .*: #{error_msg}"
       expect(slack_msg).to match(/^#{expected_msg}/)
+      expect(@raven_called).to eq true
     end
   end
 end
