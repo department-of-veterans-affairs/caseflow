@@ -18,8 +18,13 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def mail_assign_to_organization_data(task, user = nil)
-      options = MailTask.subclass_routing_options(user: user, appeal: task.appeal)
-      valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      if task.appeal.is_a? Appeal
+        options = MailTask.descendant_routing_options(user: user, appeal: task.appeal)
+          .reject { |opt| opt[:value] == task.type }
+        valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      elsif task.appeal.is_a? LegacyAppeal
+        valid_options = MailTask::LEGACY_MAIL_TASKS
+      end
       { options: valid_options }
     end
 
@@ -41,7 +46,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
@@ -105,6 +110,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           task.appeal.veteran_full_name
         )
       }
+    end
+
+    def format_cancel_body(task, text, name)
+      if task.is_a?(MailTask)
+        ""
+      else
+        format(text, name)
+      end
     end
 
     def assign_to_hearings_user_data(task, user = nil)
@@ -586,7 +599,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
         modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
@@ -640,7 +653,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         drop_down_label: COPY::VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
@@ -708,7 +721,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -725,7 +738,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -742,7 +755,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -766,7 +779,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -778,7 +791,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         drop_down_label: COPY::EMO_ASSIGN_TO_RPO_MODAL_BODY,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
@@ -795,7 +808,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}",
         modal_button_text: COPY::MODAL_RETURN_BUTTON
@@ -872,10 +885,26 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def cancel_task_and_return_to_sct_action(task, _)
+      {
+        modal_title: COPY::RETURN_TO_SCT_MODAL_TITLE,
+        modal_body: COPY::RETURN_TO_SCT_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        show_instructions: true,
+        message_title: format(COPY::RETURN_TO_SCT_SUCCESS_BANNER_TITLE, task.appeal.claimant.name),
+        message_detail: COPY::RETURN_TO_SCT_SUCCESS_BANNER_DETAIL
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      # route to decision if mst/pact toggles are enabled.
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if
+        FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end

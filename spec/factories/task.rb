@@ -88,6 +88,130 @@ FactoryBot.define do
       end
     end
 
+    trait :postponement_request_with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        appeal.update!(closest_regional_office: "RO17")
+        task.update!(parent: root_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
+      end
+    end
+
+    trait :postponement_request_with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        scheduled_time = Time.zone.today + 1.month
+        if appeal.is_a?(Appeal)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:virtual],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:hearing,
+                           disposition: nil,
+                           judge: nil,
+                           appeal: appeal,
+                           hearing_day: hearing_day,
+                           scheduled_time: scheduled_time)
+        else
+          case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id, hearing_date: scheduled_time)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:video],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:legacy_hearing,
+                           disposition: nil,
+                           case_hearing: case_hearing,
+                           appeal_id: appeal.id,
+                           appeal: appeal,
+                           hearing_day: hearing_day)
+          appeal.update!(hearings: [hearing])
+        end
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        distro_task.update!(status: "on_hold")
+        AssignHearingDispositionTask.create!(appeal: appeal,
+                                             parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
+      end
+    end
+
+    trait :withdrawal_request_with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        appeal.update!(closest_regional_office: "RO17")
+        task.update!(parent: root_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        HearingWithdrawalRequestMailTask.create!(appeal: appeal,
+                                                 parent: task,
+                                                 assigned_to: HearingAdmin.singleton,
+                                                 instructions: task.instructions)
+      end
+    end
+
+    trait :withdrawal_request_with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        scheduled_time = Time.zone.today + 1.month
+        if appeal.is_a?(Appeal)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:virtual],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:hearing,
+                           disposition: nil,
+                           judge: nil,
+                           appeal: appeal,
+                           hearing_day: hearing_day,
+                           scheduled_time: scheduled_time)
+        else
+          case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id, hearing_date: scheduled_time)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:video],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:legacy_hearing,
+                           disposition: nil,
+                           case_hearing: case_hearing,
+                           appeal_id: appeal.id,
+                           appeal: appeal,
+                           hearing_day: hearing_day)
+          appeal.update!(hearings: [hearing])
+        end
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        distro_task.update!(status: "on_hold")
+        AssignHearingDispositionTask.create!(appeal: appeal,
+                                             parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+        HearingWithdrawalRequestMailTask.create!(appeal: appeal,
+                                                 parent: task,
+                                                 assigned_to: HearingAdmin.singleton,
+                                                 instructions: task.instructions)
+      end
+    end
+
     # Colocated tasks for Legacy appeals
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       # don't expect to have a parent for LegacyAppeals
@@ -307,16 +431,84 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
-      factory :higher_level_review_vha_task, class: DecisionReviewTask do
-        appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
+      factory :supplemental_claim_poa_task, class: DecisionReviewTask do
+        appeal do
+          create(:supplemental_claim,
+                 :processed,
+                 :with_vha_issue,
+                 :with_end_product_establishment,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
         assigned_by { nil }
-        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+
+        after(:create) do |task|
+          task.appeal.create_business_line_tasks!
+        end
+      end
+
+      factory :higher_level_review_vha_task, class: DecisionReviewTask do
+        appeal do
+          create(:higher_level_review,
+                 :with_vha_issue,
+                 :with_intake,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
+      factory :higher_level_review_vha_task_with_decision, class: DecisionReviewTask do
+        appeal do
+          create(:higher_level_review,
+                 :with_vha_issue,
+                 :with_intake,
+                 :with_decision,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.updated_at = Time.zone.now + 1.minute
+          task.save
+        end
       end
 
       factory :supplemental_claim_vha_task, class: DecisionReviewTask do
-        appeal { create(:supplemental_claim, :with_vha_issue, benefit_type: "vha") }
+        appeal do
+          create(
+            :supplemental_claim,
+            :with_vha_issue,
+            :with_intake,
+            benefit_type: "vha",
+            claimant_type: :veteran_claimant
+          )
+        end
         assigned_by { nil }
-        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
+      factory :supplemental_claim_vha_task_with_decision, class: DecisionReviewTask do
+        appeal do
+          create(:supplemental_claim,
+                 :with_vha_issue,
+                 :with_intake,
+                 :with_decision,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.updated_at = Time.zone.now + 1.minute
+          task.save
+        end
       end
 
       factory :distribution_task, class: DistributionTask do
@@ -328,6 +520,9 @@ FactoryBot.define do
           task.update(status: Constants.TASK_STATUSES.on_hold)
           task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
         end
+      end
+
+      factory :evidence_or_argument_mail_task, class: EvidenceOrArgumentMailTask do
       end
 
       factory :pulac_cerullo_task, class: PulacCerulloTask do
@@ -346,6 +541,87 @@ FactoryBot.define do
       end
 
       factory :ama_judge_assign_task, class: JudgeAssignTask do
+      end
+
+      factory :specialty_case_team_assign_task, class: SpecialtyCaseTeamAssignTask do
+        appeal do
+          create(:appeal,
+                 :with_vha_issue,
+                 :with_post_intake_tasks,
+                 :direct_review_docket)
+        end
+        assigned_to { SpecialtyCaseTeam.singleton }
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
+
+        after(:create) do |task, _evaluator|
+          task.appeal.tasks.of_type(:DistributionTask).first.completed!
+        end
+
+        transient do
+          associated_judge { nil }
+          associated_attorney { nil }
+        end
+
+        trait :action_required do
+          after(:create) do |task, evaluator|
+            task.update(status: Constants.TASK_STATUSES.in_progress)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["SCT judge decision cancelled."])
+            attorney_task = AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                                 assigned_by: judge,
+                                                 assigned_to: attorney,
+                                                 assigned_at: 6.hours.ago,
+                                                 started_at: Time.zone.now - 30.minutes,
+                                                 instructions: ["SCT attorney cancelled."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+
+            # Set the status of the two tasks to be cancelled to mimic the correct workflow
+            attorney_task.cancelled!
+            judge_review_task.cancelled!
+          end
+        end
+
+        trait :completed do
+          after(:create) do |task, evaluator|
+            task.update(status: Constants.TASK_STATUSES.completed)
+            task.update(closed_at: Time.zone.now)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["SCT judge on hold."])
+            AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                 assigned_by: judge,
+                                 assigned_to: attorney,
+                                 assigned_at: 6.hours.ago,
+                                 started_at: Time.zone.now - 30.minutes,
+                                 instructions: ["SCT attorney assigned."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+          end
+        end
+
+        trait :ready_for_split_appeal do
+          action_required
+
+          after(:create) do |task, _evaluator|
+            create(:request_issue,
+                   decision_review: task.appeal,
+                   nonrating_issue_category: "Military Retired Pay",
+                   decision_date: 5.days.ago)
+            task.save
+          end
+        end
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
@@ -523,12 +799,7 @@ FactoryBot.define do
 
       factory :assess_documentation_task, class: AssessDocumentationTask do
         parent { create(:vha_document_search_task, appeal: appeal) }
-        assigned_by { nil }
-      end
-
-      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_by { nil }
+        assigned_by { parent.assigned_by }
       end
 
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
@@ -538,12 +809,6 @@ FactoryBot.define do
           User.find_by_css_id("INTAKE_USER") ||
             create(:user, css_id: "INTAKE_USER").tap { |user| BvaIntake.singleton.add_user(user) }
         end
-      end
-
-      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_to { :assigned_to }
-        assigned_by { nil }
       end
 
       factory :education_document_search_task, class: EducationDocumentSearchTask do
@@ -627,6 +892,27 @@ FactoryBot.define do
           User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
             create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
         end
+      end
+
+      factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
+        parent { create(:distribution_task, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
+      end
+
+      factory :hearing_withdrawal_request_mail_task, class: HearingWithdrawalRequestMailTask do
+        parent { create(:distribution_task, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
+      end
+
+      factory :hearing_related_mail_task, class: HearingRelatedMailTask do
+        assigned_to { MailTeam.singleton }
+        parent { create(:root_task, appeal: appeal) }
       end
     end
   end

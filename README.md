@@ -132,7 +132,7 @@ Missing test coverage will be reported automatically at the end of the test run.
 ---
 
 ## Debugging FACOLS setup  #######################################################
-See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-facols-issues.
+See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-development.
 
 Review the [FACOLS documentation](docs/FACOLS.md) for details.
 

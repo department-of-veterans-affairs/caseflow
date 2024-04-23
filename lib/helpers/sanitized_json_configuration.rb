@@ -196,7 +196,7 @@ class SanitizedJsonConfiguration
 
   def extract_configuration(config_field, configuration, default_value = nil)
     configuration.select { |klass, _| klass < ActiveRecord::Base }
-      .map { |klass, class_config| [klass, class_config[config_field] || default_value.clone] }.to_h.compact
+      .transform_values { |class_config| class_config[config_field] || default_value.clone }.compact
   end
 
   def extract_classes_with_true(config_field, configuration)
@@ -373,7 +373,7 @@ class SanitizedJsonConfiguration
              AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
-      end .to_h
+      end.to_h
     )
   end
 

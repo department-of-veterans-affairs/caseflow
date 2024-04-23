@@ -13,7 +13,7 @@ describe BoardGrantEffectuationTask, :postgres do
   end
 
   describe "#complete_with_payload!" do
-    subject { task.complete_with_payload!(nil, nil) }
+    subject { task.complete_with_payload!(nil, nil, nil) }
 
     context "assigned task" do
       it "can be completed" do

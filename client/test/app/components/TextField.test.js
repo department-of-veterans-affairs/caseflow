@@ -93,11 +93,13 @@ describe('TextField', () => {
       inputProps: {
         type: 'search',
       },
+      disabled: true
     };
     const { input } = setup(props);
 
     expect(input).toHaveAttribute('name', props.name);
     expect(input.readOnly).toBe(props.readOnly);
+    expect(input.disabled).toBe(props.disabled);
     expect(input).toHaveAttribute('autocomplete', props.autoComplete);
     expect(input).toHaveAttribute('placeholder', props.placeholder);
     expect(input).toHaveAttribute('title', props.title);

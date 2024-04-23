@@ -19,8 +19,6 @@ class ETLBuilderJob < CaseflowJob
     slack_msg = "Error running #{klass}."
     slack_msg += " See Sentry event #{Raven.last_event_id}" if Raven.last_event_id.present?
     slack_service.send_notification(slack_msg, klass)
-    # Also send a message to #appeals-data-workgroup
-    slack_service.send_notification(slack_msg, klass, "#appeals-data-workgroup")
   end
 
   private
@@ -28,7 +26,7 @@ class ETLBuilderJob < CaseflowJob
   def sweep_etl
     start = Time.zone.now
     swept = ETL::Sweeper.new.call
-    datadog_report_time_segment(segment: "etl_sweeper", start_time: start)
+    metrics_service_report_time_segment(segment: "etl_sweeper", start_time: start)
 
     return unless swept > 20 # big enough to warrant reality check
 
@@ -39,7 +37,7 @@ class ETLBuilderJob < CaseflowJob
   def build_etl
     start = Time.zone.now
     etl_build = ETL::Builder.new.incremental
-    datadog_report_time_segment(segment: "etl_builder", start_time: start)
+    metrics_service_report_time_segment(segment: "etl_builder", start_time: start)
 
     return unless etl_build.built == 0
 

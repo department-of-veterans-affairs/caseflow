@@ -6,7 +6,7 @@
 # Currently used for attorney fee cases when the attorney isn't found in the BGS attorney database.
 
 class OtherClaimant < Claimant
-  delegate :name, :first_name, :middle_name, :last_name, :suffix, :ssn,
+  delegate :name, :first_name, :middle_name, :last_name, :suffix, :ein, :ssn,
            :address, :address_line_1, :address_line_2, :address_line_3,
            :city, :state, :zip, :country, :date_of_birth,
            :email_address, :phone_number,
@@ -30,16 +30,20 @@ class OtherClaimant < Claimant
     unrecognized_appellant&.relationship&.titleize || "Other"
   end
 
-  def save_unrecognized_details!(params, poa_params)
+  # :reek:FeatureEnvy
+  def save_unrecognized_details!(params, poa_params, benefit_type)
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)
-
     if poa_form
       poa_participant_id = poa_params&.delete(:listed_attorney)&.dig(:value)
+      not_listed_poa = poa_participant_id == "not_listed"
+      vha_benefit_type = benefit_type == "vha"
 
-      if poa_participant_id != "not_listed"
+      if !not_listed_poa
         appellant.update!(poa_participant_id: poa_participant_id)
+      elsif not_listed_poa && vha_benefit_type
+        appellant.update!(not_listed_power_of_attorney: NotListedPowerOfAttorney.create!)
       else
         poa_params.permit!
         appellant.update!(unrecognized_power_of_attorney: create_party_detail!(poa_params))

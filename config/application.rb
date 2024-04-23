@@ -12,11 +12,119 @@ require "vbms"
 module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    # config.load_defaults 5.1
+    config.load_defaults 5.2
+    config.autoloader = :classic
 
     # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
+
+    # ==================================================================================================================
+    # Rails default overrides
+    #   These settings override the defaults set by `config.load_defaults`.
+    #   If and as appropriate, we can transition these overrides one-by-one to migrate to their respective defaults.
+    #   See the Rails Guides: Configuring Rails Applications for more info on each option.
+    #   https://guides.rubyonrails.org/configuring.html
+    #
+    # ==================================================================================================================
+    # Rails 5.0 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Enable per-form CSRF tokens.
+    # Default as of 5.0: true
+    config.action_controller.per_form_csrf_tokens = false
+
+    # Enable origin-checking CSRF mitigation.
+    # Default as of 5.0: true
+    config.action_controller.forgery_protection_origin_check = false
+
+    # Make Ruby 2.4 preserve the timezone of the receiver when calling `to_time`.
+    # Default as of 5.0: true
+    ActiveSupport.to_time_preserves_timezone = false
+
+    # Require `belongs_to` associations by default.
+    # Default as of 5.0: true
+    config.active_record.belongs_to_required_by_default = false
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rails 5.1 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Make `form_with` generate non-remote forms.
+    # Default as of 5.1: true
+    # Default as of 6.1: false
+    config.action_view.form_with_generates_remote_forms = false
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rails 5.2 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Make Active Record use stable #cache_key alongside new #cache_version method.
+    # This is needed for recyclable cache keys.
+    # Default as of 5.2: true
+    config.active_record.cache_versioning = false
+
+    # Use AES-256-GCM authenticated encryption for encrypted cookies.
+    # Also, embed cookie expiry in signed or encrypted cookies for increased security.
+    #
+    # This option is not backwards compatible with earlier Rails versions.
+    # It's best enabled when your entire app is migrated and stable on 5.2.
+    #
+    # Existing cookies will be converted on read then written with the new scheme.
+    # Default as of 5.2: true
+    config.action_dispatch.use_authenticated_cookie_encryption = false
+    #
+    # Use AES-256-GCM authenticated encryption as default cipher for encrypting messages
+    # instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
+    # Default as of 5.2: true
+    config.active_support.use_authenticated_message_encryption = false
+
+    # Add default protection from forgery to ActionController::Base instead of in ApplicationController.
+    # Default as of 5.2: true
+    config.action_controller.default_protect_from_forgery = false
+
+    # Store boolean values in sqlite3 databases as 1 and 0 instead of 't' and 'f' after migrating old data.
+    # Default as of 5.2: true
+    config.active_record.sqlite3.represent_boolean_as_integer = false
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rails 6.0 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Don't force requests from old versions of IE to be UTF-8 encoded.
+    # Default as of 6.0: false
+    config.action_view.default_enforce_utf8 = true
+
+    # Embed purpose and expiry metadata inside signed and encrypted
+    # cookies for increased security.
+    #
+    # This option is not backwards compatible with earlier Rails versions.
+    # It's best enabled when your entire app is migrated and stable on 6.0.
+    # Default as of 6.0: true
+    config.action_dispatch.use_cookies_with_metadata = false
+
+    # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
+    # Default as of 6.0: false
+    config.action_dispatch.return_only_media_type_on_content_type = true
+
+    # Use ActionMailer::MailDeliveryJob for sending parameterized and normal mail.
+    #
+    # The default delivery jobs (ActionMailer::Parameterized::DeliveryJob, ActionMailer::DeliveryJob),
+    # will be removed in Rails 6.1. This setting is not backwards compatible with earlier Rails versions.
+    # If you send mail in the background, job workers need to have a copy of
+    # MailDeliveryJob to ensure all delivery jobs are processed properly.
+    # Make sure your entire app is migrated and stable on 6.0 before using this setting.
+    # Default as of 6.0: "ActionMailer::MailDeliveryJob"
+    config.action_mailer.delivery_job = nil
+
+    # Enable the same cache key to be reused when the object being cached of type
+    # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
+    # of the relation's cache key into the cache version to support recycling cache key.
+    # Default as of 6.0: true
+    config.active_record.collection_cache_versioning = false
+
+    # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -102,5 +210,12 @@ module CaseflowCertification
       TOPLEVEL_BINDING.eval("self").extend FinderConsoleMethods
     end
     # :nocov:
+
+    # Unregister `sprockets-rails` source mapping postprocessor to avoid conflicts with source map generation provided
+    # by `react_on_rails`+`webpack`. The addition of this postprocessor in `sprockets-rails` `3.4.0` was causing
+    # corruption of the `webpack-bundle.js` file, thus breaking feature specs in local development environments.
+    config.assets.configure do |env|
+      env.unregister_postprocessor("application/javascript", ::Sprockets::Rails::SourcemappingUrlProcessor)
+    end
   end
 end

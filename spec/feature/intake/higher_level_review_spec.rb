@@ -253,6 +253,16 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "030HLRR"
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
+    )
+
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       hash_including(
@@ -263,7 +273,7 @@ feature "Higher-Level Review", :all_dbs do
           claim_type: "Claim",
           station_of_jurisdiction: current_user.station_id,
           date: higher_level_review.receipt_date.to_date,
-          end_product_modifier: "033",
+          end_product_modifier: ratings_end_product_establishment.end_product.modifier,
           end_product_label: "Higher-Level Review Rating",
           end_product_code: "030HLRR",
           gulf_war_registry: false,
@@ -275,12 +285,12 @@ feature "Higher-Level Review", :all_dbs do
       )
     )
 
-    ratings_end_product_establishment = EndProductEstablishment.find_by(
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: "030HLRR"
+      code: "030HLRNR"
     )
 
-    expect(ratings_end_product_establishment).to have_attributes(
+    expect(nonratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910292",
       payee_code: "10"
     )
@@ -294,7 +304,7 @@ feature "Higher-Level Review", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "032",
+        end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
         end_product_label: "Higher-Level Review Nonrating",
         end_product_code: "030HLRNR",
         gulf_war_registry: false,
@@ -302,16 +312,6 @@ feature "Higher-Level Review", :all_dbs do
       ),
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
-    )
-
-    nonratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: "030HLRNR"
-    )
-
-    expect(nonratings_end_product_establishment).to have_attributes(
-      claimant_participant_id: "5382910292",
-      payee_code: "10"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -471,30 +471,6 @@ feature "Higher-Level Review", :all_dbs do
         user: current_user,
         claim_date: higher_level_review.receipt_date.to_date
       )
-    end
-  end
-
-  context "when disabling claim establishment is enabled" do
-    before { FeatureToggle.enable!(:disable_claim_establishment) }
-    after { FeatureToggle.disable!(:disable_claim_establishment) }
-
-    it "completes intake and prevents edit" do
-      start_higher_level_review(veteran_no_ratings)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "Description for Active Duty Adjustments",
-        date: profile_date.mdY
-      )
-      click_intake_finish
-
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-
-      click_on "correct the issues"
-
-      expect(page).to have_content("Review not editable")
     end
   end
 
@@ -659,7 +635,7 @@ feature "Higher-Level Review", :all_dbs do
 
     let!(:untimely_rating) { generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id) }
     let!(:before_ama_rating_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
-    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
     let!(:request_issue_in_progress) do

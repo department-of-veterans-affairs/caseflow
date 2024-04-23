@@ -579,6 +579,19 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "when there is a granted aod, claimant is an AttorneyClaimant and aod_based_on_age is false" do
+    let(:appeal) { create(:appeal, :advanced_on_docket_granted_attorney_claimant) }
+
+    it "returns true" do
+      expect(appeal.advanced_on_docket?).to eq(true)
+      expect(appeal.aod_based_on_age).to eq(false)
+    end
+
+    it "does not return nil" do
+      expect(appeal.advanced_on_docket?).not_to eq(nil)
+    end
+  end
+
   context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
@@ -1156,7 +1169,7 @@ describe Appeal, :all_dbs do
       it "sets target decision date" do
         subject.set_target_decision_date!
         expect(subject.target_decision_date).to eq(
-          subject.receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days
+          subject.receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days
         )
       end
     end
@@ -1261,6 +1274,116 @@ describe Appeal, :all_dbs do
 
       it "returns false" do
         expect(subject).to be_falsey
+      end
+    end
+  end
+
+  describe "#mst?" do
+    subject { appeal.mst? }
+
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
+    let(:request_issues) do
+      [
+        create(:request_issue, mst_status: mst_status)
+      ]
+    end
+
+    context "when request issues with mst_status are associated with appeal" do
+      let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+      context "when mst_status is enabled" do
+        let(:mst_status) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when mst_status is disabled" do
+        let(:mst_status) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
+      end
+    end
+
+    context "when request issues with mst_status are not associated with appeal and has special_issue_list" do
+      let!(:appeal) { create(:appeal) }
+
+      before do
+        Timecop.freeze(Time.utc(2023, 4, 28, 12, 0, 0))
+        create(:special_issue_list, appeal_id: appeal.id, military_sexual_trauma: military_sexual_trauma)
+      end
+
+      after do
+        Timecop.return
+      end
+
+      context "when military_sexual_trauma is enabled" do
+        let(:military_sexual_trauma) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when military_sexual_trauma is disabled" do
+        let(:military_sexual_trauma) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
+      end
+    end
+  end
+
+  describe "#pact?" do
+    subject { appeal.pact? }
+
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
+
+    let(:request_issues) do
+      [
+        create(:request_issue, pact_status: pact_status)
+      ]
+    end
+
+    context "when request issues with pact_status are associated with appeal" do
+      let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+      context "when pact_status is enabled" do
+        let(:pact_status) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when pact_status is disabled" do
+        let(:pact_status) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
       end
     end
   end
@@ -1504,11 +1627,108 @@ describe Appeal, :all_dbs do
       end
     end
 
+    context "when an appeal has open DistributionTask and non-blocking MailTask subclass" do
+      let!(:appeal_ready_to_distribute_with_evidence_task) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
+        appeal
+      end
+
+      subject { appeal_ready_to_distribute_with_evidence_task.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has on_hold DistributionTask and correct blocking MailTask tree" do
+      let!(:appeal_not_ready_to_distribute_with_correct_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.tasks.find_by(type: DistributionTask.name))
+        appeal
+      end
+
+      subject { appeal_not_ready_to_distribute_with_correct_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
+      end
+    end
+
+    # this shouldn't happen as blocking MailTasks should be a child of DistributionTask if it is not closed,
+    # but this is the easiest way to test whether blocking MailTasks are picked up in the method's checks
+    context "when an appeal has incorrectly open DistributionTask and blocking MailTask" do
+      let!(:appeal_ready_to_distribute_with_incorrect_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.root_task)
+        appeal
+      end
+
+      subject { appeal_ready_to_distribute_with_incorrect_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
+      end
+    end
+
     context "when an appeal has open tasks" do
       subject { distributed_appeal_cannot_redistribute.can_redistribute_appeal? }
       it "returns false" do
         expect(subject).to be false
       end
+    end
+  end
+
+  describe "sct_appeal?" do
+    let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
+    let(:appeal_2) { create(:appeal, :with_request_issues) }
+
+    it "should return true if appeal has vha issue" do
+      expect(appeal.sct_appeal?).to be true
+    end
+
+    it "should return false for appeal with no vha issue" do
+      expect(appeal_2.sct_appeal?).to be false
+    end
+  end
+
+  describe "reopen_distribution_task" do
+    let!(:appeal) { create(:appeal, :ready_for_distribution) }
+    let!(:user) { create(:user) }
+
+    before do
+      appeal.tasks.find { |task| task.is_a?(DistributionTask) }.completed!
+      appeal.reload
+    end
+
+    it "should reopen the distribution task on the appeal and set the assigned by on the task to the user" do
+      expect(appeal.ready_for_distribution?).to eq(false)
+      appeal.reopen_distribution_task!(user)
+      expect(appeal.tasks.find { |task| task.is_a?(DistributionTask) }.assigned_by).to eq(user)
+      expect(appeal.ready_for_distribution?).to eq(true)
+    end
+  end
+
+  describe "completed_specialty_case_team_assign_task?" do
+    let(:appeal) { create(:appeal, :with_vha_issue) }
+    let(:appeal_2) { create(:specialty_case_team_assign_task, :completed).appeal }
+
+    it "should return true if appeal has a specialty case team assign task" do
+      expect(appeal_2.completed_specialty_case_team_assign_task?).to be true
+    end
+
+    it "should return false for appeal without a specialty case team assign task" do
+      expect(appeal.completed_specialty_case_team_assign_task?).to be false
+    end
+  end
+
+  describe "distributed?" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let(:appeal_2) { create(:appeal) }
+
+    it "should return true if appeal has a distribution task" do
+      expect(appeal.distributed?).to be true
+    end
+
+    it "should return false for appeal does not have a distribution task" do
+      expect(appeal_2.distributed?).to be false
     end
   end
 

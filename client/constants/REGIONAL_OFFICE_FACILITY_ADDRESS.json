@@ -416,7 +416,7 @@
       "timezone" : "America/Chicago"
    },
    "vba_351" : {
-      "address_1" : "122 Eastside Blvd.",
+      "address_1" : "125 South Main Street.",
       "address_2" : null,
       "address_3" : null,
       "city" : "Muskogee",
@@ -578,12 +578,12 @@
       "timezone" : "America/Denver"
    },
    "vba_452" : {
-      "address_1" : "5500 E Kellogg",
-      "address_2" : "Bldg. 61",
+      "address_1" : "9111 E. Douglas Ave.",
+      "address_2" : "Suite 200",
       "address_3" : null,
       "city" : "Wichita",
       "state" : "KS",
-      "zip" : "67218",
+      "zip" : "67207",
       "timezone" : "America/Chicago"
    },
    "vba_459" : {
@@ -720,6 +720,15 @@
       "state" : "MS",
       "zip" : "39531",
       "timezone" : "America/Chicago"
+   },
+   "vc_0742V" :{
+      "address_1" : "1118 Burlington Street",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Holdrege",
+      "state" : "NE",
+      "zip" : "68949-1705",
+      "timezone" : "America/New_York"
    },
    "vha_402GA" : {
       "address_1" : "163 Van Buren Road",
@@ -1334,12 +1343,12 @@
       "timezone" : "America/Chicago"
    },
    "vha_740GA" : {
-      "address_1" : "2106 Treasure Hills Boulevard",
+      "address_1" : "2601 Veteran Drive",
       "address_2" : null,
       "address_3" : null,
       "city" : "Harlingen",
       "state" : "TX",
-      "zip" : "78550-8736",
+      "zip" : "78550",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {

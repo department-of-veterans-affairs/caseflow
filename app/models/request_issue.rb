@@ -11,6 +11,13 @@ class RequestIssue < CaseflowRecord
   include HasBusinessLine
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
+  include SyncLock
+
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
+  # Max page per limit
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -68,11 +75,19 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
   amoeba do
     enable
     exclude_association :decision_review_id
     exclude_association :request_decision_issues
+  end
+
+  class DecisionDateInFutureError < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot edit issue decision date " \
+        "due to decision date being in the future")
+    end
   end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -151,6 +166,10 @@ class RequestIssue < CaseflowRecord
       active_or_ineligible.or(withdrawn)
     end
 
+    def active_or_decided
+      active.or(decided).order(id: :asc)
+    end
+
     def active_or_decided_or_withdrawn
       active.or(decided).or(withdrawn).order(id: :asc)
     end
@@ -177,7 +196,7 @@ class RequestIssue < CaseflowRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
       issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
@@ -206,10 +225,16 @@ class RequestIssue < CaseflowRecord
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
         verified_unidentified_issue: data[:verified_unidentified_issue],
-        is_predocket_needed: data[:is_predocket_needed]
+        is_predocket_needed: data[:is_predocket_needed],
+        mst_status: data[:mst_status],
+        vbms_mst_status: data[:vbms_mst_status],
+        mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
+        pact_status: data[:pact_status],
+        vbms_pact_status: data[:vbms_pact_status],
+        pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
       }
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||
@@ -244,6 +269,41 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def mst_contention_status?
+    return false if bgs_contention.nil?
+
+    if bgs_contention.special_issues.is_a?(Hash)
+      return bgs_contention.special_issues[:spis_tc] == "MST" if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if issue[:spis_tc] == "MST"
+      end
+    end
+    false
+  end
+
+  def pact_contention_status?
+    return false if bgs_contention.nil?
+
+    if bgs_contention.special_issues.is_a?(Hash)
+      if bgs_contention&.special_issues
+        return %w[PACT PACTDICRE PEES1].include?(bgs_contention.special_issues[:spis_tc])
+      end
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if %w[PACT PACTDICRE PEES1].include?(issue[:spis_tc])
+      end
+    end
+    false
+  end
+
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
   end
 
   def rating?
@@ -302,6 +362,10 @@ class RequestIssue < CaseflowRecord
 
   def vha_predocket?
     benefit_type == "vha" && predocket_needed?
+  end
+
+  def sct_benefit_type?
+    Constants::SPECIALTY_CASE_TEAM_BENEFIT_TYPES.key?(benefit_type)
   end
 
   def description
@@ -431,13 +495,21 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    ### hlr_sync_lock will stop any other request issues associated with the current End Product Establishment
+    ### from syncing with BGS concurrently if the claim is a Higher Level Review. This will ensure that
+    ### the remand supplemental claim generation that occurs within '#on_decision_issue_sync_processed' will
+    ### not be inadvertantly bypassed due to two request issues from the same claim being synced at the same
+    ### time. If this situation does occur, one of the request issues will error out with
+    ### Caseflow::Error:SyncLockFailed and be picked up to sync again later
+    hlr_sync_lock do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
   end
 
@@ -459,6 +531,10 @@ class RequestIssue < CaseflowRecord
 
     transaction do
       update!(closed_at: closed_at_value, closed_status: status)
+
+      # Special handling for claim reviews that contain issues without a decision date
+      decision_review.try(:handle_issues_with_no_decision_date!)
+
       yield if block_given?
     end
   end
@@ -489,12 +565,22 @@ class RequestIssue < CaseflowRecord
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
+  def save_decision_date!(new_decision_date)
+    fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
+
+    update!(decision_date: new_decision_date, decision_date_added_at: Time.zone.now)
+
+    # Special handling for claim reviews that contain issues without a decision date
+    decision_review.try(:handle_issues_with_no_decision_date!)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
+
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?
@@ -609,7 +695,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def contention
-    end_product_establishment.contention_for_object(self)
+    end_product_establishment&.contention_for_object(self)
   end
 
   def bgs_contention
@@ -987,6 +1073,15 @@ class RequestIssue < CaseflowRecord
 
   def appeal_active?
     decision_review.tasks.open.any?
+  end
+
+  def decision_date_exists?
+    decision_date.present?
+  end
+
+  def set_decision_date_added_at
+    self.decision_date_added_at = created_at
+    save!
   end
 end
 # rubocop:enable Metrics/ClassLength

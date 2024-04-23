@@ -14,6 +14,10 @@ Frequently Asked Question:
 
 Apple Silicon processors use a different architecture (arm64/aarch64) than Intel processors (x86_64). Oracle, which is used for the VACOLS database, does not have binaries to run any of their database tools natively on arm64 for MacOS. Additionally, the Ruby gems `therubyracer` and `jshint` require the library v8@3.15, which can also only be compiled and installed on x86_64 processors. To work around this we use Rosetta to emulate x86_64 processors in the terminal, installing most of the Caseflow dependencies via the x86_64 version of Homebrew. It is important that while setting up your environment, you ensure you are *in the correct terminal type* and *in the correct directory* so that you do not install or compile a dependency with the wrong architecture.
 
+2. I am running into errors! Where can I go for help?
+
+See the Installation Workarounds section for common or previously relevant workarounds that may help. Additionally, join the #bid_appeals_mac_support channel in Slack (or ask your scrum master to add you). You can search that channel to see if your issue has been previously discussed or post what step you are having a problem on and what you've done so far.
+
 ***Ensure command line tools are installed via Self Service Portal prior to starting***
 
 ***Follow these instructions as closely as possible. If a folder is specified for running terminal commands, ensure you are in that directory prior to running the command(s). If you can't complete a step, ask for help in the #bid_appeals_mac_support channel of the Benefits Integrated Delivery (BID) Slack workspace.***
@@ -57,7 +61,7 @@ Install UTM and VACOLS VM
 6. Select the “Play” button when it pops up in UTM
 7. Leave this running in the background. If you close the window, you can open it back up by repeating steps 5-7
 
-Chromedriver Installation
+Chromedriver, PDFtk Server, and wkhtmltox Installation
 ---
 1. Open terminal and run
     * `brew install --cask chromedriver`
@@ -70,37 +74,8 @@ developer”
 6. Select “Yes” from pop up
 7. Reopen terminal and once again run `chromedriver –version`
 8. Select “Open”
-
-Note: you may need to run ```sudo spctl --global-disable``` in the terminal if you have issues with security
-
-Install PDFtk Server and wkhtmltox
----
-1. Download and install from this [link](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
-2. Download this [file](https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-2/wkhtmltox-0.12.6-2.macos-cocoa.pkg) and move through the prompts
-
-Note: you may need to run ```sudo spctl --global-disable``` in the terminal if you have issues with security
-
-Configure x86_64 Homebrew
----
-Run the below commands **from your home directory**
-
-1. In a terminal, create a homebrew directory under your home directory
-    * ```mkdir homebrew```
-2. In a terminal, run
-    * ```curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew```
-3. If you get a chdir error, run
-    * ``mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew``
-4. Using sudo, move the homebrew directory to /usr/local/
-    * ```sudo mv homebrew /usr/local/homebrew```
-
-Rosetta
----
-1. Open standard terminal and run:
-    * ```softwareupdate -–install-rosetta –-agree-to-license```
-2. Once Rosetta is installed, find the default terminal in “Finder” > Applications
-3. Right click and select “Get Info”
-4. Select “Open using Rosetta”
-    * Note: you can copy the standard terminal executable to your desktop and enable Rosetta on that, so that you don’t need to disable rosetta on the default terminal once Caseflow setup is complete
+9. Download and install from this [link](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg). When you receive a security warning, follow steps 3-6 for PDFtk server
+10. Download this [file](https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-2/wkhtmltox-0.12.6-2.macos-cocoa.pkg) and move through the prompts. When you receive a security warning, follow steps 3-6 for wkhtmltox
 
 Oracle “instantclient” Files
 ---
@@ -114,20 +89,25 @@ Postgres Download
 ---
 1. Download and install from this [link](https://github.com/PostgresApp/PostgresApp/releases/download/v2.5.8/Postgres-2.5.8-14.dmg)
 
-OpenSSL
+Configure x86_64 Homebrew
 ---
-1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?id=%2Fteams%2FVABID%2Fappeals%2FDocuments%2FDevelopment%2FDeveloper%20Setup%20Resources%2FM1%20Mac%20Developer%20Setup&viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd)
-2. Open “Finder” and find the two folders under “Downloads”
-3. Extract the `.tar.gz` files
-4. In each of the extracted folders:
-    1. Navigate to the `/usr/local/homebrew/Cellar` subfolder
-    2. Copy the openssl folder to your local machine's `/usr/local/homebrew/Cellar` folder
-    3. If the folder `Cellar` in `/usr/local/homebrew` does not exist, create it with `mkdir /usr/local/homebrew/Cellar`
-    * Note: moving these folders can be done using finder or a terminal
-5. Run command (from a rosetta terminal)
-    1. `brew link --force openssl@1.1`
-    2. If the one above doesn’t work run: `brew link openssl@1.1 --force`
-    * Note: don't link openssl@3 unless you run into issues farther in the setup
+Run the below commands **from your home directory**
+
+1. In a terminal, create a homebrew directory under your home directory
+    * ```mkdir homebrew```
+2. In a terminal, run
+    * ```curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew```
+3. If you get a chdir error, run
+    * ``mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew``
+
+Rosetta
+---
+1. Open standard terminal and run:
+    * ```softwareupdate -–install-rosetta –-agree-to-license```
+2. Once Rosetta is installed, find the default terminal in “Finder” > Applications
+3. Right click and select “Get Info”
+4. Select “Open using Rosetta”
+    * Note: you can copy the standard terminal executable to your desktop and enable Rosetta on that, so that you don’t need to disable rosetta on the default terminal once Caseflow setup is complete
 
 Modify your .zshrc File
 ---
@@ -135,17 +115,17 @@ Modify your .zshrc File
 2. Add the following lines, if any of these are already set make sure to comment previous settings:
 
 ```
-export PATH=/usr/local/homebrew/bin:${PATH}
-eval "$(/usr/local/homebrew/bin/rbenv init -)"
-eval "$(/usr/local/homebrew/bin/nodenv init -)"
-eval "$(/usr/local/homebrew/bin/pyenv init --path)"
+export PATH=~/homebrew/bin:${PATH}
+eval "$(~/homebrew/bin/rbenv init -)"
+eval "$(~/homebrew/bin/nodenv init -)"
+eval "$(~/homebrew/bin/pyenv init --path)"
 
 # Add Postgres environment variables for CaseFlow
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 export NLS_LANG=AMERICAN_AMERICA.UTF8
-export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freedesktop.org.xml export OCI_DIR=~/Downloads/instantclient_19_8
+export FREEDESKTOP_MIME_TYPES_PATH=~/homebrew/share/mime/packages/freedesktop.org.xml export OCI_DIR=~/Downloads/instantclient_19_8
 ```
 
 3. Save file
@@ -156,40 +136,40 @@ Run dev setup scripts in Caseflow repo
 ---
 **VERY IMPORTANT NOTE: The below commands must be run *in a Rosetta terminal* until you reach the 'Running Caseflow' section**
 
-*Script 1*
+***Script 1***
 
-1. Enter a **Rosetta** terminal and ensure you are in the directory you cloned Caseflow repo into (~/dev/appeals/caseflow) and run commands:
+1. Open a **new Rosetta** terminal and ensure you are in the directory you cloned the Caseflow repo into (~/dev/appeals/caseflow) and run commands:
     1. ```git checkout grant/setup-m1```
     2. ```./scripts/dev_env_setup_step1.sh```
     * If this fails, double check your .zshrc file to ensure your PATH has only the x86_64 brew
 
-*Script 2*
+Note: If you run into errors installing any versions of openssl, see the "Installation Workarounds" section at the bottom of this document
 
-1. Open a **Rosetta** terminal and navigate to /usr/local, run the command ```sudo spctl --global-disable```
+***Script 2***
+
 2. In the **Rosetta** terminal, install pyenv and the required python2 version:
     1. `brew install pyenv`
-    2. `pyenv install 2.7.18`
-    3. In the caseflow directory, run `pyenv local 2.7.18` to set the version
+    2. `pyenv rehash`
+    3. `pyenv install 2.7.18`
+    4. In the caseflow directory, run `pyenv local 2.7.18` to set the version
 3. In the **Rosetta** terminal navigate to caseflow folder:
-    1. set ```RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1"```
-    2. run `rbenv install 2.7.3`
-    3. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
-    4. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
-        1. run `brew edit v8@3.15`
+    1. run `rbenv install $(cat .ruby-version)`
+    2. run `rbenv rehash`
+    3. run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
+    4. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
+    5. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
+        1. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew edit v8@3.15`
         2. go to line 21 in the editor by typing `:21`
       Note: the line being removed is `disable! date: "2023-06-19", because: "depends on Python 2 to build"`
         3. delete the line by pressing `d` twice
         4. save and quit by typing `:x`
-    5. Configure build opts for gem `therubyracer`:
+        5. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew install v8@3.15`
+    6. Configure build opts for gem `therubyracer`:
         1. `bundle config build.libv8 --with-system-v8`
         2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)`
-    6. run ```./scripts/dev_env_setup_step2.sh```
-  If you get a permission error while running gem install or bundle install, **do not run using sudo.**
-  Set the permissions back to you for every directory under /.rbenv
-      * Enter command: `sudo chown -R <your name under /Users> /Users/<your name>/.rbenv`
-          * For example, if my name is Eli Brown, the command will be:
-          `sudo chown –R elibrown /Users/elibrown/.rbenv`
-4. Optional: If there are no errors messages, run `bundle install` to ensure all gems are installed
+    7. run ```./scripts/dev_env_setup_step2.sh```
+  If you get a permission error while running gem install or bundle install, something went wrong with your rbenv install which needs to be fixed.
+4. If there are no errors messages, run `bundle install` to ensure all gems are installed
 
 Running Caseflow
 ---
@@ -197,12 +177,12 @@ Running Caseflow
 
 1. Once your installation of all gems is complete, switch back to a standard MacOS terminal:
     1. open your ~/.zshrc file
-    2. comment the line `export PATH=/usr/local/homebrew/bin:$PATH`
+    2. comment the line `export PATH=~/homebrew/bin:$PATH`
     3. uncomment the line `export PATH=/opt/homebrew/bin:$PATH`
     4. add the line `export PATH=$HOME/.nodenv/shims:$HOME/.rbenv/shims:$HOME/.pyenv/shims:$PATH`
     5. comment the lines `eval "$({binary} init -)"` for rbenv, pyenv, and nodenv if applicable
-    6. if you added the line `eval $(/usr/local/homebrew/bin/brew shellenv)` after installing x86_64 homebrew, comment it out
-2. Open a terminal verify:
+    6. if you added the line `eval $(~/homebrew/bin/brew shellenv)` after installing x86_64 homebrew, comment it out
+2. Open a new terminal and verify:
 	  1. that you are on arm64 by doing `arch` and checking the output
 	  2. that you are using arm64 brew by doing `which brew` and ensuring the output is `/opt/homebrew/bin/brew`
 3. Open caseflow in VSCode (optional), or navigate to the caseflow directory in your terminal and:
@@ -234,7 +214,33 @@ To launch caseflow after a machine restart:
 Note: It takes several minutes for the VACOLS VM to go through its startup and launch the Oracle DB service, and about a minute for the Postgres DB to initialize after running `make up-m1`.
 
 ---
+# Installation Workarounds
 
+OpenSSL
+---
+**When installing rbenv, nodenv, or pyenv, both openssl libraries should install as dependencies. _Only follow the below instructions if you have problems with openssl@3 or openssl@1.1 not compiling_.**
+
+1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?id=%2Fteams%2FVABID%2Fappeals%2FDocuments%2FDevelopment%2FDeveloper%20Setup%20Resources%2FM1%20Mac%20Developer%20Setup&viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd)
+2. Open “Finder” and find the two folders under “Downloads”
+3. Extract the `.tar.gz` or `.zip` archives
+4. In each of the extracted folders:
+    1. Navigate to the `~/homebrew/Cellar` subfolder
+    2. Copy the openssl folder to your local machine's `~/homebrew/Cellar` folder
+    3. If the folder `Cellar` in `~/homebrew` does not exist, create it with `mkdir ~/homebrew/Cellar`
+    * Note: moving these folders can be done using finder or a terminal
+5. Run command (from a rosetta terminal)
+    1. `brew link --force openssl@1.1`
+    2. If the one above doesn’t work run: `brew link openssl@1.1 --force`
+    * Note: don't link openssl@3 unless you run into issues farther in the setup
+
+Installing Ruby via Rbenv
+---
+If you are getting errors for rbenv being unable to find a usable version of openssl, run these commands prior to running the second dev setup script:
+1. `brew install openssl@1.1`
+2. `export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1"`
+
+Running Caseflow
+---
 The following steps are an alternative to step 7 of the Running Caseflow section in the event that you absolutely cannot get those commands to work:
 1. In caseflow, run
     * a. `make down`

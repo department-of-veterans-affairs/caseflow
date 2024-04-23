@@ -103,6 +103,26 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(case_rows.length).to eq(1)
       end
     end
+
+    context "The judge should still see the assign cases component if they are a member of the SCT organization" do
+      before do
+        SpecialtyCaseTeam.singleton.add_user(judge_one)
+        create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one, appeal: appeal_one)
+        create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one, appeal: appeal_two)
+      end
+
+      scenario "Checking for the assign to attorney widget" do
+        visit "/queue"
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id)
+
+        expect(page).to have_content("Cases to Assign (2)")
+        expect(page).to have_content("Moe Syzlak")
+        expect(page).to have_content("Alice Macgyvertwo")
+      end
+    end
   end
 
   context "Cannot view assigned cases queue of attorneys in other teams" do
@@ -258,7 +278,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
       click_dropdown(prompt: "Select a user", text: judge_two.full_name)
       fill_in("taskInstructions", with: "Test")
-      click_on("Submit")
+      click_button COPY::MODAL_SUBMIT_BUTTON
 
       expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -285,8 +305,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
-      click_on("Submit")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
+      click_button COPY::ASSIGN_TASK_BUTTON
 
       expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
     end
@@ -305,7 +325,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
       click_dropdown(prompt: "Select a user", text: judge_two.full_name)
       fill_in("taskInstructions", with: "Test")
-      click_on("Submit")
+      click_button COPY::MODAL_SUBMIT_BUTTON
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
@@ -334,9 +354,9 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(prompt: "Select a user", text: "Other")
       safe_click ".dropdown-Other"
       click_dropdown({ text: judge_two.full_name }, page.find(".dropdown-Other"))
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on("Submit")
+      click_button COPY::ASSIGN_TASK_BUTTON
       expect(page).to have_content("Assigned 1 task to #{judge_two.full_name}")
     end
   end
@@ -351,9 +371,9 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: judge_one.full_name)
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on("Submit")
+      click_button COPY::ASSIGN_TASK_BUTTON
       expect(page).to have_content("Assigned 1 task to #{judge_one.full_name}")
     end
   end

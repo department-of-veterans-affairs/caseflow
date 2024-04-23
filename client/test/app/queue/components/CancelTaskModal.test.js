@@ -19,7 +19,8 @@ import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData,
   visnData,
-  postData
+  postData,
+  cancelHearingPostponementRequestData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 
 let requestPatchSpy;
@@ -120,7 +121,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+    enterTextFieldOptions(COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, additionalContextText);
 
     expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
@@ -128,7 +129,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
   test('Resultant case timeline entry labels reason for cancellation', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
-    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+    enterTextFieldOptions(COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, additionalContextText);
 
     clickSubmissionButton(buttonText);
 
@@ -179,6 +180,17 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
     expect(getReceivedInstructions()).toBe(
       `##### REASON FOR RETURN:\n${additionalContextText}`
     );
+  });
+});
+
+describe('A mail task gets cancelled', () => {
+  const taskType = 'HearingPostponementRequestMailTask';
+  const returnText = screen.queryByText('Cancelling this task will return it to Huan MailUser Tiryaki');
+
+  test('cancel task modal does not have text indicating that it will return to another user', () => {
+    renderCancelTaskModal(TASK_ACTIONS.CANCEL_TASK.value, cancelHearingPostponementRequestData, taskType);
+
+    expect(returnText).toBeNull();
   });
 });
 
