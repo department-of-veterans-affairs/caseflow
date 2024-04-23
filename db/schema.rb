@@ -200,10 +200,6 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
 
-  create_table "auto_texts", force: :cascade do |t|
-    t.string "name"
-  end
-
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address", comment: "Full address of the location"
     t.integer "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
@@ -606,91 +602,29 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
   create_table "conference_links", force: :cascade do |t|
     t.string "alias", comment: "Alias of the conference"
     t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.string "co_host_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
-    t.integer "conference_id", comment: "Id of the conference"
+    t.string "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.datetime "deleted_at", comment: "Needed column to make use of the paranoia gem."
     t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
     t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
-    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
+    t.bigint "hearing_day_id", comment: "The associated hearing day id"
+    t.bigint "hearing_id", comment: "ID of the hearing associated with this record"
+    t.string "hearing_type", comment: "Type of hearing associated with this record"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.string "type", comment: "Pexip or Webex conference link"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
     t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["deleted_at"], name: "index_conference_links_on_deleted_at"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["hearing_id", "hearing_type"], name: "index_conference_links_on_hearing_id_and_hearing_type"
+    t.index ["type"], name: "index_conference_links_on_type"
     t.index ["updated_by_id"], name: "index_updated_by_id"
-  end
-
-  create_table "correspondence_documents", force: :cascade do |t|
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false, comment: "Date and Time of creation."
-    t.string "document_file_number", comment: "From CMP documents table"
-    t.integer "document_type", comment: "ID of the doc to lookup VBMS Doc Type"
-    t.integer "pages", comment: "Number of pages in the CMP Document"
-    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
-    t.uuid "uuid", comment: "Reference to document in AWS S3"
-    t.bigint "vbms_document_type_id", comment: "From CMP documents table"
-    t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
-  end
-
-  create_table "correspondence_intakes", force: :cascade do |t|
-    t.bigint "correspondence_id", comment: "Foreign key on correspondences table"
-    t.datetime "created_at", null: false
-    t.integer "current_step", null: false, comment: "Tracks users progress on intake workflow"
-    t.jsonb "redux_store", null: false, comment: "JSON representation of the data for the current step"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", comment: "Foreign key on users table"
-    t.index ["correspondence_id"], name: "index_on_correspondence_id"
-    t.index ["user_id"], name: "index_on_user_id"
-  end
-
-  create_table "correspondence_relations", force: :cascade do |t|
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.bigint "related_correspondence_id"
-    t.datetime "updated_at", null: false
-    t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
-    t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
-  end
-
-  create_table "correspondence_types", force: :cascade do |t|
-    t.boolean "active", default: true, null: false
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "correspondences", force: :cascade do |t|
-    t.bigint "assigned_by_id", comment: "Foreign key to users table"
-    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
-    t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
-    t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
-    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.text "notes", comment: "Comes from CMP; can be updated by user"
-    t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
-    t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
-    t.string "source_type", comment: "An information identifier we get from CMP"
-    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.bigint "updated_by_id", comment: "Foreign key to users table"
-    t.uuid "uuid", comment: "Unique identifier"
-    t.datetime "va_date_of_receipt", comment: "Date package delivered"
-    t.bigint "veteran_id", comment: "Foreign key to veterans table"
-    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
-    t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
-    t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
-    t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
-    t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
-  end
-
-  create_table "correspondences_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -1361,6 +1295,13 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
+  create_table "meeting_types", force: :cascade do |t|
+    t.bigint "conferenceable_id"
+    t.string "conferenceable_type"
+    t.integer "service_name", default: 0, comment: "Pexip or Webex Instant Connect"
+    t.index ["conferenceable_type", "conferenceable_id"], name: "conferenceable_association_idx"
+  end
+
   create_table "membership_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
@@ -1516,13 +1457,6 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
-  end
-
-  create_table "package_document_types", force: :cascade do |t|
-    t.boolean "active", default: true
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -1963,6 +1897,30 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
+  create_table "transcription_files", force: :cascade do |t|
+    t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
+    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
+    t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
+    t.string "docket_number", null: false, comment: "Docket number of associated hearing"
+    t.string "file_name", null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
+    t.string "file_status", comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
+    t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
+    t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
+    t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
+    t.index ["docket_number"], name: "index_transcription_files_on_docket_number"
+    t.index ["file_name", "docket_number", "hearing_id", "hearing_type"], name: "idx_transcription_files_on_file_name_and_docket_num_and_hearing", unique: true
+    t.index ["file_type"], name: "index_transcription_files_on_file_type"
+    t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
+    t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
+  end
+
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
     t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
@@ -2108,52 +2066,6 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
-  create_table "vbms_document_types", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "doc_type_id"
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
-  end
-
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2231,8 +2143,9 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
+    t.string "co_host_hearing_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
-    t.integer "conference_id", comment: "ID of conference from Pexip"
+    t.string "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
@@ -2351,18 +2264,6 @@ ActiveRecord::Schema.define(version: 2024_04_11_185612) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
-  add_foreign_key "correspondence_documents", "correspondences"
-  add_foreign_key "correspondence_intakes", "correspondences"
-  add_foreign_key "correspondence_intakes", "users"
-  add_foreign_key "correspondence_relations", "correspondences"
-  add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
-  add_foreign_key "correspondences", "correspondence_types"
-  add_foreign_key "correspondences", "package_document_types"
-  add_foreign_key "correspondences", "users", column: "assigned_by_id"
-  add_foreign_key "correspondences", "users", column: "updated_by_id"
-  add_foreign_key "correspondences", "veterans"
-  add_foreign_key "correspondences_appeals", "appeals"
-  add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"

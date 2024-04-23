@@ -1,0 +1,128 @@
+# frozen_string_literal: true
+
+require "json"
+
+# This file defines the ExternalApi::WebexService class, which is responsible for interacting
+# with the Webex API. This service is used for creating and deleting conferences, refreshing
+# access tokens, and fetching recording details.
+#
+# Key behaviors include:
+# 1. The initialize method sets up the service with necessary parameters like host, port, aud,
+#    apikey, domain, api_endpoint, and query.
+# 2. The create_conference method sends a POST request to the Webex API to create a new conference.
+# 3. The delete_conference method sends a POST request to the Webex API to delete a conference.
+# 4. The refresh_access_token method sends a POST request to the Webex API to refresh the access token.
+# 5. The fetch_recordings_list method sends a GET request to the Webex API to fetch a list of recordings.
+# 6. The fetch_recording_details method sends a GET request to the Webex API to fetch details of a recording.
+# 7. The send_webex_request method is a private method used to send requests to the Webex API
+#    with the specified body and method.
+#
+# All requests to the Webex API are recorded using the MetricsService.
+class ExternalApi::WebexService
+  def initialize(config:)
+    @config = config
+  end
+
+  def create_conference(conferenced_item)
+    body = {
+      "jwt": {
+        "sub": conferenced_item.subject_for_conference,
+        "nbf": conferenced_item.nbf,
+        "exp": conferenced_item.exp
+      },
+      "aud": @config[:aud],
+      "numHost": 2,
+      "provideShortUrls": true,
+      "verticalType": "gen"
+    }
+    method = "POST"
+    resp = send_webex_request(body, method)
+    ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
+  end
+
+  def delete_conference(conferenced_item)
+    body = {
+      "jwt": {
+        "sub": conferenced_item.subject_for_conference,
+        "nbf": 0,
+        "exp": 0
+      },
+      "aud": @config[:aud],
+      "numHost": 2,
+      "provideShortUrls": true,
+      "verticalType": "gen"
+    }
+    method = "POST"
+    resp = send_webex_request(body, method)
+    ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
+  end
+
+  # Purpose: Refreshing the access token to access the API
+  # Return: The response body
+  def refresh_access_token
+    url = URI::DEFAULT_PARSER.escape("#{BASE_URL}/v1/access_token")
+
+    body = {
+      grant_type: "refresh_token",
+      client_id: ENV["WEBEX_CLIENT_ID"],
+      client_secret: ENV["WEBEX_CLIENT_SECRET"],
+      refresh_token: CredStash.get("webex_#{Rails.deploy_env}_refresh_token")
+    }
+
+    headers = {
+      "Content-Type" => "application/x-www-form-urlencoded",
+      "Accept" => "application/json",
+      "Authorization" => CredStash.get("webex_#{Rails.deploy_env}_access_token")
+    }
+
+    request = HTTPI::Request.new
+    request.url = url
+    request.body = URI.encode_www_form(body)
+    request.headers = headers
+
+    response = HTTPI.post(request)
+
+    ExternalApi::WebexService::AccessTokenRefreshResponse.new(response)
+  end
+
+  def fetch_recordings_list
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body, method)
+    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
+  end
+
+  def fetch_recording_details
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body, method)
+    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
+  end
+
+  private
+
+  # :nocov:
+  def send_webex_request(body, method)
+    url = "https://#{@config[:host]}#{@config[:domain]}#{@config[:api_endpoint]}"
+    request = HTTPI::Request.new(url)
+    request.open_timeout = 300
+    request.read_timeout = 300
+    request.body = body.to_json unless body.nil?
+    request.query = @config[:query]
+    request.headers = { "Authorization": "Bearer #{@config[:apikey]}", "Content-Type": "application/json" }
+
+    MetricsService.record(
+      "#{@config[:host]} #{method} request to #{url}",
+      service: :webex,
+      name: @config[:api_endpoint]
+    ) do
+      case method
+      when "POST"
+        HTTPI.post(request)
+      when "GET"
+        HTTPI.get(request)
+      end
+    end
+  end
+  # :nocov:
+end
