@@ -34,6 +34,15 @@ class BusinessLine < Organization
   end
 
   def in_progress_tasks(pagination_params = {})
+    # binding.pry
+    QueryBuilder.new(
+      query_type: :in_progress,
+      query_params: pagination_params,
+      parent: self
+    ).build_query
+  end
+
+  def pending_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :in_progress,
       query_params: pagination_params,

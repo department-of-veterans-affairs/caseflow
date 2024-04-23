@@ -1426,7 +1426,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
 
   create_table "pending_request_issues", comment: "A database table to store pending request issues that are for modification", force: :cascade do |t|
     t.datetime "approved_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
-    t.boolean "approved_status", comment: "withdraw status"
     t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
@@ -1438,6 +1437,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
     t.bigint "request_issue_id", comment: "Indicates the id of the request_issues on which the modification was requested"
     t.text "request_reason", comment: "request reason"
     t.string "request_type", limit: 20, comment: "Pending Request Type"
+    t.string "status", comment: "status of the pending task"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
     t.datetime "withdrawal_date", comment: "if request issue was withdrawn then we save it as withdrawal date "
