@@ -20,7 +20,11 @@ module CorrespondenceControllerConcern
     return unless @response_type == "success"
 
     tasks = Task.where(id: task_ids)
-    tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+    tasks.update_all(
+      assigned_to_id: mail_team_user.id,
+      assigned_to_type: "User",
+      status: Constants.TASK_STATUSES.assigned
+    )
   end
 
   def set_banner_params(user, task_count, tab)
