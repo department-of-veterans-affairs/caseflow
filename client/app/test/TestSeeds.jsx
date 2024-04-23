@@ -164,7 +164,7 @@ class TestSeeds extends React.PureComponent {
                           />
                         )}
                       </>
-                      <table >
+                      <table className='seed-table-style' >
                         <thead>
                           <tr>
                             <th className={cx('table-header-styling')}>
@@ -177,7 +177,7 @@ class TestSeeds extends React.PureComponent {
                               Days Ago
                             </th>
                             <th className={cx('table-header-styling')}>
-                              Judge CSS_ID<br />(optional)
+                              Judge CSS_ID (optional)
                             </th>
                             <th className={cx('table-header-styling')}>
                             </th>
@@ -212,7 +212,7 @@ class TestSeeds extends React.PureComponent {
                                 </div>
                               </td>
                               <td>
-                                <div className={cx('lever-right', 'test-seeds-num-field')}>
+                                <div className={cx('lever-right', 'test-seeds-cssid-field')}>
                                   <TextField
                                     ariaLabelText={`css-id-${type}`}
                                     inputID={`css-id-${type}`}
@@ -226,7 +226,7 @@ class TestSeeds extends React.PureComponent {
                                 <div className="cf-btn-link lever-right test-seed-button-style">
                                   <Button
                                     onClick={() => this.reseedByCaseType(type)}
-                                    name='create'
+                                    name='Create'
                                     loading={this.state.reseedingStatus[type]}
                                     loadingText={`Reseeding ${this.formatSeedName(type)}`}
                                   />
