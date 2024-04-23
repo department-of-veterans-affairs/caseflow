@@ -67,6 +67,23 @@ export default class IssuesList extends React.Component {
         );
       }
     }
+    if (this.props.userCanRequestForIssueUpdates) {
+      options = [];
+      options.push(
+        { displayText: 'Request modification',
+          value: 'request_modification' }
+      );
+
+      options.push(
+        { displayText: 'Request removal',
+          value: 'request_removal' }
+      );
+
+      options.push(
+        { displayText: 'Request withdrawal',
+          value: 'request_withdrawal' }
+      );
+    }
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -179,6 +196,7 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
+  userCanRequestForIssueUpdates: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object
 };

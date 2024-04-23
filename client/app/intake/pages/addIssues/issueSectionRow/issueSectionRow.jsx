@@ -18,6 +18,7 @@ const issueSectionRow = (
     sectionIssues,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
+    userCanRequestForIssueUpdates,
     withdrawReview
   }) => {
   const reviewHasPredocketVhaIssues = sectionIssues.some(
@@ -42,6 +43,7 @@ const issueSectionRow = (
           userCanWithdrawIssues={userCanWithdrawIssues}
           withdrawReview={withdrawReview}
           userCanEditIntakeIssues={userCanEditIntakeIssues}
+          userCanRequestForIssueUpdates={userCanRequestForIssueUpdates}
         />
         {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
       </div>

@@ -45,13 +45,19 @@ import {
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal,
-  toggleEditIntakeIssueModal
+  toggleEditIntakeIssueModal,
+  toggleRequestIssueModificationModal,
+  toggleRequestIssueRemovalModal,
+  toggleRequestIssueWithdrawalModal
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeIssueModal';
+import { RequestIssueModificationModal } from '../../../intakeEdit/components/RequestIssueModificationModal';
+import { RequestIssueRemovalModal } from '../../../intakeEdit/components/RequestIssueRemovalModal';
+import { RequestIssueWithdrawalModal } from '../../../intakeEdit/components/RequestIssueWithdrawalModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -108,6 +114,15 @@ class AddIssuesPage extends React.Component {
         issueIndex: index
       });
       this.props.toggleEditIntakeIssueModal({ index });
+      break;
+    case 'request_modification':
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'request_removal':
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'request_withdrawal':
+      this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     default:
       this.props.undoCorrection(index);
@@ -232,6 +247,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
+      userCanRequestForIssueUpdates,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -303,6 +319,21 @@ class AddIssuesPage extends React.Component {
     };
 
     const renderButtons = () => {
+      if (userCanRequestForIssueUpdates) {
+        return (
+          <div className="cf-actions">
+            <Button
+              name="request-additional-issue"
+              label="request-additional-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+            >
+            + Request additional issue
+            </Button>
+          </div>
+        );
+      }
+
       return (
         <div className="cf-actions">
           {splitButtonVisible() ? (
@@ -455,6 +486,7 @@ class AddIssuesPage extends React.Component {
           sectionIssues,
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
+          userCanRequestForIssueUpdates,
           withdrawReview,
         };
 
@@ -580,6 +612,21 @@ class AddIssuesPage extends React.Component {
             }}
           />
         )}
+
+        {intakeData.requestIssueModificationModalVisible && (
+          <RequestIssueModificationModal
+            onCancel={() => this.props.toggleRequestIssueModificationModal()} />
+        )}
+
+        {intakeData.requestIssueRemovalModalVisible && (
+          <RequestIssueRemovalModal
+            onCancel={() => this.props.toggleRequestIssueRemovalModal()} />
+        )}
+
+        {intakeData.requestIssueWithdrawalModalVisible && (
+          <RequestIssueWithdrawalModal
+            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
+        )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -692,6 +739,7 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
+    userCanRequestForIssueUpdates: state.userCanRequestForIssueUpdates,
     isLegacy: state.isLegacy
   }),
   (dispatch) =>
@@ -702,6 +750,9 @@ export const EditAddIssuesPage = connect(
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
         toggleEditIntakeIssueModal,
+        toggleRequestIssueModificationModal,
+        toggleRequestIssueRemovalModal,
+        toggleRequestIssueWithdrawalModal,
         removeIssue,
         withdrawIssue,
         setIssueWithdrawalDate,

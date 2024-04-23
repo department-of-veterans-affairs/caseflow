@@ -14,6 +14,7 @@ export const mapDataToInitialState = function(props = {}) {
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
     userCanSplitAppeal,
+    userCanRequestForIssueUpdates,
     isLegacy,
     hasDistributionTask,
     hasSpecialtyCaseTeamAssignTask
@@ -40,6 +41,7 @@ export const mapDataToInitialState = function(props = {}) {
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
     userCanSplitAppeal,
+    userCanRequestForIssueUpdates,
     isLegacy,
     addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
