@@ -19,8 +19,18 @@ RSpec.feature "Test Seeds" do
   end
 end
 
+# def confirm_page_and_section_loaded
+#   expect(page).to have_content(COPY::TEST_SEEDS_RUN_SEEDS)
+#   find_field("count-aod-seeds").set(2)
+#   find(:xpath, "//*[@id='button-Run-Demo-Aod-Seeds']").click
+# end
+
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::TEST_SEEDS_RUN_SEEDS)
-  find_field("count-aod-seeds").set(2)
-  find(:xpath, "//*[@id='button-Run-Demo-Aod-Seeds']").click
+
+  aod_seed_field = find_field("count-aod-seeds", visible: :all)
+  aod_seed_field.set(2)
+
+  run_demo_button = find_button("Run Demo Aod Seeds")
+  run_demo_button.click
 end
