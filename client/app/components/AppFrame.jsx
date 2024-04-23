@@ -7,9 +7,7 @@ import classnames from 'classnames';
 import Alert from './Alert';
 
 // eslint-disable-next-line no-process-env
-// const env = process.env.DEPLOY_ENV;
-
-const env = 'uat';
+const env = process.env.DEPLOY_ENV;
 
 const className = classnames(
   {
