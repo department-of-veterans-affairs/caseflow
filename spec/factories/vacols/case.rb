@@ -248,6 +248,13 @@ FactoryBot.define do
     trait :legacy_cavc_appeal do
       bfmpro { "HIS" }
       bfddec { 1.day.ago }
+
+      after(:create) do |vacols_case|
+        vacols_case.case_issues.each do |case_issue|
+          case_issue.issdc = "3"
+          case_issue.save
+        end
+      end
     end
 
     trait :certified do
