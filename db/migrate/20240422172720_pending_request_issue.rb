@@ -10,7 +10,7 @@ class PendingRequestIssue < Caseflow::Migration
       t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
       t.string "nonrating_issue_category", null: true, comment: "issue category decision_issues.non_rating_issue_category"
       t.datetime "withdrawal_date", null: true, comment: "if request issue was withdrawn then we save it as withdrawal date "
-      t.boolean "approved_status", comment: "withdraw status"
+      t.string "status", comment: "status of the pending task"
       t.datetime "approved_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
       t.boolean "remove_original_issue", comment: "flag to indicate if the original issue was removed or not."
       t.references :created_by , index: true, foreign_key: { to_table: :users }
