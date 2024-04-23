@@ -166,6 +166,7 @@ GEM
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
     backport (1.2.0)
+    base64 (0.2.0)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -311,7 +312,18 @@ GEM
       colorize (~> 0.7)
       ruby_parser (>= 3.13.0)
     ffi (1.16.3)
-    foreman (0.87.2)
+    flipper (0.28.3)
+      concurrent-ruby (< 2)
+    flipper-active_record (0.28.3)
+      activerecord (>= 4.2, < 8)
+      flipper (~> 0.28.3)
+    flipper-ui (0.28.3)
+      erubi (>= 1.0.0, < 2.0.0)
+      flipper (~> 0.28.3)
+      rack (>= 1.4, < 3)
+      rack-protection (>= 1.5.3, <= 4.0.0)
+      sanitize (< 7)
+    foreman (0.87.0)
     formatador (0.2.5)
     fuzzy_match (2.1.0)
     get_process_mem (0.2.4)
@@ -394,7 +406,7 @@ GEM
       kramdown (~> 2.0)
     launchy (2.4.3)
       addressable (~> 2.3)
-    libv8 (3.16.14.19)
+    libv8 (3.16.14.19-x86_64-linux)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -422,7 +434,6 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.5)
     minitest (5.19.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
@@ -450,8 +461,7 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.5)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -490,6 +500,9 @@ GEM
     rack (2.2.6.4)
     rack-contrib (2.1.0)
       rack (~> 2.0)
+    rack-protection (3.2.0)
+      base64 (>= 0.1.0)
+      rack (~> 2.2, >= 2.2.4)
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (6.0.6.1)
@@ -624,6 +637,9 @@ GEM
     rubyzip (1.3.0)
     safe_shell (1.1.0)
     safe_yaml (1.0.5)
+    sanitize (6.1.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.12.0)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -746,7 +762,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   aasm (= 4.11.0)
@@ -782,6 +798,9 @@ DEPENDENCIES
   faker
   fast_jsonapi
   fasterer
+  flipper
+  flipper-active_record
+  flipper-ui
   foreman
   fuzzy_match
   govdelivery-tms

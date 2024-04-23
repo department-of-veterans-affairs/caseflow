@@ -45,6 +45,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     css_id
   end
 
+  def flipper_id
+    username
+  end
+
   def roles
     (self[:roles] || []).inject([]) do |result, role|
       result.concat([role]).concat(FUNCTION_ALIASES[role] || [])
