@@ -34,7 +34,6 @@ class BusinessLine < Organization
   end
 
   def in_progress_tasks(pagination_params = {})
-    # binding.pry
     QueryBuilder.new(
       query_type: :in_progress,
       query_params: pagination_params,
@@ -42,9 +41,10 @@ class BusinessLine < Organization
     ).build_query
   end
 
+  # TODO: test this method out.
   def pending_tasks(pagination_params = {})
     QueryBuilder.new(
-      query_type: :in_progress,
+      query_type: :pending,
       query_params: pagination_params,
       parent: self
     ).build_query
@@ -108,6 +108,9 @@ class BusinessLine < Organization
       in_progress: {
         sort_by: :assigned_at
       },
+      pending: {
+        sort_by: :assigned_at
+      },
       completed: {
         sort_by: :closed_at
       }
@@ -117,7 +120,6 @@ class BusinessLine < Organization
       @query_type = query_type
       @parent = parent
       @query_params = query_params.dup
-
       # Initialize default sorting
       @query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
       @query_params[:sort_order] ||= "desc"
@@ -549,6 +551,15 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
+    def pending_request_issues_join
+      "LEFT JOIN pending_request_issues on pending_request_issues.decision_review_id = tasks.appeal_id
+        AND pending_request_issues.decision_review_type = tasks.appeal_type"
+    end
+
+    def pending_issue_filter(query_type)
+      "pending_request_issues.id IS NOT NULL" if query_type == :pending
+    end
+
     def union_query_join_clauses
       [
         veterans_join,
@@ -556,7 +567,8 @@ class BusinessLine < Organization
         people_join,
         unrecognized_appellants_join,
         party_details_join,
-        bgs_attorneys_join
+        bgs_attorneys_join,
+        pending_request_issues_join
       ]
     end
 
@@ -633,6 +645,7 @@ class BusinessLine < Organization
         .where(where_constraints)
         .where(search_all_clause, *search_values)
         .where(issue_type_filter_predicate(query_params[:filters]))
+        .where(pending_issue_filter(query_type))
         .group(group_by_columns)
         .arel
     end
@@ -659,6 +672,11 @@ class BusinessLine < Organization
         },
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
+          assigned_to: parent,
+          "request_issues.closed_at": nil,
+          "request_issues.ineligible_reason": nil
+        },
+        pending: {
           assigned_to: parent,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil
