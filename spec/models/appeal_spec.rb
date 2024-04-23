@@ -579,6 +579,19 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "when there is a granted aod, claimant is an AttorneyClaimant and aod_based_on_age is false" do
+    let(:appeal) { create(:appeal, :advanced_on_docket_granted_attorney_claimant) }
+
+    it "returns true" do
+      expect(appeal.advanced_on_docket?).to eq(true)
+      expect(appeal.aod_based_on_age).to eq(false)
+    end
+
+    it "does not return nil" do
+      expect(appeal.advanced_on_docket?).not_to eq(nil)
+    end
+  end
+
   context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
@@ -1660,6 +1673,62 @@ describe Appeal, :all_dbs do
       it "returns false" do
         expect(subject).to be false
       end
+    end
+  end
+
+  describe "sct_appeal?" do
+    let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
+    let(:appeal_2) { create(:appeal, :with_request_issues) }
+
+    it "should return true if appeal has vha issue" do
+      expect(appeal.sct_appeal?).to be true
+    end
+
+    it "should return false for appeal with no vha issue" do
+      expect(appeal_2.sct_appeal?).to be false
+    end
+  end
+
+  describe "reopen_distribution_task" do
+    let!(:appeal) { create(:appeal, :ready_for_distribution) }
+    let!(:user) { create(:user) }
+
+    before do
+      appeal.tasks.find { |task| task.is_a?(DistributionTask) }.completed!
+      appeal.reload
+    end
+
+    it "should reopen the distribution task on the appeal and set the assigned by on the task to the user" do
+      expect(appeal.ready_for_distribution?).to eq(false)
+      appeal.reopen_distribution_task!(user)
+      expect(appeal.tasks.find { |task| task.is_a?(DistributionTask) }.assigned_by).to eq(user)
+      expect(appeal.ready_for_distribution?).to eq(true)
+    end
+  end
+
+  describe "completed_specialty_case_team_assign_task?" do
+    let(:appeal) { create(:appeal, :with_vha_issue) }
+    let(:appeal_2) { create(:specialty_case_team_assign_task, :completed).appeal }
+
+    it "should return true if appeal has a specialty case team assign task" do
+      expect(appeal_2.completed_specialty_case_team_assign_task?).to be true
+    end
+
+    it "should return false for appeal without a specialty case team assign task" do
+      expect(appeal.completed_specialty_case_team_assign_task?).to be false
+    end
+  end
+
+  describe "distributed?" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let(:appeal_2) { create(:appeal) }
+
+    it "should return true if appeal has a distribution task" do
+      expect(appeal.distributed?).to be true
+    end
+
+    it "should return false for appeal does not have a distribution task" do
+      expect(appeal_2.distributed?).to be false
     end
   end
 

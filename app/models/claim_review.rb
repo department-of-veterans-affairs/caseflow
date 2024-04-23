@@ -306,6 +306,10 @@ class ClaimReview < DecisionReview
     intake ? intake.from_decision_review_created_event? : false
   end
 
+  def sct_appeal?
+    false
+  end
+
   private
 
   def cleared_end_products
