@@ -67,7 +67,7 @@ export default class IssuesList extends React.Component {
         );
       }
     }
-    if (this.props.userCanRequestIssueUpdates) {
+    if (this.props.userCanRequestIssueUpdates && !this.props.hasRequestIssuesWithoutDecisionDate) {
       options = [];
       options.push(
         { displayText: 'Request modification',
@@ -197,6 +197,7 @@ IssuesList.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanRequestIssueUpdates: PropTypes.bool,
+  hasRequestIssuesWithoutDecisionDate: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object
 };
