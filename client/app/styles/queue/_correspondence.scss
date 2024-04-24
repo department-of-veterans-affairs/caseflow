@@ -560,3 +560,49 @@ $translate: 11%;
 .checkbox-column-inline-style {
   margin-top: -1rem;
 }
+
+
+//new stuff needs new home
+
+.team-member-container {
+  display: flex;
+  align-content: space-between;
+  // border-top: 1px solid gray;
+  border-bottom-color: gray;
+  border-bottom-style: solid !important;
+  border-bottom-width: 1px !important;
+  background-color: lightblue;
+
+}
+
+
+.team-member-info {
+  display: 'flex';
+  flex-direction: 'row';
+  width: 45%;
+  margin: 0px;
+  padding: 0px;
+  align-content: end;
+  margin-top: 30px;
+}
+
+.team-member-buttons-container {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.team-member-permission-toggles-container {
+  display: flex;
+  flex-direction: column;
+  width: 53%;
+  margin-left: 20px;
+  background-color: lightcoral;
+}
+
+user-permissions-text {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}

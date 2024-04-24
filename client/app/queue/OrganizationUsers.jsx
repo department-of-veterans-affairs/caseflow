@@ -16,32 +16,48 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import Checkbox from '../components/Checkbox';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
   padding: '.5rem 0 .5rem',
-  listStyle: 'none'
+  listStyle: 'none',
+  width: '100%'
 });
 const topUserStyle = css({
-  borderTop: '.1rem solid gray',
+  // borderTop: '.1rem solid gray',
   margin: '.5rem 0 .5rem',
   padding: '1rem 0 .5rem',
-  listStyle: 'none'
+  listStyle: 'none',
+  width: '100%'
 });
 const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
+  // borderBottom: '.1rem solid gray',
 });
 const buttonStyle = css({
   paddingRight: '1rem',
-  display: 'inline-block'
+  display: 'inline-block',
+  width: '100%'
 });
 const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
+  // borderBottom: '1rem solid gray',
   borderWidth: '1px',
   padding: '.5rem 0 2rem',
+  width: '100%'
 });
 const listStyle = css({
   listStyle: 'none'
+});
+
+const checkboxStyle = css({
+  marginTop: '0px',
+  marginBottom: '10px'
+});
+
+const NODcheckboxStyle = css({
+  marginTop: '0',
+  marginLeft: '25px',
+  marginBottom: '30px'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -60,8 +76,22 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false
+      isVhaOrg: false,
+      toggledAutoAssignmentCheckboxes: []
     };
+  }
+
+  handleAutoAssignmentCheck = (value) => {
+    console.log(value);
+    if (this.state.toggledAutoAssignmentCheckboxes.includes(value)) {
+      // toggledAutoAssignmentCheckboxes
+    } else {
+      const newState = this.state.toggledAutoAssignmentCheckboxes + value;
+
+      this.setState({
+        toggledAutoAssignmentCheckboxes: (newState)
+      });
+    }
   }
 
   loadingPromise = () => {
@@ -248,18 +278,50 @@ export default class OrganizationUsers extends React.PureComponent {
       const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
+        <div className={['team-member-container']}>
+          <div className={['team-member-info']}>
+            <li key={user.id} {...style}>{this.formatName(user)}
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+            </li>
+            { (judgeTeam || dvcTeam) && admin ?
+              <div {...topUserBorder}></div> :
+              <div {...buttonContainerStyle}>
+                <div className={['team-member-buttons-container']}>
+                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                  { this.removeUserButton(user) }
+                </div>
+              </div>
+
+            }
+          </div>
+          <div className={['team-member-permission-toggles-container']}>
+            <p className={['user-permissions-text']}>User permissions:</p>
+            <Checkbox
+              name={`superuser${user.id}`}
+              key={`xpp${user.id}`}
+              styling={checkboxStyle}
+              label="Superuser: Split, Merge, and Reassign" />
+            <Checkbox
+              key={`xbo${user.id}`}
+              // id={`${user.id}${user.css_id}`}
+              value={this.state.toggledAutoAssignmentCheckboxes.includes(user.id)}
+              name={`auto-assignment-${user.id}`}
+              onChange={() => this.handleAutoAssignmentCheck(user.id)}
+              styling={checkboxStyle}
+              label="Auto-Assignment" />
+            {this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString()) &&
+            <Checkbox
+              name={`nod-${user.id}`}
+              key={`xpip${user.id}`}
+              styling={NODcheckboxStyle}
+              label='Receive "NOD Mail"' />}
+
+
+          </div>
+        </div>
       </React.Fragment>;
     });
 
