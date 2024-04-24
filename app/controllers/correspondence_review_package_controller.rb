@@ -31,7 +31,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update
-    binding.pry
     unless update_veteran_on_correspondence
       return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
@@ -40,7 +39,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_cmp
-    binding.pry
     correspondence.update(
       va_date_of_receipt: params["VADORDate"].in_time_zone,
       package_document_type_id: params["packageDocument"]["value"].to_i
@@ -81,7 +79,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def update_veteran_on_correspondence
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])
-    veteran && correspondence.update(
+    veteran && correspondence.update!(
       correspondence_params.merge(
         veteran_id: veteran.id,
         updated_by_id: RequestStore.store[:current_user].id

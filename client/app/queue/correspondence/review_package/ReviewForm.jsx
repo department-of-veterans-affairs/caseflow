@@ -82,25 +82,20 @@ export const ReviewForm = (props) => {
         correspondence: {
           notes: props.editableData.notes,
           correspondence_type_id: props.editableData.default_select_value,
-          va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
+          va_date_of_receipt: vaDORDate
         },
         veteran: {
           file_number: props.editableData.veteran_file_number,
-        },
-        updateCmp: {
-          data: { packageDocument, VADORDate }
         }
       },
     };
 
     try {
-      // debugger;
+      debugger
       const response = await ApiUtil.patch(
         `/queue/correspondence/${correspondence.correspondence_uuid}`,
         payloadData
       );
-
-      const responseVADOR = await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, updateCmp)
 
       const { body } = response;
 
