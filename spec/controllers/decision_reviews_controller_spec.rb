@@ -625,6 +625,84 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
+    context "vha org pending_tasks" do
+      let(:non_comp_org) { VhaBusinessLine.singleton }
+
+      context "pending_tasks" do
+        let(:query_params) do
+          {
+            business_line_slug: non_comp_org.url,
+            tab: "pending"
+          }
+        end
+
+        let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
+
+        let!(:pending_tasks) do
+          (0...32).map do |task_num|
+            task = create(
+              :higher_level_review_task,
+              assigned_to: non_comp_org,
+              assigned_at: task_num.days.ago
+            )
+            task.appeal.update!(veteran_file_number: veteran.file_number)
+            # create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+
+            # Generate some random request issues for testing issue type filters
+            generate_request_issues(task, non_comp_org)
+
+            # TODO: Replace this with the factory??
+            # TODO: This also needs to test pending vs closed modification requests.
+            # The query should only care about open/pending requests
+            RequestIssueModification.create(request_issue: task.appeal.reload.request_issues.first,
+                                            user: user)
+
+            task
+          end
+        end
+
+        # TODO: Add some pending tasks that are already completed
+
+        it "page 1 displays first 15 tasks" do
+          query_params[:page] = 1
+
+          # test_task = pending_tasks.first
+          # puts test_task.appeal.request_issues.count
+          # puts test_task.appeal.request_issues.first.request_issue_modifications.inspect
+
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["total_task_count"]).to eq 32
+          expect(response_body["tasks_per_page"]).to eq 15
+          expect(response_body["task_page_count"]).to eq 3
+
+          expect(
+            task_ids_from_response_body(response_body)
+          ).to match_array task_ids_from_seed(pending_tasks, (0...15), :assigned_at)
+        end
+
+        it "page 3 displays last 10 tasks" do
+          query_params[:page] = 3
+
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["total_task_count"]).to eq 32
+          expect(response_body["tasks_per_page"]).to eq 15
+          expect(response_body["task_page_count"]).to eq 3
+
+          expect(
+            task_ids_from_response_body(response_body)
+          ).to match_array task_ids_from_seed(pending_tasks, (-2..pending_tasks.size), :assigned_at)
+        end
+      end
+    end
+
     it "throws 404 error if unrecognized tab name is provided" do
       get :index,
           params: {
@@ -755,6 +833,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
   end
+
   describe "#generate_report" do
     let(:non_comp_org) { VhaBusinessLine.singleton }
 
