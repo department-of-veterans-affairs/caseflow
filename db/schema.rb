@@ -1880,14 +1880,14 @@ ActiveRecord::Schema.define(version: 2024_04_23_190320) do
   create_table "transcription_contractors", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.string "directory", null: false, comment: "The qat contract house box.com folder full path"
+    t.string "email", comment: "The qat contract house contact email address"
     t.boolean "inactive", default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
+    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a qat is available or not to take work"
+    t.string "name", null: false, comment: "The qat contract house name"
+    t.string "phone", comment: "The qat contract house contact phone number"
+    t.string "poc", comment: "The qat contract house poc name"
     t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
-    t.string "qat_directory", null: false, comment: "The qat contract house box.com folder full path"
-    t.string "qat_email", comment: "The qat contract house contact email address"
-    t.string "qat_name", null: false, comment: "The qat contract house name"
-    t.string "qat_phone", comment: "The qat contract house contact phone number"
-    t.string "qat_poc", comment: "The qat contract house poc name"
-    t.boolean "qat_stop", default: false, null: false, comment: "Work Stoppage flag to indicate if a qat is available or not to take work"
     t.datetime "updated_at", precision: 6, null: false
     t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
   end
