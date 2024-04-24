@@ -4,7 +4,7 @@
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
     userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
-    userCanRequestForIssueUpdates: current_user.can_request_for_issue_updates?,
+    userCanRequestIssueUpdates: current_user.can_request_for_issue_updates?,
     appeal: appeal,
     hearings: appeal.hearings,
     hearingDayDate: appeal.hearing_day_if_schedueled,

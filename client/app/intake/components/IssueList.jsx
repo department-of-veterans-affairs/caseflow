@@ -67,7 +67,7 @@ export default class IssuesList extends React.Component {
         );
       }
     }
-    if (this.props.userCanRequestForIssueUpdates) {
+    if (this.props.userCanRequestIssueUpdates) {
       options = [];
       options.push(
         { displayText: 'Request modification',
@@ -196,7 +196,7 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
-  userCanRequestForIssueUpdates: PropTypes.bool,
+  userCanRequestIssueUpdates: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object
 };

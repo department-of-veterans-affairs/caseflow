@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Modal from '../../components/Modal';
+import Modal from 'app/components/Modal';
 
 // To be completed in APPEALS-39446
 export const RequestIssueWithdrawalModal = (props) => {

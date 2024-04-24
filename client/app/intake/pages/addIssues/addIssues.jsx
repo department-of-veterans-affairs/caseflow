@@ -56,10 +56,10 @@ import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeIssueModal';
-import { RequestIssueModificationModal } from '../../../intakeEdit/components/RequestIssueModificationModal';
-import { RequestIssueRemovalModal } from '../../../intakeEdit/components/RequestIssueRemovalModal';
-import { RequestIssueWithdrawalModal } from '../../../intakeEdit/components/RequestIssueWithdrawalModal';
-import { RequestIssueAdditionModal } from '../../../intakeEdit/components/RequestIssueAdditionModal';
+import { RequestIssueModificationModal } from 'app/intakeEdit/components/RequestIssueModificationModal';
+import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssueRemovalModal';
+import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
+import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -253,7 +253,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
-      userCanRequestForIssueUpdates,
+      userCanRequestIssueUpdates,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -325,7 +325,7 @@ class AddIssuesPage extends React.Component {
     };
 
     const renderButtons = () => {
-      if (userCanRequestForIssueUpdates) {
+      if (userCanRequestIssueUpdates) {
         return (
           <div className="cf-actions">
             <Button
@@ -493,7 +493,7 @@ class AddIssuesPage extends React.Component {
           sectionIssues,
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
-          userCanRequestForIssueUpdates,
+          userCanRequestIssueUpdates,
           withdrawReview,
         };
 
@@ -751,7 +751,7 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
-    userCanRequestForIssueUpdates: state.userCanRequestForIssueUpdates,
+    userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy
   }),
   (dispatch) =>
