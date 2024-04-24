@@ -67,6 +67,10 @@ export const toggleRequestIssueWithdrawalModal = (index) => ({
   payload: { index }
 });
 
+export const toggleRequestIssueAdditionModal = () => ({
+  type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
+});
+
 export const setMstPactDetails = (editIssuesDetails) => ({
   type: ACTIONS.SET_MST_PACT_DETAILS,
   payload: { editIssuesDetails }

@@ -71,17 +71,17 @@ export default class IssuesList extends React.Component {
       options = [];
       options.push(
         { displayText: 'Request modification',
-          value: 'request_modification' }
+          value: 'requestModification' }
       );
 
       options.push(
         { displayText: 'Request removal',
-          value: 'request_removal' }
+          value: 'requestRemoval' }
       );
 
       options.push(
         { displayText: 'Request withdrawal',
-          value: 'request_withdrawal' }
+          value: 'requestWithdrawal' }
       );
     }
 

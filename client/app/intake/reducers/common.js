@@ -80,6 +80,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueAdditionModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;

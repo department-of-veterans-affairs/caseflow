@@ -48,7 +48,8 @@ import {
   toggleEditIntakeIssueModal,
   toggleRequestIssueModificationModal,
   toggleRequestIssueRemovalModal,
-  toggleRequestIssueWithdrawalModal
+  toggleRequestIssueWithdrawalModal,
+  toggleRequestIssueAdditionModal,
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -58,6 +59,7 @@ import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeI
 import { RequestIssueModificationModal } from '../../../intakeEdit/components/RequestIssueModificationModal';
 import { RequestIssueRemovalModal } from '../../../intakeEdit/components/RequestIssueRemovalModal';
 import { RequestIssueWithdrawalModal } from '../../../intakeEdit/components/RequestIssueWithdrawalModal';
+import { RequestIssueAdditionModal } from '../../../intakeEdit/components/RequestIssueAdditionModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -82,6 +84,10 @@ class AddIssuesPage extends React.Component {
   onClickAddIssue = () => {
     this.setState({ addingIssue: true });
   };
+
+  onClickRequestAdditionalIssue = () => {
+    this.props.toggleRequestIssueAdditionModal();
+  }
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -115,13 +121,13 @@ class AddIssuesPage extends React.Component {
       });
       this.props.toggleEditIntakeIssueModal({ index });
       break;
-    case 'request_modification':
+    case 'requestModification':
       this.props.toggleRequestIssueModificationModal(index);
       break;
-    case 'request_removal':
+    case 'requestRemoval':
       this.props.toggleRequestIssueRemovalModal(index);
       break;
-    case 'request_withdrawal':
+    case 'requestWithdrawal':
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     default:
@@ -327,6 +333,7 @@ class AddIssuesPage extends React.Component {
               label="request-additional-issue"
               legacyStyling={false}
               classNames={['usa-button-secondary']}
+              onClick={() => this.onClickRequestAdditionalIssue()}
             >
             + Request additional issue
             </Button>
@@ -627,6 +634,11 @@ class AddIssuesPage extends React.Component {
           <RequestIssueWithdrawalModal
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
         )}
+
+        {intakeData.requestIssueAdditionModalVisible && (
+          <RequestIssueAdditionModal
+            onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
+        )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -753,6 +765,7 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueModificationModal,
         toggleRequestIssueRemovalModal,
         toggleRequestIssueWithdrawalModal,
+        toggleRequestIssueAdditionModal,
         removeIssue,
         withdrawIssue,
         setIssueWithdrawalDate,
