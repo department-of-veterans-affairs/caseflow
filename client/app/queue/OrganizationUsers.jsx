@@ -57,7 +57,7 @@ const checkboxStyle = css({
 const NODcheckboxStyle = css({
   marginTop: '0',
   marginLeft: '25px',
-  marginBottom: '30px'
+  marginBottom: '10px'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
