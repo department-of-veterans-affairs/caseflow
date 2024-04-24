@@ -24,7 +24,8 @@ module DisallowedDeprecations
     /ActionView::Base instances must implement `compiled_method_container`/,
     /render file: should be given the absolute path to a file/,
     /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/,
-    /Class level methods will no longer inherit scoping/
+    /Class level methods will no longer inherit scoping/,
+    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
