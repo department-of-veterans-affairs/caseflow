@@ -580,11 +580,16 @@ $translate: 11%;
   width: 45%;
   margin: 0px;
   padding: 0px;
-  margin-top: 30px;
+  padding-top: 30px;
 }
 
 .team-member-list-item {
-  list-style: none
+  list-style: none;
+  padding-bottom: 0;
+  margin-bottom: 20px;
+  // .li {
+  //   margin-bottom: 0px !important ;
+  // }
 }
 
 .team-member-buttons-container {
@@ -600,9 +605,10 @@ $translate: 11%;
   flex-direction: column;
   width: 53%;
   margin-left: 20px;
+  padding-top: 30px;
 }
 
-user-permissions-text {
-  margin-top: 30px;
+.user-permissions-text {
+  margin-top: 0px;
   margin-bottom: 20px;
 }

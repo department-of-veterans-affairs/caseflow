@@ -18,19 +18,19 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import Checkbox from '../components/Checkbox';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none',
-  width: '100%'
-});
-const topUserStyle = css({
-  // borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none',
-  width: '100%'
-});
+// const userStyle = css({
+//   margin: '.5rem 0 .5rem',
+//   padding: '.5rem 0 .5rem',
+//   listStyle: 'none',
+//   width: '100%'
+// });
+// const topUserStyle = css({
+//   // borderTop: '.1rem solid gray',
+//   margin: '.5rem 0 .5rem',
+//   padding: '1rem 0 .5rem',
+//   listStyle: 'none',
+//   width: '100%'
+// });
 const topUserBorder = css({
   // borderBottom: '.1rem solid gray',
 });
@@ -39,12 +39,12 @@ const buttonStyle = css({
   display: 'inline-block',
   width: '100%'
 });
-const buttonContainerStyle = css({
-  // borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 0',
-  width: '100%'
-});
+// const buttonContainerStyle = css({
+//   // borderBottom: '1rem solid gray',
+//   borderWidth: '1px',
+//   padding: '.5rem 0 0',
+//   width: '100%'
+// });
 const listStyle = css({
   listStyle: 'none'
 });
@@ -281,7 +281,8 @@ export default class OrganizationUsers extends React.PureComponent {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.state.organizationUsers.map((user, i) => {
+    // const listOfUsers = this.state.organizationUsers.map((user, i) => {
+    const listOfUsers = this.state.organizationUsers.map((user) => {
       const { dvc, admin } = user.attributes;
 
       return <React.Fragment key={user.id}>
@@ -295,7 +296,8 @@ export default class OrganizationUsers extends React.PureComponent {
             </li>
             { (judgeTeam || dvcTeam) && admin ?
               <div {...topUserBorder}></div> :
-              <div {...buttonContainerStyle}>
+              // <div {...buttonContainerStyle}>
+              <div>
                 <div className={['team-member-buttons-container']}>
                   { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
                   { this.removeUserButton(user) }
