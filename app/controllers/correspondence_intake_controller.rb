@@ -60,7 +60,7 @@ class CorrespondenceIntakeController < CorrespondenceController
       intake_task.update!(status: Constants.TASK_STATUSES.cancelled)
       ReviewPackageTask.create!(
         parent_id: intake_task.parent_id,
-        assigned_to: current_user,
+        assigned_to: intake_task.assigned_to,
         status: Constants.TASK_STATUSES.assigned,
         appeal_id: correspondence.id,
         appeal_type: "Correspondence"
