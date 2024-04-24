@@ -60,7 +60,7 @@ const CaseTitleScaffolding = (props) => {
         { (
           props.isReadOnly &&
           props.isReassignPackage &&
-          (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor)) &&
+          (props.isInboundOpsSuperuser || props.userIsCorrespondenceSupervisor)) &&
           <Button
             name="Review reassign request"
             classNames={['usa-button-primary, correspondence-review-package-case-title-button-styling']}
@@ -125,7 +125,7 @@ ReviewPackageCaseTitle.propTypes = {
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
@@ -134,7 +134,7 @@ CaseSubTitleScaffolding.propTypes = {
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 CaseTitleScaffolding.propTypes = {
@@ -144,7 +144,7 @@ CaseTitleScaffolding.propTypes = {
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;
