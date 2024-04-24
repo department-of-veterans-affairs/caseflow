@@ -77,7 +77,8 @@ export default class OrganizationUsers extends React.PureComponent {
       changingAdminRights: {},
       removingUser: {},
       isVhaOrg: false,
-      toggledAutoAssignmentCheckboxes: []
+      toggledAutoAssignmentCheckboxes: [],
+      toggledNodCheckboxes: []
     };
   }
 
@@ -98,6 +99,26 @@ export default class OrganizationUsers extends React.PureComponent {
 
       this.setState({
         toggledAutoAssignmentCheckboxes: (newState)
+      });
+    }
+  }
+
+  handleNODCheck = (value) => {
+    if (this.state.toggledNodCheckboxes.includes(value)) {
+      const index = this.state.toggledNodCheckboxes.indexOf(value.toString());
+      const newState = [...this.state.toggledNodCheckboxes];
+
+      newState.splice(index, 1);
+      this.setState({
+        toggledNodCheckboxes: (newState)
+      });
+    } else {
+      const newState = [...this.state.toggledNodCheckboxes];
+
+      newState.push(value);
+
+      this.setState({
+        toggledNodCheckboxes: (newState)
       });
     }
   }
@@ -312,8 +333,9 @@ export default class OrganizationUsers extends React.PureComponent {
               name={`superuser${user.id}`}
               key={`xpp${user.id}`}
               styling={checkboxStyle}
-              value={user.attributes.admin ? true : false}
-              disabled={user.attributes.admin ? true : false}
+              // value={Boolean(user.attributes.admin)}
+              disabled={Boolean(user.attributes.admin)}
+              onChange={() => console.log(user.id)}
               label="Superuser: Split, Merge, and Reassign" />
             { user.attributes.admin === false &&
             <Checkbox
@@ -326,6 +348,8 @@ export default class OrganizationUsers extends React.PureComponent {
               label="Auto-Assignment" /> }
             {this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString()) &&
             <Checkbox
+            value={this.state.toggledNodCheckboxes.includes(user.id.toString())}
+            onChange={() => this.handleNODCheck(user.id)}
               name={`nod-${user.id}`}
               key={`xpip${user.id}`}
               styling={NODcheckboxStyle}
