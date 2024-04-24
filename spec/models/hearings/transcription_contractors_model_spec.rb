@@ -3,11 +3,11 @@ require "rails_helper"
 RSpec.describe TranscriptionContractor, type: :model do
   before do
     @transcription_contractor = TranscriptionContractor.new(
-      qat_name: "Example Name",
-      qat_directory: "Example Directory",
+      qat_name: "Genesis Government Solutions, Inc.",
+      qat_directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc.",
       qat_poc: "Example POC",
-      qat_phone: "Example Phone",
-      qat_email: "Example Email"
+      qat_phone: "888-888-8888",
+      qat_email: "test_email@bah.com"
     )
   end
 

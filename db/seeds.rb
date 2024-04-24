@@ -81,6 +81,8 @@ class SeedDB
     call_and_log_seed_step Seeds::RemandedAmaAppeals
     call_and_log_seed_step Seeds::RemandedLegacyAppeals
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    # Transcription contractor
+    call_and_log_seed_step Seeds::TranscriptionContractor
 
     Judge.list_all
     Attorney.list_all
