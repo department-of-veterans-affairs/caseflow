@@ -172,6 +172,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let editIssuesLink = null;
     let displayPOAComponent = this.props.task.business_line === 'vha';
+    const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -184,15 +185,15 @@ class NonCompDispositions extends React.PureComponent {
         </div>
       </React.Fragment>;
 
-      editIssuesLink = isBusinessLineAdmin ? <React.Fragment>
+      editIssuesLink = (displayRequestIssueModification) ? <React.Fragment>
         <Link button="secondary" href={appeal.editIssuesUrl}>Edit Issues</Link>
       </React.Fragment> : <React.Fragment>
         <Link button="secondary" href={appeal.editIssuesUrl}>Request issue modification</Link>
-        <Link button="disabled">Edit Issues</Link>
+        <Button disabled>Edit Issues</Button>
       </React.Fragment>;
     }
 
-    const decisionHeaderText = isBusinessLineAdmin ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
+    const decisionHeaderText = displayRequestIssueModification ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
       COPY.DISPOSITION_DECISION_HEADER_NONADMIN;
 
     return <div>

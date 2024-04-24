@@ -393,14 +393,31 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
+    scenario "VHA non-admins should see request issue modification" do
+      visit dispositions_url
+
+      expect(page).to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
+      expect(page).to have_button("Edit Issues", disabled: true)
+      expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+    end
+
     context "with a VHA Admin" do
       before do
         OrganizationsUser.make_user_admin(user, vha_org)
       end
 
-      it "should display a view history link" do
+      it "should display admin-only links" do
         visit dispositions_url
-        expect(page).to have_link("View History")
+
+        step "should display a view history link" do
+          expect(page).to have_link("View History")
+        end
+
+        step "should display only the Edit Issues link" do
+          expect(page).to have_link("Edit Issues", href: in_progress_task.caseflow_only_edit_issues_url)
+          expect(page).not_to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
+          expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
+        end
       end
     end
     context "with no POA" do
