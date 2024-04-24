@@ -42,7 +42,7 @@ const buttonStyle = css({
 const buttonContainerStyle = css({
   // borderBottom: '1rem solid gray',
   borderWidth: '1px',
-  padding: '.5rem 0 2rem',
+  padding: '.5rem 0 0',
   width: '100%'
 });
 const listStyle = css({
@@ -82,11 +82,19 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   handleAutoAssignmentCheck = (value) => {
-    console.log(value);
     if (this.state.toggledAutoAssignmentCheckboxes.includes(value)) {
-      // toggledAutoAssignmentCheckboxes
+      const index = this.state.toggledAutoAssignmentCheckboxes.indexOf(value.toString());
+      const newState = [...this.state.toggledAutoAssignmentCheckboxes];
+
+      newState.splice(index, 1);
+      this.setState({
+        toggledAutoAssignmentCheckboxes: (newState)
+      });
     } else {
-      const newState = this.state.toggledAutoAssignmentCheckboxes + value;
+      console.log('Else fired');
+      const newState = [...this.state.toggledAutoAssignmentCheckboxes];
+
+      newState.push(value);
 
       this.setState({
         toggledAutoAssignmentCheckboxes: (newState)
@@ -275,12 +283,11 @@ export default class OrganizationUsers extends React.PureComponent {
     const dvcTeam = this.state.dvcTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment key={user.id}>
         <div className={['team-member-container']}>
           <div className={['team-member-info']}>
-            <li key={user.id} {...style}>{this.formatName(user)}
+            <li key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
               { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
               { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
               { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
@@ -303,22 +310,24 @@ export default class OrganizationUsers extends React.PureComponent {
               name={`superuser${user.id}`}
               key={`xpp${user.id}`}
               styling={checkboxStyle}
+              value={user.attributes.admin ? true : false}
+              disabled={user.attributes.admin ? true : false}
               label="Superuser: Split, Merge, and Reassign" />
+            { user.attributes.admin === false &&
             <Checkbox
               key={`xbo${user.id}`}
               // id={`${user.id}${user.css_id}`}
-              value={this.state.toggledAutoAssignmentCheckboxes.includes(user.id)}
+              value={this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString())}
               name={`auto-assignment-${user.id}`}
               onChange={() => this.handleAutoAssignmentCheck(user.id)}
               styling={checkboxStyle}
-              label="Auto-Assignment" />
+              label="Auto-Assignment" /> }
             {this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString()) &&
             <Checkbox
               name={`nod-${user.id}`}
               key={`xpip${user.id}`}
               styling={NODcheckboxStyle}
               label='Receive "NOD Mail"' />}
-
 
           </div>
         </div>

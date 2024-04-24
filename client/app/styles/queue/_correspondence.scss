@@ -571,8 +571,6 @@ $translate: 11%;
   border-bottom-color: gray;
   border-bottom-style: solid !important;
   border-bottom-width: 1px !important;
-  background-color: lightblue;
-
 }
 
 
@@ -582,15 +580,18 @@ $translate: 11%;
   width: 45%;
   margin: 0px;
   padding: 0px;
-  align-content: end;
   margin-top: 30px;
+}
+
+.team-member-list-item {
+  list-style: none
 }
 
 .team-member-buttons-container {
   display: flex;
   flex-direction: row;
   width: 80%;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   margin-top: 0;
 }
 
@@ -599,7 +600,6 @@ $translate: 11%;
   flex-direction: column;
   width: 53%;
   margin-left: 20px;
-  background-color: lightcoral;
 }
 
 user-permissions-text {
