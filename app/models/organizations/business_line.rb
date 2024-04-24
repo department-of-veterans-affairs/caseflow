@@ -184,6 +184,10 @@ class BusinessLine < Organization
 
       issue_count_options
     end
+
+    def pending_issue_count
+      "COUNT(pending_request_issues.id) AS pending_issue_count"
+    end
     # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
@@ -457,6 +461,7 @@ class BusinessLine < Organization
       [
         Task.arel_table[Arel.star],
         issue_count,
+        pending_issue_count,
         claimant_name_alias,
         participant_id_alias,
         veteran_ssn_alias,
