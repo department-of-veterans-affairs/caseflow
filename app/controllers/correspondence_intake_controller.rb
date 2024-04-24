@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class CorrespondenceIntakeController < CorrespondenceController
+  before_action :verify_correspondence_intake_access
   def intake
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
-    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
-                                                  correspondence: correspondence)&.redux_store
+    @redux_store ||= CorrespondenceIntake.find_by(correspondence: correspondence)&.redux_store
     @prior_mail = prior_mail.map do |correspondence|
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
@@ -55,17 +55,20 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def cancel_intake
     begin
-      intake_task = Task.where("appeal_id = ? and appeal_type = 'Correspondence' and type = 'CorrespondenceIntakeTask'",
-                               correspondence.id).first
-      intake_task.update!(status: "cancelled")
+      # find the correspondence intake task even if it isn't assigned to the user
+      intake_task = CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id)
+      intake_task.update!(status: Constants.TASK_STATUSES.cancelled)
       ReviewPackageTask.create!(
-        assigned_to: User.find(correspondence.assigned_by_id),
-        assigned_to_id: correspondence.assigned_by_id,
-        status: "assigned",
+        parent_id: correspondence.root_task,
+        assigned_to: current_user,
+        status: Constants.TASK_STATUSES.assigned,
         appeal_id: correspondence.id,
         appeal_type: "Correspondence"
       )
       render json: {}, status: :ok
+
+      # reroute to correspondence queue after successful cancel
+      redirect_to Constants.CORRESPONDENCE_ROUTES.YOUR_CORRESPONDENCE
     rescue StandardError
       render json: { error: "Failed to update records" }, status: :bad_request
     end
@@ -75,5 +78,19 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def prior_mail
     Correspondence.prior_mail(veteran_by_correspondence.id, params[:correspondence_uuid])
+  end
+
+  def verify_correspondence_intake_access
+    # always allow supervisors and superusers to acccess intakes not assigned to them.
+    return true if CorrespondenceIntakeTask
+      .open.find_by(appeal_id: correspondence.id, assigned_to: current_user) ||
+                   (current_user.mail_supervisor? || current_user.mail_superuser?)
+
+    # redirect if no access
+    if current_user.mail_team_user?
+      redirect_to "queue/correspondence"
+    else
+      redirect_to "/unauthorized"
+    end
   end
 end
