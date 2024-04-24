@@ -105,26 +105,6 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
     role="main"
   >
     <div
-      class="uat-env-alert"
-    >
-      <div
-        class="usa-alert usa-alert-warning usa-alert-slim"
-        role="alert"
-      >
-        <div
-          class="usa-alert-body"
-        >
-          <div
-            class="usa-alert-text"
-          >
-            This is the 
-            uat
-             environment!
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
       class="cf-app-segment cf-app-segment--alt"
     >
       <div
