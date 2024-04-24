@@ -1,8 +1,8 @@
 # db/transcription_contractor_seeds.rb
 module Seeds
   class TranscriptionContractor < Base
-    def seed
       # Create TranscriptionContractor records
+    def seed!
       transcription_contractors = [
         { qat_name: "Genesis Government Solutions, Inc.", qat_directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc." },
         { qat_name: "Jamison Professional Services", qat_directory: "BVA Hearing Transcripts/Jamison Professional Services" },
