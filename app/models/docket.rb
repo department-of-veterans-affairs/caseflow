@@ -17,7 +17,7 @@ class Docket
     scope = docket_appeals.active
 
     # scope = apply_docket_type_exclusion(scope)
-    ready_priority_appeals
+    # ready_priority_appeals
 
     if ready
       scope = scope.ready_for_distribution
@@ -33,15 +33,22 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def apply_docket_type_exclusion
-    docket_lever = "priority_#{self.class.name}"
-    should_exclude_docket = CaseDistributionLever[docket_lever]
+  # def apply_docket_type_exclusion
+  #   docket_lever = "priority_#{self.class.name}"
+  #   should_exclude_docket = CaseDistributionLever[docket_lever]
 
-    should_exclude_docket ? scope.none : scope
-  end
+  #   should_exclude_docket ? scope.none : scope
+  # end
 
+  # Where is this method getting called?
+  # docket_lever - what is an example of what is should be returning (ie priority_evidence_hearings, or is it an actual docket lever from seed file)?
+  # age_of_oldest_priority_appeal pattern?
+  # does this method only return none or appeals and nothing else?
+  # if this is called by a parent, what data needs to be returned? Will the parent manipulate/change/handle the data?
   def ready_priority_appeals
+    puts("this is a thing")
     docket_lever = "priority_#{self.class.name}"
+    binding.pry
     should_exclude_docket = CaseDistributionLever[docket_lever]
     if should_exclude_docket
         .none
