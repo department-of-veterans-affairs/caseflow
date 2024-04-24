@@ -158,6 +158,7 @@ export default class OrganizationUsers extends React.PureComponent {
   };
 
   addUser = ({ value }) => {
+    console.log({ value });
     const data = {
       id: value.id
     };
@@ -253,6 +254,9 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+    console.log("running mod admin rights")
+    console.log(user);
+    console.log(adminFlag);
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -330,12 +334,12 @@ export default class OrganizationUsers extends React.PureComponent {
           <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
             <Checkbox
-              name={`superuser${user.id}`}
-              key={`xpp${user.id}`}
+              name={`supveruser${user.id}`}
+              key={`xppv${user.id}`}
               styling={checkboxStyle}
               // value={Boolean(user.attributes.admin)}
               disabled={Boolean(user.attributes.admin)}
-              onChange={() => console.log(user.id)}
+              onChange={this.modifyAdminRights(user, true)}
               label="Superuser: Split, Merge, and Reassign" />
             { user.attributes.admin === false &&
             <Checkbox
@@ -348,8 +352,8 @@ export default class OrganizationUsers extends React.PureComponent {
               label="Auto-Assignment" /> }
             {this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString()) &&
             <Checkbox
-            value={this.state.toggledNodCheckboxes.includes(user.id.toString())}
-            onChange={() => this.handleNODCheck(user.id)}
+              value={this.state.toggledNodCheckboxes.includes(user.id.toString())}
+              onChange={() => this.handleNODCheck(user.id)}
               name={`nod-${user.id}`}
               key={`xpip${user.id}`}
               styling={NODcheckboxStyle}
