@@ -14,7 +14,6 @@
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
-    },
-    hasRequestIssuesWithoutDecisionDate: higher_level_review.request_issues_without_decision_dates?
+    }
   }) %>
 <% end %>

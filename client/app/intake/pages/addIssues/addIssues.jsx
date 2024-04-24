@@ -254,7 +254,6 @@ class AddIssuesPage extends React.Component {
       userCanEditIntakeIssues,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
-      hasRequestIssuesWithoutDecisionDate,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -325,8 +324,16 @@ class AddIssuesPage extends React.Component {
 
     };
 
+    const originalIssuesHaveNoDecisionDate = () => {
+      return _.some(intakeData.originalIssues, { decisionDate: null });
+    };
+
+    const showRequestIssueUpdateOptions = () => {
+      return userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
+    };
+
     const renderButtons = () => {
-      if (userCanRequestIssueUpdates && !hasRequestIssuesWithoutDecisionDate) {
+      if (showRequestIssueUpdateOptions()) {
         return (
           <div className="cf-actions">
             <Button
@@ -496,7 +503,7 @@ class AddIssuesPage extends React.Component {
           userCanEditIntakeIssues,
           userCanRequestIssueUpdates,
           withdrawReview,
-          hasRequestIssuesWithoutDecisionDate
+          showRequestIssueUpdateOptions
         };
 
         if (key === 'requestedIssues') {
@@ -754,7 +761,6 @@ export const EditAddIssuesPage = connect(
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    hasRequestIssuesWithoutDecisionDate: state.hasRequestIssuesWithoutDecisionDate,
     isLegacy: state.isLegacy
   }),
   (dispatch) =>

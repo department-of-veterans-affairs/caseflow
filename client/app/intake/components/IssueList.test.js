@@ -74,6 +74,7 @@ describe('IssuesList', () => {
     const propsWithRequestForIssueUpdates = {
       ...mockedIssueListProps,
       userCanRequestForIssueUpdates: true,
+      showRequestIssueUpdateOptions: true
     };
 
     // having only one dropdown will be easier to query for
