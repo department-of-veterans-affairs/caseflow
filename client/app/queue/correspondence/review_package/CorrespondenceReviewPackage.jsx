@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
+import moment from 'moment';
 import {
   CORRESPONDENCE_READONLY_BANNER_HEADER,
   CORRESPONDENCE_READONLY_BANNER_MESSAGE,
@@ -30,7 +31,8 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: null
+    default_select_value: null,
+    va_date_of_receipt: '',
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
@@ -85,9 +87,15 @@ export const CorrespondenceReviewPackage = (props) => {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
       );
+      // API Response Without VA DOR
+      const apiResWithVADOR = response.body.general_information;
 
-      setApiResponse(response.body.general_information);
-      const data = response.body.general_information;
+      // Appended API Response VA DOR to
+      // eslint-disable-next-line max-len
+      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+
+      setApiResponse(apiResWithVADOR);
+      const data = apiResWithVADOR;
 
       if (response.body.efolder_upload_failed_before.length > 0) {
         setBannerInformation({
@@ -111,6 +119,7 @@ export const CorrespondenceReviewPackage = (props) => {
         notes: data.notes,
         veteran_file_number: data.file_number,
         default_select_value: data.correspondence_type_id,
+        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
       });
 
       if (isPageReadOnly(data.correspondence_tasks)) {
@@ -159,8 +168,9 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
 
   const intakeAppeal = async () => {

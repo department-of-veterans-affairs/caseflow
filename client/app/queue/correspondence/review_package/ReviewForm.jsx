@@ -1,5 +1,7 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TextareaField from '../../../components/TextareaField';
@@ -7,8 +9,14 @@ import Button from '../../../components/Button';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
+import DateSelector from '../../../components/DateSelector';
+import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import moment from 'moment';
 
 export const ReviewForm = (props) => {
+  // eslint-disable-next-line max-len
+  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
+
   const handleFileNumber = (value) => {
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
@@ -48,13 +56,23 @@ export const ReviewForm = (props) => {
     return `${firstName} ${middleInitial} ${lastName}`;
   };
 
-  const handleSelect = (val) => {
+  const handleSelectCorrespondenceType = (val) => {
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
     };
 
     props.setEditableData(updatedSelectedValue);
+  };
+  const handleSelectVADOR = (val) => {
+
+    setVADORDate(val);
+    const updatedSelectedDate = {
+      ...props.editableData,
+      va_date_of_receipt: val,
+    };
+
+    props.setEditableData(updatedSelectedDate);
   };
 
   const handleSubmit = async () => {
@@ -64,18 +82,25 @@ export const ReviewForm = (props) => {
         correspondence: {
           notes: props.editableData.notes,
           correspondence_type_id: props.editableData.default_select_value,
+          va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
         },
         veteran: {
           file_number: props.editableData.veteran_file_number,
         },
+        updateCmp: {
+          data: { packageDocument, VADORDate }
+        }
       },
     };
 
     try {
+      // debugger;
       const response = await ApiUtil.patch(
         `/queue/correspondence/${correspondence.correspondence_uuid}`,
         payloadData
       );
+
+      const responseVADOR = await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, updateCmp)
 
       const { body } = response;
 
@@ -154,9 +179,20 @@ export const ReviewForm = (props) => {
                 name="correspondence-dropdown"
                 label="Correspondence type"
                 options={generateOptions(props.reviewDetails.dropdown_values)}
-                onChange={handleSelect}
+                onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
                 placeholder="Select..."
+              />
+
+            </div>
+            <div>
+
+              <DateSelector
+                label="VA DOR"
+                name="date"
+                type="date"
+                onChange={handleSelectVADOR}
+                value={vaDORDate}
               />
             </div>
 
@@ -225,4 +261,19 @@ ReviewForm.propTypes = {
   isReadOnly: PropTypes.bool
 };
 
-export default ReviewForm;
+const mapStateToProps = (state) => ({
+  correspondence: state.reviewPackage.correspondence,
+  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation,
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  updateCmpInformation
+}, dispatch);
+
+export default
+connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ReviewForm);
