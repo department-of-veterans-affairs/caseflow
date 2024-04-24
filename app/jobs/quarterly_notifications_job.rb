@@ -3,6 +3,7 @@
 class QuarterlyNotificationsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
+
   QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
 
   # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
@@ -67,21 +68,11 @@ class QuarterlyNotificationsJob < CaseflowJob
     )
   end
 
-
   def send_and_log_quarterly_notification(appeal_state, appeal)
     MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                           name: "send_quarterly_notifications(appeal_state, appeal)") do
       send_quarterly_notifications(appeal_state, appeal)
     end
-  end
-
-  # Purpose: Method to be called with an error need to be logged to the rails logger
-  #
-  # Params: error_message (Expecting a string) - Message to be logged to the logger
-  #
-  # Response: None
-  def log_error(error_message)
-    Rails.logger.error(error_message)
   end
 
   # Purpose: Raises and logs errors whenever an appeal (AMA or Legacy) for an AppealState record cannot be located.
