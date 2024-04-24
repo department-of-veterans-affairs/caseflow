@@ -4,8 +4,9 @@ class OrganizationsUser < CaseflowRecord
   belongs_to :organization
   belongs_to :user
 
-  scope :non_admin, -> { where(admin: false) }
+  has_many :organization_user_permissions, dependent: :destroy
 
+  scope :non_admin, -> { where(admin: false) }
   scope :admin, -> { where(admin: true) }
 
   class << self
