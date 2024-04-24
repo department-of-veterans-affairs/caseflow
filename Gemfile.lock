@@ -235,7 +235,10 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
-    database_cleaner (1.7.0)
+    database_cleaner-active_record (2.0.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     date (3.3.3)
     ddtrace (0.34.1)
       msgpack
@@ -686,6 +689,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sql_tracker (1.3.2)
+    statsd-instrument (3.7.0)
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
@@ -770,7 +774,7 @@ DEPENDENCIES
   console_tree_renderer!
   countries
   danger (~> 6.2.2)
-  database_cleaner
+  database_cleaner-active_record (= 2.0.0)
   ddtrace
   debase
   derailed_benchmarks
@@ -841,6 +845,7 @@ DEPENDENCIES
   sniffybara!
   solargraph
   sql_tracker
+  statsd-instrument
   stringex
   strong_migrations
   test-prof
