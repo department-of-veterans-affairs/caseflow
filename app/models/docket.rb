@@ -16,6 +16,9 @@ class Docket
 
     scope = docket_appeals.active
 
+    # scope = apply_docket_type_exclusion(scope)
+    ready_priority_appeals
+
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
@@ -29,6 +32,23 @@ class Docket
     scope.order("appeals.receipt_date")
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def apply_docket_type_exclusion
+    docket_lever = "priority_#{self.class.name}"
+    should_exclude_docket = CaseDistributionLever[docket_lever]
+
+    should_exclude_docket ? scope.none : scope
+  end
+
+  def ready_priority_appeals
+    docket_lever = "priority_#{self.class.name}"
+    should_exclude_docket = CaseDistributionLever[docket_lever]
+    if should_exclude_docket
+        .none
+    else
+      appeals(priority: true, ready: true)
+    end
+  end
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
