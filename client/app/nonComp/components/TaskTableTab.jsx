@@ -10,6 +10,7 @@ import {
   veteranParticipantIdColumn,
   veteranSsnColumn,
   decisionReviewTypeColumn,
+  pendingIssueModificationColumn
 } from './TaskTableColumns';
 import {
   issueCountColumn,
@@ -90,6 +91,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
       ...issueTypesColumn(),
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
+    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : {}
   ];
 
   enabledTaskFilters = () => extractEnabledTaskFilters(

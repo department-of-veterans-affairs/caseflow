@@ -50,3 +50,15 @@ export const decisionReviewTypeColumn = (tasks) => {
     order: -1
   };
 };
+
+export const pendingIssueModificationColumn = () => {
+  return {
+    // TODO: Replace these with constants
+    header: 'Pending Requests',
+    name: 'pendingIssueRequests',
+    // TODO: make this matchup with the backend naming convention
+    valueFunction: (task) => task.appeal.pendingIssueModificationCount,
+    backendCanSort: true,
+    getSortValue: (task) => task.appeal.pendingIssueModificationCount
+  };
+};

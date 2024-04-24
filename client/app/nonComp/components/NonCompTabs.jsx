@@ -48,10 +48,27 @@ const NonCompTabsUnconnected = (props) => {
         key="incomplete"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=incomplete`}
         tabPaginationOptions={tabPaginationOptions}
+        {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.incomplete}
         filterableTaskIssueTypes={props.taskFilterDetails.incomplete_issue_types}
         description={COPY.VHA_INCOMPLETE_TAB_DESCRIPTION}
         tabName="incomplete"
+        predefinedColumns={{ includeDaysWaiting: true,
+          defaultSortIdx: 3 }} />
+    },
+    pending: {
+      label: 'Pending tasks',
+      page: <TaskTableTab {...props}
+        key="pending"
+        baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=pending`}
+        tabPaginationOptions={tabPaginationOptions}
+        {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
+        description={props.isBusinessLineAdmin ?
+          COPY.VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION :
+          COPY.VHA_PENDING_REQUESTS_TAB_DESCRIPTION}
+        tabName="pending"
+        filterableTaskTypes={props.taskFilterDetails.pending}
+        filterableTaskIssueTypes={props.taskFilterDetails.pending_issue_types}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     },
@@ -109,11 +126,14 @@ NonCompTabsUnconnected.propTypes = {
   taskFilterDetails: PropTypes.shape({
     incomplete: PropTypes.object,
     incomplete_issue_types: PropTypes.object,
+    pending: PropTypes.object,
+    pending_issue_types: PropTypes.object,
     in_progress: PropTypes.object,
     in_progress_issue_types: PropTypes.object,
     completed: PropTypes.object,
     completed_issue_types: PropTypes.object,
   }),
+  isBusinessLineAdmin: PropTypes.bool,
   businessLineUrl: PropTypes.string,
   businessLineConfig: PropTypes.shape({ tabs: PropTypes.array })
 };
@@ -123,6 +143,7 @@ const NonCompTabs = connect(
     currentTab: state.nonComp.currentTab,
     baseTasksUrl: state.nonComp.baseTasksUrl,
     taskFilterDetails: state.nonComp.taskFilterDetails,
+    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
     businessLineUrl: state.nonComp.businessLineUrl,
     businessLineConfig: state.nonComp.businessLineConfig,
   })
