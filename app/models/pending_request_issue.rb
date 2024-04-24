@@ -9,6 +9,6 @@ class PendingRequestIssue < CaseflowRecord
     pending: "pending",
     accepted: "accepted",
     rejected: "rejected",
-    canceled: "canceled"
+    cancelld: "cancelled"
   }
 end
