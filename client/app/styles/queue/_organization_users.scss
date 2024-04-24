@@ -1,3 +1,8 @@
+.top-user-border {
+  border-top-color: gray;
+  border-top-style: solid !important;
+  border-top-width: 1px !important;
+}
 
 .team-member-container {
   display: flex;
@@ -6,6 +11,9 @@
   border-bottom-color: gray;
   border-bottom-style: solid !important;
   border-bottom-width: 1px !important;
+  border-top-color: gray;
+  border-top-style: solid !important;
+  border-top-width: 1px !important;
 }
 
 .team-member-info {

@@ -18,22 +18,9 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import Checkbox from '../components/Checkbox';
 
-// const userStyle = css({
-//   margin: '.5rem 0 .5rem',
-//   padding: '.5rem 0 .5rem',
-//   listStyle: 'none',
-//   width: '100%'
+// const topUserBorder = css({
+//   border: '.1rem solid gray',
 // });
-// const topUserStyle = css({
-//   // borderTop: '.1rem solid gray',
-//   margin: '.5rem 0 .5rem',
-//   padding: '1rem 0 .5rem',
-//   listStyle: 'none',
-//   width: '100%'
-// });
-const topUserBorder = css({
-  // borderBottom: '.1rem solid gray',
-});
 const buttonStyle = css({
   paddingRight: '1rem',
   display: 'inline-block',
@@ -92,7 +79,6 @@ export default class OrganizationUsers extends React.PureComponent {
         toggledAutoAssignmentCheckboxes: (newState)
       });
     } else {
-      console.log('Else fired');
       const newState = [...this.state.toggledAutoAssignmentCheckboxes];
 
       newState.push(value);
@@ -158,7 +144,6 @@ export default class OrganizationUsers extends React.PureComponent {
   };
 
   addUser = ({ value }) => {
-    console.log({ value });
     const data = {
       id: value.id
     };
@@ -254,9 +239,6 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
-    console.log("running mod admin rights")
-    console.log(user);
-    console.log(adminFlag);
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -320,8 +302,7 @@ export default class OrganizationUsers extends React.PureComponent {
               { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
             </li>
             { (judgeTeam || dvcTeam) && admin ?
-              <div {...topUserBorder}></div> :
-              // <div {...buttonContainerStyle}>
+              <div className={['top-user-border']}></div> :
               <div>
                 <div className={['team-member-buttons-container']}>
                   { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
