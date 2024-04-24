@@ -59,16 +59,13 @@ class CorrespondenceIntakeController < CorrespondenceController
       intake_task = CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id)
       intake_task.update!(status: Constants.TASK_STATUSES.cancelled)
       ReviewPackageTask.create!(
-        parent_id: correspondence.root_task,
+        parent_id: intake_task.parent_id,
         assigned_to: current_user,
         status: Constants.TASK_STATUSES.assigned,
         appeal_id: correspondence.id,
         appeal_type: "Correspondence"
       )
       render json: {}, status: :ok
-
-      # reroute to correspondence queue after successful cancel
-      redirect_to Constants.CORRESPONDENCE_ROUTES.YOUR_CORRESPONDENCE
     rescue StandardError
       render json: { error: "Failed to update records" }, status: :bad_request
     end
@@ -81,14 +78,23 @@ class CorrespondenceIntakeController < CorrespondenceController
   end
 
   def verify_correspondence_intake_access
-    # always allow supervisors and superusers to acccess intakes not assigned to them.
-    return true if CorrespondenceIntakeTask
-      .open.find_by(appeal_id: correspondence.id, assigned_to: current_user) ||
-                   (current_user.mail_supervisor? || current_user.mail_superuser?)
+    active_intake_task = CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id)
+    # route if no active task
+    route_user unless active_intake_task && user_can_work_intake(active_intake_task)
+  end
 
-    # redirect if no access
+  # always allow supervisors and superusers to acccess intakes not assigned to them.
+  def user_can_work_intake(task)
+    (task.assigned_to == current_user) ||
+      (current_user.mail_supervisor? || current_user.mail_superuser?)
+  end
+
+  # redirect if no access
+  def route_user
     if current_user.mail_team_user?
-      redirect_to "queue/correspondence"
+      redirect_to "/queue/correspondence"
+    elsif current_user.mail_superuser? || current_user.mail_supervisor?
+      redirect_to "/queue/correspondence/team"
     else
       redirect_to "/unauthorized"
     end
