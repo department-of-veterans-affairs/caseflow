@@ -221,7 +221,7 @@ export const CorrespondenceReviewPackage = (props) => {
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
-            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
@@ -302,7 +302,7 @@ CorrespondenceReviewPackage.propTypes = {
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

@@ -28,7 +28,7 @@ import {
   setOrganizations,
   setMailTeamUser,
   setMailSupervisor,
-  setMailSuperUser
+  setInboundOpsSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -134,7 +134,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setMailTeamUser(this.props.isMailTeamUser);
     this.props.setMailSupervisor(this.props.isMailSupervisor);
-    this.props.setMailSuperUser(this.props.isMailSuperUser);
+    this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
@@ -646,7 +646,7 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}>
       <CorrespondenceReviewPackage
         mailTeamUsers={this.props.mailTeamUsers}
-        userIsCorrespondenceSuperuser={this.props.userIsCorrespondenceSuperuser}
+        isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
         {...props.match.params} />
     </ReviewPackageLoadingScreen>
@@ -1537,10 +1537,10 @@ QueueApp.propTypes = {
   setOrganizations: PropTypes.func,
   setMailTeamUser: PropTypes.func,
   setMailSupervisor: PropTypes.func,
-  setMailSuperUser: PropTypes.func,
+  setInboundOpsSuperUser: PropTypes.func,
   isMailTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
   mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
@@ -1561,7 +1561,6 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
@@ -1600,7 +1599,7 @@ const mapDispatchToProps = (dispatch) =>
       setOrganizations,
       setMailTeamUser,
       setMailSupervisor,
-      setMailSuperUser,
+      setInboundOpsSuperUser,
     },
     dispatch
   );
