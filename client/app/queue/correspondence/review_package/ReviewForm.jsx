@@ -11,11 +11,13 @@ import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import DateSelector from '../../../components/DateSelector';
 import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import { validateDateNotInFuture } from '../../../intake/util/issues';
 import moment from 'moment';
 
 export const ReviewForm = (props) => {
   // eslint-disable-next-line max-len
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
+  const [dateError, setDateError] = useState(false);
 
   const handleFileNumber = (value) => {
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
@@ -64,8 +66,27 @@ export const ReviewForm = (props) => {
 
     props.setEditableData(updatedSelectedValue);
   };
+
+  const errorOnVADORDate = (val) => {
+
+    if (val.length === 10) {
+      const error = validateDateNotInFuture(val) ? null : 'Receipt date cannot be in the future';
+
+      return error;
+    }
+  };
+
+  const vaDORReadOnly = () => {
+    if (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor) {
+      return false;
+    }
+
+    return true;
+
+  };
   const handleSelectVADOR = (val) => {
 
+    setDateError(errorOnVADORDate(val));
     setVADORDate(val);
     const updatedSelectedDate = {
       ...props.editableData,
@@ -91,7 +112,6 @@ export const ReviewForm = (props) => {
     };
 
     try {
-      debugger
       const response = await ApiUtil.patch(
         `/queue/correspondence/${correspondence.correspondence_uuid}`,
         payloadData
@@ -148,7 +168,7 @@ export const ReviewForm = (props) => {
           name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
-          disabled={!props.disableButton || props.isReadOnly}
+          disabled={!props.disableButton || props.isReadOnly || dateError}
           onClick={handleSubmit}
         />
       </div>
@@ -188,6 +208,8 @@ export const ReviewForm = (props) => {
                 type="date"
                 onChange={handleSelectVADOR}
                 value={vaDORDate}
+                errorMessage={dateError}
+                readOnly = {vaDORReadOnly()}
               />
             </div>
 
@@ -252,8 +274,11 @@ ReviewForm.propTypes = {
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,
-  errorMessage: PropTypes.string,
-  isReadOnly: PropTypes.bool
+  errorMessage: PropTypes.any,
+  isReadOnly: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  correspondence: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

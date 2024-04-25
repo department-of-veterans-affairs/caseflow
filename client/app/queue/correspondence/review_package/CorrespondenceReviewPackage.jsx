@@ -261,6 +261,8 @@ export const CorrespondenceReviewPackage = (props) => {
               isReadOnly
             }}
             {...props}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <CmpDocuments
             documents={props.correspondenceDocuments}
