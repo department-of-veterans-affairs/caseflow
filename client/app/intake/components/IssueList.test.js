@@ -7,7 +7,7 @@ import { mockedIssueListProps } from './mockData/issueListProps';
 
 describe('IssuesList', () => {
   const mockOnClickIssueAction = jest.fn();
-  const mockShowRequestIssueOptions = jest.fn();
+  // const mockShowRequestIssueOptions = jest.fn();
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -18,7 +18,7 @@ describe('IssuesList', () => {
       <IssuesList
         {...testProps}
         onClickIssueAction={mockOnClickIssueAction}
-        showRequestIssueUpdateOptions={mockShowRequestIssueOptions}
+        // showRequestIssueUpdateOptions={mockShowRequestIssueOptions}
       />
     );
 
@@ -76,7 +76,7 @@ describe('IssuesList', () => {
     const propsWithRequestForIssueUpdates = {
       ...mockedIssueListProps,
       userCanRequestForIssueUpdates: true,
-      showRequestIssueUpdateOptions: mockShowRequestIssueOptions.mockReturnValueOnce(true)
+      showRequestIssueUpdateOptions: true
     };
 
     // having only one dropdown will be easier to query for

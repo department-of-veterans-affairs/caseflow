@@ -325,15 +325,13 @@ class AddIssuesPage extends React.Component {
     };
 
     const originalIssuesHaveNoDecisionDate = () => {
-      return _.some(intakeData.originalIssues, { decisionDate: null });
+      return intakeData.originalIssues.some((issue) => issue.decisionDate === null);
     };
 
-    const showRequestIssueUpdateOptions = () => {
-      return userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
-    };
+    const showRequestIssueUpdateOptions = userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
 
     const renderButtons = () => {
-      if (showRequestIssueUpdateOptions()) {
+      if (showRequestIssueUpdateOptions) {
         return (
           <div className="cf-actions">
             <Button
