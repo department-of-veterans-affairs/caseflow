@@ -7,7 +7,6 @@ import { mockedIssueListProps } from './mockData/issueListProps';
 
 describe('IssuesList', () => {
   const mockOnClickIssueAction = jest.fn();
-  // const mockShowRequestIssueOptions = jest.fn();
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -18,7 +17,6 @@ describe('IssuesList', () => {
       <IssuesList
         {...testProps}
         onClickIssueAction={mockOnClickIssueAction}
-        // showRequestIssueUpdateOptions={mockShowRequestIssueOptions}
       />
     );
 
