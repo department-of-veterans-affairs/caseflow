@@ -623,7 +623,7 @@ ActiveRecord::Schema.define(version: 2024_04_23_180432) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
-create_table "correspondence_documents", force: :cascade do |t|
+  create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
     t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
