@@ -41,7 +41,6 @@ class BusinessLine < Organization
     ).build_query
   end
 
-  # TODO: test this method out.
   def pending_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :pending,
@@ -576,7 +575,9 @@ class BusinessLine < Organization
     end
 
     def pending_issue_filter(query_type)
-      "pending_request_issues.id IS NOT NULL" if query_type == :pending
+      return if query_type != :pending
+
+      "pending_request_issues.id IS NOT NULL"
     end
 
     def union_query_join_clauses

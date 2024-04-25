@@ -10,11 +10,6 @@ FactoryBot.define do
     nonrating_issue_category {}
     status { PendingRequestIssue.statuses.keys.sample }
 
-    # association(:decision_review, factory: [:higher_level_review, :with_vha_issue, :create_business_line])
-
-    # request_issue { create(:request_issue, decision_review: decision_review, benefit_type: "vha") }
-    decision_date { 1.month.ago }
-    decision_text { nil }
     withdrawal_date { nil }
     remove_original_issue { false }
     created_by_id { User.first.id }
@@ -43,8 +38,7 @@ FactoryBot.define do
                     nonrating_issue_category: Constants::ISSUE_CATEGORIES[pri.benefit_type].sample,
                     nonrating_issue_description: "Seeded issue",
                     decision_review: pri.decision_review,
-                    decision_date: 1.month.ago
-                    )
+                    decision_date: 1.month.ago)
 
         if evaluator.request_type != "Addition"
           pri.request_issue = ri
