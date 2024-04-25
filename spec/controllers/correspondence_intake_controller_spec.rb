@@ -28,6 +28,9 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
     FeatureToggle.enable!(:correspondence_queue)
     User.authenticate!(roles: ["Mail Intake"])
     correspondence.update(veteran: veteran)
+    MailTeam.singleton.add_user(current_user)
+    User.authenticate!(user: current_user)
+    correspondence.update(veteran: veteran)
 
     allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
     allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
@@ -44,11 +47,46 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
     end
   end
 
+  describe "POST #current_step" do
+    let(:redux_store) do
+      {
+        taskRelatedAppealIds: [],
+        newAppealRelatedTasks: [],
+        fetchedAppeals: [],
+        correspondences: [],
+        radioValue: "0",
+        relatedCorrespondences: [],
+        mailTasks: {},
+        unrelatedTasks: [],
+        currentCorrespondence: {
+          id: 181,
+          veteran_id: 3909
+        },
+        veteranInformation: {
+          id: 3909
+        },
+        waivedEvidenceTasks: []
+      }.to_json
+    end
+
+    it "saves the user's current step in the intake form" do
+      current_step = 1
+      post :current_step, params: {
+        correspondence_uuid: correspondence.uuid,
+        current_step: current_step,
+        redux_store: redux_store
+      }
+
+      expect(response).to have_http_status(:success)
+
+      intake_correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
+      expect(intake_correspondence.current_step).to eq(current_step)
+      expect(intake_correspondence.redux_store).to eq(redux_store)
+    end
+  end
+
   describe "POST #process_intake" do
     before do
-      MailTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-      correspondence.update(veteran: veteran)
       appeal_ids = esw_tasks.map { |task| Task.find(task[:task_id]).appeal.id }
       post :process_intake, params: {
         correspondence_uuid: correspondence.uuid,
@@ -83,11 +121,6 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
   end
 
   describe "PATCH #intake_update" do
-    before do
-      MailTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
-
     it "returns 200 - happy path" do
       patch :intake_update, params: { correspondence_uuid: correspondence.uuid }
 
@@ -122,12 +155,6 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
   end
 
   describe "POST #process_intake sad path" do
-    before do
-      MailTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-      correspondence.update(veteran: veteran)
-    end
-
     it "Rolls back db changes if there is an error" do
       post :process_intake, params: {
         correspondence_uuid: correspondence.uuid,
