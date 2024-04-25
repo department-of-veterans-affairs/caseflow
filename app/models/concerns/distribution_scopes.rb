@@ -52,7 +52,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   end
 
-  def genpop_query
+  def genpop_base_query
     join_distribution_tasks
       .with_original_appeal_and_judge_task
   end
@@ -61,21 +61,31 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
       genpop
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
-      genpop_query
-        .tied_to_distribution_judge(judge)
+      genpop_base_query
         .where(
           "appeals.stream_type != ? OR original_judge_task.assigned_to_id in (?)",
           Constants.AMA_STREAM_TYPES.court_remand,
-          JudgeTeam.judges_with_exclude_appeals_from_affinity
+          JudgeTeam.judges_with_exclude_appeals_from_affinity.push(judge&.id).compact
         )
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
-      genpop_query
+      genpop_base_query
         .where("appeals.stream_type != ?", Constants.AMA_STREAM_TYPES.court_remand)
     end
   end
 
+  def non_genpop_with_case_distribution_lever(judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      non_genpop_for_judge(judge)
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .where(original_judge_task: { assigned_to_id: judge&.id })
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query
+    end
+  end
+
   def genpop
-    genpop_query
+    genpop_base_query
       .where(
         "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
@@ -108,8 +118,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge)
-    join_distribution_tasks
-      .with_original_appeal_and_judge_task
+    genpop_base_query
       .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end

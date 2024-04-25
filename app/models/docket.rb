@@ -134,7 +134,7 @@ class Docket
 
   # :reek:ControlParameter
   def adjust_for_genpop(scope, genpop, judge)
-    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop_with_case_distribution_lever(judge)
+    (genpop == "not_genpop") ? scope.non_genpop_with_case_distribution_lever(judge) : scope.genpop_with_case_distribution_lever(judge)
   end
 
   def adjust_for_affinity(scope, judge)
