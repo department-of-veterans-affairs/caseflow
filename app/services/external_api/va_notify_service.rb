@@ -46,7 +46,7 @@ class ExternalApi::VANotifyService
       log_info(email_response)
       email_response
     end
-    # rubocop:enable Metrics/ParameterLists
+    # rubocop:disable Metrics/ParameterLists
     # Purpose: Send the sms notifications
     #
     # Params: Details from appeal for notification
@@ -57,7 +57,15 @@ class ExternalApi::VANotifyService
     #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-    def send_sms_notifications(participant_id:, notification_id:, sms_template_id:, first_name:, docket_number:, status: "")
+
+    def send_sms_notifications(
+      participant_id:,
+      notification_id:,
+      sms_template_id:,
+      first_name:,
+      docket_number:,
+      status: ""
+    )
       sms_response = send_va_notify_request(
         sms_request(participant_id, notification_id, sms_template_id, first_name, docket_number, status)
       )

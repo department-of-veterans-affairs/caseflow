@@ -185,9 +185,8 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when audit record is nil" do
-        allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
-
         allow_any_instance_of(Notification).to receive(:nil?).and_return(true)
+
         expect(Rails.logger).to receive(:send)
           .with(:error, /Notification audit record was unable to be found or created/)
         perform_enqueued_jobs do
