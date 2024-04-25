@@ -308,7 +308,41 @@ describe BusinessLine do
   end
 
   describe ".pending_tasks" do
+    let(:user) { create(:user) }
+    let!(:hlr_pending_tasks) do
+      create_list(:pending_request_issue, 3, :with_higher_level_review, created_by_id: user.id, updated_by_id: user.id)
+    end
 
+    let!(:sc_pending_tasks) do
+      create_list(:pending_request_issue, 3, :with_supplemental_claim, created_by_id: user.id, updated_by_id: user.id)
+    end
+
+    let(:task_filters) { nil }
+
+    subject { business_line.pending_tasks(filters: task_filters)}
+    include_examples "task filtration"
+
+    context "With an empty task filter" do
+      it "All pending tasks are included in the results" do
+        expect(subject.size).to eq(6)
+        expect(subject.map(&:id)).to match_array(
+          (hlr_pending_tasks + sc_pending_tasks).pluck(:id)
+        )
+      end
+    end
+  end
+
+  describe "#pending_issue_filter" do
+    it "returns a SQL condition for pending issues" do
+      query_type = "pending"
+      condition = pending_issue_filter(query_type)
+      expect(condition).to eq("pending_request_issue.id IS NOT NULL")
+    end
+
+    it "raises an ArgumentError for an invalid query type" do
+      query_type = "invalid"
+      expect { pending_issue_filter(query_type) }.to raise_error(ArgumentError)
+    end
   end
 
   describe "Generic Non Comp Org Businessline" do

@@ -87,7 +87,7 @@ class BusinessLine < Organization
   end
 
   def pending_tasks_type_counts
-    QueryBuilder.new(query_type: :in_progress, parent: self).task_type_count
+    QueryBuilder.new(query_type: :pending, parent: self).task_type_count
   end
 
   def change_history_rows(filters = {})
@@ -155,16 +155,19 @@ class BusinessLine < Organization
       appeals_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(ama_appeal: :request_issues)
+        .joins(pending_request_issues_join)
         .where(query_constraints)
         .where(pending_issue_filter(query_type))
       hlr_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(supplemental_claim: :request_issues)
+        .joins(pending_request_issues_join)
         .where(query_constraints)
         .where(pending_issue_filter(query_type))
       sc_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(higher_level_review: :request_issues)
+        .joins(pending_request_issues_join)
         .where(query_constraints)
         .where(pending_issue_filter(query_type))
 

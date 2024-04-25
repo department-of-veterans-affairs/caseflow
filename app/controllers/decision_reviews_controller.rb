@@ -20,7 +20,7 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_issue_type_counts,
            :pending_tasks,
            :pending_tasks_type_counts,
-           :pending_tasks_issue_counts,
+           :pending_tasks_issue_type_counts,
            :included_tabs,
            :can_generate_claim_history?,
            to: :business_line

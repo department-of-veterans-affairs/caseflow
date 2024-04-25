@@ -4,7 +4,7 @@
 
 module Seeds
   class VhaPendingRequestIssue < Base
-    NUMBER_OF_RECORDS_TO_CREATE = 1
+    NUMBER_OF_RECORDS_TO_CREATE = 5
 
     def seed!
       RequestStore[:current_user] = User.system_user
