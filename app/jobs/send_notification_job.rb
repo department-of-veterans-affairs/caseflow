@@ -42,14 +42,18 @@ class SendNotificationJob < CaseflowJob
   def perform(message_json)
     ensure_current_user_is_set
 
-    fail SendNotificationJobError, "Message argument of value nil supplied to job" if message_json.nil?
+    begin
+      fail SendNotificationJobError, "Message argument of value nil supplied to job" if message_json.nil?
 
-    @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
+      @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
 
-    ActiveRecord::Base.transaction do
-      @notification_audit = find_or_create_notification_audit
-      update_notification_statuses
-      maybe_send_to_va_notify if message_status_valid?
+      ActiveRecord::Base.transaction do
+        @notification_audit = find_or_create_notification_audit
+        update_notification_statuses
+        maybe_send_to_va_notify if message_status_valid?
+      end
+    rescue StandardError => error
+      log_error(error)
     end
   end
 
