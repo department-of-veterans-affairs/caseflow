@@ -2068,19 +2068,22 @@ describe Task, :all_dbs do
     end
 
     context "package action tasks" do
+      let(:correspondence) { create(:correspondence) }
+      let(:user) { create(:user) }
+      let(:user2) { create(:user) }
+
       describe "reassign package tasks" do
-        it "approve" do
-          correspondence = create(:correspondence)
-          user = create(:user)
-          user2 = create(:user)
-          reassign_pt = ReassignPackageTask.create!(
-            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
+        let(:reassign_pt) do
+          ReassignPackageTask.create!(
+            parent_id: correspondence.review_package_task.id,
             appeal_id: correspondence&.id,
             appeal_type: Correspondence.name,
             assigned_to: InboundOpsTeam.singleton,
-            assigned_by: user
+            assigned_by: user2
           )
+        end
 
+        it "approve" do
           expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
           expect(reassign_pt.closed_at).to eq nil
           expect(reassign_pt.completed_by).to eq nil
@@ -2103,17 +2106,6 @@ describe Task, :all_dbs do
         end
 
         it "reject" do
-          correspondence = create(:correspondence)
-          user = create(:user)
-          user2 = create(:user)
-          reassign_pt = ReassignPackageTask.create!(
-            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
-            appeal_id: correspondence&.id,
-            appeal_type: Correspondence.name,
-            assigned_to: InboundOpsTeam.singleton,
-            assigned_by: user2
-          )
-
           expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
           expect(reassign_pt.closed_at).to eq nil
           expect(reassign_pt.completed_by).to eq nil
@@ -2134,19 +2126,17 @@ describe Task, :all_dbs do
       end
 
       describe "remove package tasks" do
-        it "approve" do
-          correspondence = create(:correspondence)
-          user = create(:user)
-          user2 = create(:user)
-          rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-          remove_pt = RemovePackageTask.create!(
-            parent_id: rpt.id,
+        let(:remove_pt) do
+          RemovePackageTask.create!(
+            parent_id: correspondence.review_package_task.id,
             appeal_id: correspondence&.id,
             appeal_type: Correspondence.name,
             assigned_to: InboundOpsTeam.singleton,
             assigned_by: user2
           )
+        end
 
+        it "approve" do
           expect(remove_pt.completed_by_id).to eq nil
           expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
 
@@ -2156,16 +2146,6 @@ describe Task, :all_dbs do
         end
 
         it "reject" do
-          correspondence = create(:correspondence)
-          user = create(:user)
-
-          remove_pt = RemovePackageTask.create!(
-            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
-            appeal_id: correspondence&.id,
-            appeal_type: Correspondence.name,
-            assigned_to: InboundOpsTeam.singleton
-          )
-
           expect(remove_pt.completed_by_id).to eq nil
           expect(remove_pt.closed_at).to eq nil
           expect(remove_pt.status).to eq Constants.TASK_STATUSES.assigned
@@ -2182,9 +2162,10 @@ describe Task, :all_dbs do
           expect(remove_pt.parent.status).to eq Constants.TASK_STATUSES.in_progress
         end
       end
+
       it "verifies no other open package action task on correspondence before creation" do
         correspondence = create(:correspondence)
-        parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
+        parent_task = correspondence.review_package_task
         reassign_pt = ReassignPackageTask.create!(
           parent_id: parent_task&.id,
           appeal_id: correspondence&.id,
