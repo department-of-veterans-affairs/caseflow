@@ -72,7 +72,7 @@ export default class OrganizationUsers extends React.PureComponent {
   generatePermissionsCheckboxes = (id) => {
     return (
       this.props.organizationPermissions.map((permission) => {
-        return (<Checkbox name={permission.permission} />)
+        return (<Checkbox styling={checkboxStyle} name={permission.permission} />)
       })
     )
   }
