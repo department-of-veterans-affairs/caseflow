@@ -41,11 +41,17 @@ const checkboxStyle = css({
   marginBottom: '10px'
 });
 
-const NODcheckboxStyle = css({
-  marginTop: '0',
-  marginLeft: '25px',
-  marginBottom: '10px'
-});
+// const NODcheckboxStyle = css({
+//   marginTop: '0',
+//   marginLeft: '25px',
+//   marginBottom: '10px'
+// });
+
+// const NODcheckboxStyle = css({
+//   marginTop: '0',
+//   marginLeft: '25px',
+//   marginBottom: '10px'
+// });
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -72,9 +78,16 @@ export default class OrganizationUsers extends React.PureComponent {
   generatePermissionsCheckboxes = (id) => {
     return (
       this.props.organizationPermissions.map((permission) => {
-        return (<Checkbox name={permission.permission} />)
+        const marginL = permission.parent_permission_id ? '25px' : '0px';
+        const NODcheckboxStyle = css({
+          marginTop: '0',
+          marginLeft: marginL,
+          marginBottom: '10px'
+        });
+
+        return (<Checkbox name={permission.permission} styling={NODcheckboxStyle} />);
       })
-    )
+    );
   }
 
   handleAutoAssignmentCheck = (value) => {
