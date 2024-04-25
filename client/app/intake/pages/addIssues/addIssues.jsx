@@ -331,7 +331,7 @@ class AddIssuesPage extends React.Component {
     const showRequestIssueUpdateOptions = userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
 
     const renderButtons = () => {
-      if (showRequestIssueUpdateOptions) {
+      if (showRequestIssueUpdateOptions && intakeData.benefitType === 'vha') {
         return (
           <div className="cf-actions">
             <Button
