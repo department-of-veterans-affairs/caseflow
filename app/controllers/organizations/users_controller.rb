@@ -2,9 +2,9 @@
 
 class Organizations::UsersController < OrganizationsController
   def index
-    @permissions = organization.organization_permissions.select(
-      :permission, :description, :enabled, :parent_permission_id
-    )
+    @permissions = organization.organization_permissions
+      # :permission, :description, :enabled, :parent_permissions
+    # )
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
