@@ -16,11 +16,9 @@ class Docket
 
     scope = docket_appeals.active
 
-    # scope = apply_docket_type_exclusion(scope)
-    # ready_priority_appeals
-
     if ready
       scope = scope.ready_for_distribution
+      scope = ready_appeals_from_levers(scope, priority)
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
       scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
@@ -33,28 +31,28 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  # def apply_docket_type_exclusion
-  #   docket_lever = "priority_#{self.class.name}"
-  #   should_exclude_docket = CaseDistributionLever[docket_lever]
+  def build_lever_item(appeal, priority_status)
+    "disable_ama_#{priority_status}_#{appeal.docket_type.downcase}"
+  end
 
-  #   should_exclude_docket ? scope.none : scope
-  # end
+  def ready_appeals_from_levers(scope, priority = false)
+    priority_status = priority ? "priority" : "non_priority"
+    # docket_levers = CaseDistributionLever.where(lever_group: Constants::ACD_LEVERS["lever_groups"]["docket_levers"])
+    scope.select do |appeal|
+      lever_item = build_lever_item(appeal, priority_status)
+      lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
 
-  # Where is this method getting called?
-  # docket_lever - what is an example of what is should be returning (ie priority_evidence_hearings, or is it an actual docket lever from seed file)?
-  # age_of_oldest_priority_appeal pattern?
-  # does this method only return none or appeals and nothing else?
-  # if this is called by a parent, what data needs to be returned? Will the parent manipulate/change/handle the data?
-  def ready_priority_appeals
-    puts("this is a thing")
-    docket_lever = "priority_#{self.class.name}"
-    binding.pry
-    should_exclude_docket = CaseDistributionLever[docket_lever]
-    if should_exclude_docket
-        .none
-    else
-      appeals(priority: true, ready: true)
+      # We only include the appeal if lever does not exist or its value is false
+      lever.nil? || !lever.value
     end
+
+    # lever_item = "disable_ama_#{priority_status}_#{appeal.docket_type}"
+    # should_exclude_docket = docket_levers.value
+    # if should_exclude_docket
+    #     .none
+    # else
+    #   appeals(priority: true, ready: true)
+    # end
   end
 
   def count(priority: nil, ready: nil)
