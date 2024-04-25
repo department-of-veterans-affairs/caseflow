@@ -5,9 +5,18 @@ RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceTaskHelpers
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
 
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
   let(:unauthorized_user) { create(:user) }
+  let(:correspondence) { create :correspondence }
+  let(:correspondence_intake_task) do
+    create(
+      :correspondence_intake_task,
+      appeal: correspondence,
+      appeal_type: Correspondence.name,
+      assigned_to: mail_user
+    )
+  end
 
   context "correspondence intake form access" do
     before :each do
@@ -31,22 +40,11 @@ RSpec.feature("The Correspondence Intake page") do
   before :each do
     organization.add_user(mail_user)
     mail_user.reload
+    # reload in case of controller validation triggers before data created
+    correspondence_intake_task.reload
   end
 
   context "intake form feature toggle" do
-    before :each do
-      CorrespondenceType.create!(
-        name: "a correspondence type"
-      )
-      PackageDocumentType.create!
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-    end
-
     it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       User.authenticate!(user: mail_user)
@@ -127,18 +125,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "The mail team user is able to add unrelated tasks" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      CorrespondenceType.create!(
-        name: "a correspondence type"
-      )
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
       click_on("button-continue")
     end
 
@@ -240,14 +227,7 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
       click_on("button-continue")
       click_on("+ Add tasks")
     end
@@ -360,6 +340,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       correspondence = create(:correspondence)
       create_correspondence_intake(correspondence, current_user)
+      correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     end
 
     it "successfully loads the in progress tab" do
@@ -387,7 +368,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "checks for failed to upload to the eFolder banner after navigating away from page" do
     let(:current_user) { create(:user) }
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
 

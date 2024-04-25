@@ -37,7 +37,7 @@ module CorrespondenceHelpers
         package_document_type: create(:package_document_type, name: "0304")
       )
     end
-
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
   end
 
@@ -63,7 +63,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
     click_button("Continue")
@@ -84,6 +84,7 @@ module CorrespondenceHelpers
       )
     end
 
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
     click_button("Continue")
@@ -97,6 +98,7 @@ module CorrespondenceHelpers
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
     click_button("Continue")
@@ -132,6 +134,7 @@ module CorrespondenceHelpers
       appeal = create(:appeal, veteran_file_number: veteran.file_number)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
     click_button("Continue")
   end
@@ -145,6 +148,7 @@ module CorrespondenceHelpers
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
     @correspondence_uuid = Correspondence.first.uuid
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{@correspondence_uuid}/intake"
   end
 
