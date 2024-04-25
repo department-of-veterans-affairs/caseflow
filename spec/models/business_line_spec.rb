@@ -307,6 +307,10 @@ describe BusinessLine do
     end
   end
 
+  describe ".pending_tasks" do
+
+  end
+
   describe "Generic Non Comp Org Businessline" do
     include_context :business_line, "NONCOMPORG", "nco"
 

@@ -19,6 +19,8 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
            :pending_tasks,
+           :pending_tasks_type_counts,
+           :pending_tasks_issue_counts,
            :included_tabs,
            :can_generate_claim_history?,
            to: :business_line
@@ -132,8 +134,8 @@ class DecisionReviewsController < ApplicationController
         task_filter_hash[:completed] = completed_tasks_type_counts
         task_filter_hash[:completed_issue_types] = completed_tasks_issue_type_counts
       when :pending
-        task_filter_hash[:pending] = in_progress_tasks_type_counts
-        task_filter_hash[:pending_issue_types] = in_progress_tasks_issue_type_counts
+        task_filter_hash[:pending] = pending_tasks_type_counts
+        task_filter_hash[:pending_issue_types] = pending_tasks_issue_type_counts
       else
         fail NotImplementedError "Tab name type not implemented for this business line: #{business_line}"
       end
@@ -184,6 +186,7 @@ class DecisionReviewsController < ApplicationController
 
     tasks = case tab_name
             when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
+            when "pending" then pending_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
             when nil

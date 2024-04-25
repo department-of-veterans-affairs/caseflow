@@ -82,6 +82,14 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
   end
 
+  def pending_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :pending, parent: self).issue_type_count
+  end
+
+  def pending_tasks_type_counts
+    QueryBuilder.new(query_type: :in_progress, parent: self).task_type_count
+  end
+
   def change_history_rows(filters = {})
     QueryBuilder.new(query_params: filters, parent: self).change_history_rows
   end
@@ -148,14 +156,17 @@ class BusinessLine < Organization
         .select(shared_select_statement)
         .joins(ama_appeal: :request_issues)
         .where(query_constraints)
+        .where(pending_issue_filter(query_type))
       hlr_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(supplemental_claim: :request_issues)
         .where(query_constraints)
+        .where(pending_issue_filter(query_type))
       sc_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(higher_level_review: :request_issues)
         .where(query_constraints)
+        .where(pending_issue_filter(query_type))
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
