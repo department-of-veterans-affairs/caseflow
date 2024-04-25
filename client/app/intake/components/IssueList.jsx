@@ -67,7 +67,7 @@ export default class IssuesList extends React.Component {
         );
       }
     }
-    if (this.props.showRequestIssueUpdateOptions) {
+    if (this.props.showRequestIssueUpdateOptions()) {
       options = [];
       options.push(
         { displayText: 'Request modification',
