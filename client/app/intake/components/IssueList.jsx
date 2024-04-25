@@ -85,7 +85,6 @@ export default class IssuesList extends React.Component {
       );
     }
 
-
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
     // Do not show the Add Decision Date action if the issue is pending or is fully withdrawn
