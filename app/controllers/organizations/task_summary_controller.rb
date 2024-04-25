@@ -31,7 +31,7 @@ class Organizations::TaskSummaryController < OrganizationsController
       format.json do
         render json: {
           members: json_users(organization.users),
-          task_counts: result.to_hash.to_json
+          task_counts: result.to_a.to_json
         }
       end
     end

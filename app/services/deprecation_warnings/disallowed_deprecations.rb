@@ -14,7 +14,8 @@ module DisallowedDeprecations
 
   # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
   RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
-    /update_attributes is deprecated and will be removed from Rails 6\.1/
+    /update_attributes is deprecated and will be removed from Rails 6\.1/,
+    /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection

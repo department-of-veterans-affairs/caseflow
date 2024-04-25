@@ -210,7 +210,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       group by PRIORITY, READY
     SQL
 
-    connection.exec_query(query).to_hash
+    connection.exec_query(query).to_a
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -220,7 +220,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       where VLJ is null or #{ineligible_judges_sattyid_cache}
     SQL
 
-    connection.exec_query(query).to_hash.count
+    connection.exec_query(query).to_a.size
   end
 
   def self.not_genpop_priority_count
@@ -229,7 +229,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       where VLJ is not null
     SQL
 
-    connection.exec_query(query).to_hash.count
+    connection.exec_query(query).to_a.size
   end
 
   def self.nod_count
@@ -311,7 +311,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, num])
 
-    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals = conn.exec_query(fmtd_query).to_a
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
@@ -330,7 +330,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       num
                                     ])
 
-    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals = conn.exec_query(fmtd_query).to_a
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
@@ -349,7 +349,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       num
                                     ])
 
-    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals = conn.exec_query(fmtd_query).to_a
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
@@ -361,7 +361,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, 1])
 
-    connection.exec_query(fmtd_query).to_hash.first&.fetch("bfdloout")
+    connection.exec_query(fmtd_query).to_a.first&.fetch("bfdloout")
   end
 
   def self.age_of_oldest_priority_appeal_by_docket_date
@@ -372,7 +372,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, 1])
 
-    connection.exec_query(fmtd_query).to_hash.first&.fetch("bfd19")
+    connection.exec_query(fmtd_query).to_a.first&.fetch("bfd19")
   end
 
   def self.nonpriority_decisions_per_year
@@ -411,7 +411,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.priority_ready_appeal_vacols_ids
-    connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
+    connection.exec_query(SELECT_PRIORITY_APPEALS).to_a.map { |appeal| appeal["bfkey"] }
   end
 
   def self.ready_to_distribute_appeals
@@ -420,7 +420,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     SQL
 
     fmtd_query = sanitize_sql_array([query])
-    connection.exec_query(fmtd_query).to_hash
+    connection.exec_query(fmtd_query).to_a
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
@@ -504,11 +504,11 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     conn.transaction do
       if dry_run
-        conn.exec_query(query).to_hash
+        conn.exec_query(query).to_a
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
-        appeals = conn.exec_query(query).to_hash
+        appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }

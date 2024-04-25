@@ -159,7 +159,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
           conn.exec_query(sanitize_sql_array([query, vacols_ids]))
         end
 
-        result.to_hash.reduce({}) do |memo, row|
+        result.to_a.reduce({}) do |memo, row|
           memo[(row["bfkey"]).to_s] = (row["n"] > 0)
           memo
         end
