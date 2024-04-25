@@ -58,7 +58,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(10)
+            .exactly(5)
             .times
         )
       end
@@ -178,7 +178,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(10)
+            .exactly(5)
             .times
         )
 
