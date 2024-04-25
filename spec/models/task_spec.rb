@@ -2077,7 +2077,8 @@ describe Task, :all_dbs do
             parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
             appeal_id: correspondence&.id,
             appeal_type: Correspondence.name,
-            assigned_to: InboundOpsTeam.singleton
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by: user
           )
 
           expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
@@ -2104,11 +2105,13 @@ describe Task, :all_dbs do
         it "reject" do
           correspondence = create(:correspondence)
           user = create(:user)
+          user2 = create(:user)
           reassign_pt = ReassignPackageTask.create!(
             parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
             appeal_id: correspondence&.id,
             appeal_type: Correspondence.name,
-            assigned_to: InboundOpsTeam.singleton
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by: user2
           )
 
           expect(reassign_pt.status).to eq Constants.TASK_STATUSES.assigned
@@ -2134,12 +2137,14 @@ describe Task, :all_dbs do
         it "approve" do
           correspondence = create(:correspondence)
           user = create(:user)
-
+          user2 = create(:user)
+          rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
           remove_pt = RemovePackageTask.create!(
-            parent_id: ReviewPackageTask.find_by(appeal_id: correspondence.id).id,
+            parent_id: rpt.id,
             appeal_id: correspondence&.id,
             appeal_type: Correspondence.name,
-            assigned_to: InboundOpsTeam.singleton
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by: user2
           )
 
           expect(remove_pt.completed_by_id).to eq nil
