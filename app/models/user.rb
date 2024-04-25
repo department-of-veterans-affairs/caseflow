@@ -110,10 +110,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations.include?(InboundOpsTeam.singleton)
   end
 
-  def mail_superuser?
-    organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
-  end
-
   def can_assign_hearing_schedule?
     can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
   end

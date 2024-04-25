@@ -34,7 +34,7 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
-    columns.insert(0, Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name) unless user.mail_superuser?
+    columns.insert(0, Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name) unless user.inbound_ops_team_superuser?
     columns
   end
 end
