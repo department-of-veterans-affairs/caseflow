@@ -69,6 +69,14 @@ export default class OrganizationUsers extends React.PureComponent {
     };
   }
 
+  generatePermissionsCheckboxes = (id) => {
+    return (
+      this.props.organizationPermissions.map((permission) => {
+        return (<Checkbox name={permission.permission} />)
+      })
+    )
+  }
+
   handleAutoAssignmentCheck = (value) => {
     if (this.state.toggledAutoAssignmentCheckboxes.includes(value)) {
       const index = this.state.toggledAutoAssignmentCheckboxes.indexOf(value.toString());
@@ -239,6 +247,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -251,7 +260,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -314,11 +322,12 @@ export default class OrganizationUsers extends React.PureComponent {
           </div>
           <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
-            <Checkbox
+            {this.generatePermissionsCheckboxes()}
+            {/* <Checkbox
               name={`supveruser${user.id}`}
               key={`xppv${user.id}`}
               styling={checkboxStyle}
-              // value={Boolean(user.attributes.admin)}
+              value={Boolean(user.attributes.admin)}
               disabled={Boolean(user.attributes.admin)}
               onChange={this.modifyAdminRights(user, true)}
               label="Superuser: Split, Merge, and Reassign" />
@@ -338,7 +347,7 @@ export default class OrganizationUsers extends React.PureComponent {
               name={`nod-${user.id}`}
               key={`xpip${user.id}`}
               styling={NODcheckboxStyle}
-              label='Receive "NOD Mail"' />}
+              label='Receive "NOD Mail"' />} */}
 
           </div>
         </div>

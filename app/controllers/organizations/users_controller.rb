@@ -2,11 +2,13 @@
 
 class Organizations::UsersController < OrganizationsController
   def index
+    @permissions = organization.organization_permissions.select(
+      :permission, :description, :enabled, :parent_permission_id
+    )
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
         organization_users = organization.users
-
         render json: {
           organization_name: organization.name,
           judge_team: organization.type == JudgeTeam.name,

@@ -15,7 +15,6 @@ class OrganizationsController < ApplicationController
 
   def org_index
     return filter_by_type if params[:type]
-
     render json: {}, status: :ok
   end
 
