@@ -325,7 +325,6 @@ describe BusinessLine do
       let(:task_filters) { nil }
 
       it "All pending tasks are included in the results" do
-        byebug
         expect(subject.size).to eq(6)
 
         expect(subject.map(&:appeal_id)).to match_array(
