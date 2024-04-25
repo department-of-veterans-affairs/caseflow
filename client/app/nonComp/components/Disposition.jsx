@@ -20,7 +20,7 @@ import {
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission
 } from '../util';
-import Link from '../../components/Link';
+import Link from 'app/components/Link';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -213,8 +213,7 @@ class NonCompDispositions extends React.PureComponent {
           {displayPOAComponent && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
-              <h2>Decision</h2>
-              <div></div>  {/* h2's margin-bottom is overridden without something below it*/}
+              <h2 style={{ 'margin-bottom': '30px' }}>Decision</h2>
             </div>
             <div className="usa-width-one-half cf-txt-r">
               {editIssuesLink}
