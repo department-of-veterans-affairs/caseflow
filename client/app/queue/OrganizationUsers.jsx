@@ -85,7 +85,12 @@ export default class OrganizationUsers extends React.PureComponent {
           marginBottom: '10px'
         });
 
-        return (<Checkbox name={permission.permission} styling={NODcheckboxStyle} />);
+        return (<Checkbox
+          name={`${id}-${permission.permission}`}
+          label={permission.permission}
+          key={`${id}-${permission.permission}`}
+          styling={NODcheckboxStyle}
+        />);
       })
     );
   }
@@ -335,7 +340,7 @@ export default class OrganizationUsers extends React.PureComponent {
           </div>
           <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
-            {this.generatePermissionsCheckboxes()}
+            {this.generatePermissionsCheckboxes(user.id)}
             {/* <Checkbox
               name={`supveruser${user.id}`}
               key={`xppv${user.id}`}
