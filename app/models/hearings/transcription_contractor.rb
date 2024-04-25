@@ -1,4 +1,4 @@
 class TranscriptionContractor < ApplicationRecord
-  validates :qat_name, presence: true
-  validates :qat_directory, presence: true
+  validates :name, presence: true
+  validates :directory, presence: true
 end
