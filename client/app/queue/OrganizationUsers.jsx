@@ -36,10 +36,10 @@ const listStyle = css({
   listStyle: 'none'
 });
 
-const checkboxStyle = css({
-  marginTop: '0px',
-  marginBottom: '10px'
-});
+// const checkboxStyle = css({
+//   marginTop: '0px',
+//   marginBottom: '10px'
+// });
 
 // const NODcheckboxStyle = css({
 //   marginTop: '0',
@@ -472,5 +472,6 @@ export default class OrganizationUsers extends React.PureComponent {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  organizationPermissions: PropTypes.array
 };
