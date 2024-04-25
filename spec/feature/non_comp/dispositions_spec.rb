@@ -415,7 +415,8 @@ feature "NonComp Dispositions Task Page", :postgres do
 
         step "should display only the Edit Issues link" do
           expect(page).to have_link("Edit Issues", href: in_progress_task.caseflow_only_edit_issues_url)
-          expect(page).not_to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
+          expect(page).not_to have_link("Request issue modification",
+                                        href: in_progress_task.caseflow_only_edit_issues_url)
           expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
         end
       end
