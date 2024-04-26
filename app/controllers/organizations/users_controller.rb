@@ -21,6 +21,12 @@ class Organizations::UsersController < OrganizationsController
     end
   end
 
+  def modify_user_permission(user_id, permission_name)
+    format json: {
+      test: 'test'
+    }
+  end
+
   def create
     organization.add_user(user_to_modify, current_user)
 

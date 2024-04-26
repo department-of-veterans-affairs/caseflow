@@ -413,7 +413,9 @@ Rails.application.routes.draw do
     # Maintain /organizations/members for backwards compatability for a few days.
     resources :members, only: [:index], controller: 'organizations/task_summary'
     resources :task_summary, only: [:index], controller: 'organizations/task_summary'
+# Organizations::UsersController#index
   end
+  get '/organizations/update_permission', to: 'organizations/users#modify_user_permission'
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
   get '/organizations(*rest)', to: 'organizations#org_index'
 

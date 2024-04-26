@@ -75,6 +75,17 @@ export default class OrganizationUsers extends React.PureComponent {
     };
   }
 
+  modifyUserPermission = (userId, permissionName) => () => {
+
+    const payload = { data: { userId, permissionName } };
+
+    ApiUtil.patch(``, payload).then((response) => {
+      //do something if success
+    }, (error) => {
+      //handle error
+    });
+  }
+
   generatePermissionsCheckboxes = (id) => {
     return (
       this.props.organizationPermissions.map((permission) => {
@@ -90,6 +101,7 @@ export default class OrganizationUsers extends React.PureComponent {
           label={permission.permission}
           key={`${id}-${permission.permission}`}
           styling={NODcheckboxStyle}
+          onChange={() => this.modifyUserPermission(id, permission.permission)}
         />);
       })
     );
@@ -341,32 +353,6 @@ export default class OrganizationUsers extends React.PureComponent {
           <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
             {this.generatePermissionsCheckboxes(user.id)}
-            {/* <Checkbox
-              name={`supveruser${user.id}`}
-              key={`xppv${user.id}`}
-              styling={checkboxStyle}
-              value={Boolean(user.attributes.admin)}
-              disabled={Boolean(user.attributes.admin)}
-              onChange={this.modifyAdminRights(user, true)}
-              label="Superuser: Split, Merge, and Reassign" />
-            { user.attributes.admin === false &&
-            <Checkbox
-              key={`xbo${user.id}`}
-              // id={`${user.id}${user.css_id}`}
-              value={this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString())}
-              name={`auto-assignment-${user.id}`}
-              onChange={() => this.handleAutoAssignmentCheck(user.id)}
-              styling={checkboxStyle}
-              label="Auto-Assignment" /> }
-            {this.state.toggledAutoAssignmentCheckboxes.includes(user.id.toString()) &&
-            <Checkbox
-              value={this.state.toggledNodCheckboxes.includes(user.id.toString())}
-              onChange={() => this.handleNODCheck(user.id)}
-              name={`nod-${user.id}`}
-              key={`xpip${user.id}`}
-              styling={NODcheckboxStyle}
-              label='Receive "NOD Mail"' />} */}
-
           </div>
         </div>
       </React.Fragment>;
