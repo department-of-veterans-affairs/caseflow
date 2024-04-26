@@ -134,11 +134,16 @@ class Docket
 
   # :reek:ControlParameter
   def adjust_for_genpop(scope, genpop, judge)
-    (genpop == "not_genpop") ? scope.non_genpop_with_case_distribution_lever(judge) : scope.genpop_with_case_distribution_lever(judge)
+    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
   def adjust_for_affinity(scope, judge)
-    scope.genpop.or(scope.non_genpop_for_judge(judge))
+    result = scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      result = result.or(genpop_base_query.tied_to_ineligible_judge)
+    end
+
+    result
   end
 
   def scoped_for_priority(scope)
