@@ -1,4 +1,4 @@
-class PendingRequestIssue < ActiveRecord::Migration[6.0]
+class PendingRequestIssue < Caseflow::Migration
   def change
     create_table :pending_request_issues, comment: "A database table to store pending request issues that are for modification" do |t|
       t.references :request_issue, foreign_key: true, null: true, comment:"Indicates the id of the request_issues on which the modification was requested"
