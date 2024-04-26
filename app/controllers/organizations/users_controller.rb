@@ -21,10 +21,28 @@ class Organizations::UsersController < OrganizationsController
     end
   end
 
-  def modify_user_permission(user_id, permission_name)
-    format json: {
-      test: 'test'
-    }
+  def modify_user_permission
+    user_id = params[:userId]
+    permission_name = params[:permissionName].strip
+    org_url = params[:organization_url]
+    org_permission = OrganizationPermission.find_by(permission: permission_name)
+    organization_user_permission = OrganizationUserPermission.find_by(organization_permission_id: org_permission.id)
+    target_user = OrganizationsUser.find_by(user_id: user_id)
+    org = Organization.find_by(url: org_url)
+
+    org_permission_checker = OrganizationUserPermissionChecker.new
+    # binding.pry
+    if org_permission_checker.can?(permission_name:org_permission.permission, organization:org, user:target_user.user)
+      target_user.organization_user_permissions.select { |org_user_permission| org_user_permission == organization_user_permission}
+      binding.pry
+      render json: { test: 'removed permission'}
+
+    else
+      binding.pry
+      target_user.organization_user_permissions << organization_user_permission
+      render json: { test: 'added permission'}
+    end
+
   end
 
   def create

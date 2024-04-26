@@ -75,12 +75,12 @@ export default class OrganizationUsers extends React.PureComponent {
     };
   }
 
+  //http://localhost:3000/organizations/inbound-ops-team/test
   modifyUserPermission = (userId, permissionName) => () => {
-
     const payload = { data: { userId, permissionName } };
 
-    ApiUtil.patch(``, payload).then((response) => {
-      //do something if success
+    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).then((response) => {
+      console.log(response)
     }, (error) => {
       //handle error
     });
@@ -101,7 +101,7 @@ export default class OrganizationUsers extends React.PureComponent {
           label={permission.permission}
           key={`${id}-${permission.permission}`}
           styling={NODcheckboxStyle}
-          onChange={() => this.modifyUserPermission(id, permission.permission)}
+          onChange={this.modifyUserPermission(id, permission.permission)}
         />);
       })
     );
