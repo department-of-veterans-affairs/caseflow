@@ -162,22 +162,27 @@ $translate: 11%;
     td {
       border: 0;
       background-color: $caseflow-background;
-      padding-top: 2rem;
       padding-bottom: 0;
     }
 
     th {
       width: 25%;
-      padding-left:30px;
     }
 
     td {
       margin: 2px;
       padding-top: 0;
       padding-bottom: 25px;
-      padding-left:30px;
       width: 25%
-      }
+    }
+
+    .corr-table-borderless-first-item {
+      padding-left: 30px;
+    }
+
+    .corr-table-borderless-last-item {
+        padding-right: 30px;
+    }
   }
 
 }
