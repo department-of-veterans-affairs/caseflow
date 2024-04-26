@@ -40,7 +40,7 @@ module DistributionConcern
   def send_slack_notification(appeal)
     msg = "Appeal #{appeal.id}. Check its task tree for a potential bug or tasks which need to be manually remediated"
     title = "Appeal with unexpected open tasks during distribution"
-    SlackService.new(url: slack_url).send_notification(msg, title)
+    SlackService.new.send_notification(msg, title)
   end
 
   def assign_sct_tasks_for_appeals(appeals)
@@ -56,10 +56,6 @@ module DistributionConcern
 
   def cancel_previous_judge_assign_task(appeal, judge_id)
     appeal.tasks.of_type(:JudgeAssignTask).where.not(assigned_to_id: judge_id).update(status: :cancelled)
-  end
-
-  def slack_url
-    ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 
   # rubocop:disable Metrics/MethodLength
