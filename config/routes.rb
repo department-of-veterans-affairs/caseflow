@@ -424,13 +424,6 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
-  # test seed buttons routes
-  get 'test/seeds', :to => 'test_seeds#seeds'
-
-  scope path: 'seeds', as: 'seeds' do
-    post 'run-demo/:seed_type/:seed_count', to: 'test_seeds#run_demo'
-  end
-
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
@@ -446,6 +439,14 @@ Rails.application.routes.draw do
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
+  end
+
+  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get 'test/seeds', :to => 'test_seeds#seeds'
+
+      scope path: 'seeds', as: 'seeds' do
+        post 'run-demo/:seed_type/:seed_count', to: 'test_seeds#run_demo'
+      end
   end
   # :nocov:
 
