@@ -53,12 +53,12 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
         # LegacyIssue
         if vacols_ids_exist?(ri)
-          create_legacy_issue_backfill(event, ri)
-        end
+          legacy_issue = create_legacy_issue_backfill(event, ri)
 
-        # LegacyIssueOptin
-        if optin?(decision_review) && ri.ineligible_reason.blank?
-          create_legacy_optin_backfill(event, ri)
+          # LegacyIssueOptin
+          if optin?(decision_review) && ri.ineligible_reason.blank?
+            create_legacy_optin_backfill(event, ri, legacy_issue)
+          end
         end
       end
       newly_created_issues
@@ -81,12 +81,14 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       li = LegacyIssue.create!(request_issue_id: request_issue.id,
                                vacols_id: request_issue.vacols_id,
                                vacols_sequence_id: request_issue.vacols_sequence_id)
-
       create_event_record(event, li)
+
+      li
     end
 
-    def create_legacy_optin_backfill(event, request_issue)
-      optin = LegacyIssueOptin.create!(request_issue_id: request_issue.id)
+    def create_legacy_optin_backfill(event, request_issue, legacy_issue)
+      optin = LegacyIssueOptin.create!(request_issue_id: request_issue.id,
+                                       legacy_issue: legacy_issue)
       create_event_record(event, optin)
     end
   end
