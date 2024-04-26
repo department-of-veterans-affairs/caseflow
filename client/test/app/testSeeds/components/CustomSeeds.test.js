@@ -1,38 +1,116 @@
 import React from 'react';
-import {waitFor} from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import CustomSeeds from 'app/testSeeds/components/CustomSeeds';
-import { mount } from 'enzyme';
-import COPY from '../../../../COPY';
 import CUSTOM_SEEDS from '../../../../constants/CUSTOM_SEEDS';
+import ApiUtil from 'app/util/ApiUtil';
 
-describe('Scenario Seeds', () => {
+jest.mock('app/util/ApiUtil', () => ({
+  post: jest.fn()
+}));
+
+describe('Custom Seeds', () => {
+
+  beforeEach(() => {
+    // Reset mock implementation before each test
+    ApiUtil.post.mockReset();
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders Scenario Seeds', () => {
+  const seedTypes = Object.keys(CUSTOM_SEEDS);
 
-    let wrapper = mount(
-      <CustomSeeds />
-    );
+  it('should render input fields and buttons for each seed type', () => {
+    const { getByLabelText, container } = render(<CustomSeeds />);
 
-    expect(Object.keys(CUSTOM_SEEDS).length).toEqual(4);
+    // Check if input fields and buttons are rendered for each seed type
+    seedTypes.forEach((type) => {
+      const caseCountInput = getByLabelText(`case-count-${type}`);
+      const daysAgoInput = getByLabelText(`days-ago-${type}`);
+      const cssIdInput = getByLabelText(`css-id-${type}`);
+      const button = container.querySelector(`#btn-${type}`);
 
-    let inputField = wrapper.find('input[id="case-count-seed-ama-aod-hearing"]');
-    let inputField2 = wrapper.find('input[id="days-ago-seed-ama-aod-hearing"]');
-    let inputField3= wrapper.find('input[id="css-id-seed-ama-aod-hearing"]');
+      expect(caseCountInput).toBeInTheDocument();
+      expect(daysAgoInput).toBeInTheDocument();
+      expect(cssIdInput).toBeInTheDocument();
+      expect(button).toBeInTheDocument();
+    });
+  });
 
-    // Calls simulate change to set value outside of min/max range
-    waitFor(() => inputField.simulate('change', 2));
-    waitFor(() => inputField2.simulate('change', 90));
-    waitFor(() => inputField3.simulate('change', 'BVADWISE'));
+  it('should update state when input values change', () => {
+    const { getByLabelText } = render(<CustomSeeds />);
+    const first_seed = seedTypes[0];
+    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
 
-    wrapper.update();
+    fireEvent.change(caseCountInput, { target: { value: '10' } });
+    fireEvent.change(daysAgoInput, { target: { value: '5' } });
+    fireEvent.change(cssIdInput, { target: { value: '12345' } });
 
-    waitFor(() => expect(inputField.prop('value').toBe(2)));
+    expect(caseCountInput.value).toBe('10');
+    expect(daysAgoInput.value).toBe('5');
+    expect(cssIdInput.value).toBe('12345');
+  });
 
-    expect(wrapper.find('#run_custom_seeds').text()).toContain(COPY.TEST_SEEDS_CUSTOM_SEEDS);
+  it('should make API call when button is clicked', async () => {
+    ApiUtil.post.mockResolvedValueOnce({ data: 'Success' });
+
+    const { container, getByLabelText } = render(<CustomSeeds />);
+    const first_seed = seedTypes[0];
+    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
+    const button = container.querySelector(`#btn-${first_seed}`);
+
+    fireEvent.change(caseCountInput, { target: { value: '10' } });
+    fireEvent.change(daysAgoInput, { target: { value: '5' } });
+    fireEvent.change(cssIdInput, { target: { value: 'BVADWISE' } });
+
+    // Find the button in the same row as the input fields
+    const row = button.closest('tr');
+    // const createButton = within(row).getByText('Create');
+
+    fireEvent.click(button);
+
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}/1`, {
+      data: { case_count: [10], days_ago: [5], css_id: ['BVADWISE'] }
+    });
+
+    // Wait for API call to resolve
+    await waitFor(() => {
+      expect(ApiUtil.post).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('should handle API call error', async () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn');
+
+    ApiUtil.post.mockRejectedValueOnce(new Error('API Error'));
+    const { container, getByLabelText } = render(<CustomSeeds />);
+    const first_seed = seedTypes[0];
+    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
+    const button = container.querySelector(`#btn-${first_seed}`);
+
+    fireEvent.change(caseCountInput, { target: { value: '10' } });
+    fireEvent.change(daysAgoInput, { target: { value: '5' } });
+    fireEvent.change(cssIdInput, { target: { value: 'BVADWISE' } });
+    fireEvent.click(button);
+
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}/1`, {
+      data: { case_count: [10], days_ago: [5], css_id: ['BVADWISE'] }
+    });
+
+    // Wait for API call to reject
+    await waitFor(() => {
+      expect(ApiUtil.post).toHaveBeenCalledTimes(1);
+    });
+
+    // Check if error message is displayed
+    expect(consoleWarnSpy).toHaveBeenCalledWith(new Error('API Error'));
   });
 });
 
