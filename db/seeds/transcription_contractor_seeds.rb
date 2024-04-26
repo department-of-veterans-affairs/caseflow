@@ -4,7 +4,7 @@ module Seeds
       # Create TranscriptionContractor records
     def seed!
       transcription_contractors = [
-        { ame: "Genesis Government Solutions, Inc.", directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc." },
+        { name: "Genesis Government Solutions, Inc.", directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc." },
         { name: "Jamison Professional Services", directory: "BVA Hearing Transcripts/Jamison Professional Services" },
         { name: "The Ravens Group, Inc.", directory: "BVA Hearing Transcripts/The Ravens Group, Inc." }
       ]
