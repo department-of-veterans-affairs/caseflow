@@ -574,6 +574,7 @@ class BusinessLine < Organization
         AND pending_request_issues.decision_review_type = tasks.appeal_type"
     end
 
+    # :reek:ControlParameter
     def pending_issue_filter(query_type)
       return if query_type != :pending
 

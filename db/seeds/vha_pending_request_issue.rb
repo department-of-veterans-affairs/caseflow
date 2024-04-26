@@ -9,6 +9,7 @@ module Seeds
     def seed!
       RequestStore[:current_user] = User.system_user
       create_seeds_for_pending_request_issues_sc
+      create_seeds_for_pending_request_issues_hlr
     end
 
     def create_seeds_for_pending_request_issues_hlr
