@@ -7,7 +7,7 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
       tmp_file_paths = fetch_transcription_files
       zip_file_path = zip(tmp_file_paths)
       formatted_zip_path = rename_before_upload(zip_file_path)
-      # will implement upload to s3 here in future
+      # will implement upload to s3 here in next ticket
       cleanup_tmp(tmp_file_paths + [formatted_zip_path])
     end
   end

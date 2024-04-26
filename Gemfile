@@ -67,6 +67,7 @@ gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
 gem "rtf"
+gem "rubyzip", "~> 2.3.2"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -86,7 +87,6 @@ gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "webvtt-ruby"
 gem "ziptz"
-gem "rubyzip", "~> 2.3.2"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
