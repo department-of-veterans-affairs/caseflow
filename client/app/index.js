@@ -59,7 +59,8 @@ import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
 import CaseDistribution from 'app/caseDistribution';
 import CaseDistributionTest from 'app/caseDistribution/test';
-import TestSeeds from 'app/test/TestSeeds';
+import TestSeeds from 'app/testSeeds';
+
 import uuid from 'uuid';
 
 const COMPONENTS = {
@@ -182,7 +183,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './explain/index',
         './mpi/MPISearch',
         './admin/index',
-        './caseDistribution/index'
+        './caseDistribution/index',
+        './testSeeds/index'
       ],
       () => renderApp(component)
     );
