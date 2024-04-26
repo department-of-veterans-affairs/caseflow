@@ -29,6 +29,7 @@ import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
+import QUEUE_CONFIG from 'constants/QUEUE_CONFIG';
 
 const assignSectionStyling = css({ marginTop: '30px' });
 const loadingContainerStyling = css({ marginTop: '-2em' });
@@ -76,6 +77,11 @@ class UnassignedCasesPage extends React.PureComponent {
 
     const HeadingTag = userIsSCTCoordinator ? 'h1' : 'h2';
 
+    const defaultTableSort = {
+      sortColName: QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      sortAscending: true
+    };
+
     return <React.Fragment>
       <HeadingTag {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</HeadingTag>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
@@ -108,6 +114,7 @@ class UnassignedCasesPage extends React.PureComponent {
               includeNewDocsIcon
               tasks={this.props.tasks}
               userId={userId}
+              defaultSort={defaultTableSort}
               {...(userIsCamoEmployee ? { preserveQueueFilter: true } : {})}
             />
           }
