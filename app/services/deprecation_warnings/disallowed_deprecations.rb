@@ -24,7 +24,8 @@ module DisallowedDeprecations
     /ActionView::Base instances should be constructed with a lookup context, assignments, and a controller./,
     /ActionView::Base instances must implement `compiled_method_container`/,
     /render file: should be given the absolute path to a file/,
-    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/
+    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/,
+    /Class level methods will no longer inherit scoping/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
