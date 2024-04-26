@@ -3,8 +3,8 @@ MAINTAINER Development and Operations team @ Department of Veterans Affairs
 
 # Build variables
 ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
-ENV CASEFLOW git yarn
-ENV NODE 14.20.0
+ENV CASEFLOW git yarn node
+#ENV NODE 14.20.0
 
 # Environment (system) variables
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
