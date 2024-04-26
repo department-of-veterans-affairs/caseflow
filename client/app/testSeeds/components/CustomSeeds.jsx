@@ -111,6 +111,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-num-field')}>
                       <NumberField
                         ariaLabelText={`case-count-${type}`}
+                        useAriaLabel={true}
                         inputID={`case-count-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'case_count', value);
@@ -122,6 +123,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-num-field')}>
                       <NumberField
                         ariaLabelText={`days-ago-${type}`}
+                        useAriaLabel={true}
                         inputID={`days-ago-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'days_ago', value);
@@ -133,6 +135,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-cssid-field')}>
                       <TextField
                         ariaLabelText={`css-id-${type}`}
+                        useAriaLabel={true}
                         inputID={`css-id-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'css_id', value);
@@ -144,6 +147,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className="cf-btn-link lever-right test-seed-button-style">
                       <Button
                         onClick={() => this.reseedByCaseType(type)}
+                        id={`btn-${type}`}
                         name='Create'
                         loading={this.state.reseedingStatus[type]}
                         loadingText={`Reseeding ${CUSTOM_SEEDS[type]}`}
