@@ -26,23 +26,33 @@ class Organizations::UsersController < OrganizationsController
     permission_name = params[:permissionName].strip
     org_url = params[:organization_url]
     org_permission = OrganizationPermission.find_by(permission: permission_name)
-    organization_user_permission = OrganizationUserPermission.find_by(organization_permission_id: org_permission.id)
+
+    # might need this in the very soon future
+    # organization_user_permission = OrganizationUserPermission.find_by(organizations_user_id: user_id, organization_permission_id: org_permission.id)
+
     target_user = OrganizationsUser.find_by(user_id: user_id)
     org = Organization.find_by(url: org_url)
 
     org_permission_checker = OrganizationUserPermissionChecker.new
-    # binding.pry
     if org_permission_checker.can?(permission_name:org_permission.permission, organization:org, user:target_user.user)
-      target_user.organization_user_permissions.select { |org_user_permission| org_user_permission == organization_user_permission}
-      binding.pry
+      org_user_permission = OrganizationUserPermission.find_by(
+        organization_permission: org_permission,
+        organizations_user: target_user
+      )
+      org_user_permission.delete
+
+      # alternate version. instead of deleting we just set this to false to flag the permission as disabled.
+      # org_user_permission.update!(permitted: false)
       render json: { test: 'removed permission'}
 
     else
-      binding.pry
-      target_user.organization_user_permissions << organization_user_permission
+      OrganizationUserPermission.find_or_create_by!(
+        organization_permission: org_permission,
+        organizations_user: target_user,
+        permitted: true
+      )
       render json: { test: 'added permission'}
     end
-
   end
 
   def create
