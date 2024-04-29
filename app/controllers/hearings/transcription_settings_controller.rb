@@ -6,6 +6,19 @@ class Hearings::TranscriptionSettingsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
   before_action :verify_access_to_hearings
 
+  def index
+    respond_to do |format|
+      format.html do
+        render "hearings/index"
+      end
+
+      format.json do
+        @transcription_contractors = TranscriptionContractor.all
+        render json: { transcription_contractors: @transcription_contractors }
+      end
+    end
+  end
+
   def show
     respond_to do |format|
       format.html do
