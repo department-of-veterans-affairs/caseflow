@@ -37,13 +37,7 @@ module CorrespondenceHelpers
         package_document_type: create(:package_document_type, name: "0304")
       )
     end
-    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
-    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
-  end
-
-  def visit_intake_form
-    correspondence = create :correspondence
-    visit "/queue/correspondence/#{correspondence.uuid}/intake"
+    find_and_route_to_intake
   end
 
   def visit_intake_form_step_2_with_appeals
@@ -63,9 +57,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
-    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
-
+    find_and_route_to_intake
     click_button("Continue")
   end
 
@@ -83,10 +75,7 @@ module CorrespondenceHelpers
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
-
-    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
-    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
-
+    find_and_route_to_intake
     click_button("Continue")
   end
 
@@ -95,11 +84,11 @@ module CorrespondenceHelpers
     create(
       :correspondence,
       :with_correspondence_intake_task,
+      assigned_to: current_user,
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
-    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
-    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
+    find_and_route_to_intake
 
     click_button("Continue")
     click_button("+ Add tasks")
@@ -134,8 +123,7 @@ module CorrespondenceHelpers
       appeal = create(:appeal, veteran_file_number: veteran.file_number)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
-    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
-    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
+    find_and_route_to_intake
     click_button("Continue")
   end
 
@@ -156,6 +144,12 @@ module CorrespondenceHelpers
     require Rails.root.join("db/seeds/base.rb").to_s
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
     Seeds::CorrespondenceAutoTexts.new.seed!
+  end
+
+  def find_and_route_to_intake
+    correspondence = Correspondence.first
+    correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
+    visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
   # rubocop:enable Metrics/ModuleLength
 end
