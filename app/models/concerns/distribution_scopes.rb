@@ -77,7 +77,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       non_genpop_for_judge(judge)
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
-        .where(original_judge_task: { assigned_to_id: judge&.id })
+        .where(original_judge_task: { assigned_to_id: judge&.id },
+               appeals: { stream_type: Constants.AMA_STREAM_TYPES.court_remand })
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
       genpop_base_query.none
     end
@@ -215,7 +216,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def exclude_affinity_and_ineligible_judge_ids
     judge_ids = JudgeTeam.judges_with_exclude_appeals_from_affinity
-    judge_ids.push(*HearingRequestDistributionQuery.ineligible_judges_id_cache) if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      judge_ids.push(*HearingRequestDistributionQuery.ineligible_judges_id_cache)
+    end
 
     judge_ids
   end
