@@ -18,6 +18,7 @@ describe ExternalApi::WebexService do
       port: port,
       query: query
     )
+  end
 
   describe "webex requests" do
     let(:virtual_hearing) do
