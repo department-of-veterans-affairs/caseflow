@@ -102,4 +102,3 @@ module WarRoom
     end
   end
 end
-``
