@@ -100,7 +100,6 @@ module WarRoom
         fail Interrupt
       end
     end
-
   end
 end
 ``
