@@ -4,7 +4,6 @@ MAINTAINER Development and Operations team @ Department of Veterans Affairs
 # Build variables
 ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
 ENV CASEFLOW git yarn
-ENV NODE 14.20.0
 
 # Environment (system) variables
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
@@ -34,6 +33,8 @@ COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
 RUN update-ca-certificates
 COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
 
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
 RUN apt -y update && \
     apt -y upgrade && \
     mkdir -p /usr/share/man/man1 && \
@@ -41,9 +42,22 @@ RUN apt -y update && \
     apt install -y ${BUILD} && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt -y update && \
-    apt-get install nodejs=${NODE} && \
-    apt install -y ${CASEFLOW} &&  \
+    apt -y update
+
+#install node
+RUN mkdir /usr/local/nvm
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 14.20.0
+ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
+RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+RUN source $NVM_DIR/nvm.sh \
+   && nvm install $NODE_VERSION \
+   && nvm alias default $NODE_VERSION \
+   && nvm use default
+ENV NODE_PATH $NVM_INSTALL_PATH/lib/node_modules
+ENV PATH $NVM_INSTALL_PATH/bin:$PATH
+
+RUN apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get clean && apt-get autoclean && apt-get autoremove
