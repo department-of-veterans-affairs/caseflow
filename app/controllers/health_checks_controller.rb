@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationController
 class HealthChecksController < ActionController::Base
   include TrackRequestId
-  include CollectDataDogMetrics
+  include CollectCustomMetrics
 
   protect_from_forgery with: :exception
   newrelic_ignore_apdex
@@ -23,3 +24,4 @@ class HealthChecksController < ActionController::Base
     { pending_migrations: migrations.any?, migrations: migrations }
   end
 end
+# rubocop:enable Rails/ApplicationController

@@ -31,13 +31,14 @@ class ExternalApi::VANotifyService
     #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: email_response: JSON response from VA Notify API
+    # rubocop:disable Metrics/ParameterLists
     def send_email_notifications(
-      participant_id,
-      notification_id,
-      email_template_id,
-      first_name,
-      docket_number,
-      status = ""
+      participant_id:,
+      notification_id:,
+      email_template_id:,
+      first_name:,
+      docket_number:,
+      status: ""
     )
       email_response = send_va_notify_request(
         email_request(participant_id, notification_id, email_template_id, first_name, docket_number, status)
@@ -45,7 +46,7 @@ class ExternalApi::VANotifyService
       log_info(email_response)
       email_response
     end
-
+    # rubocop:disable Metrics/ParameterLists
     # Purpose: Send the sms notifications
     #
     # Params: Details from appeal for notification
@@ -56,13 +57,22 @@ class ExternalApi::VANotifyService
     #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, docket_number, status = "")
+
+    def send_sms_notifications(
+      participant_id:,
+      notification_id:,
+      sms_template_id:,
+      first_name:,
+      docket_number:,
+      status: ""
+    )
       sms_response = send_va_notify_request(
         sms_request(participant_id, notification_id, sms_template_id, first_name, docket_number, status)
       )
       log_info(sms_response)
       sms_response
     end
+    # rubocop:enable Metrics/ParameterLists
 
     # Purpose: Get the status of a notification
     def get_status(notification_id)
@@ -113,6 +123,7 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
+    # rubocop:disable Metrics/ParameterLists
     def email_request(participant_id, notification_id, email_template_id, first_name, docket_number, status)
       request = {
         body: {
@@ -170,13 +181,15 @@ class ExternalApi::VANotifyService
       end
       request
     end
+    # rubocop:enable Metrics/ParameterLists
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     # Purpose: Build and send the request to the server
     #
     # Params: general requirements for HTTP request
     #
     # Return: service_response: JSON from VA Notify or error
+    # rubocop:disable
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
@@ -209,7 +222,7 @@ class ExternalApi::VANotifyService
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # Purpose: Method to be called with info need to be logged to the rails logger
     #

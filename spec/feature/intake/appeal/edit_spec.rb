@@ -569,7 +569,7 @@ feature "Appeal Edit issues", :all_dbs do
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
-    let(:request_issue_1) do
+    let!(:request_issue_1) do
       create(:request_issue,
              id: 22,
              decision_review: appeal2,
@@ -581,7 +581,7 @@ feature "Appeal Edit issues", :all_dbs do
              benefit_type: "Education")
     end
 
-    let(:request_issue_2) do
+    let!(:request_issue_2) do
       create(:request_issue,
              id: 25,
              decision_review: appeal2,
@@ -593,102 +593,82 @@ feature "Appeal Edit issues", :all_dbs do
              benefit_type: "Education")
     end
 
-    scenario "the split appeal button shows and leads to create_split page" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
+    before do
+      # Login with the user
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
-      visit "appeals/#{appeal2.uuid}/edit/"
+    end
 
-      expect(page).to have_button("Split appeal")
-      # clicking the button takes the user to the next page
-      click_button("Split appeal")
-
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-
+    after do
       FeatureToggle.disable!(:split_appeal_workflow)
     end
 
-    scenario "The SSC user navigates to the split appeal page" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
+    scenario "Split appeal page behavior" do
+      step "SSC user navigates to the split appeal page" do
+        visit "appeals/#{appeal2.uuid}/edit/"
 
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/create_split")
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Other Issue Description")
-      # expect the select bar, cancel button, and continue button to show
-      expect(page).to have_content("Select...")
-      expect(page).to have_content("Cancel")
-      # expect the continue button to be disabled
-      expect(page).to have_button("Continue", disabled: true)
+        expect(page).to have_button("Split appeal")
+        # clicking the button takes the user to the next page
+        click_button("Split appeal")
+
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+      end
+
+      step "The split appeal page contains the appropriate information" do
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+
+        # expect the select bar, cancel button, and continue button to show
+        expect(page).to have_content("Select...")
+        expect(page).to have_content("Cancel")
+
+        # expect the continue button to be disabled
+        expect(page).to have_button("Continue", disabled: true)
+
+        # The cancel button goes back to the edit page
+        click_button("Cancel")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+      end
+
+      step "If no issues and no reason are selected on the split appeal page, the Continue button is disabled" do
+        visit("/appeals/#{appeal2.uuid}/edit/create_split")
+
+        # expect issue descriptions to display
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+        expect(page).to have_content("Select...")
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If a reason is selected the button remains disabled" do
+        find(:css, ".cf-select").select_option
+        find(:css, ".cf-select__menu").click
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If an issue is selected and then de-selected the Continue button behaves correctly" do
+        find("label", text: "PTSD denied").click
+        expect(page).to have_button("Continue", disabled: false)
+        find("label", text: "PTSD denied").click
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If all issues are selected on the split appeal page, the Continue button is disabled" do
+        find("label", text: "PTSD denied").click
+        find("label", text: "Other Issue Description").click
+
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "The SSC user navigates to the split appeal page to review page" do
+        find("label", text: "PTSD denied").click
+        click_button("Continue")
+        expect(page).to have_content("Reason for new appeal stream:")
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+      end
     end
 
-    scenario "The cancel button goes back to the edit page when clicked" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/create_split")
-
-      # click the cancel link and go to queue page
-      click_button("Cancel")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-    end
-
-    scenario "If no issues are selected on the split appeal page, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      find("label", text: "PTSD denied").click
-      expect(page).to have_content("Select...")
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    scenario "If no issues are selected after de-selecting an issue, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      find("label", text: "PTSD denied").click
-      find("label", text: "PTSD denied").click
-      expect(page).to have_content("Select...")
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    scenario "If all issues are selected on the split appeal page, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      # click checkboxes
-      find("label", text: "PTSD denied").click
-      find("label", text: "Military Retired Pay - nonrating description").click
-      expect(page).to have_content("Select...")
-      find(:css, ".cf-select").select_option
-      find(:css, ".cf-select__menu").click
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    # rubocop:disable Metrics/AbcSize
     def skill_form(appeal)
-      # add issues to the appeal
-      appeal.request_issues << request_issue_1
-      appeal.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
       visit("/appeals/#{appeal.uuid}/edit/create_split")
 
       # expect issue descritions to display
@@ -701,91 +681,170 @@ feature "Appeal Edit issues", :all_dbs do
       find(:css, ".cf-select__menu").click
 
       click_button("Continue")
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
     end
-    # rubocop:enable Metrics/AbcSize
 
-    def wait_for_ajax
-      max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
-      while Capybara::Helpers.monotonic_time < max_time
-        finished = finished_all_ajax_requests?
-        if finished
-          break
+    def specialty_case_team_split_form(appeal)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      expect(page).to have_content("CHAMPVA Split Issue")
+      find("label", text: "CHAMPVA Split Issue").click
+      expect(page).to have_content("Select...")
+
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+
+      click_button("Continue")
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
+    end
+
+    # scenario "When the user accesses the review_split page, the page renders as expected" do
+    scenario "Review split page behavior" do
+      step "When the user accesses the review_split page, the page renders as expected" do
+        skill_form(appeal2)
+
+        expect(page).to have_table("review_table")
+        expect(page).to have_content("Cancel")
+        expect(page).to have_button("Back")
+        expect(page).to have_button("Split appeal")
+        expect(page).to have_content("Reason for new appeal stream:")
+        expect(appeal2.docket_type).not_to have_content("hearing")
+
+        # Verify table information
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        expect(row2_1).to eq("Veteran")
+        if expect(appeal2.veteran_is_not_claimant).to be(false)
+          expect(row3_1).to eq("Docket Number")
         else
-          sleep 0.1
+          expect(row3_1).to eq("Appellant")
         end
       end
-      fail "wait_for_ajax timeout" unless finished
-    end
 
-    def finished_all_ajax_requests?
-      page.evaluate_script(<<~EOS
-        ((typeof window.jQuery === 'undefined')
-        || (typeof window.jQuery.active === 'undefined')
-        || (window.jQuery.active === 0))
-        && ((typeof window.injectedJQueryFromNode === 'undefined')
-        || (typeof window.injectedJQueryFromNode.active === 'undefined')
-        || (window.injectedJQueryFromNode.active === 0))
-        && ((typeof window.httpClients === 'undefined')
-        || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
-      EOS
-                          )
-    end
+      step "the back button takes the user back" do
+        click_button("Back")
+        expect(page).to have_content("Create new appeal stream")
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+      end
 
-    scenario "The SSC user navigates to the split appeal page to review page" do
-      skill_form(appeal2)
-    end
+      step "the cancel button takes the user back to the appeal case details page" do
+        skill_form(appeal2)
+        expect(page).to have_button("Split appeal")
+        click_button("Cancel")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+      end
 
-    scenario "When the user accesses the review_split page, the page renders as expected" do
-      # add issues to the appeal
-      skill_form(appeal2)
+      step "the Split appeal button splits appeal and takes the user back to the original appeal case details page" do
+        skill_form(appeal2)
 
-      expect(page).to have_table("review_table")
-      expect(page).to have_content("Cancel")
-      expect(page).to have_button("Back")
-      expect(page).to have_button("Split appeal")
-      expect(page).to have_content("Reason for new appeal stream:")
-    end
+        click_button("Split appeal")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
 
-    scenario "on the review_split page, the back button takes the user back" do
-      skill_form(appeal2)
+        # Verify the success banner
+        expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+        expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
 
-      click_button("Back")
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-    end
-
-    scenario "on the review_split page, the cancel button takes the user to queue" do
-      skill_form(appeal2)
-
-      click_button("Cancel")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-    end
-
-    scenario "on the review_split page, testing appellant and vetera" do
-      skill_form(appeal2)
-      row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-      row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-      expect(row2_1).to eq("Veteran")
-      if expect(appeal2.veteran_is_not_claimant).to be(false)
-        expect(row3_1).to eq("Docket Number")
-      else
-        expect(row3_1).to eq("Appellant")
+        # Verify the spit appeal information
+        appeal2.reload
+        split_record = SplitCorrelationTable.last
+        new_appeal = Appeal.find(split_record.appeal_id)
+        expect(split_record.original_appeal_id).to eq(appeal2.id)
+        expect(new_appeal.request_issues.first.contested_issue_description).to eq("PTSD denied")
+        expect(appeal2.request_issues.active.count).to eq(1)
+        expect(new_appeal.docket_number).to eq(appeal2.docket_number)
       end
     end
 
-    scenario "on the review_split page, appeal type is no hearing" do
-      skill_form(appeal2)
-      expect(appeal2.docket_type).not_to have_content("hearing")
-    end
+    context "When splitting appeals with Specialty Case Team issues" do
+      let!(:request_issue_3) do
+        create(:request_issue,
+               id: 28,
+               decision_review: appeal2,
+               decision_date: profile_date,
+               benefit_type: "vha",
+               nonrating_issue_category: "CHAMPVA",
+               nonrating_issue_description: "CHAMPVA Split Issue")
+      end
 
-    scenario "on the review_split page, the Split appeal button takes the user to queue" do
-      skill_form(appeal2)
+      context "With feature toggle enabled" do
+        before do
+          FeatureToggle.enable!(:specialty_case_team_distribution)
+        end
+        after do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
 
-      click_button("Split appeal")
-      # wait_for_ajax
-      # page.find(:xpath, '/queue/appeals/#{appeal2.uuid}')
-      # assert_current_path("/queue/appeals/#{appeal2.uuid}")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+        scenario "Split appeal with Vha issue" do
+          step "The split appeal should progress through to the review split page" do
+            specialty_case_team_split_form(appeal2)
+          end
+
+          step "the banner should be on the page indicating that it is a specialty case team issue" do
+            expect(page).to have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+          end
+
+          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+            click_button("Split appeal")
+            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+            # Verify the success banner
+            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+            # Verify the spit appeal information
+            appeal2.reload
+            split_record = SplitCorrelationTable.last
+            new_appeal = Appeal.find(split_record.appeal_id)
+            expect(split_record.original_appeal_id).to eq(appeal2.id)
+            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+            expect(appeal2.request_issues.active.count).to eq(2)
+            expect(new_appeal.request_issues.active.count).to eq(1)
+            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+            # The new appeal should have an assigned SCT task
+            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+            expect(sct_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          end
+        end
+      end
+
+      context "With sct feature toggle disabled" do
+        scenario "Split appeal with Vha issue" do
+          step "The split appeal should progress through to the review split page" do
+            specialty_case_team_split_form(appeal2)
+          end
+
+          step "the sct banner should not be on the page indicating that it is a specialty case team issue" do
+            expect(page).to_not have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+          end
+
+          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+            click_button("Split appeal")
+            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+            # Verify the success banner
+            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+            # Verify the spit appeal information
+            appeal2.reload
+            split_record = SplitCorrelationTable.last
+            new_appeal = Appeal.find(split_record.appeal_id)
+            expect(split_record.original_appeal_id).to eq(appeal2.id)
+            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+            expect(appeal2.request_issues.active.count).to eq(2)
+            expect(new_appeal.request_issues.active.count).to eq(1)
+            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+            # The new appeal should not have an assigned SCT task
+            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+            expect(sct_task).to eq(nil)
+          end
+        end
+      end
     end
   end
 
@@ -1215,6 +1274,260 @@ feature "Appeal Edit issues", :all_dbs do
           expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end
       end
+    end
+  end
+
+  context "with BVA Intake Admin user" do
+    # creates organization
+    let(:bva_intake) { BvaIntake.singleton }
+    # creates admin user
+    let(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
+
+    let(:legacy_appeal_mst_pact_unchecked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "N", isspact: "N")
+          ]
+        )
+      )
+    end
+
+    let(:legacy_appeal_mst_pact_checked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "Y", isspact: "Y")
+          ]
+        )
+      )
+    end
+
+    before do
+      # joins the user with the organization to grant access to role and org permissions
+      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+      # authenticates and sets the user
+      User.authenticate!(user: bva_intake_admin_user)
+    end
+
+    def go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal)
+      visit "/queue"
+      click_on "Search cases"
+      fill_in "search", with: legacy_appeal.veteran_file_number
+      click_on "Search"
+      click_on legacy_appeal.docket_number
+      click_on "Correct issues"
+    end
+
+    context "with Legacy MST/PACT identifications" do
+      before do
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
+        FeatureToggle.enable!(:legacy_mst_pact_identification)
+      end
+
+      after do
+        FeatureToggle.disable!(:mst_identification)
+        FeatureToggle.disable!(:pact_identification)
+        FeatureToggle.disable!(:legacy_mst_pact_identification)
+      end
+
+      scenario "can add MST/PACT to issues" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("MST and PACT")
+      end
+
+      scenario "can remove MST/PACT issues" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_no_content("MST and PACT")
+      end
+
+      scenario "can add and remove only PACT to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_content("SPECIAL ISSUES\nPACT")
+
+        click_on "Correct issues"
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_no_content("SPECIAL ISSUES\nPact")
+      end
+
+      scenario "can add and remove only MST to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_content("SPECIAL ISSUES\nMST")
+
+        click_on "Correct issues"
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_no_content("SPECIAL ISSUES\nMST")
+      end
+    end
+  end
+
+  context "when benefit type is initially non-vha" do
+    let!(:appeal3) do
+      create(:appeal,
+             :assigned_to_judge,
+             :completed_distribution_task,
+             veteran_file_number: create(:veteran).file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:request_issue) do
+      create(:request_issue,
+             benefit_type: "compensation",
+             nonrating_issue_category: "Unknown Issue Category",
+             nonrating_issue_description: "non vha issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
+    let(:sct_user) { create(:user) }
+    before do
+      SpecialtyCaseTeam.singleton.add_user(sct_user)
+      BvaIntake.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:specialty_case_team_distribution)
+    end
+    after { FeatureToggle.disable!(:specialty_case_team_distribution) }
+
+    scenario "appeal moves to sct queue when vha issue is added" do
+      reload_case_detail_page(appeal3.uuid)
+      click_on "Correct issues"
+      click_remove_intake_issue_dropdown("Unknown Issue Category")
+      click_intake_add_issue
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 5.months.ago.mdY
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+
+      safe_click ".add-issue"
+      click_edit_submit
+      expect(page).to have_content("Move appeal to SCT queue")
+      expect(page).to have_button("Move")
+      safe_click ".confirm"
+      expect(page).to have_content("You have successfully updated issues on this appeal")
+      expect(page).to have_content(
+        "The appeal for #{appeal3.claimant.name} " \
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+      )
+    end
+  end
+
+  context "Removing all Specialty Case Team issues from an appeal" do
+    let!(:appeal3) do
+      create(:appeal,
+             :assigned_to_judge,
+             :completed_distribution_task,
+             veteran_file_number: create(:veteran).file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:request_issue) do
+      create(:request_issue,
+             benefit_type: "compensation",
+             nonrating_issue_category: "Unknown Issue Category",
+             nonrating_issue_description: "Compensation issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
+    let!(:sct_request_issue) do
+      create(:request_issue,
+             benefit_type: "vha",
+             nonrating_issue_category: "CHAMPVA",
+             nonrating_issue_description: "VHA issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
+
+    before do
+      SpecialtyCaseTeam.singleton.add_user(current_user)
+      BvaIntake.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:specialty_case_team_distribution)
+
+      # Add a Specialty Case Team Assign Task to the appeal
+      SpecialtyCaseTeamAssignTask.create!(appeal: appeal3,
+                                          parent: appeal3.root_task,
+                                          assigned_to: SpecialtyCaseTeam.singleton)
+    end
+
+    after { FeatureToggle.disable!(:specialty_case_team_distribution) }
+
+    scenario "appeal moves back to distribution when all SCT issues are removed" do
+      reload_case_detail_page(appeal3.uuid)
+      click_on "Correct issues"
+      click_remove_intake_issue_dropdown("CHAMPVA")
+      click_edit_submit_and_confirm
+
+      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
+      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
+      expect(page).to have_button("Move")
+      safe_click ".confirm"
+      expect(page).to have_content("You have successfully updated issues on this appeal")
+      expect(page).to have_content(
+        "The appeal for #{appeal3.claimant.name} " \
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+      )
+      expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
+
+      # Verify task tree status
+      appeal3.reload
+      appeal3.tasks.reload
+      appeal3.request_issues.reload
+      distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
+      expect(distribution_task.assigned_by).to eq(current_user)
+      expect(distribution_task.status).to eq("assigned")
+      expect(appeal3.ready_for_distribution?).to eq(true)
+      expect(appeal3.can_redistribute_appeal?).to eq(true)
+      expect(appeal3.request_issues.active.count).to eq(1)
+      expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
     end
   end
 end

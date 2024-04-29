@@ -58,7 +58,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(10)
+            .exactly(5)
             .times
         )
       end
@@ -85,16 +85,32 @@ describe VirtualHearings::CreateConferenceJob do
       end
     end
 
-    it "creates a conference", :aggregate_failures do
-      subject.perform_now
+    shared_examples "conference created" do
+      it "creates a conference", :aggregate_failures do
+        subject.perform_now
 
-      virtual_hearing.reload
-      expect(virtual_hearing.conference_id).to eq(9001)
-      expect(virtual_hearing.status).to eq(:active)
-      expect(virtual_hearing.alias).to eq("0000001")
-      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
-      expect(virtual_hearing.host_pin.to_s.length).to eq(8)
-      expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
+        virtual_hearing.reload
+        expect(virtual_hearing.conference_id).to eq(9001)
+        expect(virtual_hearing.status).to eq(:active)
+        expect(virtual_hearing.alias).to eq("0000001")
+        expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
+        expect(virtual_hearing.host_pin.to_s.length).to eq(8)
+        expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
+      end
+    end
+
+    context "conference creation" do
+      context "when all emails present" do
+        include_examples "conference created"
+      end
+
+      context "when appealant email is missing" do
+        before do
+          virtual_hearing.update!(appellant_email: nil)
+        end
+
+        include_examples "conference created"
+      end
     end
 
     include_examples "confirmation emails are sent"
@@ -102,7 +118,7 @@ describe VirtualHearings::CreateConferenceJob do
     include_examples "sent email event objects are created"
 
     it "logs success to datadog" do
-      expect(DataDogService).to receive(:increment_counter).with(
+      expect(MetricsService).to receive(:increment_counter).with(
         hash_including(
           metric_name: "created_conference.successful",
           metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -154,7 +170,7 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       it "job goes back on queue and logs if error", :aggregate_failures do
-        expect(Rails.logger).to receive(:error).exactly(11).times
+        expect(Rails.logger).to receive(:error).exactly(6).times
 
         expect do
           perform_enqueued_jobs do
@@ -162,7 +178,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(10)
+            .exactly(5)
             .times
         )
 
@@ -173,7 +189,7 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       it "logs failure to datadog" do
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "created_conference.failed",
             metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,

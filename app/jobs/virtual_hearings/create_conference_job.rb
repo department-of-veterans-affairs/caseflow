@@ -31,16 +31,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     )
   end
 
-  retry_on(IncompleteError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(IncompleteError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
-  retry_on(VirtualHearingNotCreatedError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(VirtualHearingNotCreatedError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
   # Retry if Pexip returns an invalid response.
-  retry_on(Caseflow::Error::PexipApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(Caseflow::Error::PexipApiError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     kwargs = job.arguments.first
@@ -124,7 +124,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference_datadog_tags
-    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+    custom_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def create_conference
@@ -149,12 +149,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         virtual_hearing.establishment.update_error!(error_display)
 
-        DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
         fail pexip_response.error
       end
 
-      DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+      MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
       virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
     end

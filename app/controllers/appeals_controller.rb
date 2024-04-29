@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class AppealsController < ApplicationController
   include UpdatePOAConcern
   before_action :react_routed
@@ -24,11 +25,11 @@ class AppealsController < ApplicationController
         result = if docket_number?(case_search)
                    CaseSearchResultsForDocketNumber.new(
                      docket_number: case_search, user: current_user
-                   ).call
+                   ).search_call
                  else
                    CaseSearchResultsForVeteranFileNumber.new(
                      file_number_or_ssn: case_search, user: current_user
-                   ).call
+                   ).search_call
                  end
 
         render_search_results_as_json(result)
@@ -42,14 +43,14 @@ class AppealsController < ApplicationController
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
           caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
-        ).call
+        ).search_call
 
         render_search_results_as_json(result)
       end
     end
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -84,7 +85,7 @@ class AppealsController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -154,7 +155,8 @@ class AppealsController < ApplicationController
 
   def edit
     # only AMA appeals may call /edit
-    return not_found if appeal.is_a?(LegacyAppeal)
+    # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
+    return not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -168,18 +170,12 @@ class AppealsController < ApplicationController
   end
 
   def update
-    if request_issues_update.perform!
-      # if cc appeal, create SendInitialNotificationLetterTask
-      if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
-        # check if an existing letter task is open
-        existing_letter_task_open = appeal.tasks.any? do |task|
-          task.class == SendInitialNotificationLetterTask && task.status == "assigned"
-        end
-        # create SendInitialNotificationLetterTask unless one is open
-        send_initial_notification_letter unless existing_letter_task_open
-      end
+    if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
 
+      legacy_mst_pact_updates
+    elsif request_issues_update.perform!
       set_flash_success_message
+      create_subtasks!
 
       render json: {
         beforeIssues: request_issues_update.before_issues.map(&:serialize),
@@ -193,11 +189,24 @@ class AppealsController < ApplicationController
 
   private
 
+  def create_subtasks!
+    # if cc appeal, create SendInitialNotificationLetterTask
+    if appeal.contested_claim? && feature_enabled?(:cc_appeal_workflow)
+
+      # check if an existing letter task is open
+      existing_letter_task_open = appeal.tasks.any? do |task|
+        task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+      end
+      # create SendInitialNotificationLetterTask unless one is open
+      send_initial_notification_letter unless existing_letter_task_open
+    end
+  end
+
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
     if result.success?
-      render json: result.extra[:search_results]
+      render json: result.extra[:case_search_results]
     else
       render json: result.to_h, status: result.extra[:status]
     end
@@ -260,7 +269,306 @@ class AppealsController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
+  # check if changes in params
+  def mst_pact_changes?
+    request_issues_update.mst_edited_issues.any? || request_issues_update.pact_edited_issues.any?
+  end
+
+  # format MST/PACT edit success banner message
+  # rubocop:disable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+  def mst_and_pact_edited_issues
+    # list of edit counts
+    mst_added = 0
+    mst_removed = 0
+    pact_added = 0
+    pact_removed = 0
+    # get edited issues from params and reject new issues without id
+    if !appeal.is_a?(LegacyAppeal)
+      existing_issues = params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
+
+      # get added issues
+      new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+      # get removed issues
+      removed_issues = request_issues_update.before_issues - request_issues_update.after_issues
+
+      # calculate edits
+      existing_issues.each do |issue_edit|
+        # find the original issue and compare MST/PACT changes
+        before_issue = request_issues_update.before_issues.find { |b_issue| b_issue.id == issue_edit[:request_issue_id].to_i }
+
+        # increment edit counts if they meet the criteria for added/removed
+        mst_added += 1 if issue_edit[:mst_status] != before_issue.mst_status && issue_edit[:mst_status]
+        mst_removed += 1 if issue_edit[:mst_status] != before_issue.mst_status && !issue_edit[:mst_status]
+        pact_added += 1 if issue_edit[:pact_status] != before_issue.pact_status && issue_edit[:pact_status]
+        pact_removed += 1 if issue_edit[:pact_status] != before_issue.pact_status && !issue_edit[:pact_status]
+      end
+    else
+      existing_issues = legacy_issue_params[:request_issues]
+      existing_issues.each do |issue_edit|
+        mst_added += 1 if legacy_issues_with_updated_mst_pact_status[:mst_edited].include?(issue_edit) && issue_edit[:mst_status]
+        mst_removed += 1 if legacy_issues_with_updated_mst_pact_status[:mst_edited].include?(issue_edit) && !issue_edit[:mst_status]
+        pact_added += 1 if legacy_issues_with_updated_mst_pact_status[:pact_edited].include?(issue_edit) && issue_edit[:pact_status]
+        pact_removed += 1 if legacy_issues_with_updated_mst_pact_status[:pact_edited].include?(issue_edit) && !issue_edit[:pact_status]
+        new_issues = []
+        removed_issues = []
+      end
+    end
+
+    # return if no edits, removals, or additions
+    return if (mst_added + mst_removed + pact_added + pact_removed == 0) && removed_issues.empty? && new_issues.empty?
+
+    message = []
+
+    message << "#{pact_removed} #{'issue'.pluralize(pact_removed)} unmarked as PACT" unless pact_removed == 0
+    message << "#{mst_removed} #{'issue'.pluralize(mst_removed)} unmarked as MST" unless mst_removed == 0
+    message << "#{mst_added} #{'issue'.pluralize(mst_added)} marked as MST" unless mst_added == 0
+    message << "#{pact_added} #{'issue'.pluralize(pact_added)} marked as PACT" unless pact_added == 0
+
+    # add in removed message and added message, if any
+    message << create_mst_pact_message_for_new_and_removed_issues(new_issues, "added") unless new_issues.empty?
+    message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
+
+    # add in the Specialty Case Team messages, if any
+    if !appeal.is_legacy? && feature_enabled?(:specialty_case_team_distribution) && appeal.distributed?
+      if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+         (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
+         appeal.specialty_case_team_assign_task?
+        message << move_to_distribution_success_message
+      end
+
+      if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?)
+        message << move_to_specialty_case_team_success_message
+      end
+    end
+
+    message.flatten
+  end
+  # rubocop:enable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+
+  # create MST/PACT message for added/removed issues
+  # rubocop:disable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def create_mst_pact_message_for_new_and_removed_issues(issues, type)
+    special_issue_message = []
+    # check if any added/removed issues have MST/PACT and get the count
+    mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
+    pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
+    both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
+    none_count = issues.count { |issue| !issue.pact_status && !issue.mst_status }
+
+    special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
+    special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
+    special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
+    special_issue_message << "#{none_count} #{'issue'.pluralize(none_count)} #{type}" unless none_count == 0
+
+    special_issue_message
+  end
+  # rubocop:enable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  # check if there is a change in mst/pact on legacy issue
+  # if there is a change, creat an issue update task
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def legacy_mst_pact_updates
+    legacy_issue_params[:request_issues].each do |current_issue|
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+
+      # Check for changes in mst/pact status
+      next unless issue.mst_status != current_issue[:mst_status] || issue.pact_status != current_issue[:pact_status]
+
+      # If there is a change :
+      # Create issue_update_task to populate casetimeline if there is a change
+      create_legacy_issue_update_task(issue, current_issue)
+
+      # Grab record from Vacols database to issue.
+      # When updating an Issue, method in IssueMapper and IssueRepo requires the attrs show below in issue_attrs:{}
+      record = VACOLS::CaseIssue.find_by(isskey: appeal.vacols_id, issseq: current_issue[:vacols_sequence_id])
+      Issue.update_in_vacols!(
+        vacols_id: appeal.vacols_id,
+        vacols_sequence_id: current_issue[:vacols_sequence_id],
+        issue_attrs: {
+          mst_status: current_issue[:mst_status] ? "Y" : "N",
+          pact_status: current_issue[:pact_status] ? "Y" : "N",
+          program: record[:issprog],
+          issue: record[:isscode],
+          level_1: record[:isslev1],
+          level_2: record[:isslev2],
+          level_3: record[:isslev3]
+        }
+      )
+    end
+    set_flash_mst_edit_message
+    render json: { issues: json_issues }, status: :ok
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  def json_issues
+    appeal.issues.map do |issue|
+      ::WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
+    end
+  end
+
+  def legacy_issues_with_updated_mst_pact_status
+    mst_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue.mst_status != current_issue[:mst_status]
+    end
+    pact_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue.pact_status != current_issue[:pact_status]
+    end
+    { mst_edited: mst_edited, pact_edited: pact_edited }
+  end
+
+  def legacy_issue_params
+    # Checks the keys for each object in request_issues array
+    request_issue_params = params.require("request_issues").each do |current_param|
+      current_param.permit(:request_issue_id,
+                           :withdrawal_date,
+                           :vacols_sequence_id,
+                           :mst_status,
+                           :pact_status,
+                           :mst_status_update_reason_notes,
+                           :pact_status_update_reason_notes).to_h
+    end
+
+    # After check, recreate safe_params object and include vacols_uniq_id
+    safe_params = {
+      request_issues: request_issue_params,
+      vacols_user_id: current_user.vacols_uniq_id
+    }
+    safe_params
+  end
+
+  def create_params
+    legacy_issue_params.merge(vacols_id: appeal.vacols_id)
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:FeatureEnvy
+  def create_legacy_issue_update_task(before_issue, current_issue)
+    # close out any tasks that might be open
+    open_issue_task = Task.where(
+      assigned_to: SpecialIssueEditTeam.singleton
+    ).where(status: "assigned").where(appeal: appeal)
+    open_issue_task[0].delete unless open_issue_task.empty?
+
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: appeal.root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: current_user,
+      completed_by: current_user
+    )
+    # format the task instructions and close out
+    set = CaseTimelineInstructionSet.new(
+      change_type: "Edited Issue",
+      issue_category: [
+        "Benefit Type: #{before_issue.labels[0]}\n",
+        "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
+        "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(' - ')}\n",
+        "Note: #{before_issue.note}\n",
+        "Disposition: #{before_issue.readable_disposition}\n"
+      ].compact.join("\r\n"),
+      benefit_type: "",
+      original_mst: before_issue.mst_status,
+      original_pact: before_issue.pact_status,
+      edit_mst: current_issue[:mst_status],
+      edit_pact: current_issue[:pact_status]
+    )
+    task.format_instructions(set)
+    task.completed!
+
+    # create SpecialIssueChange record to log the changes
+    SpecialIssueChange.create!(
+      issue_id: before_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "LegacyAppeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: current_user.id,
+      created_by_css_id: current_user.css_id,
+      original_mst_status: before_issue.mst_status,
+      original_pact_status: before_issue.pact_status,
+      updated_mst_status: current_issue[:mst_status],
+      updated_pact_status: current_issue[:pact_status],
+      change_category: "Edited Issue"
+    )
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  def set_flash_move_to_sct_success_message
+    # If original issues were not SCT related, then that means it will be moved to the SCT queue
+    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
+       appeal.distributed? && feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+        message: move_to_specialty_case_team_success_message
+      }
+    end
+  end
+
+  def set_flash_move_to_distribution_success_message
+    # If the before issues had an SCT issue but the after issues don't then the appeal is moving to distribution
+    if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+       (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
+       appeal.distributed? && appeal.specialty_case_team_assign_task? &&
+       feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+        message: move_to_distribution_success_message
+      }
+    end
+  end
+
+  def move_to_distribution_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "regular distribution pool"
+    )
+  end
+
+  def move_to_specialty_case_team_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "SCT queue"
+    )
+  end
+
   def set_flash_success_message
+    # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
+    return set_flash_mst_edit_message if mst_pact_changes? && (feature_enabled?(:mst_identification) ||
+                                        feature_enabled?(:pact_identification))
+
+    set_flash_specialty_case_team_message
+
+    set_flash_edit_message unless flash[:custom]
+  end
+
+  def set_flash_specialty_case_team_message
+    set_flash_move_to_sct_success_message
+    set_flash_move_to_distribution_success_message
+  end
+
+  # create success message with added and removed issues
+  def set_flash_mst_edit_message
+    flash[:mst_pact_edited] = mst_and_pact_edited_issues
+  end
+
+  def flash_move_to_sct_success
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+        request_issues_update.review.claimant.name,
+        request_issues_update.veteran.file_number
+      )
+    }
+  end
+
+  def set_flash_edit_message
     flash[:edited] = if request_issues_update.after_issues.empty?
                        review_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
@@ -288,19 +596,19 @@ class AppealsController < ApplicationController
     # depending on the docket type, create cooresponding task as parent task
     case appeal.docket_type
     when "evidence_submission"
-      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+      parent_task = appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
     when "hearing"
-      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+      parent_task = appeal.tasks.find_by(type: "ScheduleHearingTask")
     when "direct_review"
-      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+      parent_task = appeal.tasks.find_by(type: "DistributionTask")
     end
     unless parent_task.nil?
-      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+      @send_initial_notification_letter ||= appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                             SendInitialNotificationLetterTask.create!(
-                                              appeal: @appeal,
+                                              appeal: appeal,
                                               parent: parent_task,
                                               assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                              assigned_by: RequestStore[:current_user]
+                                              assigned_by: current_user
                                             )
     end
   end
@@ -355,3 +663,4 @@ class AppealsController < ApplicationController
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

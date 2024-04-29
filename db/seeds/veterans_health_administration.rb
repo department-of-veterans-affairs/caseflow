@@ -17,7 +17,8 @@ module Seeds
       :dependent_claimant,
       :attorney_claimant,
       :healthcare_claimant,
-      :other_claimant
+      :other_claimant,
+      :other_claimant_not_listed
     ].freeze
 
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze
@@ -26,6 +27,7 @@ module Seeds
       setup_camo_org
       setup_caregiver_org
       setup_program_offices!
+      setup_specialty_case_team!
       create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
@@ -33,6 +35,7 @@ module Seeds
       create_vha_visn_pre_docket_queue
       create_higher_level_reviews
       create_supplemental_claims
+      create_specialty_case_team_tasks
       add_vha_user_to_be_vha_business_line_member
     end
 
@@ -64,6 +67,14 @@ module Seeds
         org.add_user(regular_user)
         OrganizationsUser.make_user_admin(admin_user, org)
       end
+    end
+
+    def setup_specialty_case_team!
+      regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
+      admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
+      sct = SpecialtyCaseTeam.singleton
+      sct.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, sct)
     end
 
     def create_visn_org_teams!
@@ -182,6 +193,30 @@ module Seeds
         task = create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
         task.completed!
       end
+    end
+
+    # :reek:FeatureEnvy
+    def create_specialty_case_team_action_required
+      tasks = create_list(:specialty_case_team_assign_task, 5, :action_required)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
+    end
+
+    # :reek:FeatureEnvy
+    def create_specialty_case_team_completed
+      tasks = create_list(:specialty_case_team_assign_task, 5, :completed)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
+    end
+
+    def create_specialty_case_team_assigned
+      create_list(:specialty_case_team_assign_task, 5)
+    end
+
+    def create_specialty_case_team_tasks
+      create_specialty_case_team_action_required
+      create_specialty_case_team_completed
+      create_specialty_case_team_assigned
     end
 
     # :reek:FeatureEnvy

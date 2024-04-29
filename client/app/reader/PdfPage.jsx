@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Mark from 'mark.js';
 import uuid, { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +17,7 @@ import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+import { pdfPagePropTypes } from 'app/constants/pdfPagePropTypes';
 
 const markStyle = css({
   '& mark': {
@@ -35,7 +35,6 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
-    this.measureTimeStartMs = null;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -157,10 +156,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.isPageVisible && !prevProps.isPageVisible) {
-      this.measureTimeStartMs = performance.now();
-    }
-
     if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
@@ -213,17 +208,13 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
+
       const pageMetricData = {
-        message: 'Storing PDF page',
+        message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
         product: 'reader',
         type: 'performance',
-        data: {
-          file: this.props.file,
-          documentId: this.props.documentId,
-          pageIndex: this.props.pageIndex,
-          numPagesInDoc: this.props.pdfDocument.numPages,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled
-        },
+        data: this.props.metricsAttributes,
+        eventId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
@@ -235,31 +226,20 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: 'Storing PDF page text',
+          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
           product: 'reader',
           type: 'performance',
-          data: {
-            file: this.props.file,
-            documentId: this.props.documentId,
-            pageIndex: this.props.pageIndex,
-            numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
-          },
+          data: this.props.metricsAttributes,
+          eventId: this.props.metricsIdentifier
         };
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: 'PDFJS rendering text layer',
+          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
           type: 'performance',
           product: 'reader',
-          data: {
-            documentId: this.props.documentId,
-            documentType: this.props.documentType,
-            file: this.props.file,
-            pageIndex: this.props.pageIndex,
-            numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
-          },
+          data: this.props.metricsAttributes,
+          eventId: this.props.metricsIdentifier
         };
 
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
@@ -269,27 +249,7 @@ export class PdfPage extends React.PureComponent {
             this.props.featureToggles.metricsReaderRenderText);
         });
 
-        this.drawPage(page).then(() => {
-          const data = {
-            overscan: this.props.windowingOverscan,
-            documentType: this.props.documentType,
-            pageCount: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
-          };
-
-          if (this.props.featureToggles.pdfPageRenderTimeInMs) {
-            storeMetrics(
-              this.props.documentId,
-              data,
-              {
-                message: 'pdf_page_render_time_in_ms',
-                type: 'performance',
-                product: 'reader',
-                duration: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
-              }
-            );
-          }
-        });
+        this.drawPage(page).then();
       }).catch((error) => {
         const id = uuid.v4();
         const data = {
@@ -308,7 +268,8 @@ export class PdfPage extends React.PureComponent {
             { message,
               type: 'error',
               product: 'browser',
-            }
+            },
+            this.props.metricsIdentifier
           );
         }
       });
@@ -401,40 +362,7 @@ export class PdfPage extends React.PureComponent {
   }
 }
 
-PdfPage.propTypes = {
-  currentMatchIndex: PropTypes.any,
-  documentId: PropTypes.number,
-  documentType: PropTypes.any,
-  file: PropTypes.string,
-  getTextLayerRef: PropTypes.func,
-  handleSelectCommentIcon: PropTypes.func,
-  isDrawing: PropTypes.any,
-  isFileVisible: PropTypes.bool,
-  isPageVisible: PropTypes.any,
-  isPlacingAnnotation: PropTypes.any,
-  isVisible: PropTypes.bool,
-  matchesPerPage: PropTypes.shape({
-    length: PropTypes.any
-  }),
-  page: PropTypes.shape({
-    cleanup: PropTypes.func
-  }),
-  pageDimensions: PropTypes.any,
-  pageIndex: PropTypes.number,
-  pageIndexWithMatch: PropTypes.any,
-  pdfDocument: PropTypes.object,
-  placingAnnotationIconPageCoords: PropTypes.object,
-  relativeIndex: PropTypes.any,
-  rotate: PropTypes.number,
-  rotation: PropTypes.number,
-  scale: PropTypes.number,
-  searchBarHidden: PropTypes.bool,
-  searchText: PropTypes.string,
-  setDocScrollPosition: PropTypes.func,
-  setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string,
-  featureToggles: PropTypes.object
-};
+PdfPage.propTypes = pdfPagePropTypes;
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators(
