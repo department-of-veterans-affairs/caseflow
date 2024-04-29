@@ -34,15 +34,15 @@ class Docket
     "disable_ama_#{priority_status}_#{docket_type.downcase}"
   end
 
-  def ready_appeals_from_levers(priority = false)
+  def ready_priority_nonpriority_appeals(priority = false)
     priority_status = priority ? "priority" : "non_priority"
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    binding.pry
-    lever_value = lever.value
+    lever_value = lever&.value
     if lever_value == "true"
       []
-      # else self
+    else
+      self
     end
   end
 

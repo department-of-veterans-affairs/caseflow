@@ -284,24 +284,48 @@ describe Docket, :all_dbs do
       end
     end
 
-    context "doodle count" do
+    context "ready_priority_nonpriority_appeals" do
       let(:docket) { DirectReviewDocket.new }
-      # subject { docket.ready_appeals_from_levers(false) }
-      # disable_ama_non_priority_direct_review
-      it "returns non_priority_direct_review when the corresponding CaseDistributionLever value is false" do
+
+      it "returns docket when the corresponding CaseDistributionLever value is false" do
         CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
-        binding.pry
-        result = docket.ready_appeals_from_levers(false)
-        # This is expected to return docket
+        result = docket.ready_priority_nonpriority_appeals(false)
         expect(result).to eq(docket)
       end
 
-      it "returns non_priority_direct_review when the corresponding CaseDistributionLever value is true" do
+      it "returns an empty array when the corresponding CaseDistributionLever value is true" do
         CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: true)
-        result = docket.ready_appeals_from_levers(false)
-
-        # expecting an empty array
+        result = docket.ready_priority_nonpriority_appeals(false)
         expect(result).to eq([])
+      end
+
+      it "returns the docket itself when the corresponding CaseDistributionLever record is not found" do
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(nil)
+        expect(docket.ready_priority_nonpriority_appeals(false)).to eq(docket)
+      end
+
+      it "returns the docket itself when the lever value is any non-'true' value" do
+        non_true_values = %w[false null undefined enabled]
+        non_true_values.each do |value|
+          allow_any_instance_of(CaseDistributionLever).to receive(:value).and_return(value)
+          expect(docket.ready_priority_nonpriority_appeals(false)).to eq(docket)
+        end
+      end
+
+      it "returns an empty array when the lever value is true and priority is true" do
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "true"))
+        expect(docket.ready_priority_nonpriority_appeals(true)).to eq([])
+      end
+
+      it "returns the docket itself when the lever value is false and priority is true" do
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "false"))
+        expect(docket.ready_priority_nonpriority_appeals(true)).to eq(docket)
+      end
+
+      it "correctly builds the lever item based on docket type" do
+        expect(docket).to receive(:docket_type).and_return("direct_review")
+        expect(docket).to receive(:build_lever_item).with("direct_review", "non_priority").and_call_original
+        docket.ready_priority_nonpriority_appeals(false)
       end
     end
 
