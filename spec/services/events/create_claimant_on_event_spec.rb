@@ -140,9 +140,9 @@ RSpec.describe Events::CreateClaimantOnEvent do
     end
 
     context "when an error occurs" do
-      let(:standard_error) { StandardError.new("Some unexpected error occured.") }
       it "the error is caught and the Caseflow::Error::DecisionReviewCreatedClaimantError is raised" do
-        expect { described_class.process!(event: event, parser: failing_veteran_is_claimant_parser, decision_review: decision_review) }.to raise_error(Caseflow::Error::DecisionReviewCreatedClaimantError)
+        expect { described_class.process!(event: event, parser: failing_veteran_is_claimant_parser, decision_review: decision_review) }
+          .to raise_error(Caseflow::Error::DecisionReviewCreatedClaimantError)
       end
     end
   end
