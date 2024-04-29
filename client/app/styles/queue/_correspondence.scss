@@ -370,6 +370,7 @@ $translate: 11%;
 // PDF Document Viewer is 800px wide or less.
 .correspondence-pdf-tool-bar {
   width: 33%;
+
   &.toolbar-left {
 
     @media(max-width: 1165px) {
@@ -452,12 +453,12 @@ $translate: 11%;
   tbody {
     tr {
       td {
-          padding-left: 15px;
-          background-color: $caseflow-background;
-          border-bottom: none;
-          border-color: #d6d7d9;
-          padding-top: 0;
-          padding-bottom: 0;
+        padding-left: 15px;
+        background-color: $caseflow-background;
+        border-bottom: none;
+        border-color: #d6d7d9;
+        padding-top: 0;
+        padding-bottom: 0;
       }
     }
   }

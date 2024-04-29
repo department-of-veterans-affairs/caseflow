@@ -274,6 +274,7 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
+      find(".cf-icon-close").click
       cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
     end
