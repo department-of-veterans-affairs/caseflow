@@ -848,11 +848,20 @@ class AppealRepository
       end
     end
 
+    # currently this is used for reporting needs
     def ready_to_distribute_appeals
       MetricsService.record("VACOLS: ready_to_distribute_appeals",
                             name: "ready_to_distribute_appeals",
                             service: :vacols) do
         VACOLS::CaseDocket.ready_to_distribute_appeals
+      end
+    end
+
+    def appeals_tied_to_non_ssc_avljs
+      MetricsService.record("VACOLS: appeals_tied_to_non_ssc_avljs",
+                            name: "appeals_tied_to_non_ssc_avljs",
+                            service: :vacols) do
+        VACOLS::CaseDocket.appeals_tied_to_non_ssc_avljs
       end
     end
 
