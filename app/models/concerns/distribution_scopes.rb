@@ -65,10 +65,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
         .where(
           "appeals.stream_type != ? OR original_judge_task.assigned_to_id in (?)",
           Constants.AMA_STREAM_TYPES.court_remand,
-          JudgeTeam.judges_with_exclude_appeals_from_affinity
+          exclude_affinity_and_ineligible_judge_ids
         )
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
-      genpop_base_query.none
+      genpop_base_query
     end
   end
 
@@ -79,7 +79,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       genpop_base_query
         .where(original_judge_task: { assigned_to_id: judge&.id })
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
-      genpop_base_query
+      genpop_base_query.none
     end
   end
 
@@ -89,7 +89,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
         "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
         CaseDistributionLever.cavc_affinity_days.days.ago,
-        JudgeTeam.judges_with_exclude_appeals_from_affinity
+        exclude_affinity_and_ineligible_judge_ids
       )
   end
 
@@ -211,5 +211,12 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
+  end
+
+  def exclude_affinity_and_ineligible_judge_ids
+    judge_ids = JudgeTeam.judges_with_exclude_appeals_from_affinity
+    judge_ids.push(*HearingRequestDistributionQuery.ineligible_judges_id_cache) if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+
+    judge_ids
   end
 end

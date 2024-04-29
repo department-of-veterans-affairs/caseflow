@@ -138,12 +138,7 @@ class Docket
   end
 
   def adjust_for_affinity(scope, judge)
-    result = scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
-    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      result = result.or(genpop_base_query.tied_to_ineligible_judge)
-    end
-
-    result
+    scope.genpop_with_case_distribution_lever.or(scope.non_genpop_with_case_distribution_lever(judge))
   end
 
   def scoped_for_priority(scope)
