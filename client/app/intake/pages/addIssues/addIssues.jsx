@@ -25,7 +25,9 @@ import { formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues } from '../../util/issues';
+  formatLegacyAddedIssues,
+  formatPendingRequestIssues,
+  fakePendingData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 
@@ -137,6 +139,17 @@ class AddIssuesPage extends React.Component {
 
     return !requestIssues.every((issue) => issue.ratingIssueReferenceId ||
       issue.isUnidentified || issue.decisionDate);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  pendingRequestIssues(intakeData) {
+    if (intakeData.docketType === 'Legacy') {
+      return false;
+    }
+
+    const pendingRequestIssues = formatPendingRequestIssues(intakeData.pendingRequestIssues);
+
+    return pendingRequestIssues;
   }
 
   willRedirect(intakeData, hasClearedEp) {
@@ -456,6 +469,7 @@ class AddIssuesPage extends React.Component {
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
           withdrawReview,
+          fakePendingData
         };
 
         if (key === 'requestedIssues') {
@@ -471,6 +485,13 @@ class AddIssuesPage extends React.Component {
               ...issueSectionRowProps,
               fieldTitle: 'Withdrawn issues',
             }),
+          );
+        } else if (key === 'pendingAdminReview') {
+          rowObjects = rowObjects.concat(
+            issueSectionRow({
+              ...issueSectionRowProps,
+              fieldTitle: 'Pending admin reveiw'
+            })
           );
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));

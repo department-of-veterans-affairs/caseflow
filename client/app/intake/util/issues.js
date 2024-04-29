@@ -4,6 +4,17 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
+export const fakePendingData = [
+  {
+    request_issue_id: '5636',
+    pending_request_type: 'Modification',
+    pending_nonrating_issue_category: 'Caregiver | Eligibility',
+    pending_decision_text: 'New Decision text',
+    pending_decision_date: '2024-01-30',
+    request_reason: 'This is my reason.',
+  }
+];
+
 const getClaimantField = (intakeData) => {
   const {
     claimantName,
@@ -141,7 +152,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isRating: !issue.category,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
-      ratingIssueProfileDate: issue.rating_issue_profile_date && new Date(issue.rating_issue_profile_date).toISOString(),
+      ratingIssueProfileDate:
+        issue.rating_issue_profile_date && new Date(issue.rating_issue_profile_date).toISOString(),
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
@@ -156,6 +168,31 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     };
   }
   );
+};
+
+export const formatPendingRequestIssues = (pendingRequestIssues) => {
+  if (!pendingRequestIssues) {
+    return;
+  }
+
+  return pendingRequestIssues.map((issue) => {
+    return {
+      // id: String(issue.id),
+      // request_issue_id: issue.request_issue.id,
+      // decision_review_id:
+      // decision_review_type:
+      // request_type:
+      // request_date:
+      // request_reaso:
+      // decision_date:
+      // decision_text:
+      // non_rating_issue_category:
+      // benefit_type:
+      // withdrawal_date:
+      // approved_status:
+      // remove_original_issue:
+    };
+  });
 };
 
 export const formatContestableIssues = (contestableIssues) => {
