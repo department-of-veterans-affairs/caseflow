@@ -58,6 +58,8 @@ class SeedDB
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
+    # Transcription contractor seed data
+    call_and_log_seed_step Seeds::TranscriptionContractor
     # Case Distribution Seed Data
     # Creates 300+ priority cases ready for distribution
     # Warning a number are not setup correctly so cannot be used beyond
