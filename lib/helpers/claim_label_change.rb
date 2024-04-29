@@ -93,12 +93,13 @@ module WarRoom
         update_vbms(epe, original_code, new_code)
       end
     end
-  end
 
-  def validate_claim_code(claim_code, error_message)
-    unless claim_code_check(claim_code)
-      puts(error_message)
-      fail Interrupt
+    def validate_claim_code(claim_code, error_message)
+      unless claim_code_check(claim_code)
+        puts(error_message)
+        fail Interrupt
+      end
     end
+
   end
 end
