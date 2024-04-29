@@ -64,6 +64,8 @@ describe DistributionConcern do
         let!(:appeals) do
           appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
 
+          VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
+                                       status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
           QualityReviewTask.create!(appeal: appeal, parent: appeal.root_task,
                                     status: Constants.TASK_STATUSES.assigned, assigned_to: QualityReview.singleton)
 

@@ -5,10 +5,14 @@ module DistributionConcern
 
   private
 
-  # A list of tasks which are okay to have open at time of distribution, in addition to those defined by the method
-  # Appeal.can_redistribute_appeal?
+  # A list of tasks which are expected or allowed to be open at time of distribution
   ALLOWABLE_TASKS = [
-    VeteranRecordRequest.name
+    RootTask.name,
+    DistributionTask.name,
+    JudgeAssignTask.name,
+    TrackVeteranTask.name,
+    VeteranRecordRequest.name,
+    *MailTask.subclasses.reject(&:blocking?).map(&:name)
   ].freeze
 
   def assign_judge_tasks_for_appeals(appeals, judge)
@@ -31,8 +35,7 @@ module DistributionConcern
   # Check for tasks which are open that we would not expect to see at the time of distribution. Send a slack
   # message for notification of a potential bug in part of the application, but do not stop the distribution
   def check_for_unexpected_tasks(appeal)
-    unless appeal.can_redistribute_appeal? ||
-           appeal.tasks.open.select { |t| ALLOWABLE_TASKS.include?(t.class.name) }.any?
+    unless appeal.tasks.open.reject { |t| ALLOWABLE_TASKS.include?(t.class.name) }.empty?
       send_slack_notification(appeal)
     end
   end
