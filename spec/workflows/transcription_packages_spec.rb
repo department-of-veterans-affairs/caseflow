@@ -2,7 +2,7 @@
 
 describe TranscriptionPackages do
   describe "#call" do
-    context "start to ejecute all jobs" do
+    context "start to execute all jobs" do
       let(:hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
       let(:legacy_hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
       let(:work_order) do
@@ -10,7 +10,7 @@ describe TranscriptionPackages do
           work_order_name: "#1234567",
           return_date: "05/07/2024",
           contractor: "Contractor A",
-          hearings: hearings + legacy_hearings
+          hearings_list: hearings + legacy_hearings
         }
       end
       subject { TranscriptionPackages.new(work_order).call }
