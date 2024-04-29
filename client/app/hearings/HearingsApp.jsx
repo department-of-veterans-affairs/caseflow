@@ -14,6 +14,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
+import { TranscriptionSettingsContainer } from './containers/TranscriptionSettingsContainer';
 import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
@@ -119,6 +120,12 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
+  routeForTranscriptionSettings = ({ match: history }) => {
+    <HearingsUserContext.Provider value={this.userPermissionProps}>
+      <TranscriptionsContainer history={history}></TranscriptionsContainer>
+    </HearingsUserContext.Provider>
+  };
+
   render = () => <BrowserRouter basename="/hearings">
     <Switch>
       <PageRoute
@@ -210,6 +217,12 @@ export default class HearingsApp extends React.PureComponent {
               title="Assign Hearings"
               breadcrumb="Assign"
               component={this.routeForAssignHearingsContainer}
+            />
+            <PageRoute
+              exact
+              path="/find_by_contractor"
+              title="Transcription Settings"
+              component={this.routeForTranscriptionSettings}
             />
           </div>
         </AppFrame>
