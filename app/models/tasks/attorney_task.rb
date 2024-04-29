@@ -28,7 +28,7 @@ class AttorneyTask < Task
 
     movement_actions = [
       Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      attorney_cancel_action
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ]
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
