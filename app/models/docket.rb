@@ -18,13 +18,8 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      puts(scope.length, "scope 1")
-      scope = ready_appeals_from_levers(scope, priority)
-      puts(scope.length, "scope 2")
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      puts(scope.length, "scope 3")
       scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
-      puts(scope.length, "scope 4")
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -35,33 +30,20 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def build_lever_item(appeal, priority_status)
-    "disable_ama_#{priority_status}_#{appeal.docket_type.downcase}"
+  def build_lever_item(docket_type, priority_status)
+    "disable_ama_#{priority_status}_#{docket_type.downcase}"
   end
 
-  def ready_appeals_from_levers(scope, priority = false)
+  def ready_appeals_from_levers(priority = false)
     priority_status = priority ? "priority" : "non_priority"
-    # docket_levers = CaseDistributionLever.where(lever_group: Constants::ACD_LEVERS["lever_groups"]["docket_levers"])
-    scope = scope.filter do |appeal|
-      lever_item = build_lever_item(appeal, priority_status)
-      lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-      lever_value = lever.value
-        if lever_value == "true"
-          false
-        elsif lever_value == "false"
-          true
-        end
-      # We only include the appeal if lever does not exist or its value is false
-      # lever.nil? || !lever.value
+    lever_item = build_lever_item(docket_type, priority_status)
+    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
+    binding.pry
+    lever_value = lever.value
+    if lever_value == "true"
+      []
+      # else self
     end
-    scope
-    # lever_item = "disable_ama_#{priority_status}_#{appeal.docket_type}"
-    # should_exclude_docket = docket_levers.value
-    # if should_exclude_docket
-    #     .none
-    # else
-    #   appeals(priority: true, ready: true)
-    # end
   end
 
   def count(priority: nil, ready: nil)

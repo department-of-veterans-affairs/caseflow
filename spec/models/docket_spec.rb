@@ -284,6 +284,27 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "doodle count" do
+      let(:docket) { DirectReviewDocket.new }
+      # subject { docket.ready_appeals_from_levers(false) }
+      # disable_ama_non_priority_direct_review
+      it "returns non_priority_direct_review when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        binding.pry
+        result = docket.ready_appeals_from_levers(false)
+        # This is expected to return docket
+        expect(result).to eq(docket)
+      end
+
+      it "returns non_priority_direct_review when the corresponding CaseDistributionLever value is true" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: true)
+        result = docket.ready_appeals_from_levers(false)
+
+        # expecting an empty array
+        expect(result).to eq([])
+      end
+    end
+
     context "age_of_n_oldest_genpop_priority_appeals" do
       subject { DirectReviewDocket.new.age_of_n_oldest_genpop_priority_appeals(1) }
 
