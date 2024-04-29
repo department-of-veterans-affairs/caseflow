@@ -21,7 +21,7 @@ export default class BenefitType extends React.PureComponent {
 
     let modifiedBenefitTypes = { ...BENEFIT_TYPES };
 
-    if (featureToggles.vbaIntakeDisabled) {
+    if (featureToggles.removeCompAndPenIntake) {
       delete modifiedBenefitTypes.compensation;
       delete modifiedBenefitTypes.pension;
     }
