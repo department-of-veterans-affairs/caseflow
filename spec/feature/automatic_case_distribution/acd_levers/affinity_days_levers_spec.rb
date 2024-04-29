@@ -9,8 +9,6 @@ RSpec.feature "Affinity Days Levers" do
 
   let(:disabled_lever_list) do
     [
-      Constants.DISTRIBUTION.cavc_aod_affinity_days,
-      Constants.DISTRIBUTION.cavc_affinity_days,
       Constants.DISTRIBUTION.aoj_affinity_days,
       Constants.DISTRIBUTION.aoj_aod_affinity_days,
       Constants.DISTRIBUTION.aoj_cavc_affinity_days
@@ -20,7 +18,9 @@ RSpec.feature "Affinity Days Levers" do
   let(:enabled_lever_list) do
     [
       Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
-      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days
+      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_affinity_days
     ]
   end
 
