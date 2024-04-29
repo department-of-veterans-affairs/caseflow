@@ -192,7 +192,7 @@ $translate: 11%;
 }
 
 .a-r-p1 {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .a-r-h2 {
@@ -266,6 +266,7 @@ $translate: 11%;
 
 .veternal-file-styling-review-form {
   width: 40%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -274,6 +275,7 @@ $translate: 11%;
 .error-veternal-file-styling-review-form {
   width: 48%;
   margin-top: -6.4rem;
+
   @media (max-width: 1599px) {
     width: 58%;
   }
@@ -281,6 +283,7 @@ $translate: 11%;
 
 .veternal-name-styling-review-form {
   width: 60%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -289,6 +292,7 @@ $translate: 11%;
 .input-styling-review-form {
   display: flex;
   gap: 5%;
+
   @media (max-width: 1081px) {
     flex-direction: column;
   }
@@ -315,7 +319,7 @@ $translate: 11%;
 .correspondence-case-title-header-containing-div-styling {
   display: block;
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
-  margin: -2rem -4rem 0 -4rem;
+  margin: -2rem -4rem 0;
   padding: 0 0 1.5rem 4rem;
 
   & > * {
@@ -342,7 +346,7 @@ $translate: 11%;
 .correspondence-list-styling {
   list-style-type: none;
   vertical-align: super;
-  padding: 0 0 4rem 0;
+  padding: 0 0 4rem;
   display: flex;
   flex-wrap: wrap;
 }
@@ -364,9 +368,9 @@ $translate: 11%;
 }
 
 // PDF Document Viewer is 800px wide or less.
-.correspondence-pdf-tool-bar{
+.correspondence-pdf-tool-bar {
   width: 33%;
-  &.toolbar-left{
+  &.toolbar-left {
 
     @media(max-width: 1165px) {
       width: 18%;
@@ -385,15 +389,16 @@ $translate: 11%;
 
     @media(max-width: 1165px) {
       width: 44%;
-        & .cf-pdf-button-text { display: none } }
+      & .cf-pdf-button-text { display: none; } }
   }
 }
 
 .correspondence-rp-list-item-styling {
   display: inline-block;
   padding: 0.5rem 1.5rem 0.5rem 0;
+
   & > * {
-    padding-right: 1.5rem
+    padding-right: 1.5rem;
   }
 
   & > p {
@@ -405,7 +410,7 @@ $translate: 11%;
     line-height: 1.3;
   }
 
-  & > div { min-height: '22px' }
+  & > div { min-height: '22px'; }
 }
 
 .correspondence-rp-h2-right-style {
@@ -439,20 +444,21 @@ $translate: 11%;
 
   thead {
     th {
-        padding-inline-end: 15px;
-        padding-top: 10px;
+      padding-inline-end: 15px;
+      padding-top: 10px;
     }
   }
+
   tbody {
     tr {
-        td {
-            padding-left: 15px;
-            background-color: $caseflow-background;
-            border-bottom: none;
-            border-color: #d6d7d9;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
+      td {
+          padding-left: 15px;
+          background-color: $caseflow-background;
+          border-bottom: none;
+          border-color: #d6d7d9;
+          padding-top: 0;
+          padding-bottom: 0;
+      }
     }
   }
 }
@@ -476,11 +482,11 @@ $translate: 11%;
 }
 
 .somthing-new {
-  padding-bottom: 0px;
-  padding-top: 0px;
+  padding-bottom: 0;
+  padding-top: 0;
   width: 100%;
 
-  &:first-child{
+  &:first-child {
     padding-top: 5px;
   }
 }
