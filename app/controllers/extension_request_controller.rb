@@ -33,7 +33,7 @@ class ExtensionRequestController < TasksController
   def create_params
     params
       .require(:task)
-      .permit(sanitize_sql(:decision), :days_on_hold, instructions: [])
+      .permit(:decision, :days_on_hold, instructions: [])
       .merge(assigned_by: current_user)
   end
 
