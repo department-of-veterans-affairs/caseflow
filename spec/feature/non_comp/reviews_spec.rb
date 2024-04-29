@@ -464,7 +464,7 @@ feature "NonComp Reviews Queue", :postgres do
 
         # Has a clickable name "claimant"
         click_link "claimant"
-        expect(page).to have_content("Review each issue and assign the appropriate dispositions")
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
       end
     end
 
@@ -878,7 +878,7 @@ feature "NonComp Reviews Queue", :postgres do
 
         # Visit a task page
         visit dispositions_url
-        expect(page).to have_content("Review each issue and assign the appropriate dispositions.")
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
 
         # Return to the in progress tab
         visit BASE_URL
@@ -888,7 +888,7 @@ feature "NonComp Reviews Queue", :postgres do
 
         # Visit a task page again
         visit dispositions_url
-        expect(page).to have_content("Review each issue and assign the appropriate dispositions.")
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
 
         # Return to the completed tab
         visit BASE_URL + "?tab=completed&page=1"
