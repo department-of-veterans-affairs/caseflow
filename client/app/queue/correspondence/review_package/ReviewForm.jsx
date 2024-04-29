@@ -84,8 +84,25 @@ export const ReviewForm = (props) => {
     return true;
 
   };
-  const handleSelectVADOR = (val) => {
 
+  const checkIfNOD = () => {
+    const documents = props.correspondenceDocuments;
+    const docArr = [];
+
+    documents.map((document) => {
+      docArr.push(document.document_title);
+
+      return docArr;
+    });
+
+    if (docArr.includes('VA Form 10182 Notice of Disagreement')) {
+      return 'NOD';
+    }
+
+    return 'Non-NOD';
+  };
+
+  const handleSelectVADOR = (val) => {
     setDateError(errorOnVADORDate(val));
     setVADORDate(val);
     const updatedSelectedDate = {
@@ -188,15 +205,14 @@ export const ReviewForm = (props) => {
               </div>
 
             </div>
-            <div className= "tag-styling-review-form">
+            <div className= "veternal-name-styling-review-form ">
 
-              <SearchableDropdown
-                name="correspondence-dropdown"
-                label="Correspondence type"
-                options={generateOptions(props.reviewDetails.dropdown_values)}
-                onChange={handleSelectCorrespondenceType}
-                readOnly={props.isReadOnly}
-                placeholder="Select..."
+              <TextField
+                label="Package document type"
+                value={checkIfNOD()}
+                readOnly
+                name="Veteran-name-display"
+                useAriaLabel
               />
 
             </div>
@@ -209,7 +225,7 @@ export const ReviewForm = (props) => {
                 onChange={handleSelectVADOR}
                 value={vaDORDate}
                 errorMessage={dateError}
-                readOnly = {vaDORReadOnly()}
+                readOnly = {vaDORReadOnly() || props.isReadOnly}
               />
             </div>
 
@@ -222,6 +238,16 @@ export const ReviewForm = (props) => {
                 value={props.editableData.notes}
                 onChange={handleChangeNotes}
                 disabled={props.isReadOnly}
+              />
+            </div>
+            <div >
+                <SearchableDropdown
+                name="correspondence-dropdown"
+                label="Correspondence type"
+                options={generateOptions(props.reviewDetails.dropdown_values)}
+                onChange={handleSelectCorrespondenceType}
+                readOnly={props.isReadOnly}
+                placeholder="Select..."
               />
             </div>
           </div>
