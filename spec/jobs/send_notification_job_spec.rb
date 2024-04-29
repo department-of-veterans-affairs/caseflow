@@ -470,4 +470,18 @@ describe SendNotificationJob, type: :job do
       expect(Notification.first.sms_notification_status).to eq("No Participant Id Found")
     end
   end
+
+  context "Veteran determined deceased" do
+    it "the email status should be updated to say no Failure Due to Deceased" do
+      FeatureToggle.enable!(:va_notify_email)
+      SendNotificationJob.new(bad_message.to_json).perform_now
+      expect(Notification.first.email_notification_status).to eq("No Participant Id Found")
+    end
+
+    it "the sms status should be updated to say Failure Due to Deceased" do
+      FeatureToggle.enable!(:va_notify_sms)
+      SendNotificationJob.new(bad_message.to_json).perform_now
+      expect(Notification.first.sms_notification_status).to eq("No Participant Id Found")
+    end
+  end
 end
