@@ -120,11 +120,11 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
-  routeForTranscriptionSettings = ({ match: history }) => {
-    <HearingsUserContext.Provider value={this.userPermissionProps}>
-      <TranscriptionsContainer history={history}></TranscriptionsContainer>
+  routeForTranscriptionSettings = ({ match: history }) => (
+    <HearingsUserContext.Provider value={this.userPermissionProps()}>
+      <TranscriptionSettingsContainer history={history} />
     </HearingsUserContext.Provider>
-  };
+  );
 
   render = () => <BrowserRouter basename="/hearings">
     <Switch>

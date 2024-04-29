@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { css } from 'glamor';
 
 const TranscriptionSettings = (props) => {
   const {

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useContext, useState } from 'react';
 
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import TranscriptionSettings from '../components/transcriptionProcessing';
+import TranscriptionSettings from '../components/transcriptionProcessing/TranscriptionSettings';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
 export const TranscriptionSettingsContainer = ({ history }) => {
@@ -28,6 +28,6 @@ export const TranscriptionSettingsContainer = ({ history }) => {
   );
 };
 
-// TranscriptionSettingContainer.propTypes = {
-//   history: PropTypes.object
-// };
+TranscriptionSettingsContainer.propTypes = {
+  history: PropTypes.object
+};
