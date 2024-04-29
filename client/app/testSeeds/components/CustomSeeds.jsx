@@ -49,7 +49,7 @@ class CustomSeeds extends React.PureComponent {
     if(typeof this.seedByType[type] !== 'object'){
       this.seedByType[type] = {};
     }
-    this.seedByType[type][inputKey] = [value];
+    this.seedByType[type][inputKey] = value;
   }
 
   reseedByCaseType = (type) => {
@@ -60,7 +60,7 @@ class CustomSeeds extends React.PureComponent {
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    ApiUtil.post(`/seeds/run-demo/${type}/1`, { data: caseType }).then(() => {
+    ApiUtil.post(`/seeds/run-demo/${type}`, { data: caseType }).then(() => {
       this.setState({ seedRunning: false });
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }

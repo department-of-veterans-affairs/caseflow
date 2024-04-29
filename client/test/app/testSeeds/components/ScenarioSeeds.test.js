@@ -51,7 +51,7 @@ describe('Scenario Seeds', () => {
     fireEvent.change(input, { target: { value: '10' } });
     fireEvent.click(button);
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${seed_aod_type}/10`);
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${seed_aod_type}?seed_count=10`);
 
     // Wait for API call to resolve
     await waitFor(() => {
@@ -72,7 +72,7 @@ describe('Scenario Seeds', () => {
     fireEvent.change(input, { target: { value: '10' } });
     fireEvent.click(button);
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${seed_aod_type}/10`);
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${seed_aod_type}?seed_count=10`);
 
     // Wait for API call to reject
     await waitFor(() => {
