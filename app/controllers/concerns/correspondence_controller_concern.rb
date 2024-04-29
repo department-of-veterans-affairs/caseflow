@@ -20,7 +20,11 @@ module CorrespondenceControllerConcern
     return unless @response_type == "success"
 
     tasks = Task.where(id: task_ids)
-    tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+    tasks.update_all(
+      assigned_to_id: mail_team_user.id,
+      assigned_to_type: "User",
+      status: Constants.TASK_STATUSES.assigned
+    )
   end
 
   def set_banner_params(user, task_count, tab)
@@ -70,10 +74,12 @@ module CorrespondenceControllerConcern
     vet = veteran_by_correspondence
     if action_type == "cancel_intake"
       @response_header = "You have successfully cancelled the intake form"
-      @response_message = "#{vet.name}'s correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment."
+      @response_message = "#{vet.name}'s correspondence (ID: #{correspondence.id}) "\
+       "has been returned to the supervisor's queue for assignment."
     else
       @response_header = "You have successfully saved the intake form"
-      @response_message = "You can continue from step three of the intake form for #{vet.name}'s correspondence (ID: #{correspondence.id}) at a later date."
+      @response_message = "You can continue from step three of the intake form for #{vet.name}'s "\
+      "correspondence (ID: #{correspondence.id}) at a later date."
     end
     @response_type = "success"
   end

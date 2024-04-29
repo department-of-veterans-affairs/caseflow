@@ -146,7 +146,7 @@ class WorkQueue::AppealSearchSerializer
   end
 
   attribute :evidence_submission_task do |object|
-    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: Constants.TASK_STATUSES.assigned)
   end
 
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
