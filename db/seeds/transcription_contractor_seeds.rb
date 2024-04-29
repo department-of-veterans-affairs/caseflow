@@ -1,7 +1,6 @@
-# db/transcription_contractor_seeds.rb
 module Seeds
   class TranscriptionContractor < Base
-      # Create TranscriptionContractor records
+
     def seed!
       transcription_contractors = [
         { name: "Genesis Government Solutions, Inc.",
