@@ -381,27 +381,4 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
       end
     end
   end
-
-  describe "PATCH #modify_user_permission" do
-    let(:user) { create(:user) }
-    let(:params) { { id: user.id } }
-    let(:authparams) { { id: authenticated_user.id } }
-
-    context "when current user is not authorized" do
-      it "returns unauthorized" do
-        patch :modify_user_permission, params: params
-
-        expect(response.status).to eq(302)
-        expect(response).to redirect_to("/unauthorized")
-      end
-    end
-
-    context "when current user is admin and authorized" do
-      it "returns a successful response" do
-        patch :modify_user_permission, params: authparams
-
-        expect(response).to have_http_status(:ok)
-      end
-    end
-  end
 end

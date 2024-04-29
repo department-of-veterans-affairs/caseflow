@@ -312,4 +312,66 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
   end
+
+  describe "PATCH /organizations/:org_url/update_permissions" do
+    let(:params) { { id: user.id, status: new_status } }
+    subject { patch(:update_permissions, params: params, as: :json) }
+    let(:user) {
+      create(:user).tap { |bva_user| Bva.singleton.add_user(bva_user) }
+    }
+    let(:iops_user) {
+      create(:user).tap { |iops_user| Bva.singleton.add_user(iops_user) }
+    }
+    let(:admin) {
+      create(:user).tap do |u|
+        OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
+      end
+    }
+
+    # before do
+    #   User.authenticate!(user: admin)
+    # end
+
+    context "when current user is not authorized" do
+      it "returns unauthorized" do
+        User.authenticate!(user: user)
+        patch :modify_user_permission, params: params
+
+        expect(response.status).to eq(302)
+        expect(response).to redirect_to("/unauthorized")
+      end
+    end
+
+    context "when current user is admin and authorized" do
+      it "returns a successful response" do
+        User.authenticate!(user: admin)
+        patch :modify_user_permission, params: authparams
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  # describe "PATCH /users/#modify_user_permission" do
+  #   let(:user) do create(:user) end
+  #   let(:params) do { id: user.id } end
+  #   let(:authparams) do { id: authenticated_user.id } end
+
+  #   context "when current user is not authorized" do
+  #     it "returns unauthorized" do
+  #       patch :modify_user_permission, params: params
+
+  #       expect(response.status).to eq(302)
+  #       expect(response).to redirect_to("/unauthorized")
+  #     end
+  #   end
+
+  #   context "when current user is admin and authorized" do
+  #     it "returns a successful response" do
+  #       patch :modify_user_permission, params: authparams
+
+  #       expect(response).to have_http_status(:ok)
+  #     end
+  #   end
+  # end
 end
