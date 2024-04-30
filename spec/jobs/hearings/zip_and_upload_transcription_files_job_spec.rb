@@ -17,6 +17,8 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
 
   subject { described_class.new.perform(hearings_in_work_order(hearings + legacy_hearings)) }
 
+  before { User.authenticate!(user: create(:user)) }
+
   after { cleanup_tmp_directories }
 
   it "temporarily downloads mp3s and rtfs for all the hearings in a work order" do
@@ -50,6 +52,27 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
       full_path = dir.path + "/" + file_name
       expect(File.exist?(full_path)).to eq true
       expect(File.extname(full_path)).to eq ".zip"
+    end
+  end
+
+  it "creates a transcription file record for each zip file" do
+    expect(TranscriptionFile.where(file_type: "zip").empty?).to eq true
+
+    subject
+
+    TranscriptionFile.where(file_type: "zip").each do |file|
+      expect(file.file_name).to be_a String
+      expect(file.date_upload_aws).to be_a Time
+      expect(file.created_by_id).to be_a Integer
+      expect(file.aws_link).to be_a String
+    end
+  end
+
+  it "uploads the zip file to s3 bucket" do
+    subject
+
+    TranscriptionFile.where(file_type: "zip").pluck("aws_link").each do |link|
+      expect(link.include?("vaec-appeals-caseflow-test/transcript_text")).to eq true
     end
   end
 end
