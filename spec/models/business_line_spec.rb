@@ -313,6 +313,7 @@ describe BusinessLine do
       create_list(:issue_modification_request,
                   3,
                   :with_higher_level_review,
+                  status: "assigned",
                   created_by_id: user.id,
                   updated_by_id: user.id)
     end
@@ -321,6 +322,7 @@ describe BusinessLine do
       create_list(:issue_modification_request,
                   3,
                   :with_supplemental_claim,
+                  status: "assigned",
                   created_by_id: user.id,
                   updated_by_id: user.id)
     end
