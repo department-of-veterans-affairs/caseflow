@@ -310,11 +310,19 @@ describe BusinessLine do
   describe ".pending_tasks" do
     let!(:user) { create(:user) }
     let!(:hlr_pending_tasks) do
-      create_list(:issue_modification_request, 3, :with_higher_level_review, created_by_id: user.id, updated_by_id: user.id)
+      create_list(:issue_modification_request,
+                  3,
+                  :with_higher_level_review,
+                  created_by_id: user.id,
+                  updated_by_id: user.id)
     end
 
     let!(:sc_pending_tasks) do
-      create_list(:issue_modification_request, 3, :with_supplemental_claim, created_by_id: user.id, updated_by_id: user.id)
+      create_list(:issue_modification_request,
+                  3,
+                  :with_supplemental_claim,
+                  created_by_id: user.id,
+                  updated_by_id: user.id)
     end
 
     subject { business_line.pending_tasks(filters: task_filters) }

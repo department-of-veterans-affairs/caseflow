@@ -576,9 +576,10 @@ class BusinessLine < Organization
 
     # :reek:ControlParameter
     def issue_modification_request_filter
-      return if @query_type != :pending
+      return if @query_type != :assigned
 
-      "issue_modification_requests.id IS NOT NULL AND COALESCE(issue_modification_requests.status, 'assigned') = 'assigned' "
+      "issue_modification_requests.id IS NOT NULL
+        AND COALESCE(issue_modification_requests.status, 'assigned') = 'assigned'"
     end
 
     def union_query_join_clauses
