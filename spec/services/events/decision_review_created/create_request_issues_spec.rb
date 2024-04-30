@@ -87,6 +87,15 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
+    context "when an error occurs" do
+      it "the error is caught and Caseflow::Error::DecisionReviewCreatedRequestIssuesError is raised" do
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
+
+        expect { described_class.process!(event: event, parser: parser, epe: nil, decision_review: nil) }
+          .to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
+      end
+    end
+
     def retrieve_payload
       {
         "request_issues": [
