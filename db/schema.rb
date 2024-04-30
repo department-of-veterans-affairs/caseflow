@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_03_160601) do
+ActiveRecord::Schema.define(version: 2024_04_25_193445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -640,6 +640,15 @@ ActiveRecord::Schema.define(version: 2024_04_03_160601) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
+  create_table "correspondence_appeals", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.bigint "correspondence_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["appeal_id"], name: "index on appeal_id"
+    t.index ["correspondence_id"], name: "index on correspondence_id"
+  end
+
   create_table "correspondence_auto_assignment_levers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description", null: false
@@ -648,15 +657,6 @@ ActiveRecord::Schema.define(version: 2024_04_03_160601) do
     t.datetime "updated_at", null: false
     t.integer "value", null: false
     t.index ["name"], name: "index_correspondence_auto_assignment_levers_on_name", unique: true
-  end
-
-  create_table "correspondence_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
   end
 
   create_table "correspondence_documents", force: :cascade do |t|
@@ -1526,6 +1526,7 @@ ActiveRecord::Schema.define(version: 2024_04_03_160601) do
 
   create_table "organization_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "default_for_admin"
     t.string "description", null: false, comment: "UX display value"
     t.boolean "enabled", default: false, null: false, comment: "Whether permission is enabled or disabled"
     t.bigint "organization_id", null: false, comment: "Foreign key to organizations table"
