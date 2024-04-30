@@ -33,7 +33,11 @@ FactoryBot.define do
 
     trait :with_supplemental_claim do
       after(:create) do |pri|
-        dr = create(:supplemental_claim, :with_vha_issue, :update_assigned_at)
+        dr = create(:supplemental_claim,
+                    :with_vha_issue,
+                    :update_assigned_at,
+                    :processed,
+                    claimant_type: :veteran_claimant)
 
         pri.decision_review = dr
         pri.save!
@@ -42,9 +46,12 @@ FactoryBot.define do
 
     trait :with_higher_level_review do
       after(:create) do |pri|
-        dr = create(:higher_level_review, :with_vha_issue, :update_assigned_at)
-        # dr.submit_for_processing!
-        # dr.create_business_line_tasks!
+        dr = create(:higher_level_review,
+                    :with_vha_issue,
+                    :update_assigned_at,
+                    :processed,
+                    claimant_type: :veteran_claimant)
+
         pri.decision_review = dr
         pri.save!
       end

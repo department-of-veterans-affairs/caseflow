@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_22_172720) do
+ActiveRecord::Schema.define(version: 2024_04_29_215736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1133,6 +1133,31 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
+  create_table "issue_modification_requests", comment: "A database table to store pending request issues that are for modification", force: :cascade do |t|
+    t.datetime "approved_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
+    t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "created_by_id"
+    t.datetime "decision_date", comment: "prior decision Date"
+    t.bigint "decision_review_id"
+    t.string "decision_review_type"
+    t.text "decision_text", comment: "Description"
+    t.string "nonrating_issue_category", comment: "issue category decision_issues.non_rating_issue_category"
+    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
+    t.datetime "request_date", comment: "Requested Date"
+    t.bigint "request_issue_id", comment: "Indicates the id of the request_issues on which the modification was requested"
+    t.text "request_reason", comment: "request reason"
+    t.string "request_type", limit: 20, comment: "Pending Request Type"
+    t.string "status", default: "assigned", comment: "status of the pending task"
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "updated_by_id"
+    t.datetime "withdrawal_date", comment: "if request issue was withdrawn then we save it as withdrawal date "
+    t.index ["created_by_id"], name: "index_issue_modification_requests_on_created_by_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
+    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
+    t.index ["updated_by_id"], name: "index_issue_modification_requests_on_updated_by_id"
+  end
+
   create_table "job_notes", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
     t.bigint "job_id", null: false, comment: "The job to which the note applies"
@@ -1422,28 +1447,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["updated_at"], name: "index_organizations_users_on_updated_at"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
-  end
-
-  create_table "pending_request_issues", comment: "A database table to store pending request issues that are for modification", force: :cascade do |t|
-    t.datetime "approved_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
-    t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
-    t.datetime "created_at", null: false
-    t.bigint "created_by_id"
-    t.bigint "decision_review_id", comment: "decision_issues.decision_review_id"
-    t.string "decision_review_type", limit: 20, comment: "decision_issues.decision_review_type"
-    t.string "nonrating_issue_category", comment: "issue category decision_issues.non_rating_issue_category"
-    t.boolean "remove_original_issue", comment: "flag to indicate if the original issue was removed or not."
-    t.datetime "request_date", comment: "Requested Date"
-    t.bigint "request_issue_id", comment: "Indicates the id of the request_issues on which the modification was requested"
-    t.text "request_reason", comment: "request reason"
-    t.string "request_type", limit: 20, comment: "Pending Request Type"
-    t.string "status", comment: "status of the pending task"
-    t.datetime "updated_at", null: false
-    t.bigint "updated_by_id"
-    t.datetime "withdrawal_date", comment: "if request issue was withdrawn then we save it as withdrawal date "
-    t.index ["created_by_id"], name: "index_pending_request_issues_on_created_by_id"
-    t.index ["request_issue_id"], name: "index_pending_request_issues_on_request_issue_id"
-    t.index ["updated_by_id"], name: "index_pending_request_issues_on_updated_by_id"
   end
 
   create_table "people", force: :cascade do |t|
@@ -2298,6 +2301,9 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
+  add_foreign_key "issue_modification_requests", "request_issues"
+  add_foreign_key "issue_modification_requests", "users", column: "created_by_id"
+  add_foreign_key "issue_modification_requests", "users", column: "updated_by_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"
@@ -2322,9 +2328,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_172720) do
   add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
-  add_foreign_key "pending_request_issues", "request_issues"
-  add_foreign_key "pending_request_issues", "users", column: "created_by_id"
-  add_foreign_key "pending_request_issues", "users", column: "updated_by_id"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "priority_end_product_sync_queue", "batch_processes", column: "batch_id", primary_key: "batch_id", name: "priority_end_product_sync_queue_batch_processes_id_fk"
