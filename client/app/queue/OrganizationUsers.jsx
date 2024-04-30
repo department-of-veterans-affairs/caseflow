@@ -84,6 +84,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
   generatePermissionsCheckboxes = (id) => {
 
+    // used to check the value of a checkbox. Looks at state first, and falls back to props otherwise.
     const checkPermissions = (checkboxId, permission) => {
       const orgUserPermissions = this.props.orgnizationUserPermissions[checkboxId];
       let found = false;
@@ -138,7 +139,10 @@ export default class OrganizationUsers extends React.PureComponent {
           marginBottom: '10px'
         });
 
-        parentPermissionChecked(id, permission.parent_permission_id);
+        // prevents additional checkboxes from rendering if the superuser checkbox has been clicked
+        if (permission.permission !== 'Superuser: Split, Merge, and Reassign' && checkPermissions(id, 'Superuser: Split, Merge, and Reassign')) {
+          return null;
+        }
 
         return (parentPermissionChecked(id, permission.parent_permission_id) && <Checkbox
           name={`${id}-${permission.permission}`}
@@ -147,6 +151,8 @@ export default class OrganizationUsers extends React.PureComponent {
           styling={NODcheckboxStyle}
           onChange={this.modifyUserPermission(id, permission.permission)}
           defaultValue={checkPermissions(id, permission.permission)}
+          disabled={checkPermissions(id, "Superuser: Split, Merge, and Reassign")}
+
         />);
       })
     );
