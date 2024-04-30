@@ -75,7 +75,7 @@ describe('Custom Seeds', () => {
     fireEvent.click(button);
 
     expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { case_count: 10, days_ago: 5, css_id: 'BVADWISE' }
+      data: { case_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to resolve
@@ -101,7 +101,7 @@ describe('Custom Seeds', () => {
     fireEvent.click(button);
 
     expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { case_count: 10, days_ago: 5, css_id: 'BVADWISE' }
+      data: { case_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to reject

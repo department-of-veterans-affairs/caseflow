@@ -138,7 +138,7 @@ class CustomSeeds extends React.PureComponent {
                         useAriaLabel={true}
                         inputID={`css-id-${type}`}
                         onChange={(value) => {
-                          this.onChangeCaseType(type, 'css_id', value);
+                          this.onChangeCaseType(type, 'judge_css_id', value);
                         }}
                       />
                     </div>
