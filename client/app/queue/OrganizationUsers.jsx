@@ -88,6 +88,11 @@ export default class OrganizationUsers extends React.PureComponent {
       const orgUserPermissions = this.props.orgnizationUserPermissions[checkboxId];
       let found = false;
 
+      const checkBoxInState = this.state.toggledCheckboxes.find((oup) => oup.permissionName == permission && oup.userId === id);
+
+      if (typeof checkBoxInState !== 'undefined') {
+        return checkBoxInState.checked;
+      }
       orgUserPermissions.forEach((oup) => {
         if (oup[0] === permission && oup[2] === Number(id) && oup[1]) {
           found = true;
@@ -97,28 +102,26 @@ export default class OrganizationUsers extends React.PureComponent {
       return found;
     };
 
+    // grabs the values off of state as a priority, and falls back to the props. if there is any state, props gets ignored.
     const parentPermissionChecked = (userId, parentId) => {
       if (typeof parentId !== 'number') {
         return true;
       }
 
       let result = false;
-      const parentPermission = this.props.organizationPermissions.find((permission) => permission.id == parentId);
+      const parentPermission = this.props.organizationPermissions.find((permission) => permission.id === parentId);
       const orgUserPermissions = this.props.orgnizationUserPermissions[id];
 
-      // prioritize state
       const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
-        permission.userId == userId &&
-      permission.permissionName == parentPermission.permission &&
-    permission.checked);
+        permission.userId === userId &&
+      permission.permissionName === parentPermission.permission);
 
-      if (typeof checkboxInState !== 'undefined') {
-        result = true;
+      if (typeof checkboxInState !== 'undefined' && checkboxInState.checked) {
+        return true;
       }
 
-      // check if it came in checked
       orgUserPermissions.forEach((permission) => {
-        if (permission[0] === parentPermission.permission && permission[1]) {
+        if (permission[0] === parentPermission.permission && permission[1] && typeof checkboxInState === 'undefined') {
           result = true;
         }
       });
