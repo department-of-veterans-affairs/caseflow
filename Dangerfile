@@ -40,7 +40,7 @@ if git.modified_files.grep(/db\/etl\/schema.rb/).any?
 end
 
 new_db_migrations = git.modified_files.grep(/db\/migrate\//).any?
-new_etl_migrations = git.modified_files.grep(/db\/etl\/migrate\//).any?
+new_etl_migrations = git.modified_files.grep(/db\/etl_migrate\//).any?
 
 # migration without migrating
 if new_db_migrations && git.modified_files.grep(/db\/schema.rb/).none?
