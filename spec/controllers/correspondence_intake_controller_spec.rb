@@ -71,6 +71,9 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
 
     it "saves the user's current step in the intake form" do
       current_step = 1
+      correspondence = create(:correspondence)
+      CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, current_user)
+
       post :current_step, params: {
         correspondence_uuid: correspondence.uuid,
         current_step: current_step,
@@ -79,7 +82,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
 
       expect(response).to have_http_status(:success)
 
-      intake_correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
+      intake_correspondence = CorrespondenceIntake.find_by(task: correspondence&.open_intake_task)
       expect(intake_correspondence.current_step).to eq(current_step)
       expect(intake_correspondence.redux_store).to eq(redux_store)
     end

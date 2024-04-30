@@ -2,8 +2,7 @@
 
 RSpec.describe CorrespondenceIntake, type: :model do
   describe "relationships" do
-    it { CorrespondenceIntake.reflect_on_association(:correspondence).macro.should eq(:belongs_to) }
-    it { CorrespondenceIntake.reflect_on_association(:user).macro.should eq(:belongs_to) }
+    it { CorrespondenceIntake.reflect_on_association(:task).macro.should eq(:belongs_to) }
   end
 
   describe "Record entry" do
@@ -15,39 +14,28 @@ RSpec.describe CorrespondenceIntake, type: :model do
 
       FactoryBot.create(:veteran)
     end
+
     it "can be created" do
-      user = User.create!(css_id: "User", station_id: "1")
-      correspondence = Correspondence.create!(
-        updated_by_id: User.first.id,
-        correspondence_type: CorrespondenceType.first,
-        assigned_by_id: User.first.id,
-        veteran_id: Veteran.first.id,
-        package_document_type: PackageDocumentType.first
-      )
+      correspondence = create(:correspondence)
+      task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, create(:user))
       subject = CorrespondenceIntake.create!(
-        correspondence_id: correspondence.id,
-        user_id: user.id,
+        task_id: task.id,
         current_step: 1,
-        redux_store: 1
+        redux_store: {}
       )
 
       expect(subject).to be_a(CorrespondenceIntake)
     end
 
-    it "validates :correspondence_id and :user_id" do
-      user = User.create!(css_id: "User", station_id: "1")
-      correspondence = Correspondence.create!(
-        updated_by_id: User.first.id,
-        correspondence_type: CorrespondenceType.first,
-        assigned_by_id: User.first.id,
-        veteran_id: Veteran.first.id,
-        package_document_type: PackageDocumentType.first
-      )
-
+    it "validates :task_id" do
       expect { CorrespondenceIntake.create! }.to raise_error(ActiveRecord::RecordInvalid)
-      expect { CorrespondenceIntake.create!(correspondence_id: correspondence.id) }
-        .to raise_error(ActiveRecord::RecordInvalid)
-      expect { CorrespondenceIntake.create!(user_id: user.id) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it "validates that the associated task is a CorrespondenceIntakeTask" do
+      correspondence = create(:correspondence)
+      task = correspondence&.root_task
+
+      expect { CorrespondenceIntake.create!(task_id: task.id).to raise_error(ActiveRecord::RecordInvalid) }
     end
   end
 end
