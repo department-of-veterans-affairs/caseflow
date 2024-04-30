@@ -270,6 +270,9 @@ FactoryBot.define do
           case_issue.save
         end
         
+        vacols_case.bfmemid = staff_judge.sattyid
+        vacols_case.bfattid = staff_attorney.sattyid
+        
         create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case,
         case_issues_equal: true, original_case_issues: vacols_case.case_issues)
       end
