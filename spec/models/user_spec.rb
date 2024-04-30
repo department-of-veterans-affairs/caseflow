@@ -152,6 +152,7 @@ describe User, :all_dbs do
         "css_id" => css_id.upcase,
         "pg_user_id" => user.id,
         "email" => nil,
+        "meeting_type" => "pexip",
         "roles" => [],
         "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,

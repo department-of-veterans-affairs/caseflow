@@ -46,7 +46,7 @@ class ExternalApi::VANotifyService
       log_info(email_response)
       email_response
     end
-    # rubocop:disable Metrics/ParameterLists
+
     # Purpose: Send the sms notifications
     #
     # Params: Details from appeal for notification

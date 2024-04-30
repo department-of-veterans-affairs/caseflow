@@ -28,7 +28,7 @@ class QuarterlyNotificationsJob < CaseflowJob
           appeal = appeal_state.retrieve_appeal
           MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                                 name: "send_quarterly_notifications(appeal_state, appeal)") do
-            AppellantNotification.notify_appellant(appeal, Constants.QUARTERLY_STATUSES.quarterly_notification , status)
+            AppellantNotification.notify_appellant(appeal, Constants.QUARTERLY_STATUSES.quarterly_notification, status)
           end
         rescue StandardError => error
           log_error(error, appeal_state.appeal_type, appeal_state.appeal_id)
