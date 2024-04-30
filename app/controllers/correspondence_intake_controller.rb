@@ -5,7 +5,9 @@ class CorrespondenceIntakeController < CorrespondenceController
   def intake
     # If correspondence intake was started, json data from the database will
     # be loaded into the page when user returns to intake
-    @redux_store ||= CorrespondenceIntake.find_by(correspondence: correspondence)&.redux_store
+    @redux_store ||= CorrespondenceIntake.find_by(
+      task: correspondence&.open_intake_task
+    )&.redux_store
     @prior_mail = prior_mail.map do |correspondence|
       WorkQueue::CorrespondenceSerializer.new(correspondence).serializable_hash[:data][:attributes]
     end
@@ -15,8 +17,8 @@ class CorrespondenceIntakeController < CorrespondenceController
   end
 
   def current_step
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence) ||
-             CorrespondenceIntake.new(user: current_user, correspondence: correspondence)
+    intake = CorrespondenceIntake.find_by(task: correspondence&.open_intake_task) ||
+             CorrespondenceIntake.new(task: correspondence&.open_intake_task)
 
     intake.update(
       current_step: params[:current_step],
@@ -58,7 +60,7 @@ class CorrespondenceIntakeController < CorrespondenceController
       # find the correspondence intake task even if it isn't assigned to the user
       intake_task = CorrespondenceIntakeTask.open.find_by(appeal_id: correspondence.id)
       intake_task.update!(status: Constants.TASK_STATUSES.cancelled)
-      ReviewPackageTask.create!(
+      ReviewPackageTask.find_or_create_by!(
         parent_id: intake_task.parent_id,
         assigned_to: intake_task.assigned_to,
         status: Constants.TASK_STATUSES.assigned,
