@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
-  def perform(work_order)
-    work_order[:hearings].each do |wo_hearing|
-      @hearing = ALLOWED_HEARING_KLASSES[wo_hearing[:hearing_type]].find(wo_hearing[:hearing_id])
+  def perform(hearing_types_and_ids)
+    hearing_types_and_ids.each do |hearing_type_and_id|
+      @hearing = ALLOWED_HEARING_KLASSES[hearing_type_and_id[:hearing_type]].find(hearing_type_and_id[:hearing_id])
       tmp_file_paths = fetch_transcription_files
       zip_file_path = zip(tmp_file_paths)
       formatted_zip_path = rename_before_upload(zip_file_path)
@@ -16,8 +16,8 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
 
   # Purpose: allow request params to interact with intended db tables only
   ALLOWED_HEARING_KLASSES = {
-    "Hearing" => "Hearing".constantize,
-    "LegacyHearing" => "LegacyHearing".constantize
+    Hearing.name => Hearing,
+    LegacyHearing.name => LegacyHearing
   }.freeze
 
   TRANSCRIPTION_FILE_TYPES = %w(mp3 rtf).freeze
@@ -50,7 +50,7 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
   #
   # Returns: String - the updated absolute file path
   def rename_before_upload(zip_file_path)
-    new_path = zip_file_path.sub(".", "-#{xor_checksum(zip_file_path)}-#{format_year(zip_file_path)}.")
+    new_path = zip_file_path.sub(".", "-#{xor_checksum(zip_file_path)}-#{format_creation_date(zip_file_path)}.")
     File.rename(zip_file_path, new_path)
     new_path
   end
@@ -64,7 +64,7 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
   end
 
   # Purpose: format zip file creation date as YYYYMMDD to use in the file name
-  def format_year(file_path)
+  def format_creation_date(file_path)
     File.ctime(file_path).strftime("%Y%m%d")
   end
 

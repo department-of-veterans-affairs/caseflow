@@ -14,16 +14,8 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
 
   let(:hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
   let(:legacy_hearings) { (1..5).map { create(:legacy_hearing, :with_transcription_files) } }
-  let(:work_order) do
-    {
-      work_order_name: "#1234567",
-      return_date: "12/12/2050",
-      contractor: "Example Contractor",
-      hearings: hearings_in_work_order(hearings + legacy_hearings)
-    }
-  end
 
-  subject { described_class.new.perform(work_order) }
+  subject { described_class.new.perform(hearings_in_work_order(hearings + legacy_hearings)) }
 
   after { cleanup_tmp_directories }
 
