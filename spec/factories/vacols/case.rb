@@ -269,6 +269,8 @@ FactoryBot.define do
           case_issue.issdc = "3"
           case_issue.save
         end
+
+        create(:case, bfdpdcn: vacols_case.bfddec)
       end
     end
 
