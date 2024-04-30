@@ -77,7 +77,7 @@ module VbmsDocumentTransactionConcern
   end
 
   def cleanup_up_file
-    File.delete(output_location)
+    File.delete(output_location) if File.exist?(output_location)
   end
 
   def log_info(info_message)
