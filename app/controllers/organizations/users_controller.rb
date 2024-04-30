@@ -3,7 +3,7 @@
 class Organizations::UsersController < OrganizationsController
   def index
     @permissions = organization.organization_permissions.select(
-      :permission, :description, :enabled, :parent_permission_id, :default_for_admin
+      :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
     org_users = OrganizationsUser.where(organization_id: organization.id)
     users_with_permissions = {}
@@ -53,7 +53,7 @@ class Organizations::UsersController < OrganizationsController
         organizations_user: target_user
       )
       org_user_permission.update!(permitted: false)
-      render json: { test: 'removed permission'}
+      render json: { checked: false }
 
     else
       org_user_permission = OrganizationUserPermission.find_or_create_by!(
@@ -62,7 +62,7 @@ class Organizations::UsersController < OrganizationsController
       )
       org_user_permission.permitted = true
       org_user_permission.save
-      render json: { test: 'added permission'}
+      render json: { checked: true }
     end
   end
 

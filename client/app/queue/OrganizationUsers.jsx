@@ -18,40 +18,14 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import Checkbox from '../components/Checkbox';
 
-// const topUserBorder = css({
-//   border: '.1rem solid gray',
-// });
 const buttonStyle = css({
   paddingRight: '1rem',
   display: 'inline-block',
   width: '100%'
 });
-// const buttonContainerStyle = css({
-//   // borderBottom: '1rem solid gray',
-//   borderWidth: '1px',
-//   padding: '.5rem 0 0',
-//   width: '100%'
-// });
 const listStyle = css({
   listStyle: 'none'
 });
-
-// const checkboxStyle = css({
-//   marginTop: '0px',
-//   marginBottom: '10px'
-// });
-
-// const NODcheckboxStyle = css({
-//   marginTop: '0',
-//   marginLeft: '25px',
-//   marginBottom: '10px'
-// });
-
-// const NODcheckboxStyle = css({
-//   marginTop: '0',
-//   marginLeft: '25px',
-//   marginBottom: '10px'
-// });
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -71,8 +45,30 @@ export default class OrganizationUsers extends React.PureComponent {
       removingUser: {},
       isVhaOrg: false,
       toggledAutoAssignmentCheckboxes: [],
-      toggledNodCheckboxes: []
+      toggledNodCheckboxes: [],
+      toggledCheckboxes: []
     };
+  }
+
+  updateToggledCheckBoxes = (userId, permissionName, checked) => {
+    const newData = { userId, permissionName, checked };
+    const stateCopy = this.state.toggledCheckboxes;
+
+    // check if the id and permission already exist in the state. Returns undefined if it didn't find a match.
+    const existsInState = this.state.toggledCheckboxes.findIndex((checkboxData) =>
+      checkboxData.userId === newData.userId && checkboxData.permissionName === newData.permissionName);
+
+    // add the item to state if it didn't exist, update it otherwise.
+    if (existsInState > -1) {
+      stateCopy[existsInState].checked = !stateCopy[existsInState].checked;
+      this.setState({
+        toggledCheckboxes: [...stateCopy]
+      });
+    } else {
+      this.setState({
+        toggledCheckboxes: [...[newData], ...stateCopy]
+      });
+    }
   }
 
   // http://localhost:3000/organizations/inbound-ops-team/test
@@ -80,7 +76,7 @@ export default class OrganizationUsers extends React.PureComponent {
     const payload = { data: { userId, permissionName } };
 
     ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).then((response) => {
-      console.log(response);
+      this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
     }, (error) => {
       // handle error
     });
@@ -88,8 +84,8 @@ export default class OrganizationUsers extends React.PureComponent {
 
   generatePermissionsCheckboxes = (id) => {
 
-    const checkPermissions = (id, permission) => {
-      const orgUserPermissions = this.props.orgnizationUserPermissions[id];
+    const checkPermissions = (checkboxId, permission) => {
+      const orgUserPermissions = this.props.orgnizationUserPermissions[checkboxId];
       let found = false;
 
       orgUserPermissions.forEach((oup) => {
@@ -101,6 +97,35 @@ export default class OrganizationUsers extends React.PureComponent {
       return found;
     };
 
+    const parentPermissionChecked = (userId, parentId) => {
+      if (typeof parentId !== 'number') {
+        return true;
+      }
+
+      let result = false;
+      const parentPermission = this.props.organizationPermissions.find((permission) => permission.id == parentId);
+      const orgUserPermissions = this.props.orgnizationUserPermissions[id];
+
+      // prioritize state
+      const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
+        permission.userId == userId &&
+      permission.permissionName == parentPermission.permission &&
+    permission.checked);
+
+      if (typeof checkboxInState !== 'undefined') {
+        result = true;
+      }
+
+      // check if it came in checked
+      orgUserPermissions.forEach((permission) => {
+        if (permission[0] === parentPermission.permission && permission[1]) {
+          result = true;
+        }
+      });
+
+      return result;
+    };
+
     return (
       this.props.organizationPermissions.map((permission) => {
         const marginL = permission.parent_permission_id ? '25px' : '0px';
@@ -110,7 +135,9 @@ export default class OrganizationUsers extends React.PureComponent {
           marginBottom: '10px'
         });
 
-        return (<Checkbox
+        parentPermissionChecked(id, permission.parent_permission_id);
+
+        return (parentPermissionChecked(id, permission.parent_permission_id) && <Checkbox
           name={`${id}-${permission.permission}`}
           label={permission.permission}
           key={`${id}-${permission.permission}`}
