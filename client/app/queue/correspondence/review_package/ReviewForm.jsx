@@ -205,20 +205,23 @@ export const ReviewForm = (props) => {
               </div>
 
             </div>
-            <div className= "veternal-name-styling-review-form ">
+            <div className="review-package-field-styling">
 
               <TextField
+                className={['review-package-text-input-read-only']}
                 label="Package document type"
                 value={checkIfNOD()}
                 readOnly
-                name="Veteran-name-display"
+                name="Veteran-NOD-display"
                 useAriaLabel
               />
 
             </div>
-            <div>
+            <div className="review-package-field-styling">
 
               <DateSelector
+                className={['review-package-date-input']}
+                class= "field-style-rp"
                 label="VA DOR"
                 name="date"
                 type="date"
@@ -240,8 +243,8 @@ export const ReviewForm = (props) => {
                 disabled={props.isReadOnly}
               />
             </div>
-            <div >
-                <SearchableDropdown
+            <div className="review-package-searchable-dropdown-div">
+              <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
                 options={generateOptions(props.reviewDetails.dropdown_values)}
@@ -299,6 +302,7 @@ ReviewForm.propTypes = {
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
+  correspondenceDocuments: PropTypes.array,
   handleReview: PropTypes.func,
   errorMessage: PropTypes.any,
   isReadOnly: PropTypes.bool,
