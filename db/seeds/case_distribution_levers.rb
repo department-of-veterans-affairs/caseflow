@@ -305,7 +305,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
@@ -339,7 +339,7 @@ module Seeds
                 text: "Omit variable from distribution rules"
               }
             ],
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3003
