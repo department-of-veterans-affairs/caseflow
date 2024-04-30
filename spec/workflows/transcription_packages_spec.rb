@@ -5,22 +5,29 @@ describe TranscriptionPackages do
     context "start to execute all jobs" do
       let(:hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
       let(:legacy_hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
-      let(:work_order) do
+      let(:work_order_params) do
         {
           work_order_name: "#1234567",
           return_date: "05/07/2024",
           contractor: "Contractor A",
-          hearings_list: hearings + legacy_hearings
+          hearings: hearings + legacy_hearings
         }
       end
-      subject { TranscriptionPackages.new(work_order).call }
+      subject { TranscriptionPackages.new(work_order_params) }
 
 
       it "Call to initialize method" do
-        subject.create_work_order
+        expect(subject.instance_variable_get(:@work_order_params)[:work_order_name]).to eq("#1234567")
+        expect(subject.instance_variable_get(:@work_order_params)[:return_date]).to eq("05/07/2024")
+        expect(subject.instance_variable_get(:@work_order_params)[:contractor]).to eq("Contractor A")
+        expect(subject.instance_variable_get(:@work_order_params)[:hearings]).to eq(hearings + legacy_hearings)
       end
 
-
+      it "Call to Call method " do
+        allow_any_instance_of(TranscriptionPackages).to receive(:create_work_order).and_return(true)
+        allow_any_instance_of(TranscriptionPackages).to receive(:create_zip_file).and_return(true)
+        expect { subject.call }.not_to raise_error
+      end
     end
   end
 end

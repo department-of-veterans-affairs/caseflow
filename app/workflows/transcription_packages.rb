@@ -8,8 +8,8 @@ class TranscriptionPackages
   include MailRequestValidator::DistributionDestination
 
 
-  def initialize(work_order)
-    @recipient_info = work_order
+  def initialize(work_order_params)
+    @work_order_params = work_order_params
   end
 
   def call
@@ -21,12 +21,12 @@ class TranscriptionPackages
 
   def create_work_order
     # call job work_order
-    Hearings::WorkOrderJob.perform(@recipient_info)
+    Hearings::WorkOrderJob.perform(@work_order_params)
   end
 
   def create_zip_file
     # call job to create a zip File
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform(@recipient_info.hearings_list)
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform(@work_order_params.hearings)
   end
 end
 
