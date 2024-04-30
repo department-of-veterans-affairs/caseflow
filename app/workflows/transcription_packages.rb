@@ -14,7 +14,7 @@ class TranscriptionPackages
 
   def call
     create_work_order
-    create_zipFile
+    create_zip_file
   end
 
   private
@@ -26,7 +26,7 @@ class TranscriptionPackages
 
   def create_zip_file
     # call job to create a zip File
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform(@recipient_info)
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform(@recipient_info.hearings_list)
   end
 end
 
