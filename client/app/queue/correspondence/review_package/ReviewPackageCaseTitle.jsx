@@ -98,7 +98,7 @@ const CaseSubTitleScaffolding = (props) => (
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div className="correspondence-drop-down-div">
-      { !props.isReadOnly &&
+      { (!props.isReadOnly && props.efolder) &&
       <SearchableDropdown
         options={[
           { value: 'splitPackage', label: 'Split package' },
@@ -133,6 +133,7 @@ CaseSubTitleScaffolding.propTypes = {
   mailTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
+  efolder: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool
 };
