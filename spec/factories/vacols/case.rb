@@ -270,7 +270,8 @@ FactoryBot.define do
           case_issue.save
         end
         
-        create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case)
+        create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case,
+        case_issues_equal: true, original_case_issues: vacols_case.case_issues)
       end
     end
 
@@ -429,6 +430,20 @@ FactoryBot.define do
           vacols_case.folder = evaluator.original_case.except("tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2",
           "tioctime", "tiocuser", "tidktime", "tidkuser")
           vacols_case.folder.save
+        end
+      end
+    end
+
+    transient do
+      case_issues_equal { false }
+      original_case_issues { [] }
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.case_issues_equal
+          original_case_issues.each do |case_issue, i|
+            vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser", "issmdtime", "issdc",
+            "issdcls")
+          end
         end
       end
     end
