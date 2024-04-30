@@ -11,7 +11,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
   describe "#process!" do
     subject { described_class }
 
-    context "when receiving an Event with request_issues" do
+    context "when receiving an Event with only request_issues" do
       it "should create CF RequestIssues and backfill records" do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
 
@@ -51,7 +51,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
-    context "when there are associated VACOLS Issues" do
+    context "when there are associated VACOLS Issues with the RequestIssues" do
       it "should create RequestIssues as well as LegacyIssues" do
         hash = JSON.parse(payload)
         hash["request_issues"][0]["vacols_id"] = "DRCTEST"
