@@ -10,8 +10,6 @@ const ExcludeDocketLever = (levers) => {
   let docketLever = levers.lever;
 
   const onChangeSelected = (lever) => (event) => {
-    console.log(lever)
-    console.log(event)
     const { item } = lever;
 
     dispatch(updateLeverValue(LEVER_GROUP, item, event));
@@ -28,19 +26,15 @@ const ExcludeDocketLever = (levers) => {
     }
   ];
 
-  const generateUniqueId = (leverItem, leverValue) => `${leverItem}-${leverValue}`;
-
-  console.log(docketLever)
   return (
     <span>
       <RadioField
-        name=""
+        name={docketLever.item}
+        hideLabel
         value={docketLever.value}
         options={options}
         onChange={onChangeSelected(docketLever)}
         vertical
-        uniqueIdGenerator={(option, index) =>
-          generateUniqueId(docketLever.item, docketLever.value)}
       />
     </span>
   );
