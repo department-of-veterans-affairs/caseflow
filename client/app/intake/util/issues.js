@@ -12,6 +12,12 @@ export const fakePendingData = [
     pending_decision_text: 'New Decision text',
     pending_decision_date: '2024-01-30',
     request_reason: 'This is my reason.',
+  },
+  {
+    request_issue_id: '5636',
+    pending_request_type: 'Withdrawl',
+    withdrawl_request_date: '2024-01-30',
+    request_reason: 'This is my reason.'
   }
 ];
 

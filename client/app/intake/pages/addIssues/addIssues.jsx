@@ -284,7 +284,6 @@ class AddIssuesPage extends React.Component {
     const issuesBySection = formatIssuesBySection(issues);
     const pendingIssuesBySection = formatPendingIssuesBySection(fakePendingData);
 
-
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -461,13 +460,9 @@ class AddIssuesPage extends React.Component {
 
     const issuesObj = { ...issuesBySection, ...pendingIssuesBySection };
 
-    console.log(issuesBySection);
-    console.log(issuesObj);
-
-    Object.keys(issuesObj.requestedIssues).sort().
-    // Object.keys(issuesBySection).sort().
+    Object.keys(issuesObj).sort().
       map((key) => {
-        const sectionIssues = issuesBySection[key];
+        const sectionIssues = issuesObj[key];
         const endProductCleared = sectionIssues[0]?.endProductCleared;
         const issueSectionRowProps = {
           editPage,
@@ -511,7 +506,7 @@ class AddIssuesPage extends React.Component {
             }),
           );
         }
-        console.log(rowObjects);
+
         return rowObjects;
       });
 
