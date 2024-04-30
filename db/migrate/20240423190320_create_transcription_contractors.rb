@@ -9,8 +9,7 @@ class CreateTranscriptionContractors < ActiveRecord::Migration[6.0]
       t.boolean :is_available_for_work, default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
       t.integer :previous_goal, default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
       t.integer :current_goal, default: 0, comment: "The current weeks goal of hearings to send for transcribing"
-      t.boolean :inactive, default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
-
+      t.boolean :inactive, default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
       t.timestamps
     end
 
