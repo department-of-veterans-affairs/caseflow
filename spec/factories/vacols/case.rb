@@ -269,8 +269,8 @@ FactoryBot.define do
           case_issue.issdc = "3"
           case_issue.save
         end
-
-        create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7")
+        
+        create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case)
       end
     end
 
@@ -416,6 +416,19 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         if evaluator.remand_return_date
           create(:priorloc, lockey: vacols_case.bfkey, locstto: "96", locdout: evaluator.remand_return_date)
+        end
+      end
+    end
+
+    transient do
+      folder_number_equal { false }
+      original_case { nil }
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.folder_number_equal
+          vacols_case.folder = evaluator.original_case.except("tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2",
+          "tioctime", "tiocuser", "tidktime", "tidkuser")
+          vacols_case.folder.save
         end
       end
     end
