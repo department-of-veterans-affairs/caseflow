@@ -154,21 +154,21 @@ class BusinessLine < Organization
       appeals_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(ama_appeal: :request_issues)
-        .joins(pending_request_issues_join)
+        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(pending_issue_filter(query_type))
+        .where(issue_modification_request_filter)
       hlr_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(supplemental_claim: :request_issues)
-        .joins(pending_request_issues_join)
+        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(pending_issue_filter(query_type))
+        .where(issue_modification_request_filter)
       sc_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(higher_level_review: :request_issues)
-        .joins(pending_request_issues_join)
+        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(pending_issue_filter(query_type))
+        .where(issue_modification_request_filter)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
@@ -199,7 +199,7 @@ class BusinessLine < Organization
     end
 
     def pending_issue_count
-      "COUNT(pending_request_issues.id) AS pending_issue_count"
+      "COUNT(issue_modification_requests.id) AS pending_issue_count"
     end
     # rubocop:enable Metrics/AbcSize
 
@@ -569,16 +569,16 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
-    def pending_request_issues_join
-      "LEFT JOIN pending_request_issues on pending_request_issues.decision_review_id = tasks.appeal_id
-        AND pending_request_issues.decision_review_type = tasks.appeal_type"
+    def issue_modification_request_join
+      "LEFT JOIN issue_modification_requests on issue_modification_requests.decision_review_id = tasks.appeal_id
+        AND issue_modification_requests.decision_review_type = tasks.appeal_type"
     end
 
     # :reek:ControlParameter
-    def pending_issue_filter(query_type)
-      return if query_type != :pending
+    def issue_modification_request_filter
+      return if @query_type != :pending
 
-      "pending_request_issues.id IS NOT NULL"
+      "issue_modification_requests.id IS NOT NULL AND COALESCE(issue_modification_requests.status, 'assigned') = 'assigned' "
     end
 
     def union_query_join_clauses
@@ -589,7 +589,7 @@ class BusinessLine < Organization
         unrecognized_appellants_join,
         party_details_join,
         bgs_attorneys_join,
-        pending_request_issues_join
+        issue_modification_request_join
       ]
     end
 
@@ -666,7 +666,7 @@ class BusinessLine < Organization
         .where(where_constraints)
         .where(search_all_clause, *search_values)
         .where(issue_type_filter_predicate(query_params[:filters]))
-        .where(pending_issue_filter(query_type))
+        .where(issue_modification_request_filter)
         .group(group_by_columns)
         .arel
     end
