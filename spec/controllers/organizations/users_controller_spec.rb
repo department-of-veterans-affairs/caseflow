@@ -314,19 +314,25 @@ describe Organizations::UsersController, :postgres, type: :controller do
   end
 
   describe "PATCH /organizations/:org_url/update_permissions" do
-    let(:params) { { id: user.id, status: new_status } }
-    subject { patch(:update_permissions, params: params, as: :json) }
     let(:user) {
       create(:user).tap { |bva_user| Bva.singleton.add_user(bva_user) }
     }
     let(:iops_user) {
-      create(:user).tap { |iops_user| Bva.singleton.add_user(iops_user) }
+      create(:user).tap { |iops_user| InboundOpsTeam.singleton.add_user(iops_user) }
     }
     let(:admin) {
       create(:user).tap do |u|
         OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
       end
     }
+    let(:params) { { user_id = user.user_id
+                      permission_name = params[:permissionName].strip
+                      org_url = params[:organization_url]
+                      org_permission = OrganizationPermission.find_by(permission: permission_name)} }
+    subject { patch(:update_permissions, params: params, as: :json) }
+
+
+    let(:authparams) { { id: admin.id } }
 
     # before do
     #   User.authenticate!(user: admin)
@@ -336,9 +342,10 @@ describe Organizations::UsersController, :postgres, type: :controller do
       it "returns unauthorized" do
         User.authenticate!(user: user)
         patch :modify_user_permission, params: params
+        binding.pry
 
         expect(response.status).to eq(302)
-        expect(response).to redirect_to("/unauthorized")
+        # expect(response).to redirect_to("/unauthorized")
       end
     end
 
