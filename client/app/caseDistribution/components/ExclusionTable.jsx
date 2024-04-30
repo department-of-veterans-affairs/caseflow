@@ -1,19 +1,16 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import RadioField from 'app/components/RadioField';
 import cx from 'classnames';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
-import { updateLeverValue } from '../reducers/levers/leversActions';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import ExcludeDocketLever from './ExcludeDocketLever';
 
 const ExclusionTable = () => {
   const theState = useSelector((state) => state);
-  const dispatch = useDispatch();
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
-  const LEVER_GROUP = ACD_LEVERS.lever_groups.docket_levers;
 
   const getOptionData = () => {
     let options = theState.caseDistributionLevers.levers.docket_levers.map((opt) => ({
@@ -33,13 +30,6 @@ const ExclusionTable = () => {
     return optionData.find((opt) => opt.item === item);
   };
 
-  const onChangeSelected = (lever) => (event) => {
-    // eslint-disable-next-line camelcase
-    const { item } = lever;
-
-    dispatch(updateLeverValue(LEVER_GROUP, item, event));
-  };
-
   const options = [
     { displayText: 'On',
       value: 'true',
@@ -52,9 +42,6 @@ const ExclusionTable = () => {
   ];
 
   const generateUniqueId = (leverItem, optionValue, index) => `${leverItem}-${optionValue}-${index}`;
-
-  onChangeSelected(filterOption(DISTRIBUTION.disable_ama_non_priority_hearing));
-  // console.log(optionData);
 
   return (
     <div className="exclusion-table-container-styling">
@@ -101,60 +88,30 @@ const ExclusionTable = () => {
               <td className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
-                <span>
-                  <RadioField
-                    name=""
-                    value={filterOption(DISTRIBUTION.disable_legacy_non_priority).value}
-                    options={options}
-                    onChange={onChangeSelected(filterOption(DISTRIBUTION.disable_legacy_non_priority))}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
+                <ExcludeDocketLever
+                  lever={filterOption(DISTRIBUTION.disable_legacy_non_priority)}
+                />
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
-                <span>
-                  <RadioField
-                    name=""
-                    value={filterOption(DISTRIBUTION.disable_ama_non_priority_hearing).value}
-                    options={options}
-                    onChange={onChangeSelected(filterOption(DISTRIBUTION.disable_ama_non_priority_hearing))}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
+                <ExcludeDocketLever
+                  lever={filterOption(DISTRIBUTION.disable_ama_non_priority_hearing)}
+                />
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
-                <span>
-                  <RadioField
-                    name=""
-                    value={filterOption(DISTRIBUTION.disable_ama_non_priority_direct_review).value}
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
+                <ExcludeDocketLever
+                  lever={filterOption(DISTRIBUTION.disable_ama_non_priority_direct_review)}
+                />
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
-                <span>
-                  <RadioField
-                    name=""
-                    value={filterOption(DISTRIBUTION.disable_ama_non_priority_evidence_sub).value}
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
+                <ExcludeDocketLever
+                  lever={filterOption(DISTRIBUTION.disable_ama_non_priority_evidence_sub)}
+                />
               </td>
             </tr>
             <tr>
