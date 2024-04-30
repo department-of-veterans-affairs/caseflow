@@ -117,6 +117,7 @@ plugins:
 
 exclude_patterns:
   - 'db/schema.rb'
+  - 'db/etl_schema.rb'
   - 'db/seeds.rb'
   - 'db/scripts/*'
   - 'node_modules/**/*'
