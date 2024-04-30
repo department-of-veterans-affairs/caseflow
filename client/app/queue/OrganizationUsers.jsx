@@ -75,18 +75,32 @@ export default class OrganizationUsers extends React.PureComponent {
     };
   }
 
-  //http://localhost:3000/organizations/inbound-ops-team/test
+  // http://localhost:3000/organizations/inbound-ops-team/test
   modifyUserPermission = (userId, permissionName) => () => {
     const payload = { data: { userId, permissionName } };
 
     ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).then((response) => {
-      console.log(response)
+      console.log(response);
     }, (error) => {
-      //handle error
+      // handle error
     });
   }
 
   generatePermissionsCheckboxes = (id) => {
+
+    const checkPermissions = (id, permission) => {
+      const orgUserPermissions = this.props.orgnizationUserPermissions[id];
+      let found = false;
+
+      orgUserPermissions.forEach((oup) => {
+        if (oup[0] === permission && oup[2] === Number(id) && oup[1]) {
+          found = true;
+        }
+      });
+
+      return found;
+    };
+
     return (
       this.props.organizationPermissions.map((permission) => {
         const marginL = permission.parent_permission_id ? '25px' : '0px';
@@ -102,6 +116,7 @@ export default class OrganizationUsers extends React.PureComponent {
           key={`${id}-${permission.permission}`}
           styling={NODcheckboxStyle}
           onChange={this.modifyUserPermission(id, permission.permission)}
+          defaultValue={checkPermissions(id, permission.permission)}
         />);
       })
     );
@@ -326,7 +341,6 @@ export default class OrganizationUsers extends React.PureComponent {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    // const listOfUsers = this.state.organizationUsers.map((user, i) => {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       const { dvc, admin } = user.attributes;
 
@@ -459,5 +473,6 @@ export default class OrganizationUsers extends React.PureComponent {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string,
-  organizationPermissions: PropTypes.array
+  organizationPermissions: PropTypes.array,
+  orgnizationUserPermissions: PropTypes.array
 };

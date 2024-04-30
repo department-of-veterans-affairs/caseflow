@@ -5,6 +5,19 @@ class Organizations::UsersController < OrganizationsController
     @permissions = organization.organization_permissions.select(
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin
     )
+    org_users = OrganizationsUser.where(organization_id: organization.id)
+    users_with_permissions = {}
+    org_users.each do |org_user|
+      user = org_user.user
+      org_user_permissions = OrganizationUserPermission.includes(
+        :organization_permission, :organizations_user
+      )
+        .where(organizations_user_id: org_user.id).pluck(:permission, :permitted, :user_id)
+      users_with_permissions[user[:id]] = org_user_permissions
+    end
+
+    # binding.pry
+    @user_permissions = users_with_permissions
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
@@ -39,18 +52,16 @@ class Organizations::UsersController < OrganizationsController
         organization_permission: org_permission,
         organizations_user: target_user
       )
-      org_user_permission.delete
-
-      # alternate version. instead of deleting we just set this to false to flag the permission as disabled.
-      # org_user_permission.update!(permitted: false)
+      org_user_permission.update!(permitted: false)
       render json: { test: 'removed permission'}
 
     else
-      OrganizationUserPermission.find_or_create_by!(
+      org_user_permission = OrganizationUserPermission.find_or_create_by!(
         organization_permission: org_permission,
-        organizations_user: target_user,
-        permitted: true
+        organizations_user: target_user
       )
+      org_user_permission.permitted = true
+      org_user_permission.save
       render json: { test: 'added permission'}
     end
   end
