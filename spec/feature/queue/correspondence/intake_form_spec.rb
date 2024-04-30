@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
 RSpec.feature("The Correspondence Intake page") do
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
   let(:correspondence) { create :correspondence }
+  let(:correspondence_intake_task) do
+    create(
+      :correspondence_intake_task,
+      appeal: correspondence,
+      appeal_type: Correspondence.name,
+      assigned_to: mail_user
+    )
+  end
 
   before do
+    # reload in case of controller validation triggers before data created
+    correspondence_intake_task.reload
     organization.add_user(mail_user)
     mail_user.reload
   end

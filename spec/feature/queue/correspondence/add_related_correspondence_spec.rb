@@ -3,7 +3,7 @@
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   include CorrespondenceHelpers
 
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   before(:each) do
@@ -14,7 +14,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
   context "No related correspondence" do
     it "Displays the expected content" do
-      visit_intake_form
+      visit_intake_form_with_correspondence_load
 
       expect(page).to have_content("Add Related Correspondence")
       expect(page).to have_content("Add any related correspondence to the mail package that is in progress.")
@@ -27,7 +27,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
     end
 
     it "Continue button is active" do
-      visit_intake_form
+      visit_intake_form_with_correspondence_load
 
       expect(page.has_button?("Continue")).to be(true)
     end

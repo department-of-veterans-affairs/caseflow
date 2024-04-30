@@ -2,7 +2,7 @@
 
 RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
   before do

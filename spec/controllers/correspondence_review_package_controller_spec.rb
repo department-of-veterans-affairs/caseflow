@@ -39,7 +39,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       User.authenticate!(user: current_user)
       put :update_cmp, params: {
         correspondence_uuid: correspondence.uuid,
-        VADORDate: Time.now,
+        VADORDate: Time.zone.now,
         packageDocument: { value: "1" }
       }
     end
@@ -69,7 +69,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
       doc_types.each do |doc_type|
         expect(doc_type).to be_a(Hash)
-        expect(doc_type.keys.include?(:name)).to eq true
+        expect(doc_type.key?(:name)).to eq true
       end
 
       names_from_db = PackageDocumentType.pluck(:name)
