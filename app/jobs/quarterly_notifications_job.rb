@@ -16,8 +16,8 @@ class QuarterlyNotificationsJob < CaseflowJob
   def perform
     ensure_current_user_is_set
 
-    AppealState.where.not(
-      decision_mailed: true, appeal_cancelled: true
+    AppealState.where(
+      decision_mailed: false, appeal_cancelled: false
     ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
       batched_appeal_states.each do |appeal_state|
         status = appeal_state.quarterly_notification_status
