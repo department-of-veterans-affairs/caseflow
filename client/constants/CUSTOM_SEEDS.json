@@ -1,6 +1,6 @@
 {
-  "seed-ama-aod-hearing": "Seed AMA AOD Hearing",
-  "seed-ama-non-aod-hearing": "Seed AMA NON AOD Hearing",
-  "seed-legacy-cases": "Seed Legacy Cases",
-  "seed-ama-direct-review": "Seed AMA Direct Review"
+  "ama-aod-hearing-seeds": "Seed AMA AOD Hearing",
+  "ama-non-aod-hearing-seeds": "Seed AMA NON AOD Hearing",
+  "legacy-case-seeds": "Seed Legacy Cases",
+  "ama-direct-review-seeds": "Seed AMA Direct Review"
 }
