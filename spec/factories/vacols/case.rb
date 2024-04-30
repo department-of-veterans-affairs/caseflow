@@ -270,7 +270,7 @@ FactoryBot.define do
           case_issue.save
         end
 
-        create(:case, bfdpdcn: vacols_case.bfddec)
+        create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7")
       end
     end
 
