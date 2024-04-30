@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
-  def perform(hearing_types_and_ids)
-    hearing_types_and_ids.each do |hearing_type_and_id|
-      @hearing = ALLOWED_HEARING_KLASSES[hearing_type_and_id[:hearing_type]].find(hearing_type_and_id[:hearing_id])
+  def perform(hearing_lookup_hashes)
+    hearing_lookup_hashes.each do |hearing_lookup_hash|
+      @hearing = ALLOWED_HEARING_KLASSES[hearing_lookup_hash[:hearing_type]].find(hearing_lookup_hash[:hearing_id])
       tmp_file_paths = fetch_transcription_files
       zip_file_path = zip(tmp_file_paths)
       formatted_zip_path = rename_before_upload(zip_file_path)
