@@ -402,9 +402,21 @@ export const formatIssuesBySection = (issues) => {
         (result.withdrawnIssues || (result.withdrawnIssues = [])).push(issue);
       } else if (issue.endProductCode) {
         (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
+      // } else if (issue.) {
+      //   (result.pendingAdminReview || (result.pendingAdminReview = [])).push(issue)
       } else {
         (result.requestedIssues || (result.requestedIssues = [])).push(issue);
       }
+
+      return result;
+    }, {}
+  );
+};
+
+export const formatPendingIssuesBySection = (pendingIssues) => {
+  return pendingIssues.reduce(
+    (result, pendingIssue) => {
+      (result.pendingAdminReview || (result.pendingAdminReview = [])).push(pendingIssue);
 
       return result;
     }, {}

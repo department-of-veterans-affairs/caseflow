@@ -27,6 +27,7 @@ import { formatAddedIssues,
   formatIssuesBySection,
   formatLegacyAddedIssues,
   formatPendingRequestIssues,
+  formatPendingIssuesBySection,
   fakePendingData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
@@ -279,7 +280,10 @@ class AddIssuesPage extends React.Component {
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
+
     const issuesBySection = formatIssuesBySection(issues);
+    const pendingIssuesBySection = formatPendingIssuesBySection(fakePendingData);
+
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -455,7 +459,13 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    Object.keys(issuesBySection).sort().
+    const issuesObj = { ...issuesBySection, ...pendingIssuesBySection };
+
+    console.log(issuesBySection);
+    console.log(issuesObj);
+
+    Object.keys(issuesObj.requestedIssues).sort().
+    // Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
         const endProductCleared = sectionIssues[0]?.endProductCleared;
@@ -469,7 +479,6 @@ class AddIssuesPage extends React.Component {
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
           withdrawReview,
-          fakePendingData
         };
 
         if (key === 'requestedIssues') {
@@ -502,10 +511,11 @@ class AddIssuesPage extends React.Component {
             }),
           );
         }
-
+        console.log(rowObjects);
         return rowObjects;
       });
 
+    // Object.keys(iss)
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
     const hideAddIssueButton = (intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues)) ||
