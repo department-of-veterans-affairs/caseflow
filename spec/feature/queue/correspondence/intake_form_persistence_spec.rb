@@ -26,7 +26,6 @@ RSpec.feature("Persistence of the intake correspondence page") do
     it "updates the correspondence_intake record when visiting step 2" do
       visit_intake_form_step_2_with_appeals
       correspondence = Correspondence.first
-      binding.pry
       expect(page).to have_content("Continue")
 
       expect(CorrespondenceIntake.find_by(task: correspondence&.open_intake_task).current_step).to eq(2)
