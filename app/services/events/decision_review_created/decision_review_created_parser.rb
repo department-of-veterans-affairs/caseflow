@@ -45,7 +45,14 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    logical_date_int.nil? ? nil : Time.at(logical_date_int.to_i).to_date
+    return nil if logical_date_int.nil?
+
+    date_str = logical_date_int.to_s
+    if date_str =~ /\A(\d{4})(\d{2})(\d{2})\z/
+      Date.new($1.to_i, $2.to_i, $3.to_i)
+    else
+      nil  # Return nil if the format does not match
+    end
   end
 
   def css_id
