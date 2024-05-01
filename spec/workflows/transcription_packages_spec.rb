@@ -15,7 +15,6 @@ describe TranscriptionPackages do
       end
       subject { TranscriptionPackages.new(work_order_params) }
 
-
       it "Call to initialize method" do
         expect(subject.instance_variable_get(:@work_order_params)[:work_order_name]).to eq("#1234567")
         expect(subject.instance_variable_get(:@work_order_params)[:return_date]).to eq("05/07/2024")
