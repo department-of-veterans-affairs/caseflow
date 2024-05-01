@@ -54,6 +54,8 @@ class QuarterlyNotificationsJob < CaseflowJob
 
             Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
               "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
+
+            log_error(error)
           end
         end
       end
