@@ -9,6 +9,9 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
@@ -35,7 +38,7 @@ class Docket
   end
 
   def ready_priority_nonpriority_appeals(priority = false)
-    priority_status = priority ? "priority" : "non_priority"
+    priority_status = priority ? PRIORITY : NON_PRIORITY
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value

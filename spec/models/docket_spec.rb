@@ -294,7 +294,9 @@ describe Docket, :all_dbs do
       end
 
       it "returns an empty array when the corresponding CaseDistributionLever value is true" do
-        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: true)
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: "true")
+        lever = CaseDistributionLever.find_by_item("disable_ama_non_priority_direct_review")
+        expect(lever.value).to eq("true")
         result = docket.ready_priority_nonpriority_appeals(false)
         expect(result).to eq([])
       end
