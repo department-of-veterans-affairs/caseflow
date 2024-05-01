@@ -162,31 +162,46 @@ $translate: 11%;
     td {
       border: 0;
       background-color: $caseflow-background;
-      padding-top: 2rem;
       padding-bottom: 0;
+    }
+
+    th {
+      width: 25%;
     }
 
     td {
       margin: 2px;
       padding-top: 0;
       padding-bottom: 25px;
-      }
+      width: 25%;
+    }
+
+    .corr-table-borderless-first-item {
+      padding-left: 30px;
+    }
+
+    .corr-table-borderless-last-item {
+      padding-right: 30px;
+    }
   }
 
 }
 
-.a-r-h1{
-  margin-bottom: 20px
+.a-r-h1 {
+  margin-bottom: 20px;
 }
-.a-r-p1{
-  margin-top: 0px
+
+.a-r-p1 {
+  margin-top: 0;
 }
-.a-r-h2{
-  margin: 30px auto 20px auto
+
+.a-r-h2 {
+  margin: 30px auto 20px;
 }
-.a-r-p2{
-  margin-top: 0px;
-  margin-bottom: -7px
+
+.a-r-p2 {
+  margin-top: 0;
+  margin-bottom: -7px;
 }
 
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
@@ -194,8 +209,9 @@ $translate: 11%;
 }
 
 .cmp-document-border {
-  border: 1px solid #dee2e6
+  border: 1px solid #dee2e6;
 }
+
 .cmp-document-pagination-style {
   margin-top: 2%;
   margin-left: 1.5%;
@@ -203,16 +219,16 @@ $translate: 11%;
 
 .correspondence-document-table-data-filled {
   background: #0071bc;
-  color: white;
+  color: #ffffff;
 }
 
 .correspondence-document-table-data-empty {
-  background: white;
+  background: #ffffff;
   color: #0071bc;
 }
 
 .correspondence-intake-appeal-button {
-  margin-right: 2rem !important
+  margin-right: 2rem !important;
 }
 
 .main-div-review-form {
@@ -233,7 +249,7 @@ $translate: 11%;
   gap: 12%;
 
   @media (max-width: 600px) {
-    width: 100%
+    width: 100%;
   }
 }
 
@@ -243,12 +259,13 @@ $translate: 11%;
   flex-direction: column;
 
   @media (max-width: 600px) {
-    width: '100%'
+    width: '100%';
   }
 }
 
 .veternal-file-styling-review-form {
   width: 40%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -257,6 +274,7 @@ $translate: 11%;
 .error-veternal-file-styling-review-form {
   width: 48%;
   margin-top: -6.4rem;
+
   @media (max-width: 1599px) {
     width: 58%;
   }
@@ -264,6 +282,7 @@ $translate: 11%;
 
 .veternal-name-styling-review-form {
   width: 60%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -272,6 +291,7 @@ $translate: 11%;
 .input-styling-review-form {
   display: flex;
   gap: 5%;
+
   @media (max-width: 1081px) {
     flex-direction: column;
   }
@@ -293,12 +313,13 @@ $translate: 11%;
 .review-form-title-style {
   display: flex;
   gap: 20px;
+  margin-top: 20px;
 }
 
-.correspondence-case-title-header-containing-div-styling{
+.correspondence-case-title-header-containing-div-styling {
   display: block;
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
-  margin: -2rem -4rem 0 -4rem;
+  margin: -2rem -4rem 0;
   padding: 0 0 1.5rem 4rem;
 
   & > * {
@@ -307,37 +328,37 @@ $translate: 11%;
   }
 }
 
-.correspondence-review-package-case-title-header-styling{
+.correspondence-review-package-case-title-header-styling {
   padding-right: 2.5rem;
 }
 
-.correspondence-review-package-case-title-remove-button{
+.correspondence-review-package-case-title-remove-button {
   float: right !important;
   margin-right: 2rem !important;
 }
 
-.correspondence-review-package-case-title-button-styling{
+.correspondence-review-package-case-title-button-styling {
   margin-right: 2rem !important;
   padding: 15px;
   font-size: larger;
 }
 
-.correspondence-list-styling{
+.correspondence-list-styling {
   list-style-type: none;
   vertical-align: super;
-  padding: 0 0 4rem 0;
+  padding: 0 0 4rem;
   display: flex;
   flex-wrap: wrap;
 }
 
-.correspondence-column-styling{
+.correspondence-column-styling {
   flex-basis: 0;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
 }
 
-.correspondence-drop-down-div{
+.correspondence-drop-down-div {
   margin-top: -10px;
   flex-basis: 0;
   -webkit-box-flex: 1;
@@ -347,36 +368,40 @@ $translate: 11%;
 }
 
 // PDF Document Viewer is 800px wide or less.
-.correspondence-pdf-tool-bar{
-
+.correspondence-pdf-tool-bar {
   width: 33%;
 
-  &.toolbar-left{
+  &.toolbar-left {
+
     @media(max-width: 1165px) {
       width: 18%;
     }
-
   }
-  &.toolbar-center{
+
+  &.toolbar-center {
+
     @media(max-width: 1165px) {
       width: 18%;
     }
-
   }
-  &.toolbar-right{
+
+  &.toolbar-right {
     text-align: right;
-    @media(max-width: 1165px){
+
+    @media(max-width: 1165px) {
       width: 44%;
-        & .cf-pdf-button-text { display: none } }
+      & .cf-pdf-button-text { display: none; } }
   }
 }
 
-.correspondence-rp-list-item-styling{
+.correspondence-rp-list-item-styling {
   display: inline-block;
   padding: 0.5rem 1.5rem 0.5rem 0;
+
   & > * {
-    padding-right: 1.5rem
+    padding-right: 1.5rem;
   }
+
   & > p {
     font-weight: bold;
     font-size: 17px;
@@ -385,57 +410,57 @@ $translate: 11%;
     color: #323a45;
     line-height: 1.3;
   }
-  & > div { min-height: '22px' }
+
+  & > div { min-height: '22px'; }
 }
 
-.correspondence-rp-h2-right-style{
+.correspondence-rp-h2-right-style {
   margin-right: 20px;
 }
 
-.correspondence-rp-outer-div-style{
+.correspondence-rp-outer-div-style {
   display: inline-flex;
-
 }
+
 .add-related-correspondence {
   border: 2px solid $color-gray-lighter;
-
-    margin-bottom: 5rem;
-    padding: 3rem 4rem
-
+  margin-bottom: 5rem;
+  padding: 3rem 4rem;
 }
 
-.modal-fwb{
-  font-weight: bold
+.modal-fwb {
+  font-weight: bold;
 }
 
-.associated-prior-mail-empty{
+.associated-prior-mail-empty {
   margin-bottom: 150px;
-  font-weight: bold
+  font-weight: bold;
 }
 
 
 .table-latitude {
   width: 100%;
   padding-top: 1px;
-  margin: 0px;
+  margin: 0;
 
   thead {
-      th {
-          padding-inline-end: 15px;
-          padding-top: 10px;
-      }
+    th {
+      padding-inline-end: 15px;
+      padding-top: 10px;
+    }
   }
+
   tbody {
-      tr {
-          td {
-              padding-left: 15px;
-              background-color: #f9f9f9;
-              border-bottom: none;
-              border-color: #d6d7d9;
-              padding-top: 0vh;
-              padding-bottom: 0vh;
-          }
+    tr {
+      td {
+        padding-left: 15px;
+        background-color: $caseflow-background;
+        border-bottom: none;
+        border-color: #d6d7d9;
+        padding-top: 0;
+        padding-bottom: 0;
       }
+    }
   }
 }
 
@@ -446,23 +471,23 @@ $translate: 11%;
 
 .completed-mail-tasks {
   border-bottom: 1px solid #d6d7d9;
-  padding-left: 0px;
+  padding-left: 0;
   padding-bottom: 10px;
   padding-top: 10px;
   margin-bottom: 10px;
   list-style-type: none;
 
-  &:last-child{
+  &:last-child {
     border: none;
   }
 }
 
 .somthing-new {
-  padding-bottom: 0px;
-  padding-top: 0px;
+  padding-bottom: 0;
+  padding-top: 0;
   width: 100%;
 
-  &:first-child{
+  &:first-child {
     padding-top: 5px;
   }
 }
@@ -470,31 +495,25 @@ $translate: 11%;
 .completed-mail-tasks-title {
 
   border-bottom: 1px solid #d6d7d9;
-  padding: 10px 0px;
+  padding: 10px 0;
   margin-bottom: 20px;
   font-weight: bold;
 }
 
 .review-and-confirm-title-div-style {
 
-  background-color: #f9f9f9;
-  padding: 20px;
-}
-
-.review-and-confirm-title-div-style {
-
-  background-color: #f9f9f9;
+  background-color: $caseflow-background;
   padding: 20px;
 }
 
 .review-and-confirm-title-div-color {
 
-  background-color: #f9f9f9;
+  background-color: $caseflow-background;
 }
 
 .correspondence-table-builder-margin {
-  margin-bottom: 0rem;
-  margin-top: 0px;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 .correspondence-table-builder-filter-style {
@@ -509,11 +528,11 @@ $translate: 11%;
 }
 
 .correspondence-table-builder-searchable-button-position {
-  margin-left: 2rem
+  margin-left: 2rem;
 }
 
 .correspondence-table-builder-searchable-auto-assign-button-position {
-  margin-left: auto
+  margin-left: auto;
 }
 
 .correspondence-table-builder-searchable-dropdown-style .cf-select .cf-select__value-container {
@@ -526,10 +545,10 @@ $translate: 11%;
 
 .correspondence-table-builder-filter-bar-position {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
-.checkbox-modal-style .cf-modal-body{
+.checkbox-modal-style .cf-modal-body {
   width: 50%;
   min-width: 750px;
 }
@@ -537,18 +556,14 @@ $translate: 11%;
 .checkbox-modal-size {
   display: flex;
   flex-direction: column;
-  overflow-y:  scroll;
+  overflow-y: scroll;
   max-height: 400px;
-  padding-left: 1%;
-  margin-left: 100px;
-  padding-right: 10px;
-  padding-top: 0%;
+  padding: 0% 10px 1%;
   width: 73%;
   overflow-x: hidden;
   transform: scale(1.3);
   translate: 0%;
-  margin-top: 80px;
-  margin-bottom: 50px;
+  margin: 80px auto 50px 100px;
 }
 
 .confirm-correspondence-view-border {

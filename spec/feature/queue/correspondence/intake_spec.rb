@@ -5,9 +5,18 @@ RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceTaskHelpers
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
 
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
   let(:unauthorized_user) { create(:user) }
+  let(:correspondence) { create :correspondence }
+  let(:correspondence_intake_task) do
+    create(
+      :correspondence_intake_task,
+      appeal: correspondence,
+      appeal_type: Correspondence.name,
+      assigned_to: mail_user
+    )
+  end
 
   context "correspondence intake form access" do
     before :each do
@@ -31,22 +40,11 @@ RSpec.feature("The Correspondence Intake page") do
   before :each do
     organization.add_user(mail_user)
     mail_user.reload
+    # reload in case of controller validation triggers before data created
+    correspondence_intake_task.reload
   end
 
   context "intake form feature toggle" do
-    before :each do
-      CorrespondenceType.create!(
-        name: "a correspondence type"
-      )
-      PackageDocumentType.create!
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-    end
-
     it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       User.authenticate!(user: mail_user)
@@ -127,18 +125,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "The mail team user is able to add unrelated tasks" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      CorrespondenceType.create!(
-        name: "a correspondence type"
-      )
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
       click_on("button-continue")
     end
 
@@ -218,7 +205,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(4)
+        expect(all("button > span", text: "Edit Section").length).to eq(5)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -227,7 +214,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        all("button > span", text: "Edit Section")[1].click
+        all("button > span", text: "Edit Section")[2].click
         expect(page).to have_content("Review Tasks & Appeals")
         expect(page).to have_content("Tasks not related to an Appeal")
       end
@@ -240,14 +227,7 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      create(
-        :correspondence,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
       click_on("button-continue")
       click_on("+ Add tasks")
     end
@@ -265,7 +245,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Cancel").length
+      cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
     end
 
@@ -274,8 +254,8 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
-      find_by_id("Add-autotext-button-id-close").click
-      cancel_count = all("#button-Cancel").length
+      find(".cf-icon-close").click
+      cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
     end
 
@@ -360,6 +340,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       correspondence = create(:correspondence)
       create_correspondence_intake(correspondence, current_user)
+      correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     end
 
     it "successfully loads the in progress tab" do
@@ -374,7 +355,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       intake_path = current_path
       click_on("button-Return-to-queue")
-      page.all(".cf-form-radio-option")[3].click
+      page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
       expect(page).to have_content("You have successfully saved the intake form")
       visit "/queue/correspondence?tab=correspondence_in_progress"
@@ -387,7 +368,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "checks for failed to upload to the eFolder banner after navigating away from page" do
     let(:current_user) { create(:user) }
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
 
@@ -416,6 +397,8 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
       click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[1].click
+      click_on("Return-To-Queue-button-id-1")
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end
