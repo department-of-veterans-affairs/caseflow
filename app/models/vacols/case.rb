@@ -18,6 +18,8 @@ class VACOLS::Case < VACOLS::Record
   has_many   :decision_quality_reviews, foreign_key: :qrfolder
   has_many   :mail,            foreign_key: :mlfolder
 
+  has_one :appeal_affinity, as: :case
+
   class InvalidLocationError < StandardError; end
 
   BVA_DISPOSITION_CODES = %w[1 3 4 5 6 8 9].freeze

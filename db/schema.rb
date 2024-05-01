@@ -81,12 +81,13 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
   create_table "appeal_affinities", force: :cascade do |t|
     t.datetime "affinity_start_date", null: false, comment: "The date from which to calculate an appeal's affinity window"
     t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
+    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
     t.datetime "created_at", precision: 6, null: false
     t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
     t.string "docket", null: false, comment: "The docket of the appeal"
     t.boolean "priority", null: false, comment: "Priority status (true/false)"
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["case_id"], name: "index_appeal_affinities_on_case_id", unique: true
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type"
     t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
