@@ -6,7 +6,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
   let(:hearing) { create(:hearing) }
   let(:work_order) do
     {
-      work_order_id: "#1234567",
+      work_order_name: "#12347767",
       return_date: "02/12/2024",
       contractor: "Contractor Name",
       hearings: [{ hearing_id: hearing.id, hearing_type: hearing.class.to_s }]
@@ -16,7 +16,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
   subject { described_class.perform_now(work_order) }
 
   it "temporarily saves a xls file in the work order" do
-    file_path = File.join(Rails.root, "tmp", "BVA-#{Time.zone.today.year}-0001.xls")
+    file_path = File.join(Rails.root, "tmp", "BVA-#{work_order[:work_order_name]}.xls")
     expect(File.exist?(file_path)).to eq false
     subject
     expect(File.exist?(file_path)).to eq true

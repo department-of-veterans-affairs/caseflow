@@ -5,7 +5,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
 
   def perform(work_order)
     work_book = create_spreadsheet(work_order)
-    file_location(work_book)
+    file_location(work_book, work_order[:work_order_name])
     # upload to s3
   end
 
@@ -15,7 +15,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     workbook =  Spreadsheet::Workbook.new
     worksheet = workbook.create_worksheet
 
-    worksheet.row(0).concat ["Work Order", work_order[:work_order_id]]
+    worksheet.row(0).concat ["Work Order", work_order[:work_order_name]]
     worksheet.row(2).concat ["Return Date", work_order[:return_date]]
     worksheet.row(4).concat ["Contractor Name", work_order[:contractor]]
 
@@ -23,8 +23,8 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     workbook
   end
 
-  def file_location(workbook)
-    file_name = "BVA-#{sequence}.xls"
+  def file_location(workbook, work_order_name)
+    file_name = "BVA-#{work_order_name}.xls"
     file_path = File.join(Rails.root, "tmp", file_name)
     workbook.write(file_path)
   end
@@ -79,10 +79,5 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     (0..7).each do |col_index|
       row.set_format(col_index, row_format)
     end
-  end
-
-  def sequence
-    sequence = Sequence.instance
-    sequence.next
   end
 end
