@@ -38,9 +38,16 @@ class QuarterlyNotificationsJob < CaseflowJob
           begin
             MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                                   name: "send_quarterly_notifications(appeal_state, appeal)") do
+
+              Rails.logger.info("VACOLS Connection pool stats before notifiying: #{VACOLS::Record.connection_pool.stats}")
+
               send_quarterly_notifications(appeal_state, appeal)
+
+              Rails.logger.info("VACOLS Connection pool stats after notifiying: #{VACOLS::Record.connection_pool.stats}")
             end
           rescue StandardError => error
+            Rails.logger.info("VACOLS Connection at time of error: #{VACOLS::Record.connection_pool.stats}")
+
             Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
               "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
           end
