@@ -102,6 +102,14 @@ export default class OrganizationUsers extends React.PureComponent {
       return user.attributes?.userAdminPermission.find((adminPer) => adminPer === permission);
     };
 
+    const renderedPermissions = () => {
+      if (user.attributes?.admin) {
+        // return the filtered admin only permisisons
+      }
+
+      return this.props.organizationPermissions;
+    };
+
     // grabs the values off of state as a priority, and falls back to the props. if there is any state, props gets ignored.
     const parentPermissionChecked = (userId, parentId) => {
       if (typeof parentId !== 'number') {
@@ -130,7 +138,7 @@ export default class OrganizationUsers extends React.PureComponent {
     };
 
     return (
-      this.props.organizationPermissions.map((permission) => {
+      renderedPermissions().map((permission) => {
         const marginL = permission.parent_permission_id ? '25px' : '0px';
         const NODcheckboxStyle = css({
           marginTop: '0',
