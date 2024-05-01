@@ -256,15 +256,19 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         vacols_case.bfmemid = if evaluator.judge
-          VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+          existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+          existing_judge.sattyid
         else
-          create(:staff, :judge_role, user: evaluator.judge)
+          new_judge = create(:staff, :judge_role, user: evaluator.judge)
+          new_judge.sattyid
         end
 
         vacols_case.bfattid = if evaluator.attorney
-          VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+          existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+          existing_attorney.sattyid
         else
-          create(:staff, :attorney_role, user: evaluator.attorney)
+          new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
+          new_attorney.sattyid
         end
 
         vacols_case.case_issues.each do |case_issue|
