@@ -85,7 +85,16 @@ class Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+    appeals_list = appeals(priority: false, ready: true)
+    if calculate_days_for_time_goal_with_prior_to_goal > 0
+      appeals_list = appeals_list.where("receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
+    end
+
+    appeals_list.limit(num).map(&:receipt_date)
+  end
+
+  def calculate_days_for_time_goal_with_prior_to_goal
+    return docket_time_goal - start_distribution_prior_to_goal if docket_time_goal > 0
   end
 
   def age_of_oldest_priority_appeal
