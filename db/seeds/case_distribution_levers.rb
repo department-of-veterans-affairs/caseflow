@@ -600,7 +600,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 102
@@ -612,7 +612,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 103
@@ -624,7 +624,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 104
@@ -636,7 +636,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 105
@@ -648,7 +648,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 106
@@ -660,7 +660,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 107
