@@ -20,6 +20,7 @@ import {
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission
 } from '../util';
+import Link from 'app/components/Link';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -157,6 +158,7 @@ class NonCompDispositions extends React.PureComponent {
     const {
       appeal,
       decisionIssuesStatus,
+      isBusinessLineAdmin,
       task
     } = this.props;
 
@@ -170,6 +172,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let editIssuesLink = null;
     let displayPOAComponent = this.props.task.business_line === 'vha';
+    const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -182,10 +185,16 @@ class NonCompDispositions extends React.PureComponent {
         </div>
       </React.Fragment>;
 
-      editIssuesLink = <React.Fragment>
-        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
+      editIssuesLink = (displayRequestIssueModification) ? <React.Fragment>
+        <Link button="secondary" href={appeal.editIssuesUrl}>Edit Issues</Link>
+      </React.Fragment> : <React.Fragment>
+        <Link button="secondary" href={appeal.editIssuesUrl}>Request issue modification</Link>
+        <Button disabled>Edit Issues</Button>
       </React.Fragment>;
     }
+
+    const decisionHeaderText = displayRequestIssueModification ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
+      COPY.DISPOSITION_DECISION_HEADER_NONADMIN;
 
     return <div>
       {displayPOAComponent && <div className="cf-decisions">
@@ -204,12 +213,14 @@ class NonCompDispositions extends React.PureComponent {
           {displayPOAComponent && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
-              <h2>Decision</h2>
-              <div>Review each issue and assign the appropriate dispositions.</div>
+              <h2 style={{ 'margin-bottom': '30px' }}>Decision</h2>
             </div>
             <div className="usa-width-one-half cf-txt-r">
               {editIssuesLink}
             </div>
+          </div>
+          <div className="usa-grid-full">
+            <div className="usa-width-one-whole">{decisionHeaderText}</div >
           </div>
         </div>
 
@@ -261,6 +272,7 @@ NonCompDispositions.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
+  isBusinessLineAdmin: PropTypes.bool,
   handleSave: PropTypes.func
 };
 
@@ -268,6 +280,7 @@ export default connect(
   (state) => ({
     appeal: state.nonComp.appeal,
     task: state.nonComp.task,
-    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
+    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin
   })
 )(NonCompDispositions);
