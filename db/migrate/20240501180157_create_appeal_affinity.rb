@@ -10,7 +10,7 @@ class CreateAppealAffinity < ActiveRecord::Migration[6.0]
 
       t.timestamps
 
-      t.index ["case_id", "case_type"]
+      t.index ["case_id", "case_type"], unique: true
     end
   end
 end

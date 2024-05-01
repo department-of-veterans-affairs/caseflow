@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
     t.string "docket", null: false, comment: "The docket of the appeal"
     t.boolean "priority", null: false, comment: "Priority status (true/false)"
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type"
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
     t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
