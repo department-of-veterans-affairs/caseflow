@@ -578,7 +578,7 @@ class BusinessLine < Organization
     def issue_modification_request_filter
       if @query_type == :pending
         "issue_modification_requests.id IS NOT NULL
-          AND COALESCE(issue_modification_requests.status, 'assigned') = 'assigned'"
+          AND issue_modification_requests.status = 'assigned'"
       else
         "COALESCE(issue_modification_requests.status, '') <> 'assigned'"
       end
