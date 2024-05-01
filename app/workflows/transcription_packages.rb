@@ -7,7 +7,6 @@ class TranscriptionPackages
   include MailRequestValidator::Distribution
   include MailRequestValidator::DistributionDestination
 
-
   def initialize(work_order_params)
     @work_order_params = work_order_params
   end
