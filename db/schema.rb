@@ -1134,28 +1134,27 @@ ActiveRecord::Schema.define(version: 2024_04_29_215736) do
   end
 
   create_table "issue_modification_requests", comment: "A database table to store pending request issues that are for modification", force: :cascade do |t|
-    t.datetime "approved_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
-    t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
+    t.string "benefit_type", comment: "which benefit type does this issue belongs to it can vha, compensation, will be used when request type is addition"
     t.datetime "created_at", precision: 6, null: false
-    t.bigint "created_by_id"
+    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
+    t.text "decided_decision_text", comment: "Admin adds Description during approval/denial"
+    t.bigint "decider_id", comment: "The user who decides approval of request issues"
     t.datetime "decision_date", comment: "prior decision Date"
     t.bigint "decision_review_id"
     t.string "decision_review_type"
-    t.text "decision_text", comment: "Description"
     t.string "nonrating_issue_category", comment: "issue category decision_issues.non_rating_issue_category"
     t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
-    t.datetime "request_date", comment: "Requested Date"
     t.bigint "request_issue_id", comment: "Indicates the id of the request_issues on which the modification was requested"
-    t.text "request_reason", comment: "request reason"
-    t.string "request_type", limit: 20, comment: "Pending Request Type"
+    t.text "request_reason", comment: "Issue modification request reason."
+    t.string "request_type", limit: 20, default: "Addition", comment: "Issue modification Request Type can be addition, modification, withdrawal and cancelled."
+    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
     t.string "status", default: "assigned", comment: "status of the pending task"
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "updated_by_id"
     t.datetime "withdrawal_date", comment: "if request issue was withdrawn then we save it as withdrawal date "
-    t.index ["created_by_id"], name: "index_issue_modification_requests_on_created_by_id"
+    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
     t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
     t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
-    t.index ["updated_by_id"], name: "index_issue_modification_requests_on_updated_by_id"
+    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
   end
 
   create_table "job_notes", force: :cascade do |t|
@@ -2302,8 +2301,8 @@ ActiveRecord::Schema.define(version: 2024_04_29_215736) do
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
   add_foreign_key "issue_modification_requests", "request_issues"
-  add_foreign_key "issue_modification_requests", "users", column: "created_by_id"
-  add_foreign_key "issue_modification_requests", "users", column: "updated_by_id"
+  add_foreign_key "issue_modification_requests", "users", column: "decider_id"
+  add_foreign_key "issue_modification_requests", "users", column: "requestor_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

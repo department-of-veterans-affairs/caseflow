@@ -574,9 +574,8 @@ class BusinessLine < Organization
         AND issue_modification_requests.decision_review_type = tasks.appeal_type"
     end
 
-    # :reek:ControlParameter
     def issue_modification_request_filter
-      if @query_type == :pending
+      if query_type == :pending
         "issue_modification_requests.id IS NOT NULL
           AND issue_modification_requests.status = 'assigned'"
       else

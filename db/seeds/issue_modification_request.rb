@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# Veterans Pending Request Issue related seeds
+# These seeds are for data in pending tabs in Vha Decision review, inserts data into issue_modification_request table.
 
 module Seeds
-  class VhaIssueModificationRequest < Base
+  class IssueModificationRequest < Base
     NUMBER_OF_RECORDS_TO_CREATE = 5
 
     def seed!

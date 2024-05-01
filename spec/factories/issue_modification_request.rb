@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :issue_modification_request do
     request_type { "Addition" }
-    request_date { 1.month.ago }
     request_reason { Faker::Lorem.sentence }
 
     benefit_type { "vha" }
@@ -12,8 +11,8 @@ FactoryBot.define do
 
     withdrawal_date { nil }
     remove_original_issue { false }
-    created_by_id { User.first.id }
-    updated_by_id { User.first.id }
+    requestor_id { User.first.id }
+    decider_id { User.last.id }
 
     trait :with_request_issue do
       after(:create) do |pri, evaluator|

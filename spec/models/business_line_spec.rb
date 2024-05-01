@@ -315,7 +315,7 @@ describe BusinessLine do
                   :with_higher_level_review,
                   status: "assigned",
                   created_by_id: user.id,
-                  updated_by_id: user.id)
+                  decider_id: user.id)
     end
 
     let!(:sc_pending_tasks) do
@@ -323,8 +323,8 @@ describe BusinessLine do
                   3,
                   :with_supplemental_claim,
                   status: "assigned",
-                  created_by_id: user.id,
-                  updated_by_id: user.id)
+                  requestor_id: user.id,
+                  decider_id: user.id)
     end
 
     subject { business_line.pending_tasks(filters: task_filters) }
