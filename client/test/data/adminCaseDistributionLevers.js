@@ -885,3 +885,102 @@ export const mockTextLeverReturn = [
     lever_group_order: 2003
   }
 ];
+
+export const mockDocketLevers = [
+  {
+    item: 'disable_ama_priority_legacy',
+    title: 'Test Docket Lever Title 1',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 100
+  },
+  {
+    item: 'disable_ama_priority_direct_review',
+    title: 'Test Docket Lever Title 2',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 101
+  },
+  {
+    item: 'disable_ama_priority_hearing',
+    title: 'Test Docket Lever Title 3',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 102
+  },
+  {
+    item: 'disable_ama_priority_evidence_submission',
+    title: 'Test Docket Lever Title 4',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 103
+  },
+  {
+    item: 'disable_ama_non_priority_legacy',
+    title: 'Test Docket Lever Title 5',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 104
+  },
+  {
+    item: 'disable_ama_non_priority_direct_review',
+    title: 'Test Docket Lever Title 6',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 105
+  },
+  {
+    item: 'disable_ama_non_priority_hearing',
+    title: 'Test Docket Lever Title 7',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 106
+  },
+  {
+    item: 'disable_ama_non_priority_evidence_submission',
+    title: 'Test Docket Lever Title 8',
+    description: '',
+    data_type: 'boolean',
+    value: false,
+    unit: '',
+    is_disabled_in_ui: false,
+    algorithms_used: ['proportion', 'docket'],
+    lever_group: 'docket_levers',
+    lever_group_order: 107
+  },
+];

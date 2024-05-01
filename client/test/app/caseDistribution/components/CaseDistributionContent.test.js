@@ -42,6 +42,7 @@ describe('CaseDistributionContent', () => {
       static: [],
       batch: [],
       affinity: [],
+      docket_levers: [],
       docket_distribution_prior: [],
       docket_time_goal: []
     };

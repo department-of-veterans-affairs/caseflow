@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import RadioField from 'app/components/RadioField';
 import { updateLeverValue } from '../reducers/levers/leversActions';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
@@ -8,6 +8,8 @@ const ExcludeDocketLever = (levers) => {
   const dispatch = useDispatch();
   const LEVER_GROUP = ACD_LEVERS.lever_groups.docket_levers;
   let docketLever = levers.lever;
+  let leverName = docketLever?.item ? docketLever.item : '';
+  let leverValue = docketLever?.value ? docketLever.value : ''
 
   const onChangeSelected = (lever) => (event) => {
     const { item } = lever;
@@ -29,9 +31,9 @@ const ExcludeDocketLever = (levers) => {
   return (
     <span>
       <RadioField
-        name={docketLever.item}
+        name={leverName}
         hideLabel
-        value={docketLever.value}
+        value={leverValue}
         options={options}
         onChange={onChangeSelected(docketLever)}
         vertical

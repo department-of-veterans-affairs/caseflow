@@ -12,7 +12,7 @@ const ExclusionTable = () => {
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
   const getOptionData = () => {
-    let options = theState.caseDistributionLevers.levers.docket_levers.map((opt) => ({
+    let options = theState.caseDistributionLevers.levers.docket_levers?.map((opt) => ({
       item: opt.item,
       value: opt.value,
       disabled: opt.is_disabled_in_ui
@@ -25,11 +25,11 @@ const ExclusionTable = () => {
   let optionData = getOptionData();
 
   const filterOption = (item) => {
-    return optionData.find((opt) => opt.item === item);
+    return optionData?.find((opt) => opt.item === item);
   };
 
   const filterOptionValue = (item) => {
-    let enabled = optionData.find((opt) => opt.item === item).value;
+    let enabled = optionData?.find((opt) => opt.item === item)?.value;
 
     if (enabled) {
       return COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_ON;
