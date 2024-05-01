@@ -38,7 +38,6 @@ class QuarterlyNotificationsJob < CaseflowJob
           begin
             MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                                   name: "send_quarterly_notifications(appeal_state, appeal)") do
-
               Rails.logger.info(
                 "VACOLS Connection pool stats before notifiying: #{VACOLS::Record.connection_pool.stat}"
               )
