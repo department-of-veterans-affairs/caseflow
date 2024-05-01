@@ -255,24 +255,23 @@ FactoryBot.define do
       bfddec { 1.day.ago }
 
       after(:create) do |vacols_case, evaluator|
-        if evaluator.judge
-          existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
-          staff_judge = (existing_judge || create(:staff, :judge_role, user: evaluator.judge))
+        vacols_case.bfmemid = if evaluator.judge
+          VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+        else
+          create(:staff, :judge_role, user: evaluator.judge)
         end
 
-        if evaluator.attorney
-          existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
-          staff_attorney = (existing_attorney || create(:staff, :attorney_role, user: evaluator.attorney))
+        vacols_case.bfattid = if evaluator.attorney
+          VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+        else
+          create(:staff, :attorney_role, user: evaluator.attorney)
         end
 
         vacols_case.case_issues.each do |case_issue|
           case_issue.issdc = "3"
           case_issue.save
         end
-        
-        vacols_case.bfmemid = staff_judge.sattyid
-        vacols_case.bfattid = staff_attorney.sattyid
-        
+
         create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case,
         case_issues_equal: true, original_case_issues: vacols_case.case_issues)
       end
