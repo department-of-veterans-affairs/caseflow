@@ -9,6 +9,9 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
@@ -29,6 +32,22 @@ class Docket
     scope.order("appeals.receipt_date")
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def build_lever_item(docket_type, priority_status)
+    "disable_ama_#{priority_status}_#{docket_type.downcase}"
+  end
+
+  def ready_priority_nonpriority_appeals(priority = false)
+    priority_status = priority ? PRIORITY : NON_PRIORITY
+    lever_item = build_lever_item(docket_type, priority_status)
+    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
+    lever_value = lever&.value
+    if lever_value == "true"
+      []
+    else
+      self
+    end
+  end
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
