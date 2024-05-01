@@ -19,9 +19,17 @@ require "json"
 #
 # All requests to the Webex API are recorded using the MetricsService.
 class ExternalApi::WebexService
-  def initialize(config:)
-    @config = config
+  # rubocop:disable Metrics/ParameterLists
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query: nil)
+    @host = host
+    @port = port
+    @aud = aud
+    @apikey = apikey
+    @domain = domain
+    @api_endpoint = api_endpoint
+    @query = query
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def create_conference(conferenced_item)
     body = {
@@ -30,7 +38,7 @@ class ExternalApi::WebexService
         "nbf": conferenced_item.nbf,
         "exp": conferenced_item.exp
       },
-      "aud": @config[:aud],
+      "aud": @aud,
       "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
@@ -47,7 +55,7 @@ class ExternalApi::WebexService
         "nbf": 0,
         "exp": 0
       },
-      "aud": @config[:aud],
+      "aud": @aud,
       "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
@@ -103,18 +111,18 @@ class ExternalApi::WebexService
 
   # :nocov:
   def send_webex_request(body, method)
-    url = "https://#{@config[:host]}#{@config[:domain]}#{@config[:api_endpoint]}"
+    url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
-    request.query = @config[:query]
-    request.headers = { "Authorization": "Bearer #{@config[:apikey]}", "Content-Type": "application/json" }
+    request.query = @query
+    request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
-      "#{@config[:host]} #{method} request to #{url}",
+      "#{@host} #{method} request to #{url}",
       service: :webex,
-      name: @config[:api_endpoint]
+      name: @api_endpoint
     ) do
       case method
       when "POST"
