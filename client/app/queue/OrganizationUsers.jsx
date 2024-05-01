@@ -78,6 +78,7 @@ export default class OrganizationUsers extends React.PureComponent {
     ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).then((response) => {
       this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
     }, (error) => {
+      console.log(error)
       // handle error
     });
   }
@@ -86,11 +87,14 @@ export default class OrganizationUsers extends React.PureComponent {
 
     const userPermissions = (permission) => {
       if (user.attributes.userPermission === null ||
-          typeof user.attributes.userPermission === 'undefined') {
+          typeof user.attributes.userPermission === 'undefined' ||
+        user.attributes.userPermission.length === 0) {
         return false;
       }
 
-      return user.attributes?.userPermission.find((userPer) => userPer === permission);
+      if(user.attributes?.userPermission.flat().find((userPer) => userPer === permission)) {
+        return true
+      }
     };
 
     const checkAdminPermission = (permission) => {
@@ -142,11 +146,8 @@ export default class OrganizationUsers extends React.PureComponent {
       return result;
     };
 
-    console.log(renderedPermissions());
-
     return (
       renderedPermissions().map((permission) => {
-        // console.log(permission.permission)
         const marginL = permission.parent_permission_id ? '25px' : '0px';
         const NODcheckboxStyle = css({
           marginTop: '0',
