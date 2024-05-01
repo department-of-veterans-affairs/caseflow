@@ -96,13 +96,15 @@ class ExternalApi::WebexService
   def fetch_recordings_list
     body = nil
     method = "GET"
+    @api_endpoint += "recordings"
     resp = send_webex_request(body, method)
     ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
   end
 
-  def fetch_recording_details
+  def fetch_recording_details(recording_id)
     body = nil
     method = "GET"
+    @api_endpoint += "recordings/#{recording_id}"
     resp = send_webex_request(body, method)
     ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
   end
