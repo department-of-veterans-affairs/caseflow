@@ -177,6 +177,34 @@ export const ReviewForm = (props) => {
 
   };
 
+  const vaDORReadOnlyStyling = () => {
+    if (vaDORReadOnly() || props.isReadOnly) {
+      return <DateSelector
+        className={['review-package-date-input', 'review-package-text-input-read-only']}
+        class= "field-style-rp"
+        label="VA DOR"
+        name="date"
+        type="date"
+        onChange={handleSelectVADOR}
+        value={vaDORDate}
+        errorMessage={dateError}
+        readOnly = {vaDORReadOnly() || props.isReadOnly}
+      />;
+    }
+
+    return <DateSelector
+      className={['review-package-date-input']}
+      class= "field-style-rp"
+      label="VA DOR"
+      name="date"
+      type="date"
+      onChange={handleSelectVADOR}
+      value={vaDORDate}
+      errorMessage={dateError}
+      readOnly = {vaDORReadOnly() || props.isReadOnly}
+    />;
+  };
+
   return (
     <React.Fragment>
       <div className="review-form-title-style">
@@ -219,17 +247,7 @@ export const ReviewForm = (props) => {
             </div>
             <div className="review-package-field-styling">
 
-              <DateSelector
-                className={['review-package-date-input']}
-                class= "field-style-rp"
-                label="VA DOR"
-                name="date"
-                type="date"
-                onChange={handleSelectVADOR}
-                value={vaDORDate}
-                errorMessage={dateError}
-                readOnly = {vaDORReadOnly() || props.isReadOnly}
-              />
+              {vaDORReadOnlyStyling()}
             </div>
 
           </div>
