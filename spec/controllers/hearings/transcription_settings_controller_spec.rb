@@ -24,14 +24,12 @@ describe Hearings::TranscriptionSettingsController, :all_dbs do
 
   context "GET index" do
     context "with JSON request" do
-      context "an invalid transcription contractor ID" do
-        subject { get :index, as: :json }
-        it "returns json result" do
-          response_body = JSON.parse(subject.body)
-          expect(subject.status).to eq 200
-          expect(response_body["transcription_contractors"][0]["id"]).to eq @transcripton_contractor_1.id
-          expect(response_body["transcription_contractors"][1]["id"]).to eq @transcripton_contractor_2.id
-        end
+      subject { get :index, as: :json }
+      it "returns json result" do
+        response_body = JSON.parse(subject.body)
+        expect(subject.status).to eq 200
+        expect(response_body["transcription_contractors"][0]["id"]).to eq @transcripton_contractor_1.id
+        expect(response_body["transcription_contractors"][1]["id"]).to eq @transcripton_contractor_2.id
       end
     end
 
@@ -48,9 +46,11 @@ describe Hearings::TranscriptionSettingsController, :all_dbs do
     context "with JSON request" do
       context "an invalid transcription contractor ID" do
         subject { get :show, params: { id: 45 }, as: :json }
-        it "redirects to 404 page" do
-          expect(subject.status).to eq 302
-          expect(subject).to redirect_to("/404")
+        it "sends error JSON" do
+          response_body = JSON.parse(subject.body)
+          expect(subject.status).to eq 404
+          expect(response_body["errors"][0]["title"]).to eq "Record Not Found"
+          expect(response_body["errors"][0]["detail"]).to eq "Record with that ID is not found"
         end
       end
 

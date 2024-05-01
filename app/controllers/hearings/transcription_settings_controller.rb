@@ -3,7 +3,7 @@
 class Hearings::TranscriptionSettingsController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
-  rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
   before_action :verify_access_to_hearings
 
   def index
@@ -32,7 +32,12 @@ class Hearings::TranscriptionSettingsController < ApplicationController
     end
   end
 
-  def render_page_not_found
-    redirect_to "/404"
+  def render_record_not_found
+    render json: {
+      "errors": [
+        "title": "Record Not Found",
+        "detail": "Record with that ID is not found"
+      ]
+    }, status: :not_found
   end
 end
