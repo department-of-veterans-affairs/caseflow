@@ -68,7 +68,7 @@ class ExternalApi::WebexService
   # Purpose: Refreshing the access token to access the API
   # Return: The response body
   def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape("#{BASE_URL}/v1/access_token")
+    url = URI::DEFAULT_PARSER.escape("https://#{@host}#{@domain}#{@api_endpoint}access_token")
 
     body = {
       grant_type: "refresh_token",
