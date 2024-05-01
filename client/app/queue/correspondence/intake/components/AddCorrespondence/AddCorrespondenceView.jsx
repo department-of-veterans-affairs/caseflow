@@ -23,7 +23,6 @@ class AddCorrespondenceView extends React.Component {
     this.state = {
       veteranId: '',
       vaDateOfReceipt: '',
-      sourceType: '',
       packageDocumentType: '',
       correspondenceType: '',
       notes: '',
@@ -91,22 +90,6 @@ class AddCorrespondenceView extends React.Component {
             </span>
           );
         }
-      },
-      {
-        cellClass: 'source-type-column',
-        ariaLabel: 'source-type-header-label',
-        header: (
-          <div id="source-type-header">
-            <span id="source-type-header-label" className="table-header-label">
-              Source Type
-            </span>
-          </div>
-        ),
-        valueFunction: () => (
-          <span className="va-source-type-item">
-            <p>{correspondence.sourceType}</p>
-          </span>
-        )
       },
       {
         cellClass: 'package-document-type-column',
