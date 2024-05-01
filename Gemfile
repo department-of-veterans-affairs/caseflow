@@ -155,3 +155,5 @@ end
 # rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+
+gem "rbtrace", "~> 0.5.1"
