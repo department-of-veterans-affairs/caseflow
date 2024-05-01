@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import ReduxBase from '../components/ReduxBase';
+// import ReduxBase from '../components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';

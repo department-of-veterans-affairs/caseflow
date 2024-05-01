@@ -116,8 +116,8 @@ class ScenarioSeeds extends React.Component {
         </>
       </div>
     );
-  };
-};
+  }
+}
 
 // ScenarioSeeds.propTypes = {
 
