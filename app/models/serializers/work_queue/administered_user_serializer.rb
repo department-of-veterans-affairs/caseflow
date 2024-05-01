@@ -17,4 +17,7 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
   attribute :userAdminPermission do |object, params|
     object&.organization_admin_permissions(params[:organization])
   end
+  attribute :description do |object, params|
+    object&.organization_admin_permissions(params[:organization])
+  end
 end

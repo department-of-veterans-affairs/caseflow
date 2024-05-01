@@ -122,7 +122,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     OrganizationUserPermission.where(organizations_user: org_user)
       .includes(:organization_permission, :organizations_user)
       .where(organizations_user_id: org_user.id, permitted: true)
-      .pluck(:permission)
+      .pluck(:permission, :description)
   end
 
   def organization_admin_permissions(org)

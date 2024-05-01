@@ -104,7 +104,12 @@ export default class OrganizationUsers extends React.PureComponent {
 
     const renderedPermissions = () => {
       if (user.attributes?.admin) {
-        // return the filtered admin only permisisons
+        return [{
+          default_for_admin: true,
+          //change me!
+          description: user.attributes.description[0],
+          permission: user.attributes.userAdminPermission[0]
+        }];
       }
 
       return this.props.organizationPermissions;
@@ -137,8 +142,11 @@ export default class OrganizationUsers extends React.PureComponent {
       return result;
     };
 
+    console.log(renderedPermissions());
+
     return (
       renderedPermissions().map((permission) => {
+        // console.log(permission.permission)
         const marginL = permission.parent_permission_id ? '25px' : '0px';
         const NODcheckboxStyle = css({
           marginTop: '0',
