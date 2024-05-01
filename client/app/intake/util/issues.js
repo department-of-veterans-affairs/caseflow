@@ -4,20 +4,66 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-export const fakePendingData = [
+export const nonAdminFakePendingData = [
   {
-    request_issue_id: '5636',
+    request_issue_id: '3311',
     pending_request_type: 'Modification',
     pending_nonrating_issue_category: 'Caregiver | Eligibility',
-    pending_decision_text: 'New Decision text',
+    pending_decision_text: 'New Caregiver | Eligibility text',
     pending_decision_date: '2024-01-30',
-    request_reason: 'This is my reason.',
+    request_reason: 'This is my reason for Modification.'
   },
   {
-    request_issue_id: '5636',
+    request_issue_id: '3311',
     pending_request_type: 'Withdrawl',
     withdrawl_request_date: '2024-01-30',
-    request_reason: 'This is my reason.'
+    request_reason: 'This is my reason for Withdrawl'
+  },
+  {
+    pending_request_type: 'Addition',
+    pending_nonrating_issue_category: 'Beneficiary Travel',
+    pending_decision_text: 'New Beneficiary Travel text',
+    pending_decision_date: '2024-01-30',
+    request_reason: 'This is my reason for Addition.'
+  },
+  {
+    request_issue_id: '3311',
+    pending_request_type: 'Removal',
+    request_reason: 'This is my reason for Removal.'
+  }
+];
+
+export const adminFakePendingData = [
+  {
+    request_issue_id: '3311',
+    pending_request_type: 'Modification',
+    pending_nonrating_issue_category: 'Caregiver | Eligibility',
+    pending_decision_text: 'New Caregiver | Eligibility text',
+    pending_decision_date: '2024-01-30',
+    request_reason: 'This is my reason for Modification.',
+    approved: true,
+    remove_original_issue: true
+  },
+  {
+    request_issue_id: '3311',
+    pending_request_type: 'Withdrawl',
+    withdrawl_request_date: '2024-01-30',
+    request_reason: 'This is my reason for Withdrawl',
+    approved: true,
+  },
+  {
+    pending_request_type: 'Addition',
+    pending_nonrating_issue_category: 'Beneficiary Travel',
+    pending_decision_text: 'New Beneficiary Travel text',
+    pending_decision_date: '2024-01-30',
+    request_reason: 'This is my reason for Addition.',
+    approved: true
+  },
+  {
+    request_issue_id: '3311',
+    pending_request_type: 'Removal',
+    request_reason: 'This is my reason for Removal.',
+    approved: true
   }
 ];
 
@@ -183,20 +229,16 @@ export const formatPendingRequestIssues = (pendingRequestIssues) => {
 
   return pendingRequestIssues.map((issue) => {
     return {
-      // id: String(issue.id),
-      // request_issue_id: issue.request_issue.id,
-      // decision_review_id:
-      // decision_review_type:
-      // request_type:
-      // request_date:
-      // request_reaso:
-      // decision_date:
-      // decision_text:
-      // non_rating_issue_category:
-      // benefit_type:
-      // withdrawal_date:
-      // approved_status:
-      // remove_original_issue:
+      id: String(issue.id),
+      requestIssueId: issue.request_issue_id,
+      pendingRequestType: issue.pending_request_type,
+      pendingNonratingIssue_category: issue.pending_nonrating_issue_category,
+      pendingDecisionText: issue.pending_decision_text,
+      pendingDecisionDate: issue.pending_decision_date,
+      requestReason: issue.request_reason,
+      withdrawlRequestDate: issue.withdrawl_request_date,
+      approved: issue.approved,
+      removeOriginalIssue: issue.remove_original_issue
     };
   });
 };
