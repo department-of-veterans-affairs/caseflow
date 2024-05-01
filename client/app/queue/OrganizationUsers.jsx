@@ -102,25 +102,6 @@ export default class OrganizationUsers extends React.PureComponent {
       return user.attributes?.userAdminPermission.find((adminPer) => adminPer === permission);
     };
 
-    // used to check the value of a checkbox. Looks at state first, and falls back to props otherwise.
-    const checkPermissions = (checkboxId, permission) => {
-      const orgUserPermissions = this.props.orgnizationUserPermissions[checkboxId];
-      let found = false;
-
-      const checkBoxInState = this.state.toggledCheckboxes.find((oup) => oup.permissionName == permission && oup.userId === user.id);
-
-      if (typeof checkBoxInState !== 'undefined') {
-        return checkBoxInState.checked;
-      }
-      orgUserPermissions.forEach((oup) => {
-        if (oup[0] === permission && oup[2] === Number(user.id) && oup[1]) {
-          found = true;
-        }
-      });
-
-      return found;
-    };
-
     // grabs the values off of state as a priority, and falls back to the props. if there is any state, props gets ignored.
     const parentPermissionChecked = (userId, parentId) => {
       if (typeof parentId !== 'number') {

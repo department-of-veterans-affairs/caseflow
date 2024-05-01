@@ -47,7 +47,11 @@ class Organizations::UsersController < OrganizationsController
     org = Organization.find_by(url: org_url)
 
     org_permission_checker = OrganizationUserPermissionChecker.new
-    if org_permission_checker.can?(permission_name:org_permission.permission, organization:org, user:target_user.user)
+    if org_permission_checker.can?(
+      permission_name: org_permission.permission,
+      organization: org,
+      user: target_user.user
+    )
       org_user_permission = OrganizationUserPermission.find_by(
         organization_permission: org_permission,
         organizations_user: target_user
