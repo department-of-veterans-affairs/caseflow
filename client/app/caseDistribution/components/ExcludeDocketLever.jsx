@@ -9,7 +9,7 @@ const ExcludeDocketLever = (levers) => {
   const LEVER_GROUP = ACD_LEVERS.lever_groups.docket_levers;
   let docketLever = levers.lever;
   let leverName = docketLever?.item ? docketLever.item : '';
-  let leverValue = docketLever?.value ? docketLever.value : ''
+  let leverValue = docketLever?.value ? docketLever.value : '';
 
   const onChangeSelected = (lever) => (event) => {
     const { item } = lever;
