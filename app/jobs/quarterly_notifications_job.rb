@@ -25,7 +25,7 @@ class QuarterlyNotificationsJob < CaseflowJob
         next unless status
 
         begin
-          appeal = appeal_state.retrieve_appeal
+          appeal = appeal_state.appeal
           MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                                 name: "send_quarterly_notifications(appeal_state, appeal)") do
             AppellantNotification.notify_appellant(appeal, Constants.QUARTERLY_STATUSES.quarterly_notification, status)
@@ -45,5 +45,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   def log_error(error, appeal_type, appeal_id)
     Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
             "#{appeal_type} ID #{appeal_id} because of #{error}")
+
+    super(error)
   end
 end

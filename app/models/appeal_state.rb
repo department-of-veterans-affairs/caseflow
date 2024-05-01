@@ -5,28 +5,13 @@ class AppealState < CaseflowRecord
   include CreatedAndUpdatedByUserConcern
   include AppealStateBelongsToPolymorphicAppealConcern
 
-  # Purpose: Method to retrieve the Appeal based on the appeal_type and appeal_id
-  #
-  # Params: None
-  #
-  # Response: A boolean value from the check_appeal_status method
-  def retrieve_appeal
-    if appeal_type == "Appeal"
-      appeal = Appeal.find_by(id: appeal_id)
-    elsif appeal_type == "LegacyAppeal"
-      appeal = LegacyAppeal.find_by(id: appeal_id)
-    end
-
-    appeal
-  end
-
   # Purpose: Method to verify if the Appeal can receive a QuarterlyNotification
   #
   #
-  # Params: appeal
+  # Params: None
   #
   # Response: A boolean value indicating if the Appeal can receive a QuarterlyNotification or not
-  def check_appeal_status(appeal)
+  def check_appeal_status
     if appeal.nil?
       begin
         fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable "\
@@ -47,8 +32,7 @@ class AppealState < CaseflowRecord
   #
   # Response: Status of QuarterlyNotification
   def quarterly_notification_status
-    appeal = retrieve_appeal
-    if check_appeal_status(appeal)
+    if check_appeal_status
       # if either there's a hearing postponed or a hearing scheduled in error
       status = check_hearing_scheduled || check_hearing_withdrawn
       status
