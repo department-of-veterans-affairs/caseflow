@@ -28,7 +28,8 @@ import { formatAddedIssues,
   formatLegacyAddedIssues,
   formatPendingRequestIssues,
   formatPendingIssuesBySection,
-  fakePendingData } from '../../util/issues';
+  nonAdminFakePendingData,
+  adminFakePendingData} from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 
@@ -246,6 +247,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
+      userIsOrgAdmin,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -282,7 +284,8 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issues);
-    const pendingIssuesBySection = formatPendingIssuesBySection(fakePendingData);
+    const pendingIssuesBySection = userIsOrgAdmin ?
+      formatPendingIssuesBySection(adminFakePendingData) : formatPendingIssuesBySection(nonAdminFakePendingData);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -460,7 +463,7 @@ class AddIssuesPage extends React.Component {
 
     const issuesObj = { ...issuesBySection, ...pendingIssuesBySection };
 
-    Object.keys(issuesObj).sort().
+    Object.keys(issuesObj).sort((firstItem, secondItem) => firstItem - secondItem).
       map((key) => {
         const sectionIssues = issuesObj[key];
         const endProductCleared = sectionIssues[0]?.endProductCleared;
@@ -666,6 +669,7 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
+  userIsOrgAdmin: PropTypes.bool,
   isLegacy: PropTypes.bool
 };
 
@@ -718,6 +722,7 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
+    userIsOrgAdmin: state.userIsOrgAdmin,
     isLegacy: state.isLegacy
   }),
   (dispatch) =>
