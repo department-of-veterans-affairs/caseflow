@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
@@ -445,6 +446,14 @@ Rails.application.routes.draw do
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
+  end
+
+  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get 'test/seeds', :to => 'test_seeds#seeds'
+
+      scope path: 'seeds', as: 'seeds' do
+        post 'run-demo/:seed_type/:seed_count', to: 'test_seeds#run_demo'
+      end
   end
   # :nocov:
 

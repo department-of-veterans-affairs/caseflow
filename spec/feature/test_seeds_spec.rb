@@ -1,4 +1,4 @@
-# # frozen_string_literal: true
+# frozen_string_literal: true
 
 # RSpec.feature "Test Seeds" do
 #   let!(:current_user) do

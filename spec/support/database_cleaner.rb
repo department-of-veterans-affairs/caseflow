@@ -16,7 +16,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner[:active_record, { connection: etl }].clean_with(:truncation)
     DatabaseCleaner[:active_record, { connection: vacols }]
-      .clean_with(:deletion, except: vacols_tables_to_preserve)
+      .clean_with(:deletion, { except: vacols_tables_to_preserve })
     DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
   end
 
