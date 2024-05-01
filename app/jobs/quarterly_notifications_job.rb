@@ -4,7 +4,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
-  application_attr :hearing_schedule
+  application_attr :va_notify
 
   QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
 
@@ -75,17 +75,17 @@ class QuarterlyNotificationsJob < CaseflowJob
     if appeal_state.hearing_postponed || appeal_state.scheduled_in_error
       # appeal status is Hearing to be Rescheduled / Privacy Act Pending
       if appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled_privacy_pending
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled_privacy_pending
         )
       # appeal status is Hearing to be Rescheduled
       else
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled
         )
       end
     # if there's a hearing scheduled
@@ -93,18 +93,18 @@ class QuarterlyNotificationsJob < CaseflowJob
       # if there's privacy act tasks pending
       # appeal status is Hearing Scheduled /  Privacy Act Pending
       if appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_scheduled_privacy_pending
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.hearing_scheduled_privacy_pending
         )
       # if there's no privacy act tasks pending
       # appeal status is Hearing Scheduled
       elsif !appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_scheduled
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.hearing_scheduled
         )
       end
     # if there's no hearing scheduled and no hearing withdrawn
@@ -112,42 +112,42 @@ class QuarterlyNotificationsJob < CaseflowJob
       # if there's ihp tasks pending and privacy act tasks pending
       # appeal status is VSO IHP Pending / Privacy Act Pending
       if appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.ihp_pending_privacy_pending
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.ihp_pending_privacy_pending
         )
       # if there's no ihp tasks pending and there are privacy act tasks pending
       # appeal status is Privacy Act Pending
       elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.privacy_pending
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.privacy_pending
         )
       # if there's no privacy acts pending and there are ihp tasks pending
       # appeal status is VSO IHP Pending
       elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.ihp_pending
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.ihp_pending
         )
       # if there's no privacy acts pending or ihp tasks pending
       # appeal status is Appeal Docketed
       elsif !appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.appeal_docketed
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.appeal_docketed
+        NotificationInitializationJob.perform_later(
+          appeal: appeal,
+          template_name: "Quarterly Notification",
+          appeal_status: Constants.QUARTERLY_STATUSES.appeal_docketed
         )
       end
     # appeal status is Appeal Docketed
     elsif appeal_state.appeal_docketed && appeal_state.hearing_withdrawn
-      AppellantNotification.notify_appellant(
-        appeal,
-        "Quarterly Notification",
-        Constants.QUARTERLY_STATUSES.appeal_docketed
+      NotificationInitializationJob.perform_later(
+        appeal: appeal,
+        template_name: "Quarterly Notification",
+        appeal_status: Constants.QUARTERLY_STATUSES.appeal_docketed
       )
     end
   end
