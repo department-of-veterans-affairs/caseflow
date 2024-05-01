@@ -56,6 +56,7 @@ RSpec.feature("The Correspondence Review Package page") do
     it "Checking the VA DOR and Package document type values in modal" do
       # click_button "Edit"
       # binding.pry IDK RN
+      # binding.pry
       expect(page).to have_content(correspondence.va_date_of_receipt.strftime("%m/%d/%Y"))
       # expect(page).to have_content(package_document_type.name.to_s)
     end
