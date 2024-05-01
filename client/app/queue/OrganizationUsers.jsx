@@ -82,20 +82,38 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  generatePermissionsCheckboxes = (id) => {
+  generatePermissionsCheckboxes = (user) => {
+
+    const userPermissions = (permission) => {
+      if (user.attributes.userPermission === null ||
+          typeof user.attributes.userPermission === 'undefined') {
+        return false;
+      }
+
+      return user.attributes?.userPermission.find((userPer) => userPer === permission);
+    };
+
+    const checkAdminPermission = (permission) => {
+      if (user.attributes.userAdminPermission === null ||
+        typeof user.attributes.userAdminPermission === 'undefined') {
+        return false;
+      }
+
+      return user.attributes?.userAdminPermission.find((adminPer) => adminPer === permission);
+    };
 
     // used to check the value of a checkbox. Looks at state first, and falls back to props otherwise.
     const checkPermissions = (checkboxId, permission) => {
       const orgUserPermissions = this.props.orgnizationUserPermissions[checkboxId];
       let found = false;
 
-      const checkBoxInState = this.state.toggledCheckboxes.find((oup) => oup.permissionName == permission && oup.userId === id);
+      const checkBoxInState = this.state.toggledCheckboxes.find((oup) => oup.permissionName == permission && oup.userId === user.id);
 
       if (typeof checkBoxInState !== 'undefined') {
         return checkBoxInState.checked;
       }
       orgUserPermissions.forEach((oup) => {
-        if (oup[0] === permission && oup[2] === Number(id) && oup[1]) {
+        if (oup[0] === permission && oup[2] === Number(user.id) && oup[1]) {
           found = true;
         }
       });
@@ -111,7 +129,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
       let result = false;
       const parentPermission = this.props.organizationPermissions.find((permission) => permission.id === parentId);
-      const orgUserPermissions = this.props.orgnizationUserPermissions[id];
+      const orgUserPermissions = this.props.orgnizationUserPermissions[user.id];
 
       const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
         permission.userId === userId &&
@@ -139,19 +157,14 @@ export default class OrganizationUsers extends React.PureComponent {
           marginBottom: '10px'
         });
 
-        // prevents additional checkboxes from rendering if the superuser checkbox has been clicked
-        if (permission.permission !== 'Superuser: Split, Merge, and Reassign' && checkPermissions(id, 'Superuser: Split, Merge, and Reassign')) {
-          return null;
-        }
-
-        return (parentPermissionChecked(id, permission.parent_permission_id) && <Checkbox
-          name={`${id}-${permission.permission}`}
+        return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
+          name={`${user.id}-${permission.permission}`}
           label={permission.permission}
-          key={`${id}-${permission.permission}`}
+          key={`${user.id}-${permission.permission}`}
           styling={NODcheckboxStyle}
-          onChange={this.modifyUserPermission(id, permission.permission)}
-          defaultValue={checkPermissions(id, permission.permission)}
-          disabled={checkPermissions(id, "Superuser: Split, Merge, and Reassign")}
+          onChange={this.modifyUserPermission(user.id, permission.permission)}
+          defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
+          disabled={checkAdminPermission(permission.permission)}
 
         />);
       })
@@ -402,7 +415,7 @@ export default class OrganizationUsers extends React.PureComponent {
           </div>
           <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
-            {this.generatePermissionsCheckboxes(user.id)}
+            {this.generatePermissionsCheckboxes(user)}
           </div>
         </div>
       </React.Fragment>;

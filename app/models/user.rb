@@ -114,6 +114,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
   end
 
+  def organization_permissions(org)
+    # get organization user from the org relationship
+    org_user = organizations_users.find_by(organization: org)
+    # get user permission using the org_user
+
+    OrganizationUserPermission.where(organizations_user: org_user)
+      .includes(:organization_permission, :organizations_user)
+      .where(organizations_user_id: org_user.id, permitted: true)
+      .pluck(:permission)
+  end
+
+  def organization_admin_permissions(org)
+    return [] unless org.user_is_admin?(self)
+
+    OrganizationPermission.where(organization: org, default_for_admin: true).pluck(:permission)
+  end
+
   def can_assign_hearing_schedule?
     can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
   end
