@@ -3,8 +3,8 @@ import Alert from '../../components/Alert';
 
 const SeedsBannerDisplay = () => {
 
-  let title = "Test Seeds";
-  let message = "";
+  let title = 'Test Seeds';
+  let message = '';
   let type = 'success';
   let showBanner = false;
 

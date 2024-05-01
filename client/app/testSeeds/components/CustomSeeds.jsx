@@ -46,7 +46,7 @@ class CustomSeeds extends React.PureComponent {
   }
 
   onChangeCaseType = (type, inputKey, value) => {
-    if(typeof this.seedByType[type] !== 'object'){
+    if (typeof this.seedByType[type] !== 'object') {
       this.seedByType[type] = {};
     }
     this.seedByType[type][inputKey] = value;
@@ -81,8 +81,8 @@ class CustomSeeds extends React.PureComponent {
     return (
       <div>
         <>
-        <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
-          <table className='seed-table-style' >
+          <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
+          <table className="seed-table-style" >
             <thead>
               <tr>
                 <th className={cx('table-header-styling')}>
@@ -111,7 +111,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-num-field')}>
                       <NumberField
                         ariaLabelText={`case-count-${type}`}
-                        useAriaLabel={true}
+                        useAriaLabel
                         inputID={`case-count-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'case_count', value);
@@ -123,7 +123,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-num-field')}>
                       <NumberField
                         ariaLabelText={`days-ago-${type}`}
-                        useAriaLabel={true}
+                        useAriaLabel
                         inputID={`days-ago-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'days_ago', value);
@@ -135,7 +135,7 @@ class CustomSeeds extends React.PureComponent {
                     <div className={cx('lever-right', 'test-seeds-cssid-field')}>
                       <TextField
                         ariaLabelText={`css-id-${type}`}
-                        useAriaLabel={true}
+                        useAriaLabel
                         inputID={`css-id-${type}`}
                         onChange={(value) => {
                           this.onChangeCaseType(type, 'judge_css_id', value);
@@ -148,7 +148,7 @@ class CustomSeeds extends React.PureComponent {
                       <Button
                         onClick={() => this.reseedByCaseType(type)}
                         id={`btn-${type}`}
-                        name='Create'
+                        name="Create"
                         loading={this.state.reseedingStatus[type]}
                         loadingText={`Reseeding ${CUSTOM_SEEDS[type]}`}
                       />

@@ -2,9 +2,9 @@ import React from 'react';
 import TestSeedsWrapper from '../components/TestSeedsWrapper';
 
 class TestSeedsApp extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   render() {
     return (

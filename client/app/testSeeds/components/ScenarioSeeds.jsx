@@ -83,7 +83,7 @@ class ScenarioSeeds extends React.Component {
     return (
       <div>
         <>
-        <h2 id="run_seeds">{COPY.TEST_SEEDS_RUN_SEEDS}</h2>
+          <h2 id="run_seeds">{COPY.TEST_SEEDS_RUN_SEEDS}</h2>
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
             {seedTypes.map((type) => (
               <li key={type}>
