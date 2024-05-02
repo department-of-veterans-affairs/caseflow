@@ -1133,24 +1133,25 @@ ActiveRecord::Schema.define(version: 2024_04_29_215736) do
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
-  create_table "issue_modification_requests", comment: "A database table to store pending request issues that are for modification", force: :cascade do |t|
-    t.string "benefit_type", comment: "which benefit type does this issue belongs to it can vha, compensation, will be used when request type is addition"
+  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
+    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
     t.datetime "created_at", precision: 6, null: false
     t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
-    t.text "decided_decision_text", comment: "Admin adds Description during approval/denial"
-    t.bigint "decider_id", comment: "The user who decides approval of request issues"
-    t.datetime "decision_date", comment: "prior decision Date"
-    t.bigint "decision_review_id"
+    t.text "decided_decision_text", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
+    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
+    t.datetime "decision_date", comment: "The decision date of the request issue that is being modified"
+    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
     t.string "decision_review_type"
-    t.string "nonrating_issue_category", comment: "issue category decision_issues.non_rating_issue_category"
+    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
+    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
     t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
-    t.bigint "request_issue_id", comment: "Indicates the id of the request_issues on which the modification was requested"
-    t.text "request_reason", comment: "Issue modification request reason."
-    t.string "request_type", limit: 20, default: "Addition", comment: "Issue modification Request Type can be addition, modification, withdrawal and cancelled."
+    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
+    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
+    t.string "request_type", default: "Addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
     t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
-    t.string "status", default: "assigned", comment: "status of the pending task"
+    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "withdrawal_date", comment: "if request issue was withdrawn then we save it as withdrawal date "
+    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
     t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
     t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
     t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
