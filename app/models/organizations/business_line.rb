@@ -197,10 +197,6 @@ class BusinessLine < Organization
 
       issue_count_options
     end
-
-    def pending_issue_count
-      "COUNT(issue_modification_requests.id) AS pending_issue_count"
-    end
     # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
@@ -489,6 +485,10 @@ class BusinessLine < Organization
       "COUNT(request_issues.id) AS issue_count"
     end
 
+    def pending_issue_count
+      "COUNT(issue_modification_requests.id) AS pending_issue_count"
+    end
+
     # Alias for the issue_categories on request issues for sorting and serialization
     # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
     def issue_types
@@ -579,7 +579,11 @@ class BusinessLine < Organization
         "issue_modification_requests.id IS NOT NULL
           AND issue_modification_requests.status = 'assigned'"
       else
-        "COALESCE(issue_modification_requests.status, '') <> 'assigned'"
+        "AND NOT EXISTS(
+          SELECT distinct decision_review_id FROM issue_modification_requests WHERE
+          issue_modification_requests.status = 'assigned'
+          AND issue_modification_requests.decision_review_id = tasks.appeal_id
+          AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
       end
     end
 

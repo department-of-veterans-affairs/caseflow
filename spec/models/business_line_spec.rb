@@ -309,13 +309,14 @@ describe BusinessLine do
 
   describe ".pending_tasks" do
     let!(:user) { create(:user) }
+    let!(:user_approver) { create(:user) }
     let!(:hlr_pending_tasks) do
       create_list(:issue_modification_request,
                   3,
                   :with_higher_level_review,
                   status: "assigned",
-                  created_by_id: user.id,
-                  decider_id: user.id)
+                  requestor: user,
+                  decider: user_approver)
     end
 
     let!(:sc_pending_tasks) do
@@ -323,8 +324,8 @@ describe BusinessLine do
                   3,
                   :with_supplemental_claim,
                   status: "assigned",
-                  requestor_id: user.id,
-                  decider_id: user.id)
+                  requestor: user,
+                  decider: user_approver)
     end
 
     subject { business_line.pending_tasks(filters: task_filters) }

@@ -8,6 +8,8 @@ class IssueModificationRequest < CaseflowRecord
 
   validates :status, :requestor, presence: true
 
+  before_save :set_decided_at
+
   enum status: {
     assigned: "assigned",
     approved: "approved",
@@ -21,4 +23,12 @@ class IssueModificationRequest < CaseflowRecord
     modification: "Modification",
     withdrawal: "Withdrawal"
   }
+
+  private
+
+  def set_decided_at
+    if status_changed? && status_was == "assigned" && decider_id?
+      self.decided_at = Time.zone.now
+    end
+  end
 end

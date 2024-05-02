@@ -7,52 +7,59 @@ FactoryBot.define do
 
     benefit_type { "vha" }
     nonrating_issue_category {}
-    status { IssueModificationRequest.statuses.keys.sample }
+    status { "assigned" }
 
     withdrawal_date { nil }
     remove_original_issue { false }
-    requestor_id { User.first.id }
-    decider_id { User.last.id }
+    requestor_id { create(:user).id }
+
+    trait :update_decider do
+      after(:create) do |imr|
+        imr.status = "approved"
+        imr.decider_id = create(:user).id
+        imr.save!
+      end
+    end
 
     trait :with_request_issue do
-      after(:create) do |pri, evaluator|
+      after(:create) do |imr, evaluator|
         ri = create(:request_issue,
-                    benefit_type: pri.benefit_type,
-                    nonrating_issue_category: Constants::ISSUE_CATEGORIES[pri.benefit_type].sample,
+                    benefit_type: imr.benefit_type,
+                    nonrating_issue_category: Constants::ISSUE_CATEGORIES[imr.benefit_type].sample,
                     nonrating_issue_description: "Seeded issue",
-                    decision_review: pri.decision_review,
+                    decision_review: imr.decision_review,
                     decision_date: 1.month.ago)
 
         if evaluator.request_type != "Addition"
-          pri.request_issue = ri
-          pri.save!
+          imr.request_issue = ri
+          imr.save!
         end
       end
     end
 
     trait :with_supplemental_claim do
-      after(:create) do |pri|
+      after(:create) do |imr|
         dr = create(:supplemental_claim,
                     :with_vha_issue,
                     :update_assigned_at,
                     :processed,
                     claimant_type: :veteran_claimant)
 
-        pri.decision_review = dr
-        pri.save!
+        imr.decision_review = dr
+        imr.save!
       end
     end
 
     trait :with_higher_level_review do
-      after(:create) do |pri|
+      after(:create) do |imr|
         dr = create(:higher_level_review,
                     :with_vha_issue,
                     :update_assigned_at,
                     :processed,
                     claimant_type: :veteran_claimant)
 
-        pri.decision_review = dr
-        pri.save!
+        imr.decision_review = dr
+        imr.save!
       end
     end
   end
