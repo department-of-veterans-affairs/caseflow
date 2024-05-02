@@ -580,7 +580,7 @@ class BusinessLine < Organization
           AND issue_modification_requests.status = 'assigned'"
       else
         "AND NOT EXISTS(
-          SELECT distinct decision_review_id FROM issue_modification_requests WHERE
+          SELECT decision_review_id FROM issue_modification_requests WHERE
           issue_modification_requests.status = 'assigned'
           AND issue_modification_requests.decision_review_id = tasks.appeal_id
           AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
