@@ -445,6 +445,11 @@ FactoryBot.define do
       completed_distribution_task
     end
 
+    trait :ready_for_distribution_with_appeal_affinity do
+      ready_for_distribution
+      with_appeal_affinity
+    end
+
     trait :cavc_ready_for_distribution do
       completed_distribution_task
     end
