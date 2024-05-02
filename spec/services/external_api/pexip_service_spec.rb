@@ -93,10 +93,8 @@ describe ExternalApi::PexipService do
   end
 
   describe "#delete_conference" do
-    let(:virtual_hearing) do
-      create(:virtual_hearing, conference_id: "123")
-    end
-    subject { pexip_service.delete_conference(virtual_hearing) }
+    let(:conference_id) { "123" }
+    subject { pexip_service.delete_conference(conference_id: conference_id) }
 
     let(:success_del_resp) { HTTPI::Response.new(204, {}, {}) }
     let(:error_del_resp) { HTTPI::Response.new(404, {}, {}) }
@@ -107,12 +105,12 @@ describe ExternalApi::PexipService do
     end
 
     it "passed correct arguments to #send_pexip_request" do
-      expect(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      expect(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
       subject
     end
 
     it "success response" do
-      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
         .and_return(success_del_resp)
 
       expect(subject.code).to eq(204)
@@ -121,7 +119,7 @@ describe ExternalApi::PexipService do
     end
 
     it "error response" do
-      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
         .and_return(error_del_resp)
 
       expect(subject.code).to eq(404)
@@ -129,4 +127,5 @@ describe ExternalApi::PexipService do
       expect(subject.error).to eq(Caseflow::Error::PexipNotFoundError.new(code: 404, message: "No error message"))
     end
   end
+
 end
