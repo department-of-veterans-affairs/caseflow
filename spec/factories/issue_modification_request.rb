@@ -14,8 +14,8 @@ FactoryBot.define do
     requestor_id { create(:user).id }
 
     trait :update_decider do
-      after(:create) do |imr|
-        imr.status = "approved"
+      after(:create) do |imr, evaluator|
+        imr.status = evaluator.status || "approved"
         imr.decider_id = create(:user).id
         imr.save!
       end

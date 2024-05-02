@@ -57,6 +57,7 @@ module Seeds
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_supplemental_claim,
                   :with_request_issue,
+                  :update_decider,
                   request_type: "Withdrawal",
                   decision_date: rand(17.days.ago..1.day.ago),
                   withdrawal_date: rand(10.days.ago..1.day.ago))
@@ -65,6 +66,7 @@ module Seeds
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_supplemental_claim,
                   :with_request_issue,
+                  :update_decider,
                   request_type: "Modification",
                   decision_date: rand(17.days.ago..1.day.ago),
                   nonrating_issue_category: "Caregiver | Eligibility")
