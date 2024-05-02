@@ -127,5 +127,4 @@ describe ExternalApi::PexipService do
       expect(subject.error).to eq(Caseflow::Error::PexipNotFoundError.new(code: 404, message: "No error message"))
     end
   end
-
 end
