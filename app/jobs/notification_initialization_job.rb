@@ -10,18 +10,10 @@ class NotificationInitializationJob < CaseflowJob
     begin
       ensure_current_user_is_set
 
-      Rails.logger.info(
-        "VACOLS Connection pool stats before initializing notification: #{VACOLS::Record.connection_pool.stat}"
-      )
-
       AppellantNotification.notify_appellant(
         appeal,
         template_name,
         appeal_status
-      )
-
-      Rails.logger.info(
-        "VACOLS Connection pool stats after initializing notification: #{VACOLS::Record.connection_pool.stat}"
       )
     rescue StandardError => error
       log_error(error)
