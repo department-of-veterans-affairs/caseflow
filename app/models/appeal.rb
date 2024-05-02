@@ -580,6 +580,7 @@ class Appeal < DecisionReview
 
     # set the parent to the nil to skip over callbacks for the original parent or new parent
     dup_task.parent_id = nil
+    # dup_task.parent_id = parent_task_id
 
     # set the appeal split process to true for the task
     dup_task.appeal.appeal_split_process = true
