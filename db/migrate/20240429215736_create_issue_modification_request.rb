@@ -12,6 +12,7 @@ class CreateIssueModificationRequest < ActiveRecord::Migration[6.0]
       t.datetime "withdrawal_date", null: true, comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
       t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
       t.datetime "decided_at", null: true, comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
+      t.datetime "edited_at", null: true, comment: "Timestamp when the requestor or decider edits the issue modification request."
       t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
       t.references :requestor, index: true, foreign_key: { to_table: :users }, comment: "The user who requests modification or addition of request issues"
       t.references :decider, index: true, foreign_key: { to_table: :users }, comment: "The user who decides approval/denial of the issue modification request."

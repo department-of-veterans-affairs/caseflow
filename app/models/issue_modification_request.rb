@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IssueModificationRequest < CaseflowRecord
+  has_paper_trail on: [:update, :destroy]
+
   belongs_to :request_issue
   belongs_to :decision_review, polymorphic: true
   belongs_to :requestor, class_name: "User"
