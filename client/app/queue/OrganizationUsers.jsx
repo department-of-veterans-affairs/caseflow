@@ -103,7 +103,9 @@ export default class OrganizationUsers extends React.PureComponent {
         return false;
       }
 
-      return user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission);
+      if (user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission)) {
+        return true;
+      }
     };
 
     // used to display checkboxes for the org.
