@@ -312,23 +312,21 @@ describe SendNotificationJob, type: :job do
 
   context "va_notify FeatureToggles" do
     describe "email" do
+      before { FeatureToggle.enable!(:va_notify_email) }
+      after { FeatureToggle.disable!(:va_notify_email) }
       it "is expected to send when the feature toggle is on" do
-        FeatureToggle.enable!(:va_notify_email)
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
       it "updates the notification_content field with content" do
-        FeatureToggle.enable!(:va_notify_email)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.notification_content).not_to eq(nil)
       end
       it "updates the email_notification_content field with content" do
-        FeatureToggle.enable!(:va_notify_email)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.email_notification_content).not_to eq(nil)
       end
       it "updates the notification_audit_record with email_notification_external_id" do
-        FeatureToggle.enable!(:va_notify_email)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.email_notification_external_id).not_to eq(nil)
       end
@@ -340,18 +338,17 @@ describe SendNotificationJob, type: :job do
     end
 
     describe "sms" do
+      before { FeatureToggle.enable!(:va_notify_sms) }
+      after { FeatureToggle.disable!(:va_notify_sms) }
       it "is expected to send when the feature toggle is on" do
-        FeatureToggle.enable!(:va_notify_sms)
         expect(VANotifyService).to receive(:send_sms_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
       it "updates the sms_notification_content field with content" do
-        FeatureToggle.enable!(:va_notify_sms)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.sms_notification_content).not_to eq(nil)
       end
       it "updates the notification_audit_record with sms_notification_external_id" do
-        FeatureToggle.enable!(:va_notify_sms)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.sms_notification_external_id).not_to eq(nil)
       end
@@ -372,7 +369,6 @@ describe SendNotificationJob, type: :job do
 
       it "is expected to send a generic saluation instead of a name" do
         expect(VANotifyService).to receive(:send_email_notifications).with(hash_including(first_name: "Appellant"))
-
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
@@ -383,16 +379,16 @@ describe SendNotificationJob, type: :job do
 
       it "is expected to send a generic saluation instead of a name" do
         expect(VANotifyService).to receive(:send_sms_notifications).with(hash_including(first_name: "Appellant"))
-
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
   end
 
   context "on retry" do
+    before { FeatureToggle.enable!(:va_notify_email) }
+    after { FeatureToggle.disable!(:va_notify_email) }
     describe "notification object" do
       it "does not create multiple notification objects" do
-        FeatureToggle.enable!(:va_notify_email)
         job = SendNotificationJob.new(good_message.to_json)
         allow(job).to receive(:find_or_create_notification_audit).and_return(notification)
         expect { job.perform_now }.not_to change(Notification, :count)
@@ -436,39 +432,26 @@ describe SendNotificationJob, type: :job do
     let(:legacy_appeal) { create(:legacy_appeal) }
 
     it "should only send notifications when feature flag is turned on" do
-      FeatureToggle.enable!(:appeal_docketed_event)
+      FeatureToggle.enable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)
       job.instance_variable_set(:@notification_audit, notification)
       allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(job).to receive(:send_to_va_notify)
       job.perform_now
-      FeatureToggle.disable!(:appeal_docketed_event)
     end
 
     it "should not send notifications when feature flag is turned off" do
-      FeatureToggle.enable!(:appeal_docketed_event)
+      FeatureToggle.disable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)
       job.instance_variable_set(:@notification_audit, notification)
       allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(job).not_to receive(:send_to_va_notify)
       job.perform_now
-      FeatureToggle.disable!(:appeal_docketed_event)
     end
   end
 
   context "feature flag testing for creating legacy appeal notification records" do
     let(:legacy_appeal) { create(:legacy_appeal) }
-
-    before {
-      FeatureToggle.enable!(:appeal_docketed_event)
-      FeatureToggle.enable!(:va_notify_sms)
-    }
-
-    after {
-      FeatureToggle.disable!(:appeal_docketed_event)
-      FeatureToggle.disable!(:va_notify_sms)
-    }
-
 
     it "should only create an instance of a notification before saving if a notification isn't found" do
       FeatureToggle.enable!(:appeal_docketed_event)
@@ -476,6 +459,7 @@ describe SendNotificationJob, type: :job do
       allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(Notification).to receive(:create)
       job.perform_now
+      FeatureToggle.disable!(:appeal_docketed_event)
     end
 
     it "should return the notification record if one is found and not try to create one" do
@@ -485,6 +469,8 @@ describe SendNotificationJob, type: :job do
       job = SendNotificationJob.new(legacy_message.to_json)
       expect(Notification).not_to receive(:create)
       job.perform_now
+      FeatureToggle.disable!(:appeal_docketed_event)
+      FeatureToggle.disable!(:va_notify_sms)
     end
   end
 
