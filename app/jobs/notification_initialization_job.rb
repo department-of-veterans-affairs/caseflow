@@ -16,6 +16,10 @@ class NotificationInitializationJob < CaseflowJob
         appeal_status
       )
     rescue StandardError => error
+      Rails.logger.info(
+        "Notification Init - VACOLS Connection at time of error: #{VACOLS::Record.connection_pool.stat}"
+      )
+
       log_error(error)
     end
   end

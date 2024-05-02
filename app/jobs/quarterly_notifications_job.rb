@@ -42,7 +42,7 @@ class QuarterlyNotificationsJob < CaseflowJob
               send_quarterly_notifications(appeal_state, appeal)
             end
           rescue StandardError => error
-            Rails.logger.info("VACOLS Connection at time of error: #{VACOLS::Record.connection_pool.stat}")
+            Rails.logger.info("Quarterly - VACOLS Connection at time of error: #{VACOLS::Record.connection_pool.stat}")
 
             Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
               "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
