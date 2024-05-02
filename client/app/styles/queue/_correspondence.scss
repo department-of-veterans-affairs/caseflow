@@ -597,9 +597,10 @@ $translate: 11%;
 .review-package-date-input{
   max-width: none;
 }
+
 .review-package-text-input-read-only {
   max-width: none;
-
+  margin-top: 15px;
   input{
     background: #f1f1f1 !important;
     opacity: 1 !important;
