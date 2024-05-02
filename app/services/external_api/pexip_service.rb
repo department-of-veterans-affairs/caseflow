@@ -40,17 +40,21 @@ class ExternalApi::PexipService
     ExternalApi::PexipService::CreateResponse.new(resp)
   end
 
-  def delete_conference(virtual_hearing)
-    return if virtual_hearing.conference_id.nil?
+  def delete_conference(conference_id:)
+    return if conference_id.nil?
 
-    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{virtual_hearing.conference_id}/"
+    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
-    return if resp.nil?
+    return lack_of_connectivity_response if resp.nil?
 
     ExternalApi::PexipService::DeleteResponse.new(resp)
   end
 
   private
+
+  def lack_of_connectivity_response
+    HTTPI::Response.new(503, {}, {})
+  end
 
   attr_reader :host, :port, :user_name, :password, :client_host
 
