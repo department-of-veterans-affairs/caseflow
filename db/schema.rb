@@ -200,6 +200,10 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
   end
 
+  create_table "auto_texts", force: :cascade do |t|
+    t.string "name"
+  end
+
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address", comment: "Full address of the location"
     t.integer "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
@@ -634,6 +638,25 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["created_by_id"], name: "index_created_by_id"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_updated_by_id"
+  end
+
+  create_table "correspondence_appeals", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.bigint "correspondence_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["appeal_id"], name: "index on appeal_id"
+    t.index ["correspondence_id"], name: "index on correspondence_id"
+  end
+
+  create_table "correspondence_auto_assignment_levers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.boolean "enabled", default: false, null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", null: false
+    t.index ["name"], name: "index_correspondence_auto_assignment_levers_on_name", unique: true
   end
 
   create_table "correspondence_documents", force: :cascade do |t|
@@ -1551,6 +1574,13 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
+  create_table "package_document_types", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
@@ -2132,6 +2162,52 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
+  create_table "vbms_document_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "doc_type_id"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
