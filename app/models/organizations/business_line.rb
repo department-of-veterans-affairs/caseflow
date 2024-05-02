@@ -579,7 +579,7 @@ class BusinessLine < Organization
         "issue_modification_requests.id IS NOT NULL
           AND issue_modification_requests.status = 'assigned'"
       else
-        "AND NOT EXISTS(
+        "NOT EXISTS(
           SELECT decision_review_id FROM issue_modification_requests WHERE
           issue_modification_requests.status = 'assigned'
           AND issue_modification_requests.decision_review_id = tasks.appeal_id
