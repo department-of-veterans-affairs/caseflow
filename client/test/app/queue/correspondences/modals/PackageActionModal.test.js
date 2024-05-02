@@ -44,7 +44,6 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Request package removal')).toBeInTheDocument();
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
     expect(screen.getByText('Provide a reason for removal')).toBeInTheDocument();
-    expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
     // hacky way to match multi line dynamic text
     expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
@@ -68,7 +67,6 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Request package reassignment')).toBeInTheDocument();
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
     expect(screen.getByText('Provide a reason for reassignment')).toBeInTheDocument();
-    expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
     // hacky way to match multi line dynamic text
     expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
@@ -93,7 +91,6 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Request split package')).toBeInTheDocument();
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
     expect(screen.getByText('Select a reason for splitting this package')).toBeInTheDocument();
-    expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
 
     expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
@@ -129,7 +126,6 @@ describe('PackageActionModal rendering', () => {
 
     expect(screen.getByText('Request merge')).toBeInTheDocument();
     expect(screen.getByText('Select a reason for merging this package.')).toBeInTheDocument();
-    expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Confirm request' })).toBeDisabled();

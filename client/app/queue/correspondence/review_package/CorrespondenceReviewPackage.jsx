@@ -1,7 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
@@ -13,6 +12,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
+import moment from 'moment';
 import {
   CORRESPONDENCE_READONLY_BANNER_HEADER,
   CORRESPONDENCE_READONLY_BANNER_MESSAGE,
@@ -30,7 +30,8 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: null
+    default_select_value: null,
+    va_date_of_receipt: '',
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
@@ -95,10 +96,16 @@ export const CorrespondenceReviewPackage = (props) => {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
       );
+      // API Response Without VA DOR
+      const apiResWithVADOR = response.body.general_information;
 
-      setApiResponse(response.body.general_information);
+      // Appended API Response VA DOR to
+      // eslint-disable-next-line max-len
+      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+
+      setApiResponse(apiResWithVADOR);
+      const data = apiResWithVADOR;
       const body = response.body;
-      const data = body.general_information;
 
       hasEfolderUploadTask(data.correspondence_tasks);
 
@@ -126,6 +133,7 @@ export const CorrespondenceReviewPackage = (props) => {
         notes: data.notes,
         veteran_file_number: data.file_number,
         default_select_value: data.correspondence_type_id,
+        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
       });
 
       if (isPageReadOnly(data.correspondence_tasks)) {
@@ -175,8 +183,9 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
 
   const intakeAppeal = async () => {
@@ -240,11 +249,7 @@ export const CorrespondenceReviewPackage = (props) => {
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
-          <ReviewPackageData
-            correspondence={props.correspondence}
-            packageDocumentType={props.packageDocumentType}
-            isReadOnly={isReadOnly}
-          />
+
           {packageActionModal &&
             <PackageActionModal
               packageActionModal={packageActionModal}
@@ -268,6 +273,8 @@ export const CorrespondenceReviewPackage = (props) => {
               isReadOnly
             }}
             {...props}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <CmpDocuments
             documents={props.correspondenceDocuments}
@@ -319,6 +326,7 @@ CorrespondenceReviewPackage.propTypes = {
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool
 };
 
