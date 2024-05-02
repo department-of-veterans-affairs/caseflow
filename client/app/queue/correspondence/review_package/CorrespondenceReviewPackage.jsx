@@ -40,6 +40,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
+  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -81,6 +82,15 @@ export const CorrespondenceReviewPackage = (props) => {
       );
     };
 
+    const hasEfolderUploadTask = (tasks) => {
+      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
+      task.type === 'EfolderUploadFailedTask');
+
+      if (existEfolderUploadTask) {
+        setIsEfolderUploadFailedTask(false);
+      }
+    };
+
     try {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
@@ -90,6 +100,8 @@ export const CorrespondenceReviewPackage = (props) => {
       const body = response.body;
       const data = body.general_information;
 
+      hasEfolderUploadTask(data.correspondence_tasks);
+
       if (response.body.efolder_upload_failed_before.length > 0) {
         setBannerInformation({
           title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
@@ -97,6 +109,7 @@ export const CorrespondenceReviewPackage = (props) => {
           bannerType: 'error'
         });
       }
+
       setReviewDetails({
         veteran_name: data.veteran_name || {},
         dropdown_values: data.correspondence_types || [],
@@ -123,6 +136,7 @@ export const CorrespondenceReviewPackage = (props) => {
         });
         setIsReadOnly(true);
       }
+
       if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -216,6 +230,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             reviewDetails={reviewPackageDetails}
+            efolder={isEfolderUploadFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
@@ -223,7 +238,7 @@ export const CorrespondenceReviewPackage = (props) => {
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
-            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
@@ -304,7 +319,7 @@ CorrespondenceReviewPackage.propTypes = {
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

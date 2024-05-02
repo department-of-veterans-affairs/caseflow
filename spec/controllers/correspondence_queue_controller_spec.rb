@@ -34,7 +34,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
       get :correspondence_cases
 
       body = JSON.parse(response.body, symbolize_names: true)
-      expect(body.keys.include?(:correspondence_config)).to eq true
+      expect(body.key?(:correspondence_config)).to eq true
     end
   end
 
@@ -69,7 +69,8 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
                                           user: current_user.css_id,
                                           correspondence_uuid: correspondence.uuid }
       expect(controller.view_assigns["response_header"]).to eq("You have successfully cancelled the intake form")
-      expect(controller.view_assigns["response_message"]).to eq("#{veteran.name}'s correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment.")
+      expect(controller.view_assigns["response_message"]).to eq("#{veteran.name}'s "\
+        "correspondence (ID: #{correspondence.id}) has been returned to the supervisor's queue for assignment.")
     end
 
     it "returns intake continue later response" do
@@ -77,7 +78,8 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
                                           user: current_user.css_id,
                                           correspondence_uuid: correspondence.uuid }
       expect(controller.view_assigns["response_header"]).to eq("You have successfully saved the intake form")
-      expect(controller.view_assigns["response_message"]).to eq("You can continue from step three of the intake form for #{veteran.name}'s correspondence (ID: #{correspondence.id}) at a later date.")
+      expect(controller.view_assigns["response_message"]).to eq("You can continue from step three of the "\
+        "intake form for #{veteran.name}'s correspondence (ID: #{correspondence.id}) at a later date.")
     end
   end
 end

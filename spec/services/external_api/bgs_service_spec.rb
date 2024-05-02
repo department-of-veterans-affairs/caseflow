@@ -37,7 +37,7 @@ describe ExternalApi::BGSService do
       expect(bgs).to receive(:get_participant_id_for_user).with(user).and_return(participant_id)
       expect(bgs_client).to receive(:security).and_return(bgs_security_service)
       expect(bgs_security_service).to receive(:find_person_scrty_log_by_ptcpnt_id)
-        .with(participant_id).and_return({ scrty_level_type_cd: "#{sensitivity_level}" })
+        .with(participant_id).and_return({ scrty_level_type_cd: sensitivity_level.to_s })
 
       expect(bgs.sensitivity_level_for_user(user)).to eq(sensitivity_level)
 
@@ -57,7 +57,7 @@ describe ExternalApi::BGSService do
 
       expect(bgs_client).to receive(:security).and_return(bgs_security_service)
       expect(bgs_security_service).to receive(:find_sensitivity_level_by_participant_id)
-        .with(veteran.participant_id).and_return({ scrty_level_type_cd: "#{sensitivity_level}" })
+        .with(veteran.participant_id).and_return({ scrty_level_type_cd: sensitivity_level.to_s })
 
       expect(bgs.sensitivity_level_for_veteran(veteran)).to eq(sensitivity_level)
 
