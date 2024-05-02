@@ -30,48 +30,59 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def create_table(hearings_data, worksheet)
+    setup_worksheet_header(worksheet)
+    hearings = fetch_hearings(hearings_data)
+    populate_table_data(hearings, worksheet)
+  end
+
+  def setup_worksheet_header(worksheet)
     header_format = Spreadsheet::Format.new weight: :bold, border: :thin
-    border_format = Spreadsheet::Format.new border: :thin
-
-    columns = [
-      "DOCKET NUMBER",
-      "FIRST NAME",
-      "LAST NAME",
-      "TYPES",
-      "HEARING DATE",
-      "RO",
-      "VLJ",
-      "APPEAL TYPE"
-    ]
+    columns = ["DOCKET NUMBER", "FIRST NAME", "LAST NAME", "TYPES", "HEARING DATE", "RO", "VLJ", "APPEAL TYPE"]
     set_border_format(worksheet.row(6), header_format)
-    worksheet.row(6).concat columns
-    hearings = Hearing.includes(:appeal).where(id: hearings_data.pluck(:hearing_id))
+    worksheet.row(6).concat(columns)
+  end
 
-    table_data = []
-    hearings.each do |hearing|
-      appeal = hearing.appeal
+  def fetch_hearings(hearings_data)
+    Hearing.includes(:appeal).where(id: hearings_data.pluck(:hearing_id))
+  end
 
-      hearing_date = if appeal.hearing_day_if_schedueled.present?
-                       appeal.hearing_day_if_schedueled.strftime("%m/%d/%Y")
-                     else
-                       ""
-                     end
-
-      table_data << [
-        appeal.docket_number,
-        hearing.appellant_first_name,
-        hearing.appellant_last_name,
-        appeal.type,
-        hearing_date,
-        hearing.regional_office.name,
-        hearing.judge.full_name,
-        appeal.is_a?(LegacyAppeal) ? "Legacy" : "AMA"
-      ]
+  def populate_table_data(hearings, worksheet)
+    table_data = hearings.map do |hearing|
+      format_hearing_data(hearing)
     end
+    append_table_data_to_worksheet(table_data, worksheet)
+  end
 
-    table_data.each_with_index do |row_data, row_index|
-      set_border_format(worksheet.row(row_index + 7), border_format)
-      worksheet.row(row_index + 7).concat row_data
+  def format_hearing_data(hearing)
+    appeal = hearing.appeal
+    hearing_date = format_hearing_date(appeal)
+    [
+      appeal.docket_number,
+      hearing.appellant_first_name,
+      hearing.appellant_last_name,
+      appeal.type,
+      hearing_date,
+      hearing.regional_office.name,
+      hearing.judge.full_name,
+      appeal_type(appeal)
+    ]
+  end
+
+  def format_hearing_date(appeal)
+    if appeal.hearing_day_if_schedueled.present?
+      appeal.hearing_day_if_schedueled.strftime("%m/%d/%Y")
+    else
+      ""
+    end
+  end
+
+  def appeal_type(appeal)
+    appeal.is_a?(LegacyAppeal) ? "Legacy" : "AMA"
+  end
+
+  def append_table_data_to_worksheet(table_data, worksheet)
+    table_data.each_with_index do |row, index|
+      worksheet.row(7 + index).replace(row)
     end
   end
 
