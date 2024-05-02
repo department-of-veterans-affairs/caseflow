@@ -97,7 +97,8 @@ export const CorrespondenceReviewPackage = (props) => {
       );
 
       setApiResponse(response.body.general_information);
-      const data = response.body.general_information;
+      const body = response.body;
+      const data = body.general_information;
 
       hasEfolderUploadTask(data.correspondence_tasks);
 
@@ -112,7 +113,8 @@ export const CorrespondenceReviewPackage = (props) => {
       setReviewDetails({
         veteran_name: data.veteran_name || {},
         dropdown_values: data.correspondence_types || [],
-        correspondence_type_id: data.correspondence_type_id
+        correspondence_type_id: data.correspondence_type_id,
+        nod: body.correspondence.nod
       });
 
       setReviewPackageDetails((prev) => {
