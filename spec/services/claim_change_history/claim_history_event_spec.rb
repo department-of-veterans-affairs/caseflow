@@ -8,7 +8,7 @@ describe ClaimHistoryEvent do
       "id" => nil,
       "appeal_id" => 155,
       "appeal_type" => change_data_claim_type,
-      "assigned_at" => "2023-10-19 22:47:16.222148",
+      "assigned_at" => Time.zone.parse("2023-10-19 22:47:16.222148"),
       "assigned_to_id" => 200_000_022_2,
       "assigned_to_type" => "Organization",
       "decision_date" => change_data_decision_date,
@@ -32,22 +32,23 @@ describe ClaimHistoryEvent do
       "request_issue_update_id" => 7,
       "request_issue_id" => request_issue_id,
       "request_issue_created_at" => request_issue_created_at,
-      "intake_completed_at" => "2023-10-19 22:39:14.270897",
+      "intake_completed_at" => Time.zone.parse("2023-10-19 22:39:14.270897"),
       "update_user_name" => "Tyler User",
       "intake_user_name" => "Monte Mann",
       "update_user_station_id" => "101",
       "intake_user_station_id" => "741",
       "decision_user_name" => nil,
       "decision_user_station_id" => nil,
-      "decision_created_at" => "2023-10-19 22:48:25.281657",
+      "decision_created_at" => Time.zone.parse("2023-10-19 22:48:25.281657"),
       "intake_user_css_id" => 200_000_601_2,
       "decision_user_css_id" => nil,
       "update_user_css_id" => 3992,
-      "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
+      "request_issue_closed_at" => Time.zone.parse("2023-10-16 22:47:16.233187"),
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
-      "days_waiting" => 25
+      "days_waiting" => 25,
+      "task_closed_at" => "2023-10-19 22:47:16.233187"
     }
   end
 
@@ -59,13 +60,13 @@ describe ClaimHistoryEvent do
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
   let(:change_data_decision_date) { "2023-05-31" }
-  let(:change_data_decision_date_added_at) { "2023-10-19 22:48:25.281657" }
+  let(:change_data_decision_date_added_at) { Time.zone.parse("2023-10-19 22:48:25.281657") }
   let(:version_changes) { nil }
-  let(:request_issue_update_time) { "2023-10-19 22:47:16.233187" }
-  let(:request_issue_created_at) { "2023-10-19 22:45:43.108934" }
+  let(:request_issue_update_time) { Time.zone.parse("2023-10-19 22:47:16.233187") }
+  let(:request_issue_created_at) { Time.zone.parse("2023-10-19 22:45:43.108934") }
   let(:event_attribute_data) do
     {
-      assigned_at: "2023-10-19 22:47:16.222148",
+      assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
@@ -78,20 +79,20 @@ describe ClaimHistoryEvent do
       event_type: event_type,
       event_user_css_id: nil,
       event_user_name: nil,
-      intake_completed_date: "2023-10-19 22:39:14.270897",
+      intake_completed_date: Time.zone.parse("2023-10-19 22:39:14.270897"),
       issue_description: "Clothing allowance no decision date",
       issue_type: "Clothing Allowance",
       task_id: 124_28,
       task_status: "completed",
       user_facility: nil,
       veteran_file_number: "000100022",
-      withdrawal_request_date: "2023-10-16 22:47:16.233187"
+      withdrawal_request_date: Time.zone.parse("2023-10-16 22:47:16.233187")
     }
   end
 
   let(:status_event_attribute_data) do
     {
-      assigned_at: "2023-10-19 22:47:16.222148",
+      assigned_at: Time.zone.parse("2023-10-19 22:47:16.222148"),
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
@@ -99,12 +100,12 @@ describe ClaimHistoryEvent do
       decision_date: nil,
       decision_description: nil,
       disposition: nil,
-      disposition_date: nil,
+      disposition_date: "2023-10-19",
       event_date: nil,
       event_type: event_type,
       event_user_css_id: nil,
       event_user_name: nil,
-      intake_completed_date: "2023-10-19 22:39:14.270897",
+      intake_completed_date: Time.zone.parse("2023-10-19 22:39:14.270897"),
       issue_description: nil,
       issue_type: nil,
       task_id: 124_28,
@@ -229,10 +230,10 @@ describe ClaimHistoryEvent do
           expect(events.count).to eq(2)
           expect(events[0].event_type).to eq(:in_progress)
           expect(events[0].event_user_name).to eq("System")
-          expect(events[0].event_date).to eq("2023-11-08T19:22:47Z")
+          expect(events[0].event_date).to eq(Time.zone.parse("2023-11-08 19:22:47.227634704 UTC"))
           expect(events[1].event_type).to eq(:completed)
           expect(events[1].event_user_name).to eq("System")
-          expect(events[1].event_date).to eq("2023-11-09T19:22:47Z")
+          expect(events[1].event_date).to eq(Time.zone.parse("2023-11-09 19:22:47.244304624 Z"))
         end
       end
 
@@ -256,10 +257,10 @@ describe ClaimHistoryEvent do
           expect(events.count).to eq(2)
           expect(events[0].event_type).to eq(:in_progress)
           expect(events[0].event_user_name).to eq("System")
-          expect(events[0].event_date).to eq("2023-11-09T23:16:15Z")
+          expect(events[0].event_date).to eq(Time.zone.parse("2023-11-09 23:16:15.724150103 Z"))
           expect(events[1].event_type).to eq(:cancelled)
           expect(events[1].event_user_name).to eq("System")
-          expect(events[1].event_date).to eq("2023-11-11T23:16:28Z")
+          expect(events[1].event_date).to eq(Time.zone.parse("2023-11-11 23:16:28.446399290 Z"))
         end
       end
 
@@ -313,10 +314,10 @@ describe ClaimHistoryEvent do
           events.each do |event|
             expect(event.event_user_name).to eq("System")
           end
-          expect(assigned_event.event_date).to eq("2023-10-19T22:39:14Z")
-          expect(on_hold_event.event_date).to eq("2023-10-19T22:45:43Z")
-          expect(second_assigned_event.event_date).to eq("2023-10-19T22:47:16Z")
-          expect(completed_event.event_date).to eq("2023-10-19T22:48:25Z")
+          expect(assigned_event.event_date).to eq(Time.zone.parse("2023-10-19 22:39:14.207143000 Z"))
+          expect(on_hold_event.event_date).to eq(Time.zone.parse("2023-10-19 22:45:43.148742110 Z"))
+          expect(second_assigned_event.event_date).to eq(Time.zone.parse("2023-10-19 22:47:16.222311778 Z"))
+          expect(completed_event.event_date).to eq(Time.zone.parse("2023-10-19 22:48:25.324023984 Z"))
         end
       end
 
@@ -368,9 +369,9 @@ describe ClaimHistoryEvent do
           events.each do |event|
             expect(event.event_user_name).to eq("System")
           end
-          expect(on_hold_event.event_date).to eq("2023-10-19T22:39:14Z")
-          expect(assigned_event.event_date).to eq("2023-10-19T22:47:16Z")
-          expect(completed_event.event_date).to eq("2023-10-19T22:48:25Z")
+          expect(on_hold_event.event_date).to eq(Time.zone.parse("2023-10-19 22:39:14.207143000 Z"))
+          expect(assigned_event.event_date).to eq(Time.zone.parse("2023-10-19 22:47:16.222311778 Z"))
+          expect(completed_event.event_date).to eq(Time.zone.parse("2023-10-19 22:48:25.324023984 Z"))
         end
       end
 
@@ -398,7 +399,7 @@ describe ClaimHistoryEvent do
           expect(events[0].event_date).to eq(change_data["intake_completed_at"])
           expect(events[1].event_type).to eq(:cancelled)
           expect(events[1].event_user_name).to eq("System")
-          expect(events[1].event_date).to eq(change_data["task_completed_at"])
+          expect(events[1].event_date).to eq(change_data["task_closed_at"])
         end
       end
     end
@@ -418,7 +419,7 @@ describe ClaimHistoryEvent do
 
       before do
         # This attribute has to match within 15 seconds of the request issues update to guess the event type
-        request_issue.decision_date_added_at = DateTime.parse(change_data["request_issue_update_time"])
+        request_issue.decision_date_added_at = change_data["request_issue_update_time"]
         request_issue.save!
       end
 
@@ -496,7 +497,7 @@ describe ClaimHistoryEvent do
                  nonrating_issue_description: "Updated issue description",
                  decision_date: Time.zone.today,
                  # This attribute has to match within 15 seconds of the request issues update to guess the event type
-                 decision_date_added_at: DateTime.parse(change_data["request_issue_update_time"]))
+                 decision_date_added_at: change_data["request_issue_update_time"])
         end
 
         before do
@@ -651,11 +652,14 @@ describe ClaimHistoryEvent do
         let(:request_issue_id) { request_issue.id }
 
         let(:request_issue_hash) do
+          # You have to reload here because the full precision in Time.zone.now remains in the created object,
+          # but is not saved in the database
+          request_issue.reload
           {
             "nonrating_issue_category" => request_issue.nonrating_issue_category,
             "nonrating_issue_description" => request_issue.nonrating_issue_description,
             "decision_date" => request_issue.decision_date,
-            "decision_date_added_at" => request_issue.decision_date_added_at.iso8601,
+            "decision_date_added_at" => request_issue.decision_date_added_at,
             "request_issue_closed_at" => request_issue.closed_at
           }
         end
@@ -900,12 +904,12 @@ describe ClaimHistoryEvent do
 
         # Copy of the hash from claim_history_event.rb
         event_types = {
-          in_progress: "Claim status - In Progress",
+          in_progress: "Claim status - In progress",
           incomplete: "Claim status - Incomplete",
           completed: "Claim closed",
           claim_creation: "Claim created",
           completed_disposition: "Completed disposition",
-          added_issue: "Added Issue",
+          added_issue: "Added issue",
           withdrew_issue: "Withdrew issue",
           removed_issue: "Removed issue",
           added_decision_date: "Added decision date"
