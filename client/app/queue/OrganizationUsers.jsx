@@ -160,6 +160,7 @@ export default class OrganizationUsers extends React.PureComponent {
           onChange={this.modifyUserPermission(user.id, permission.permission)}
           defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
           disabled={checkAdminPermission(permission.permission)}
+          value={checkAdminPermission(permission.permission)}
 
         />);
       })
