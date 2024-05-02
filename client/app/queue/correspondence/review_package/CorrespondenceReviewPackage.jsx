@@ -1,6 +1,7 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
@@ -246,6 +247,11 @@ export const CorrespondenceReviewPackage = (props) => {
             mailTeamUsers={props.mailTeamUsers}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+          />
+          <ReviewPackageData
+            correspondence={props.correspondence}
+            packageDocumentType={props.packageDocumentType}
+            isReadOnly={isReadOnly}
           />
           {packageActionModal &&
             <PackageActionModal

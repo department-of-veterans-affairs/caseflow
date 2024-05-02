@@ -21,10 +21,6 @@ class ReviewPackageData extends React.PureComponent {
   render = () => {
     return (
       <div>
-        <CmpInfoScaffolding
-          correspondence={this.props.correspondence}
-          packageDocumentType = {this.props.packageDocumentType}
-          isReadOnly={this.props.isReadOnly} />
       </div>
     );
   };
