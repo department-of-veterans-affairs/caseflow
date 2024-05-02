@@ -1,5 +1,16 @@
 {
-  "superuser" : "Superuser: Split, Merge, and Reassign",
-  "auto_assign": "auto_assign",
-  "receive_nod_mail": "receive_nod_mail"
+  "superuser" : {
+    "permission": "superuser",
+    "description": "Superuser: Split, Merge, and Reassign"
+  },
+
+  "auto_assign": {
+    "permission": "auto_assign",
+    "description": "Auto-Assignment"
+  },
+
+  "receive_nod_mail": {
+    "permission": "receive_nod_mail",
+    "description": "Receive \"NOD Mail\""
+  }
 }

@@ -48,7 +48,7 @@ class AutoAssignableUserFinder
       next if num_assigned >= CorrespondenceAutoAssignmentLever.max_capacity
 
       nod_eligible = permission_checker.can?(
-        permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
+        permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.permission,
         organization: InboundOpsTeam.singleton,
         user: user
       )
