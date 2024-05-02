@@ -17,13 +17,13 @@ class ExternalApi::WebexService::Response
   end
 
   def success?
-    !error
+    !resp.error?
   end
 
   private
 
   def check_for_errors
-    return false if code == 200
+    return false if success?
 
     msg = error_message
     case code

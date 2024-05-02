@@ -126,16 +126,14 @@ class ExternalApi::WebexService
       case method
       when "POST"
         response = HTTPI.post(request)
-        service_response = ExternalApi::WebexService::Response.new(response)
-        fail service_response.error if service_response.error
+        fail response.error if !response.success?
 
-        service_response
+        response
       when "GET"
         response = HTTPI.get(request)
-        service_response = ExternalApi::WebexService::Response.new(response)
-        fail service_response.error if service_response.error
+        fail response.error if !response.success?
 
-        service_response
+        response
       else
         fail NotImplementedError
       end
