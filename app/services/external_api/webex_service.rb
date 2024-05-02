@@ -45,7 +45,7 @@ class ExternalApi::WebexService
     }
     method = "POST"
     resp = send_webex_request(body, method)
-    ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::CreateResponse.new(resp)
   end
 
   def delete_conference(conferenced_item)
@@ -61,8 +61,7 @@ class ExternalApi::WebexService
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::DeleteResponse.new(send_webex_request(body, method))
   end
 
   # Purpose: Refreshing the access token to access the API
@@ -97,21 +96,20 @@ class ExternalApi::WebexService
     body = nil
     method = "GET"
     @api_endpoint += "recordings"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::RecordingsListResponse.new(send_webex_request(body, method))
   end
 
   def fetch_recording_details(recording_id)
     body = nil
     method = "GET"
     @api_endpoint += "recordings/#{recording_id}"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
   end
 
   private
 
   # :nocov:
+  # rubocop:disable Metrics/MethodLength
   def send_webex_request(body, method)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
@@ -128,11 +126,22 @@ class ExternalApi::WebexService
     ) do
       case method
       when "POST"
-        HTTPI.post(request)
+        response = HTTPI.post(request)
+        service_response = ExternalApi::WebexService::Response.new(response)
+        fail service_response.error if service_response.error
+
+        service_response
       when "GET"
-        HTTPI.get(request)
+        response = HTTPI.get(request)
+        service_response = ExternalApi::WebexService::Response.new(response)
+        fail service_response.error if service_response.error
+
+        service_response
+      else
+        fail NotImplementedError
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # :nocov:
 end
