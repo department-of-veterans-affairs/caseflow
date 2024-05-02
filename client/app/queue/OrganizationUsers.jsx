@@ -327,7 +327,16 @@ getFilteredUsers = () => {
             />
           </div>
         </div>
-        <ul>{listOfUsers}</ul>
+        { listOfUsers.length > 0 ? (
+          <ul>{listOfUsers}</ul>
+        ) : (
+          <>
+            <b className="no-results-found-styling">No results found</b>
+            <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
+          </>
+        )
+        }
+
       </div>
     </React.Fragment>;
   }
