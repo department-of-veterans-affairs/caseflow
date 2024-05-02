@@ -7,7 +7,7 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
       tmp_file_paths = fetch_transcription_files
       zip_file_path = zip(tmp_file_paths)
       formatted_zip_path = rename_before_upload(zip_file_path)
-      # will implement upload to s3 here in next ticket
+      create_transcription_file_for_zip(formatted_zip_path)&.upload_to_s3!
       cleanup_tmp(tmp_file_paths + [formatted_zip_path])
     end
   end
@@ -66,6 +66,17 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
   # Purpose: format zip file creation date as YYYYMMDD to use in the file name
   def format_creation_date(file_path)
     File.ctime(file_path).strftime("%Y%m%d")
+  end
+
+  def create_transcription_file_for_zip(file_path)
+    TranscriptionFile.create!(
+      file_name: file_path.split("/").last,
+      hearing_id: @hearing.id,
+      hearing_type: @hearing.class.name,
+      docket_number: @hearing.docket_number,
+      file_type: "zip",
+      created_by_id: RequestStore[:current_user].id
+    )
   end
 
   def cleanup_tmp(file_paths)
