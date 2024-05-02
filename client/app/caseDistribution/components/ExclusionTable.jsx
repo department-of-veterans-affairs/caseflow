@@ -14,7 +14,9 @@ const ExclusionTable = () => {
 
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  const docketLevers = theState.caseDistributionLevers?.levers?.docket_levers ?? [];
+  let docketLevers = theState.caseDistributionLevers?.levers?.docket_levers ?? [];
+
+  docketLevers = docketLevers.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   const priorityLevers = docketLevers.filter((lever) => lever.control_group === ACD_LEVERS.priority);
   const nonPriorityLevers = docketLevers.filter((lever) => lever.control_group === ACD_LEVERS.non_priority);

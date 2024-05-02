@@ -7,7 +7,6 @@ const ExcludeDocketLever = (levers) => {
   const dispatch = useDispatch();
   let selectedLever = levers.lever;
   const onChangeSelected = (selected) => (event) => {
-
     dispatch(updateLeverValue(selected.leverGroup, selected.item, event));
   };
 
