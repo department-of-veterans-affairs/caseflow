@@ -449,6 +449,16 @@ FactoryBot.define do
       completed_distribution_task
     end
 
+    trait :with_appeal_affinity do
+      transient do
+        affinity_start_date { Time.zone.now }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
+      end
+    end
+
     trait :completed_distribution_task do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
