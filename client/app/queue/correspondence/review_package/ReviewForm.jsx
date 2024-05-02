@@ -180,7 +180,7 @@ export const ReviewForm = (props) => {
   const vaDORReadOnlyStyling = () => {
     if (vaDORReadOnly() || props.isReadOnly) {
       return <DateSelector
-        className={['review-package-date-input', 'review-package-text-input-read-only']}
+        className={['review-package-text-input-read-only']}
         class= "field-style-rp"
         label="VA DOR"
         name="date"
