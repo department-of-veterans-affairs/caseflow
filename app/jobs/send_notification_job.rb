@@ -208,8 +208,8 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated Notification object
   def send_to_va_notify
-    send_va_notify_email if email_enabled
-    send_va_notify_sms if sms_enabled
+    send_va_notify_email if email_enabled?
+    send_va_notify_sms if sms_enabled?
   end
 
   # Purpose: Build payload for VA Notify request body
@@ -260,9 +260,9 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: String
   def notification_type
-    if email_enabled
-      sms_enabled ? "Email and SMS" : "Email"
-    elsif sms_enabled
+    if email_enabled?
+      sms_enabled? ? "Email and SMS" : "Email"
+    elsif sms_enabled?
       "SMS"
     else
       "None"
