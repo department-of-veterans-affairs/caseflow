@@ -297,6 +297,12 @@ $translate: 11%;
   }
 }
 
+.nod-styling-review-form {
+  & .cf-form-textinput {
+    max-width: 72rem !important;
+  }
+}
+
 .tag-styling-review-form {
   & .cf-select__control {
     max-width: 63rem !important;

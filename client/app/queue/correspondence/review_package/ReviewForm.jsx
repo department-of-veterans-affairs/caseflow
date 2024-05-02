@@ -231,25 +231,20 @@ export const ReviewForm = (props) => {
                   useAriaLabel
                 />
               </div>
-
             </div>
-            <div className="review-package-field-styling">
-
+            <div className= "nod-styling-review-form">
               <TextField
-                className={['review-package-text-input-read-only']}
+                name="correspondence-package-document-type"
                 label="Package document type"
-                value={checkIfNOD()}
+                value = {props.reviewDetails?.nod ? 'NOD' : 'Non-NOD'}
                 readOnly
-                name="Veteran-NOD-display"
-                useAriaLabel
               />
-
             </div>
+
             <div className="review-package-field-styling">
 
               {vaDORReadOnlyStyling()}
             </div>
-
           </div>
           <div className="divide-textarea-styling-review-form">
             <div >
