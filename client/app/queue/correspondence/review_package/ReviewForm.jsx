@@ -147,7 +147,7 @@ export const ReviewForm = (props) => {
                 />
               </div>
             </div>
-            <div className= "tag-styling-review-form">
+            <div className= "nod-styling-review-form">
               <TextField
                 name="correspondence-package-document-type"
                 label="Package document type"
