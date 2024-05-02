@@ -45,9 +45,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    return nil if logical_date_int.nil?
+    return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
+
     base_date = Date.new(1970, 1, 1)
-    converted_date = base_date + logical_date_int.days
+    converted_date = base_date + logical_date_int.to_i.days
     return converted_date
   end
 
