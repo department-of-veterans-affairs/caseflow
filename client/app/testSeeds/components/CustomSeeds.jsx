@@ -54,13 +54,15 @@ class CustomSeeds extends React.PureComponent {
 
   reseedByCaseType = (type) => {
     const caseType = this.seedByType[type];
+    caseType["seed_type"] = type;
 
     this.setState({ seedRunning: true, seedRunningMsg: '' });
     this.setState((prevState) => ({
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    ApiUtil.post(`/seeds/run-demo/${type}`, { data: caseType }).then(() => {
+    // ApiUtil.post(`/seeds/run-demo/${type}`, { data: caseType }).then(() => {
+    ApiUtil.post(`/seeds/run-demo`, { data: caseType }).then(() => {
       this.setState({ seedRunning: false });
       this.setState((prevState) => ({
         reseedingStatus: { ...prevState.reseedingStatus, [type]: false }

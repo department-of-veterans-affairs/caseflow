@@ -60,7 +60,8 @@ class ScenarioSeeds extends React.Component {
       reseedingStatus: { ...prevState.reseedingStatus, [type]: true }
     }));
 
-    const endpoint = `/seeds/run-demo/${type}?seed_count=${seedCount}`;
+    // const endpoint = `/seeds/run-demo/${type}?seed_count=${seedCount}`;
+    const endpoint = `/seeds/run-demo?seed_type=${type}&seed_count=${seedCount}`;
 
     ApiUtil.post(endpoint).then(() => {
       this.setState({ seedRunning: false });
