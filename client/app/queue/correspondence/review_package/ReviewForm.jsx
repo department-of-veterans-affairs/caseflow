@@ -146,10 +146,16 @@ export const ReviewForm = (props) => {
                   useAriaLabel
                 />
               </div>
-
             </div>
             <div className= "tag-styling-review-form">
-
+              <TextField
+                name="correspondence-package-document-type"
+                label="Package document type"
+                value = {props.reviewDetails?.nod ? 'NOD' : 'Non-NOD'}
+                readOnly
+              />
+            </div>
+            <div className= "tag-styling-review-form">
               <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
@@ -159,7 +165,6 @@ export const ReviewForm = (props) => {
                 placeholder="Select..."
               />
             </div>
-
           </div>
           <div className="divide-textarea-styling-review-form">
             <div >
