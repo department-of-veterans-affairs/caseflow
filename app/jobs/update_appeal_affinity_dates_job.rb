@@ -1,0 +1,94 @@
+# frozen_string_literal: true
+
+class UpdateAppealAffinityDatesJob < CaseflowJob
+  LEGACY_DOCKET = "legacy"
+  LEGACY_READY_TO_DISTRIBUTE_LOCATIONS = %w[81 83].freeze
+  PAIRS_TO_DELETE = [["evidence_submission", false], ["direct_review", false]].freeze
+
+  def initialize(distribution_id = nil)
+    @distribution_id = distribution_id
+  end
+
+  def perform
+    RequestStore.store[:current_user] = User.system_user
+
+    if @distribution_id
+      update_from_requested_distribution
+    else
+      update_from_push_priority_appeals_job
+    end
+  end
+
+  # private
+
+  def update_from_requested_distribution
+    receipt_date_hashes_array = latest_receipt_dates_from_distribution
+    process_ama_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+    # Uncomment this while implementing legacy appeal affinities
+    # process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+  end
+
+  # TODO: this
+  def update_from_push_priority_appeals_job; end
+
+  def latest_receipt_dates_from_distribution
+    distributed_cases_hash =
+      DistributedCase
+        .joins("INNER JOIN appeals ON case_id = uuid::text")
+        .where(distribution_id: @distribution_id).group("docket", "priority")
+        .maximum("receipt_date")
+
+    # If there isn't a held hearing and it isn't a CAVC remand (priority), then there will never be an affinity
+    distributed_cases_hash.delete_if { |combo, _| PAIRS_TO_DELETE.include?(combo) }
+
+    # Transform the SQL output into a more workable array of hashes
+    receipt_date_hashes_array = []
+    distributed_cases_hash.each_pair do |keys, receipt_date|
+      receipt_date_hashes_array << { docket: keys[0], priority: keys[1], receipt_date: receipt_date }
+    end
+
+    receipt_date_hashes_array
+  end
+
+  def process_ama_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+    receipt_date_hashes_array.map do |receipt_date_hash|
+      next if receipt_date_hash[:docket] == LEGACY_DOCKET
+
+      base_appeals_to_update =
+        Appeal
+          .ready_for_distribution
+          .joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
+          .where(docket_type: receipt_date_hash[:docket], appeal_affinities: { affinity_start_date: nil })
+          .where("receipt_date <= (?)", receipt_date_hash[:receipt_date])
+
+      appeals_to_update_adjusted_for_priority = if receipt_date_hash[:priority]
+                                                  base_appeals_to_update.priority
+                                                else
+                                                  base_appeals_to_update.nonpriority
+                                                end
+
+      create_or_update_appeal_affinties(appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
+    end
+  end
+
+  # To be implemented in future work
+  def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array); end
+
+  # The appeals arg can be an array of VACOLS::Case objects, they have the same affinity associations as Appeal objects
+  def create_or_update_appeal_affinties(appeals, priority)
+    appeals.each do |appeal|
+      existing_affinity = appeal.appeal_affinity
+
+      if existing_affinity
+        existing_affinity.update!(affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
+      else
+        appeal.create_appeal_affinity!(
+          docket: appeal.docket_type,
+          priority: priority,
+          affinity_start_date: Time.zone.now,
+          distribution_id: @distribution_id
+        )
+      end
+    end
+  end
+end
