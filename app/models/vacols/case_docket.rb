@@ -79,6 +79,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   SELECT_READY_APPEALS = "
     select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    left outer join brieff b2 on brieff.bfcorlid = b2.bfcorlid and brieff.bfkey != b2.bfkey
+left outer join folder f2 on b2.bfkey = f2.ticknum
     #{FROM_READY_APPEALS}
   "
 
@@ -102,6 +104,18 @@ class VACOLS::CaseDocket < VACOLS::Record
         and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
+
+  JOIN_PREVIOUS_APPEALS = "
+  left join (
+      select BRIEFF.BFKEY, BRIEFF.BFCORLID, BRIEFF.BFDDEC, BRIEFF.BFMEMID, BRIEFF.BFAC as PREV_TYPE_ACTION, FOLDER.TINUM, FOLDER.TITRNUM
+      from BRIEFF
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+
+      where BRIEFF.BFMPRO = 'HIS' and BRIEFF.BFMEMID not in ('000', '888', '999') and BRIEFF.BFATTID is not null
+    ) PREV_APPEAL
+      on PREV_APPEAL.BFKEY != BRIEFF.BFKEY and PREV_APPEAL.BFCORLID = BRIEFF.BFCORLID
+      and PREV_APPEAL.TINUM = BRIEFF.TINUM and PREV_APPEAL.TITRNUM = BRIEFF.TITRNUM
+      and PREV_APPEAL.BFDDEC = BRIEFF.BFDPDCN"
 
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
@@ -150,13 +164,14 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ, PREV_APPEAL.PREV_TYPE_ACTION
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
       order by BFD19
     )
   "
