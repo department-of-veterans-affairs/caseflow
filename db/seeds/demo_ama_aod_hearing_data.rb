@@ -3,8 +3,8 @@
 module Seeds
   class DemoAmaAodHearingData < Base
     def initialize
-      @seed_count = ENV['SEED_COUNT'].to_i
-      @days_ago = ENV['DAYS_AGO'].to_i.days.ago
+      @seed_count = ENV["SEED_COUNT"].to_i
+      @days_ago = ENV["DAYS_AGO"].to_i.days.ago
       @hearing_judge = find_or_create_demo_seed_judge(ENV['JUDGE_CSS_ID'])
     end
 
@@ -16,8 +16,9 @@ module Seeds
     end
 
     def create_ama_aod_hearing
+      puts "create"
       Timecop.travel(@days_ago)
-        create(
+      create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,

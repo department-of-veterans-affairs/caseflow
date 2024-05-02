@@ -112,11 +112,11 @@ class CustomSeeds extends React.PureComponent {
                   <td>
                     <div className={cx('lever-right', 'test-seeds-num-field')}>
                       <NumberField
-                        ariaLabelText={`case-count-${type}`}
+                        ariaLabelText={`seed-count-${type}`}
                         useAriaLabel
-                        inputID={`case-count-${type}`}
+                        inputID={`seed-count-${type}`}
                         onChange={(value) => {
-                          this.onChangeCaseType(type, 'case_count', value);
+                          this.onChangeCaseType(type, 'seed_count', value);
                         }}
                       />
                     </div>

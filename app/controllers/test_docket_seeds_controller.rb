@@ -5,12 +5,13 @@ class TestDocketSeedsController < ApplicationController
 
   def seed_dockets
     task_name = Constants.TEST_SEEDS.to_h[params[:seed_type].to_sym]
-    ENV["SEED_COUNT"] = params[:seed_count]
-    ENV["DAYS_AGO"] = params[:days_ago]
-    ENV["JUDGE_CSS_ID"] = params[:judge_css_id]
+    puts params
+    ENV["SEED_COUNT"] = params[:seed_count].to_s
+    ENV["DAYS_AGO"] = params[:days_ago].to_s
+    ENV["JUDGE_CSS_ID"] = params[:judge_css_id].to_s
 
     Rake::Task[task_name].reenable
-    Rake::Task[task_name].execute
+    Rake::Task[task_name].invoke
 
     ENV.delete("SEED_COUNT")
     ENV.delete("DAYS_AGO")

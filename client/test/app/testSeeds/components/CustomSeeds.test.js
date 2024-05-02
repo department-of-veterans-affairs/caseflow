@@ -26,7 +26,7 @@ describe('Custom Seeds', () => {
 
     // Check if input fields and buttons are rendered for each seed type
     seedTypes.forEach((type) => {
-      const caseCountInput = getByLabelText(`case-count-${type}`);
+      const caseCountInput = getByLabelText(`seed-count-${type}`);
       const daysAgoInput = getByLabelText(`days-ago-${type}`);
       const cssIdInput = getByLabelText(`css-id-${type}`);
       const button = container.querySelector(`#btn-${type}`);
@@ -41,7 +41,7 @@ describe('Custom Seeds', () => {
   it('should update state when input values change', () => {
     const { getByLabelText } = render(<CustomSeeds />);
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
     const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
     const cssIdInput = getByLabelText(`css-id-${first_seed}`);
 
@@ -59,7 +59,7 @@ describe('Custom Seeds', () => {
 
     const { container, getByLabelText } = render(<CustomSeeds />);
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
     const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
     const cssIdInput = getByLabelText(`css-id-${first_seed}`);
     const button = container.querySelector(`#btn-${first_seed}`);
@@ -75,7 +75,7 @@ describe('Custom Seeds', () => {
     fireEvent.click(button);
 
     expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { case_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
+      data: { seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to resolve
@@ -90,7 +90,7 @@ describe('Custom Seeds', () => {
     ApiUtil.post.mockRejectedValueOnce(new Error('API Error'));
     const { container, getByLabelText } = render(<CustomSeeds />);
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`case-count-${first_seed}`);
+    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
     const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
     const cssIdInput = getByLabelText(`css-id-${first_seed}`);
     const button = container.querySelector(`#btn-${first_seed}`);
@@ -101,7 +101,7 @@ describe('Custom Seeds', () => {
     fireEvent.click(button);
 
     expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { case_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
+      data: { seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to reject
