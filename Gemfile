@@ -72,6 +72,7 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "spreadsheet", "~> 1.3"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
@@ -116,9 +117,9 @@ group :test, :development, :demo do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
+  gem "rspec-rails"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
