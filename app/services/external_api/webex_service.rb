@@ -44,8 +44,7 @@ class ExternalApi::WebexService
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::CreateResponse.new(resp)
+    ExternalApi::WebexService::CreateResponse.new(send_webex_request(body, method))
   end
 
   def delete_conference(conferenced_item)
