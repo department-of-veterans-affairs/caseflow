@@ -1,20 +1,20 @@
 class CreateIssueModificationRequest < ActiveRecord::Migration[6.0]
   def change
-    create_table :issue_modification_requests, comment: "A database table to store pending request issues that are for modification" do |t|
-      t.references :request_issue, foreign_key: true, null: true, comment:"Indicates the id of the request_issues on which the modification was requested."
-      t.references :decision_review, polymorphic: true, null: true, index: {name: :index_issue_modification_requests_decision_review}, comment: "Mostly used when request type is addition"
-      t.string "request_type", default: "Addition", limit: 20, comment:  "Issue modification request type can be addition, modification, withdrawal and cancelled."
-      t.text "request_reason", null: true, comment: "Requestor enters Issue modification request reason for why new issue is being request or modified or withdrawn."
-      t.string "benefit_type", null: true, comment: "This will be mostly be used when request type is addition. it reflects what benefit type the issue belongs to."
-      t.datetime "decision_date", null: true, comment: "prior decision Date of the issue if any"
-      t.text "decided_decision_text", null: true, comment: "Decider (admin user) adds Description during approval/denial"
-      t.string "nonrating_issue_category", null: true, comment: "issue category decision_issues.non_rating_issue_category"
-      t.datetime "withdrawal_date", null: true, comment: "if request issue was withdrawn then we save it as withdrawal date "
-      t.string "status", default: "assigned", comment: "status of the pending task"
+    create_table :issue_modification_requests, comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues" do |t|
+      t.references :request_issue, foreign_key: true, null: true, comment: "Specifies the request issue targeted by the modification request."
+      t.references :decision_review, polymorphic: true, null: true, index: {name: :index_issue_modification_requests_decision_review}, comment: "The decision review that this issue modification request belongs to"
+      t.string "request_type", default: "Addition", limit: 20, comment:  "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+      t.text "request_reason", null: true, comment: "The reason behind the modification request provided by the user initiating it."
+      t.string "benefit_type", null: true, comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
+      t.datetime "decision_date", null: true, comment: "The decision date of the request issue that is being modified"
+      t.text "decided_decision_text", null: true, comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
+      t.string "nonrating_issue_category", null: true, comment: "The nonrating issue category of the request issue that is being modified or added by the request"
+      t.datetime "withdrawal_date", null: true, comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
+      t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
       t.datetime "decided_at", null: true, comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
       t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
       t.references :requestor, index: true, foreign_key: { to_table: :users }, comment: "The user who requests modification or addition of request issues"
-      t.references :decider, index: true, foreign_key: { to_table: :users }, comment: "The user who decides approval/denial of requested issues"
+      t.references :decider, index: true, foreign_key: { to_table: :users }, comment: "The user who decides approval/denial of the issue modification request."
       t.timestamps
     end
   end
