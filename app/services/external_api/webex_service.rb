@@ -20,7 +20,7 @@ require "json"
 # All requests to the Webex API are recorded using the MetricsService.
 class ExternalApi::WebexService
   # rubocop:disable Metrics/ParameterLists
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query:)
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query: nil)
     @host = host
     @port = port
     @aud = aud
@@ -44,8 +44,7 @@ class ExternalApi::WebexService
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::CreateResponse.new(send_webex_request(body, method))
   end
 
   def delete_conference(conferenced_item)
@@ -61,14 +60,13 @@ class ExternalApi::WebexService
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::DeleteResponse.new(send_webex_request(body, method))
   end
 
   # Purpose: Refreshing the access token to access the API
   # Return: The response body
   def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape("#{BASE_URL}/v1/access_token")
+    url = URI::DEFAULT_PARSER.escape("https://#{@host}#{@domain}#{@api_endpoint}access_token")
 
     body = {
       grant_type: "refresh_token",
@@ -96,20 +94,21 @@ class ExternalApi::WebexService
   def fetch_recordings_list
     body = nil
     method = "GET"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
+    @api_endpoint += "recordings"
+    ExternalApi::WebexService::RecordingsListResponse.new(send_webex_request(body, method))
   end
 
-  def fetch_recording_details
+  def fetch_recording_details(recording_id)
     body = nil
     method = "GET"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
+    @api_endpoint += "recordings/#{recording_id}"
+    ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
   end
 
   private
 
   # :nocov:
+  # rubocop:disable Metrics/MethodLength
   def send_webex_request(body, method)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
@@ -126,11 +125,20 @@ class ExternalApi::WebexService
     ) do
       case method
       when "POST"
-        HTTPI.post(request)
+        response = HTTPI.post(request)
+        fail response.error if !response.success?
+
+        response
       when "GET"
-        HTTPI.get(request)
+        response = HTTPI.get(request)
+        fail response.error if !response.success?
+
+        response
+      else
+        fail NotImplementedError
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # :nocov:
 end

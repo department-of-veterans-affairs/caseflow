@@ -51,8 +51,6 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   private
 
   def fetch_recording_details(id)
-    query = { "id": id }
-
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
@@ -60,8 +58,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: query
-    ).fetch_recording_details
+      query: nil
+    ).fetch_recording_details(id)
   end
 
   def create_file_name(topic, extension)
