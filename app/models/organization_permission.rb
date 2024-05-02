@@ -23,7 +23,7 @@ class OrganizationPermission < CaseflowRecord
 
   class << self
     def valid_permission_names
-      Constants.ORGANIZATION_PERMISSIONS.to_h.keys
+      Constants.ORGANIZATION_PERMISSIONS.to_h
     end
 
     def auto_assign(organization)
