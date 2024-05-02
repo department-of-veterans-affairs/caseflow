@@ -220,7 +220,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            legacy_appeal = LegacyAppeal.last
+            # legacy_appeal = LegacyAppeal.last
             # TODO: Add expext statements
           end
 
@@ -234,7 +234,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            legacy_appeal = LegacyAppeal.last
+            # legacy_appeal = LegacyAppeal.last
             # TODO: Add expext statements
           end
         end
@@ -250,7 +250,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            legacy_appeal = LegacyAppeal.last
+            # legacy_appeal = LegacyAppeal.last
             # TODO: Add expext statements
           end
 
@@ -264,7 +264,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            legacy_appeal = LegacyAppeal.last
+            # legacy_appeal = LegacyAppeal.last
             # TODO: Add expext statements
           end
         end

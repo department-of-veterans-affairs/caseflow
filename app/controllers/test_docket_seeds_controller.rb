@@ -5,7 +5,6 @@ class TestDocketSeedsController < ApplicationController
 
   def seed_dockets
     task_name = Constants.TEST_SEEDS.to_h[params[:seed_type].to_sym]
-    puts params
     ENV["SEED_COUNT"] = params[:seed_count].to_s
     ENV["DAYS_AGO"] = params[:days_ago].to_s
     ENV["JUDGE_CSS_ID"] = params[:judge_css_id].to_s

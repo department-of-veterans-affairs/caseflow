@@ -16,7 +16,6 @@ module Seeds
     end
 
     def create_ama_aod_hearing
-      puts "create"
       Timecop.travel(@days_ago)
       create(
           :appeal,
