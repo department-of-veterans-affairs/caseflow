@@ -244,7 +244,11 @@ export default class OrganizationUsers extends React.PureComponent {
 getFilteredUsers = () => {
   if (this.state.searchValue.length > 0) {
 
-    return this.state.organizationUsers.filter((user) => user.attributes.full_name.toLowerCase().includes(this.state.searchValue));
+    // return name or css id if match
+    return this.state.organizationUsers.filter((user) =>
+      user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
+      user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
+    );
   }
 
   return this.state.organizationUsers;
