@@ -78,10 +78,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
-    left outer join brieff b2 on brieff.bfcorlid = b2.bfcorlid and brieff.bfkey != b2.bfkey
-left outer join folder f2 on b2.bfkey = f2.ticknum
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFMEMID as PRIOR_DECISION_JUDGE
     #{FROM_READY_APPEALS}
+    left outer join brieff b2 on brieff.bfcorlid = b2.bfcorlid and brieff.bfkey != b2.bfkey
+    left outer join folder f2 on b2.bfkey = f2.ticknum
   "
 
   # this version of the query should not be used during distribution it is only intended for reporting usage
@@ -161,13 +161,13 @@ left outer join folder f2 on b2.bfkey = f2.ticknum
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
+    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_APPEAL.PREV_TYPE_ACTION
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ, PREV_APPEAL.PREV_TYPE_ACTION
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
-          and BFAC <> '7' and AOD = '0'
+          and BFAC <> '7' and AOD = '0' and f1.tinum = f2.tinum and brieff.bfdpdcn = b2.bfddec
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
