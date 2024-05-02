@@ -29,15 +29,37 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   end
 
   # TODO: this
-  def update_from_push_priority_appeals_job; end
+  def update_from_push_priority_appeals_job
+    receipt_date_hashes_array = latest_receipt_dates_from_push_job
+    process_ama_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+    # Uncomment this while implementing legacy appeal affinities
+    # process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+  end
 
   def latest_receipt_dates_from_distribution
     distributed_cases_hash =
       DistributedCase
         .joins("INNER JOIN appeals ON case_id = uuid::text")
-        .where(distribution_id: @distribution_id).group("docket", "priority")
+        .where(distribution_id: @distribution_id)
+        .group("docket", "priority")
         .maximum("receipt_date")
 
+    distributed_cases_to_receipt_date(distributed_cases_hash)
+  end
+
+  def latest_receipt_dates_from_push_job
+    distributed_cases_hash =
+      DistributedCase
+        .includes(:distribution)
+        .joins("INNER JOIN appeals ON case_id = uuid::text")
+        .where(distributions: { priority_push: true, completed_at: Time.zone.todady.midnight..Time.zone.now })
+        .group("docket", "priority")
+        .maximum("receipt_date")
+
+    distributed_cases_to_receipt_date(distributed_cases_hash)
+  end
+
+  def distributed_cases_to_receipt_date(distributed_cases_hash)
     # If there isn't a held hearing and it isn't a CAVC remand (priority), then there will never be an affinity
     distributed_cases_hash.delete_if { |combo, _| PAIRS_TO_DELETE.include?(combo) }
 
