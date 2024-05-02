@@ -35,8 +35,8 @@ class Hearings::TranscriptionSettingsController < ApplicationController
   def render_record_not_found
     render json: {
       "errors": [
-        "title": "Record Not Found",
-        "detail": "Record with that ID is not found"
+        "title": "Contractor Not Found",
+        "detail": "Contractor with that ID is not found"
       ]
     }, status: :not_found
   end

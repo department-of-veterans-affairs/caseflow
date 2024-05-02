@@ -49,8 +49,8 @@ describe Hearings::TranscriptionSettingsController, :all_dbs do
         it "sends error JSON" do
           response_body = JSON.parse(subject.body)
           expect(subject.status).to eq 404
-          expect(response_body["errors"][0]["title"]).to eq "Record Not Found"
-          expect(response_body["errors"][0]["detail"]).to eq "Record with that ID is not found"
+          expect(response_body["errors"][0]["title"]).to eq "Contractor Not Found"
+          expect(response_body["errors"][0]["detail"]).to eq "Contractor with that ID is not found"
         end
       end
 
