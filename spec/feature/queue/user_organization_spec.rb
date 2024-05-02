@@ -107,7 +107,6 @@ RSpec.feature "User organization", :postgres do
         fill_in("searchBar", with: "you killed my father, prepare to die")
         expect(page).to have_content("No results found")
         expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
-
       end
     end
 
