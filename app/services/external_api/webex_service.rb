@@ -126,12 +126,12 @@ class ExternalApi::WebexService
       case method
       when "POST"
         response = HTTPI.post(request)
-        fail response.error if !response.success?
+        fail ExternalApi::WebexService::Response.new(response).error if !response.error?
 
         response
       when "GET"
         response = HTTPI.get(request)
-        fail response.error if !response.success?
+        fail ExternalApi::WebexService::Response.new(response).error if !response.error?
 
         response
       else
