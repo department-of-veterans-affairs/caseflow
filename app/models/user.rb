@@ -119,16 +119,30 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     org_user = organizations_users.find_by(organization: org)
     # get user permission using the org_user
 
+    # use org_user > org_user_permission > org_permission to get
+    # organization permissions assigned to the user.
     OrganizationUserPermission.where(organizations_user: org_user)
       .includes(:organization_permission, :organizations_user)
       .where(organizations_user_id: org_user.id, permitted: true)
-      .pluck(:permission, :description)
+      .pluck(:permission, :description).map do |permission, description|
+        {
+          permission: permission,
+          desciption: description
+        }
+      end
   end
 
   def organization_admin_permissions(org)
     return [] unless org.user_is_admin?(self)
 
-    OrganizationPermission.where(organization: org, default_for_admin: true).pluck(:permission)
+    # if admin, directly grab admin permissions from the org_permission table
+    OrganizationPermission.where(organization: org, default_for_admin: true)
+      .pluck(:permission, :description).map do |permission, description|
+      {
+        permission: permission,
+        desciption: description
+      }
+    end
   end
 
   def can_assign_hearing_schedule?

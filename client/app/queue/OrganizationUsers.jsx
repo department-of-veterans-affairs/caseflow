@@ -92,8 +92,8 @@ export default class OrganizationUsers extends React.PureComponent {
         return false;
       }
 
-      if(user.attributes?.userPermission.flat().find((userPer) => userPer === permission)) {
-        return true
+      if (user.attributes?.userPermission.flat().find((userPer) => userPer.permission === permission)) {
+        return true;
       }
     };
 
@@ -103,17 +103,14 @@ export default class OrganizationUsers extends React.PureComponent {
         return false;
       }
 
-      return user.attributes?.userAdminPermission.find((adminPer) => adminPer === permission);
+      return user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission);
     };
 
+    // used to display checkboxes for the org.
+    // if an admin, only display the pre-checked admin checkboxes
     const renderedPermissions = () => {
       if (user.attributes?.admin) {
-        return [{
-          default_for_admin: true,
-          //change me!
-          description: user.attributes.description[0],
-          permission: user.attributes.userAdminPermission[0]
-        }];
+        return this.props.organizationPermissions.filter((per) => per.default_for_admin);
       }
 
       return this.props.organizationPermissions;
@@ -157,7 +154,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
         return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
           name={`${user.id}-${permission.permission}`}
-          label={permission.permission}
+          label={permission.description}
           key={`${user.id}-${permission.permission}`}
           styling={NODcheckboxStyle}
           onChange={this.modifyUserPermission(user.id, permission.permission)}
