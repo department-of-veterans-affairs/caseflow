@@ -38,15 +38,21 @@ class Docket
   end
 
   def ready_priority_nonpriority_appeals(priority = false, ready = true, *args)
-    binding.pry
     priority_status = priority ? PRIORITY : NON_PRIORITY
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value
     if lever_value == "true"
       []
+    elsif args.any?
+      appeals(
+        priority: priority,
+        ready: ready,
+        genpop: args[0][:genpop],
+        judge: args[0][:judge]
+      )
     else
-      args.any? ? appeals(priority: priority, ready: ready, genpop: args[0][:genpop], judge: args[0][:judge]) : appeals(priority: priority, ready: ready)
+      appeals(priority: priority, ready: ready)
     end
   end
 
@@ -115,7 +121,11 @@ class Docket
       query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
       appeals, sct_appeals = create_sct_appeals(query_args, limit)
     else
-      appeals = ready_priority_nonpriority_appeals(priority, true, { genpop: genpop }, { judge: distribution.judge }).limit(limit)
+      appeals = ready_priority_nonpriority_appeals(
+        priority,
+        true,
+        { genpop: genpop, judge: distribution.judge }
+      ).limit(limit)
       sct_appeals = []
     end
 
