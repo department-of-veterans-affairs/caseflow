@@ -85,23 +85,6 @@ export const ReviewForm = (props) => {
 
   };
 
-  const checkIfNOD = () => {
-    const documents = props.correspondenceDocuments;
-    const docArr = [];
-
-    documents.map((document) => {
-      docArr.push(document.document_title);
-
-      return docArr;
-    });
-
-    if (docArr.includes('VA Form 10182 Notice of Disagreement')) {
-      return 'NOD';
-    }
-
-    return 'Non-NOD';
-  };
-
   const handleSelectVADOR = (val) => {
     setDateError(errorOnVADORDate(val));
     setVADORDate(val);
