@@ -445,8 +445,23 @@ FactoryBot.define do
       completed_distribution_task
     end
 
+    trait :ready_for_distribution_with_appeal_affinity do
+      ready_for_distribution
+      with_appeal_affinity
+    end
+
     trait :cavc_ready_for_distribution do
       completed_distribution_task
+    end
+
+    trait :with_appeal_affinity do
+      transient do
+        affinity_start_date { Time.zone.now }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
+      end
     end
 
     trait :completed_distribution_task do
