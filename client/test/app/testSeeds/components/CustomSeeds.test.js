@@ -74,8 +74,8 @@ describe('Custom Seeds', () => {
 
     fireEvent.click(button);
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo`, {
+      data: { seed_type: first_seed, seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to resolve
@@ -100,8 +100,8 @@ describe('Custom Seeds', () => {
     fireEvent.change(cssIdInput, { target: { value: 'BVADWISE' } });
     fireEvent.click(button);
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo/${first_seed}`, {
-      data: { seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo`, {
+      data: { seed_type: first_seed, seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
     });
 
     // Wait for API call to reject
