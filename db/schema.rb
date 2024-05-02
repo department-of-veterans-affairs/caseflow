@@ -640,6 +640,15 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
+  create_table "correspondence_appeals", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.bigint "correspondence_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["appeal_id"], name: "index on appeal_id"
+    t.index ["correspondence_id"], name: "index on correspondence_id"
+  end
+
   create_table "correspondence_auto_assignment_levers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description", null: false
@@ -648,15 +657,6 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.datetime "updated_at", null: false
     t.integer "value", null: false
     t.index ["name"], name: "index_correspondence_auto_assignment_levers_on_name", unique: true
-  end
-
-  create_table "correspondence_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
   end
 
   create_table "correspondence_documents", force: :cascade do |t|
