@@ -372,7 +372,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           }
 
           expect(response.status).to eq 200
-          expect(Appeal.where(docket_type:"direct_review").count).to eq(5)
+          expect(Appeal.where(docket_type: "direct_review").count).to eq(5)
           expect(Appeal.count).to eq(5)
         end
       end
