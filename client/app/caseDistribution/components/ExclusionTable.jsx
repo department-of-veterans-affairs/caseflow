@@ -6,23 +6,32 @@ import cx from 'classnames';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+
 
 const ExclusionTable = () => {
   const theState = useSelector((state) => state);
 
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  // Placeholder options until future implementation
-  let options = [
-    { displayText: 'On',
-      value: '1',
-      disabled: true
-    },
-    { displayText: 'Off',
-      value: '2',
-      disabled: true
-    }
-  ];
+  const docketLevers = theState.caseDistributionLevers?.levers?.docket_levers ?? [];
+
+  const priorityLevers = docketLevers.filter((lever) => lever.control_group === ACD_LEVERS.priority);
+  const nonPriorityLevers = docketLevers.filter((lever) => lever.control_group === ACD_LEVERS.non_priority);
+
+  const priorityRadios = priorityLevers.map((lever) => ({
+    displayText: lever.title,
+    value: lever.value,
+    disabled: lever.is_disabled_in_ui,
+    options: lever.options
+  }));
+
+  const nonPriorityRadios = nonPriorityLevers.map((lever) => ({
+    displayText: lever.title,
+    value: lever.value,
+    disabled: lever.is_disabled_in_ui,
+    options: lever.options
+  }));
 
   const generateUniqueId = (leverItem, optionValue, index) => `${leverItem}-${optionValue}-${index}`;
 
@@ -68,58 +77,24 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
-                  />
-                </span>
-              </td>
+
+              {nonPriorityRadios && nonPriorityRadios.map((lever, i) => (
+                <td className={cx('exclusion-table-styling')}
+                  aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+                >
+                  <span>
+                    <RadioField
+                      label=" "
+                      value={lever.value}
+                      name={`non-priority-lever-${i}`}
+                      options={lever.options}
+                      vertical
+                      uniqueIdGenerator={(option, index) =>
+                        generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
+                    />
+                  </span>
+                </td>
+              ))}
             </tr>
             <tr>
               <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
@@ -136,57 +111,23 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
-              >
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
-                  />
-                </span>
-              </td>
+              {priorityRadios && priorityRadios.map((lever, i) => (
+                <td className={cx('exclusion-table-styling')}
+                  aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+                >
+                  <span>
+                    <RadioField
+                      label=" "
+                      value={lever.value}
+                      name={`priority-lever-${i}`}
+                      options={lever.options}
+                      vertical
+                      uniqueIdGenerator={(option, index) =>
+                        generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
+                    />
+                  </span>
+                </td>
+              ))}
             </tr>
           </tbody> :
 
