@@ -4,7 +4,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
   Rails.application.load_tasks
   let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
 
-  describe "POST run-demo/:seed_type?seed_count=x&days_ago=y&judge_css_id=zzz" do
+  describe "POST run-demo?seed_type=ii?seed_count=x&days_ago=y&judge_css_id=zzz" do
     context "seed_ama_aod_hearings" do
       context "single seed" do
         context "with judge CSS ID given" do

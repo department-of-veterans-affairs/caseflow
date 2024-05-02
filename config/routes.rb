@@ -427,7 +427,7 @@ Rails.application.routes.draw do
   get 'test/seeds', :to => 'test_seeds#seeds'
 
   scope path: 'seeds', as: 'seeds' do
-    post 'run-demo/:seed_type', to: 'test_docket_seeds#seed_dockets'
+    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
   end
 
   # :nocov:
