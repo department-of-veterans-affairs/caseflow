@@ -62,6 +62,30 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_MODIFICATION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueModificationModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_REMOVAL_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueRemovalModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_WITHDRAWAL_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueWithdrawalModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueAdditionModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;

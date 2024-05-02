@@ -45,13 +45,21 @@ import {
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal,
-  toggleEditIntakeIssueModal
+  toggleEditIntakeIssueModal,
+  toggleRequestIssueModificationModal,
+  toggleRequestIssueRemovalModal,
+  toggleRequestIssueWithdrawalModal,
+  toggleRequestIssueAdditionModal,
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeIssueModal';
+import { RequestIssueModificationModal } from 'app/intakeEdit/components/RequestIssueModificationModal';
+import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssueRemovalModal';
+import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
+import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -76,6 +84,10 @@ class AddIssuesPage extends React.Component {
   onClickAddIssue = () => {
     this.setState({ addingIssue: true });
   };
+
+  onClickRequestAdditionalIssue = () => {
+    this.props.toggleRequestIssueAdditionModal();
+  }
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -108,6 +120,15 @@ class AddIssuesPage extends React.Component {
         issueIndex: index
       });
       this.props.toggleEditIntakeIssueModal({ index });
+      break;
+    case 'requestModification':
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'requestRemoval':
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'requestWithdrawal':
+      this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     default:
       this.props.undoCorrection(index);
@@ -232,6 +253,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
+      userCanRequestIssueUpdates,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -302,7 +324,29 @@ class AddIssuesPage extends React.Component {
 
     };
 
+    const originalIssuesHaveNoDecisionDate = () => {
+      return intakeData.originalIssues.some((issue) => issue.decisionDate === null);
+    };
+
+    const showRequestIssueUpdateOptions = userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
+
     const renderButtons = () => {
+      if (showRequestIssueUpdateOptions && intakeData.benefitType === 'vha') {
+        return (
+          <div className="cf-actions">
+            <Button
+              name="request-additional-issue"
+              label="request-additional-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickRequestAdditionalIssue()}
+            >
+            + Request additional issue
+            </Button>
+          </div>
+        );
+      }
+
       return (
         <div className="cf-actions">
           {splitButtonVisible() ? (
@@ -455,7 +499,9 @@ class AddIssuesPage extends React.Component {
           sectionIssues,
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
+          userCanRequestIssueUpdates,
           withdrawReview,
+          showRequestIssueUpdateOptions
         };
 
         if (key === 'requestedIssues') {
@@ -580,6 +626,26 @@ class AddIssuesPage extends React.Component {
             }}
           />
         )}
+
+        {intakeData.requestIssueModificationModalVisible && (
+          <RequestIssueModificationModal
+            onCancel={() => this.props.toggleRequestIssueModificationModal()} />
+        )}
+
+        {intakeData.requestIssueRemovalModalVisible && (
+          <RequestIssueRemovalModal
+            onCancel={() => this.props.toggleRequestIssueRemovalModal()} />
+        )}
+
+        {intakeData.requestIssueWithdrawalModalVisible && (
+          <RequestIssueWithdrawalModal
+            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
+        )}
+
+        {intakeData.requestIssueAdditionModalVisible && (
+          <RequestIssueAdditionModal
+            onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
+        )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -692,6 +758,7 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
+    userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy
   }),
   (dispatch) =>
@@ -702,6 +769,10 @@ export const EditAddIssuesPage = connect(
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
         toggleEditIntakeIssueModal,
+        toggleRequestIssueModificationModal,
+        toggleRequestIssueRemovalModal,
+        toggleRequestIssueWithdrawalModal,
+        toggleRequestIssueAdditionModal,
         removeIssue,
         withdrawIssue,
         setIssueWithdrawalDate,

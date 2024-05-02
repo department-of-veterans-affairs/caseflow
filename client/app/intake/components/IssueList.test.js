@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import COPY from '../../../COPY';
 import userEvent from '@testing-library/user-event';
 import IssuesList from 'app/intake/components/IssueList';
@@ -68,5 +68,25 @@ describe('IssuesList', () => {
     setup(propsWithEditedDecisionDate);
 
     expect(screen.getByText('Edit decision date')).toBeInTheDocument();
+  });
+
+  it('renders the request for issue updates dropdown actions', () => {
+    const propsWithRequestForIssueUpdates = {
+      ...mockedIssueListProps,
+      userCanRequestForIssueUpdates: true,
+      showRequestIssueUpdateOptions: true
+    };
+
+    // having only one dropdown will be easier to query for
+    propsWithRequestForIssueUpdates.issues.pop();
+
+    setup(propsWithRequestForIssueUpdates);
+    const dropdown = screen.getByText('Select action');
+
+    fireEvent.click(dropdown);
+
+    expect(screen.getByText('Request modification')).toBeInTheDocument();
+    expect(screen.getByText('Request removal')).toBeInTheDocument();
+    expect(screen.getByText('Request withdrawal')).toBeInTheDocument();
   });
 });

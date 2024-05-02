@@ -52,6 +52,25 @@ export const toggleEditIntakeIssueModal = (index) => ({
   payload: { index }
 });
 
+export const toggleRequestIssueModificationModal = (index) => ({
+  type: ACTIONS.TOGGLE_REQUEST_ISSUE_MODIFICATION_MODAL,
+  payload: { index }
+});
+
+export const toggleRequestIssueRemovalModal = (index) => ({
+  type: ACTIONS.TOGGLE_REQUEST_ISSUE_REMOVAL_MODAL,
+  payload: { index }
+});
+
+export const toggleRequestIssueWithdrawalModal = (index) => ({
+  type: ACTIONS.TOGGLE_REQUEST_ISSUE_WITHDRAWAL_MODAL,
+  payload: { index }
+});
+
+export const toggleRequestIssueAdditionModal = () => ({
+  type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
+});
+
 export const setMstPactDetails = (editIssuesDetails) => ({
   type: ACTIONS.SET_MST_PACT_DETAILS,
   payload: { editIssuesDetails }

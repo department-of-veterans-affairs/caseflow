@@ -7,6 +7,10 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     create(:user, roles: ["Mail Intake"])
   end
 
+  let!(:admin_user) do
+    create(:user, roles: ["Mail Intake"])
+  end
+
   let(:veteran_file_number) { "123412345" }
 
   let(:veteran) do
@@ -25,9 +29,13 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
   before do
     VhaBusinessLine.singleton.add_user(current_user)
+    VhaBusinessLine.singleton.add_user(admin_user)
+    OrganizationsUser.make_user_admin(admin_user, VhaBusinessLine.singleton)
+    CaseReview.singleton.add_user(admin_user)
     CaseReview.singleton.add_user(current_user)
     OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
     current_user.save
+    admin_user.save
     User.authenticate!(user: current_user)
   end
 
@@ -159,6 +167,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Test adding a new issue without decision date then adding one
       # Click the links and get to the edit issues page
+      User.authenticate!(user: admin_user)
       click_link veteran.name.to_s
       click_link "Edit Issues"
       expect(page).to have_content("Edit Issues")
@@ -210,6 +219,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
   shared_examples "Vha HLR/SC adding issue without decision date to existing claim review" do
     it "Allows Vha to add an issue without a decision date to an existing claim review and remove the issue" do
+      User.authenticate!(user: admin_user)
       visit edit_url
 
       expect(task.status).to eq("assigned")
