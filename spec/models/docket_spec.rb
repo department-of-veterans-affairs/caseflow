@@ -286,11 +286,19 @@ describe Docket, :all_dbs do
 
     context "ready_priority_nonpriority_appeals" do
       let(:docket) { DirectReviewDocket.new }
+      let(:judge) { create(:user, :judge, :with_judge_team) }
 
       it "returns docket when the corresponding CaseDistributionLever value is false" do
         CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
         result = docket.ready_priority_nonpriority_appeals(false)
         expect(result).to eq(docket)
+      end
+
+      it "returns docket when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        result = docket.ready_priority_nonpriority_appeals(false, { genpop: true, judge: judge })
+        expected_appeals = docket.appeals(false, true, true, judge)
+        expect(result).to eq(expected_appeals)
       end
 
       it "returns an empty array when the corresponding CaseDistributionLever value is true" do
