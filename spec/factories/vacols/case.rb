@@ -433,8 +433,10 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         if evaluator.folder_number_equal
-          vacols_case.folder = evaluator.original_case.except("tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2",
-          "tioctime", "tiocuser", "tidktime", "tidkuser")
+          folder_json = evaluator.original_case.folder.to_json
+          folder_attributes = JSON.parse(folder_json)
+          folder_attributes.except!("tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser", "tidktime", "tidkuser")
+          vacols_case.folder.assign_attributes(folder_attributes)
           vacols_case.folder.save
         end
       end
