@@ -1976,18 +1976,16 @@ describe Appeal, :all_dbs do
         user = create(:intake_admin_user)
         original_appeal = create(
           :appeal,
-          :with_schedule_hearing_tasks,
+          :with_distribution_task_and_schedule_hearing_child_task,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"))
-        distribution_task = create(:distribution_task, appeal: original_appeal, assigned_to: Bva.singleton)
-        final_letter_task = SendFinalNotificationLetterTask.create!(
-          appeal: original_appeal,
-          parent: distribution_task,
-          assigned_to: ClerkOfTheBoard.singleton
-        )
-        informal_hearing_presentation_task = create(:informal_hearing_presentation_task, parent: distribution_task)
-        informal_hearing_presentation_task.update!(status: "completed")
-        final_letter_task.update!(status: "cancelled", cancelled_by_id: user.id)
+
+        distribution_task = original_appeal.tasks.where(type: "DistributionTask").first
+        hearing_task = original_appeal.tasks.where(type: "HearingTask").first
+        schedule_hearing_task = original_appeal.tasks.where(type: "ScheduleHearingTask").first
+
         distribution_task.update!(status: "completed")
+        hearing_task.update!(status: "completed")
+        schedule_hearing_task.update!(status: "completed")
 
         newly_split_request_issue = original_appeal.request_issues.first.id.to_s
 
@@ -1998,11 +1996,14 @@ describe Appeal, :all_dbs do
           split_other_reason: "Some Other Reason",
           user_css_id: regular_user.css_id
         }
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
         dup_appeal.finalize_split_appeal(original_appeal, params)
+
         dup_distribution_task = dup_appeal.tasks.where(type: "DistributionTask").first
-        dup_final_letter_task = dup_appeal.tasks.where(type: "SendFinalNotificationLetterTask").first
+        dup_hearing_task = dup_appeal.tasks.where(type: "HearingTask").first
+        dup_schedule_hearing_task = dup_appeal.tasks.where(type: "ScheduleHearingTask").first
 
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
@@ -2010,9 +2011,10 @@ describe Appeal, :all_dbs do
         expect(dup_appeal.request_issues.count).to eq(1)
         expect(dup_appeal.tasks.count).to eq(original_appeal.tasks.count)
         expect(dup_distribution_task.id).not_to eq(distribution_task.id)
+        expect(dup_hearing_task.id).not_to eq(hearing_task.id)
+        expect(dup_schedule_hearing_task.id).not_to eq(schedule_hearing_task.id)
         expect(dup_distribution_task.status).to eq(distribution_task.status)
         expect(dup_distribution_task.appeal_id).not_to eq(distribution_task.appeal_id)
-        expect(dup_final_letter_task.cancelled_by_id).to eq(final_letter_task.cancelled_by_id)
       end
     end
 
