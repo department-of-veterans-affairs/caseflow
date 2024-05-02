@@ -91,5 +91,15 @@ describe AppealAffinity do
         expect(appeal_affinity.distribution_id).to eq(distribution.id)
       end
     end
+
+    context "when created as a trait using the Appeal factory" do
+      let(:appeal_affinity) { nil }
+      let(:appeal_with_affinity) { create(:appeal, :ready_for_distribution_with_appeal_affinity) }
+
+      it "is ready to distribute with a set affinity start date" do
+        expect(appeal_with_affinity.appeal_affinity).not_to be nil
+        expect(appeal_with_affinity.ready_for_distribution?).to be true
+      end
+    end
   end
 end

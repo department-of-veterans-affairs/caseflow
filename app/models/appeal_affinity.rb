@@ -2,6 +2,7 @@
 
 class AppealAffinity < CaseflowRecord
   validates :case_id, :docket, :affinity_start_date, presence: true
+  validates :case_type, inclusion: %w[Appeal VACOLS::Case]
   validates :priority, inclusion: [true, false]
 
   belongs_to :distribution
