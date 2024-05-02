@@ -166,46 +166,6 @@ export default class OrganizationUsers extends React.PureComponent {
     );
   }
 
-  handleAutoAssignmentCheck = (value) => {
-    if (this.state.toggledAutoAssignmentCheckboxes.includes(value)) {
-      const index = this.state.toggledAutoAssignmentCheckboxes.indexOf(value.toString());
-      const newState = [...this.state.toggledAutoAssignmentCheckboxes];
-
-      newState.splice(index, 1);
-      this.setState({
-        toggledAutoAssignmentCheckboxes: (newState)
-      });
-    } else {
-      const newState = [...this.state.toggledAutoAssignmentCheckboxes];
-
-      newState.push(value);
-
-      this.setState({
-        toggledAutoAssignmentCheckboxes: (newState)
-      });
-    }
-  }
-
-  handleNODCheck = (value) => {
-    if (this.state.toggledNodCheckboxes.includes(value)) {
-      const index = this.state.toggledNodCheckboxes.indexOf(value.toString());
-      const newState = [...this.state.toggledNodCheckboxes];
-
-      newState.splice(index, 1);
-      this.setState({
-        toggledNodCheckboxes: (newState)
-      });
-    } else {
-      const newState = [...this.state.toggledNodCheckboxes];
-
-      newState.push(value);
-
-      this.setState({
-        toggledNodCheckboxes: (newState)
-      });
-    }
-  }
-
   loadingPromise = () => {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
       this.setState({
