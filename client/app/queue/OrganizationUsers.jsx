@@ -10,6 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
+import SearchBar from 'app/components/SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
@@ -72,6 +73,7 @@ export default class OrganizationUsers extends React.PureComponent {
       membershipRequests: [],
       loading: true,
       error: null,
+      searchValue: '',
       success: null,
       addingUser: null,
       changingAdminRights: {},
@@ -256,10 +258,24 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
+getFilteredUsers = () => {
+  if (this.state.searchValue.length > 0) {
+
+    // return name or css id if match
+    return this.state.organizationUsers.filter((user) =>
+      user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
+      user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
+    );
+  }
+
+  return this.state.organizationUsers;
+
+};
+
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.state.organizationUsers.map((user) => {
+    const listOfUsers = this.getFilteredUsers().map((user, i) => {
       const { dvc, admin } = user.attributes;
       const { conferenceSelectionVisibility } = this.props;
       let altLabel = '';
@@ -309,6 +325,18 @@ export default class OrganizationUsers extends React.PureComponent {
       );
     });
 
+    const handleSearchChange = (value) => {
+      this.setState({
+        searchValue: value
+      });
+    };
+
+    const handleClearSearch = () => {
+      this.setState({
+        searchValue: ''
+      });
+    };
+
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
       <div {...addDropdownStyle}>
@@ -329,14 +357,38 @@ export default class OrganizationUsers extends React.PureComponent {
           async={this.asyncLoadUser} />
       </div>
       <div>
-        <h3>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h3>
-        <ul {...instructionListStyle}>
-          { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-          <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
-            COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-            COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
-        </ul>
-        <ul {...userListStyle}>{listOfUsers}</ul>
+        <div>
+          <h3>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h3>
+          <ul {...instructionListStyle}>
+            { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
+            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
+              COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+            <p className="text-styling-for-filter-search-bar">
+          Filter by username or CSS ID</p>
+            <div className="search-bar-styling-for-filter">
+              <SearchBar
+                id="searchBar"
+                placeholder="Type to filter..."
+                isSearchAhead
+                size="small"
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value= {this.state.searchValue}
+              />
+            </div>
+          </ul>
+        </div>
+        { listOfUsers.length > 0 ? (
+          <ul {...userListStyle}>{listOfUsers}</ul>
+        ) : (
+          <>
+            <b className="no-results-found-styling">No results found</b>
+            <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
+          </>
+        )
+        }
+
       </div>
     </React.Fragment>;
   }

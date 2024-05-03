@@ -227,6 +227,21 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
+export const setMailTeamUser = (isMailTeamUser) => ({
+  type: ACTIONS.SET_MAIL_TEAM_USER,
+  payload: { isMailTeamUser }
+});
+
+export const setMailSupervisor = (isMailSupervisor) => ({
+  type: ACTIONS.SET_MAIL_SUPERVISOR,
+  payload: { isMailSupervisor }
+});
+
+export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERUSER,
+  payload: { isInboundOpsSuperuser }
+});
+
 export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
