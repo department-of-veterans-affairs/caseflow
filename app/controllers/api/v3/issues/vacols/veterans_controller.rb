@@ -44,15 +44,15 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   end
 
   def show
-    page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
-    # per_page uses the default value defined in the DtoBuilder unless a param is given,
-    # but it cannot exceed the upper bound
-    per_page = [params[:per_page].to_i, DEFAULT_UPPER_BOUND_PER_PAGE].min if params[:per_page]&.to_i&.positive?
-    # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
-    (page.nil? || page <= 0) ? page = 1 : page ||= 1
-
     MetricsService.record("VACOLS: Get VACOLS Issues information for Veteran",
-                          name: "Api::V3::Issues::Vacols::VeteransController.show") do
+    name: "Api::V3::Issues::Vacols::VeteransController.show") do
+      page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
+      # per_page uses the default value defined in the DtoBuilder unless a param is given,
+      # but it cannot exceed the upper bound
+      per_page = [params[:per_page].to_i, DEFAULT_UPPER_BOUND_PER_PAGE].min if params[:per_page]&.to_i&.positive?
+      # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
+      (page.nil? || page <= 0) ? page = 1 : page ||= 1
+
       render_vacols_issues(Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder.new(@veteran, page, per_page))
     end
   end
