@@ -42,10 +42,6 @@ class Events::DecisionReviewCreated
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
           decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
 
-          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
-          # decision_review.legacy_opt_in_approved is true
-          Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
-
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: decision_review)
@@ -63,6 +59,11 @@ class Events::DecisionReviewCreated
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
             decision_review: decision_review)
+
+          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
+          # decision_review.legacy_opt_in_approved is true
+          Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
+
           # Update the Event after all backfills have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil)
         end

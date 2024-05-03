@@ -6,11 +6,12 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
   let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
   let!(:epe) { create(:end_product_establishment) }
   let!(:higher_level_review) { create(:higher_level_review) }
+  let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
 
   describe "#process!" do
     subject { described_class }
 
-    context "when receiving an Event with request_issues" do
+    context "when receiving an Event with only request_issues" do
       it "should create CF RequestIssues and backfill records" do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
 
@@ -50,6 +51,51 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       end
     end
 
+    context "when there are associated VACOLS Issues with the RequestIssues" do
+      it "should create RequestIssues as well as LegacyIssues" do
+        hash = JSON.parse(payload)
+        hash["request_issues"][0]["vacols_id"] = "DRCTEST"
+        hash["request_issues"][0]["vacols_sequence_id"] = 1
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, hash)
+
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+
+        expect(backfilled_issues.count).to eq(1)
+        expect(RequestIssue.count).to eq(1)
+        expect(LegacyIssue.count).to eq(1)
+        expect(EventRecord.count).to eq(2)
+      end
+    end
+
+    context "when there are legacy opt-ins" do
+      it "should create RequestIssues, LegacyIssues and LegacyIssueOptins" do
+        hash = JSON.parse(payload)
+        hash["request_issues"][0]["vacols_id"] = "DRCTEST"
+        hash["request_issues"][0]["vacols_sequence_id"] = 1
+
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, hash)
+        higher_level_review.update!(legacy_opt_in_approved: true)
+
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+
+        expect(backfilled_issues.count).to eq(1)
+        expect(RequestIssue.count).to eq(1)
+        expect(LegacyIssue.count).to eq(1)
+        expect(LegacyIssueOptin.count).to eq(1)
+        expect(EventRecord.count).to eq(3)
+      end
+    end
+
+    context "when an error occurs" do
+      it "the error is caught and Caseflow::Error::DecisionReviewCreatedRequestIssuesError is raised" do
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
+
+        expect { described_class.process!(event: event, parser: parser, epe: nil, decision_review: nil) }
+          .to raise_error(Caseflow::Error::DecisionReviewCreatedRequestIssuesError)
+      end
+    end
+
     def retrieve_payload
       {
         "request_issues": [
@@ -70,7 +116,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "nonrating_issue_description": nil,
             "untimely_exemption": nil,
             "untimely_exemption_notes": nil,
-            "vacols_id": nil,
+            "vacols_id": "DRCTEST",
             "vacols_sequence_id": nil,
             "closed_at": nil,
             "closed_status": nil,
@@ -96,7 +142,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "nonrating_issue_description": nil,
             "untimely_exemption": false,
             "untimely_exemption_notes": nil,
-            "vacols_id": nil,
+            "vacols_id": "DRCTEST",
             "vacols_sequence_id": nil,
             "closed_at": nil,
             "closed_status": nil,
