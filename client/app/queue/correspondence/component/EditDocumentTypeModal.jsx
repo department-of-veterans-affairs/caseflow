@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateDocumentTypeName } from '../correspondenceReducer/reviewPackageActions';
+import { updateDocumentTypeName, setCorrespondence } from '../correspondenceReducer/reviewPackageActions';
 import COPY from '../../../../COPY';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
@@ -50,6 +50,8 @@ class EditDocumentTypeModal extends React.Component {
         data: {
           vbms_document_type_id: this.state.packageDocument.value
         }
+      }).then((resp) => {
+        this.props.setCorrespondence(resp.body.correspondence);
       });
       this.props.updateDocumentTypeName(this.state.packageDocument, this.props.indexDoc);
       this.props.setModalState(false);
@@ -102,12 +104,14 @@ EditDocumentTypeModal.propTypes = {
   document: PropTypes.object,
   onSaveValue: PropTypes.func,
   updateDocumentTypeName: PropTypes.func,
+  setCorrespondence: PropTypes.func,
   setModalState: PropTypes.func,
   indexDoc: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateDocumentTypeName
+  updateDocumentTypeName,
+  setCorrespondence
 }, dispatch);
 
 export default connect(

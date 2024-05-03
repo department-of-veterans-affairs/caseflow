@@ -1,6 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
@@ -18,6 +18,9 @@ export const ReviewForm = (props) => {
   // eslint-disable-next-line max-len
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
+  const stateCorrespondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
 
   const handleFileNumber = (value) => {
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
@@ -219,7 +222,7 @@ export const ReviewForm = (props) => {
               <TextField
                 name="correspondence-package-document-type"
                 label="Package document type"
-                value = {props.reviewDetails?.nod ? 'NOD' : 'Non-NOD'}
+                value = {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
                 readOnly
               />
             </div>
