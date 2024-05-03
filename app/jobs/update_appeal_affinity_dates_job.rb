@@ -50,7 +50,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         .group("docket", "priority")
         .maximum("receipt_date")
 
-    distributed_cases_to_receipt_date(distributed_cases_hash)
+    format_distributed_case_hash(distributed_cases_hash)
   end
 
   def latest_receipt_dates_from_push_job
@@ -62,10 +62,10 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         .group("docket", "priority")
         .maximum("receipt_date")
 
-    distributed_cases_to_receipt_date(distributed_cases_hash)
+    format_distributed_case_hash(distributed_cases_hash)
   end
 
-  def distributed_cases_to_receipt_date(distributed_cases_hash)
+  def format_distributed_case_hash(distributed_cases_hash)
     # If there isn't a held hearing and it isn't a CAVC remand (priority), then there will never be an affinity
     distributed_cases_hash.delete_if { |combo, _| PAIRS_TO_DELETE.include?(combo) }
 
