@@ -109,6 +109,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
 
       if existing_affinity
         existing_affinity.update!(affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
+        existing_affinity
       else
         appeal.create_appeal_affinity!(
           docket: appeal.docket_type,

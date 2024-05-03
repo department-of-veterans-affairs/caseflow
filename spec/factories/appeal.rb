@@ -464,6 +464,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_appeal_affinity_no_start_date do
+      after(:create) do |appeal, _evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: nil)
+      end
+    end
+
     trait :completed_distribution_task do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }

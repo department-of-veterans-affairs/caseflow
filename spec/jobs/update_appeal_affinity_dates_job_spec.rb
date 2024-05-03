@@ -77,10 +77,27 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#create_or_update_appeal_affinties" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:distribution) { create(:distribution, :completed, judge: judge) }
+    let(:appeal_no_appeal_affinity) { create(:appeal) }
+    let(:appeal_with_appeal_affinity_no_start_date) { create(:appeal, :with_appeal_affinity_no_start_date) }
+
     it "updates existing affinity records if they exist" do
+      appeals = [appeal_with_appeal_affinity_no_start_date]
+      result = described_class.new(distribution.id).send(:create_or_update_appeal_affinities, appeals, false)
+
+      expect(result.first.affinity_start_date).to_not be nil
+      expect(result.first.distribution_id).to eq distribution.id
     end
 
     it "creates new affinity records if they don't exist" do
+      appeals = [appeal_no_appeal_affinity]
+      result = described_class.new(distribution.id).send(:create_or_update_appeal_affinities, appeals, false)
+
+      expect(result.first.affinity_start_date).to_not be nil
+      expect(result.first.docket).to eq appeal_no_appeal_affinity.docket_type
+      expect(result.first.priority).to eq false
+      expect(result.first.distribution_id).to eq distribution.id
     end
   end
 
@@ -105,6 +122,7 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     it "runs successfully and adds expected appeal affinity records or values" do
+
     end
   end
 end
