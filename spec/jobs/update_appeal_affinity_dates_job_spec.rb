@@ -23,17 +23,27 @@ describe UpdateAppealAffinityDatesJob do
   context "#latest_receipt_dates" do
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution_requested) { create(:distribution, :completed, judge: judge) }
+    let(:distribution_requested_older) { create(:distribution, :completed, :this_month, judge: judge) }
     let(:distribution_current_push) { create(:distribution, :completed, :priority, judge: judge) }
     let(:distribution_old_push) { create(:distribution, :completed, :priority, :this_month, judge: judge) }
     let(:appeal_requested) do
-      create(:appeal, :direct_review_docket, :type_cavc_remand, :assigned_to_judge, receipt_date: 1.week.ago)
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+             receipt_date: 1.week.ago)
+    end
+    let(:appeal_requested_older) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+             receipt_date: 1.year.ago)
     end
     let(:appeal_current_push) do
-      create(:appeal, :evidence_submission_docket, :type_cavc_remand, :assigned_to_judge, receipt_date: 2.weeks.ago)
+      create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+             receipt_date: 2.weeks.ago)
     end
     let(:appeal_old_push) { create(:appeal, :hearing_docket, :assigned_to_judge, receipt_date: 1.month.ago) }
     let!(:distributed_case_requested) do
       create(:distributed_case, distribution: distribution_requested, appeal: appeal_requested)
+    end
+    let!(:distributed_case_requested_older) do
+      create(:distributed_case, distribution: distribution_requested_older, appeal: appeal_requested_older)
     end
     let!(:distributed_case_current_push) do
       create(:distributed_case, distribution: distribution_current_push, appeal: appeal_current_push)
@@ -43,12 +53,12 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     context "from_distribution" do
-      it "does not use DistributeCases from any push job" do
+      it "does not use DistributeCases from any push job and gets most recent receipt date" do
         result = described_class.new(distribution_requested.id).send(:latest_receipt_dates_from_distribution)
-        dockets = result.map { |hash| hash[:docket] }
 
         expect(result.length).to eq 1
-        expect(dockets).to match_array([appeal_requested.docket_type])
+        expect(result.first[:docket]).to eq appeal_requested.docket_type
+        expect(result.first[:receipt_date]).to eq appeal_requested.receipt_date
       end
     end
 
@@ -121,8 +131,133 @@ describe UpdateAppealAffinityDatesJob do
       described_class.new.perform_now
     end
 
-    it "runs successfully and adds expected appeal affinity records or values" do
+    context "full run" do
+      let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+      let!(:previous_distribution) { create(:distribution, :completed, :this_month, judge: judge) }
 
+      # previously distributed appeals with distributed cases from each docket and priority combination
+      let!(:distributed_appeal_drd_priority) do
+        appeal = create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                        receipt_date: 2.days.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+      let!(:distributed_appeal_drd_nonpriority) do
+        appeal = create(:appeal, :direct_review_docket, :assigned_to_judge,
+                        receipt_date: 1.week.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+      let!(:distributed_appeal_esd_priority) do
+        appeal = create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                        receipt_date: 3.days.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+      let!(:distributed_appeal_esd_nonpriority) do
+        appeal = create(:appeal, :evidence_submission_docket, :assigned_to_judge,
+                        receipt_date: 2.weeks.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+      let!(:distributed_appeal_hrd_priority) do
+        appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                        receipt_date: 4.days.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+      let!(:distributed_appeal_hrd_nonpriority) do
+        appeal = create(:appeal, :hearing_docket, :assigned_to_judge,
+                        receipt_date: 3.weeks.ago, associated_judge: judge)
+        create(:distributed_case, appeal: appeal, distribution: previous_distribution)
+        appeal
+      end
+
+      # ready appeals from each docket and priority combination without existing affinity records
+      let!(:ready_appeal_drd_priority) do
+        create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               receipt_date: 3.days.ago)
+      end
+      let!(:ready_appeal_drd_nonpriority) do
+        create(:appeal, :direct_review_docket, :ready_for_distribution, receipt_date: 2.weeks.ago)
+      end
+      let!(:ready_appeal_esd_priority) do
+        create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               receipt_date: 4.days.ago)
+      end
+      let!(:ready_appeal_esd_nonpriority) do
+        create(:appeal, :evidence_submission_docket, :ready_for_distribution, receipt_date: 3.weeks.ago)
+      end
+      let!(:ready_appeal_hrd_priority) do
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               receipt_date: 5.days.ago)
+      end
+      let!(:ready_appeal_hrd_nonpriority) do
+        create(:appeal, :hearing_docket, :ready_for_distribution, receipt_date: 4.weeks.ago)
+      end
+
+      # ready appeals from each docket and priority combination with existing affinity records but no start date
+      let!(:ready_appeal_drd_priority_no_start_date) do
+        create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               :with_appeal_affinity_no_start_date, receipt_date: 3.days.ago)
+      end
+      let!(:ready_appeal_esd_priority_no_start_date) do
+        create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               :with_appeal_affinity_no_start_date, receipt_date: 4.days.ago)
+      end
+      let!(:ready_appeal_hrd_priority_no_start_date) do
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               :with_appeal_affinity_no_start_date, receipt_date: 5.days.ago)
+      end
+      let!(:ready_appeal_hrd_nonpriority_no_start_date) do
+        create(:appeal, :hearing_docket, :ready_for_distribution, :with_appeal_affinity_no_start_date,
+               receipt_date: 4.weeks.ago)
+      end
+
+      # ready appeals from each docket and priority combination which should not be selected
+      let!(:ready_appeal_drd_priority_not_selectable) do
+        create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+      end
+      let!(:ready_appeal_esd_priority_not_selectable) do
+        create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+      end
+      let!(:ready_appeal_hrd_priority_not_selectable) do
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+      end
+      let!(:ready_appeal_hrd_nonpriority_not_selectable) do
+        create(:appeal, :hearing_docket, :ready_for_distribution)
+      end
+
+      # non-ready appeals from each docket and priority combination
+      let!(:non_ready_appeal_drd_priority) do
+        create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks)
+      end
+      let!(:non_ready_appeal_esd_priority) do
+        create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks)
+      end
+      let!(:non_ready_appeal_hrd_priority) do
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks)
+      end
+      let!(:non_ready_appeal_hrd_nonpriority) do
+        create(:appeal, :hearing_docket, :with_post_intake_tasks)
+      end
+
+      it "is successful and adds expected appeal affinity records or values" do
+        described_class.new(previous_distribution.id).perform_now
+
+        # Only 8 of the staged appeals should have an affinity
+        expect(AppealAffinity.count).to eq 8
+
+        # Validate that only the expected appeals are the ones that were updated
+        expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
+        expect(ready_appeal_esd_priority.appeal_affinity).to_not be nil
+        expect(ready_appeal_hrd_priority.appeal_affinity).to_not be nil
+        expect(ready_appeal_hrd_nonpriority.appeal_affinity).to_not be nil
+        expect(ready_appeal_drd_priority_no_start_date.appeal_affinity).to_not be nil
+        expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
+        expect(ready_appeal_hrd_priority_no_start_date.appeal_affinity).to_not be nil
+        expect(ready_appeal_hrd_nonpriority_no_start_date.appeal_affinity).to_not be nil
+      end
     end
   end
 end
