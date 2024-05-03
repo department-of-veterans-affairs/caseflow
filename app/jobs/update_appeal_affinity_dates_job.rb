@@ -54,7 +54,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
       DistributedCase
         .includes(:distribution)
         .joins("INNER JOIN appeals ON case_id = uuid::text")
-        .where(distributions: { priority_push: true, completed_at: Time.zone.todady.midnight..Time.zone.now })
+        .where(distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
         .group("docket", "priority")
         .maximum("receipt_date")
 
@@ -100,7 +100,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
 
   # The appeals arg can be an array of VACOLS::Case objects, they have the same affinity associations as Appeal objects
   def create_or_update_appeal_affinties(appeals, priority)
-    appeals.each do |appeal|
+    appeals.map do |appeal|
       existing_affinity = appeal.appeal_affinity
 
       if existing_affinity
