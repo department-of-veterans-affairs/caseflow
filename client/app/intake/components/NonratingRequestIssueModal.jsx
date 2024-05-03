@@ -229,8 +229,12 @@ class NonratingRequestIssueModal extends React.Component {
 
   getNonratingRequestIssueOptions() {
     const { intakeData } = this.props;
+    const { category } = this.state;
 
     const options = intakeData.activeNonratingRequestIssues.
+      filter(() => {
+        return category;
+      }).
       map((issue) => {
         return {
           displayText: `${issue.category}: ${issue.description}, decided ${formatDateStr(issue.decisionDate)}`,
