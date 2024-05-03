@@ -103,7 +103,9 @@ describe SendNotificationJob, type: :job do
   }
   let(:good_message) { VANotifySendMessageTemplate.new(success_message_attributes, good_template_name) }
   let(:legacy_message) { VANotifySendMessageTemplate.new(success_legacy_message_attributes, good_template_name) }
-  let(:legacy_deceased_message) { VANotifySendMessageTemplate.new(deceased_legacy_message_attributes, deceased_template_name) }
+  let(:legacy_deceased_message) {
+    VANotifySendMessageTemplate.new(deceased_legacy_message_attributes, deceased_template_name)
+  }
   let(:no_name_message) { VANotifySendMessageTemplate.new(no_name_message_attributes, good_template_name) }
   let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
   let(:deceased_message) { VANotifySendMessageTemplate.new(deceased_message_attributes, deceased_template_name) }
@@ -397,7 +399,6 @@ describe SendNotificationJob, type: :job do
   end
 
   context "feature flags for setting notification type" do
-
     it "notification type should be email if only email flag is on" do
       FeatureToggle.enable!(:va_notify_email)
       job = SendNotificationJob.new(good_message.to_json)
@@ -475,13 +476,13 @@ describe SendNotificationJob, type: :job do
   end
 
   context "feature flag for quarterly notifications" do
-    before {
+    before do
       FeatureToggle.enable!(:va_notify_quarterly_sms)
-    }
+    end
 
-    after {
+    after do
       FeatureToggle.disable!(:va_notify_quarterly_sms)
-    }
+    end
 
     it "should send an sms for quarterly notifications when the flag is on" do
       FeatureToggle.enable!(:va_notify_quarterly_sms)
@@ -497,15 +498,15 @@ describe SendNotificationJob, type: :job do
   end
 
   context "no participant or claimant found" do
-    before {
+    before do
       FeatureToggle.enable!(:va_notify_email)
       FeatureToggle.enable!(:va_notify_sms)
-    }
+    end
 
-    after {
+    after do
       FeatureToggle.disable!(:va_notify_email)
       FeatureToggle.disable!(:va_notify_sms)
-    }
+    end
     it "the email status should be updated to say no participant id if that is the message" do
       SendNotificationJob.new(bad_message.to_json).perform_now
       expect(Notification.first.email_notification_status).to eq("No Participant Id Found")
@@ -518,14 +519,14 @@ describe SendNotificationJob, type: :job do
   end
 
   context "Appeal is the subject of the notification" do
-    before {
+    before do
       FeatureToggle.enable!(:va_notify_email)
       FeatureToggle.enable!(:va_notify_sms)
-    }
-    after{
+    end
+    after do
       FeatureToggle.disable!(:va_notify_email)
       FeatureToggle.disable!(:va_notify_sms)
-    }
+    end
     it "The veteran being the claimant and is alive" do
       expect(VANotifyService).to receive(:send_email_notifications)
       expect(VANotifyService).to receive(:send_sms_notifications)
