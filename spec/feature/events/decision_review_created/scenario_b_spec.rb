@@ -42,7 +42,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
           "benefit_type": "compensation",
           "filed_by_va_gov": false,
           "legacy_opt_in_approved": false,
-          "receipt_date": 20231208,
+          "receipt_date": 19699,
           "veteran_is_not_claimant": true,
           "establishment_attempted_at": 1702067145000,
           "establishment_last_submitted_at": 1702067145000,
@@ -53,7 +53,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         },
         "end_product_establishment": {
           "benefit_type_code": "1",
-          "claim_date": 20231208,
+          "claim_date": 19699,
           "code": "030HLRNR",
           "modifier": "030",
           "payee_code": "00",
