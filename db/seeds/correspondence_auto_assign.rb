@@ -14,7 +14,6 @@ module Seeds
 
     def create_auto_assign_permissions
       OrganizationPermission.valid_permission_names.to_a.each do |permission|
-        binding.pry
         OrganizationPermission.find_or_create_by(permission: permission[1][:permission], organization: InboundOpsTeam.singleton) do |p|
           p.description = permission[1][:description]
           p.default_for_admin = permission[1][:default_for_admin]

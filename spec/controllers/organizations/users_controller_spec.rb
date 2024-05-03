@@ -342,7 +342,6 @@ describe Organizations::UsersController, :postgres, type: :controller do
       it "returns unauthorized" do
         User.authenticate!(user: user)
         patch :modify_user_permission, params: params
-        binding.pry
 
         expect(response.status).to eq(302)
         # expect(response).to redirect_to("/unauthorized")

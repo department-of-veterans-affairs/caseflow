@@ -16,7 +16,6 @@ class Organizations::UsersController < OrganizationsController
       users_with_permissions[user[:id]] = org_user_permissions
     end
 
-    # binding.pry
     @user_permissions = users_with_permissions
     respond_to do |format|
       format.html { render template: "queue/index" }
