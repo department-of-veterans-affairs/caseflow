@@ -2,7 +2,11 @@
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
+<<<<<<< HEAD
   include EventConcern
+=======
+  include ConferenceableConcern
+>>>>>>> uat/FY24Q3.2.0
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -12,6 +16,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
+  has_many :organization_user_permissions, through: :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :membership_requests, foreign_key: :requestor_id
   has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
@@ -23,6 +28,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+  scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -95,6 +101,19 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def hearings_user?
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
+  def inbound_ops_team_superuser?
+    member_of_organization?(InboundOpsTeam.singleton) &&
+      (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
+  end
+
+  def mail_team_user?
+    organizations.include?(MailTeam.singleton)
+  end
+
+  def mail_supervisor?
+    organizations.include?(InboundOpsTeam.singleton)
   end
 
   def can_assign_hearing_schedule?
@@ -438,6 +457,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_assigned_tasks_tab,
+      correspondence_in_progress_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def self.default_active_tab
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
@@ -452,6 +479,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def completed_tasks_tab
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::CorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_in_progress_tasks_tab
+    ::CorrespondenceInProgressTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::CorrespondenceCompletedTasksTab.new(assignee: self)
   end
 
   def can_edit_unrecognized_poa?
