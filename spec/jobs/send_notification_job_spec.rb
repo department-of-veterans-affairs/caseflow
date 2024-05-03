@@ -42,7 +42,7 @@ describe SendNotificationJob, type: :job do
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
   let(:error_template_name) { "No Participant Id Found" }
-  let(:deceased_template_name) { "Failure Due to Deceased" }
+  let(:deceased_status) { "Failure Due to Deceased" }
   let(:success_status) { "Success" }
   let(:error_status) { "No participant_id" }
   let(:success_message_attributes) {
@@ -63,10 +63,10 @@ describe SendNotificationJob, type: :job do
   }
   let(:deceased_legacy_message_attributes) {
     {
-      participant_id: nil,
-      status: deceased_message_attributes,
-      appeal_id: "123456",
-      appeal_type: "LegacyAppeal"
+      participant_id: "123456789",
+      status: deceased_status,
+      appeal_id: target_appeal.external_id,
+      appeal_type: target_appeal.class.name
     }
   }
   let(:no_name_message_attributes) {
@@ -87,10 +87,10 @@ describe SendNotificationJob, type: :job do
   }
   let(:deceased_message_attributes) {
     {
-      participant_id: nil,
-      status: deceased_template_name,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1578",
-      appeal_type: "Appeal"
+      participant_id: "123456789",
+      status: deceased_status,
+      appeal_id: target_appeal.external_id,
+      appeal_type: target_appeal.class.name
     }
   }
   let(:fail_create_message_attributes) {
@@ -103,12 +103,12 @@ describe SendNotificationJob, type: :job do
   }
   let(:good_message) { VANotifySendMessageTemplate.new(success_message_attributes, good_template_name) }
   let(:legacy_message) { VANotifySendMessageTemplate.new(success_legacy_message_attributes, good_template_name) }
-  let(:legacy_deceased_message) {
-    VANotifySendMessageTemplate.new(deceased_legacy_message_attributes, deceased_template_name)
-  }
+  let(:legacy_deceased_message) do
+    AppellantNotification.create_payload(target_appeal, good_template_name).to_json
+  end
   let(:no_name_message) { VANotifySendMessageTemplate.new(no_name_message_attributes, good_template_name) }
   let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
-  let(:deceased_message) { VANotifySendMessageTemplate.new(deceased_message_attributes, deceased_template_name) }
+  let(:deceased_message) { VANotifySendMessageTemplate.new(deceased_message_attributes, good_template_name).to_json }
   let(:fail_create_message) { VANotifySendMessageTemplate.new(fail_create_message_attributes, error_template_name) }
   let(:quarterly_message) { VANotifySendMessageTemplate.new(success_message_attributes, "Quarterly Notification") }
   let(:participant_id) { success_message_attributes[:participant_id] }
@@ -519,6 +519,8 @@ describe SendNotificationJob, type: :job do
   end
 
   context "Appeal is the subject of the notification" do
+    let!(:target_appeal) { create(:appeal, :with_deceased_veteran)}
+
     before do
       FeatureToggle.enable!(:va_notify_email)
       FeatureToggle.enable!(:va_notify_sms)
@@ -530,43 +532,66 @@ describe SendNotificationJob, type: :job do
     it "The veteran being the claimant and is alive" do
       expect(VANotifyService).to receive(:send_email_notifications)
       expect(VANotifyService).to receive(:send_sms_notifications)
+
       SendNotificationJob.new(good_message.to_json).perform_now
+
       expect(Notification.first.email_notification_status).to eq("Success")
     end
 
     it "The veteran being the claimant and is deceased" do
       expect(VANotifyService).to_not receive(:send_email_notifications)
       expect(VANotifyService).to_not receive(:send_sms_notifications)
-      SendNotificationJob.new(deceased_message.to_json).perform_now
+
+      SendNotificationJob.perform_now(deceased_message)
+
+      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
     end
 
     it "The veteran being deceased and there being an AppellantSubstitution on the appeal to swap the claimant" do
       substitution
       expect(VANotifyService).to_not receive(:send_email_notifications)
       expect(VANotifyService).to_not receive(:send_sms_notifications)
-      SendNotificationJob.new(deceased_message.to_json).perform_now
+
+      SendNotificationJob.new(deceased_message).perform_now
+
+      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
     end
   end
 
   context "Legacy Appeal is the subject of the notification" do
-    let(:legacy_appeal) { create(:legacy_appeal) }
+    let(:target_appeal)  do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(:case_with_form_9)
+      )
+    end
+
     before { FeatureToggle.enable!(:appeal_docketed_notification) }
     after { FeatureToggle.disable!(:appeal_docketed_notification) }
 
     it "The veteran being the claimant and is alive" do
       job = SendNotificationJob.new(legacy_message.to_json)
       job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
+      allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
       expect(job).to receive(:send_to_va_notify)
+
       job.perform_now
+
+      expect(Notification.first.email_notification_status).to eq("Success")
     end
 
     it "The veteran being the claimant and is deceased" do
+      target_appeal.veteran.update!(date_of_death: 2.weeks.ago)
+
       job = SendNotificationJob.new(legacy_deceased_message.to_json)
       job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
+      allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
       expect(job).to_not receive(:send_to_va_notify)
+
       job.perform_now
+
+      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
     end
   end
 end
