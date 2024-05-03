@@ -73,6 +73,24 @@ describe UpdateAppealAffinityDatesJob do
     end
   end
 
+  context "when there are no query results" do
+    it "#latest_receipt_dates_from_push_job does not error" do
+      result = described_class.new.send(:latest_receipt_dates_from_push_job)
+      expect(result).to eq []
+    end
+
+    it "#process_ama_appeals_which_need_affinity_updates doesn't error or call #create_or_update_appeal_affinities" do
+      expect_any_instance_of(described_class).to_not receive(:create_or_update_appeal_affinities)
+      result = described_class.new.send(:process_ama_appeals_which_need_affinity_updates, [])
+      expect(result).to eq []
+    end
+
+    it "#perform does not call #process_ama_appeals_which_need_affinity_updates" do
+      expect_any_instance_of(described_class).to_not receive(:process_ama_appeals_which_need_affinity_updates)
+      described_class.new.perform_now
+    end
+  end
+
   context "#process_ama_appeals_which_need_affinity_updates" do
     let(:hashes_array) do
       [{ docket: "hearing", priority: true, receipt_date: Time.zone.now },
