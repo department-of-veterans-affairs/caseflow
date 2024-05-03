@@ -158,6 +158,20 @@ class Docket
       .pluck(:id).size
   end
 
+  def docket_time_goal
+    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{lever_name}_docket_time_goals").to_i
+  end
+
+  def start_distribution_prior_to_goal
+    @start_distribution_prior_to_goal ||= CaseDistributionLever.public_send(
+      "ama_#{lever_name}_start_distribution_prior_to_goals"
+    ).to_i
+  end
+
+  def lever_name
+    docket_type == "hearing" ? "hearings" : docket_type
+  end
+
   private
 
   # :reek:ControlParameter

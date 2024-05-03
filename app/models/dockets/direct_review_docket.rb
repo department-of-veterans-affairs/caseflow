@@ -23,14 +23,6 @@ class DirectReviewDocket < Docket
     number_of_nonpriority_appeals_received_in_the_past_year
   end
 
-  def docket_time_goal
-    @docket_time_goal ||= CaseDistributionLever.ama_direct_review_docket_time_goals
-  end
-
-  def start_distribution_prior_to_goal
-    @start_distribution_prior_to_goal ||= CaseDistributionLever.ama_direct_review_start_distribution_prior_to_goals
-  end
-
   private
 
   def number_of_nonpriority_appeals_received_in_the_past_year

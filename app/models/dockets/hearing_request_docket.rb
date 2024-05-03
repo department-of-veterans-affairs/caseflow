@@ -10,7 +10,12 @@ class HearingRequestDocket < Docket
   end
 
   def ready_nonpriority_appeals
-    appeals(priority: false, ready: true)
+    appeals_list = appeals(priority: false, ready: true)
+    if calculate_days_for_time_goal_with_prior_to_goal > 0
+      appeals_list = appeals_list.where("receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
+    end
+
+    appeals_list
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
@@ -22,14 +27,9 @@ class HearingRequestDocket < Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
-    appeals_list = hearing_distribution_query(
+    hearing_distribution_query(
       base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop", judge: judge
-    ).call
-    if calculate_days_for_time_goal_with_prior_to_goal > 0
-      appeals_list = appeals_list.where("receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
-    end
-
-    appeals_list.map(&:receipt_date)
+    ).call.map(&:receipt_date)
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
@@ -105,13 +105,5 @@ class HearingRequestDocket < Docket
     # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases,
     # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
     # Instead, reinstate the limit here by filtering out the newest cases
-  end
-
-  def docket_time_goal
-    @docket_time_goal ||= CaseDistributionLever.ama_hearings_docket_time_goals
-  end
-
-  def start_distribution_prior_to_goal
-    @start_distribution_prior_to_goal ||= CaseDistributionLever.ama_hearings_start_distribution_prior_to_goals
   end
 end
