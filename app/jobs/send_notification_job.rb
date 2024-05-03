@@ -180,7 +180,13 @@ class SendNotificationJob < CaseflowJob
   def format_message_status
     return @message.status if message_status_valid?
 
-    (@message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
+    case @message.status
+    when "No participant_id" then "No Participant Id Found"
+    when "No claimant" then "No Claimant Found"
+    when "Failure Due to Deceased" then "Failure Due to Deceased"
+    else
+      fail StandardError, "Message status #{@message.status} is not recognized."
+    end
   end
 
   # Purpose: Determine if message status belongs to invalid
