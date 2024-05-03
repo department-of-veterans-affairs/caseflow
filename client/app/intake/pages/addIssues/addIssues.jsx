@@ -122,12 +122,21 @@ class AddIssuesPage extends React.Component {
       this.props.toggleEditIntakeIssueModal({ index });
       break;
     case 'requestModification':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueModificationModal(index);
       break;
     case 'requestRemoval':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueRemovalModal(index);
       break;
     case 'requestWithdrawal':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     default:
@@ -629,21 +638,27 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueModificationModalVisible && (
           <RequestIssueModificationModal
-            onCancel={() => this.props.toggleRequestIssueModificationModal()} />
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            onCancel={() => this.props.toggleRequestIssueModificationModal()}
+          />
         )}
 
         {intakeData.requestIssueRemovalModalVisible && (
           <RequestIssueRemovalModal
-            onCancel={() => this.props.toggleRequestIssueRemovalModal()} />
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            onCancel={() => this.props.toggleRequestIssueRemovalModal()}
+            onSubmit={() => this.props.toggleRequestIssueRemovalModal()} />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
           <RequestIssueWithdrawalModal
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
