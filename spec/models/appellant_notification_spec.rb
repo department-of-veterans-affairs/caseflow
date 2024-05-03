@@ -86,64 +86,6 @@ describe AppellantNotification do
         end
       end
     end
-
-    describe "self.notify_appellant" do
-      #       expect(VANotifyService).to_not receive(:send_email_notifications)
-      # expect(VANotifyService).to_not receive(:send_sms_notifications)
-
-      subject { AppellantNotification.notify_appellant(target_appeal, "Hearing scheduled") }
-
-      before do
-        FeatureToggle.enable!(:va_notify_email)
-        FeatureToggle.enable!(:va_notify_sms)
-        FeatureToggle.enable!(:appeal_docketed_notification)
-      end
-
-      after do
-        FeatureToggle.disable!(:va_notify_email)
-        FeatureToggle.disable!(:va_notify_sms)
-        FeatureToggle.disable!(:appeal_docketed_notification)
-      end
-
-      context "with an AMA Appeals" do
-        context "with a deceased veteran claimant" do
-          let!(:target_appeal) { create(:appeal, :with_deceased_veteran) }
-
-          it "a notification recorded is created, but nothing is sent to VANotify" do
-            expect(VANotifyService).to_not receive(:send_email_notifications)
-            expect(VANotifyService).to_not receive(:send_sms_notifications)
-
-            subject
-
-            byebug
-
-            expect(target_appeal.notifications.first.status).to eq "Failure Due to Deceased"
-          end
-        end
-
-        context "with an appellant substitution" do
-
-        end
-
-        context "with an alive veteran" do
-
-        end
-      end
-
-      context "with a Legacy Appeal" do
-        context "with a deceased veteran claimant" do
-
-        end
-
-        context "with an appellant substitution" do
-
-        end
-
-        context "with an alive veteran" do
-
-        end
-      end
-    end
   end
 end
 
