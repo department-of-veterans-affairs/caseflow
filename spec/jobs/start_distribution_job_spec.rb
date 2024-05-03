@@ -9,7 +9,7 @@ describe StartDistributionJob do
     subject { StartDistributionJob.perform_now(distribution) }
     it "calls distribute!" do
       expect(distribution).to receive(:distribute!)
-      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform)
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(distribution.id)
       subject
     end
 

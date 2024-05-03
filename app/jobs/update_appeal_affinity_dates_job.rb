@@ -10,12 +10,9 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   LEGACY_READY_TO_DISTRIBUTE_LOCATIONS = %w[81 83].freeze
   PAIRS_TO_DELETE = [["evidence_submission", false], ["direct_review", false]].freeze
 
-  def initialize(distribution_id = nil)
-    @distribution_id = distribution_id
-  end
-
-  def perform
+  def perform(distribution_id = nil)
     RequestStore.store[:current_user] = User.system_user
+    @distribution_id = distribution_id
 
     if @distribution_id
       update_from_requested_distribution

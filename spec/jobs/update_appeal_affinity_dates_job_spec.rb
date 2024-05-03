@@ -54,7 +54,9 @@ describe UpdateAppealAffinityDatesJob do
 
     context "from_distribution" do
       it "does not use DistributeCases from any push job and gets most recent receipt date" do
-        result = described_class.new(distribution_requested.id).send(:latest_receipt_dates_from_distribution)
+        job = described_class.new
+        job.instance_variable_set(:@distribution_id, distribution_requested.id)
+        result = job.send(:latest_receipt_dates_from_distribution)
 
         expect(result.length).to eq 1
         expect(result.first[:docket]).to eq appeal_requested.docket_type
@@ -87,7 +89,7 @@ describe UpdateAppealAffinityDatesJob do
 
     it "#perform does not call #process_ama_appeals_which_need_affinity_updates" do
       expect_any_instance_of(described_class).to_not receive(:process_ama_appeals_which_need_affinity_updates)
-      described_class.new.perform_now
+      described_class.perform_now
     end
   end
 
@@ -112,7 +114,10 @@ describe UpdateAppealAffinityDatesJob do
 
     it "updates existing affinity records if they exist" do
       appeals = [appeal_with_appeal_affinity_no_start_date]
-      result = described_class.new(distribution.id).send(:create_or_update_appeal_affinities, appeals, false)
+
+      job = described_class.new
+      job.instance_variable_set(:@distribution_id, distribution.id)
+      result = job.send(:create_or_update_appeal_affinities, appeals, false)
 
       expect(result.first.affinity_start_date).to_not be nil
       expect(result.first.distribution_id).to eq distribution.id
@@ -120,7 +125,10 @@ describe UpdateAppealAffinityDatesJob do
 
     it "creates new affinity records if they don't exist" do
       appeals = [appeal_no_appeal_affinity]
-      result = described_class.new(distribution.id).send(:create_or_update_appeal_affinities, appeals, false)
+
+      job = described_class.new
+      job.instance_variable_set(:@distribution_id, distribution.id)
+      result = job.send(:create_or_update_appeal_affinities, appeals, false)
 
       expect(result.first.affinity_start_date).to_not be nil
       expect(result.first.docket).to eq appeal_no_appeal_affinity.docket_type
@@ -132,12 +140,12 @@ describe UpdateAppealAffinityDatesJob do
   context "#perform" do
     it "updates from distribution if provided a distribution_id" do
       expect_any_instance_of(described_class).to receive(:update_from_requested_distribution).and_return(true)
-      described_class.new(1).perform_now
+      described_class.perform_now(1)
     end
 
     it "updates from the most recent push job if provided no args" do
       expect_any_instance_of(described_class).to receive(:update_from_push_priority_appeals_job).and_return(true)
-      described_class.new.perform_now
+      described_class.perform_now
     end
 
     it "sends a slack notification if the job errors" do
@@ -146,7 +154,7 @@ describe UpdateAppealAffinityDatesJob do
 
       expect_any_instance_of(SlackService).to receive(:send_notification)
 
-      described_class.new.perform_now
+      described_class.perform_now
     end
 
     context "full run" do
@@ -261,7 +269,7 @@ describe UpdateAppealAffinityDatesJob do
       end
 
       it "is successful and adds expected appeal affinity records or values" do
-        described_class.new(previous_distribution.id).perform_now
+        described_class.perform_now(previous_distribution.id)
 
         # Only 8 of the staged appeals should have an affinity
         expect(AppealAffinity.count).to eq 8
