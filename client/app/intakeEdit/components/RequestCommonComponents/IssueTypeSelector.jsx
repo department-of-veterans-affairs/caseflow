@@ -4,7 +4,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import ISSUE_CATEGORIES from 'constants/ISSUE_CATEGORIES';
 
 const IssueTypeSelector = () => {
-  const { control } = useFormContext();
+  const { control, errors } = useFormContext();
 
   const formattedIssueTypes = ISSUE_CATEGORIES.vha.map((issue) => {
     return {
@@ -22,6 +22,7 @@ const IssueTypeSelector = () => {
         label="Issue type"
         options={formattedIssueTypes}
         inputRef={ref}
+        errorMessage={errors.nonratingIssueCategory?.message}
         onChange={(valObj) => {
           onChange(valObj?.value);
         }}

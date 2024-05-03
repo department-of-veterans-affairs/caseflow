@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export const RequestIssueFormWrapper = (props) => {
 
   const methods = useForm({ defaultValues: {
     requestReason: '',
-    issueType: '',
+    nonratingIssueCategory: '',
   },
   mode: 'onSubmit',
+  resolver: yupResolver(props.schema),
   reValidateMode: 'onSubmit' });
-
-  const onSubmit = (data) => console.log(data);
 
   return (
     <div>
@@ -26,7 +26,8 @@ export const RequestIssueFormWrapper = (props) => {
 
 RequestIssueFormWrapper.propTypes = {
   onCancel: PropTypes.func,
-  currentIssue: PropTypes.object
+  currentIssue: PropTypes.object,
+  schema: PropTypes.object
 };
 
 export default RequestIssueFormWrapper;

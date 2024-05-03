@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { useFormContext } from 'react-hook-form';
 
 export const RequestReason = (props) => {
-  const { register } = useFormContext();
+  const { register, errors } = useFormContext();
 
   return (
     <div>
@@ -14,6 +14,7 @@ export const RequestReason = (props) => {
         name="requestReason"
         label={`Please provide a reason for the issue ${props.label} request`}
         inputRef={register}
+        errorMessage={errors.requestReason?.message}
       />
     </div>
 
