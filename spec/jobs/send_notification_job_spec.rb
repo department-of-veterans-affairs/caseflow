@@ -585,7 +585,7 @@ describe SendNotificationJob, type: :job do
       it "The veteran being the claimant and is deceased" do
         target_appeal.veteran.update!(date_of_death: 2.weeks.ago)
 
-        job = SendNotificationJob.new(legacy_deceased_message.to_json)
+        job = SendNotificationJob.new(legacy_deceased_message)
         job.instance_variable_set(:@notification_audit, notification)
         allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
         expect(job).to_not receive(:send_to_va_notify)
