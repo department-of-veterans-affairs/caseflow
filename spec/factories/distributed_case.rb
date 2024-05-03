@@ -15,6 +15,9 @@ FactoryBot.define do
     genpop_query { "only_genpop" if appeal.docket_type == "hearing" }
 
     transient do
+      # There is a callback to create an AppealState record for appeal_docketed that will raise an error without this
+      RequestStore[:current_user] ||= User.system_user
+
       appeal { create(:appeal, :assigned_to_judge) }
     end
   end
