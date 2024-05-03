@@ -518,80 +518,82 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  context "Appeal is the subject of the notification" do
-    let!(:target_appeal) { create(:appeal, :with_deceased_veteran)}
-
+  context "Deceased veteran checks" do
     before do
       FeatureToggle.enable!(:va_notify_email)
       FeatureToggle.enable!(:va_notify_sms)
+      FeatureToggle.enable!(:appeal_docketed_notification)
     end
     after do
       FeatureToggle.disable!(:va_notify_email)
       FeatureToggle.disable!(:va_notify_sms)
-    end
-    it "The veteran being the claimant and is alive" do
-      expect(VANotifyService).to receive(:send_email_notifications)
-      expect(VANotifyService).to receive(:send_sms_notifications)
-
-      SendNotificationJob.new(good_message.to_json).perform_now
-
-      expect(Notification.first.email_notification_status).to eq("Success")
+      FeatureToggle.disable!(:appeal_docketed_notification)
     end
 
-    it "The veteran being the claimant and is deceased" do
-      expect(VANotifyService).to_not receive(:send_email_notifications)
-      expect(VANotifyService).to_not receive(:send_sms_notifications)
+    context "Appeal is the subject of the notification" do
+      let!(:target_appeal) { create(:appeal, :with_deceased_veteran) }
 
-      SendNotificationJob.perform_now(deceased_message)
+      it "The veteran being the claimant and is alive" do
+        expect(VANotifyService).to receive(:send_email_notifications)
+        expect(VANotifyService).to receive(:send_sms_notifications)
 
-      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
+        SendNotificationJob.new(good_message.to_json).perform_now
+
+        expect(Notification.first.email_notification_status).to eq("Success")
+      end
+
+      it "The veteran being the claimant and is deceased" do
+        expect(VANotifyService).to_not receive(:send_email_notifications)
+        expect(VANotifyService).to_not receive(:send_sms_notifications)
+
+        SendNotificationJob.perform_now(deceased_message)
+
+        expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
+      end
+
+      it "The veteran being deceased and there being an AppellantSubstitution on the appeal to swap the claimant" do
+        substitution
+        expect(VANotifyService).to_not receive(:send_email_notifications)
+        expect(VANotifyService).to_not receive(:send_sms_notifications)
+
+        SendNotificationJob.new(deceased_message).perform_now
+
+        expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
+      end
     end
 
-    it "The veteran being deceased and there being an AppellantSubstitution on the appeal to swap the claimant" do
-      substitution
-      expect(VANotifyService).to_not receive(:send_email_notifications)
-      expect(VANotifyService).to_not receive(:send_sms_notifications)
+    context "Legacy Appeal is the subject of the notification" do
+      let(:target_appeal)  do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: create(:case_with_form_9)
+        )
+      end
 
-      SendNotificationJob.new(deceased_message).perform_now
+      it "The veteran being the claimant and is alive" do
+        job = SendNotificationJob.new(legacy_message.to_json)
+        job.instance_variable_set(:@notification_audit, notification)
+        allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
+        expect(job).to receive(:send_to_va_notify)
 
-      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
-    end
-  end
+        job.perform_now
 
-  context "Legacy Appeal is the subject of the notification" do
-    let(:target_appeal)  do
-      create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: create(:case_with_form_9)
-      )
-    end
+        expect(Notification.last.email_notification_status).to eq("Success")
+      end
 
-    before { FeatureToggle.enable!(:appeal_docketed_notification) }
-    after { FeatureToggle.disable!(:appeal_docketed_notification) }
+      it "The veteran being the claimant and is deceased" do
+        target_appeal.veteran.update!(date_of_death: 2.weeks.ago)
 
-    it "The veteran being the claimant and is alive" do
-      job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
-      expect(job).to receive(:send_to_va_notify)
+        job = SendNotificationJob.new(legacy_deceased_message.to_json)
+        job.instance_variable_set(:@notification_audit, notification)
+        allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
+        expect(job).to_not receive(:send_to_va_notify)
 
-      job.perform_now
+        job.perform_now
 
-      expect(Notification.first.email_notification_status).to eq("Success")
-    end
-
-    it "The veteran being the claimant and is deceased" do
-      target_appeal.veteran.update!(date_of_death: 2.weeks.ago)
-
-      job = SendNotificationJob.new(legacy_deceased_message.to_json)
-      job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(target_appeal)
-      expect(job).to_not receive(:send_to_va_notify)
-
-      job.perform_now
-
-      expect(Notification.first.email_notification_status).to eq("Failure Due to Deceased")
+        expect(Notification.last.email_notification_status).to eq("Failure Due to Deceased")
+      end
     end
   end
 end
