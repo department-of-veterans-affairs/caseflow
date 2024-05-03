@@ -37,21 +37,21 @@ export default class TranscriptionSettings extends React.PureComponent {
     };
   }
 
-  // addContractorButton = () =>
-  //   <div {...buttonStyle}><Button
-  //     name={`Add Contractor`}
-  //     id={`Add-contractor`}
-  //     // classNames={['usa-button-primary']}
-  //     // on click add contractor modal opens
-  //     /></div>
+  addContractorButton = () =>
+    <div {...buttonStyle}><Button
+      name={`Add Contractor`}
+      id={`Add-contractor`}
+      classNames={['usa-button-primary']}
+      // on click add contractor modal opens
+      /></div>
 
-  // removeContractorButton = () =>
-  //   <div {...buttonStyle}><Button
-  //     name={`Remove Contractor`}
-  //     id={`Remove-contractor`}
-  //     // classNames={['usa-button-secondary']}
-  //     // on click contractor is removed
-  //     /></div>
+  removeContractorButton = () =>
+    <div {...buttonStyle}><Button
+      name={`Remove Contractor`}
+      id={`Remove-contractor`}
+      classNames={['usa-button-secondary']}
+      // on click contractor is removed
+      /></div>
 
   mainContent = () => {
     return (
@@ -65,8 +65,8 @@ export default class TranscriptionSettings extends React.PureComponent {
               {`Edit Current Contractors`}
             </h2>
             <span>
-              {/* {this.removeContractorButton()}
-              {this.addContractorButton()} */}
+              {this.removeContractorButton()}
+              {this.addContractorButton()}
             </span>
           </div>
         </div>
@@ -80,13 +80,12 @@ export default class TranscriptionSettings extends React.PureComponent {
     );
   }
 
-  render = () => <LoadingDataDisplay>
+  render = () =>
   <AppSegment filledBackground>
     <div>
       {this.mainContent()}
     </div>
-  </AppSegment>
-</LoadingDataDisplay>;
+  </AppSegment>;
 }
 
 TranscriptionSettings.propTypes = {
