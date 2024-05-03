@@ -242,7 +242,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.removeUser(user)} /></div>
 
 getFilteredUsers = () => {
-  if (this.state.searchValue.length > 0) {
+  if (this.state.searchValue.length > 1) {
 
     // return name or css id if match
     return this.state.organizationUsers.filter((user) =>
