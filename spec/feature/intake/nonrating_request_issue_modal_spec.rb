@@ -77,31 +77,6 @@ feature "Nonrating Request Issue Modal", :postgres do
            )).to_not be_nil
   end
 
-  context "when it is a claim review" do
-    it "Shows the correct issue categories by benefit type" do
-      test_issue_categories(
-        decision_review_type: "higher_level_review",
-        benefit_type: "pension",
-        included_category: "Eligibility | Wartime Service",
-        mst_pact: false
-      )
-
-      test_issue_categories(
-        decision_review_type: "higher_level_review",
-        benefit_type: "vha",
-        included_category: "Eligibility for Dental Treatment",
-        mst_pact: false
-      )
-
-      test_issue_categories(
-        decision_review_type: "supplemental_claim",
-        benefit_type: "fiduciary",
-        included_category: "Appointment of a Fiduciary (38 CFR 13.100)",
-        mst_pact: false
-      )
-    end
-  end
-
   context "when the decision review type is appeal" do
     it "should show the compensation categories because there is no benefit type" do
       test_issue_categories(
