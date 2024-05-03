@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UpdateAppealAffinityDatesJob < CaseflowJob
+  include DistributionScopes
+
   LEGACY_DOCKET = "legacy"
   LEGACY_READY_TO_DISTRIBUTE_LOCATIONS = %w[81 83].freeze
   PAIRS_TO_DELETE = [["evidence_submission", false], ["direct_review", false]].freeze
@@ -77,9 +79,9 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
       next if receipt_date_hash[:docket] == LEGACY_DOCKET
 
       base_appeals_to_update =
-        Appeal
+        Appeal.extending(DistributionScopes)
           .ready_for_distribution
-          .joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
+          .with_appeal_affinities
           .where(docket_type: receipt_date_hash[:docket], appeal_affinities: { affinity_start_date: nil })
           .where("receipt_date <= (?)", receipt_date_hash[:receipt_date])
 
