@@ -236,7 +236,7 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |hlr|
-        css_id = "CSS_ID#{generate :css_id}"
+        css_id = "CSSID#{generate :css_id}"
 
         intake_user = User.find_by(css_id: css_id)
 

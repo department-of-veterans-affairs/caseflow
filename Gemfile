@@ -56,7 +56,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "5.2.8.1"
+gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -71,6 +71,7 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
@@ -86,7 +87,7 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -99,7 +100,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record", "2.0.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
