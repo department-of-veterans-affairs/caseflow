@@ -3,6 +3,9 @@
 class UpdateAppealAffinityDatesJob < CaseflowJob
   include DistributionScopes
 
+  queue_with_priority :low_priority
+  application_attr :queue
+
   LEGACY_DOCKET = "legacy"
   LEGACY_READY_TO_DISTRIBUTE_LOCATIONS = %w[81 83].freeze
   PAIRS_TO_DELETE = [["evidence_submission", false], ["direct_review", false]].freeze
