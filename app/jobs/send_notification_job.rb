@@ -177,7 +177,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Reformat message status if status belongs to invalid category
   #
   # Response: Message string
-  def format_message_status
+    def format_message_status
     return @message.status if message_status_valid?
 
     case @message.status

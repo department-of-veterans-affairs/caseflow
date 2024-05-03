@@ -42,7 +42,7 @@ describe SendNotificationJob, type: :job do
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
   let(:error_template_name) { "No Participant Id Found" }
-  let(:deceased_template_name) { "Failure Due to Deceased" }
+  let(:deceased_template_name) { "Appeal docketed" }
   let(:success_status) { "Success" }
   let(:error_status) { "No participant_id" }
   let(:success_message_attributes) {
