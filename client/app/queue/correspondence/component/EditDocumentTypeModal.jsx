@@ -53,6 +53,7 @@ class EditDocumentTypeModal extends React.Component {
       });
       this.props.updateDocumentTypeName(this.state.packageDocument, this.props.indexDoc);
       this.props.setModalState(false);
+      location.reload();
     } catch (error) {
       console.error(error);
     }
