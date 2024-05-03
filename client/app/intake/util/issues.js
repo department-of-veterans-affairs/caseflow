@@ -4,66 +4,74 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-export const nonAdminFakePendingData = [
+export const nonAdminFakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
-    pending_request_type: 'Modification',
-    pending_nonrating_issue_category: 'Caregiver | Eligibility',
-    pending_decision_text: 'New Caregiver | Eligibility text',
-    pending_decision_date: '2024-01-30',
-    request_reason: 'This is my reason for Modification.'
+    request_type: 'Modification',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
+    reason: 'This is my reason for Modification.'
   },
   {
     request_issue_id: '3311',
-    pending_request_type: 'Withdrawl',
+    request_type: 'Withdrawal',
     withdrawl_request_date: '2024-01-30',
-    request_reason: 'This is my reason for Withdrawl'
+    request_reason: 'This is my reason for Withdrawal'
   },
   {
-    pending_request_type: 'Addition',
-    pending_nonrating_issue_category: 'Beneficiary Travel',
-    pending_decision_text: 'New Beneficiary Travel text',
-    pending_decision_date: '2024-01-30',
-    request_reason: 'This is my reason for Addition.'
+    request_type: 'Addition',
+    nonrating_issue_category: 'Beneficiary Travel',
+    decision_text: 'New Beneficiary Travel text',
+    decision_date: '2024-01-30',
+    reason: 'This is my reason for Addition.'
   },
   {
     request_issue_id: '3311',
-    pending_request_type: 'Removal',
+    request_type: 'Removal',
     request_reason: 'This is my reason for Removal.'
   }
 ];
 
-export const adminFakePendingData = [
+export const adminFakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
-    pending_request_type: 'Modification',
-    pending_nonrating_issue_category: 'Caregiver | Eligibility',
-    pending_decision_text: 'New Caregiver | Eligibility text',
-    pending_decision_date: '2024-01-30',
+    request_type: 'Modification',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
     request_reason: 'This is my reason for Modification.',
-    approved: true,
+    status: 'approved',
     remove_original_issue: true
   },
   {
     request_issue_id: '3311',
-    pending_request_type: 'Withdrawl',
+    request_type: 'Withdrawl',
     withdrawl_request_date: '2024-01-30',
     request_reason: 'This is my reason for Withdrawl',
-    approved: true,
+    status: 'approved',
   },
   {
-    pending_request_type: 'Addition',
-    pending_nonrating_issue_category: 'Beneficiary Travel',
-    pending_decision_text: 'New Beneficiary Travel text',
-    pending_decision_date: '2024-01-30',
+    request_type: 'Addition',
+    nonrating_issue_category: 'Beneficiary Travel',
+    decision_text: 'New Beneficiary Travel text',
+    decision_date: '2024-01-30',
     request_reason: 'This is my reason for Addition.',
-    approved: true
+    status: 'approved',
   },
   {
     request_issue_id: '3311',
-    pending_request_type: 'Removal',
+    request_type: 'Removal',
     request_reason: 'This is my reason for Removal.',
-    approved: true
+    status: 'approved',
+  },
+  {
+    request_issue_id: '3311',
+    request_type: 'Modification',
+    nonrating_issue_category: 'CHAMPVA',
+    decision_text: 'New CHAMPVA text',
+    decision_date: '2024-01-30',
+    request_reason: 'This is my reason for Modification.'
   }
 ];
 
@@ -222,22 +230,22 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   );
 };
 
-export const formatPendingRequestIssues = (pendingRequestIssues) => {
-  if (!pendingRequestIssues) {
+export const formatIssueModificationRequests = (issueModificationRequests) => {
+  if (!issueModificationRequests) {
     return;
   }
 
-  return pendingRequestIssues.map((issue) => {
+  return issueModificationRequests.map((issue) => {
     return {
       id: String(issue.id),
       requestIssueId: issue.request_issue_id,
-      pendingRequestType: issue.pending_request_type,
-      pendingNonratingIssue_category: issue.pending_nonrating_issue_category,
-      pendingDecisionText: issue.pending_decision_text,
-      pendingDecisionDate: issue.pending_decision_date,
+      requestType: issue.request_type,
+      nonratingIssueCategory: issue.pending_nonrating_issue_category,
+      decisionText: issue.pending_decision_text,
+      decisionDate: issue.pending_decision_date,
       requestReason: issue.request_reason,
       withdrawlRequestDate: issue.withdrawl_request_date,
-      approved: issue.approved,
+      status: issue.status,
       removeOriginalIssue: issue.remove_original_issue
     };
   });
@@ -369,6 +377,7 @@ export const formatIssues = (state) => {
   const ratingData = formatRatingRequestIssues(state);
   const nonRatingData = formatNonratingRequestIssues(state);
   const unidentifiedData = formatUnidentifiedIssues(state);
+  // const modificationIssueRequestsData = formatIssueModificationRequests(state);
 
   const data = {
     request_issues: _.concat(ratingData, nonRatingData, unidentifiedData)
@@ -461,8 +470,8 @@ export const formatIssuesBySection = (issues) => {
   );
 };
 
-export const formatPendingIssuesBySection = (pendingIssues) => {
-  return pendingIssues.reduce(
+export const formatIssueModificationRequestsBySection = (issueModificationRequests) => {
+  return issueModificationRequests.reduce(
     (result, pendingIssue) => {
       (result.pendingAdminReview || (result.pendingAdminReview = [])).push(pendingIssue);
 
