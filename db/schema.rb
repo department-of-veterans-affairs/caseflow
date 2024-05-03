@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
   end
 
   create_table "appeal_affinities", force: :cascade do |t|
-    t.datetime "affinity_start_date", null: false, comment: "The date from which to calculate an appeal's affinity window"
+    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
     t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
     t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
     t.datetime "created_at", precision: 6, null: false
