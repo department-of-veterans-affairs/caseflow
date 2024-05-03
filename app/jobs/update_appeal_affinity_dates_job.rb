@@ -19,9 +19,13 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     else
       update_from_push_priority_appeals_job
     end
+  rescue StandardError => error
+    title = "UpdateAppealAffinityDatesJob Error"
+    slack_service.send_notification(error.message, title)
+    log_error(error)
   end
 
-  # private
+  private
 
   def update_from_requested_distribution
     receipt_date_hashes_array = latest_receipt_dates_from_distribution
@@ -91,7 +95,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
                                                   base_appeals_to_update.nonpriority
                                                 end
 
-      create_or_update_appeal_affinties(appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
+      create_or_update_appeal_affinities(appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
     end
   end
 
@@ -99,7 +103,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array); end
 
   # The appeals arg can be an array of VACOLS::Case objects, they have the same affinity associations as Appeal objects
-  def create_or_update_appeal_affinties(appeals, priority)
+  def create_or_update_appeal_affinities(appeals, priority)
     appeals.map do |appeal|
       existing_affinity = appeal.appeal_affinity
 
