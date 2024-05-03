@@ -242,7 +242,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.removeUser(user)} /></div>
 
 getFilteredUsers = () => {
-  if (this.state.searchValue.length > 0) {
+  if (this.state.searchValue.length > 1) {
 
     return this.state.organizationUsers.filter((user) => user.attributes.full_name.toLowerCase().includes(this.state.searchValue));
   }
