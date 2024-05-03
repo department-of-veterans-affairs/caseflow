@@ -63,7 +63,7 @@ class AppealState < CaseflowRecord
   def check_hearing_withdrawn
     # if there's no hearing scheduled and no hearing withdrawn
     if !hearing_withdrawn
-      notify_appellant_privacy_act_pending
+      notify_appellant_ihp_or_privacy_act_pending
     # appeal status is Appeal Docketed
     elsif appeal_docketed && hearing_withdrawn
       notify_appelant_appeal_docketed
@@ -110,7 +110,7 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: Status of QuarterlyNotification
-  def notify_appellant_privacy_act_pending
+  def notify_appellant_ihp_or_privacy_act_pending
     if vso_ihp_pending
       check_ihp_tasks_pending
     else
