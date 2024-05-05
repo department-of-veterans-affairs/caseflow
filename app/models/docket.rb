@@ -37,16 +37,15 @@ class Docket
     "disable_ama_#{priority_status}_#{docket_type.downcase}"
   end
 
-  def ready_priority_nonpriority_appeals(priority = false)
+  def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value
-    if lever_value == "true"
-      []
-    else
-      self
-    end
+
+    return [] if lever_value == "true"
+
+    appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
   end
 
   def count(priority: nil, ready: nil)
@@ -75,25 +74,29 @@ class Docket
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
-    appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
+    ready_priority_nonpriority_appeals(
+      priority: true,
+      ready: true,
+      genpop: true
+    ).limit(num).map(&:ready_for_distribution_at)
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
-    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
   end
 
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
     @age_of_oldest_priority_appeal ||=
       if use_by_docket_date?
-        appeals(priority: true, ready: true).limit(1).first&.receipt_date
+        ready_priority_nonpriority_appeals(priority: true, ready: true).limit(1).first&.receipt_date
       else
-        appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+        ready_priority_nonpriority_appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
       end
   end
 
@@ -114,7 +117,12 @@ class Docket
       query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
       appeals, sct_appeals = create_sct_appeals(query_args, limit)
     else
-      appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+      appeals = ready_priority_nonpriority_appeals(
+        priority: priority,
+        ready: true,
+        genpop: genpop,
+        judge: distribution.judge
+      ).limit(limit)
       sct_appeals = []
     end
 
