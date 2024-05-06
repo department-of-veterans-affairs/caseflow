@@ -9,6 +9,7 @@ class CreateIssueModificationRequest < ActiveRecord::Migration[6.0]
       t.datetime "decision_date", null: true, comment: "The decision date of the request issue that is being modified"
       t.text "decided_decision_text", null: true, comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
       t.string "nonrating_issue_category", null: true, comment: "The nonrating issue category of the request issue that is being modified or added by the request"
+      t.string "nonrating_issue_description", null: true, comment: "The nonrating issue description of the request issue that is being modified or added by the request"
       t.datetime "withdrawal_date", null: true, comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
       t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
       t.datetime "decided_at", null: true, comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
