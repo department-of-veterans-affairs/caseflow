@@ -22,7 +22,7 @@ class TestDocketSeedsController < ApplicationController
   private
 
   def verify_access
-    return true if current_user&.organizations && current_user.organizations.any?(&:users_can_create_seeds)
+    return true if current_user&.organizations && current_user.organizations.any?(&:users_can_view_levers?)
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
