@@ -21,6 +21,9 @@ FactoryBot.define do
 
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+
+      # There is a callback to create an AppealState record for appeal_docketed that will raise an error without this
+      RequestStore[:current_user] ||= User.system_user unless RequestStore[:current_user]
     end
 
     # Appeal's after_save interferes with explicit updated_at values
