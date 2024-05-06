@@ -75,10 +75,11 @@ export default class OrganizationUsers extends React.PureComponent {
   modifyUserPermission = (userId, permissionName) => () => {
     const payload = { data: { userId, permissionName } };
 
-    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).then((response) => {
+    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).
+    then((response) => {
       this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
     }, (error) => {
-      console.log(error)
+      console.log(error);
       // handle error
     });
   }
@@ -97,10 +98,41 @@ export default class OrganizationUsers extends React.PureComponent {
       }
     };
 
+    const getCheckboxEnabled = (user, permission) => {
+      // prioritize state
+      const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) => storedCheckbox.userId == user.id && storedCheckbox.permissionName === permission.permission));
+
+      if (typeof stateValue !== 'undefined') {
+        return stateValue.checked;
+      }
+      // check props as the fallback
+      const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id == user.id).attributes;
+
+      if (orgUserPermissions.userPermission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+        return true;
+      }
+
+      if (orgUserPermissions.userAdminPermission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+        return true;
+      }
+
+      // check if user is marked as admin
+      if(permission.default_for_admin && user.attributes.admin) {
+        return true;
+      }
+
+      // if(this.state.changingAdminRights.find((x) => ))
+      return false;
+
+    };
     const checkAdminPermission = (permission) => {
       if (user.attributes.userAdminPermission === null ||
         typeof user.attributes.userAdminPermission === 'undefined') {
         return false;
+      }
+
+      if (user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission)) {
+        return true;
       }
 
       if (user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission)) {
@@ -162,7 +194,7 @@ export default class OrganizationUsers extends React.PureComponent {
           onChange={this.modifyUserPermission(user.id, permission.permission)}
           defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
           disabled={checkAdminPermission(permission.permission)}
-          value={checkAdminPermission(permission.permission)}
+          value={getCheckboxEnabled(user, permission)}
 
         />);
       })
