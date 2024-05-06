@@ -47,6 +47,7 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
     let(:error_details) do
       {
         error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
+        provider: "webex",
         api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
         times: { from: from_param, to: to_param },
