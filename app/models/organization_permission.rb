@@ -15,9 +15,8 @@ class OrganizationPermission < CaseflowRecord
   validate :valid_permission
 
   def valid_permission
-    true
-    # errors.add(:permission, "Invalid permission") unless
-      # self.class.valid_permission_names.include?(permission)
+    errors.add(:permission, "Invalid permission") unless
+    self.class.valid_permission_names.include?(permission)
   end
 
   class << self

@@ -1,4 +1,4 @@
-orgUserPermissions# frozen_string_literal: true
+# frozen_string_literal: true
 
 describe OrganizationPermission do
   describe "Associations" do

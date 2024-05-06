@@ -87,20 +87,21 @@ export default class OrganizationUsers extends React.PureComponent {
   generatePermissionsCheckboxes = (user) => {
 
     const userPermissions = (permission) => {
-      if (user.attributes.userPermission === null ||
-          typeof user.attributes.userPermission === 'undefined' ||
-        user.attributes.userPermission.length === 0) {
+      if (user.attributes.user_permission === null ||
+          typeof user.attributes.user_permission === 'undefined' ||
+        user.attributes.user_permission.length === 0) {
         return false;
       }
 
-      if (user.attributes?.userPermission.flat().find((userPer) => userPer.permission === permission)) {
+      if (user.attributes?.user_permission.flat().find((userPer) => userPer.permission === permission)) {
         return true;
       }
     };
 
     const getCheckboxEnabled = (user, permission) => {
       // prioritize state
-      const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) => storedCheckbox.userId == user.id && storedCheckbox.permissionName === permission.permission));
+      const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) =>
+        storedCheckbox.userId == user.id && storedCheckbox.permissionName === permission.permission));
 
       if (typeof stateValue !== 'undefined') {
         return stateValue.checked;
@@ -108,11 +109,11 @@ export default class OrganizationUsers extends React.PureComponent {
       // check props as the fallback
       const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id == user.id).attributes;
 
-      if (orgUserPermissions.userPermission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+      if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
         return true;
       }
 
-      if (orgUserPermissions.userAdminPermission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+      if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
         return true;
       }
 
@@ -126,16 +127,16 @@ export default class OrganizationUsers extends React.PureComponent {
 
     };
     const checkAdminPermission = (permission) => {
-      if (user.attributes.userAdminPermission === null ||
-        typeof user.attributes.userAdminPermission === 'undefined') {
+      if (user.attributes.user_admin_permission === null ||
+        typeof user.attributes.user_admin_permission === 'undefined') {
         return false;
       }
 
-      if (user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission)) {
+      if (user.attributes?.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
         return true;
       }
 
-      if (user.attributes?.userAdminPermission.find((adminPer) => adminPer.permission === permission)) {
+      if (user.attributes?.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
         return true;
       }
     };
