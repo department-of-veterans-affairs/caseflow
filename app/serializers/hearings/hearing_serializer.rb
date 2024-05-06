@@ -21,9 +21,7 @@ class HearingSerializer
     end
   end
   attribute :transcription_contractors do
-    TranscriptionContractor.all_contractors.map do |contractor|
-      { id: contractor.id, name: contractor.name }
-    end
+    TranscriptionContractor.all_contractors.index_by(&:id).transform_values(&:name)
   end
   attribute :appeal_external_id
   attribute :appeal_id

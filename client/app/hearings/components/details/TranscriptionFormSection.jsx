@@ -20,6 +20,7 @@ export const TranscriptionFormSection = (
           transcription={transcription}
           update={(values) => update('transcription', values)}
           readOnly={readOnly}
+          transcriptionContractors={hearing.transcriptionContractors}
         />
         <div className="cf-help-divider" />
 
