@@ -7,7 +7,6 @@ FactoryBot.define do
       adding_user do
         User.find_by(css_id: "HR_FCT_USER") ||
           create(:user, css_id: "HR_FCT_USER", full_name: "Hearing Factory AddingUser")
-
       end
     end
     appeal { association(:appeal, :hearing_docket) }
