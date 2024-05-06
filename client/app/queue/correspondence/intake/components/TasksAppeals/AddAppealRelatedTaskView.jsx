@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForSearchStore } from '../../../../utils';
@@ -164,7 +165,7 @@ export const AddAppealRelatedTaskView = (props) => {
                 <div className="right-side-of-assigned-to" >
                   <CaseListTable
                   // Need to use this as key to force React to re-render checkboxes
-                  key={tableUpdateTrigger}
+                    key={tableUpdateTrigger}
                     appeals={appeals}
                     showCheckboxes
                     paginate
@@ -177,25 +178,26 @@ export const AddAppealRelatedTaskView = (props) => {
                 </div>
               </ul>
             </div>
-          <div>
-            {taskRelatedAppeals.toSorted().map((appealId, index) => {
-              return (
-                <ExistingAppealTasksView
-                  key={index}
-                  appeal={appealById(appealId)}
-                  newTasks={newTasks}
-                  setNewTasks={setNewTasks}
-                  waivedTasks={waivedTasks}
-                  setWaivedTasks={setWaivedTasks}
-                  nextTaskId={nextTaskId}
-                  setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
-                  unlinkAppeal={appealCheckboxOnChange}
-                  allTaskTypeOptions={props.allTaskTypeOptions}
-                  filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
-                  autoTexts={props.autoTexts}
-                />
-              );
-            })}
+            <div>
+              {taskRelatedAppeals.toSorted().map((appealId, index) => {
+                return (
+                  <ExistingAppealTasksView
+                    key={index}
+                    appeal={appealById(appealId)}
+                    newTasks={newTasks}
+                    setNewTasks={setNewTasks}
+                    waivedTasks={waivedTasks}
+                    setWaivedTasks={setWaivedTasks}
+                    nextTaskId={nextTaskId}
+                    setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+                    unlinkAppeal={appealCheckboxOnChange}
+                    allTaskTypeOptions={props.allTaskTypeOptions}
+                    filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                    autoTexts={props.autoTexts}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       }
