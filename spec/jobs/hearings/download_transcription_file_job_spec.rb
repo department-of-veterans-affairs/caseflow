@@ -233,23 +233,11 @@ describe Hearings::DownloadTranscriptionFileJob do
           allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return(nil)
         end
 
-        shared_examples "sends email template" do
-          context "email delivery succeeds" do
-            it "mailer receives correct params" do
-              allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).and_call_original
-              expect(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
-              expect_any_instance_of(described_class).to receive(:log_error).once
-              perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
-            end
-          end
-
-          context "email delivery fails" do
-            it "captures external delivery error" do
-              allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
-                .and_raise(GovDelivery::TMS::Request::Error.new(500))
-              expect_any_instance_of(Hearings::WebexTranscriptionFilesProcessJob).to receive(:log_error).twice
-              perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
-            end
+        shared_examples "sends correct email template" do
+          it "mailer receives correct params" do
+            expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
+              .with(error_details)
+            perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
           end
         end
 
@@ -268,7 +256,7 @@ describe Hearings::DownloadTranscriptionFileJob do
               .and_raise(upload_error)
           end
 
-          include_examples "sends email template"
+          include_examples "sends correct email template"
         end
 
         context "failed download" do
@@ -287,7 +275,7 @@ describe Hearings::DownloadTranscriptionFileJob do
               .and_raise(download_error)
           end
 
-          include_examples "sends email template"
+          include_examples "sends correct email template"
         end
 
         context "failed conversion" do
@@ -304,7 +292,7 @@ describe Hearings::DownloadTranscriptionFileJob do
               .and_raise(conversion_error)
           end
 
-          include_examples "sends email template"
+          include_examples "sends correct email template"
         end
 
         context "failed to parse filename" do
@@ -325,7 +313,7 @@ describe Hearings::DownloadTranscriptionFileJob do
               .and_raise(file_name_error)
           end
 
-          include_examples "sends email template"
+          include_examples "sends correct email template"
         end
       end
     end

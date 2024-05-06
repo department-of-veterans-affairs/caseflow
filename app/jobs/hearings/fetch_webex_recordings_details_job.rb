@@ -3,7 +3,7 @@
 # This job will retrieve a list of webex hearing recording detail links
 # and download the information from the links
 
-class Hearings::FetchWebexRecordingsDetailsJob < Hearings::WebexTranscriptionFilesProcessJob
+class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
@@ -20,8 +20,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < Hearings::WebexTranscriptionFil
       response: { status: exception.code, message: exception.message }.to_json,
       docket_number: nil
     }
+    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
-    job.send_email(error_details)
   end
 
   def perform(id:, file_name:)
