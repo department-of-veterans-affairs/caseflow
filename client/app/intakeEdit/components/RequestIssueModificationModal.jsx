@@ -9,6 +9,14 @@ import PriorDecisionDateAlert from 'app/intakeEdit/components/RequestCommonCompo
 import PriorDecisionDateSelector from 'app/intakeEdit/components/RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from 'app/intakeEdit/components/RequestCommonComponents/IssueDescription';
 import IssueTypeSelector from 'app/intakeEdit/components/RequestCommonComponents/IssueTypeSelector';
+import * as yup from 'yup';
+
+const modificationSchema = yup.object({
+  nonratingIssueCategory: yup.string().required('Please select an issue type.'),
+  decisionDate: yup.string().required('Please select a decision date.'),
+  decisionText: yup.string().required('Please enter an issue description.'),
+  requestReason: yup.string().required('Please enter a request reason.')
+});
 
 const RequestIssueModificationContent = (props) => {
 
@@ -61,7 +69,7 @@ RequestIssueModificationContent.propTypes = {
 export const RequestIssueModificationModal = (props) => {
 
   return (
-    <RequestIssueFormWrapper>
+    <RequestIssueFormWrapper schema={modificationSchema}>
       <RequestIssueModificationContent {...props} />
     </RequestIssueFormWrapper>
   );

@@ -6,10 +6,16 @@ import RequestReason from './RequestCommonComponents/RequestReason';
 import { useFormContext } from 'react-hook-form';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
 import DateSelector from 'app/components/DateSelector';
+import * as yup from 'yup';
+
+const withdrawalSchema = yup.object({
+  requestReason: yup.string().required('Please enter a request reason.'),
+  withdrawalDate: yup.string().required('Please enter a withdrawal date.')
+});
 
 const RequestIssueWithdrawalContent = (props) => {
 
-  const { handleSubmit, register } = useFormContext();
+  const { handleSubmit, register, errors } = useFormContext();
 
   const onSubmit = (data) => {
     const enhancedData = {
@@ -46,6 +52,7 @@ const RequestIssueWithdrawalContent = (props) => {
           label="Request date for withdrawal"
           name="withdrawalDate"
           inputRef={register}
+          errorMessage={errors.withdrawalDate?.message}
           type="date" />
         <RequestReason
           label="withdrawal" />
@@ -57,7 +64,7 @@ const RequestIssueWithdrawalContent = (props) => {
 export const RequestIssueWithdrawalModal = (props) => {
 
   return (
-    <RequestIssueFormWrapper>
+    <RequestIssueFormWrapper schema={withdrawalSchema}>
       <RequestIssueWithdrawalContent {...props} />
     </RequestIssueFormWrapper>
   );

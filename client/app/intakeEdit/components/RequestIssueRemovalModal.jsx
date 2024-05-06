@@ -5,6 +5,11 @@ import CurrentIssue from './RequestCommonComponents/CurrentIssue';
 import RequestReason from './RequestCommonComponents/RequestReason';
 import { useFormContext } from 'react-hook-form';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
+import * as yup from 'yup';
+
+const removalSchema = yup.object({
+  requestReason: yup.string().required('Please enter a request reason.')
+});
 
 const RequestIssueRemovalContent = (props) => {
 
@@ -50,7 +55,7 @@ const RequestIssueRemovalContent = (props) => {
 export const RequestIssueRemovalModal = (props) => {
 
   return (
-    <RequestIssueFormWrapper>
+    <RequestIssueFormWrapper schema={removalSchema}>
       <RequestIssueRemovalContent {...props} />
     </RequestIssueFormWrapper>
   );
