@@ -20,6 +20,11 @@ class HearingSerializer
       }
     end
   end
+  attribute :transcription_contractors do
+    TranscriptionContractor.all_contractors.map do |contractor|
+      { id: contractor.id, name: contractor.name }
+    end
+  end
   attribute :appeal_external_id
   attribute :appeal_id
   attribute :appellant_address_line_1
