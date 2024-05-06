@@ -5,14 +5,15 @@ FactoryBot.define do
     transient do
       regional_office { nil }
       adding_user do
-        create(:user, css_id: "HR_FCT_USER", full_name: "Hearing Factory AddingUser") ||
-          User.find_by(css_id: "HR_FCT_USER")
+        User.find_by(css_id: "HR_FCT_USER") ||
+          create(:user, css_id: "HR_FCT_USER", full_name: "Hearing Factory AddingUser")
+
       end
     end
     appeal { association(:appeal, :hearing_docket) }
     judge do
-      create(:user, css_id: "HR_FCT_JUDGE", full_name: "Hearing Factory JudgeUser", roles: ["Hearing Prep"]) ||
-        User.find_by(css_id: "HR_FCT_JUDGE")
+      User.find_by(css_id: "HR_FCT_JUDGE") ||
+        create(:user, css_id: "HR_FCT_JUDGE", full_name: "Hearing Factory JudgeUser", roles: ["Hearing Prep"])
     end
     uuid { SecureRandom.uuid }
     hearing_day do

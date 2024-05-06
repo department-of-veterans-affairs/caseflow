@@ -7,7 +7,7 @@ FactoryBot.define do
     trait :completed do
       completed_at { Time.zone.now }
       after(:create) do |distribution|
-        distribution.update(status: :completed)
+        distribution.update(status: :completed, statistics: { batch_size: distribution.distributed_cases.count })
       end
     end
 
