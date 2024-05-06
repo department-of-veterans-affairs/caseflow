@@ -159,7 +159,8 @@ class IntakesController < ApplicationController
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
-      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
+      removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user)
     }
   end
 
