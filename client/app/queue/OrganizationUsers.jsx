@@ -386,12 +386,12 @@ export default class OrganizationUsers extends React.PureComponent {
       return <React.Fragment key={user.id}>
         <div className={['team-member-container']}>
           <div className={['team-member-info']}>
-            <li key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
+            <div key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
               { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
               { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
               { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
               { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-            </li>
+            </div>
             { (judgeTeam || dvcTeam) && admin ?
               <div className={['top-user-border']}></div> :
               <div>
