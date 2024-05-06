@@ -23,6 +23,7 @@ module Seeds
       end
       # These are appeals with an unexpired affinity
       create_ready_appeals_with_affinity
+      create_ready_appeals_no_affinity_to_be_created
     end
 
     private
@@ -78,52 +79,73 @@ module Seeds
     end
 
     def create_ready_appeals_with_no_affinity_record
-      5.times do
-        create(:appeal, :direct_review_docket, :type_cavc_remand, :ready_for_distribution, veteran: create_veteran)
+      2.times do
+        create(:appeal, :direct_review_docket, :type_cavc_remand, :ready_for_distribution,
+               veteran: create_veteran(first_name: "Vet", last_name: "NoAffinityRecord"))
         create(:appeal, :evidence_submission_docket, :type_cavc_remand, :ready_for_distribution,
-               veteran: create_veteran)
-        priority_hearing_appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age,
-                                         :held_hearing_and_ready_to_distribute, veteran: create_veteran)
-        nonpriority_hearing_appeal = create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
-                                            veteran: create_veteran)
+               veteran: create_veteran(first_name: "Vet", last_name: "NoAffinityRecord"))
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+               veteran: create_veteran(first_name: "Vet", last_name: "NoAffinityRecord"))
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+               veteran: create_veteran(first_name: "Vet", last_name: "NoAffinityRecord"))
       end
     end
 
     def create_ready_appeals_with_affinity_no_start_date
-      5.times do
+      2.times do
         create(:appeal, :direct_review_docket, :type_cavc_remand, :ready_for_distribution,
-               :with_appeal_affinity_no_start_date, veteran: create_veteran)
+               :with_appeal_affinity_no_start_date,
+               veteran: create_veteran(first_name: "VetWithAffinity", last_name: "NoStartDate"))
         create(:appeal, :evidence_submission_docket, :type_cavc_remand, :ready_for_distribution,
-               :with_appeal_affinity_no_start_date, veteran: create_veteran)
-        priority_hearing_appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age,
-                                         :held_hearing_and_ready_to_distribute, :with_appeal_affinity_no_start_date,
-                                         veteran: create_veteran)
-        nonpriority_hearing_appeal = create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
-                                            :with_appeal_affinity_no_start_date, veteran: create_veteran)
+               :with_appeal_affinity_no_start_date,
+               veteran: create_veteran(first_name: "VetWithAffinity", last_name: "NoStartDate"))
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age,
+               :held_hearing_and_ready_to_distribute, :with_appeal_affinity_no_start_date,
+               veteran: create_veteran(first_name: "VetWithAffinity", last_name: "NoStartDate"))
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+               :with_appeal_affinity_no_start_date,
+               veteran: create_veteran(first_name: "VetWithAffinity", last_name: "NoStartDate"))
       end
     end
 
     def create_ready_appeals_with_affinity
-      5.times do
+      2.times do
         create(:appeal, :direct_review_docket, :type_cavc_remand, :ready_for_distribution,
-              :with_appeal_affinity, veteran: create_veteran)
+               :with_appeal_affinity, veteran: create_veteran(first_name: "VetWithAffinity", last_name: "StartDate"))
         create(:appeal, :evidence_submission_docket, :type_cavc_remand, :ready_for_distribution,
-              :with_appeal_affinity, veteran: create_veteran)
-        priority_hearing_appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age,
-                                        :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
-                                        veteran: create_veteran)
-        nonpriority_hearing_appeal = create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
-                                            :with_appeal_affinity, veteran: create_veteran)
+               :with_appeal_affinity, veteran: create_veteran(first_name: "VetWithAffinity", last_name: "StartDate"))
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+               :with_appeal_affinity, veteran: create_veteran(first_name: "VetWithAffinity", last_name: "StartDate"))
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+               :with_appeal_affinity, veteran: create_veteran(first_name: "VetWithAffinity", last_name: "StartDate"))
       end
     end
 
     def create_non_ready_appeals_with_affinity
-      5.times do
-        create(:appeal, :direct_review_docket, :type_cavc_remand, :with_appeal_affinity, veteran: create_veteran)
-        create(:appeal, :evidence_submission_docket, :type_cavc_remand, :with_appeal_affinity, veteran: create_veteran)
+      2.times do
+        create(:appeal, :direct_review_docket, :type_cavc_remand, :with_appeal_affinity,
+               veteran: create_veteran(first_name: "VetNotReady", last_name: "WithAffinity"))
+        create(:appeal, :evidence_submission_docket, :type_cavc_remand, :with_appeal_affinity,
+               veteran: create_veteran(first_name: "VetNotReady", last_name: "WithAffinity"))
         create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :with_appeal_affinity,
-               veteran: create_veteran)
-        create(:appeal, :hearing_docket, :with_appeal_affinity, veteran: create_veteran)
+               veteran: create_veteran(first_name: "VetNotReady", last_name: "WithAffinity"))
+        create(:appeal, :hearing_docket, :with_appeal_affinity,
+               veteran: create_veteran(first_name: "VetNotReady", last_name: "WithAffinity"))
+      end
+    end
+
+    # The receipt date on these is the time of running the seed, so they shouldn't be selected when
+    # running the new job with the distribuion ID from the distributed cases created here
+    def create_ready_appeals_no_affinity_to_be_created
+      5.times do
+        create(:appeal, :direct_review_docket, :type_cavc_remand, :ready_for_distribution,
+               veteran: create_veteran(first_name: "VetReady", last_name: "ShouldntGetAffinity"))
+        create(:appeal, :evidence_submission_docket, :type_cavc_remand, :ready_for_distribution,
+               veteran: create_veteran(first_name: "VetReady", last_name: "ShouldntGetAffinity"))
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :held_hearing_and_ready_to_distribute,
+               veteran: create_veteran(first_name: "VetReady", last_name: "ShouldntGetAffinity"))
+        create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+               veteran: create_veteran(first_name: "VetReady", last_name: "ShouldntGetAffinity"))
       end
     end
 
@@ -138,7 +160,7 @@ module Seeds
     # This will make this attorney's requested distributions only recieve 3 appeals (w/ default lever values)
     def create_and_add_attorney_to_team(judge)
       attorney = User.find_by(css_id: "AFFCALCATTY") ||
-        create(:user, :with_vacols_attorney_record, css_id: "AFFCALCATTY", full_name: "John AffinityCalc Attorney")
+        create(:user, :with_vacols_attorney_record, css_id: "AFFCALCATTY", full_name: "Jane AffinityCalc Attorney")
       JudgeTeam.for_judge(judge).add_user(attorney)
     end
   end
