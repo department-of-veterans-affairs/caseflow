@@ -74,19 +74,31 @@ describe Events::DecisionReviewCreated do
     end
 
     context "when a StandardError occurs" do
-      let(:error_message) { "StandardError message" }
+      let(:standard_error) { StandardError.new("Lions, tigers, and bears, OH MY!") }
 
       before do
-        allow(DecisionReviewCreatedEvent).to receive(:create).and_raise(StandardError, error_message)
-        allow(Event).to receive(:find_by).and_return(event)
-        allow(event).to receive(:update!)
+        allow(Events::CreateUserOnEvent).to receive(:handle_user_creation_on_event).and_raise(standard_error)
+        allow(Rails.logger).to receive(:error)
       end
 
-      it "logs the error and updates the event" do
-        expect(Rails.logger).to receive(:error).with(error_message)
-        expect(event).to receive(:update!).with(error: error_message, info: { "failed_claim_id" => reference_id })
+      it "the error is logged" do
+        expect(Rails.logger).to receive(:error) do |message|
+          expect(message).to include(standard_error.message)
+        end
+        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
+          .to raise_error(StandardError)
+      end
 
-        expect { subject.create!(consumer_event_id, reference_id) }.to raise_error(StandardError)
+      it "the error column is updated on the event" do
+        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
+          .to raise_error(StandardError)
+        expect(Event.find_by(reference_id: consumer_event_id).error).to include(standard_error.message)
+      end
+
+      it "the info column is updated on the event with the failed_claim_id" do
+        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
+          .to raise_error(StandardError)
+        expect(Event.find_by(reference_id: consumer_event_id).info).to eq("failed_claim_id" => reference_id)
       end
     end
   end
