@@ -4,66 +4,41 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-export const nonAdminFakeIssueModificationRequestsData = [
+export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Modification',
     nonrating_issue_category: 'Caregiver | Eligibility',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
-    reason: 'This is my reason for Modification.'
+    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    status: 'approved',
+    remove_original_issue: true,
+    benefit_type: 'Veterans Health Administration'
   },
   {
     request_issue_id: '3311',
     request_type: 'Withdrawal',
     withdrawl_request_date: '2024-01-30',
-    request_reason: 'This is my reason for Withdrawal'
+    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
   },
   {
     request_type: 'Addition',
     nonrating_issue_category: 'Beneficiary Travel',
-    decision_text: 'New Beneficiary Travel text',
+    decision_text: 'New note for this type of issue',
     decision_date: '2024-01-30',
-    reason: 'This is my reason for Addition.'
+    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
   },
   {
     request_issue_id: '3311',
     request_type: 'Removal',
-    request_reason: 'This is my reason for Removal.'
-  }
-];
-
-export const adminFakeIssueModificationRequestsData = [
-  {
-    request_issue_id: '3311',
-    request_type: 'Modification',
-    nonrating_issue_category: 'Caregiver | Eligibility',
-    decision_text: 'New Caregiver | Eligibility text',
-    decision_date: '2024-01-30',
-    request_reason: 'This is my reason for Modification.',
+    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
     status: 'approved',
-    remove_original_issue: true
-  },
-  {
-    request_issue_id: '3311',
-    request_type: 'Withdrawl',
-    withdrawl_request_date: '2024-01-30',
-    request_reason: 'This is my reason for Withdrawl',
-    status: 'approved',
-  },
-  {
-    request_type: 'Addition',
-    nonrating_issue_category: 'Beneficiary Travel',
-    decision_text: 'New Beneficiary Travel text',
-    decision_date: '2024-01-30',
-    request_reason: 'This is my reason for Addition.',
-    status: 'approved',
-  },
-  {
-    request_issue_id: '3311',
-    request_type: 'Removal',
-    request_reason: 'This is my reason for Removal.',
-    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
   },
   {
     request_issue_id: '3311',
@@ -71,7 +46,8 @@ export const adminFakeIssueModificationRequestsData = [
     nonrating_issue_category: 'CHAMPVA',
     decision_text: 'New CHAMPVA text',
     decision_date: '2024-01-30',
-    request_reason: 'This is my reason for Modification.'
+    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    benefit_type: 'Veterans Health Administration'
   }
 ];
 

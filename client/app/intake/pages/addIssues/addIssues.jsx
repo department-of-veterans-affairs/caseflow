@@ -28,8 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues,
   formatIssueModificationRequests,
   formatIssueModificationRequestsBySection,
-  nonAdminFakeIssueModificationRequestsData,
-  adminFakeIssueModificationRequestsData } from '../../util/issues';
+  fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import IssueModificationRow from 'app/intake/components/IssueModificationRow';
@@ -248,7 +247,6 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
-      userIsOrgAdmin,
       isLegacy
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -285,10 +283,8 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issues);
-    const modificationIssueRequestsBySection = userIsOrgAdmin ?
-      formatIssueModificationRequestsBySection(adminFakeIssueModificationRequestsData) : formatIssueModificationRequestsBySection(nonAdminFakeIssueModificationRequestsData);
-
-    // modificationIssueRequestsBySection =
+    const modificationIssueRequestsBySection =
+      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -508,73 +504,21 @@ class AddIssuesPage extends React.Component {
       });
 
     const modificationIssueRequestsObj =
-      _.groupBy(modificationIssueRequestsBySection.pendingAdminReview, 'request_type');
+      // _.groupBy(modificationIssueRequestsBySection.pendingAdminReview, 'request_type');
+      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ request_type }) => request_type);
 
-    const modificationRowObjects = [];
+    console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
 
-    Object.keys(modificationIssueRequestsObj).map((key) => {
-      const issueModifictionSectionItems = modificationIssueRequestsObj[key];
-      const issueModificationRowProps = {
-        editPage,
-        featureToggles,
-        formType,
-        intakeData,
-        onClickIssueAction: this.onClickIssueAction,
-        // sectionIssues,
-        userCanWithdrawIssues,
-        userCanEditIntakeIssues,
-        withdrawReview,
-        modificationIssueRequestsObj
-      };
-
-      if (key === 'Modification') {
-        console.log(key, issueModifictionSectionItems);
-        issueModifictionSectionItems.map((issue) => {
-          modificationRowObjects.push(
-            IssueModificationRow({
-              ...issueModificationRowProps,
-              fieldTitle: 'Modification'
-            }),
-          );
-        });
-      } else if (key === 'Addition') {
-        console.log(key, issueModifictionSectionItems);
-        issueModifictionSectionItems.map((issue) => {
-          modificationRowObjects.push(
-            IssueModificationRow({
-              ...issueModificationRowProps,
-              fieldTitle: 'Addition'
-            }),
-          );
-        });
-      } else if (key === 'Removal') {
-        console.log(key, issueModifictionSectionItems);
-        issueModifictionSectionItems.map((issue) => {
-          modificationRowObjects.push(
-            IssueModificationRow({
-              ...issueModificationRowProps,
-              fieldTitle: 'Removal'
-            }),
-          );
-        });
-      } else {
-        console.log(key, issueModifictionSectionItems);
-        issueModifictionSectionItems.map((issue) => {
-          modificationRowObjects.push(
-            IssueModificationRow({
-              ...issueModificationRowProps,
-              fieldTitle: 'Withdrawal'
-            }),
-          );
-        });
-      }
-
-      return modificationRowObjects;
+    const pendingSection = IssueModificationRow({
+      modificationIssueRequestsObj,
+      fieldTitle: 'Pending admin review'
     });
 
-    console.log('modificationRowObjects: ', modificationRowObjects);
-    rowObjects = rowObjects.concat(modificationRowObjects);
-    console.log(rowObjects);
+    if (modificationIssueRequestsObj !== null) {
+      rowObjects.push(pendingSection);
+    }
+
+    // console.log('rowObjects', rowObjects);
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
     const hideAddIssueButton = (intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues)) ||
