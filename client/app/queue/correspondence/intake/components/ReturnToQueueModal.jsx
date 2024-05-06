@@ -57,8 +57,8 @@ const ReturnToQueueModal = (props) => {
         type="info"
       />}
     </Modal>
-  )
-}
+  );
+};
 
 ReturnToQueueModal.propTypes = {
   onCancel: PropTypes.func,

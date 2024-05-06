@@ -230,9 +230,9 @@ export const setMailSupervisor = (isMailSupervisor) => ({
   payload: { isMailSupervisor }
 });
 
-export const setMailSuperUser = (isMailSuperUser) => ({
-  type: ACTIONS.SET_MAIL_SUPER_USER,
-  payload: { isMailSuperUser }
+export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERUSER,
+  payload: { isInboundOpsSuperuser }
 });
 
 export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({
