@@ -100,9 +100,83 @@ describe UpdateAppealAffinityDatesJob do
        { docket: "legacy", priority: true, receipt_date: Time.zone.now }]
     end
 
+    subject { described_class.new.send(:process_ama_appeals_which_need_affinity_updates, hashes_array) }
+
     it "doesn't process any legacy appeals" do
       expect_any_instance_of(described_class).to receive(:create_or_update_appeal_affinities).exactly(2).times
-      described_class.new.send(:process_ama_appeals_which_need_affinity_updates, hashes_array)
+      subject
+    end
+
+    context "for single docket/priority combinations" do
+      let!(:direct_review_priority) do
+        create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               receipt_date: 1.day.ago)
+      end
+      let!(:direct_review_nonpriority) do
+        create(:appeal, :direct_review_docket, :ready_for_distribution, receipt_date: 1.day.ago)
+      end
+      let!(:evidence_submission_priority) do
+        create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_motion, :ready_for_distribution,
+               receipt_date: 1.day.ago)
+      end
+      let!(:evidence_submission_nonpriority) do
+        create(:appeal, :evidence_submission_docket, :ready_for_distribution, receipt_date: 1.day.ago)
+      end
+      let!(:hearing_priority) do
+        create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+               receipt_date: 1.day.ago)
+      end
+      let!(:hearing_nonpriority) do
+        create(:appeal, :hearing_docket, :ready_for_distribution, receipt_date: 1.day.ago)
+      end
+
+      context "for direct review priority" do
+        let(:hashes_array) { [{ docket: "direct_review", priority: true, receipt_date: Time.zone.now }] }
+
+        it "only queries for and passes along direct review priority appeals" do
+          expect_any_instance_of(described_class)
+            .to receive(:create_or_update_appeal_affinities)
+            .with([direct_review_priority], hashes_array.first[:priority])
+
+          subject
+        end
+      end
+
+      context "for evidence submission priority" do
+        let(:hashes_array) { [{ docket: "evidence_submission", priority: true, receipt_date: Time.zone.now }] }
+
+        it "only queries for and passes along evidence submission priority appeals" do
+          expect_any_instance_of(described_class)
+            .to receive(:create_or_update_appeal_affinities)
+            .with([evidence_submission_priority], hashes_array.first[:priority])
+
+          subject
+        end
+      end
+
+      context "for hearing priority" do
+        let(:hashes_array) { [{ docket: "hearing", priority: true, receipt_date: Time.zone.now }] }
+
+        it "only queries for and passes along hearing priority appeals" do
+          expect_any_instance_of(described_class)
+            .to receive(:create_or_update_appeal_affinities)
+            .with([hearing_priority], hashes_array.first[:priority])
+
+          subject
+        end
+      end
+
+      context "for hearing nonpriority" do
+        let(:hashes_array) { [{ docket: "hearing", priority: false, receipt_date: Time.zone.now }] }
+
+        it "only queries for and passes along hearing nonpriority appeals" do
+          expect_any_instance_of(described_class)
+            .to receive(:create_or_update_appeal_affinities)
+            .with([hearing_nonpriority], hashes_array.first[:priority])
+
+          subject
+        end
+      end
     end
   end
 
