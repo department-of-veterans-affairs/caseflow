@@ -17,7 +17,7 @@ FactoryBot.define do
 
     transient do
       # There is a callback to create an AppealState record for appeal_docketed that will raise an error without this
-      RequestStore[:current_user] ||= User.system_user
+      RequestStore[:current_user] ||= User.find_by(css_id: "CASEFLOW1") || create(:user, station_id: "317", css_id: "CASEFLOW1")
 
       appeal { create(:appeal, :assigned_to_judge) }
     end
