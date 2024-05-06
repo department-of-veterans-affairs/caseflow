@@ -36,7 +36,6 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     # process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array)
   end
 
-  # TODO: this
   def update_from_push_priority_appeals_job
     receipt_date_hashes_array = latest_receipt_dates_from_push_job
     return if receipt_date_hashes_array.empty?
