@@ -81,7 +81,6 @@ class SeedDB
     # call_and_log_seed_step Seeds::RemandedAmaAppeals
     # call_and_log_seed_step Seeds::RemandedLegacyAppeals
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
-    call_and_log_seed_step Seeds::AppealsForAffinityCalculationUpdates
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
