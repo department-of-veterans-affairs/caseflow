@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { css } from 'glamor';
 
-
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
 
