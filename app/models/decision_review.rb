@@ -264,6 +264,10 @@ class DecisionReview < CaseflowRecord
       .where.not(id: request_issues.map(&:id))
   end
 
+  def pending_issue_modification_requests
+    issue_modification_requests.select(&:assigned?)
+  end
+
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
   def serializer_class
     ::WorkQueue::DecisionReviewSerializer

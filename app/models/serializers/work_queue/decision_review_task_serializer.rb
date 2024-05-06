@@ -106,9 +106,8 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :pending_issue_modification_count do |object|
-    # TODO: Update this based on the query and association name
-    object[:issue_modification_count] ||
-      request_issues(object).active.count { |issue| issue.request_issue_modifications.size }
+    object[:pending_issue_count] ||
+      decision_review(object).pending_issue_modification_requests.size
   end
 
   attribute :tasks_url do |object|

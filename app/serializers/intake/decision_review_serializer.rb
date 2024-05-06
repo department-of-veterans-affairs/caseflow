@@ -27,6 +27,10 @@ class Intake::DecisionReviewSerializer
     object.active_nonrating_request_issues.map(&:serialize)
   end
 
+  attribute :pending_issue_modification_requests do |object|
+    object.pending_issue_modification_requests.map(&:serialize)
+  end
+
   attribute :contestable_issues_by_date do |object|
     object.contestable_issues.map(&:serialize)
   end
