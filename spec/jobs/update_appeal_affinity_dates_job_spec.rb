@@ -185,12 +185,12 @@ describe UpdateAppealAffinityDatesJob do
     let(:distribution) { create(:distribution, :completed, judge: judge) }
     let(:appeal_no_appeal_affinity) { create(:appeal) }
     let(:appeal_with_appeal_affinity_no_start_date) { create(:appeal, :with_appeal_affinity_no_start_date) }
+    let(:job) { described_class.new }
+
+    before { job.instance_variable_set(:@distribution_id, distribution.id) }
 
     it "updates existing affinity records if they exist" do
       appeals = [appeal_with_appeal_affinity_no_start_date]
-
-      job = described_class.new
-      job.instance_variable_set(:@distribution_id, distribution.id)
       result = job.send(:create_or_update_appeal_affinities, appeals, false)
 
       expect(result.first.affinity_start_date).to_not be nil
@@ -199,9 +199,6 @@ describe UpdateAppealAffinityDatesJob do
 
     it "creates new affinity records if they don't exist" do
       appeals = [appeal_no_appeal_affinity]
-
-      job = described_class.new
-      job.instance_variable_set(:@distribution_id, distribution.id)
       result = job.send(:create_or_update_appeal_affinities, appeals, false)
 
       expect(result.first.affinity_start_date).to_not be nil
