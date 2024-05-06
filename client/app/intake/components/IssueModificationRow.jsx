@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 // import COPY from '../../../../../COPY';
 import { FORM_TYPES } from 'app/intake/constants';
-import IssueModification from 'app/intake/components/IssueModification';
+import IssueModificationList from 'app/intake/components/IssueModificationList';
 
-const issueSectionRow = (
+const issueModificationSectionRow = (
   {
     // editPage,
     // featureToggles,
@@ -19,10 +19,67 @@ const issueSectionRow = (
     // withdrawReview
     modificationIssueRequestsObj
   }) => {
-  // const reviewHasPredocketVhaIssues = sectionIssues.some(
-  //   (issue) => issue.benefitType === 'vha' && issue.isPreDocketNeeded === 'true'
-  // );
-  // const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasPredocketVhaIssues;
+  console.log('in IssueModificationRow', modificationIssueRequestsObj);
+
+  const sections = [];
+  const addionalIssuesArr = modificationIssueRequestsObj.Addition;
+  // console.log('addionalIssuesArr', addionalIssuesArr);
+  const addionalSection =
+    <IssueModificationList sectionTitle="Requested Additional Issues" issuesArr ={addionalIssuesArr} />;
+
+  sections.push(addionalSection);
+  // const addionalIssuesRows = [];
+  // const addionalIssueSection = addionalIssuesArr.map((issue) => {
+  //   addionalIssuesRows.push(
+  //     <IssueModificationList issuesArr={issue} />
+  //   );
+
+  //   return addionalIssuesRows;
+  // });
+
+  const modificationIssueArr = modificationIssueRequestsObj.Modification;
+  console.log('modificationIssueArr', modificationIssueArr);
+  const modificationSection =
+    <IssueModificationList sectionTitle="Requested Changes" issuesArr ={modificationIssueArr} />;
+  sections.push(modificationSection);
+  // const modificationIssueRows = [];
+  // const modificationIssueSection = modificationIssueArr.map((issue) => {
+  //   modificationIssueRows.push(
+  //     <IssueModificationList issue={issue} />
+  //   );
+
+  //   return modificationIssueRows;
+  // });
+
+  const removalIssueArr = modificationIssueRequestsObj.Removal;
+  // console.log('removalIssueArr', removalIssueArr);
+  const removalSection =
+    <IssueModificationList sectionTitle="Requested Issue Removal" issuesArr ={removalIssueArr} />;
+
+  sections.push(removalSection);
+  // const removalIssuesRows = [];
+  // const removalIssuesSection = removalIssueArr.map((issue) => {
+  //   removalIssuesRows.push(
+  //     <IssueModification issue={issue} />
+  //   );
+
+  //   return removalIssuesRows;
+  // });
+
+  const withdrawalIssueArr = modificationIssueRequestsObj.Withdrawal;
+  // console.log('withdrawalIssueArr', withdrawalIssueArr);
+  const withdrawalSection =
+    <IssueModificationList sectionTitle="Requested Issue Withdrawal" issuesArr ={withdrawalIssueArr} />;
+
+  sections.push(withdrawalSection);
+  // const withdrawalIssuesRows = [];
+  // const withdrawalIssueSection = withdrawalIssueArr.map((issue) => {
+  //   withdrawalIssuesRows.push(
+  //     <IssueModification issue={issue} />
+  //   );
+
+  //   return withdrawalIssuesRows;
+  // });
 
   return {
     content: (
@@ -43,18 +100,20 @@ const issueSectionRow = (
           userCanEditIntakeIssues={userCanEditIntakeIssues}
         /> */}
         {/*  {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />} */}
-        <IssueModification
-          modificationIssueRequestsObj
-        />
+
+        {/* <IssueModificationList
+          issuesObj={modificationIssueRequestsObj}
+        /> */}
+        {sections}
       </div>
     ),
     field: fieldTitle,
   };
 };
 
-export default issueSectionRow;
+export default issueModificationSectionRow;
 
-issueSectionRow.propTypes = {
+issueModificationSectionRow.propTypes = {
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object,
   fieldTitle: PropTypes.string,
