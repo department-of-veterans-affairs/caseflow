@@ -2,7 +2,7 @@
 
 # This job will retrieve a list of webex hearing recordings and details every hour
 
-class Hearings::FetchWebexRecordingsListJob < CaseflowJob
+class Hearings::FetchWebexRecordingsListJob < Hearings::WebexTranscriptionFilesProcessJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
@@ -20,8 +20,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       times: { from: from, to: to },
       docket_number: nil
     }
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
+    job.send_email(error_details)
   end
 
   def perform
