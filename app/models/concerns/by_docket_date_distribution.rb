@@ -99,7 +99,6 @@ module ByDocketDateDistribution
         ama: ama_distributed_cases_tied_to_ineligible_judges,
         legacy: distributed_cases_tied_to_ineligible_judges
       },
-      algorithm: "by_docket_date",
       settings: settings
     }
   rescue StandardError => error

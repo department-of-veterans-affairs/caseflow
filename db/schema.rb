@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_01_180157) do
+ActiveRecord::Schema.define(version: 2024_05_06_140249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -722,7 +722,17 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.jsonb "direct_review_priority_stats", comment: "Priority statistics for Direct Review Docket"
+    t.jsonb "direct_review_stats", comment: "Statistics for Direct Review Docket"
     t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.jsonb "evidence_submission_priority_stats", comment: "Priority statistics for Evidence Submission Docket"
+    t.jsonb "evidence_submission_stats", comment: "Statistics for Evidence Submission Docket"
+    t.jsonb "hearing_priority_stats", comment: "Priority statistics for Hearings Docket"
+    t.jsonb "hearing_stats", comment: "Statistics for Hearings Docket"
+    t.jsonb "ineligible_judge_stats", comment: "Statistics about appeals tied to ineligible judges"
+    t.jsonb "judge_stats", comment: "Statistics that are specific to judge"
+    t.jsonb "legacy_priority_stats", comment: "Priority statistics for any VACOLS Docket"
+    t.jsonb "legacy_stats", comment: "Statistics for any VACOLS Docket"
     t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
     t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
     t.datetime "updated_at", null: false
