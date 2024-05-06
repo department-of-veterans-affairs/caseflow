@@ -307,6 +307,44 @@ describe BusinessLine do
     end
   end
 
+  describe ".pending_tasks" do
+    let!(:user) { create(:user) }
+    let!(:user_approver) { create(:user) }
+    let!(:hlr_pending_tasks) do
+      create_list(:issue_modification_request,
+                  3,
+                  :with_higher_level_review,
+                  status: "assigned",
+                  requestor: user,
+                  decider: user_approver)
+    end
+
+    let!(:sc_pending_tasks) do
+      create_list(:issue_modification_request,
+                  3,
+                  :with_supplemental_claim,
+                  status: "assigned",
+                  requestor: user,
+                  decider: user_approver)
+    end
+
+    subject { business_line.pending_tasks(filters: task_filters) }
+
+    include_examples "task filtration"
+
+    context "With an empty task filter" do
+      let(:task_filters) { nil }
+
+      it "All pending tasks are included in the results" do
+        expect(subject.size).to eq(6)
+
+        expect(subject.map(&:appeal_id)).to match_array(
+          (hlr_pending_tasks + sc_pending_tasks).pluck(:decision_review_id)
+        )
+      end
+    end
+  end
+
   describe "Generic Non Comp Org Businessline" do
     include_context :business_line, "NONCOMPORG", "nco"
 
