@@ -955,10 +955,14 @@ class Task < CaseflowRecord
 
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+      if appeal.appeal_split_process == true
+        true
+      else
+        fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+      end
+    else
+      true
     end
-
-    true
   end
 
   def assignee_status_is_valid_on_create
@@ -984,3 +988,16 @@ class Task < CaseflowRecord
   end
 end
 # rubocop:enable Metrics/ClassLength
+# module SkipCallbacks
+#   def run_callbacks(kind, *args, &block)
+#     # binding.pry
+
+#     if [:create].include?(kind)
+#       # puts "(Skipping callbacks for #{kind}: #{args})"
+#       nil
+#     else
+#       super
+#     end
+#     yield(*args) if block_given?
+#   end
+# end
