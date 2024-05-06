@@ -44,6 +44,34 @@ RSpec.feature "InboundOpsTeamManagement" do
           expect(page).to have_content(user.full_name)
         end
       end
+
+      scenario "Adds and removes uesr permissions" do
+        visit_inbound_ops_team_management
+        find('label[for="1-superuser"]').click
+        find('label[for="1-auto_assign"]').click
+        find('label[for="1-receive_nod_mail"]').click
+        expect !OrganizationPermission.find_by(permission: "superuser").nil?
+        expect !OrganizationPermission.find_by(permission: "auto_assign").nil?
+        expect !OrganizationPermission.find_by(permission: "receive_nod_mail").nil?
+        find('label[for="1-receive_nod_mail"]').click
+        find('label[for="1-auto_assign"]').click
+        find('label[for="1-superuser"]').click
+        expect OrganizationPermission.find_by(permission: "receive_nod_mail").nil?
+        expect OrganizationPermission.find_by(permission: "auto_assign").nil?
+        expect OrganizationPermission.find_by(permission: "superuser").nil?
+      end
+
+      scenario "receive nod checkbox is invisible when auto assign is not toggled" do
+        visit_inbound_ops_team_management
+        expect all('label[for="1-receive_nod_mail"]') == []
+      end
+
+      scenario "Superuser is greyed out when the user is admin, and other checkboxes don't exist" do
+        visit_inbound_ops_team_management
+        expect(find_by_id("1-superuser", visible: false).disabled?)
+        expect all('label[for="1-receive_nod_mail"]') == []
+        expect all('label[for="1-auto_assign"]') == []
+      end
     end
   end
 
@@ -57,4 +85,6 @@ RSpec.feature "InboundOpsTeamManagement" do
     click_on("Inbound Ops Team team management")
     expect(current_path).to eq("/organizations/inbound-ops-team/users")
   end
+
+
 end
