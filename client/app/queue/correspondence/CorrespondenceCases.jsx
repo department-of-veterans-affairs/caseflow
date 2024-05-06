@@ -268,7 +268,7 @@ const CorrespondenceCases = (props) => {
           <div>
             <RadioFieldWithChildren
               name="actionRequiredRadioField"
-              className="radio-field-styling-for-reassignment"
+              className={['radio-field-styling-for-reassignment']}
               id="vertical-radio"
               label="Choose whether to approve the request for removal or reject it."
               options={reassignOptions}
@@ -287,7 +287,7 @@ const CorrespondenceCases = (props) => {
           <RadioFieldWithChildren
             name="actionRequiredRadioField"
             id="vertical-radio"
-            className="radio-field-styling-for-removal"
+            className={['radio-field-styling-for-removal']}
             label="Choose whether to approve the request for removal or reject it."
             options={removeOptions}
             onChange={(val) => setSelectedRequestChoice(val)}
