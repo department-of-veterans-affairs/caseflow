@@ -104,6 +104,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
 
+  # Provide access to legacy appeal decisions for more complete appeals history queries
   JOIN_PREVIOUS_APPEALS = "
   left join (
       select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
