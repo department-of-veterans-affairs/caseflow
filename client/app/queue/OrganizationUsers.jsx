@@ -187,11 +187,19 @@ export default class OrganizationUsers extends React.PureComponent {
           marginBottom: '10px'
         });
 
+        const testStyle = {
+          style: {
+            marginTop: '0',
+            marginLeft: marginL,
+            marginBottom: '10px'
+          }
+        }
+
         return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
           name={`${user.id}-${permission.permission}`}
           label={permission.description}
           key={`${user.id}-${permission.permission}`}
-          styling={NODcheckboxStyle}
+          styling={testStyle}
           onChange={this.modifyUserPermission(user.id, permission.permission)}
           defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
           disabled={checkAdminPermission(permission.permission)}
