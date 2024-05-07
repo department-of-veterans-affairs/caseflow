@@ -16,7 +16,7 @@ export const CorrespondenceDetailsTable = (props) => {
             <th className="corr-table-borderless-last-item"><strong>Correspondence Type</strong></th>
           </tr>
           <tr>
-            <td className="corr-table-borderless-first-item">{props.correspondence.packageDocumentType}</td>
+            <td className="corr-table-borderless-first-item">{props.correspondence.packageDocumentType.includes('10182') ? 'NOD' : 'Non-NOD'} </td>
             <td>{moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}</td>
             <td>{props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})</td>
             <td className="corr-table-borderless-last-item">{props.correspondence.correspondenceType}</td>
