@@ -1,22 +1,5 @@
 {
-  "superuser" : {
-    "permission": "superuser",
-    "description": "Superuser: Split, Merge, and Reassign",
-    "default_for_admin": true,
-    "parent_permission": null
-  },
-
-  "auto_assign": {
-    "permission": "auto_assign",
-    "description": "Auto-Assignment",
-    "default_for_admin": false,
-    "parent_permission": null
-  },
-
-  "receive_nod_mail": {
-    "permission": "receive_nod_mail",
-    "description": "Receive \"NOD Mail\"",
-    "default_for_admin": false,
-    "parent_permission": "auto_assign"
-  }
+  "superuser" : "Superuser: Split, Merge, and Reassign",
+  "auto_assign": "auto_assign",
+  "receive_nod_mail": "receive_nod_mail"
 }
