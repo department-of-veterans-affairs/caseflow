@@ -373,6 +373,20 @@ describe Docket, :all_dbs do
           [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
         )
       end
+
+      context "when calculated time goal days are 20" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals)
+            .update!(value: 385)
+          appeal.update!(receipt_date: 25.days.ago)
+          denied_aod_motion_appeal.update!(receipt_date: 25.days.ago)
+        end
+
+        it "returns only receipt_date with in the time goal" do
+          expect(subject.length).to eq(2)
+          expect(subject).to eq([appeal.receipt_date, denied_aod_motion_appeal.receipt_date])
+        end
+      end
     end
 
     context "age_of_oldest_priority_appeal" do
