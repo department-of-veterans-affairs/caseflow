@@ -13,9 +13,15 @@ class Hearings::TranscriptionFilesController < ApplicationController
     file.clean_up_tmp_location
   end
 
+  def transcription_file_dispatch
+    render "hearings/index"
+  end
+
   def render_page_not_found
     redirect_to "/404"
   end
+
+
 
   private
 
