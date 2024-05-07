@@ -14,6 +14,9 @@ class Intake::IssueModificationRequestSerializer
   attribute :decided_at
   attribute :decision_reason
   attribute :request_reason
-  # This should maybe be a serialized request issue instead of an id not sure
   attribute :request_issue_id
+  # TODO: See if all fields for request issue are needed or if it should be trimmed down
+  attribute :request_issue
+  attribute :requestor
+  attribute :decider
 end
