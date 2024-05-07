@@ -5,15 +5,15 @@ class Organizations::UsersController < OrganizationsController
     @permissions = organization.organization_permissions.select(
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
-    org_users = OrganizationsUser.where(organization_id: organization.id)
+
+    org_users = organization.organizations_users
     users_with_permissions = {}
     org_users.each do |org_user|
-      user = org_user.user
       org_user_permissions = OrganizationUserPermission.includes(
         :organization_permission, :organizations_user
       )
         .where(organizations_user_id: org_user.id).pluck(:permission, :permitted, :user_id)
-      users_with_permissions[user[:id]] = org_user_permissions
+      users_with_permissions[org_user.user[:id]] = org_user_permissions
     end
 
     @user_permissions = users_with_permissions
@@ -34,35 +34,35 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def modify_user_permission
-    params.permit(:userId, :permissionName, :organization_url)
+    user_permission_params
     user_id = params[:userId]
     permission_name = params[:permissionName].strip
-    org_url = params[:organization_url]
-    org = Organization.find_by(url: org_url)
-    org_permission = organization.organization_permissions.find_by(permission: permission_name)
 
+    pre_loaded_organization = Organization.includes(
+      organizations_users: :user,
+      organization_permissions: :organization_user_permissions
+    ).find(organization.id)
 
-    target_user = OrganizationsUser.find_by(user_id: user_id)
+    org_permission = pre_loaded_organization.organization_permissions.find_by(permission: permission_name)
+    target_user = pre_loaded_organization.organizations_users.find_by(user_id: user_id)
 
     if org_user_permission_cheker.can?(
       permission_name: org_permission.permission,
-      organization: org,
+      organization: organization,
       user: target_user.user
     )
-      org_user_permission = OrganizationUserPermission.find_by(
-        organization_permission: org_permission,
-        organizations_user: target_user
-      )
-      org_user_permission.update!(permitted: false)
+      pre_loaded_organization.organizations_users
+        .find_by(user_id: user_id).organization_user_permissions
+        .find_by(organization_permission: org_permission,
+                 organizations_user: target_user)
+        .update(permitted: false)
       render json: { checked: false }
 
     else
-      org_user_permission = OrganizationUserPermission.find_or_create_by!(
-        organization_permission: org_permission,
-        organizations_user: target_user
-      )
-      org_user_permission.permitted = true
-      org_user_permission.save
+      pre_loaded_organization.organizations_users.find_by(user_id: user_id)
+        .organization_user_permissions
+        .find_or_create_by!(organization_permission: org_permission,
+                            organizations_user: target_user).update!(permitted: true)
       render json: { checked: true }
     end
   end
@@ -151,5 +151,9 @@ class Organizations::UsersController < OrganizationsController
       is_collection: true,
       params: { organization: organization }
     )
+  end
+
+  def user_permission_params
+    params.permit(:userId, :permissionName)
   end
 end
