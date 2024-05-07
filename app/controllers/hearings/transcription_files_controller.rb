@@ -5,6 +5,13 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
+  before_action :verify_user_organization, only: [:transcription_file_dispatch]
+
+  def verify_user_organization
+    if !TranscriptionTeam.singleton.user_has_access?(current_user) && !verify_access_to_hearings
+      redirect_to "/unauthorized"
+    end
+  end
 
   # Downloads file and sends to user's local computer
   def download_transcription_file
@@ -20,8 +27,6 @@ class Hearings::TranscriptionFilesController < ApplicationController
   def render_page_not_found
     redirect_to "/404"
   end
-
-
 
   private
 

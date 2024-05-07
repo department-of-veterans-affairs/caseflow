@@ -217,7 +217,7 @@ export default class HearingsApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path="/transcription_files/dispatch"
+              path="/transcription_files"
               title="Transcription File Dispatch"
               component={this.routeForTranscriptionFileDispatch}
             />
