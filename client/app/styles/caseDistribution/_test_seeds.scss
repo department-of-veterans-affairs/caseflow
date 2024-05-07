@@ -1,0 +1,50 @@
+.test-seeds-num-field {
+  // width: auto;
+
+  .cf-form-int-input {
+    width: auto;
+    display: inline-block;
+    position: relative;
+
+    .input-container {
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    label {
+      position: absolute;
+      bottom: 6px;
+      left: 90px;
+    }
+  }
+}
+
+.test-seed-button-style {
+  width: auto;
+
+  button {
+    padding-top: 14px;
+    padding-bottom: 20px;
+    height: 45px;
+  }
+}
+
+.seed-col {
+  width: 15%;
+}
+
+.seed-table-style tr th {
+  background: transparent;
+}
+
+.seed-table-style tr td {
+  border: 0;
+  padding: 1rem 3rem;
+}
+
+.test-seeds-cssid-field {
+  input {
+    width: 110px;
+  }
+}
