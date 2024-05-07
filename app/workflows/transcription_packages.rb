@@ -33,14 +33,17 @@ class TranscriptionPackages
 
   def create_BoM_file
     # TODO -- call to job
+    Hearings::CreateBomFileJob.perform_now(@work_order_params)
   end
 
   def create_transcription_package
     # TODO -- call to job
+    Hearings::CreateTranscriptionPackageJob.perform_now(@work_order_params)
   end
 
   def upload_transcription_package
     # TODO -- call to job
+    Hearings::UploadTranscriptionPackageJob.perform_now(@work_order_params)
   end
 end
 
