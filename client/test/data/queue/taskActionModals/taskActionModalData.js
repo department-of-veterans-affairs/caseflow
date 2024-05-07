@@ -2114,7 +2114,6 @@ const hearingPostponementRequestMailTaskData = {
               value: 'PrivacyComplaintMailTask',
               label: 'Privacy complaint'
             },
-            // Do I remove these lines too?
             {
               value: 'ReturnedUndeliverableCorrespondenceMailTask',
               label: 'Returned or undeliverable mail'
@@ -2466,7 +2465,6 @@ export const rootTaskData = {
                   value: 'PrivacyComplaintMailTask',
                   label: 'Privacy complaint'
                 },
-                // Do I remove these lines too?
                 {
                   value: 'ReturnedUndeliverableCorrespondenceMailTask',
                   label: 'Returned or undeliverable mail'
@@ -2636,7 +2634,6 @@ const hearingWithdrawalRequestMailTaskData = {
               value: 'PrivacyComplaintMailTask',
               label: 'Privacy complaint'
             },
-            // Do I remove these lines too?
             {
               value: 'ReturnedUndeliverableCorrespondenceMailTask',
               label: 'Returned or undeliverable mail'

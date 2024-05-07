@@ -874,6 +874,7 @@
   "PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL": "Privacy act request",
   "PRIVACY_COMPLAINT_MAIL_TASK_LABEL": "Privacy complaint",
   "RECONSIDERATION_MOTION_MAIL_TASK_LABEL": "Motion for reconsideration",
+  "RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL": "Returned or undeliverable mail",
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
