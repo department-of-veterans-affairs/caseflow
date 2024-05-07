@@ -19,7 +19,10 @@ export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Withdrawal',
-    withdrawl_request_date: '2024-01-30',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
+    withdrawal_request_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
@@ -36,6 +39,9 @@ export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Removal',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
