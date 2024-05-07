@@ -1526,7 +1526,7 @@ ActiveRecord::Schema.define(version: 2024_04_25_193445) do
 
   create_table "organization_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "default_for_admin"
+    t.boolean "default_for_admin", default: false, null: false
     t.string "description", null: false, comment: "UX display value"
     t.boolean "enabled", default: false, null: false, comment: "Whether permission is enabled or disabled"
     t.bigint "organization_id", null: false, comment: "Foreign key to organizations table"
