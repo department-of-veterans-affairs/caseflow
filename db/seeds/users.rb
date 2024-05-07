@@ -529,8 +529,8 @@ module Seeds
     end
 
     def create_qa_admin_for_cda_control_group
-      qa_admin = User.create!(station_id: 101,
-                            css_id: "QAACDPlus",
+      qa_admin = User.find_or_create_by!(station_id: 101,
+                            css_id: "QAACDPLUS",
                             full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
                             roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
 
@@ -589,19 +589,31 @@ module Seeds
     end
 
     def create_qa_ineligible_judge
-      User.find_or_create_by(
+      ineligible_judge = User.find_or_create_by(
         css_id: "QINELIGVLJ",
         station_id: 101,
         full_name: "QA Ineligible Judge",
         status: nil
       )
+      create(
+        :staff,
+        :inactive_judge,
+        slogid: ineligible_judge.css_id,
+        user: ineligible_judge
+      )
     end
 
     def create_qa_solo_active_judge
-      User.find_or_create_by(
+      solo_active_judge = User.find_or_create_by(
         css_id: "QACTVLJNOTM",
         station_id: 101,
         full_name: "QA_Active_Judge With No_Team"
+      )
+      create(
+        :staff,
+        :judge_role,
+        slogid: solo_active_judge.css_id,
+        user: solo_active_judge
       )
     end
 
@@ -663,7 +675,8 @@ module Seeds
       qa_intake_admin_user = User.find_or_create_by(
         css_id: "QINTAKEADMIN",
         station_id: 101,
-        full_name: "QA Intake Admin"
+        full_name: "QA Intake Admin",
+        roles: ["Mail Intake"]
       )
       OrganizationsUser.make_user_admin(qa_intake_admin_user, BvaIntake.singleton)
       OrganizationsUser.make_user_admin(qa_intake_admin_user, CDAControlGroup.singleton)
