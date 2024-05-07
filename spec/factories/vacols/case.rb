@@ -437,7 +437,8 @@ FactoryBot.define do
           folder_attributes = JSON.parse(folder_json)
           folder_attributes.except!("bfkey", "tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser", "tidktime", "tidkuser")
           vacols_case.folder.assign_attributes(folder_attributes)
-          vacols_case.folder.save
+          byebug
+          vacols_case.folder.save(validate: false)
         end
       end
     end
@@ -448,7 +449,7 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         if evaluator.case_issues_equal
-          original_case_issues.each do |case_issue, i|
+          evaluator.original_case_issues.each do |case_issue, i|
             vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser", "issmdtime", "issdc",
             "issdcls")
           end
