@@ -26,12 +26,12 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  formatIssueModificationRequests,
+  // formatIssueModificationRequests,
   formatIssueModificationRequestsBySection,
   fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import IssueModificationRow from 'app/intake/components/IssueModificationRow';
+import issueModificationRow from 'app/intake/components/issueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -507,9 +507,9 @@ class AddIssuesPage extends React.Component {
       // _.groupBy(modificationIssueRequestsBySection.pendingAdminReview, 'request_type');
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ request_type }) => request_type);
 
-    console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
+    // console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
 
-    const pendingSection = IssueModificationRow({
+    const pendingSection = issueModificationRow({
       modificationIssueRequestsObj,
       fieldTitle: 'Pending admin review'
     });
@@ -518,7 +518,6 @@ class AddIssuesPage extends React.Component {
       rowObjects.push(pendingSection);
     }
 
-    // console.log('rowObjects', rowObjects);
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
     const hideAddIssueButton = (intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues)) ||
