@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import IssueModification from './IssueModificationRequest';
 
 const IssueModificationList = (
@@ -8,57 +9,6 @@ const IssueModificationList = (
     lastSection
   }
 ) => {
-  // const addionalIssuesArr = issuesObj.Addition;
-  // console.log('addionalIssuesArr', addionalIssuesArr);
-  // const addionalIssuesRows = [];
-  // const addionalIssueSection = addionalIssuesArr.map((issue) => {
-  //   addionalIssuesRows.push(
-  //     <IssueModification issue={issue} />
-  //   );
-
-  //   return addionalIssuesRows;
-  // });
-
-  // const modificationIssueArr = issuesObj.Modification;
-  // console.log('modificationIssueArr', modificationIssueArr);
-  // const modificationIssuesRows = [];
-  // const modificationIssueSection = modificationIssueArr.map((issue) => {
-  //   modificationIssuesRows.push(
-  //     <IssueModification issue={issue} />
-  //   );
-
-  //   return modificationIssuesRows;
-  // });
-
-  // const removalIssueArr = issuesObj.Removal;
-  // console.log('removalIssueArr', removalIssueArr);
-  // const removalIssuesRows = [];
-  // const removalIssuesSection = removalIssueArr.map((issue) => {
-  //   removalIssuesRows.push(
-  //     <IssueModification issue={issue} />
-  //   );
-
-  //   return removalIssuesRows;
-  // });
-
-  // const withdrawalIssueArr = issuesObj.Withdrawal;
-  // console.log('withdrawalIssueArr', withdrawalIssueArr);
-  // const withdrawalIssuesRows = [];
-  // const withdrawalIssueSection = withdrawalIssueArr.map((issue) => {
-  //   withdrawalIssuesRows.push(
-  //     <IssueModification issue={issue} />
-  //   );
-
-  //   return withdrawalIssuesRows;
-  // });
-
-  // let issuesArr = [];
-
-  // issuesArr = issuesArr.concat(addionalIssueSection);
-  // issuesArr = issuesArr.concat(modificationIssueSection);
-  // issuesArr = issuesArr.concat(removalIssuesSection);
-  // issuesArr = issuesArr.concat(withdrawalIssueSection);
-
   const issues = issuesArr.map((issue) => {
     return <li><IssueModification issue={issue} /></li>;
   });
@@ -77,3 +27,9 @@ const IssueModificationList = (
 };
 
 export default IssueModificationList;
+
+IssueModificationList.propTypes = {
+  sectionTitle: PropTypes.string.isRequired,
+  issuesArr: PropTypes.arrayOf(PropTypes.object).isRequired,
+  lastSection: PropTypes.bool.isRequired
+};
