@@ -8,7 +8,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   before_action :verify_user_organization, only: [:transcription_file_dispatch]
 
   def verify_user_organization
-    if !TranscriptionTeam.singleton.user_has_access?(current_user) && !verify_access_to_hearings
+    if !TranscriptionTeam.singleton.user_has_access?(current_user)
       redirect_to "/unauthorized"
     end
   end
