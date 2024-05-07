@@ -20,14 +20,13 @@ const defaultProps = {
 const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY.VHA_BENEFIT_EMAIL_ADDRESS);
 const penAndCompTooltipText = sprintf(COPY.INTAKE_REMOVE_COMP_AND_PEN);
 
-
 const renderBenefitType = (props) => {
   return render(<BenefitType {...props} />);
 };
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.vha });
-const getCompRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.compensation});
-const getPenRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.pension})
+const getCompRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.compensation });
+const getPenRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.pension });
 
 const getVhaOptionTooltip = () => {
   return screen.getByRole(
@@ -36,16 +35,16 @@ const getVhaOptionTooltip = () => {
   );
 };
 
-const getPenAndCompTooltip = (elementId, tooltipText) => {
-  const toolTipElements = screen.getAllByRole('tooltip');
+// const getPenAndCompTooltip = (elementId, tooltipText) => {
+//   const toolTipElements = screen.getAllByRole('tooltip');
 
-  toolTipElements.forEach(toolTipElement => {
-    if (toolTipElement.id === elementId) {
-      expect(toolTipElement).toBeInTheDocument();
-      expect(toolTipElement).toHaveTextContent(tooltipText);
-    }
-  })
-};
+//   toolTipElements.forEach((toolTipElement) => {
+//     if (toolTipElement.id === elementId) {
+//       expect(toolTipElement).toBeInTheDocument();
+//       expect(toolTipElement).toHaveTextContent(tooltipText);
+//     }
+//   });
+// };
 
 const hoverOverRadioOption = (option) => {
   act(() => {
@@ -140,8 +139,14 @@ describe('BenefitType', () => {
       it('Tooltip appear whenever Comp and Pen option is hovered over', async () => {
 
         await waitFor(() => {
-          getPenAndCompTooltip('tooltip-pension', penAndCompTooltipText);
-          getPenAndCompTooltip('tooltip-compensation', penAndCompTooltipText);
+          const toolTipElements = screen.getAllByRole('tooltip');
+
+          toolTipElements.forEach((toolTipElement) => {
+            if (toolTipElement.id === 'tooltip-pension' || toolTipElement.id === 'tooltip-compensation') {
+              expect(toolTipElement).toBeInTheDocument();
+              expect(toolTipElement).toHaveTextContent(penAndCompTooltipText);
+            }
+          });
         });
       });
     });
