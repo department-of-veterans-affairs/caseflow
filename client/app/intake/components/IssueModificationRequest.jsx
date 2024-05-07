@@ -1,5 +1,7 @@
 import React from 'react';
-const IssueModification = (
+import PropTypes from 'prop-types';
+
+const IssueModificationRequest = (
   {
     issue
   }
@@ -92,4 +94,8 @@ const IssueModification = (
   );
 };
 
-export default IssueModification;
+export default IssueModificationRequest;
+
+IssueModificationRequest.propTypes = {
+  issue: PropTypes.object
+};
