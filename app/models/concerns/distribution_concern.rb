@@ -35,7 +35,7 @@ module DistributionConcern
   # Check for tasks which are open that we would not expect to see at the time of distribution. Send a slack
   # message for notification of a potential bug in part of the application, but do not stop the distribution
   def check_for_unexpected_tasks(appeal)
-    unless appeal.tasks.open.reject { |t| ALLOWABLE_TASKS.include?(t.class.name) }.empty?
+    unless appeal.tasks.open.reject { |task| ALLOWABLE_TASKS.include?(task.class.name) }.empty?
       send_slack_notification(appeal)
     end
   end
