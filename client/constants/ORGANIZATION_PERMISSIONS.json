@@ -1,5 +1,6 @@
 {
-  "superuser" : "Superuser: Split, Merge, and Reassign",
   "auto_assign": "auto_assign",
-  "receive_nod_mail": "receive_nod_mail"
+  "receive_nod_mail": "receive_nod_mail",
+  "superuser" : "superuser"
+
 }
