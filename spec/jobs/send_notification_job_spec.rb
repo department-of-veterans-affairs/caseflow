@@ -83,8 +83,8 @@ describe SendNotificationJob, type: :job do
     {
       participant_id: nil,
       status: error_status,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1578",
-      appeal_type: "Appeal"
+      appeal_id: appeal.external_id,
+      appeal_type: appeal.class.name
     }
   }
   let(:deceased_message_attributes) {
