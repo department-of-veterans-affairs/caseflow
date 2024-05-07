@@ -35,6 +35,7 @@ describe RequestIssue, :all_dbs do
   let(:edited_description) { nil }
   let(:covid_timeliness_exempt) { nil }
   let(:is_predocket_needed) { false }
+  let(:nonrating_issue_bgs_source) { "TestSource" }
 
   let(:review) do
     create(
@@ -1089,7 +1090,8 @@ describe RequestIssue, :all_dbs do
         is_expected.to have_attributes(
           is_predocket_needed: true,
           contested_issue_description: nil,
-          nonrating_issue_description: nil
+          nonrating_issue_description: nil,
+          nonrating_issue_bgs_source: nil
         )
       end
     end
