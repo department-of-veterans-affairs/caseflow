@@ -404,10 +404,10 @@ export default class OrganizationUsers extends React.PureComponent {
 
             }
           </div>
-          <div className={['team-member-permission-toggles-container']}>
+          {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
             <p className={['user-permissions-text']}>User permissions:</p>
             {this.generatePermissionsCheckboxes(user)}
-          </div>
+          </div>}
         </div>
       </React.Fragment>;
     });
