@@ -28,6 +28,7 @@ describe SendNotificationJob, type: :job do
            homelessness: false,
            veteran_file_number: "123456789")
   end
+  let(:legacy_appeal) { create(:legacy_appeal) }
   let!(:no_name_appeal) do
     create(:appeal,
            docket_type: "Appeal",
@@ -59,8 +60,8 @@ describe SendNotificationJob, type: :job do
     {
       participant_id: "123456789",
       status: success_status,
-      appeal_id: appeal.external_id,
-      appeal_type: appeal.class.name
+      appeal_id: legacy_appeal.external_id,
+      appeal_type: legacy_appeal.class.name
     }
   }
   let(:deceased_legacy_message_attributes) {
@@ -432,7 +433,6 @@ describe SendNotificationJob, type: :job do
   end
 
   context "feature flags for sending legacy notifications" do
-    let(:legacy_appeal) { create(:legacy_appeal) }
 
     it "should only send notifications when feature flag is turned on" do
       FeatureToggle.enable!(:appeal_docketed_notification)

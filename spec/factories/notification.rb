@@ -38,7 +38,7 @@ FactoryBot.define do
     updated_at { Time.zone.now }
     email_notification_external_id { md5(uniqid(time)) }
     sms_notification_external_id { nil }
-    notifiable { nil }
+    notifiable { appeal }
   end
 
   factory :notification_sms_only do
@@ -58,7 +58,7 @@ FactoryBot.define do
     updated_at { Time.zone.now }
     email_notification_external_id { nil }
     sms_notification_external_id { md5(uniqid(time)) }
-    notifiable { nil }
+    notifiable { appeal }
   end
 
   factory :notification_email_and_sms do
@@ -78,6 +78,6 @@ FactoryBot.define do
     updated_at { Time.zone.now }
     email_notification_external_id { md5(uniqid(time)) }
     sms_notification_external_id { md5(uniqid(time)) }
-    notifiable { nil }
+    notifiable { appeal }
   end
 end
