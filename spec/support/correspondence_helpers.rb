@@ -14,7 +14,7 @@ module CorrespondenceHelpers
 
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
-    MailTeam.singleton.add_user(current_user)
+    InboundOpsTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
 
     mock_doc_uploader = instance_double(CorrespondenceDocumentsEfolderUploader)
@@ -89,7 +89,6 @@ module CorrespondenceHelpers
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
     find_and_route_to_intake
-
     click_button("Continue")
     click_button("+ Add tasks")
     all("#reactSelectContainer")[0].click
