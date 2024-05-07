@@ -379,15 +379,15 @@ RSpec.feature("The Correspondence Intake page") do
       end
     end
 
-    it "successfully loads the in progress tab" do
-      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Correspondence in progress")
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Correspondence that is currently assigned to mail team users")
     end
 
     it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
        " from the Centralized Mail Portal, if it needs to be processed." do
-      visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      find("tbody > tr:last-child > td:nth-child(2)").click
       using_wait_time(15) do
         click_on("button-continue")
       end
@@ -399,6 +399,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
+      using_wait_time(15) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end
