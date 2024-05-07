@@ -1,10 +1,11 @@
 import React from 'react';
-import IssueModification from './IssueModification';
+import IssueModification from './IssueModificationRequest';
 
 const IssueModificationList = (
   {
     sectionTitle,
-    issuesArr
+    issuesArr,
+    lastSection
   }
 ) => {
   // const addionalIssuesArr = issuesObj.Addition;
@@ -70,10 +71,9 @@ const IssueModificationList = (
           {issues}
         </ol>
       </div>
-      <hr />
+      {lastSection ? null : <hr />}
     </>
   );
-
 };
 
 export default IssueModificationList;
