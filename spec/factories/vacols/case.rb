@@ -437,7 +437,6 @@ FactoryBot.define do
           folder_attributes = JSON.parse(folder_json)
           folder_attributes.except!("bfkey", "tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser", "tidktime", "tidkuser")
           vacols_case.folder.assign_attributes(folder_attributes)
-          byebug
           vacols_case.folder.save(validate: false)
         end
       end
