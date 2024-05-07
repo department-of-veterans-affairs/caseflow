@@ -51,16 +51,16 @@ describe SendNotificationJob, type: :job do
     {
       participant_id: "123456789",
       status: success_status,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-      appeal_type: "Appeal"
+      appeal_id: appeal.external_id,
+      appeal_type: appeal.class.name
     }
   }
   let(:success_legacy_message_attributes) {
     {
       participant_id: "123456789",
       status: success_status,
-      appeal_id: "123456",
-      appeal_type: "LegacyAppeal"
+      appeal_id: appeal.external_id,
+      appeal_type: appeal.class.name
     }
   }
   let(:deceased_legacy_message_attributes) {
@@ -76,7 +76,7 @@ describe SendNotificationJob, type: :job do
       participant_id: "246813579",
       status: success_status,
       appeal_id: no_name_appeal.uuid,
-      appeal_type: "Appeal"
+      appeal_type: appeal.class.name
     }
   }
   let(:error_message_attributes) {
