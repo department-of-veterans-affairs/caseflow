@@ -486,6 +486,8 @@ feature "Intake Review Page", :postgres do
 
   shared_examples "Claim review intake with VHA benefit type" do
     let(:benefit_type_label) { Constants::BENEFIT_TYPES["vha"] }
+    let(:compensation_type_label) { Constants::BENEFIT_TYPES["compensation"] }
+    let(:pension_type_label) { Constants::BENEFIT_TYPES["pension"] }
     let(:email_href) do
       "mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim"
     end
@@ -564,6 +566,28 @@ feature "Intake Review Page", :postgres do
 
       it "VHA benefit type radio option is enabled" do
         expect(page).to have_field benefit_type_label, disabled: false, visible: false
+      end
+    end
+
+    context "Current user has Compensation and Pension form selections disabled" do
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        FeatureToggle.enable!(:remove_comp_and_pen_intake)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      after do
+        FeatureToggle.disable!(:remove_comp_and_pen_intake)
+      end
+
+      it "Compensation benefit type radio option is disabled" do
+        expect(page).to have_field compensation_type_label, disabled: true, visible: false
+      end
+
+      it "Pension benefit type radio option is disabled" do
+        expect(page).to have_field pension_type_label, disabled: true, visible: false
       end
     end
   end
