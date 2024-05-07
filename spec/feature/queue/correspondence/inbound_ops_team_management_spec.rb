@@ -85,6 +85,4 @@ RSpec.feature "InboundOpsTeamManagement" do
     click_on("Inbound Ops Team team management")
     expect(current_path).to eq("/organizations/inbound-ops-team/users")
   end
-
-
 end
