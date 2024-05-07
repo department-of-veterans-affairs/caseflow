@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_27_154315) do
+ActiveRecord::Schema.define(version: 2024_05_07_145931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1903,6 +1903,8 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
+    t.integer "created_by_id"
+    t.datetime "deleted_at", comment: "acts_as_paranoid in the model"
     t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
     t.bigint "hearing_id", comment: "Hearing ID; use as FK to hearings"
     t.date "problem_notice_sent_date", comment: "Date when notice of problem with recording was sent to appellant"
@@ -1911,9 +1913,14 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
+    t.integer "transcription_contractor_id"
+    t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
+    t.integer "updated_by_id"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
+    t.index ["deleted_at"], name: "index_transcriptions_on_deleted_at"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
+    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
