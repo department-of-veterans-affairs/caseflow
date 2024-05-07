@@ -9,7 +9,8 @@ describe SendNotificationJob, type: :job do
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
            event_date: Time.zone.today,
-           notification_type: "Email")
+           notification_type: "Email",
+           notifiable: appeal)
   end
   let(:legacy_appeal_notification) do
     create(:notification,
@@ -17,7 +18,8 @@ describe SendNotificationJob, type: :job do
            appeals_type: "LegacyAppeal",
            event_type: "Appeal docketed",
            event_date: Time.zone.today,
-           notification_type: "SMS")
+           notification_type: "SMS",
+           notifiable: appeal)
   end
   let(:appeal) do
     create(:appeal,
