@@ -10,11 +10,9 @@ import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 const mailTasksLeft = [
   'Change of address',
   'Evidence or argument',
-  'Returned or undeliverable mail'
 ];
 
 const mailTasksRight = [
-  'Sent to ROJ',
   'VACOLS updated',
   'Associated with Claims Folder'
 ];
@@ -78,7 +76,7 @@ export const AddTasksAppealsView = (props) => {
       either the mail package or for linked appeals, if any.</p>
       <div>
         <h2 style={{ margin: '30px auto 20px auto' }}>Mail Tasks</h2>
-        <div className="gray-border" style={{ padding: '0rem 2rem' }}>
+        <div className="add-task-appeals-styling" >
           <p style={{ marginBottom: '0.5rem' }}>Select any tasks completed by the Mail team for this correspondence.</p>
           <div id="mail-tasks-left" style={{ display: 'inline-block', marginRight: '14rem' }}>
             {mailTasksLeft.map((name, index) => {
