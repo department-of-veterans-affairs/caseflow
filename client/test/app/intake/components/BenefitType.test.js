@@ -35,17 +35,6 @@ const getVhaOptionTooltip = () => {
   );
 };
 
-// const getPenAndCompTooltip = (elementId, tooltipText) => {
-//   const toolTipElements = screen.getAllByRole('tooltip');
-
-//   toolTipElements.forEach((toolTipElement) => {
-//     if (toolTipElement.id === elementId) {
-//       expect(toolTipElement).toBeInTheDocument();
-//       expect(toolTipElement).toHaveTextContent(tooltipText);
-//     }
-//   });
-// };
-
 const hoverOverRadioOption = (option) => {
   act(() => {
     fireEvent(
