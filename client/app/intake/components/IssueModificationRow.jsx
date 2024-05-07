@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import COPY from '../../../../../COPY';
+import COPY from '../../../COPY.json';
 import { FORM_TYPES } from 'app/intake/constants';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 
-const issueModificationSectionRow = (
+const issueModificationRow = (
   {
     // editPage,
     // featureToggles,
@@ -19,36 +19,77 @@ const issueModificationSectionRow = (
     // withdrawReview
     modificationIssueRequestsObj
   }) => {
-  // console.log('in IssueModificationRow', modificationIssueRequestsObj);
+  console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
+  // const modArr = Object.entries(modificationIssueRequestsObj);
+  // const modKeys = Object.keys(modificationIssueRequestsObj);
+  // console.log('modArr', modArr);
+  // Object.entries(modificationIssueRequestsObj).map((item) => {
+  //   console.log(item);
+  // });
+
+  const additionalArr =
+    modificationIssueRequestsObj.Addition === null ? [] : modificationIssueRequestsObj.Addition;
+
+  // console.log('additionalArr', additionalArr);
+  const additionalSection = additionalArr?.length >= 0 ?
+    <IssueModificationList
+      sectionTitle="Requested Additional Issues"
+      issuesArr ={additionalArr}
+      lastSection={false}
+    /> : null;
+
+  const modificationIssueArr =
+    modificationIssueRequestsObj.Modification === null ? [] : modificationIssueRequestsObj.Modification;
+
+  // console.log('modificationIssueArr', modificationIssueArr);
+  const modificationSection = modificationIssueArr?.length >= 0 ?
+    <IssueModificationList
+      sectionTitle="Requested Changes"
+      issuesArr={modificationIssueArr}
+      lastSection={false}
+    /> : null;
+
+  const removalIssueArr =
+    modificationIssueRequestsObj.Removal === null ? [] : modificationIssueRequestsObj.Removal;
+
+  // console.log('removalIssueArr', removalIssueArr);
+  const removalSection = removalIssueArr?.length >= 0 ?
+    <IssueModificationList
+      sectionTitle="Requested Issue Removal"
+      issuesArr={removalIssueArr}
+      lastSection={false}
+    /> : null;
+
+  const withdrawalIssueArr =
+    modificationIssueRequestsObj.Withdrawal === null ? [] : modificationIssueRequestsObj.Withdrawal;
+
+  // console.log('withdrawalIssueArr', withdrawalIssueArr);
+  const withdrawalSection = withdrawalIssueArr?.length >= 0 ?
+    <IssueModificationList
+      sectionTitle="Requested Issue Withdrawal"
+      issuesArr={withdrawalIssueArr}
+      lastSection
+    /> : null;
 
   const sections = [];
-  const addionalIssuesArr = modificationIssueRequestsObj.Addition;
-  // console.log('addionalIssuesArr', addionalIssuesArr);
-  const addionalSection =
-    <IssueModificationList sectionTitle="Requested Additional Issues" issuesArr ={addionalIssuesArr} lastSection={false} />;
 
-  sections.push(addionalSection);
+  if (additionalSection !== null) {
+    sections.push(additionalSection);
+  }
 
-  const modificationIssueArr = modificationIssueRequestsObj.Modification;
-  // console.log('modificationIssueArr', modificationIssueArr);
-  const modificationSection =
-    <IssueModificationList sectionTitle="Requested Changes" issuesArr ={modificationIssueArr} lastSection={false} />;
+  if (modificationSection !== null) {
+    sections.push(modificationSection);
+  }
 
-  sections.push(modificationSection);
+  if (removalSection !== null) {
+    sections.push(removalSection);
+  }
 
-  const removalIssueArr = modificationIssueRequestsObj.Removal;
-  // console.log('removalIssueArr', removalIssueArr);
-  const removalSection =
-    <IssueModificationList sectionTitle="Requested Issue Removal" issuesArr ={removalIssueArr} lastSection={false} />;
+  if (withdrawalSection !== null) {
+    sections.push(withdrawalSection);
+  }
 
-  sections.push(removalSection);
-
-  const withdrawalIssueArr = modificationIssueRequestsObj.Withdrawal;
-  // console.log('withdrawalIssueArr', withdrawalIssueArr);
-  const withdrawalSection =
-    <IssueModificationList sectionTitle="Requested Issue Withdrawal" issuesArr ={withdrawalIssueArr} lastSection />;
-
-  sections.push(withdrawalSection);
+  // console.log('sections', sections);
 
   return {
     content: (
@@ -80,9 +121,9 @@ const issueModificationSectionRow = (
   };
 };
 
-export default issueModificationSectionRow;
+export default issueModificationRow;
 
-issueModificationSectionRow.propTypes = {
+issueModificationRow.propTypes = {
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object,
   fieldTitle: PropTypes.string,
@@ -92,5 +133,6 @@ issueModificationSectionRow.propTypes = {
   sectionIssues: PropTypes.arrayOf(PropTypes.object),
   userCanWithdrawIssues: PropTypes.bool,
   withdrawIssue: PropTypes.func,
-  userCanEditIntakeIssues: PropTypes.bool
+  userCanEditIntakeIssues: PropTypes.bool,
+  modificationIssueRequestsObj: PropTypes.object
 };
