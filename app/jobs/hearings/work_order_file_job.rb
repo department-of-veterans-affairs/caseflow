@@ -5,8 +5,9 @@ class Hearings::WorkOrderFileJob < CaseflowJob
 
   def perform(work_order)
     work_book = create_spreadsheet(work_order)
-    file_location(work_book, work_order[:work_order_name])
-    # upload to s3
+    write_to_workbook(work_book, work_order[:work_order_name])
+    upload_to_s3
+    cleanup_tmp_file
   end
 
   private
@@ -23,10 +24,10 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     workbook
   end
 
-  def file_location(workbook, work_order_name)
-    file_name = "BVA-#{work_order_name}.xls"
-    file_path = File.join(Rails.root, "tmp", file_name)
-    workbook.write(file_path)
+  def write_to_workbook(workbook, work_order_name)
+    @file_name = "BVA-#{work_order_name}.xls"
+    @file_path = File.join(Rails.root, "tmp", @file_name)
+    workbook.write(@file_path)
   end
 
   def create_table(hearings_data, worksheet)
@@ -90,5 +91,27 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     (0..7).each do |col_index|
       row.set_format(col_index, row_format)
     end
+  end
+
+  def upload_to_s3
+    begin
+      S3Service.store_file(s3_location, @file_path, :filepath)
+    rescue StandardError => error
+      send_failure_notification
+    end
+  end
+
+  def s3_location
+    bucket = "vaec-appeals-caseflow"
+    folder_name = (Rails.deploy_env == :prod) ? bucket : "#{bucket}-#{Rails.deploy_env}"
+    folder_name + "/transcript_text/" + @file_name
+  end
+
+  def cleanup_tmp_file
+    File.delete(@file_path) if File.exist?(@file_path)
+  end
+
+  def send_failure_notification
+    WorkOrderFileIssuesMailer.send_notification
   end
 end
