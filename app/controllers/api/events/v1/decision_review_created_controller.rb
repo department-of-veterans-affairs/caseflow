@@ -10,6 +10,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
+# check if record already in Caseflow
     if error.message.include?("already exists")
       render json: { message: "Record already exists in Caseflow" }, status: :ok
     else
