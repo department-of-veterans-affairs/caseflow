@@ -646,16 +646,12 @@ describe DecisionReviewsController, :postgres, type: :controller do
               assigned_at: task_num.days.ago
             )
             task.appeal.update!(veteran_file_number: veteran.file_number)
-            # create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
 
             # Generate some random request issues for testing issue type filters
             generate_request_issues(task, non_comp_org)
 
-            # TODO: Replace this with the factory??
             # TODO: This also needs to test pending vs closed modification requests.
-            # The query should only care about open/pending requests
-            RequestIssueModification.create(request_issue: task.appeal.reload.request_issues.first,
-                                            user: user)
+            FactoryBot.create(:issue_modification_request, decision_review: task.appeal, requestor: user)
 
             task
           end
@@ -665,10 +661,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         it "page 1 displays first 15 tasks" do
           query_params[:page] = 1
-
-          # test_task = pending_tasks.first
-          # puts test_task.appeal.request_issues.count
-          # puts test_task.appeal.request_issues.first.request_issue_modifications.inspect
 
           subject
 

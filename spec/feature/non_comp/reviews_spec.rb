@@ -58,10 +58,7 @@ feature "NonComp Reviews Queue", :postgres do
   end
 
   let!(:modification_request_a) do
-    # TODO: Replace with factory
-    RequestIssueModification.create(request_issue: request_issue_a_pending,
-                                    user: user,
-                                    status: "pending")
+    FactoryBot.create(:issue_modification_request, decision_review: hlr_a_pending, requestor: user)
   end
 
   let(:today) { Time.zone.now }
