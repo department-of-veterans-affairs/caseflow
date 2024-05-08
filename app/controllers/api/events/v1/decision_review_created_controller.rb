@@ -11,7 +11,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
     if error.message.include?("already exists")
-      render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :ok
+      render json: { message: "Record already exists in Caseflow" }, status: :ok
     else
       render json: { message: error.message }, status: :unprocessable_entity
     end
