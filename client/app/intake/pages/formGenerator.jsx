@@ -7,7 +7,8 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType, setOriginalHearingRequestType, setHomelessnessType
+import {
+  setDocketType, setOriginalHearingRequestType, setHomelessnessType
 } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
@@ -90,7 +91,7 @@ const formFieldMapping = (props) => {
     <Homelessness
       value={homelessnessFieldValue()}
       onChange={props.setHomelessnessType}
-      errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
+      errorMessage={props.homelessnessError || props.errors ?.['homelessness'] ?.message}
       register={props.register}
     />
   );
@@ -109,7 +110,7 @@ const formFieldMapping = (props) => {
             updateDocketType(value);
           }}
           errorMessage={
-            props.docketTypeError || props.errors?.['docket-type']?.message
+            props.docketTypeError || props.errors ?.['docket-type'] ?.message
           }
           value={props.docketType}
           inputRef={props.register}
@@ -117,14 +118,14 @@ const formFieldMapping = (props) => {
       </div>
     ),
     'original-hearing-request-type':
-     props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <></>,
+      props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <></>,
     'legacy-opt-in': (
       <LegacyOptInApproved
         value={props.legacyOptInApproved}
         onChange={props.setLegacyOptInApproved}
         errorMessage={
           props.legacyOptInApprovedError ||
-          props.errors?.['legacy-opt-in']?.message
+            props.errors ?.['legacy-opt-in'] ?.message
         }
         register={props.register}
       />
@@ -142,7 +143,7 @@ const formFieldMapping = (props) => {
         onChange={props.setBenefitType}
         errorMessage={
           props.benefitTypeError ||
-          props.errors?.['benefit-type-options']?.message
+            props.errors ?.['benefit-type-options'] ?.message
         }
         register={props.register}
         formName={props.formName}
@@ -162,7 +163,7 @@ const formFieldMapping = (props) => {
         }}
         errorMessage={
           props.informalConferenceError ||
-          props.errors?.['informal-conference']?.message
+            props.errors ?.['informal-conference'] ?.message
         }
         value={renderBooleanValue('informalConference')}
         inputRef={props.register}
@@ -179,7 +180,7 @@ const formFieldMapping = (props) => {
           props.setSameOffice(convertStringToBoolean(value));
         }}
         errorMessage={
-          props.sameOfficeError || props.errors?.['same-office']?.message
+          props.sameOfficeError || props.errors ?.['same-office'] ?.message
         }
         value={renderBooleanValue('sameOffice')}
         inputRef={props.register}
@@ -200,7 +201,7 @@ const formFieldMapping = (props) => {
           props.setFiledByVaGov(convertStringToBoolean(value));
         }}
         errorMessage={
-          props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message
+          props.filedByVaGovError || props.errors ?.['filed-by-va-gov'] ?.message
         }
         value={renderVaGovValue()}
         inputRef={props.register}
@@ -221,7 +222,7 @@ const formFieldMapping = (props) => {
           onChange={props.setOptionSelected}
           errorMessage={
             props.optionSelectedError ||
-            props.errors?.['opt-in-election']?.message
+              props.errors ?.['opt-in-election'] ?.message
           }
           value={props.optionSelected}
           inputRef={props.register}
@@ -235,7 +236,7 @@ const formFieldMapping = (props) => {
             onChange={props.setAppealDocket}
             errorMessage={
               props.appealDocketError ||
-              props.errors?.['appeal-docket']?.message
+                props.errors ?.['appeal-docket'] ?.message
             }
             value={props.appealDocket}
             inputRef={props.register}
@@ -247,11 +248,11 @@ const formFieldMapping = (props) => {
 };
 const FormGenerator = (props) => {
   switch (props.intakeStatus) {
-  case INTAKE_STATES.NONE:
-    return <Redirect to={PAGE_PATHS.BEGIN} />;
-  case INTAKE_STATES.COMPLETED:
-    return <Redirect to={PAGE_PATHS.COMPLETED} />;
-  default:
+    case INTAKE_STATES.NONE:
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    case INTAKE_STATES.COMPLETED:
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
+    default:
   }
 
   const beginNextIntake = () => {
@@ -269,6 +270,9 @@ const FormGenerator = (props) => {
   };
 
   const isHlrOrScForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
+  const vhaMessage = !props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment ? buildVHAInfoBannerMessage() : null;
+  const compAndPenMessage = props.featureToggles.removeCompAndPenIntake && isHlrOrScForm ? COPY.INTAKE_REMOVE_COMP_AND_PEN : null;
+
 
   return (
     <div>
@@ -293,13 +297,30 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
-      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && (
+
+      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && !compAndPenMessage && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
           </Alert>
         </div>
       )}
+
+      {(vhaMessage && compAndPenMessage) && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <ul>
+              {vhaMessage && (
+                <li dangerouslySetInnerHTML={{ __html: vhaMessage }} />
+              )}
+              {compAndPenMessage && (
+                <li>{compAndPenMessage}</li>
+              )}
+            </ul>
+          </Alert>
+        </div>
+      )}
+
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );
