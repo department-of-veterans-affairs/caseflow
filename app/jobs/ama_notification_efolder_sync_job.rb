@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AmaNotificationEfolderSyncJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500

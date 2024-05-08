@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class WarmBgsCachesJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
