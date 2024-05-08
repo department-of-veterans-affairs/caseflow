@@ -6,6 +6,14 @@ class Organizations::UsersController < OrganizationsController
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
 
+    joined_org = Organization.includes(organizations_users: :user, organization_permissions: :organization_user_permissions).find(organization.id)
+    @new_frontend_data = joined_org.organization_permissions.sort_by { |op| op.permission }.as_json(
+      only: [:permission, :enabled],
+      include: [
+        organization_user_permission: { include: [organizations_user: { include: [user: { only: [:id, :css_id, :full_name] } ]} ]}
+      ]
+    )
+
     org_users = organization.organizations_users
     users_with_permissions = {}
     org_users.each do |org_user|
