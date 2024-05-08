@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TestDocketSeedsController < ApplicationController
-  before_action :verify_access, :check_environment
+  before_action :check_environment#, :verify_access
 
   def seed_dockets
     task_name = Constants.TEST_SEEDS.to_h[params[:seed_type].to_sym]
@@ -21,12 +21,12 @@ class TestDocketSeedsController < ApplicationController
 
   private
 
-  def verify_access
-    return true if current_user&.organizations && current_user.organizations.any?(&:users_can_view_levers?)
+  # def verify_access ##future work
+  #   return true if current_user&.organizations && current_user.organizations.any?(&:users_can_view_levers?)
 
-    session["return_to"] = request.original_url
-    redirect_to "/unauthorized"
-  end
+  #   session["return_to"] = request.original_url
+  #   redirect_to "/unauthorized"
+  # end
 
   def check_environment
     return true if Rails.env.development?
