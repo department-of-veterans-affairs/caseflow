@@ -270,9 +270,8 @@ const FormGenerator = (props) => {
   };
 
   const isHlrOrScForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
-  const vhaMessage = !props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment ? buildVHAInfoBannerMessage() : null;
-  const compAndPenMessage = props.featureToggles.removeCompAndPenIntake && isHlrOrScForm ? COPY.INTAKE_REMOVE_COMP_AND_PEN : null;
-
+  const nonVhaUserConditions = !props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment;
+  const compAndPenRemovalConditions = props.featureToggles.removeCompAndPenIntake && isHlrOrScForm;
 
   return (
     <div>
@@ -298,7 +297,7 @@ const FormGenerator = (props) => {
         />
       )}
 
-      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && !compAndPenMessage && (
+      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && !compAndPenRemovalConditions && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
@@ -306,28 +305,22 @@ const FormGenerator = (props) => {
         </div>
       )}
 
-      {(vhaMessage && compAndPenMessage) && (
+      {(nonVhaUserConditions && compAndPenRemovalConditions) && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
-              {vhaMessage && (
-                <li dangerouslySetInnerHTML={{ __html: vhaMessage }} />
-              )}
-              {compAndPenMessage && (
-                <li>{compAndPenMessage}</li>
-              )}
+              <li dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
+              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
             </ul>
           </Alert>
         </div>
       )}
 
-      {(props.userIsVhaEmployee && compAndPenMessage) && (
+      {(props.userIsVhaEmployee && compAndPenRemovalConditions) && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
-              {compAndPenMessage && (
-                <li>{compAndPenMessage}</li>
-              )}
+              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
             </ul>
           </Alert>
         </div>
