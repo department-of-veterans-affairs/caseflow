@@ -38,6 +38,15 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
     object&.end_product_establishment&.reference_id
   end
 
+  attribute :claim_errors do |object|
+    claim_id = object&.end_product_establishment&.reference_id
+    if claim_id
+      Event.find_errors_by_claim_id(claim_id)
+    else
+      []
+    end
+  end
+
   attribute :decision_issues do |object|
     object.decision_issues.map do |di|
       {

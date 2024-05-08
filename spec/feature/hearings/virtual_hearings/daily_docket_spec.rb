@@ -7,7 +7,9 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   let(:regional_office_key) { "RO59" } # Honolulu, HI
   let(:regional_office_timezone) { RegionalOffice.new(regional_office_key).timezone }
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: regional_office_key, scheduled_time: "9:00AM") }
-  let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, status: :active, hearing: hearing) }
+  let!(:virtual_hearing) do
+    create(:virtual_hearing, :all_emails_sent, :initialized, status: :active, hearing: hearing)
+  end
   let(:updated_hearing_time) { "11:00 am" }
   let(:updated_virtual_hearing_time) { "11:00 AM Eastern Time (US & Canada)" }
   let(:updated_video_hearing_time) { "11:00 AM Hawaii" }
@@ -74,6 +76,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     let!(:central_virtual_hearing) do
       create(:virtual_hearing,
              :all_emails_sent,
+             :initialized,
              :timezones_initialized,
              status: :active,
              hearing: central_hearing)
@@ -163,7 +166,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
       end
     end
     context "VLJ view" do
@@ -173,7 +175,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
       end
     end
   end

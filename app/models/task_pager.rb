@@ -22,7 +22,7 @@ class TaskPager
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
-
+  
   def paged_tasks
     @paged_tasks ||= begin
       tasks = sorted_tasks(filtered_tasks)
