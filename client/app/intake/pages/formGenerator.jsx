@@ -321,6 +321,18 @@ const FormGenerator = (props) => {
         </div>
       )}
 
+      {(props.userIsVhaEmployee && compAndPenMessage) && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <ul>
+              {compAndPenMessage && (
+                <li>{compAndPenMessage}</li>
+              )}
+            </ul>
+          </Alert>
+        </div>
+      )}
+
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );
