@@ -29,6 +29,10 @@ class Docket
 
     scope = scope.nonpriority if priority == false
 
+    puts(scope.count)
+    puts(scope.first)
+    puts(scope)
+    puts(priority)
     scope.order("appeals.receipt_date")
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -38,15 +42,12 @@ class Docket
   end
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
-    ama_docket_types = %w(hearing direct_review evidence_sub)
-    if ama_docket_types.include?(docket_type.downcase)
-      priority_status = priority ? PRIORITY : NON_PRIORITY
-      lever_item = build_lever_item(docket_type, priority_status)
-      lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-      lever_value = lever&.value
+    priority_status = priority ? PRIORITY : NON_PRIORITY
+    lever_item = build_lever_item(docket_type, priority_status)
+    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
+    lever_value = lever&.value
 
-      return [] if lever_value == "true"
-    end
+    return [] if lever_value == "true"
 
     appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
   end
@@ -172,6 +173,7 @@ class Docket
   end
 
   def scoped_for_priority(scope)
+    puts("scoped_for_priority")
     if use_by_docket_date?
       scope.priority.order("appeals.receipt_date")
     else
