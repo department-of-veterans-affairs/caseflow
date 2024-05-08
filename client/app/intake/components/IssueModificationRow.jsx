@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { FORM_TYPES } from 'app/intake/constants';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 
@@ -19,77 +19,47 @@ const issueModificationRow = (
     // withdrawReview
     modificationIssueRequestsObj
   }) => {
-  console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
-  // const modArr = Object.entries(modificationIssueRequestsObj);
-  // const modKeys = Object.keys(modificationIssueRequestsObj);
-  // console.log('modArr', modArr);
-  // Object.entries(modificationIssueRequestsObj).map((item) => {
-  //   console.log(item);
-  // });
-
-  const additionalArr =
-    modificationIssueRequestsObj.Addition === null ? [] : modificationIssueRequestsObj.Addition;
-
-  // console.log('additionalArr', additionalArr);
-  const additionalSection = additionalArr?.length >= 0 ?
-    <IssueModificationList
-      sectionTitle="Requested Additional Issues"
-      issuesArr ={additionalArr}
-      lastSection={false}
-    /> : null;
-
-  const modificationIssueArr =
-    modificationIssueRequestsObj.Modification === null ? [] : modificationIssueRequestsObj.Modification;
-
-  // console.log('modificationIssueArr', modificationIssueArr);
-  const modificationSection = modificationIssueArr?.length >= 0 ?
-    <IssueModificationList
-      sectionTitle="Requested Changes"
-      issuesArr={modificationIssueArr}
-      lastSection={false}
-    /> : null;
-
-  const removalIssueArr =
-    modificationIssueRequestsObj.Removal === null ? [] : modificationIssueRequestsObj.Removal;
-
-  // console.log('removalIssueArr', removalIssueArr);
-  const removalSection = removalIssueArr?.length >= 0 ?
-    <IssueModificationList
-      sectionTitle="Requested Issue Removal"
-      issuesArr={removalIssueArr}
-      lastSection={false}
-    /> : null;
-
-  const withdrawalIssueArr =
-    modificationIssueRequestsObj.Withdrawal === null ? [] : modificationIssueRequestsObj.Withdrawal;
-
-  // console.log('withdrawalIssueArr', withdrawalIssueArr);
-  const withdrawalSection = withdrawalIssueArr?.length >= 0 ?
-    <IssueModificationList
-      sectionTitle="Requested Issue Withdrawal"
-      issuesArr={withdrawalIssueArr}
-      lastSection
-    /> : null;
-
+  // let additionalArr = [];
+  // let modificationIssueArr = [];
+  // let removalIssueArr = [];
+  // let withdrawalIssueArr = [];
   const sections = [];
+  const modificationIssueRequestsObjKeysLength = Object.keys(modificationIssueRequestsObj).length - 1;
+  // console.log('modificationIssueRequestsObjKeysLength', modificationIssueRequestsObjKeysLength);
 
-  if (additionalSection !== null) {
-    sections.push(additionalSection);
+  for (const [key, value] of Object.entries(modificationIssueRequestsObj)) {
+    // console.log('key', key);
+    // console.log('value', value);
+    let sectionTitle;
+
+    const lastSection =
+      modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
+
+    switch (key) {
+    case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
+      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE;
+      break;
+    case COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE:
+      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE;
+      break;
+    case COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE:
+      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE;
+      break;
+    case COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE:
+      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE;
+      break;
+    default:
+      break;
+    }
+
+    sections.push(
+      <IssueModificationList
+        sectionTitle={sectionTitle}
+        issuesArr={value}
+        lastSection={lastSection}
+      />
+    );
   }
-
-  if (modificationSection !== null) {
-    sections.push(modificationSection);
-  }
-
-  if (removalSection !== null) {
-    sections.push(removalSection);
-  }
-
-  if (withdrawalSection !== null) {
-    sections.push(withdrawalSection);
-  }
-
-  // console.log('sections', sections);
 
   return {
     content: (
