@@ -38,12 +38,15 @@ class Docket
   end
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
-    priority_status = priority ? PRIORITY : NON_PRIORITY
-    lever_item = build_lever_item(docket_type, priority_status)
-    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    lever_value = lever&.value
+    ama_docket_types = %w(hearing direct_review evidence_sub)
+    if ama_docket_types.include?(docket_type.downcase)
+      priority_status = priority ? PRIORITY : NON_PRIORITY
+      lever_item = build_lever_item(docket_type, priority_status)
+      lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
+      lever_value = lever&.value
 
-    return [] if lever_value == "true"
+      return [] if lever_value == "true"
+    end
 
     appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
   end
