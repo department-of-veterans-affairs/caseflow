@@ -707,6 +707,7 @@ class QueueApp extends React.PureComponent {
       priorMail={this.props.priorMail}
       veteranInformation={this.props.veteranInformation}
       isMailSupervisor={this.props.isMailSupervisor}
+      history={props.history}
     />
   );
 

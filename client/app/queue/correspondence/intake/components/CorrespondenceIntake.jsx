@@ -132,12 +132,16 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
+    console.log('history: ', props.history);
+
     if (currentStep !== 1) {
       props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
     }
   }, [currentStep]);
 
   useEffect(() => {
+    console.log('history: ', props.history);
+
     // load previous correspondence intake from database (if any)
     if (props.reduxStore !== null) {
       setCurrentStep(3);
@@ -230,6 +234,7 @@ export const CorrespondenceIntake = (props) => {
           correspondence={props.correspondence}
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
           setErrorBannerVisible={handleBannerState}
+          history={props.history}
         />
       }
     </div>
@@ -248,7 +253,8 @@ CorrespondenceIntake.propTypes = {
   reduxStore: PropTypes.object,
   isMailSupervisor: PropTypes.bool,
   loadSavedIntake: PropTypes.func,
-  saveCurrentIntake: PropTypes.func
+  saveCurrentIntake: PropTypes.func,
+  history: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

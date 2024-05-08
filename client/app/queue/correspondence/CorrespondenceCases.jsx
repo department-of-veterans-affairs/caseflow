@@ -120,7 +120,8 @@ const CorrespondenceCases = (props) => {
     <div style={{ width: '280%' }}>
       <TextareaField label="Provide a reason for rejection"
         onChange={handleDecisionReasonInput}
-        value={decisionReason} />
+        value={decisionReason}
+        name="" />
     </div>);
 
   useEffect(() => {

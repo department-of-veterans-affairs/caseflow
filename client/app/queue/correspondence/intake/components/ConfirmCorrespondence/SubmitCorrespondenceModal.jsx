@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
+import { withRouter } from 'react-router';
 import { useSelector } from 'react-redux';
 import ApiUtil from 'app/util/ApiUtil';
 import {
@@ -11,7 +12,8 @@ import {
 export const SubmitCorrespondenceModal = ({
   setSubmitCorrespondenceModalVisible,
   setErrorBannerVisible,
-  correspondence
+  correspondence,
+  history
 }) => {
 
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
@@ -33,9 +35,20 @@ export const SubmitCorrespondenceModal = ({
     setSubmitCorrespondenceModalVisible(false);
   };
 
-  const handleRouting = (status) => {
+  // const history = useHistory();
+
+  const handleRouting = (status, props) => {
     if (status === 201) {
-      window.location.href = '/queue/correspondence';
+      // window.location.href = '/queue/correspondence';
+
+      console.log(props.configUrl);
+      const configUrl = '/queue/correspondence.json?';
+
+      console.log(configUrl);
+
+      history.push('/queue/correspondence', configUrl);
+      // history.go(0);
+
     } else {
       setErrorBannerVisible(true);
       onCancel();
@@ -121,4 +134,9 @@ SubmitCorrespondenceModal.propTypes = {
   loading: PropTypes.bool,
   setSubmitCorrespondenceModalVisible: PropTypes.func,
   setErrorBannerVisible: PropTypes.func,
+  history: PropTypes.object
 };
+
+export default withRouter(
+  (SubmitCorrespondenceModal)
+);
