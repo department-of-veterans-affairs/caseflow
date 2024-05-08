@@ -181,7 +181,6 @@ class CorrespondenceIntakeProcessor
     "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
     "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
     "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
-    # Do I remove this?
     "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
     "StatusInquiryMailTask": StatusInquiryMailTask.name,
     "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
