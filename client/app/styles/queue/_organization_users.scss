@@ -1,5 +1,5 @@
 .top-user-border {
-  border-top-color: gray;
+  border-top-color: $color-gray-lighter;
   border-top-style: solid !important;
   border-top-width: 1px !important;
 }
@@ -7,11 +7,10 @@
 .team-member-container {
   display: flex;
   align-content: space-between;
-  // border-top: 1px solid gray;
-  border-bottom-color: gray;
+  border-bottom-color: $color-gray-lighter;
   border-bottom-style: solid !important;
   border-bottom-width: 1px !important;
-  border-top-color: gray;
+  border-top-color: $color-gray-lighter;
   border-top-style: solid !important;
   border-top-width: 1px !important;
 }
@@ -29,9 +28,6 @@
   list-style: none;
   padding-bottom: 0;
   margin-bottom: 20px;
-  // .li {
-  //   margin-bottom: 0px !important ;
-  // }
 }
 
 .team-member-buttons-container {
