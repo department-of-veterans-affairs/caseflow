@@ -273,7 +273,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     let!(:vha_org) { VhaBusinessLine.singleton }
-    let(:user) { create(:default_user) }
+    let(:user) { create(:default_user, roles: ["Mail Intake"]) }
     let(:veteran) { create(:veteran) }
     let(:decision_date) { Time.zone.now + 10.days }
 
@@ -281,10 +281,25 @@ feature "NonComp Dispositions Task Page", :postgres do
       create(:higher_level_review,
              :with_vha_issue,
              :with_end_product_establishment,
-             :create_business_line,
+             :processed,
+             :update_assigned_at,
              benefit_type: "vha",
              veteran: veteran,
              claimant_type: :veteran_claimant)
+    end
+
+    let!(:in_complete_task) do
+      create(:supplemental_claim,
+             :with_intake,
+             :without_decision_date,
+             :processed,
+             :update_assigned_at,
+             assigned_at: rand(1.year.ago..1.day.ago),
+             benefit_type: "vha",
+             claimant_type: :veteran_claimant,
+             issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+             description: "with decision date added",
+             number_of_claimants: 1)
     end
 
     let(:poa_task) do
@@ -293,6 +308,8 @@ feature "NonComp Dispositions Task Page", :postgres do
 
     let(:business_line_url) { "decision_reviews/vha" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+    let(:edit_issue_url) { in_progress_task.caseflow_only_edit_issues_url }
+    let(:incomplete_task_edit_issue_url) { in_complete_task.caseflow_only_edit_issues_url }
 
     it "vha decision Review workflow" do
       step "submit button should be disabled" do
@@ -418,6 +435,53 @@ feature "NonComp Dispositions Task Page", :postgres do
           expect(page).not_to have_link("Request issue modification",
                                         href: in_progress_task.caseflow_only_edit_issues_url)
           expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
+        end
+      end
+
+      it "should require decision date if task is in progress or assigned status" do
+        visit edit_issue_url
+
+        step "should display Decision date required banner for Vha Admin" do
+          expect(in_progress_task.task_in_progress?).to be true
+          expect(page).to have_content("Add issue")
+          click_on "Add issue"
+          expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+          expect(page).to have_current_path(in_progress_task.caseflow_only_edit_issues_url)
+          expect(page).to have_content(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+        end
+
+        step "should require decision date" do
+          expect(page).to have_content("Decision date")
+          fill_in "Issue category", with: "Beneficiary Travel"
+          find("#issue-category").send_keys :enter
+          fill_in "Issue description", with: "I am a VHA issue"
+          expect(page).to have_button("Add this issue", disabled: true)
+          find("#decision-date").set(1.month.ago.strftime("%m/%d/%Y"))
+          safe_click "#decision-date"
+          expect(page).to have_button("Add this issue", disabled: false)
+        end
+      end
+
+      it "should require decision date if task is on hold" do
+        visit incomplete_task_edit_issue_url
+
+        step "should display Decision date required banner for Vha Admin" do
+          expect(in_complete_task.task_in_progress?).to be false
+          expect(page).to have_content("Add issue")
+          click_on "Add issue"
+          expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+          expect(page).to have_current_path(in_complete_task.caseflow_only_edit_issues_url)
+          expect(page).not_to have_content(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+        end
+
+        step "should require decision date" do
+          expect(page).to have_content("Decision date")
+          fill_in "Issue category", with: "Beneficiary Travel"
+          find("#issue-category").send_keys :enter
+          fill_in "Issue description", with: "I am a VHA issue"
+          expect(page).to have_button("Add this issue", disabled: false)
+          click_on "Add this issue"
+          expect(page).to have_current_path(in_complete_task.caseflow_only_edit_issues_url)
         end
       end
     end
