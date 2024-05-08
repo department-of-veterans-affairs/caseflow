@@ -12,7 +12,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
       hearings: [{ hearing_id: hearing.id, hearing_type: hearing.class.to_s }]
     }
   end
-  let(:file_path) { File.join(Rails.root, "tmp", "BVA-#{work_order[:work_order_name]}.xls") }
+  let(:file_path) { Rails.root.join("tmp/BVA-#{work_order[:work_order_name]}.xls") }
 
   subject { described_class.perform_now(work_order) }
 

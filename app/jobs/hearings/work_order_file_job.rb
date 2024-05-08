@@ -3,7 +3,12 @@
 class Hearings::WorkOrderFileJob < CaseflowJob
   queue_with_priority :low_priority
 
+  S3_BUCKET = "vaec-appeals-caseflow"
+  TMP_FOLDER = Rails.root.join("tmp")
+
   def perform(work_order)
+    @file_name = nil
+    @file_path = nil
     work_book = create_spreadsheet(work_order)
     write_to_workbook(work_book, work_order[:work_order_name])
     upload_to_s3
@@ -26,7 +31,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
 
   def write_to_workbook(workbook, work_order_name)
     @file_name = "BVA-#{work_order_name}.xls"
-    @file_path = File.join(Rails.root, "tmp", @file_name)
+    @file_path = TMP_FOLDER.join(@file_name)
     workbook.write(@file_path)
   end
 
@@ -97,14 +102,14 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     begin
       S3Service.store_file(s3_location, @file_path, :filepath)
     rescue StandardError => error
+      Rails.logger.error "Work Order File Job failed to upload to S3: #{error.message}"
       send_failure_notification
     end
   end
 
   def s3_location
-    bucket = "vaec-appeals-caseflow"
-    folder_name = (Rails.deploy_env == :prod) ? bucket : "#{bucket}-#{Rails.deploy_env}"
-    folder_name + "/transcript_text/" + @file_name
+    folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
+    "#{folder_name}/transcript_text/#{@file_name}"
   end
 
   def cleanup_tmp_file
