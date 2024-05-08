@@ -1493,7 +1493,6 @@
   "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
   "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
-  "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ",
   "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences",
   "BAAA_NO_UNASSIGNED_CORRESPONDENCE": "There are no correspondences available for assignment",
   "BAAA_USERS_MAX_QUEUE_REACHED": "Queues have reached maximum capacity for all team members",
