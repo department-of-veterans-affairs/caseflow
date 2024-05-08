@@ -18,19 +18,6 @@ import {
 export const getPackageActionColumns = (dropdownType) => {
   const baseColumns = [
     {
-      cellClass: 'cm-packet-number-column',
-      header: (
-        <span id="cm-packet-number-label">
-          CM Packet Number
-        </span>
-      ),
-      valueFunction: (row) => (
-        <span className="cm-packet-number-value">
-          <p>{row.correspondence.cmp_packet_number}</p>
-        </span>
-      )
-    },
-    {
       cellClass: 'package-document-type-column',
       header: (
         <span id="package-document-type-label">
@@ -39,7 +26,7 @@ export const getPackageActionColumns = (dropdownType) => {
       ),
       valueFunction: (row) => (
         <span className="package-document-value">
-          <p>{row.packageDocumentType}</p>
+          <p>{row.correspondence.nod ? 'NOD' : 'Non-NOD'}</p>
         </span>
       )
     },
