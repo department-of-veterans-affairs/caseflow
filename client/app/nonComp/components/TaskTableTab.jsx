@@ -91,8 +91,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
       ...issueTypesColumn(),
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
-    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : {}
-  ];
+    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null
+  ].filter((column) => column !== null);
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
     this.props.tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]

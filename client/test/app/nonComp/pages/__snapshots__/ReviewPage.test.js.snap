@@ -74,7 +74,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               <span>
                 
                 <span>
-                  Incomplete tasks
+                  Incomplete tasks (0)
                 </span>
                 
               </span>
@@ -93,7 +93,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               <span>
                 
                 <span>
-                  In progress tasks
+                  In progress tasks (410)
                 </span>
                 
               </span>
@@ -292,7 +292,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               <span>
                 
                 <span>
-                  Incomplete tasks
+                  Incomplete tasks (0)
                 </span>
                 
               </span>
@@ -311,7 +311,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               <span>
                 
                 <span>
-                  In progress tasks
+                  In progress tasks (410)
                 </span>
                 
               </span>
