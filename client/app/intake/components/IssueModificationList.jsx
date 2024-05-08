@@ -16,7 +16,9 @@ const IssueModificationList = (
   return (
     <>
       <div>
+        <br />
         <h3>{sectionTitle}</h3>
+        <br />
         <ol>
           {issues}
         </ol>
