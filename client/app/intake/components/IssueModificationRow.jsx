@@ -25,22 +25,32 @@ const issueModificationRow = (
   // let withdrawalIssueArr = [];
   const sections = [];
   const modificationIssueRequestsObjKeysLength = Object.keys(modificationIssueRequestsObj).length - 1;
-  // console.log('modificationIssueRequestsObjKeysLength', modificationIssueRequestsObjKeysLength);
+  const modificationIssueRequestsArr = Object.entries(modificationIssueRequestsObj).sort();
+  // console.log('modificationIssueRequestsArr', modificationIssueRequestsArr)
+  let index = 0;
 
-  for (const [key, value] of Object.entries(modificationIssueRequestsObj)) {
+  // for (const [key, value] of Object.entries(modificationIssueRequestsObj)) {
+  for (const [key, value] of modificationIssueRequestsArr) {
     // console.log('key', key);
     // console.log('value', value);
 
+    // const lastSection =
+    //   modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
     const lastSection =
-      modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
+      modificationIssueRequestsObjKeysLength === index;
+    // console.log('lastSection', lastSection);
+
+    const commonProps = {
+      issuesArr: value,
+      lastSection
+    };
 
     switch (key) {
     case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
       sections.push(
         <IssueModificationList
           sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE}
-          issuesArr={value}
-          lastSection={lastSection}
+          {...commonProps}
         />
       );
       break;
@@ -48,8 +58,7 @@ const issueModificationRow = (
       sections.push(
         <IssueModificationList
           sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE}
-          issuesArr={value}
-          lastSection={lastSection}
+          {...commonProps}
         />
       );
       break;
@@ -57,8 +66,7 @@ const issueModificationRow = (
       sections.push(
         <IssueModificationList
           sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE}
-          issuesArr={value}
-          lastSection={lastSection}
+          {...commonProps}
         />
       );
       break;
@@ -66,14 +74,15 @@ const issueModificationRow = (
       sections.push(
         <IssueModificationList
           sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE}
-          issuesArr={value}
-          lastSection={lastSection}
+          {...commonProps}
         />
       );
       break;
     default:
       break;
     }
+
+    index += 1;
   }
 
   return {
