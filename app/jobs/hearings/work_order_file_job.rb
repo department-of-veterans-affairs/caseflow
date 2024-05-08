@@ -7,12 +7,11 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   TMP_FOLDER = Rails.root.join("tmp")
 
   def perform(work_order)
-    @file_name = nil
-    @file_path = nil
     work_book = create_spreadsheet(work_order)
-    write_to_workbook(work_book, work_order[:work_order_name])
-    upload_to_s3
-    cleanup_tmp_file
+    file_name = "BVA-#{work_order[:work_order_name]}.xls"
+    file_path = write_to_workbook(work_book, file_name)
+    upload_to_s3(file_path, file_name)
+    cleanup_tmp_file(file_path)
   end
 
   private
@@ -29,10 +28,10 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     workbook
   end
 
-  def write_to_workbook(workbook, work_order_name)
-    @file_name = "BVA-#{work_order_name}.xls"
-    @file_path = TMP_FOLDER.join(@file_name)
-    workbook.write(@file_path)
+  def write_to_workbook(workbook, file_name)
+    file_path = TMP_FOLDER.join(file_name)
+    workbook.write(file_path)
+    file_path
   end
 
   def create_table(hearings_data, worksheet)
@@ -98,9 +97,9 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     end
   end
 
-  def upload_to_s3
+  def upload_to_s3(file_path, file_name)
     begin
-      S3Service.store_file(s3_location, @file_path, :filepath)
+      S3Service.store_file("#{s3_location}/#{file_name}", file_path, :filepath)
     rescue StandardError => error
       Rails.logger.error "Work Order File Job failed to upload to S3: #{error.message}"
       send_failure_notification
@@ -109,11 +108,11 @@ class Hearings::WorkOrderFileJob < CaseflowJob
 
   def s3_location
     folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
-    "#{folder_name}/transcript_text/#{@file_name}"
+    "#{folder_name}/transcript_text"
   end
 
-  def cleanup_tmp_file
-    File.delete(@file_path) if File.exist?(@file_path)
+  def cleanup_tmp_file(file_path)
+    File.delete(file_path) if File.exist?(file_path)
   end
 
   def send_failure_notification
