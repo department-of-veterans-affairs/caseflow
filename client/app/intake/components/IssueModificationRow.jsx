@@ -30,35 +30,50 @@ const issueModificationRow = (
   for (const [key, value] of Object.entries(modificationIssueRequestsObj)) {
     // console.log('key', key);
     // console.log('value', value);
-    let sectionTitle;
 
     const lastSection =
       modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
 
     switch (key) {
     case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
-      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE;
+      sections.push(
+        <IssueModificationList
+          sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE}
+          issuesArr={value}
+          lastSection={lastSection}
+        />
+      );
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE:
-      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE;
+      sections.push(
+        <IssueModificationList
+          sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE}
+          issuesArr={value}
+          lastSection={lastSection}
+        />
+      );
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE:
-      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE;
+      sections.push(
+        <IssueModificationList
+          sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE}
+          issuesArr={value}
+          lastSection={lastSection}
+        />
+      );
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE:
-      sectionTitle = COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE;
+      sections.push(
+        <IssueModificationList
+          sectionTitle={COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE}
+          issuesArr={value}
+          lastSection={lastSection}
+        />
+      );
       break;
     default:
       break;
     }
-
-    sections.push(
-      <IssueModificationList
-        sectionTitle={sectionTitle}
-        issuesArr={value}
-        lastSection={lastSection}
-      />
-    );
   }
 
   return {
