@@ -651,13 +651,15 @@ describe DecisionReviewsController, :postgres, type: :controller do
             generate_request_issues(task, non_comp_org)
 
             # TODO: This also needs to test pending vs closed modification requests.
-            FactoryBot.create(:issue_modification_request, decision_review: task.appeal, requestor: user)
+            create(:issue_modification_request, decision_review: task.appeal, requestor: user)
 
             task
           end
         end
 
         # TODO: Add some pending tasks that are already completed
+        include_examples "task query filtering"
+        include_examples "issue type query filtering"
 
         it "page 1 displays first 15 tasks" do
           query_params[:page] = 1
