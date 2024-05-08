@@ -11,7 +11,7 @@ export const fakeIssueModificationRequestsData = [
     nonrating_issue_category: 'Caregiver | Eligibility',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
     status: 'approved',
     remove_original_issue: true,
     benefit_type: 'Veterans Health Administration'
@@ -23,7 +23,7 @@ export const fakeIssueModificationRequestsData = [
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
     withdrawal_request_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    request_reason: 'This is the reason that the user entered for the requested Withdrawal to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
   },
@@ -32,7 +32,7 @@ export const fakeIssueModificationRequestsData = [
     nonrating_issue_category: 'Beneficiary Travel',
     decision_text: 'New note for this type of issue',
     decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    request_reason: 'This is the reason that the user entered for the requested Addition to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
   },
@@ -42,7 +42,7 @@ export const fakeIssueModificationRequestsData = [
     nonrating_issue_category: 'Caregiver | Eligibility',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    request_reason: 'This is the reason that the user entered for the requested Removal to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
   },
@@ -52,7 +52,7 @@ export const fakeIssueModificationRequestsData = [
     nonrating_issue_category: 'CHAMPVA',
     decision_text: 'New CHAMPVA text',
     decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested modification to this issue.',
+    request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
     benefit_type: 'Veterans Health Administration'
   }
 ];
