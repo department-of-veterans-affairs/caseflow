@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TestDocketSeedsController < ApplicationController
-  before_action :check_environment#, :verify_access
+  before_action :check_environment # , :verify_access
 
   def seed_dockets
     task_name = Constants.TEST_SEEDS.to_h[params[:seed_type].to_sym]
