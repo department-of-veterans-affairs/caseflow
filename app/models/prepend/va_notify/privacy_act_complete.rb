@@ -3,9 +3,7 @@
 # Module to notify appellant if Privacy Act Request is Completed
 module PrivacyActComplete
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Privacy Act request complete"
-  # rubocop:enable all
+
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask
                          PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
@@ -16,7 +14,7 @@ module PrivacyActComplete
        (type.to_s.include?("PrivacyAct") && !parent&.type.to_s.include?("PrivacyAct"))) &&
        status == Constants.TASK_STATUSES.completed
       # appellant notification call
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_complete)
     end
     super_return_value
   end
@@ -27,7 +25,7 @@ module PrivacyActComplete
     super_return_value = super
     if type.to_s == "PrivacyActTask" && assigned_to_type == "Organization" &&
        status == Constants.TASK_STATUSES.completed
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_complete)
     end
     super_return_value
   end

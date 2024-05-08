@@ -19,9 +19,6 @@
 # Module to notify appellant when an appeal gets docketed
 module AppealDocketed
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Appeal docketed"
-  # rubocop:enable all
 
   # original method defined in app/models/appeal.rb
 
@@ -39,7 +36,7 @@ module AppealDocketed
         "for #{self.class} ID #{self.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(self, @@template_name)
+        AppellantNotification.notify_appellant(self, Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed)
       end
     end
     super_return_value
@@ -59,7 +56,7 @@ module AppealDocketed
       "for #{appeal.class} ID #{appeal.id}",
                           service: nil,
                           name: "AppellantNotification.notify_appellant") do
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed)
     end
     super_return_value
   end

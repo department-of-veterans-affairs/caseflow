@@ -3,12 +3,9 @@
 # Module to notify appellant if an Appeal Decision is Mailed
 module AppealDecisionMailed
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Appeal decision mailed"
 
-  CONTESTED_CLAIM = "#{@@template_name} (Contested claims)"
-  NON_CONTESTED_CLAIM = "#{@@template_name} (Non-contested claims)"
-  # rubocop:enable all
+  CONTESTED_CLAIM = "#{Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_decision_mailed} (Contested claims)"
+  NON_CONTESTED_CLAIM = "#{Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_decision_mailed} (Non-contested claims)"
 
   # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
   #

@@ -17,7 +17,7 @@
 module IhpTaskPending
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = "VSO IHP pending"
+  Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending = "VSO IHP pending"
   # rubocop:enable all
 
   # All variants of IHP Tasks
@@ -38,7 +38,7 @@ module IhpTaskPending
         "for #{@parent.appeal.class} ID #{@parent.appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
+        AppellantNotification.notify_appellant(@parent.appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending)
       end
     end
     super_return_value
@@ -61,7 +61,7 @@ module IhpTaskPending
         "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(appeal, @@template_name)
+        AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending)
       end
     end
     super_return_value

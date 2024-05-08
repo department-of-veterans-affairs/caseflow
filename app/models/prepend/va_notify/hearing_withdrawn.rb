@@ -3,16 +3,13 @@
 # Module to notify appellant if Hearing is Withdrawn
 module HearingWithdrawn
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Withdrawal of hearing"
-  # rubocop:enable all
 
   # Legacy OR AMA Hearing Withdrawn from Queue
   # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled && appeal.class.to_s == "Appeal"
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing)
     end
     super_return_value
   end
@@ -25,7 +22,7 @@ module HearingWithdrawn
     new_disposition = vacols_record.hearing_disp
     if cancelled? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing)
     end
     super_return_value
   end
