@@ -22,11 +22,12 @@ class TaskPager
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
-
+  
   def paged_tasks
     @paged_tasks ||= begin
-      tasks = sorted_tasks(filtered_tasks).not_correspondence
-      pagination_enabled ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
+      tasks = sorted_tasks(filtered_tasks)
+      limit = queue_tab.custom_task_limit || TASKS_PER_PAGE
+      pagination_enabled ? tasks.page(page).per(limit) : tasks
     end
   end
 
