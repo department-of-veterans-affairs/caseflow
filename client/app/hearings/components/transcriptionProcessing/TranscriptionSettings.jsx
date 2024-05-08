@@ -10,6 +10,8 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
 
+import COPY from '../../../../COPY';
+
 const buttonStyle = css({
   padding: '1rem 2.5rem 2rem 0',
   display: 'inline-block'
@@ -63,7 +65,6 @@ const EditContractorLink = () => (
     linkStyling
     // open modal onClick
   >
-    {/* <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span> */}
     <span {...css({ marginRight: '1px', marginLeft: '5px' })} >
       Edit Information
     </span>
@@ -94,7 +95,7 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   addContractorButton = () =>
     <div {...buttonStyle}><Button
-      name={`Add Contractor`}
+      name={COPY.TRANSCRIPTION_SETTINGS_ADD}
       id={`Add-contractor`}
       classNames={['usa-button-primary']}
       // on click add contractor modal opens
@@ -102,7 +103,7 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   removeContractorButton = () =>
     <div {...buttonStyle}><Button
-      name={`Remove Contractor`}
+      name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
       id={`Remove-contractor`}
       classNames={['usa-button-secondary']}
       // on click contractor is removed
@@ -117,32 +118,16 @@ export default class TranscriptionSettings extends React.PureComponent {
           <div {...userListItemStyle}>
             <div>
               <ul {...instructionListStyle}>
-              <h2>{`Contractor A`}<EditContractorLink /></h2>
-              <li><strong>{`Link to box.com: `}</strong>{`https://box.com/`}</li>
-              <li><strong>{`POC: `}</strong>{`Address here`}</li>
+              <h2>{COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}<EditContractorLink /></h2>
+              <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{`https://box.com/`}</li>
+              <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{`Address here`}</li>
               <span>
-                <li><strong>{`Hearings sent to Contractor A this week: `}</strong>{`50 of 160`}<EditHearingsSentLink /></li>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>{`50 of 160`}<EditHearingsSentLink /></li>
               </span>
               </ul>
             </div>
             <span {...toggleStyle}>
-              <h3>{`Temporarily stop work assignment`}</h3>
-              <ToggleSwitch />
-            </span>
-          </div>
-          <div {...userListItemStyle}>
-            <div>
-              <ul {...instructionListStyle}>
-                <h2>{`Contractor B`}<EditContractorLink /></h2>
-                <li><strong>{`Link to box.com: `}</strong>{`https://box.com/`}</li>
-                <li><strong>{`POC: `}</strong>{`Address here`}</li>
-                <span>
-                  <li><strong>{`Hearings sent to Contractor A this week: `}</strong>{`50 of 160`}<EditHearingsSentLink /></li>
-                </span>
-              </ul>
-            </div>
-            <span {...toggleStyle}>
-              <h3>{`Temporarily stop work assignment`}</h3>
+              <h3>{COPY.TRANSCRIPTION_SETTINGS_WORK_TOGGLE}</h3>
               <ToggleSwitch />
             </span>
           </div>
@@ -154,11 +139,11 @@ export default class TranscriptionSettings extends React.PureComponent {
       <React.Fragment>
         <div>
           <h1 className="cf-margin-bottom-0" {...headerStyling}>
-            {`Transcription Settings`}
+            {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
           <div {...headerContainerStyling}>
             <h2 {...headerStyling}>
-              {`Edit Current Contractors`}
+              {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
             <span {...contractorButtonStyle}>
               {this.removeContractorButton()}
@@ -176,7 +161,7 @@ export default class TranscriptionSettings extends React.PureComponent {
   render = () =>
     <AppSegment filledBackground>
       <div {...returnLinkStyle}>
-        <span><Link linkStyling>&lt; Back to transcription queue</Link>&nbsp;</span>
+        <span><Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>&nbsp;</span>
       </div>
       <div>
         {this.mainContent()}
