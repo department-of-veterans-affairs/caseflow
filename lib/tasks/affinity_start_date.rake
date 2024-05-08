@@ -22,17 +22,37 @@ namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task affinity_start_date: :environment do
     dockets = %w[legacy hearing direct_review evidence_submission]
+    docket_results = []
 
-    priority_receipt_dates =
-      dockets.map do |docket|
-        DistributedCase.where(docket: docket, priority: true)&.first&.task&.appeal&.receipt_date
+    dockets.each do |docket|
+      docket_results << {
+        receipt_date: DistributedCase.where(docket: docket, priority: true)&.first&.task&.appeal&.receipt_date,
+        priority: true,
+        docket_type: docket
+      }
+    end
+
+    dockets.each do |docket|
+      docket_results << {
+        receipt_date: DistributedCase.where(docket: docket, priority: false)&.first&.task&.appeal&.receipt_date,
+        priority: false,
+        docket_type: docket
+      }
+    end
+
+    docket_results.each do |docket_result|
+      case docket_result[:docket_type]
+      when "legacy"
+        docket_instance = LegacyDocket.new
+      when "hearing"
+        docket_instance = HearingRequestDocket.new
+      when "direct_review"
+        docket_instance = DirectReviewDocket.new
+      when "evidence_submission"
+        docket_instance = EvidenceSubmissionDocket.new
       end
 
-    nonpriority_receipt_dates =
-      dockets.map do |docket|
-        DistributedCase.where(docket: docket, priority: false)&.first&.task&.appeal&.receipt_date
-      end
-
-    receipt_dates = priority_receipt_dates.concat(nonpriority_receipt_dates)
+      docket_instance.appeals(priority: docket_result[:priority], ready: true).where(receipt_date: docket_result[:receipt_date])
+    end
   end
 end
