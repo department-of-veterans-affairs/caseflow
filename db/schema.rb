@@ -1913,7 +1913,7 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
-    t.integer "transcription_contractor_id"
+    t.bigint "transcription_contractor_id"
     t.string "transcription_status", comment: "Possible values: 'unassigned', 'in_transcription', 'completed', 'completed_overdue'"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
     t.integer "updated_by_id"
