@@ -205,8 +205,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
         "Change of address": AddressChangeMailTask.name,
         "Evidence or argument": EvidenceOrArgumentMailTask.name,
-        "Returned or undeliverable mail": ReturnedUndeliverableCorrespondenceMailTask.name,
-        "Sent to ROJ": SentToRojMailTask.name,
         "VACOLS updated": VacolsUpdatedMailTask.name
       }
 

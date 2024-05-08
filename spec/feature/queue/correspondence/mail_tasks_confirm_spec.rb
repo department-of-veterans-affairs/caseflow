@@ -41,10 +41,10 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       checkbox_div = page.find(:xpath, '//*[@id="mail-tasks-left"]')
       checkboxes = checkbox_div.all(".cf-form-checkbox ")[0..2].each { |cb| cb.set(true) }
-      expect(checkboxes.size).to eq(3)
+      expect(checkboxes.size).to eq(2)
       checkbox_div = page.find(:xpath, '//*[@id="mail-tasks-right"]')
       checkboxes = checkbox_div.all(".cf-form-checkbox ")[0..2].each { |cb| cb.set(true) }
-      expect(checkboxes.size).to eq(3)
+      expect(checkboxes.size).to eq(2)
     end
 
     it "Select Mail Tasks and Submit" do
