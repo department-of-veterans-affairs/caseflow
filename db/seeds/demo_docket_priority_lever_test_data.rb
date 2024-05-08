@@ -40,6 +40,12 @@ module Seeds
       create_direct_review_priority_dockets
       create_hearings_non_priority_dockets
       create_hearings_priority_dockets
+      create_cavc_legacy_non_priority_dockets
+      create_cavc_legacy_priority_dockets
+      create_cavc_hearing_non_priority_dockets
+      create_cavc_hearing_priority_dockets
+      create_legacy_non_priority_dockets
+      create_legacy_priority_dockets
     end
 
     def initialize_docket_seeds_lists
