@@ -3,9 +3,6 @@
 # Module to notify appellant if Hearing is Scheduled
 module HearingScheduled
   extend AppellantNotification
-  # rubocop:disable all
-  Constants.VA_NOTIFY_TEMPLATE_NAMES.hearing_scheduled = "Hearing scheduled"
-  # rubocop:enable all
 
   def create_hearing(task_values)
     # original method defined in app/models/tasks/schedule_hearing_task.rb

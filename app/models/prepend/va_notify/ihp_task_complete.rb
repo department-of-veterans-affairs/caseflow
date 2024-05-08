@@ -12,9 +12,6 @@
 # within the Appeal States table updated to be TRUE.
 module IhpTaskComplete
   extend AppellantNotification
-  # rubocop:disable all
-  Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_complete = "VSO IHP complete"
-  # rubocop:enable all
 
   # All variants of IHP Tasks
   IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze

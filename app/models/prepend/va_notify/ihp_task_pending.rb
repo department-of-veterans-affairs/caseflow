@@ -16,9 +16,6 @@
 
 module IhpTaskPending
   extend AppellantNotification
-  # rubocop:disable all
-  Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending = "VSO IHP pending"
-  # rubocop:enable all
 
   # All variants of IHP Tasks
   IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
