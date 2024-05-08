@@ -57,11 +57,7 @@ describe CaseDistributionIneligibleJudges, :postgres do
 
         expect(result).to contain_exactly(
           { id: inactive_user.id, css_id: inactive_user.css_id },
-<<<<<<< HEAD
-          { id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id },
-=======
           { id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id }
->>>>>>> feature/APPEALS-26750.cleanup
         )
         expect(result).not_to include({ id: active_user.id, css_id: active_user.css_id })
         expect(result.size).to eq(2)
