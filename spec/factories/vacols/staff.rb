@@ -72,6 +72,12 @@ FactoryBot.define do
       sattyid { generated_sattyid }
     end
 
+    trait :inactive_judge do
+      svlj { "J" }
+      sactive { "I" }
+      sattyid { generated_sattyid }
+    end
+
     trait :hearing_coordinator do
       sdept { "HRG" }
       sactive { "A" }

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe AttorneyCaseReview, :all_dbs do
+  it_behaves_like "AttorneyCaseReview belongs_to polymorphic appeal" do
+    subject { create(:attorney_case_review, :legacy) }
+  end
+
   let(:attorney) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
 

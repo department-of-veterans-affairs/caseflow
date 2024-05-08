@@ -26,7 +26,13 @@ import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
 
-import { getIssueProgramDescription, getIssueTypeDescription, getIssueDiagnosticCodeLabel } from '../utils';
+import {
+  getIssueProgramDescription,
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel,
+  getMstPactStatus,
+  getLegacyMstPactStatus } from '../utils';
+
 import {
   fullWidth,
   REMAND_REASONS,
@@ -260,6 +266,10 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     delete LEGACY_REMAND_REASONS[sectionName][index];
   };
 
+  filterSelectableAmaRemandReasons = (sectionName, index) => {
+    delete REMAND_REASONS[sectionName][index];
+  };
+
   getCheckboxGroup = () => {
     const { appeal } = this.props;
     const checkboxGroupProps = {
@@ -308,6 +318,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       );
     }
 
+    if (this.props.featureToggles.additional_remand_reasons) {
+      this.filterSelectableAmaRemandReasons('medicalExam', 0);
+      this.filterSelectableAmaRemandReasons('medicalExam', 1);
+    } else {
+      this.filterSelectableAmaRemandReasons('medicalExam', 2);
+      this.filterSelectableAmaRemandReasons('medicalExam', 3);
+      this.filterSelectableAmaRemandReasons('medicalExam', 4);
+      this.filterSelectableAmaRemandReasons('medicalExam', 5);
+    }
+
     return (
       <div {...flexContainer}>
         <div {...flexColumn}>
@@ -326,7 +346,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
-            label={<h3>Medical examination and opinion</h3>}
+            label={this.props.featureToggles.additional_remand_reasons ?
+              <h3>Medical examination and opinion</h3> :
+              <h3>Medical examination</h3>}
             name="medical-exam"
             options={REMAND_REASONS.medicalExam}
             {...checkboxGroupProps}
@@ -366,7 +388,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             `Program: ${getIssueProgramDescription(issue)}` :
             `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-        {!appeal.isLegacyAppeal && <div {...smallBottomMargin}>Issue description: {issue.description}</div>}
+        {!appeal.isLegacyAppeal && (
+          <React.Fragment>
+            <div {...smallBottomMargin}>Issue description: {issue.description}</div>
+            <div {...smallBottomMargin}>Special Issues: {getMstPactStatus(issue)}</div>
+          </React.Fragment>
+        )}
         {appeal.isLegacyAppeal && (
           <React.Fragment>
             <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
@@ -375,6 +402,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
             <div {...smallBottomMargin}>Note: {issue.note}</div>
+            <div {...smallBottomMargin}>Special Issues: {getLegacyMstPactStatus(issue)}</div>
           </React.Fragment>
         )}
         {highlight && !this.getChosenOptions().length && (

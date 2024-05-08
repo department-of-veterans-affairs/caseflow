@@ -16,6 +16,7 @@ Rails.application.configure do
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
     config.action_controller.perform_caching = true
+    config.action_controller.enable_fragment_cache_logging = true
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
@@ -26,7 +27,7 @@ Rails.application.configure do
     # config.cache_store = :null_store
   end
 
-  # Store uploaded files on the local file system (see config/storage.yml for options)
+  # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
   if ENV["WITH_TEST_EMAIL_SERVER"]
@@ -62,12 +63,15 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
-  # Raises error for missing translations
+  # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Bypass DNS rebinding protection for all `demo` sub-domains
+  config.hosts << ".demo.appeals.va.gov"
 
   #=====================================================================================================================
   # Please keep custom config settings below this comment.
@@ -111,6 +115,10 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
+  # RequestIssue paginates_per offset (vbms intake)
+  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
+  ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
+
   # Necessary vars needed to create virtual hearing links
   # Used by VirtualHearings::LinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
@@ -138,6 +146,9 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
+
+  # Dynatrace variables
+  ENV["STATSD_ENV"] = "development"
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"

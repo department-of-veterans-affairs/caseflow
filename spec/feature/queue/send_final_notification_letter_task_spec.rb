@@ -113,7 +113,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
       # check the screen output and model status
       appeal_final_letter_task = root_task.appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
-      expect(page).to have_content(`#{appeal_final_letter_task.type} completed`)
+      expect(page).to have_content("#{appeal_final_letter_task.type} completed")
       expect(appeal_final_letter_task.status).to eq("completed")
     end
 
@@ -144,7 +144,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
       # check the screen output and model status
       appeal_initial_letter_task = root_task.appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
-      expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
+      expect(page).to have_content("#{appeal_initial_letter_task.type} cancelled")
       expect(appeal_initial_letter_task.status).to eq("cancelled")
     end
   end
@@ -184,8 +184,8 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       visit("/queue")
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
       expect(page).to have_content("SendFinalNotificationLetterTask completed")
-
     end
+
     it "Finalice the process, select Yes in the radio bottom option" do
       initial_letter_task.completed!
       post_initial_task.completed!
@@ -215,6 +215,5 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(page).to have_content("SendFinalNotificationLetterTask completed")
       expect(page).to have_content("Docket Switch")
     end
-
   end
 end

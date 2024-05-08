@@ -50,14 +50,18 @@ describe CaseDistributionIneligibleJudges, :postgres do
       let!(:inactive_user_no_vacols_record) { create(:user, :inactive) }
       let!(:active_user) { create(:user) }
       # The associated staff record needs to be ACTIVE with an inactive caseflow user record
-      let!(:inactive_user_vacols_record) { create(:staff, user: inactive_user )}
+      let!(:inactive_user_vacols_record) { create(:staff, user: inactive_user) }
 
       it ".ineligible_caseflow_judges returns correct records" do
         result = described_class.ineligible_caseflow_judges
 
         expect(result).to contain_exactly(
           { id: inactive_user.id, css_id: inactive_user.css_id },
+<<<<<<< HEAD
           { id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id },
+=======
+          { id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id }
+>>>>>>> feature/APPEALS-26750.cleanup
         )
         expect(result).not_to include({ id: active_user.id, css_id: active_user.css_id })
         expect(result.size).to eq(2)

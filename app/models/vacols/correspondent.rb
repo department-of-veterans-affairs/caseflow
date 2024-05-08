@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VACOLS::Correspondent < VACOLS::Record
-  require 'csv'
+  require "csv"
   self.table_name = "corres"
   self.primary_key = "stafkey"
 
@@ -20,6 +20,7 @@ class VACOLS::Correspondent < VACOLS::Record
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.extract(last_extract)
     query = <<-SQL
       select
@@ -49,7 +50,7 @@ class VACOLS::Correspondent < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, last_extract])
 
-    connection.exec_query(fmtd_query).to_hash
+    connection.exec_query(fmtd_query).to_a
   end
 
   # Take in a collection and return a csv friendly format
@@ -81,6 +82,7 @@ class VACOLS::Correspondent < VACOLS::Record
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   class << self
     private

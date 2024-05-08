@@ -46,7 +46,7 @@ module Caseflow::Error
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
-  class VaDotGovForeignVeteranError < StandardError; end
+  class VaDotGovForeignVeteranError < SerializableError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
@@ -463,6 +463,13 @@ module Caseflow::Error
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
   class InvalidNotificationStatusFormat < StandardError; end
+  class NotificationInitializationError < SerializableError
+    attr_accessor :message
+
+    def initialize(args = {})
+      @message = args[:message]
+    end
+  end
 
   # Pacman errors
   class PacmanApiError < StandardError
