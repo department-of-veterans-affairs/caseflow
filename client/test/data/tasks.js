@@ -261,7 +261,6 @@ export const amaTasksSplit = {
               value: 'PrivacyComplaintMailTask',
               label: 'Privacy complaint'
             },
-            // Do I remove these lines too?
             {
               value: 'ReturnedUndeliverableCorrespondenceMailTask',
               label: 'Returned or undeliverable mail'
