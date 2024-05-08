@@ -9,8 +9,8 @@ const IssueModificationList = (
     lastSection
   }
 ) => {
-  const issues = issuesArr.map((issue) => {
-    return <li key={issue.id}><IssueModification issue={issue} /></li>;
+  const issues = issuesArr.map((issue, id) => {
+    return <li key={id}><IssueModification issue={issue} /></li>;
   });
 
   return (
