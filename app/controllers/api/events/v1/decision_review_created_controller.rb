@@ -10,7 +10,11 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
-    render json: { message: error.message }, status: :unprocessable_entity
+    if error.message.include?("already exists")
+      render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :ok
+    else
+      render json: { message: error.message }, status: :unprocessable_entity
+    end
   end
 
   def decision_review_created_error
