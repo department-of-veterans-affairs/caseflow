@@ -6,25 +6,20 @@ class Organizations::UsersController < OrganizationsController
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
 
-    joined_org = Organization.includes(organizations_users: :user, organization_permissions: :organization_user_permissions).find(organization.id)
-    @new_frontend_data = joined_org.organization_permissions.sort_by { |op| op.permission }.as_json(
-      only: [:permission, :enabled],
+    joined_org = Organization.includes(
+      organizations_users:
+      :user,
+      organization_permissions:
+      :organization_user_permissions
+    ).find(organization.id)
+
+    @user_permissions = joined_org.organizations_users.sort_by(&:user_id).as_json(
+      only: [:user_id],
       include: [
-        organization_user_permission: { include: [organizations_user: { include: [user: { only: [:id, :css_id, :full_name] } ]} ]}
+        organization_user_permissions: { include: [organization_permission: { only: [:permission, :permitted] }] }
       ]
     )
 
-    org_users = organization.organizations_users
-    users_with_permissions = {}
-    org_users.each do |org_user|
-      org_user_permissions = OrganizationUserPermission.includes(
-        :organization_permission, :organizations_user
-      )
-        .where(organizations_user_id: org_user.id).pluck(:permission, :permitted, :user_id)
-      users_with_permissions[org_user.user[:id]] = org_user_permissions
-    end
-
-    @user_permissions = users_with_permissions
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do

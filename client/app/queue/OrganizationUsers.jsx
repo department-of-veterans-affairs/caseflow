@@ -76,12 +76,12 @@ export default class OrganizationUsers extends React.PureComponent {
     const payload = { data: { userId, permissionName } };
 
     ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).
-    then((response) => {
-      this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
-    }, (error) => {
-      console.log(error);
+      then((response) => {
+        this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
+      }, (error) => {
+        console.log(error);
       // handle error
-    });
+      });
   }
 
   generatePermissionsCheckboxes = (user) => {
@@ -98,16 +98,16 @@ export default class OrganizationUsers extends React.PureComponent {
       }
     };
 
-    const getCheckboxEnabled = (user, permission) => {
-      // prioritize state
+    const getCheckboxEnabled = (permission) => {
       const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) =>
-        storedCheckbox.userId == user.id && storedCheckbox.permissionName === permission.permission));
+        storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
 
+      // prioritize state
       if (typeof stateValue !== 'undefined') {
         return stateValue.checked;
       }
       // check props as the fallback
-      const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id == user.id).attributes;
+      const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id === user.id).attributes;
 
       if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
         return true;
@@ -118,11 +118,10 @@ export default class OrganizationUsers extends React.PureComponent {
       }
 
       // check if user is marked as admin
-      if(permission.default_for_admin && user.attributes.admin) {
+      if (permission.default_for_admin && user.attributes.admin) {
         return true;
       }
 
-      // if(this.state.changingAdminRights.find((x) => ))
       return false;
 
     };
@@ -159,7 +158,8 @@ export default class OrganizationUsers extends React.PureComponent {
 
       let result = false;
       const parentPermission = this.props.organizationPermissions.find((permission) => permission.id === parentId);
-      const orgUserPermissions = this.props.orgnizationUserPermissions[user.id];
+      const orgUserPermissions = this.props.orgnizationUserPermissions.find((x) =>
+        x.user_id === Number(user.id)).organization_user_permissions;
 
       const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
         permission.userId === userId &&
@@ -170,7 +170,9 @@ export default class OrganizationUsers extends React.PureComponent {
       }
 
       orgUserPermissions.forEach((permission) => {
-        if (permission[0] === parentPermission.permission && permission[1] && typeof checkboxInState === 'undefined') {
+        if (permission.organization_permission.permission === parentPermission.permission &&
+          permission.permitted &&
+          typeof checkboxInState === 'undefined') {
           result = true;
         }
       });
@@ -181,29 +183,24 @@ export default class OrganizationUsers extends React.PureComponent {
     return (
       renderedPermissions().map((permission) => {
         const marginL = permission.parent_permission_id ? '25px' : '0px';
-        const NODcheckboxStyle = css({
-          marginTop: '0',
-          marginLeft: marginL,
-          marginBottom: '10px'
-        });
 
-        const testStyle = {
+        const checkboxStyle = {
           style: {
             marginTop: '0',
             marginLeft: marginL,
             marginBottom: '10px'
           }
-        }
+        };
 
         return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
           name={`${user.id}-${permission.permission}`}
           label={permission.description}
           key={`${user.id}-${permission.permission}`}
-          styling={testStyle}
+          styling={checkboxStyle}
           onChange={this.modifyUserPermission(user.id, permission.permission)}
           defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
           disabled={checkAdminPermission(permission.permission)}
-          value={getCheckboxEnabled(user, permission)}
+          value={getCheckboxEnabled(permission)}
 
         />);
       })
