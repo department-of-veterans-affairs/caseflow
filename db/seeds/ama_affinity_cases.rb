@@ -41,7 +41,8 @@ module Seeds
 
     def find_or_create_active_cda_admin_judge(css_id, full_name)
       User.find_by_css_id(css_id) ||
-        create(:user, :judge, :admin_intake_role, :cda_control_admin, :bva_intake_admin, :team_admin, css_id: css_id, full_name: full_name)
+        create(:user, :judge, :admin_intake_role, :cda_control_admin, :bva_intake_admin, :team_admin,
+               :with_vacols_judge_record, css_id: css_id, full_name: full_name)
     end
 
     def create_cda_admin_user
