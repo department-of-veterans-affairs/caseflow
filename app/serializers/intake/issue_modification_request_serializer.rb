@@ -15,7 +15,6 @@ class Intake::IssueModificationRequestSerializer
   attribute :decision_reason
   attribute :request_reason
   attribute :request_issue_id
-  # TODO: See if all fields for request issue are needed or if it should be trimmed down
   attribute :request_issue
   attribute :requestor
   attribute :decider

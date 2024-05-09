@@ -7,7 +7,6 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
     return;
   }
 
-  // TODO: Copied from request issue utils. Remove all the extra fields that aren't neccessary.
   return issueModificationRequests.map((modificationRequest) => {
     return {
       // All the standard issue modification fields

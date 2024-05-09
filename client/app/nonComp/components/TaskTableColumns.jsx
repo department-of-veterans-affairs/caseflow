@@ -53,10 +53,8 @@ export const decisionReviewTypeColumn = (tasks) => {
 
 export const pendingIssueModificationColumn = () => {
   return {
-    // TODO: Replace these with constants
-    header: 'Pending Requests',
-    name: 'pendingIssueRequests',
-    // TODO: make this matchup with the backend naming convention
+    header: COPY.CASE_LIST_TABLE_TASK_PENDING_REQUESTS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.PENDING_ISSUE_MODIFICATION_COUNT.name,
     valueFunction: (task) => task.appeal.pendingIssueModificationCount,
     backendCanSort: true,
     getSortValue: (task) => task.appeal.pendingIssueModificationCount
