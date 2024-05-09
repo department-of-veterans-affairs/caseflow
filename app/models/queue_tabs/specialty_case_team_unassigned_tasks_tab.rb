@@ -35,10 +35,6 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   end
 
   def no_task_limit
-    false
-  end
-
-  def custom_task_limit
-    60
+    true
   end
 end
