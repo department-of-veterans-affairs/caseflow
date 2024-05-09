@@ -9,7 +9,8 @@ describe SendNotificationJob, type: :job do
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
            event_date: Time.zone.today,
-           notification_type: "Email")
+           notification_type: "Email",
+           notifiable: appeal)
   end
   let(:legacy_appeal_notification) do
     create(:notification,
@@ -17,7 +18,8 @@ describe SendNotificationJob, type: :job do
            appeals_type: "LegacyAppeal",
            event_type: "Appeal docketed",
            event_date: Time.zone.today,
-           notification_type: "SMS")
+           notification_type: "SMS",
+           notifiable: appeal)
   end
   let(:appeal) do
     create(:appeal,
@@ -26,6 +28,7 @@ describe SendNotificationJob, type: :job do
            homelessness: false,
            veteran_file_number: "123456789")
   end
+  let(:legacy_appeal) { create(:legacy_appeal) }
   let!(:no_name_appeal) do
     create(:appeal,
            docket_type: "Appeal",
@@ -49,16 +52,16 @@ describe SendNotificationJob, type: :job do
     {
       participant_id: "123456789",
       status: success_status,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-      appeal_type: "Appeal"
+      appeal_id: appeal.external_id,
+      appeal_type: appeal.class.name
     }
   }
   let(:success_legacy_message_attributes) {
     {
       participant_id: "123456789",
       status: success_status,
-      appeal_id: "123456",
-      appeal_type: "LegacyAppeal"
+      appeal_id: legacy_appeal.external_id,
+      appeal_type: legacy_appeal.class.name
     }
   }
   let(:deceased_legacy_message_attributes) {
@@ -74,15 +77,15 @@ describe SendNotificationJob, type: :job do
       participant_id: "246813579",
       status: success_status,
       appeal_id: no_name_appeal.uuid,
-      appeal_type: "Appeal"
+      appeal_type: appeal.class.name
     }
   }
   let(:error_message_attributes) {
     {
       participant_id: nil,
       status: error_status,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1578",
-      appeal_type: "Appeal"
+      appeal_id: appeal.external_id,
+      appeal_type: appeal.class.name
     }
   }
   let(:deceased_message_attributes) {
@@ -430,8 +433,6 @@ describe SendNotificationJob, type: :job do
   end
 
   context "feature flags for sending legacy notifications" do
-    let(:legacy_appeal) { create(:legacy_appeal) }
-
     it "should only send notifications when feature flag is turned on" do
       FeatureToggle.enable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)

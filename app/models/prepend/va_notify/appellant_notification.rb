@@ -153,8 +153,8 @@ module AppellantNotification
         event_type: template_name,
         notification_type: notification_type,
         participant_id: msg_bdy.participant_id,
-        event_date: Time.zone.today
-        # do we need to update this hash with the notifiable attr?
+        event_date: Time.zone.today,
+        notifiable: appeal
       )
     end
     SendNotificationJob.perform_later(msg_bdy.to_json)

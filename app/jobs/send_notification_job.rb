@@ -130,7 +130,8 @@ class SendNotificationJob < CaseflowJob
       appeals_type: @message.appeal_type,
       event_type: event_type,
       event_date: Time.zone.today,
-      notification_type: notification_type
+      notification_type: notification_type,
+      notifiable: appeal
     }
 
     if legacy_appeal_docketed_event? && FeatureToggle.enabled?(:appeal_docketed_event)
