@@ -13,8 +13,8 @@ const mailTasksLeft = [
 ];
 
 const mailTasksRight = [
+  'Associated with Claims Folder',
   'VACOLS updated',
-  'Associated with Claims Folder'
 ];
 
 const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal;
