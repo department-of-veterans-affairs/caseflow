@@ -35,13 +35,21 @@ class ClaimHistoryService
     all_data.entries.each do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
-      process_task_events(change_data)
-      process_decision_issue_events(change_data)
+      process_decision_issue_and_task_events(change_data)
+      # Don't process task events outside of decision issues unless there are no decision issues
+      process_task_events(change_data) unless change_data["task_status"] == "completed"
     end
 
     # Compact and sort in place to reduce garbage collection
     @events.compact!
-    @events.sort_by! { |event| [event.task_id, event.event_date] }
+    @events.sort_by! do |event|
+      [
+        event.task_id,
+        event.event_type == :claim_creation ? 0 : 1,
+        event.event_type == :completed ? 1 : 0,
+        event.event_date
+      ]
+    end
 
     # This currently relies on the events being sorted before hand
     filter_events_for_last_action_taken!
@@ -108,6 +116,7 @@ class ClaimHistoryService
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def process_timing_filter(new_events)
     return new_events unless @filters[:timing].present? && TIMING_RANGES.include?(@filters[:timing][:range])
 
@@ -116,20 +125,27 @@ class ClaimHistoryService
     start_date, end_date = parse_date_strings(start_date, end_date)
 
     new_events.select do |event|
-      event_date = Date.parse(event.event_date)
+      next unless event.event_date
+
+      event_date = event.event_date.to_date
       (start_date.nil? || event_date >= start_date) && (end_date.nil? || event_date <= end_date)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def date_range_for_timing_filter
     {
       "before" => [nil, @filters[:timing][:start_date]],
       "after" => [@filters[:timing][:start_date], nil],
       "between" => [@filters[:timing][:start_date], @filters[:timing][:end_date]],
-      "last_7_days" => [Time.zone.today - 6, Time.zone.today],
-      "last_30_days" => [Time.zone.today - 29, Time.zone.today],
-      "last_365_days" => [Time.zone.today - 364, Time.zone.today]
+      "last_7_days" => [Time.zone.today - 6, today_with_1_day_buffer],
+      "last_30_days" => [Time.zone.today - 29, today_with_1_day_buffer],
+      "last_365_days" => [Time.zone.today - 364, today_with_1_day_buffer]
     }[@filters[:timing][:range]]
+  end
+
+  def today_with_1_day_buffer
+    Time.zone.today + 1.day
   end
 
   # Date helpers for filtering
@@ -206,12 +222,16 @@ class ClaimHistoryService
     end
   end
 
-  def process_decision_issue_events(change_data)
+  def process_decision_issue_and_task_events(change_data)
     decision_issue_id = change_data["decision_issue_id"]
 
     if decision_issue_id && !@processed_decision_issue_ids.include?(decision_issue_id)
       @processed_decision_issue_ids.add(decision_issue_id)
       save_events(ClaimHistoryEvent.create_completed_disposition_event(change_data))
+
+      # Status events sometimes need disposition information so make sure it lines up
+      # with a decision issue row in the database
+      process_task_events(change_data)
     end
   end
 

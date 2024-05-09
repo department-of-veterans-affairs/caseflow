@@ -89,9 +89,9 @@ class Helpers::Sanitizers
   def sanitize(klass, record)
     table_name = klass.name.split("::")[1].downcase
 
-    exist_hash = record.attributes.map do |k, v|
-      [k, !v.nil?]
-    end.to_h
+    exist_hash = record.attributes.transform_values do |v|
+      !v.nil?
+    end
 
     white_list(record, send("white_list_#{table_name}"))
     look_for_pii(record)

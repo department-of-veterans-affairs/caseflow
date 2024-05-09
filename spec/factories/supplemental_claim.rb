@@ -104,6 +104,15 @@ FactoryBot.define do
             type: "OtherClaimant",
             payee_code: payee_code
           )
+        when :other_claimant_not_listed
+          create(
+            :claimant,
+            :with_unrecognized_appellant_not_listed_poa,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            type: "OtherClaimant",
+            payee_code: payee_code
+          )
         when :veteran_claimant
           sc.update!(veteran_is_not_claimant: false)
           create(
@@ -211,7 +220,7 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |sc|
-        css_id = "CSS_ID#{generate :css_id}"
+        css_id = "CSSID#{generate :css_id}"
 
         intake_user = User.find_by(css_id: css_id)
 
@@ -230,7 +239,8 @@ FactoryBot.define do
           decision_review: sc,
           request_issues: sc.request_issues,
           benefit_type: sc.benefit_type,
-          disposition: "Granted"
+          disposition: "Granted",
+          caseflow_decision_date: 5.days.ago.to_date
         )
       end
     end

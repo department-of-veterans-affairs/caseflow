@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-/* eslint-disable max-len */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -23,6 +22,7 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setUserIsCamoEmployee,
+  setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
@@ -126,6 +126,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
+    this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -220,6 +221,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justificationReason}
+      mstFeatureToggle={this.props.featureToggles.mstIdentification}
+      pactFeatureToggle={this.props.featureToggles.pactIdentification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
     />
   );
 
@@ -231,6 +236,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacyMstPactIdentification}
+          mstIdentification={this.props.featureToggles.mstIdentification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -245,6 +252,10 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justificationReason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
+        mstFeatureToggle={this.props.featureToggles.mstIdentification}
+        pactFeatureToggle={this.props.featureToggles.pactIdentification}
         {...props.match.params}
       />
     );
@@ -453,6 +464,10 @@ class QueueApp extends React.PureComponent {
     <InProgressTaskModal {...props.match.params} />
   );
 
+  routedReturnToSctModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
     props
   ) => (
@@ -590,7 +605,7 @@ class QueueApp extends React.PureComponent {
     <OrganizationUsers {...props.match.params} />
   );
 
-  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} featureToggles={this.props.featureToggles} />;
 
   routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
@@ -671,13 +686,14 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     };
   };
 
@@ -1354,6 +1370,13 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
+                }`}
+              title="Return to SCT | Caseflow"
+              render={this.routedReturnToSctModal}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIDEO} | Caseflow`}
@@ -1444,6 +1467,8 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setUserIsCamoEmployee: PropTypes.func,
   userIsCamoEmployee: PropTypes.bool,
+  setUserIsSCTCoordinator: PropTypes.func,
+  userIsSCTCoordinator: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1481,6 +1506,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setUserIsCamoEmployee,
+      setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
     },
