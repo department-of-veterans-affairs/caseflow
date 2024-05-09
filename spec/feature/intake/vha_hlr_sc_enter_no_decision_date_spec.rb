@@ -199,7 +199,8 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Test adding a new issue without decision date then adding one
       # Click the links and get to the edit issues page
-      # As an admin if the task is assigned or in progressed then it is presummed that Task is being opened from in progress tab
+      # As an admin if the task is assigned or in progressed then it is presummed
+      # that Task is being opened from in progress tab
       # and in that case Decision date is no longer  optional.
       User.authenticate!(user: admin_user)
       click_link veteran.name.to_s
