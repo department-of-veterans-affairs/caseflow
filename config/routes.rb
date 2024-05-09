@@ -407,6 +407,7 @@ Rails.application.routes.draw do
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
+    patch '/organizations/users/update_permission', to: 'organizations/users#modify_user_permission'
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
@@ -415,7 +416,6 @@ Rails.application.routes.draw do
     resources :members, only: [:index], controller: 'organizations/task_summary'
     resources :task_summary, only: [:index], controller: 'organizations/task_summary'
   end
-get '/organizations/users/update_permission', to: 'organizations/users#modify_user_permission'
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
   get '/organizations(*rest)', to: 'organizations#org_index'
 
