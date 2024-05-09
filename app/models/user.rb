@@ -110,10 +110,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations.include?(InboundOpsTeam.singleton)
   end
 
-  def mail_superuser?
-    organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
-  end
-
   def organization_permissions(org)
     # get organization user from the org relationship
     org_user = organizations_users.find_by(organization: org)
