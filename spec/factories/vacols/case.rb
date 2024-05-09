@@ -276,13 +276,15 @@ FactoryBot.define do
           case_issue.save
         end
 
-        create(:case,
-               bfdpdcn: vacols_case.bfddec,
-               bfac: "7", 
-               folder_number_equal: true, 
-               original_case: vacols_case,
-               case_issues_equal: true, 
-               original_case_issues: vacols_case.case_issues)
+        create(
+          :case,
+          bfdpdcn: vacols_case.bfddec,
+          bfac: "7",
+          folder_number_equal: true,
+          original_case: vacols_case,
+          case_issues_equal: true,
+          original_case_issues: vacols_case.case_issues
+        )
       end
     end
 
