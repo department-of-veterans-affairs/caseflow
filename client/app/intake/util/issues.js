@@ -212,23 +212,24 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   );
 };
 
-export const formatIssueModificationRequests = (issueModificationRequests) => {
-  if (!issueModificationRequests) {
+export const formatModificationIssueRequests = (modificationIssueRequests) => {
+  if (!modificationIssueRequests) {
     return;
   }
 
-  return issueModificationRequests.map((issue) => {
+  return modificationIssueRequests.map((issue) => {
     return {
       id: String(issue.id),
       requestIssueId: issue.request_issue_id,
       requestType: issue.request_type,
-      nonratingIssueCategory: issue.pending_nonrating_issue_category,
-      decisionText: issue.pending_decision_text,
-      decisionDate: issue.pending_decision_date,
+      nonratingIssueCategory: issue.nonrating_issue_category,
+      decisionText: issue.decision_text,
+      decisionDate: issue.decision_date,
       requestReason: issue.request_reason,
       withdrawlRequestDate: issue.withdrawl_request_date,
       status: issue.status,
-      removeOriginalIssue: issue.remove_original_issue
+      removeOriginalIssue: issue.remove_original_issue,
+      benefitType: issue.benefit_type
     };
   });
 };
@@ -452,7 +453,7 @@ export const formatIssuesBySection = (issues) => {
   );
 };
 
-export const formatIssueModificationRequestsBySection = (issueModificationRequests) => {
+export const formatModificationIssueRequestsBySection = (issueModificationRequests) => {
   return issueModificationRequests.reduce(
     (result, pendingIssue) => {
       (result.pendingAdminReview || (result.pendingAdminReview = [])).push(pendingIssue);
