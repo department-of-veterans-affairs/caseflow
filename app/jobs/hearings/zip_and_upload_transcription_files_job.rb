@@ -1,15 +1,39 @@
 # frozen_string_literal: true
 
 class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
+  include Hearings::EnsureCurrentUserIsSet
+
+  queue_with_priority :low_priority
+
+  attr_reader :tmp_files_to_cleanup
+
+  class ZipFileUploadError < StandardError; end
+
+  retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, _exception|
+    job.cleanup_tmp(job.tmp_files_to_cleanup)
+    # this error will allow the TranscriptionPackage workflow to customize a response email
+    fail ZipFileUploadError
+  end
+
   def perform(hearing_lookup_hashes)
+    @tmp_files_to_cleanup = []
+
+    ensure_current_user_is_set
+
     hearing_lookup_hashes.each do |hearing_lookup_hash|
       @hearing = ALLOWED_HEARING_KLASSES[hearing_lookup_hash[:hearing_type]].find(hearing_lookup_hash[:hearing_id])
       tmp_file_paths = fetch_transcription_files
       zip_file_path = zip(tmp_file_paths)
       formatted_zip_path = rename_before_upload(zip_file_path)
+      tmp_files_to_cleanup.push(*tmp_file_paths, formatted_zip_path)
       create_transcription_file_for_zip(formatted_zip_path)&.upload_to_s3!
-      cleanup_tmp(tmp_file_paths + [formatted_zip_path])
     end
+    cleanup_tmp(tmp_files_to_cleanup)
+  end
+
+  def cleanup_tmp(file_paths)
+    file_paths&.each { |path| File.delete(path) if File.exist?(path) }
+    Rails.logger.info("Cleaned up the following files from tmp: #{file_paths}")
   end
 
   private
@@ -69,17 +93,20 @@ class Hearings::ZipAndUploadTranscriptionFilesJob < CaseflowJob
   end
 
   def create_transcription_file_for_zip(file_path)
-    TranscriptionFile.create!(
-      file_name: file_path.split("/").last,
-      hearing_id: @hearing.id,
-      hearing_type: @hearing.class.name,
-      docket_number: @hearing.docket_number,
-      file_type: "zip",
-      created_by_id: RequestStore[:current_user].id
-    )
-  end
+    file_name = file_path.split("/").last
+    created_by_id = RequestStore[:current_user].id
 
-  def cleanup_tmp(file_paths)
-    file_paths.each { |path| File.delete(path) if File.exist?(path) }
+    begin
+      TranscriptionFile.create!(
+        file_name: file_name,
+        hearing_id: @hearing.id,
+        hearing_type: @hearing.class.name,
+        docket_number: @hearing.docket_number,
+        file_type: "zip",
+        created_by_id: created_by_id
+      )
+    rescue ActiveRecord::RecordInvalid => error
+      Rails.logger.error "Failed to create transcription file: #{error.message}"
+    end
   end
 end
