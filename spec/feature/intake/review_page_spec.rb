@@ -549,6 +549,23 @@ feature "Intake Review Page", :postgres do
       end
     end
 
+    context "Correct banner shows when user is not VHA employee" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        FeatureToggle.enable!(:remove_comp_and_pen_intake)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      it "display REMOVE_INTAKE_COMP_AND_PEN message when vha_claim_review_establishment disabled" do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        expect(page).to have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+    end
+
     context "Current user is not a member of the VHA business line with feature toggle disabled" do
       let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
