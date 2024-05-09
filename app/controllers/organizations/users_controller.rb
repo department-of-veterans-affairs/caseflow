@@ -6,14 +6,7 @@ class Organizations::UsersController < OrganizationsController
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
 
-    joined_org = Organization.includes(
-      organizations_users:
-      :user,
-      organization_permissions:
-      :organization_user_permissions
-    ).find(organization.id)
-
-    @user_permissions = joined_org.organizations_users.sort_by(&:user_id).as_json(
+    @user_permissions = organization.organizations_users.sort_by(&:user_id).as_json(
       only: [:user_id],
       include: [
         organization_user_permissions: { include: [organization_permission: { only: [:permission, :permitted] }] }
@@ -39,20 +32,15 @@ class Organizations::UsersController < OrganizationsController
   def modify_user_permission
     user_id, permission_name = user_permission_params
 
-    pre_loaded_organization = Organization.includes(
-      organizations_users: :user,
-      organization_permissions: :organization_user_permissions
-    ).find(organization.id)
-
-    org_permission = pre_loaded_organization.organization_permissions.find_by(permission: permission_name)
-    target_user = pre_loaded_organization.organizations_users.find_by(user_id: user_id)
+    org_permission = organization.organization_permissions.find_by(permission: permission_name)
+    target_user = organization.organizations_users.find_by(user_id: user_id)
 
     if org_user_permission_cheker.can?(
       permission_name: org_permission.permission,
       organization: organization,
       user: target_user.user
     )
-      pre_loaded_organization.organizations_users
+    organization.organizations_users
         .find_by(user_id: user_id).organization_user_permissions
         .find_by(organization_permission: org_permission,
                  organizations_user: target_user)
@@ -60,7 +48,7 @@ class Organizations::UsersController < OrganizationsController
       render json: { checked: false }
 
     else
-      pre_loaded_organization.organizations_users.find_by(user_id: user_id)
+      organization.organizations_users.find_by(user_id: user_id)
         .organization_user_permissions
         .find_or_create_by!(organization_permission: org_permission,
                             organizations_user: target_user).update!(permitted: true)
