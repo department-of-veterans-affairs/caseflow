@@ -120,7 +120,6 @@ export const IntakeFrame = (props) => {
               <IntakeAddIssuesPage
                 featureToggles={props.featureToggles}
                 userCanEditIntakeIssues={props.userCanEditIntakeIssues}
-                userIsOrgAdmin={props.userIsOrgAdmin}
               />
             </IntakeLayout>
           </PageRoute>
