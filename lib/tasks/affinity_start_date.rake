@@ -52,7 +52,24 @@ namespace :db do
         docket_instance = EvidenceSubmissionDocket.new
       end
 
-      docket_instance.appeals(priority: docket_result[:priority], ready: true).where(receipt_date: docket_result[:receipt_date])
+      appeals = Appeal.joins(:appeal_affinity)
+        .where(docket_type: docket_result[:docket_type])
+        .extending(DistributionScopes)
+        .active
+        .ready_for_distribution
+        .where("affinity_start_date <= (?) OR case_id IS NULL", docket_result[:receipt_date])
+
+      if docket_result[:priority] == true
+        appeals.priority
+      else
+        appeals.nonpriority
+      end
+
+      next unless appeals
+
+      appeals.each(&:appeal_affinity)
+
+      # {}docket_instance.appeals(priority: docket_result[:priority], ready: true).where(receipt_date: docket_result[:receipt_date])
     end
   end
 end
