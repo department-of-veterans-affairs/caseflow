@@ -7,6 +7,7 @@ import SearchBar from '../../components/SearchBar';
 import { css } from 'glamor';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
+import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable';
 
 const searchBarStyles = css({
   '> div': {
@@ -28,8 +29,11 @@ const styles = {
   linkIconStyles: {
     marginLeft: '0.2em'
   },
-  buttonRow: {
+  buttonStyles: {
     display: 'inline-block'
+  },
+  tableStyles: {
+    marginTop: '5em'
   }
 };
 
@@ -69,7 +73,7 @@ export const tabConfig = [
             </Link>
           </div>
           <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
-            Please select the files you would like to dispatch for transcription
+            Please select the files you would like to dispatch for transcription:
             <div {...searchBarStyles}>
               <SearchBar
                 placeholder="Type to search..."
@@ -81,11 +85,15 @@ export const tabConfig = [
           </div>
           <div className="file-select" style={{ marginTop: '-2em' }}>
             <h2>0 files selected</h2>
-            <div className="button-row" style={styles.buttonRow} >
+            <div className="button-row" style={styles.buttonStyles} >
               <Button disabled> Package files</Button>
               <Button linkStyling>Cancel</Button>
             </div>
           </div>
+          <div style={styles.tableStyles}>
+            <TranscriptionFileDispatchTable />
+          </div>
+
         </>
       );
     }
@@ -117,7 +125,7 @@ export const tabConfig = [
     }
   },
   {
-    label: COPY.TRANSCRIPTION_DISPATCH_ALL_TAB,
+    label: COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB,
     page: () => {
       return (
         <>
