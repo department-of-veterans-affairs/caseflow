@@ -19,10 +19,6 @@ const issueModificationRow = (
     // withdrawReview
     modificationIssueRequestsObj
   }) => {
-  // let additionalArr = [];
-  // let modificationIssueArr = [];
-  // let removalIssueArr = [];
-  // let withdrawalIssueArr = [];
   const sections = [];
   const modificationIssueRequestsObjKeysLength = Object.keys(modificationIssueRequestsObj).length - 1;
   const modificationIssueRequestsArr = Object.entries(modificationIssueRequestsObj).sort();
@@ -38,7 +34,6 @@ const issueModificationRow = (
     //   modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
     const lastSection =
       modificationIssueRequestsObjKeysLength === index;
-    // console.log('lastSection', lastSection);
 
     const commonProps = {
       issuesArr: value,
@@ -104,10 +99,6 @@ const issueModificationRow = (
           userCanEditIntakeIssues={userCanEditIntakeIssues}
         /> */}
         {/*  {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />} */}
-
-        {/* <IssueModificationList
-          issuesObj={modificationIssueRequestsObj}
-        /> */}
         {sections}
       </div>
     ),
