@@ -101,8 +101,8 @@ module Seeds
       levers = CaseDistributionLevers.levers.map { |lever| lever[:item] }
       existing_levers = CaseDistributionLever.all.map(&:item)
 
-      puts "#{CaseDistributionLever.count} levers exist"
-      puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
+      Rails.logger.info("#{CaseDistributionLever.count} levers exist")
+      Rails.logger.info("Levers not created #{levers - existing_levers}") if levers.length != existing_levers.length
     end
 
     class << self

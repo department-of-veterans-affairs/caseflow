@@ -124,8 +124,6 @@ namespace :db do
 
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
-
-        # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
       # request CSS ID for task assignment if not given
@@ -147,9 +145,6 @@ namespace :db do
         docket_number += 1
         LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
       end
-      # veterans_with_250_appeals.each do |file_number|
-      #   LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user)
-      # end
     end
   end
 end

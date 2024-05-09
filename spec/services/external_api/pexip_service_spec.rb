@@ -29,14 +29,18 @@ describe ExternalApi::PexipService do
         "enable_overlay_text": true,
         "force_presenter_into_main": true,
         "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
-        "guest_pin": "5678901234#",
+        "guest_pin": "5678901",
         "name": "BVA1111111",
-        "pin": "1234567#",
+        "pin": "1234567",
         "tag": "CASEFLOW"
       }
     end
 
-    subject { pexip_service.create_conference(host_pin: "1234567#", guest_pin: "5678901234#", name: "1111111") }
+    let(:virtual_hearing) do
+      create(:virtual_hearing, host_pin: "1234567", guest_pin: "5678901", alias: "1111111")
+    end
+
+    subject { pexip_service.create_conference(virtual_hearing) }
 
     let(:success_create_resp) do
       HTTPI::Response.new(201, { "Location" => "api/admin/configuration/v1/conference/1234" }, {})
@@ -89,7 +93,8 @@ describe ExternalApi::PexipService do
   end
 
   describe "#delete_conference" do
-    subject { pexip_service.delete_conference(conference_id: "123") }
+    let(:conference_id) { "123" }
+    subject { pexip_service.delete_conference(conference_id: conference_id) }
 
     let(:success_del_resp) { HTTPI::Response.new(204, {}, {}) }
     let(:error_del_resp) { HTTPI::Response.new(404, {}, {}) }
@@ -100,12 +105,12 @@ describe ExternalApi::PexipService do
     end
 
     it "passed correct arguments to #send_pexip_request" do
-      expect(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      expect(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
       subject
     end
 
     it "success response" do
-      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
         .and_return(success_del_resp)
 
       expect(subject.code).to eq(204)
@@ -114,7 +119,7 @@ describe ExternalApi::PexipService do
     end
 
     it "error response" do
-      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}123/", :delete)
+      allow(pexip_service).to receive(:send_pexip_request).with("#{endpoint}#{conference_id}/", :delete)
         .and_return(error_del_resp)
 
       expect(subject.code).to eq(404)
