@@ -19,7 +19,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: '2em',
-    marginTop: '1em'
   },
   linkStyles: {
     display: 'inline-flex',

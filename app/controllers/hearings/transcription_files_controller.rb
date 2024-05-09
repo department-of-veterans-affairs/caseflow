@@ -5,7 +5,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
-  before_action :verify_user_organization, only: [:transcription_file_dispatch]
+  # before_action :verify_user_organization, only: [:transcription_file_dispatch]
 
   def verify_user_organization
     if !TranscriptionTeam.singleton.user_has_access?(current_user)
