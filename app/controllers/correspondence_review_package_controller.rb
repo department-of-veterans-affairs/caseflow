@@ -25,7 +25,8 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       efolder_upload_failed_before: EfolderUploadFailedTask.where(
         appeal_id: correspondence.id, type: "EfolderUploadFailedTask"
       ),
-      taskInstructions: task_instructions
+      taskInstructions: task_instructions,
+      display_intake_appeal: display_intake_appeal
     }
     render({ json: response_json }, status: :ok)
   end
@@ -76,6 +77,11 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   private
+
+  def display_intake_appeal
+    return true unless (current_user.mail_supervisor? || current_user.inbound_ops_team_superuser?)
+    correspondence.nod
+  end
 
   def update_veteran_on_correspondence
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])

@@ -8,7 +8,7 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
-import { connect } from 'react-redux';
+import { connect, useSelector  } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
@@ -33,6 +33,10 @@ export const CorrespondenceReviewPackage = (props) => {
     default_select_value: null,
     va_date_of_receipt: '',
   });
+  const correspondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+  const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true)
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -107,6 +111,8 @@ export const CorrespondenceReviewPackage = (props) => {
       const data = apiResWithVADOR;
 
       hasEfolderUploadTask(data.correspondence_tasks);
+
+      setDisplayIntakeAppeal(response.body.display_intake_appeal)
 
       if (response.body.efolder_upload_failed_before.length > 0) {
         setBannerInformation({
@@ -291,7 +297,7 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (props.packageDocumentType.name === '10182') && (
+            { displayIntakeAppeal && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
