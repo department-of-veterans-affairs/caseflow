@@ -90,6 +90,10 @@ class QueueTab
     false
   end
 
+  def custom_task_limit
+    TaskPager::TASKS_PER_PAGE
+  end
+
   # rubocop:disable Metrics/AbcSize
   def self.attorney_column_names
     [
