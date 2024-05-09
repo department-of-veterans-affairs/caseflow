@@ -3,8 +3,24 @@ import COPY from '../../../COPY';
 import Link from '../../components/Link';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
+import SearchBar from '../../components/SearchBar';
+import { css } from 'glamor';
+import Button from '../../components/Button';
+import PropTypes from 'prop-types';
+
+const searchBarStyles = css({
+  '> div': {
+    width: '100%'
+  },
+});
 
 const styles = {
+  rowstyles: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '2em',
+    marginTop: '1em'
+  },
   linkStyles: {
     display: 'inline-flex',
     fontSize: 'small',
@@ -12,7 +28,30 @@ const styles = {
   },
   linkIconStyles: {
     marginLeft: '0.2em'
+  },
+  buttonRow: {
+    display: 'inline-block'
   }
+};
+
+const Description = ({ text, searchPrompt }) => {
+  return (
+    <>
+      <div className="tab-description" style={styles.rowstyles} >
+        {text}
+        <div style={styles.rowstyles} className="cf-search-ahead-parent">
+          <div {...searchBarStyles}>
+            <SearchBar
+              placeholder="Type to search..."
+              size="big"
+              isSearchAhead
+              title={searchPrompt}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export const tabConfig = [
@@ -21,14 +60,32 @@ export const tabConfig = [
     page: () => {
       return (
         <>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }} >
-            Transcription owned by the Transcription Team are unassigned to a contractor:
+          <div className="tab-description" style={{ ...styles.rowstyles, marginTop: '-0.1em' }} >
+          Transcription owned by the Transcription Team are unassigned to a contractor:
             <Link>
               <span style={styles.linkStyles}>
                 Transcription settings
                 <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
               </span>
             </Link>
+          </div>
+          <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
+            Please select the files you would like to dispatch for transcription
+            <div {...searchBarStyles}>
+              <SearchBar
+                placeholder="Type to search..."
+                size="big"
+                isSearchAhead
+                title="Search by Docket Number, Claimant Name, File Number, or SSN"
+              />
+            </div>
+          </div>
+          <div className="file-select" style={{ marginTop: '-2em' }}>
+            <h2>0 files selected</h2>
+            <div className="button-row" style={styles.buttonRow} >
+              <Button disabled> Package files</Button>
+              <Button linkStyling>Cancel</Button>
+            </div>
           </div>
         </>
       );
@@ -39,7 +96,10 @@ export const tabConfig = [
     page: () => {
       return (
         <>
-          <p>Transcription owned by the Transcription Team are returned from contractor:</p>
+          <Description
+            text="Transcription owned by the Transcription Team are returned from contractor:"
+            searchPrompt="Search by work Order, Claimant Name, Docket Number, File Number or SSN"
+          />
         </>
       );
     }
@@ -49,7 +109,10 @@ export const tabConfig = [
     page: () => {
       return (
         <>
-          <p>Transcription owned by the Transcription Team are returned from contractor:</p>
+          <Description
+            text="Transcription owned by the Transcription Team are returned from contractor:"
+            searchPrompt="Search by work Order, or Docket Number"
+          />
         </>
       );
     }
@@ -59,10 +122,17 @@ export const tabConfig = [
     page: () => {
       return (
         <>
-          <p>All transcription owned by the Transcription team:</p>
+          <Description
+            text="All transcription owned by the Transcription team:"
+            searchPrompt="Search by work Order, or Docket Number"
+          />
         </>
       );
     }
   }
 ];
 
+Description.propTypes = {
+  text: PropTypes.string,
+  searchPrompt: PropTypes.string
+};
