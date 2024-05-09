@@ -188,6 +188,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,

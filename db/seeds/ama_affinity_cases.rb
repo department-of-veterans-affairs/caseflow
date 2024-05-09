@@ -107,6 +107,7 @@ module Seeds
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      create(:appeal_affinity, appeal: remand.remand_appeal)
 
       Timecop.return
     end
@@ -141,6 +142,7 @@ module Seeds
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+      create(:appeal_affinity, appeal: remand.remand_appeal)
 
       Timecop.return
     end
@@ -164,6 +166,7 @@ module Seeds
       # set the distribution task to assigned, if it was not already
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
     end
 
     def create_case_ready_for_more_than_hearing_affinity_days(judge)
@@ -185,6 +188,7 @@ module Seeds
       # set the distribution task to assigned, if it was not already
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
+      create(:appeal_affinity, appeal: appeal)
     end
   end
 end

@@ -212,6 +212,7 @@ module Seeds
       Timecop.travel(distribution_task_assigned_at_date)
         remand = create(:cavc_remand, source_appeal: ama_hearing_aod_cavc_appeal)
         remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+        create(:appeal_affinity, appeal: remand.remand_appeal)
       Timecop.return
     end
 
@@ -234,6 +235,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_aod_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
@@ -271,6 +273,7 @@ module Seeds
       Timecop.travel(distribution_task_assigned_at_date)
         remand = create(:cavc_remand, source_appeal: ama_hearing_cavc_appeal)
         remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+        create(:appeal_affinity, appeal: remand.remand_appeal)
       Timecop.return
     end
 
@@ -292,6 +295,7 @@ module Seeds
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
