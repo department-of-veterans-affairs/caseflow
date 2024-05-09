@@ -412,7 +412,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Date Completed asc
       # Currently swapping tabs does not correctly populate get params.
       # These statements will need to updated when that is fixed
-      click_button("tasks-organization-queue-tab-2")
+      click_button("tasks-organization-queue-tab-3")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
       earlier_date = 2.days.ago.strftime("%m/%d/%y")
@@ -894,18 +894,23 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Filtering by: Issue Type (1)")
 
         # Swap to the completed tab
-        click_button("tasks-organization-queue-tab-2")
+        click_button("tasks-organization-queue-tab-3")
         expect(page).to have_content(pipe_issue_category)
         expect(page).to have_content("Filtering by: Issue Type (1)")
 
         # Swap back to the in progress tab
-        click_button("tasks-organization-queue-tab-1")
+        click_button("tasks-organization-queue-tab-2")
         expect(page).to have_content(pipe_issue_category)
         expect(page).to_not have_content("Foreign Medical Program")
         expect(page).to have_content("Filtering by: Issue Type (1)")
 
         # Swap to the incomplete tab with no results
         click_button("tasks-organization-queue-tab-0")
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Swap to the pending tab with no results
+        click_button("tasks-organization-queue-tab-1")
         expect(page).to_not have_content("Foreign Medical Program")
         expect(page).to have_content("Filtering by: Issue Type (1)")
       end
@@ -990,7 +995,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Issues")
       expect(page).to have_content("Issue Type")
-      expect(page).to have_content("Higher-Level Review", count: 5)
+      expect(page).to have_content("Higher-Level Review", count: 4)
       expect(page).to have_content("Board Grant")
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
