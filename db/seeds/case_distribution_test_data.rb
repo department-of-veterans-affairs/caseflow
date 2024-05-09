@@ -160,27 +160,27 @@ module Seeds
     end
 
     # functions for creating appeals in batches
-    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, receipt_date, distribution_task_assigned_at_date)
+    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, receipt_date, appeal_affinity_start_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, distribution_task_assigned_at_date)
+        create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, appeal_affinity_start_date)
       end
     end
 
-    def create_create_legacy_appeals(number_of_appeals_to_create, receipt_date, distribution_task_assigned_at_date)
+    def create_create_legacy_appeals(number_of_appeals_to_create, receipt_date, appeal_affinity_start_date)
       number_of_appeals_to_create.times.each do
-        create_legacy_appeal(receipt_date, distribution_task_assigned_at_date)
+        create_legacy_appeal(receipt_date, appeal_affinity_start_date)
       end
     end
 
-    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, distribution_task_assigned_at_date)
+    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, appeal_affinity_start_date)
       number_of_appeals_to_create.times.each do
-        create_direct_review_appeal(receipt_date, distribution_task_assigned_at_date)
+        create_direct_review_appeal(receipt_date, appeal_affinity_start_date)
       end
     end
 
     # AMA HH AOD appeal creation functions
-    def create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, distribution_task_assigned_at_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, appeal_affinity_start_date)
+      Timecop.travel(appeal_affinity_start_date)
         create(
           :appeal,
           :hearing_docket,
@@ -207,8 +207,8 @@ module Seeds
     end
 
     # Legacy appeal creation functions
-    def create_legacy_appeal(receipt_date, distribution_task_assigned_at_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_legacy_appeal(receipt_date, appeal_affinity_start_date)
+      Timecop.travel(appeal_affinity_start_date)
       veteran = create_veteran_for_legacy_inactive_admin_judge_team
 
       correspondent = create(:correspondent,
