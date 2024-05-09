@@ -6,8 +6,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  LEGACY_DOCKET = "legacy"
-  LEGACY_READY_TO_DISTRIBUTE_LOCATIONS = %w[81 83].freeze
+  # the ["docket_name", priority] format is how ActiveRecord returns the query results
   PAIRS_TO_DELETE = [["evidence_submission", false], ["direct_review", false]].freeze
 
   def perform(distribution_id = nil)
@@ -83,7 +82,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
 
   def process_ama_appeals_which_need_affinity_updates(receipt_date_hashes_array)
     receipt_date_hashes_array.map do |receipt_date_hash|
-      next if receipt_date_hash[:docket] == LEGACY_DOCKET
+      next if receipt_date_hash[:docket] == LegacyDocket.docket_type
 
       base_appeals_to_update =
         Appeal.extending(DistributionScopes)
