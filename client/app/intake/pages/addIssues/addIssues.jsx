@@ -26,8 +26,8 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  // formatIssueModificationRequests,
-  formatIssueModificationRequestsBySection,
+  formatModificationIssueRequests,
+  formatModificationIssueRequestsBySection,
   fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
@@ -283,8 +283,10 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issues);
+
+    const modificationIssueRequests = formatModificationIssueRequests(fakeIssueModificationRequestsData);
     const modificationIssueRequestsBySection =
-      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
+      formatModificationIssueRequestsBySection(modificationIssueRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -504,8 +506,7 @@ class AddIssuesPage extends React.Component {
       });
 
     const modificationIssueRequestsObj =
-      // _.groupBy(modificationIssueRequestsBySection.pendingAdminReview, 'request_type');
-      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ request_type }) => request_type);
+      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
 
     // console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
 
