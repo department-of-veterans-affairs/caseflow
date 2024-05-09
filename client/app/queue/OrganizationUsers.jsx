@@ -368,7 +368,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   adminButton = (user, admin) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
       id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
       classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
@@ -376,7 +376,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.modifyAdminRights(user, !admin)} /></div>
 
   removeUserButton = (user) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
       id={`Remove-user-${user.id}`}
       classNames={['usa-button-secondary']}
