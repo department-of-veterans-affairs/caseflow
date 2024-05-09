@@ -37,9 +37,7 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def modify_user_permission
-    user_permission_params
-    user_id = params[:userId]
-    permission_name = params[:permissionName].strip
+    user_id, permission_name = user_permission_params
 
     pre_loaded_organization = Organization.includes(
       organizations_users: :user,
@@ -158,5 +156,8 @@ class Organizations::UsersController < OrganizationsController
 
   def user_permission_params
     params.permit(:userId, :permissionName)
+    user_id = params[:userId]
+    permission_name = params[:permissionName].strip
+    [user_id, permission_name]
   end
 end
