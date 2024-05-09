@@ -8,28 +8,41 @@ export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Modification',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
     nonrating_issue_category: 'Caregiver | Eligibility',
+    nonrating_issue_description: 'Money for Care',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
     status: 'approved',
     remove_original_issue: true,
-    benefit_type: 'Veterans Health Administration'
+    benefit_type: 'Veterans Health Administration',
+    request_issue: {
+      id: '3311',
+      benefit_type: 'Veterans Health Administration',
+      nonrating_issue_category: 'Beneficiary Travel',
+      nonrating_issue_description: 'Stuff',
+      decision_date: '2023-09-23'
+    }
   },
   {
     request_issue_id: '3311',
     request_type: 'Withdrawal',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
     nonrating_issue_category: 'Caregiver | Eligibility',
+    nonrating_issue_description: 'Money for Care',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
-    withdrawal_request_date: '2024-01-30',
+    withdrawal_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested Withdrawal to this issue.',
     status: 'approved',
     benefit_type: 'Veterans Health Administration'
   },
   {
     request_type: 'Addition',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
     nonrating_issue_category: 'Beneficiary Travel',
+    nonrating_issue_description: 'Money for Travel',
     decision_text: 'New note for this type of issue',
     decision_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested Addition to this issue.',
@@ -39,7 +52,9 @@ export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Removal',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
     nonrating_issue_category: 'Caregiver | Eligibility',
+    nonrating_issue_description: 'Money for Care',
     decision_text: 'New Caregiver | Eligibility text',
     decision_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested Removal to this issue.',
@@ -49,11 +64,20 @@ export const fakeIssueModificationRequestsData = [
   {
     request_issue_id: '3311',
     request_type: 'Modification',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
     nonrating_issue_category: 'CHAMPVA',
+    nonrating_issue_description: 'Money for CHAMPVA',
     decision_text: 'New CHAMPVA text',
     decision_date: '2024-01-30',
     request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    benefit_type: 'Veterans Health Administration'
+    benefit_type: 'Veterans Health Administration',
+    request_issue: {
+      id: '3311',
+      benefit_type: 'Veterans Health Administration',
+      nonrating_issue_category: 'Beneficiary Travel',
+      nonrating_issue_description: 'Stuff',
+      decision_date: '2023-09-23'
+    }
   }
 ];
 
@@ -212,24 +236,61 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
   );
 };
 
-export const formatModificationIssueRequests = (modificationIssueRequests) => {
-  if (!modificationIssueRequests) {
+export const formatIssueModificationRequests = (issueModificationRequests) => {
+  if (!issueModificationRequests) {
     return;
   }
 
-  return modificationIssueRequests.map((issue) => {
+  return issueModificationRequests.map((modificationRequest) => {
     return {
-      id: String(issue.id),
-      requestIssueId: issue.request_issue_id,
-      requestType: issue.request_type,
-      nonratingIssueCategory: issue.nonrating_issue_category,
-      decisionText: issue.decision_text,
-      decisionDate: issue.decision_date,
-      requestReason: issue.request_reason,
-      withdrawlRequestDate: issue.withdrawl_request_date,
-      status: issue.status,
-      removeOriginalIssue: issue.remove_original_issue,
-      benefitType: issue.benefit_type
+      // All the standard issue modification fields
+      id: String(modificationRequest.id),
+      benefitType: modificationRequest.benefit_type,
+      status: modificationRequest.status,
+      requestType: modificationRequest.request_type,
+      removeOriginalIssue: modificationRequest.remove_original_issue,
+      nonRatingIssueDescription: modificationRequest.nonrating_issue_description,
+      nonRatingIssueCategory: modificationRequest.nonrating_issue_category,
+      decisionDate: modificationRequest.decision_date,
+      decisionReason: modificationRequest.decision_reason,
+      requestReason: modificationRequest.request_reason,
+      requestIssueId: modificationRequest.request_issue_id,
+      // Serialized Object fields
+      // requestIssue: formatRequestIssues([modificationRequest.request_issue]),
+      requestor: modificationRequest.requestor,
+      decider: modificationRequest.decider,
+      // Extra fields that may or may not be needed later
+      decisionIssueId: modificationRequest.contested_decision_issue_id,
+      description: modificationRequest.description,
+      ineligibleReason: modificationRequest.ineligible_reason,
+      ineligibleDueToId: modificationRequest.ineligible_due_to_id,
+      decisionReviewTitle: modificationRequest.decision_review_title,
+      contentionText: modificationRequest.contention_text,
+      untimelyExemption: modificationRequest.untimelyExemption,
+      untimelyExemptionNotes: modificationRequest.untimelyExemptionNotes,
+      vacolsId: modificationRequest.vacols_id,
+      vacolsSequenceId: modificationRequest.vacols_sequence_id,
+      vacolsIssue: modificationRequest.vacols_issue,
+      endProductCleared: modificationRequest.end_product_cleared,
+      endProductCode: modificationRequest.end_product_establishment_code || modificationRequest.end_product_code,
+      withdrawalDate: modificationRequest.withdrawal_date,
+      editable: modificationRequest.editable,
+      examRequested: modificationRequest.exam_requested,
+      isUnidentified: modificationRequest.is_unidentified,
+      notes: modificationRequest.notes,
+      category: modificationRequest.category,
+      isRating: !modificationRequest.category,
+      ratingIssueReferenceId: modificationRequest.rating_issue_reference_id,
+      ratingDecisionReferenceId: modificationRequest.rating_decision_reference_id,
+      approxDecisionDate: modificationRequest.approx_decision_date,
+      titleOfActiveReview: modificationRequest.title_of_active_review,
+      rampClaimId: modificationRequest.ramp_claim_id,
+      verifiedUnidentifiedIssue: modificationRequest.verified_unidentified_issue,
+      isPreDocketNeeded: modificationRequest.is_predocket_needed,
+      mstChecked: modificationRequest.mst_status,
+      pactChecked: modificationRequest.pact_status,
+      mst_status_update_reason_notes: modificationRequest?.mstJustification,
+      pact_status_update_reason_notes: modificationRequest?.pactJustification
     };
   });
 };
