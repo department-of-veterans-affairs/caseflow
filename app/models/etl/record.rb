@@ -16,7 +16,7 @@
 
 class ETL::Record < ApplicationRecord
   self.abstract_class = true
-  establish_connection :"etl_#{Rails.env}"
+  establish_connection :etl
 
   class << self
     def sync_with_original(original)
