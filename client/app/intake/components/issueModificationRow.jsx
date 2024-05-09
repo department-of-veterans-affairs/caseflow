@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import COPY from '../../../COPY';
-import { FORM_TYPES } from 'app/intake/constants';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 
 const issueModificationRow = (
@@ -11,14 +9,14 @@ const issueModificationRow = (
     modificationIssueRequestsObj
   }) => {
   const sections = [];
-  const modificationIssueRequestsObjKeysLength = Object.keys(modificationIssueRequestsObj).length - 1;
-  const modificationIssueRequestsArr = Object.entries(modificationIssueRequestsObj).sort();
+  const modificationIssueRequestsLength = Object.keys(modificationIssueRequestsObj).length - 1;
+  const modificationIssueRequests = Object.entries(modificationIssueRequestsObj).sort();
 
   let index = 0;
 
-  for (const [key, value] of modificationIssueRequestsArr) {
+  for (const [key, value] of modificationIssueRequests) {
     const lastSection =
-      modificationIssueRequestsObjKeysLength === index;
+      modificationIssueRequestsLength === index;
 
     const commonProps = {
       issuesArr: value,
@@ -78,15 +76,6 @@ const issueModificationRow = (
 export default issueModificationRow;
 
 issueModificationRow.propTypes = {
-  editPage: PropTypes.bool,
-  featureToggles: PropTypes.object,
   fieldTitle: PropTypes.string,
-  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')),
-  intakeData: PropTypes.object,
-  onClickIssueAction: PropTypes.func,
-  sectionIssues: PropTypes.arrayOf(PropTypes.object),
-  userCanWithdrawIssues: PropTypes.bool,
-  withdrawIssue: PropTypes.func,
-  userCanEditIntakeIssues: PropTypes.bool,
   modificationIssueRequestsObj: PropTypes.object
 };
