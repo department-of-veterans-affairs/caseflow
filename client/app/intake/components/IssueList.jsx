@@ -67,6 +67,23 @@ export default class IssuesList extends React.Component {
         );
       }
     }
+    if (this.props.showRequestIssueUpdateOptions && this.props.intakeData.benefitType === 'vha') {
+      options = [];
+      options.push(
+        { displayText: 'Request modification',
+          value: 'requestModification' }
+      );
+
+      options.push(
+        { displayText: 'Request removal',
+          value: 'requestRemoval' }
+      );
+
+      options.push(
+        { displayText: 'Request withdrawal',
+          value: 'requestWithdrawal' }
+      );
+    }
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -179,6 +196,8 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
+  userCanRequestIssueUpdates: PropTypes.bool,
+  showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
   featureToggles: PropTypes.object
 };
