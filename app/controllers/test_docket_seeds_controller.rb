@@ -29,9 +29,6 @@ class TestDocketSeedsController < ApplicationController
   # end
 
   def check_environment
-    puts Rails.env.development?
-    puts Rails.deploy_env?(:demo)
-    puts Rails.deploy_env?(:uat)
     return true if Rails.env.development?
     return true if Rails.deploy_env?(:demo)
     return true if Rails.deploy_env?(:uat)
