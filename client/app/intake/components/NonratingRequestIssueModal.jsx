@@ -287,7 +287,10 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <React.Fragment>
-        {(this.isDecisionDateRequired()) ? <Alert message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER} type="info" /> : null }
+        {(this.isDecisionDateRequired()) ?
+          <Alert message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER} type="info" /> :
+          null
+        }
         <div className="decision-date">
           <DateSelector
             name="decision-date"
