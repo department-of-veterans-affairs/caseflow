@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_27_154315) do
+ActiveRecord::Schema.define(version: 2024_04_11_185612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -929,6 +929,26 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
     t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
+  end
+
+  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.bigint "evented_record_id", null: false
+    t.string "evented_record_type", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+  end
+
+  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.string "error", comment: "Error message captured during a failed event"
+    t.jsonb "info", default: {}
+    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_events_on_info", using: :gin
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -2358,6 +2378,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
