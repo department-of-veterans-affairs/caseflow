@@ -7,31 +7,16 @@ import IssueModificationList from 'app/intake/components/IssueModificationList';
 
 const issueModificationRow = (
   {
-    // editPage,
-    // featureToggles,
     fieldTitle,
-    // formType,
-    // intakeData,
-    // onClickIssueAction,
-    // sectionIssues,
-    // userCanWithdrawIssues,
-    // userCanEditIntakeIssues,
-    // withdrawReview
     modificationIssueRequestsObj
   }) => {
   const sections = [];
   const modificationIssueRequestsObjKeysLength = Object.keys(modificationIssueRequestsObj).length - 1;
   const modificationIssueRequestsArr = Object.entries(modificationIssueRequestsObj).sort();
-  // console.log('modificationIssueRequestsArr', modificationIssueRequestsArr)
+
   let index = 0;
 
-  // for (const [key, value] of Object.entries(modificationIssueRequestsObj)) {
   for (const [key, value] of modificationIssueRequestsArr) {
-    // console.log('key', key);
-    // console.log('value', value);
-
-    // const lastSection =
-    //   modificationIssueRequestsObjKeysLength === Object.keys(modificationIssueRequestsObj).indexOf(key);
     const lastSection =
       modificationIssueRequestsObjKeysLength === index;
 
@@ -83,22 +68,6 @@ const issueModificationRow = (
   return {
     content: (
       <div>
-        {/* {intakeData.editEpUpdateError && (
-          <ErrorAlert errorCode="unable_to_edit_ep" />
-        )} */}
-        {/* { !fieldTitle.includes('issues') && <span><strong>Additional </strong></span> } */}
-        {/* <IssueList
-          editPage={editPage}
-          intakeData={intakeData}
-          issues={sectionIssues}
-          featureToggles={featureToggles}
-          formType={formType}
-          onClickIssueAction={onClickIssueAction}
-          userCanWithdrawIssues={userCanWithdrawIssues}
-          withdrawReview={withdrawReview}
-          userCanEditIntakeIssues={userCanEditIntakeIssues}
-        /> */}
-        {/*  {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />} */}
         {sections}
       </div>
     ),

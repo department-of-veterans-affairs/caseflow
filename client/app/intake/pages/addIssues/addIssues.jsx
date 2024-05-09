@@ -26,7 +26,7 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  formatModificationIssueRequests,
+  formatIssueModificationRequests,
   formatModificationIssueRequestsBySection,
   fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
@@ -284,7 +284,7 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issues);
 
-    const modificationIssueRequests = formatModificationIssueRequests(fakeIssueModificationRequestsData);
+    const modificationIssueRequests = formatIssueModificationRequests(fakeIssueModificationRequestsData);
     const modificationIssueRequestsBySection =
       formatModificationIssueRequestsBySection(modificationIssueRequests);
 
@@ -507,8 +507,6 @@ class AddIssuesPage extends React.Component {
 
     const modificationIssueRequestsObj =
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
-
-    // console.log('modificationIssueRequestsObj', modificationIssueRequestsObj);
 
     const pendingSection = issueModificationRow({
       modificationIssueRequestsObj,
