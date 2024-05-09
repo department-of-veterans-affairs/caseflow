@@ -1882,7 +1882,7 @@ ActiveRecord::Schema.define(version: 2024_04_23_190320) do
     t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
     t.string "directory", null: false, comment: "The contract house box.com folder full path"
     t.string "email", null: false, comment: "The contract house contact email address"
-    t.boolean "inactive", default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
+    t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
     t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
     t.string "name", null: false, comment: "The contract house name"
     t.string "phone", null: false, comment: "The contract house contact phone number"
