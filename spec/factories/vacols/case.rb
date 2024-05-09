@@ -277,7 +277,7 @@ FactoryBot.define do
         end
 
         create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case,
-               case_issues_equal: true, original_case_issues: vacols_case.case_issues)
+              case_issues_equal: true, original_case_issues: vacols_case.case_issues)
       end
     end
 
@@ -436,7 +436,7 @@ FactoryBot.define do
           folder_json = evaluator.original_case.folder.to_json
           folder_attributes = JSON.parse(folder_json)
           folder_attributes.except!("bfkey", "ticknum", "tidrecv", "tidcls", "tiaduser",
-                                    "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser",
+                                    "tiadtime", "tikeywrd", "tiread2", "tioctime", "tiocuser",
                                     "tidktime", "tidkuser")
           vacols_case.folder.assign_attributes(folder_attributes)
           vacols_case.folder.save(validate: false)
