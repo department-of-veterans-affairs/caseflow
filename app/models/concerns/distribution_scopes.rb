@@ -19,6 +19,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     SQL
   end
 
+  def with_appeal_affinities
+    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
+  end
+
   # From docket.rb
 
   def priority

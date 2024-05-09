@@ -31,6 +31,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       subject
     end
+
+    it "queues the UpdateAppealAffinityDatesJob" do
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+
+      subject
+    end
   end
 
   context ".distribute_non_genpop_priority_appeals" do
