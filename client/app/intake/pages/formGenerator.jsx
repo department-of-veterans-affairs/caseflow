@@ -319,7 +319,7 @@ const FormGenerator = (props) => {
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
-              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
+              <li dangerouslySetInnerHTML={{ __html: COPY.INTAKE_REMOVE_COMP_AND_PEN }} />
             </ul>
           </Alert>
         </div>
