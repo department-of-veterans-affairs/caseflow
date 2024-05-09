@@ -18,12 +18,12 @@ const buttonStyle = css({
 });
 
 const contractorButtonStyle = css({
-  paddingLeft: '41rem'
+  paddingLeft: '41.55rem'
 })
 
 const headerContainerStyling = css({
   margin: '1.5rem 0 3rem 0',
-  padding: '0 0 0 0',
+  padding: '0',
   '& > *': {
     display: 'inline-block',
     paddingRight: '15px',
@@ -39,7 +39,7 @@ const headerStyling = css({
 
 const instructionListStyle = css({
   listStyle: 'none',
-  margin: '0 0 0 0',
+  margin: '0',
   padding: '1.5rem 0 2rem 0',
   fontSize: '19px',
 });
