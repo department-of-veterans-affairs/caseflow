@@ -24,6 +24,50 @@ class ExternalApi::BGSService
     @people_by_ssn = {}
   end
 
+  def sensitivity_level_for_user(user)
+    fail "Invalid user" if !user.instance_of?(User)
+
+    participant_id = get_participant_id_for_user(user)
+
+    Rails.cache.fetch("sensitivity_level_for_user_id_#{user.id}", expires_in: 1.hour) do
+      DBService.release_db_connections
+
+      MetricsService.record(
+        "BGS: sensitivity level for user #{user.id}",
+        service: :bgs,
+        name: "security.find_person_scrty_log_by_ptcpnt_id"
+      ) do
+        response = client.security.find_person_scrty_log_by_ptcpnt_id(participant_id)
+
+        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
+      rescue BGS::ShareError
+        0
+      end
+    end
+  end
+
+  def sensitivity_level_for_veteran(veteran)
+    fail "Invalid veteran" if !veteran.instance_of?(Veteran)
+
+    participant_id = veteran.participant_id
+
+    Rails.cache.fetch("sensitivity_level_for_veteran_id_#{veteran.id}", expires_in: 1.hour) do
+      DBService.release_db_connections
+
+      MetricsService.record(
+        "BGS: sensitivity level for veteran #{veteran.id}",
+        service: :bgs,
+        name: "security.find_sensitivity_level_by_participant_id"
+      ) do
+        response = client.security.find_sensitivity_level_by_participant_id(participant_id)
+
+        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
+      rescue BGS::ShareError
+        0
+      end
+    end
+  end
+
   # :nocov:
 
   def get_end_products(vbms_id)
@@ -325,7 +369,7 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_ratings_in_range_called",
       app_name: RequestStore[:application]
@@ -349,7 +393,7 @@ class ExternalApi::BGSService
   def fetch_rating_profile(participant_id:, profile_date:)
     DBService.release_db_connections
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_rating_profile_called",
       app_name: RequestStore[:application]

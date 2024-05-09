@@ -636,10 +636,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
                         FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
-    issues.any?(&:mst_status) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
+    issues.any?(&:mst_status) || special_issue_list&.military_sexual_trauma
   end
 
   def pact?
@@ -736,7 +733,7 @@ class LegacyAppeal < CaseflowRecord
 
     caseflow_file_number = veteran.file_number
     if vacols_file_number != caseflow_file_number
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         metric_group: "database_disagreement",
         metric_name: "file_number",
         app_name: RequestStore[:application],
@@ -933,6 +930,10 @@ class LegacyAppeal < CaseflowRecord
 
   def claimant_participant_id
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
+  end
+
+  def sct_appeal?
+    false
   end
 
   # :reek:FeatureEnvy

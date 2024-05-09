@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    css_id { "CSS_ID#{generate :css_id}" }
+    css_id { "CSSID#{generate :css_id}" }
 
     station_id { User::BOARD_STATION_ID }
     full_name { "Lauren Roth" }
@@ -39,12 +39,68 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :correspondence_auto_assignable_user do
+      after(:create) do |u|
+        # Member of InboundOpsTeam
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+        org_permission = OrganizationPermission.find_or_create_by!(
+          organization: InboundOpsTeam.singleton,
+          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
+        ) do |op|
+          op.enabled = true
+          op.description = Faker::Fantasy::Tolkien.poem
+        end
+
+        # Has auto-assign permission
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: org_permission,
+          organizations_user: org_user
+        ) do |oup|
+          oup.permitted = true
+        end
+      end
+
+      trait :super_user do
+        after(:create) do |u|
+          OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
+          OrganizationsUser.find_or_create_by!(organization: BvaIntake.singleton, user: u).update!(admin: true)
+          OrganizationsUser.find_or_create_by!(organization: MailTeam.singleton, user: u).update!(admin: true)
+        end
+      end
+
+      trait :nod_enabled do
+        after(:create) do |u|
+          org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+          org_permission = OrganizationPermission.find_or_create_by!(
+            organization: InboundOpsTeam.singleton,
+            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
+          ) do |op|
+            op.enabled = true
+            op.description = Faker::Fantasy::Tolkien.poem
+          end
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: org_permission,
+            organizations_user: org_user
+          ) do |oup|
+            oup.permitted = true
+          end
+        end
+      end
+    end
+
     trait :inactive do
       status { "inactive" }
     end
 
     trait :vso_role do
       roles { ["VSO"] }
+    end
+
+    trait :admin_intake_role do
+      roles { ["Mail Intake", "Admin Intake"] }
     end
 
     trait :judge do
@@ -106,6 +162,29 @@ FactoryBot.define do
     trait :vlj_support_user do
       after(:create) do |user|
         Colocated.singleton.add_user(user)
+      end
+    end
+
+    trait :cda_control_admin do
+      after(:create) do |user|
+        CDAControlGroup.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, CDAControlGroup.singleton)
+      end
+    end
+
+    trait :bva_intake_admin do
+      after(:create) do |user|
+        BvaIntake.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, BvaIntake.singleton)
+      end
+    end
+
+    trait :team_admin do
+      after(:create) do |user|
+        existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+        Functions.grant!("System Admin", users: existing_sysadmins + [user.css_id])
+        Bva.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, Bva.singleton)
       end
     end
 

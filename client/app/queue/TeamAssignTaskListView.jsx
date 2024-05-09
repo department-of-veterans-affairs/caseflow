@@ -17,7 +17,10 @@ import { fullWidth } from './constants';
 import {
   judgeAssignTasksSelector,
   camoAssignTasksSelector,
-  getTasksByUserId
+  getTasksByUserId,
+  specialtyCaseTeamAssignTasksSelector,
+  isVhaCamoOrg,
+  isSpecialtyCaseTeamOrg
 } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -52,17 +55,21 @@ class TeamAssignTaskListView extends React.PureComponent {
       organizations,
       unassignedTasksCount,
       match,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     } = this.props;
 
     const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
-        <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
-        </div>
-        {!userIsCamoEmployee &&
+        {!userIsSCTCoordinator &&
+          <div {...fullWidth} {...css({ marginBottom: '2em' })}>
+            <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' :
+              ` for ${targetUserCssId}`}</h1>
+          </div>
+        }
+        {!userIsCamoEmployee && !userIsSCTCoordinator &&
           <div className="usa-width-one-fourth">
             <ul className="usa-sidenav-list">
               <li>
@@ -81,7 +88,7 @@ class TeamAssignTaskListView extends React.PureComponent {
             </ul>
           </div>
         }
-        <div className={`usa-width-${userIsCamoEmployee ? 'one-whole' : 'three-fourths'}`}>
+        <div className={`usa-width-${(userIsCamoEmployee || userIsSCTCoordinator) ? 'one-whole' : 'three-fourths'}`}>
           <QueueOrganizationDropdown organizations={organizations} />
           <PageRoute
             exact
@@ -112,7 +119,8 @@ TeamAssignTaskListView.propTypes = {
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
   organizations: PropTypes.array,
-  userIsCamoEmployee: PropTypes.bool
+  userIsCamoEmployee: PropTypes.bool,
+  userIsSCTCoordinator: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => {
@@ -121,14 +129,19 @@ const mapStateToProps = (state) => {
       attorneysOfJudge
     },
     ui: {
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     }
   } = state;
 
   let taskSelector = judgeAssignTasksSelector(state);
 
-  if (userIsCamoEmployee) {
+  if (userIsCamoEmployee && isVhaCamoOrg(state)) {
     taskSelector = camoAssignTasksSelector(state);
+  }
+
+  if (userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state)) {
+    taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
 
   return {
@@ -137,7 +150,9 @@ const mapStateToProps = (state) => {
     targetUserId: state.ui.targetUser?.id,
     targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge
+    attorneysOfJudge,
+    userIsSCTCoordinator: userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state),
+    userIsCamoEmployee: userIsCamoEmployee && isVhaCamoOrg(state),
   };
 };
 

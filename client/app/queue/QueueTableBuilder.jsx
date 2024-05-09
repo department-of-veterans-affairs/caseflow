@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
+import { indexOf } from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
@@ -68,12 +68,12 @@ const QueueTableBuilder = (props) => {
   }, []);
 
   const calculateActiveTabIndex = (config) => {
-    const tabNames = config.tabs.map((tab) => {
+    const tabNames = config.tabs.filter((tab) => !tab.hide_from_queue_table_view).map((tab) => {
       return tab.name;
     });
 
     const activeTab = paginationOptions().tab || config.active_tab;
-    const index = _.indexOf(tabNames, activeTab);
+    const index = indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
@@ -242,15 +242,23 @@ const QueueTableBuilder = (props) => {
   };
 
   const tabsFromConfig = (config) =>
-    (config.tabs || []).map((tabConfig) =>
-      taskTableTabFactory(tabConfig, config)
-    );
+    (config.tabs || []).
+      filter((tabConfig) => !tabConfig.hide_from_queue_table_view).
+      map((tabConfig) =>
+        taskTableTabFactory(tabConfig, config)
+      );
 
   const config = queueConfig();
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown organizations={props.organizations} />
+    <QueueOrganizationDropdown
+      isMailTeamUser={props.isMailTeamUser}
+      isMailSupervisor={props.isMailSupervisor}
+      isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+      organizations={props.organizations}
+      featureToggles = {props.featureToggles}
+    />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -263,12 +271,19 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
+    isMailTeamUser: state.ui.isMailTeamUser,
+    isMailSupervisor: state.ui.isMailSupervisor,
+    isInboundOpsSuperuser: state.ui.isInboundOpsSuperuser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
 QueueTableBuilder.propTypes = {
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
@@ -278,6 +293,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);

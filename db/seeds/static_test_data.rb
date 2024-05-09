@@ -4,13 +4,18 @@
 # cases to other seed files changes the order in which data is created and therefore the ID values of data,
 # which can make regression testing difficult or change the ID values of known cases used in manual testing.
 
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class StaticTestCaseData < Base
+    include SeedHelpers
+
     def initialize
       initial_id_values
     end
 
     def seed!
+      create_evidence_submission_contested_claim_cases_with_open_letter_task
       cases_for_timely_calculations_on_das
       case_with_bad_decass_for_timeline_range_checks
       create_veterans_for_mpi_sfnod_updates
@@ -28,16 +33,6 @@ module Seeds
         @file_number += 2000
         @participant_id += 2000
       end
-    end
-
-    def create_veteran(options = {})
-      @file_number += 1
-      @participant_id += 1
-      params = {
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      }
-      create(:veteran, params.merge(options))
     end
 
     def cases_for_timely_calculations_on_das
@@ -469,7 +464,8 @@ module Seeds
         task_id: appeal.tasks.where(type: JudgeAssignTask.name).first.id,
         genpop: true,
         genpop_query: "only_genpop",
-        created_at: first_judge_assign_task.assigned_at
+        created_at: first_judge_assign_task.assigned_at,
+        sct_appeal: false
       )
     end
 
@@ -489,6 +485,26 @@ module Seeds
           :assigned,
           assigned_to: MailTeam.singleton,
           parent: appeal.root_task
+        )
+      end
+      Timecop.return
+    end
+
+    def create_evidence_submission_contested_claim_cases_with_open_letter_task
+      Timecop.travel(91.days.ago)
+      6.times do
+        appeal = create(
+          :appeal,
+          :evidence_submission_docket,
+          :with_post_intake_tasks,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              nonrating_issue_category: "Contested Claims - Apportionment"
+            )
+          ],
+          veteran: create_veteran(first_name: "EvidenceTestAppeal", last_name: "OpenLetterTask")
         )
       end
       Timecop.return

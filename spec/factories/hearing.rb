@@ -16,8 +16,8 @@ FactoryBot.define do
         scheduled_for: Time.zone.today,
         judge: judge,
         request_type: regional_office.nil? ? "C" : "V",
-        created_by: adding_user,
-        updated_by: adding_user
+        created_by: adding_user || User.system_user,
+        updated_by: adding_user || User.system_user
       )
     end
     hearing_location do
@@ -119,6 +119,33 @@ FactoryBot.define do
                :completed,
                parent: hearing.hearing_task_association.hearing_task,
                appeal: hearing.appeal)
+      end
+    end
+
+    trait :with_transcription_files do
+      after(:create) do |hearing, _evaluator|
+        hearing.meeting_type.update(service_name: "webex")
+
+        2.times do |count|
+          %w[mp4 mp3 vtt rtf].each do |file_type|
+            TranscriptionFile.create!(
+              hearing_id: hearing.id,
+              hearing_type: "Hearing",
+              file_name: "#{hearing.docket_number}_#{hearing.id}_Hearing#{count == 1 ? '-2' : ''}.#{file_type}",
+              file_type: file_type,
+              docket_number: hearing.docket_number,
+              file_status: "Successful upload (AWS)",
+              date_upload_aws: Time.zone.today,
+              aws_link: "www.test.com"
+            )
+          end
+        end
+      end
+    end
+
+    trait :with_webex_non_virtual_conference_link do
+      after(:create) do |hearing, _evaluator|
+        create(:webex_conference_link, hearing_id: hearing.id, hearing_type: "Hearing")
       end
     end
   end

@@ -48,6 +48,13 @@ export const setUserIsCobAdmin = (userIsCobAdmin) => ({
   }
 });
 
+export const setMeetingType = (conferenceProvider) => ({
+  type: ACTIONS.SET_CONFERENCE_PROVIDER,
+  payload: {
+    conferenceProvider
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {
@@ -220,6 +227,21 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
+export const setMailTeamUser = (isMailTeamUser) => ({
+  type: ACTIONS.SET_MAIL_TEAM_USER,
+  payload: { isMailTeamUser }
+});
+
+export const setMailSupervisor = (isMailSupervisor) => ({
+  type: ACTIONS.SET_MAIL_SUPERVISOR,
+  payload: { isMailSupervisor }
+});
+
+export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERUSER,
+  payload: { isInboundOpsSuperuser }
+});
+
 export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
@@ -249,6 +271,11 @@ export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
 export const setUserIsCamoEmployee = (userIsCamoEmployee) => ({
   type: ACTIONS.SET_USER_IS_CAMO_EMPLOYEE,
   payload: { userIsCamoEmployee }
+});
+
+export const setUserIsSCTCoordinator = (userIsSCTCoordinator) => ({
+  type: ACTIONS.SET_USER_IS_SCT_COORDINATOR,
+  payload: { userIsSCTCoordinator }
 });
 
 export const setFeedbackUrl = (feedbackUrl) => ({

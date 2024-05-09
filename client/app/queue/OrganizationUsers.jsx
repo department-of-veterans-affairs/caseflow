@@ -4,44 +4,61 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
+import SearchBar from 'app/components/SearchBar';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
+const addDropdownStyle = css({
+  padding: '3rem 0 4rem'
 });
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
+
+const instructionListStyle = css({
+  listStyle: 'none',
+  margin: '0 0 0 3rem',
+  padding: '1.5rem 0 2rem 0',
+  fontSize: '19px',
+  borderBottom: '.1rem solid black',
 });
-const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
+
+const userListStyle = css({
+  margin: '0'
 });
+
+const userListItemStyle = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  borderTop: '.1rem solid black',
+  padding: '4rem 0 2rem',
+  margin: '0',
+  ':first-child': {
+    borderTop: 'none',
+  }
+});
+
+const titleButtonsStyle = css({
+  width: '60rem'
+});
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
+});
+
 const buttonStyle = css({
-  paddingRight: '1rem',
+  padding: '1rem 2.5rem 2rem 0',
   display: 'inline-block'
-});
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
-});
-const listStyle = css({
-  listStyle: 'none'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -56,6 +73,7 @@ export default class OrganizationUsers extends React.PureComponent {
       membershipRequests: [],
       loading: true,
       error: null,
+      searchValue: '',
       success: null,
       addingUser: null,
       changingAdminRights: {},
@@ -111,7 +129,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
       this.setState({
         organizationUsers: [...this.state.organizationUsers, response.body.users.data[0]],
-        remainingUsers: this.state.remainingUsers.filter((user) => user.id !== value.id),
+        remainingUsers: (this.state.remainingUsers ?? []).filter((user) => user.id !== value.id),
         membershipRequests: this.state.membershipRequests.filter((mr) => parseInt(mr.userId, 10) !== parseInt(value.id, 10)),
         addingUser: null
       });
@@ -240,58 +258,137 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
+getFilteredUsers = () => {
+  if (this.state.searchValue.length > 0) {
+
+    // return name or css id if match
+    return this.state.organizationUsers.filter((user) =>
+      user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
+      user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
+    );
+  }
+
+  return this.state.organizationUsers;
+
+};
+
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.state.organizationUsers.map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user, i) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
+      const { conferenceSelectionVisibility } = this.props;
+      let altLabel = '';
 
-      return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
-      </React.Fragment>;
+      if (judgeTeam && admin) {
+        altLabel = COPY.USER_MANAGEMENT_JUDGE_LABEL;
+      }
+      if (dvcTeam && dvc) {
+        altLabel = COPY.USER_MANAGEMENT_DVC_LABEL;
+      }
+      if (judgeTeam && !admin) {
+        altLabel = COPY.USER_MANAGEMENT_ATTORNEY_LABEL;
+      }
+      if ((judgeTeam || dvcTeam) && admin) {
+        altLabel = COPY.USER_MANAGEMENT_ADMIN_LABEL;
+      }
+
+      return (
+        <React.Fragment>
+          <li key={user.id} {...userListItemStyle}>
+            <div {...titleButtonsStyle}>
+              {this.formatName(user)}
+              {altLabel !== '' && (<div><strong>( {altLabel} )</strong></div>)}
+              <div>
+                {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
+                {this.removeUserButton(user)}
+              </div>
+            </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
+                    conferenceSelectionVisibility && (
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
+                </div>
+              )}
+            </div>
+          </li>
+        </React.Fragment>
+      );
     });
+
+    const handleSearchChange = (value) => {
+      this.setState({
+        searchValue: value
+      });
+    };
+
+    const handleClearSearch = () => {
+      this.setState({
+        searchValue: ''
+      });
+    };
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
+      <div {...addDropdownStyle}>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
         <div>
-          <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
+          <h3>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h3>
+          <ul {...instructionListStyle}>
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
               COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+            <p className="text-styling-for-filter-search-bar">
+          Filter by username or CSS ID</p>
+            <div className="search-bar-styling-for-filter">
+              <SearchBar
+                id="searchBar"
+                placeholder="Type to filter..."
+                isSearchAhead
+                size="small"
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value= {this.state.searchValue}
+              />
+            </div>
           </ul>
         </div>
-        <ul>{listOfUsers}</ul>
+        { listOfUsers.length > 0 ? (
+          <ul {...userListStyle}>{listOfUsers}</ul>
+        ) : (
+          <>
+            <b className="no-results-found-styling">No results found</b>
+            <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
+          </>
+        )
+        }
+
       </div>
     </React.Fragment>;
   }
@@ -363,5 +460,6 @@ export default class OrganizationUsers extends React.PureComponent {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  conferenceSelectionVisibility: PropTypes.bool
 };
