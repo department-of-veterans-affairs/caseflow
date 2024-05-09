@@ -270,8 +270,6 @@ const FormGenerator = (props) => {
   };
 
   const isHlrOrScForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
-  const nonVhaUserConditions = !props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment;
-  const compAndPenRemovalConditions = props.featureToggles.removeCompAndPenIntake && isHlrOrScForm;
 
   return (
     <div>
@@ -289,6 +287,7 @@ const FormGenerator = (props) => {
           </Button>
         </Alert>
       )}
+
       {props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} />}
       {showInvalidVeteranError && (
         <ErrorAlert
@@ -297,7 +296,7 @@ const FormGenerator = (props) => {
         />
       )}
 
-      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && !compAndPenRemovalConditions && (
+      {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && !props.featureToggles.removeCompAndPenIntake && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
@@ -305,7 +304,7 @@ const FormGenerator = (props) => {
         </div>
       )}
 
-      {(nonVhaUserConditions && compAndPenRemovalConditions) && (
+      {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && props.featureToggles.removeCompAndPenIntake && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
@@ -316,7 +315,7 @@ const FormGenerator = (props) => {
         </div>
       )}
 
-      {(props.userIsVhaEmployee && compAndPenRemovalConditions) && (
+      {isHlrOrScForm && props.featureToggles.removeCompAndPenIntake && ((props.featureToggles.vhaClaimReviewEstablishment && props.userIsVhaEmployee) || (!props.featureToggles.vhaClaimReviewEstablishment && !props.userIsVhaEmployee)) && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
