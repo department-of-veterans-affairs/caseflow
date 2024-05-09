@@ -1,8 +1,8 @@
 import React from 'react';
-import { TranscriptionFileDispatchPage } from '../../../../app/hearings/components/TranscriptionFileDispatchPage';
+import { TranscriptionFileDispatchView } from '../../../../app/hearings/components/TranscriptionFileDispatchView';
 import { screen, render } from '@testing-library/react';
 
-const setup = () => render(<TranscriptionFileDispatchPage />);
+const setup = () => render(<TranscriptionFileDispatchView />);
 
 describe('TranscriptionFileDispatch', () => {
   it('has title', () => {

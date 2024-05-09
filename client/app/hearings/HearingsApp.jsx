@@ -23,7 +23,7 @@ import PageRoute from '../components/PageRoute';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
-import { TranscriptionFileDispatchPage } from './components/TranscriptionFileDispatchPage';
+import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -121,7 +121,7 @@ export default class HearingsApp extends React.PureComponent {
   };
 
   routeForTranscriptionFileDispatch = () =>
-    <TranscriptionFileDispatchPage />
+    <TranscriptionFileDispatchView />
 
   render = () => <BrowserRouter basename="/hearings">
     <Switch>

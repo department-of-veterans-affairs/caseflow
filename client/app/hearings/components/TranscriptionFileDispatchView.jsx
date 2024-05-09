@@ -5,7 +5,7 @@ import { css } from 'glamor';
 import TabWindow from '../../components/TabWindow';
 import { tabConfig } from './TranscriptionFileDispatchTabs';
 
-export const TranscriptionFileDispatchPage = () => {
+export const TranscriptionFileDispatchView = () => {
   return (
     <AppSegment filledBackground>
       <h1 {...css({ display: 'inline-block' })}>Transcription file dispatch</h1>
