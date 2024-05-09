@@ -256,20 +256,20 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         vacols_case.bfmemid = if evaluator.judge
-          existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
-          existing_judge.sattyid
-        else
-          new_judge = create(:staff, :judge_role, user: evaluator.judge)
-          new_judge.sattyid
-        end
+                                existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+                                existing_judge.sattyid
+                              else
+                                new_judge = create(:staff, :judge_role, user: evaluator.judge)
+                                new_judge.sattyid
+                              end
 
         vacols_case.bfattid = if evaluator.attorney
-          existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
-          existing_attorney.sattyid
-        else
-          new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
-          new_attorney.sattyid
-        end
+                                existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+                                existing_attorney.sattyid
+                              else
+                                new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
+                                new_attorney.sattyid
+                              end
 
         vacols_case.case_issues.each do |case_issue|
           case_issue.issdc = "3"
@@ -277,7 +277,7 @@ FactoryBot.define do
         end
 
         create(:case, bfdpdcn: vacols_case.bfddec, bfac: "7", folder_number_equal: true, original_case: vacols_case,
-        case_issues_equal: true, original_case_issues: vacols_case.case_issues)
+               case_issues_equal: true, original_case_issues: vacols_case.case_issues)
       end
     end
 
@@ -435,7 +435,9 @@ FactoryBot.define do
         if evaluator.folder_number_equal
           folder_json = evaluator.original_case.folder.to_json
           folder_attributes = JSON.parse(folder_json)
-          folder_attributes.except!("bfkey", "ticknum", "tidrecv", "tidcls", "tiaduser", "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser", "tidktime", "tidkuser")
+          folder_attributes.except!("bfkey", "ticknum", "tidrecv", "tidcls", "tiaduser",
+                                    "tiadtime", "tikeywrd", "tiread2","tioctime", "tiocuser",
+                                    "tidktime", "tidkuser")
           vacols_case.folder.assign_attributes(folder_attributes)
           vacols_case.folder.save(validate: false)
         end
@@ -449,8 +451,8 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         if evaluator.case_issues_equal
           evaluator.original_case_issues.each do |case_issue, i|
-            vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser", "issmdtime", "issdc",
-            "issdcls")
+            vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser",
+                                                                      "issmdtime", "issdc", "issdcls")
           end
         end
       end
