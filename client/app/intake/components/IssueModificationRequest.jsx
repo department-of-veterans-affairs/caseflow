@@ -9,9 +9,9 @@ const IssueModificationRequest = (
 ) => {
   const modificationIssueInfo = (
     <div>
-      <p>{issue?.nonratingIssueCategory} - {issue?.decisionText}</p>
-      <p>Benefit type: {issue?.benefitType}</p>
-      <p>Decision date: {issue?.decisionDate}</p>
+      <p>{issue.nonRatingIssueCategory} - {issue.nonRatingIssueDescription}</p>
+      <p>Benefit type: {issue.benefitType}</p>
+      <p>Decision date: {issue.decisionDate}</p>
       <br />
     </div>
   );
@@ -20,7 +20,7 @@ const IssueModificationRequest = (
     <div>
       <br />
       <h4>Requested by:</h4>
-      <p>Monte Mann (ACBAUERVVHAH)</p>
+      <p>{issue.requestor}</p>
       <br />
     </div>
   );
@@ -28,9 +28,9 @@ const IssueModificationRequest = (
   const originalIssue = (
     <div>
       <h3>Originial Issue</h3>
-      <p>Originial_issue.nonrating_issue_category - Originial_issue.decision_text</p>
-      <p>Benefit type: Originial_issue.benefit_type</p>
-      <p>Decision date: Originial_issue.decision_date</p>
+      <p>issue?.requestIssue.nonratingIssueCategory - issue?.requestIssue.nonratingIssueDescription</p>
+      <p>Benefit type: issue?.requestIssue.benefitType</p>
+      <p>Decision date: issue?.requestIssue.decisionDate</p>
     </div>
   );
 
@@ -38,7 +38,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS}:</h4>
-      <p>{issue?.requestReason}</p>
+      <p>{issue.requestReason}</p>
       {requestedByUser}
     </div>
   );
@@ -47,7 +47,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS}:</h4>
-      <p>{issue?.requestReason}</p>
+      <p>{issue.requestReason}</p>
       {requestedByUser}
       {originalIssue}
       <br />
@@ -58,7 +58,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS}:</h4>
-      <p>{issue?.requestReason}</p>
+      <p>{issue.requestReason}</p>
       {requestedByUser}
     </div>
   );
@@ -67,10 +67,10 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS}:</h4>
-      <p>{issue?.requestReason}</p>
+      <p>{issue.requestReason}</p>
       <br />
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
-      <p>{issue?.withdrawalRequestDate}</p>
+      <p>{issue.withdrawalDate}</p>
       {requestedByUser}
     </div>
   );
