@@ -18,11 +18,6 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import Checkbox from '../components/Checkbox';
 
-const buttonStyle = css({
-  paddingRight: '1rem',
-  display: 'inline-block',
-  width: '100%'
-});
 const listStyle = css({
   listStyle: 'none'
 });
