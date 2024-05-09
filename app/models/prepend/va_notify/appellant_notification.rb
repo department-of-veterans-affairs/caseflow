@@ -167,16 +167,16 @@ module AppellantNotification
   end
 
   def self.notification_type
-    # notification_type =
-    #   if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
-    #     "Email and SMS"
-    #   elsif FeatureToggle.enabled?(:va_notify_email)
-    #     "Email"
-    #   elsif FeatureToggle.enabled?(:va_notify_sms)
-    #     "SMS"
-    #   else
-    #     "None"
-    #   end
+    notification_type =
+      if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+        "Email and SMS"
+      elsif FeatureToggle.enabled?(:va_notify_email)
+        "Email"
+      elsif FeatureToggle.enabled?(:va_notify_sms)
+        "SMS"
+      else
+        "None"
+      end
     notification_type
   end
 
