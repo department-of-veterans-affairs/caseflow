@@ -77,7 +77,7 @@ export class Pdf extends React.PureComponent {
   loadDocsPrototype = (arr) => {
     return arr.map((file) => {
       return <PdfDocument
-        doc={file}
+        file={file}
       />;
     });
   }

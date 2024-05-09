@@ -80,7 +80,7 @@ const PdfDocument = (doc) => {
 };
 
 PdfDocument.propTypes = {
-  doc: PropTypes.object
+  doc: PropTypes.object,
 };
 
 export default PdfDocument;
