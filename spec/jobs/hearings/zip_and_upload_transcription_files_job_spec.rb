@@ -81,7 +81,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   context "fails to upload to s3" do
     it "retries on failure to upload to s3" do
       allow_any_instance_of(described_class).to receive(:perform)
-      .and_raise(TranscriptionFileUpload::FileUploadError)
+        .and_raise(TranscriptionFileUpload::FileUploadError)
 
       expect { perform_enqueued_jobs { subject } }.to raise_error(
         Hearings::ZipAndUploadTranscriptionFilesJob::ZipFileUploadError
