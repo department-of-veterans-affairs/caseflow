@@ -3,7 +3,7 @@
 class Hearings::TranscriptionSettingsController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
-  rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :render_page_not_found
   before_action :verify_access_to_hearings
 
   def index
@@ -32,12 +32,7 @@ class Hearings::TranscriptionSettingsController < ApplicationController
     end
   end
 
-  def render_record_not_found
-    render json: {
-      "errors": [
-        "title": "Contractor Not Found",
-        "detail": "Contractor with that ID is not found"
-      ]
-    }, status: :not_found
+  def render_page_not_found
+    redirect_to "/404"
   end
 end
