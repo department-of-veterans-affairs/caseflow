@@ -70,34 +70,34 @@ module AppellantNotification
                    AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
     case event
     when "decision_mailed"
-      decision_mailed_appeal_state_update(appeal_state)
+      appeal_state.decision_mailed_appeal_state_update_action!
     when "appeal_docketed"
-      appeal_docketed_appeal_state_update(appeal_state)
+      appeal_state.appeal_docketed_appeal_state_update_action!
     when "appeal_cancelled"
-      appeal_cancelled_appeal_state_update(appeal_state)
+      appeal_state.appeal_cancelled_appeal_state_update_action!
     when "hearing_postponed"
-      hearing_postponed_appeal_state_update_action(appeal_state)
+      appeal_state.hearing_postponed_appeal_state_update_action!
     when "hearing_withdrawn"
-      hearing_withdrawn_appeal_state_update_action(appeal_state)
+      appeal_state.hearing_withdrawn_appeal_state_update_action!
     when "hearing_scheduled"
-      hearing_scheduled_appeal_state_update_action(appeal_state)
+      appeal_state.hearing_scheduled_appeal_state_update_action!
     when "scheduled_in_error"
-      scheduled_in_error_appeal_state_update_action(appeal_state)
+      appeal_state.scheduled_in_error_appeal_state_update_action!
     when "vso_ihp_pending"
-      vso_ihp_pending_appeal_state_update_action(appeal_state)
+      appeal_state.vso_ihp_pending_appeal_state_update_action!
     when "vso_ihp_cancelled"
-      vso_ihp_cancelled_appeal_state_update_action(appeal_state)
+      appeal_state.vso_ihp_cancelled_appeal_state_update_action!
     when "vso_ihp_complete"
       # Only updates appeal state if ALL ihp tasks are completed
-      vso_ihp_complete_appeal_state_update_action(appeal, appeal_state)
+      appeal_state.vso_ihp_complete_appeal_state_update_action!(appeal)
     when "privacy_act_pending"
-      privacy_act_pending_appeal_state_update_action(appeal_state)
+      appeal_state.privacy_act_pending_appeal_state_update_action!
     when "privacy_act_complete"
       # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_complete_appeal_state_update(appeal, appeal_state)
+      appeal_state.privacy_act_complete_appeal_state_update_action!(appeal)
     when "privacy_act_cancelled"
       # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_cancelled_appeal_state_update(appeal, appeal_state)
+      appeal_state.privacy_act_cancelled_appeal_state_update_action!(appeal)
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity,  Metrics/AbcSize
@@ -154,6 +154,7 @@ module AppellantNotification
         notification_type: notification_type,
         participant_id: msg_bdy.participant_id,
         event_date: Time.zone.today
+        # do we need to update this hash with the notifiable attr?
       )
     end
     SendNotificationJob.perform_later(msg_bdy.to_json)
@@ -166,16 +167,16 @@ module AppellantNotification
   end
 
   def self.notification_type
-    notification_type =
-      if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
-        "Email and SMS"
-      elsif FeatureToggle.enabled?(:va_notify_email)
-        "Email"
-      elsif FeatureToggle.enabled?(:va_notify_sms)
-        "SMS"
-      else
-        "None"
-      end
+    # notification_type =
+    #   if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+    #     "Email and SMS"
+    #   elsif FeatureToggle.enabled?(:va_notify_email)
+    #     "Email"
+    #   elsif FeatureToggle.enabled?(:va_notify_sms)
+    #     "SMS"
+    #   else
+    #     "None"
+    #   end
     notification_type
   end
 
@@ -192,96 +193,5 @@ module AppellantNotification
       end
     claimant
   end
-
-  def decision_mailed_appeal_state_update_action(appeal_state)
-    appeal_state.update!(
-        decision_mailed: true,
-        appeal_docketed: false,
-        hearing_postponed: false,
-        hearing_withdrawn: false,
-        hearing_scheduled: false,
-        vso_ihp_pending: false,
-        vso_ihp_complete: false,
-        privacy_act_pending: false,
-        privacy_act_complete: false
-      )
-  end
-
-  def appeal_cancelled_appeal_state_update_action(appeal_state)
-    appeal_state.update!(
-        decision_mailed: false,
-        appeal_docketed: false,
-        hearing_postponed: false,
-        hearing_withdrawn: false,
-        hearing_scheduled: false,
-        vso_ihp_pending: false,
-        vso_ihp_complete: false,
-        privacy_act_pending: false,
-        privacy_act_complete: false,
-        scheduled_in_error: false,
-        appeal_cancelled: true
-      )
-  end
-
-  def vso_ihp_complete_appeal_state_update_action(appeal, appeal_state)
-    if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
-      appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
-     appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false)
-   end
-  end
-
-  def privacy_act_complete_appeal_state_update(appeal, appeal_state)
-    open_tasks = appeal.tasks.open
-      if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-         open_tasks.where(type: PrivacyActTask.name).empty? &&
-         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-        appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
-      end
-  end
-
-  def privacy_act_cancelled_appeal_state_update(appeal, appeal_state)
-    open_tasks = appeal.tasks.open
-      if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
-         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-        appeal_state.update!(privacy_act_pending: false)
-      end
-  end
-
-  def appeal_docketed_appeal_state_update(appeal_state)
-    appeal_state.update!(appeal_docketed: true)
-  end
-
-  def hearing_postponed_appeal_state_update_action(appeal_state)
-    appeal_state.update!(hearing_postponed: true, hearing_scheduled: false)
-  end
-
-  def hearing_withdrawn_appeal_state_update_action(appeal_state)
-    appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false)
-  end
-
-  def hearing_scheduled_appeal_state_update_action(appeal_state)
-    appeal_state.update!(hearing_scheduled: true, hearing_postponed: false, scheduled_in_error: false)
-  end
-
-  def scheduled_in_error_appeal_state_update_action(appeal_state)
-    appeal_state.update!(scheduled_in_error: true, hearing_scheduled: false)
-  end
-
-  def vso_ihp_pending_appeal_state_update_action(appeal_state)
-    appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false)
-  end
-
-  def vso_ihp_cancelled_appeal_state_update_action(appeal_state)
-    appeal_state.update!(vso_ihp_pending: false, vso_ihp_complete: false)
-  end
-
-  def privacy_act_pending_appeal_state_update_action(appeal_state)
-    appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false)
-  end
-
 end
 # rubocop:enable Metrics/ModuleLength
