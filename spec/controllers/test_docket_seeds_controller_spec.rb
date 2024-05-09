@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
-  unless Rake::Task.task_defined?('assets:precompile')
+  unless Rake::Task.task_defined?("assets:precompile")
     Rails.application.load_tasks
   end
   let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
