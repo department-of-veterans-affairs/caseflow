@@ -9,9 +9,9 @@ const IssueModificationRequest = (
 ) => {
   const modificationIssueInfo = (
     <div>
-      <p>{issue?.nonrating_issue_category} - {issue?.decision_text}</p>
-      <p>Benefit type: {issue?.benefit_type}</p>
-      <p>Decision date: {issue?.decision_date}</p>
+      <p>{issue?.nonratingIssueCategory} - {issue?.decisionText}</p>
+      <p>Benefit type: {issue?.benefitType}</p>
+      <p>Decision date: {issue?.decisionDate}</p>
       <br />
     </div>
   );
@@ -38,7 +38,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS}:</h4>
-      <p>{issue?.request_reason}</p>
+      <p>{issue?.requestReason}</p>
       {requestedByUser}
     </div>
   );
@@ -47,7 +47,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS}:</h4>
-      <p>{issue?.request_reason}</p>
+      <p>{issue?.requestReason}</p>
       {requestedByUser}
       {originalIssue}
       <br />
@@ -58,7 +58,7 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS}:</h4>
-      <p>{issue?.request_reason}</p>
+      <p>{issue?.requestReason}</p>
       {requestedByUser}
     </div>
   );
@@ -67,17 +67,17 @@ const IssueModificationRequest = (
     <div>
       {modificationIssueInfo}
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS}:</h4>
-      <p>{issue?.request_reason}</p>
+      <p>{issue?.requestReason}</p>
       <br />
       <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
-      <p>{issue?.withdrawal_request_date}</p>
+      <p>{issue?.withdrawalRequestDate}</p>
       {requestedByUser}
     </div>
   );
 
   let requestIssue;
 
-  switch (issue.request_type) {
+  switch (issue.requestType) {
   case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
     requestIssue = additionalRequest;
     break;
