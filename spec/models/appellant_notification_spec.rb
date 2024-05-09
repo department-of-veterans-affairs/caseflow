@@ -860,7 +860,7 @@ describe AppellantNotification do
         let(:colocated_task) do
           ColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: org)
         end
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending}
+        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending }
         let(:params) do
           {
             instructions: "test",
