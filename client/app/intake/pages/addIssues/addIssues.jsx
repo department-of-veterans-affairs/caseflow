@@ -738,7 +738,6 @@ AddIssuesPage.propTypes = {
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool,
-  userIsOrgAdmin: PropTypes.bool,
   isLegacy: PropTypes.bool
 };
 
