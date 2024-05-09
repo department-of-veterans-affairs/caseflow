@@ -196,6 +196,49 @@ FactoryBot.define do
                 end
               end
             end
+
+            factory :legacy_cavc_appeal do
+              transient do
+                judge { nil }
+                attorney { nil }
+              end
+        
+              bfmpro { "HIS" }
+              bfddec { 1.day.ago }
+        
+              after(:create) do |vacols_case, evaluator|
+                vacols_case.bfmemid = if evaluator.judge
+                                        existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+                                        existing_judge.sattyid
+                                      else
+                                        new_judge = create(:staff, :judge_role, user: evaluator.judge)
+                                        new_judge.sattyid
+                                      end
+        
+                vacols_case.bfattid = if evaluator.attorney
+                                        existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+                                        existing_attorney.sattyid
+                                      else
+                                        new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
+                                        new_attorney.sattyid
+                                      end
+        
+                vacols_case.case_issues.each do |case_issue|
+                  case_issue.issdc = "3"
+                  case_issue.save
+                end
+        
+                create(
+                  :case,
+                  bfdpdcn: vacols_case.bfddec,
+                  bfac: "7",
+                  folder_number_equal: true,
+                  original_case: vacols_case,
+                  case_issues_equal: true,
+                  original_case_issues: vacols_case.case_issues
+                )
+              end
+            end
           end
         end
       end
@@ -243,49 +286,6 @@ FactoryBot.define do
 
     trait :type_cavc_remand do
       bfac { "7" }
-    end
-
-    trait :legacy_cavc_appeal do
-      transient do
-        judge { nil }
-        attorney { nil }
-      end
-
-      bfmpro { "HIS" }
-      bfddec { 1.day.ago }
-
-      after(:create) do |vacols_case, evaluator|
-        vacols_case.bfmemid = if evaluator.judge
-                                existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
-                                existing_judge.sattyid
-                              else
-                                new_judge = create(:staff, :judge_role, user: evaluator.judge)
-                                new_judge.sattyid
-                              end
-
-        vacols_case.bfattid = if evaluator.attorney
-                                existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
-                                existing_attorney.sattyid
-                              else
-                                new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
-                                new_attorney.sattyid
-                              end
-
-        vacols_case.case_issues.each do |case_issue|
-          case_issue.issdc = "3"
-          case_issue.save
-        end
-
-        create(
-          :case,
-          bfdpdcn: vacols_case.bfddec,
-          bfac: "7",
-          folder_number_equal: true,
-          original_case: vacols_case,
-          case_issues_equal: true,
-          original_case_issues: vacols_case.case_issues
-        )
-      end
     end
 
     trait :certified do
