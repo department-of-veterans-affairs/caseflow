@@ -39,11 +39,7 @@ class Organizations::UsersController < OrganizationsController
       render json: { checked: false }
 
     else
-      #enable
-      organization.organizations_users.find_by(user_id: user_id)
-        .organization_user_permissions
-        .find_or_create_by!(organization_permission: org_permission,
-                            organizations_user: target_user).update!(permitted: true)
+      enable_permission(user_id: user_id, org_permission: org_permission, target_user: target_user)
       render json: { checked: true }
     end
   end
@@ -103,8 +99,13 @@ class Organizations::UsersController < OrganizationsController
       .update(permitted: false)
   end
 
-  def enable_permission
-
+  def enable_permission(user_id:, org_permission:, target_user:)
+    organization.organizations_users.find_by(user_id: user_id)
+      .organization_user_permissions
+      .find_or_create_by!(
+        organization_permission: org_permission,
+        organizations_user: target_user
+      ).update!(permitted: true)
   end
 
   def org_user_permission_checker
