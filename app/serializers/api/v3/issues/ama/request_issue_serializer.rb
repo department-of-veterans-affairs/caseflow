@@ -13,17 +13,17 @@
 class Api::V3::Issues::Ama::RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
-  attributes :id, :benefit_type, :closed_at, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+  attributes :id, :added_by_css_id, :added_by_station_id, :benefit_type, :closed_at, :closed_status, :contention_reference_id, :contested_decision_issue_id,
              :contested_issue_description, :contested_rating_decision_reference_id,
              :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
-             :contested_rating_issue_reference_id, :corrected_by_request_issue_id,
+             :contested_rating_issue_reference_id, :corrected_by_css_id, :corrected_by_station_id, :corrected_by_request_issue_id,
              :correction_type, :created_at, :decision_date, :decision_review_id,
-             :decision_review_type, :edited_description, :end_product_establishment_id,
-             :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_description,
-             :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
+             :decision_review_type, :development_item_reference_id, :edited_by_css_id, :edited_by_station_id, :edited_description, :end_product_establishment_id,
+             :ineligible_due_to_id, :ineligible_reason, :is_unidentified, :legacy_opt_in_approved,
+             :nonrating_issue_bgs_id, :nonrating_issue_bgs_source, :nonrating_issue_category, :nonrating_issue_description,
+             :notes, :ramp_claim_id, :removed_by_css_id, :removed_by_station_id, :same_office, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
-             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
+             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id, :withdrawn_by_css_id, :withdrawn_by_station_id
 
   attribute :caseflow_considers_decision_review_active, &:status_active?
   attribute :caseflow_considers_issue_active, &:active?
