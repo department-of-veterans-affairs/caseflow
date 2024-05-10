@@ -45,7 +45,7 @@ RSpec.feature "InboundOpsTeamManagement" do
         end
       end
 
-      scenario "Adds and removes uesr permissions" do
+      scenario "Adds and removes user permissions" do
         visit_inbound_ops_team_management
         find('label[for="1-superuser"]').click
         find('label[for="1-auto_assign"]').click
