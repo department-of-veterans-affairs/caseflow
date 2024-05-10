@@ -267,8 +267,8 @@ module Seeds
     end
 
     # Direct review appeal creation functions
-    def create_direct_review_appeal(receipt_date, distributions_task_assigned_at_date)
-      Timecop.travel(distributions_task_assigned_at_date)
+    def create_direct_review_appeal(receipt_date, appeal_affinity_start_date)
+      Timecop.travel(appeal_affinity_start_date)
       create(
         :appeal,
         :direct_review_docket,
