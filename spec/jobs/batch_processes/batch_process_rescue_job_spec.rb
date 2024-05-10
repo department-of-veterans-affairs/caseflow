@@ -7,7 +7,7 @@ describe BatchProcessRescueJob, type: :job do
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
-    allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+    allow(SlackService).to receive(:new).and_return(slack_service)
     allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
   end
 
