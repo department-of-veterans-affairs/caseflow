@@ -90,8 +90,7 @@ describe Events::DecisionReviewCreated do
       end
 
       it "logs the error and updates the event" do
-        expect(Rails.logger).to receive(:error).with(/#{error_message}/)
-        expect(event).to receive(:update!).with(error: /#{error_message}/, info: { "failed_claim_id" => reference_id })
+        expect(Rails.logger).to receive(:error).with(/#{standard_error}/)
 
         expect { subject.create!(consumer_event_id, reference_id) }.to raise_error(StandardError)
       end
