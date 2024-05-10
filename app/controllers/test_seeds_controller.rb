@@ -2,7 +2,7 @@
 
 require "csv"
 
-class TestSeedsController < ApplicationController
+class Test::TestSeedsController < ApplicationController
   before_action :check_environment
   before_action :verify_access, only: [:seeds]
   before_action :authorize_admin, only: [:seeds]
@@ -10,26 +10,6 @@ class TestSeedsController < ApplicationController
   def seeds
     # seeds
     render "/test/seeds"
-  end
-
-  def run_demo
-    seed_type = params[:seed_type].to_sym
-    seed_count = params[:seed_count].to_i
-    test_seed_list = Constants.TEST_SEEDS.to_h
-    task_name = test_seed_list[seed_type]
-
-    if task_name
-      Rake::Task[task_name].reenable
-      index = 0
-      seed_count.times do
-        index += 1
-        Rails.logger.info "Rake run count #{index}"
-        Rake::Task[task_name].execute
-      end
-      head :ok
-    else
-      render json: { error: "Invalid seed type" }, status: :bad_request
-    end
   end
 
   private
