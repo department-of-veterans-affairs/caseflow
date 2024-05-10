@@ -205,6 +205,9 @@ FactoryBot.define do
         
               bfmpro { "HIS" }
               bfddec { 1.day.ago }
+              bfac { "1" }
+              bdfc { "3" }
+              bfcurloc { "99" }
         
               after(:create) do |vacols_case, evaluator|
                 vacols_case.bfmemid = if evaluator.judge
@@ -232,6 +235,9 @@ FactoryBot.define do
                   :case,
                   bfdpdcn: vacols_case.bfddec,
                   bfac: "7",
+                  bfcurloc: '81',
+                  bfcorkey: vacols_case.bfcorkey,
+                  bfcorlid: vacols_case.bfcorlid,
                   folder_number_equal: true,
                   original_case: vacols_case,
                   case_issues_equal: true,
