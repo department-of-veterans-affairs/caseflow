@@ -13,9 +13,9 @@ module PrintsTaskTree
     { "#{leaf_name}": task_tree_children(tasks).map { |child| child.structure(tasks, *atts) } }
   end
 
-  def structure_as_json(*atts)
+  def structure_as_json(tasks, *atts)
     leaf_name = self.class.name
-    child_tree = task_tree_children.map { |child| child.structure_as_json(*atts) }
+    child_tree = task_tree_children(tasks).map { |child| child.structure_as_json(tasks, *atts) }
     { "#{leaf_name}": task_tree_attributes_as_json(*atts).merge(tasks: child_tree) }
   end
 

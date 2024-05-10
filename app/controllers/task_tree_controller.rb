@@ -20,7 +20,7 @@ class TaskTreeController < ApplicationController
   helper_method :appeal, :task_tree_as_json
 
   def task_tree_as_json
-    @task_tree_as_json ||= appeal.structure_as_json(*Task.column_names)
+    @task_tree_as_json ||= appeal.structure_as_json(tasks, *Task.column_names)
   end
 
   def appeal
