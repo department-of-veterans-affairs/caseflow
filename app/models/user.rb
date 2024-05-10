@@ -112,7 +112,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def organization_permissions(org)
     # get organization user from the org relationship
-    org_user = organizations_users.find_by(organization: org)
+    org_user = OrganizationsUser.find_by(organization_id: org.id)
     # get user permission using the org_user
 
     # use org_user > org_user_permission > org_permission to get
