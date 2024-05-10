@@ -79,8 +79,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   private
 
   def display_intake_appeal
-    return true unless (current_user.mail_supervisor? || current_user.inbound_ops_team_superuser?)
-    correspondence.nod
+    !(current_user.mail_supervisor? || current_user.inbound_ops_team_superuser?)
   end
 
   def update_veteran_on_correspondence
