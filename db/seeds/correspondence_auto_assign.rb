@@ -12,6 +12,29 @@ module Seeds
       create_mail_team_superuser
     end
 
+    private
+
+    def create_auto_assign_permissions
+      OrganizationPermission.valid_permission_names.each do |permission|
+        OrganizationPermission.find_or_create_by(
+          permission: permission,
+          organization: InboundOpsTeam.singleton
+        ) do |perm|
+          perm.enabled = true
+          perm.description = Faker::Hipster.sentence
+        end
+      end
+      OrganizationPermission.find_by(permission: "superuser").update!(
+        description: "Superuser: Split, Merge, and Reassign",
+        default_for_admin: true
+      )
+      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
+      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
+        description: "Receieve \"NOD Mail\"",
+        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
+      )
+    end
+
     def create_inbound_ops_team_nod_user
       users_info = [
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD1", full_name: "Alexandr Johnson" },
@@ -53,29 +76,6 @@ module Seeds
           op.permitted = true
         end
       end
-    end
-
-    private
-
-    def create_auto_assign_permissions
-      OrganizationPermission.valid_permission_names.each do |permission|
-        OrganizationPermission.find_or_create_by(
-          permission: permission,
-          organization: InboundOpsTeam.singleton
-        ) do |perm|
-          perm.enabled = true
-          perm.description = Faker::Hipster.sentence
-        end
-      end
-      OrganizationPermission.find_by(permission: "superuser").update!(
-        description: "Superuser: Split, Merge, and Reassign",
-        default_for_admin: true
-      )
-      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
-      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
-        description: "Receieve \"NOD Mail\"",
-        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
-      )
     end
 
     def create_inbound_ops_team_supervisor
