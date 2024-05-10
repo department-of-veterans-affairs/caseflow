@@ -14,18 +14,36 @@ class TranscriptionPackages
   def call
     create_work_order
     create_zip_file
+    create_BoM_file
+    create_transcription_package
+    upload_transcription_package
   end
 
   private
 
   def create_work_order
     # call job work_order
-    Hearings::WorkOrderJob.perform(@work_order_params)
+    Hearings::WorkOrderFileJob.perform_now(@work_order_params)
   end
 
   def create_zip_file
     # call job to create a zip File
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform(@work_order_params.hearings)
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(@work_order_params.hearings)
+  end
+
+  def create_BoM_file
+    # TODO -- call to job
+    Hearings::CreateBomFileJob.perform_now(@work_order_params)
+  end
+
+  def create_transcription_package
+    # TODO -- call to job
+    Hearings::CreateTranscriptionPackageJob.perform_now(@work_order_params)
+  end
+
+  def upload_transcription_package
+    # TODO -- call to job
+    Hearings::UploadTranscriptionPackageJob.perform_now(@work_order_params)
   end
 end
 
