@@ -466,6 +466,7 @@ FactoryBot.define do
           evaluator.original_case_issues.each do |case_issue, i|
             vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser",
                                                                       "issmdtime", "issdc", "issdcls")
+            vacols_case.case_issues[i].save
           end
         end
       end
