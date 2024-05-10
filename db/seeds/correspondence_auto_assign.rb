@@ -12,24 +12,6 @@ module Seeds
       create_mail_team_superuser
     end
 
-    def create_auto_assign_permissions
-      OrganizationPermission.valid_permission_names.each do |permission|
-        OrganizationPermission.find_or_create_by(permission: permission, organization: InboundOpsTeam.singleton) do |p|
-          p.enabled = true
-          p.description = Faker::Hipster.sentence
-        end
-      end
-      OrganizationPermission.find_by(permission: "superuser").update!(
-        description: "Superuser: Split, Merge, and Reassign",
-        default_for_admin: true
-      )
-      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
-      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
-        description: "Receieve \"NOD Mail\"",
-        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
-      )
-    end
-
     def create_inbound_ops_team_nod_user
       users_info = [
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD1", full_name: "Alexandr Johnson" },
@@ -38,8 +20,8 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD4", full_name: "Olia Smith" }
       ]
       users_info.map do |user_info|
-        u = create_user(user_info)
-        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+        new_user = create_user(user_info)
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
         receive_nod_mail = OrganizationPermission.find_by(
           organization: InboundOpsTeam.singleton,
           permission: "receive_nod_mail"
@@ -61,8 +43,8 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A4", full_name: "Blaze Hill" }
       ]
       users_info.map do |user_info|
-        u = create_user(user_info)
-        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+        new_user = create_user(user_info)
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
         auto_assign = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "auto_assign")
         OrganizationUserPermission.find_or_create_by!(
           organization_permission: auto_assign,
@@ -70,6 +52,47 @@ module Seeds
         ) do |op|
           op.permitted = true
         end
+      end
+    end
+
+    private
+
+    def create_auto_assign_permissions
+      OrganizationPermission.valid_permission_names.each do |permission|
+        OrganizationPermission.find_or_create_by(
+          permission: permission,
+          organization: InboundOpsTeam.singleton
+        ) do |perm|
+          perm.enabled = true
+          perm.description = Faker::Hipster.sentence
+        end
+      end
+      OrganizationPermission.find_by(permission: "superuser").update!(
+        description: "Superuser: Split, Merge, and Reassign",
+        default_for_admin: true
+      )
+      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
+      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
+        description: "Receieve \"NOD Mail\"",
+        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
+      )
+    end
+
+    def create_inbound_ops_team_supervisor
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S1", full_name: "Caleb Mitchell" },
+        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S2", full_name: "Scarlett Reed" },
+        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S3", full_name: "Elijah Turner" }
+      ]
+      users_info.map do |user_info|
+        user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: ["Mail Intake"]
+        )
+        InboundOpsTeam.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, InboundOpsTeam.singleton)
       end
     end
 
@@ -82,48 +105,13 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP5", full_name: "Liam Miller" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by!(
+        new_user = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
-      end
-    end
-
-    def create_inbound_ops_team_supervisor
-      users_info = [
-        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S1", full_name: "Caleb Mitchell" },
-        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S2", full_name: "Scarlett Reed" },
-        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S3", full_name: "Elijah Turner" }
-      ]
-      users_info.map do |user_info|
-        u = User.find_or_create_by!(
-          station_id: 101,
-          css_id: user_info[:css_id],
-          full_name: user_info[:full_name],
-          roles: ["Mail Intake"]
-        )
-        InboundOpsTeam.singleton.add_user(u)
-        OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
-      end
-    end
-
-    def create_mail_team_user
-      users_info = [
-        { css_id: "MAIL_TEAM_USER_U1", full_name: "Cedar Rain" },
-        { css_id: "MAIL_TEAM_USER_U2", full_name: "Ivy Stone" },
-        { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
-      ]
-      users_info.map do |user_info|
-        u = User.find_or_create_by!(
-          station_id: 101,
-          css_id: user_info[:css_id],
-          full_name: user_info[:full_name],
-          roles: ["Mail Intake"]
-        )
-        MailTeam.singleton.add_user(u)
+        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
       end
     end
 
@@ -134,18 +122,33 @@ module Seeds
         { css_id: "MAIL_TEAM_ADMIN3", full_name: "Luna Meadows" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by!(
+        new_user = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        MailTeam.singleton.add_user(u)
-        OrganizationsUser.make_user_admin(u, MailTeam.singleton)
+        MailTeam.singleton.add_user(new_user)
+        OrganizationsUser.make_user_admin(new_user, MailTeam.singleton)
       end
     end
 
-    private
+    def create_mail_team_user
+      users_info = [
+        { css_id: "MAIL_TEAM_USER_U1", full_name: "Cedar Rain" },
+        { css_id: "MAIL_TEAM_USER_U2", full_name: "Ivy Stone" },
+        { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
+      ]
+      users_info.map do |user_info|
+        new_user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: ["Mail Intake"]
+        )
+        MailTeam.singleton.add_user(new_user)
+      end
+    end
 
     def create_user(user_info)
       User.find_or_create_by!(
