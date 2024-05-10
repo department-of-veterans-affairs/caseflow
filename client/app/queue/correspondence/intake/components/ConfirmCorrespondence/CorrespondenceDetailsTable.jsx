@@ -47,3 +47,4 @@ CorrespondenceDetailsTable.propTypes = {
 };
 
 export default CorrespondenceDetailsTable;
+
