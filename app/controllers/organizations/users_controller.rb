@@ -6,12 +6,7 @@ class Organizations::UsersController < OrganizationsController
       :permission, :description, :enabled, :parent_permission_id, :default_for_admin, :id
     )
 
-    @user_permissions = organization.organizations_users.sort_by(&:user_id).as_json(
-      only: [:user_id],
-      include: [
-        organization_user_permissions: { include: [organization_permission: { only: [:permission, :permitted] }] }
-      ]
-    )
+    @user_permissions = user_permissions
 
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -40,16 +35,11 @@ class Organizations::UsersController < OrganizationsController
       organization: organization,
       user: target_user.user
     )
-      organization.organizations_users
-        .find_by(user_id: user_id).organization_user_permissions
-        .find_by(
-          organization_permission: org_permission,
-          organizations_user: target_user
-        )
-        .update(permitted: false)
+      disable_permission(user_id: user_id, org_permission: org_permission, target_user: target_user)
       render json: { checked: false }
 
     else
+      #enable
       organization.organizations_users.find_by(user_id: user_id)
         .organization_user_permissions
         .find_or_create_by!(organization_permission: org_permission,
@@ -93,6 +83,29 @@ class Organizations::UsersController < OrganizationsController
   end
 
   private
+
+  def user_permissions
+    organization.organizations_users.sort_by(&:user_id).as_json(
+      only: [:user_id],
+      include: [
+        organization_user_permissions: { include: [organization_permission: { only: [:permission, :permitted] }] }
+      ]
+    )
+  end
+
+  def disable_permission(user_id:, org_permission:, target_user:)
+    organization.organizations_users
+      .find_by(user_id: user_id).organization_user_permissions
+      .find_by(
+        organization_permission: org_permission,
+        organizations_user: target_user
+      )
+      .update(permitted: false)
+  end
+
+  def enable_permission
+
+  end
 
   def org_user_permission_checker
     @org_user_permission_checker ||= OrganizationUserPermissionChecker.new
