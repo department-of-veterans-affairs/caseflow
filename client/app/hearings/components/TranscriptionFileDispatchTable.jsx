@@ -12,7 +12,17 @@ import
   statusColumn } from './TranscriptionFileDispatchTableColumns';
 
 export const TranscriptionFileDispatchTable = () => {
-  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
+  const data = [
+    {
+      docketNumber: "1234-56789",
+      caseDetails: "John Smith (1000001)",
+      type: "Original",
+      hearingDate: "5/10/2024",
+      hearingType: "AMA",
+      status: "Unassigned"
+    }
+  ]
+  const [transcriptionFiles, setTranscriptionFiles] = useState(data);
 
   const createUnassignedColumnObject = (column) => {
     const functionForColumn = {
@@ -38,11 +48,11 @@ export const TranscriptionFileDispatchTable = () => {
       rowObjects={transcriptionFiles}
       enablePagination
       casesPerPage={15}
-      sortColName="Hearing Date"
-      defaultSort={{
-        sortColName: 'hearingDateColumn',
-        sortAscending: true
-      }}
+      // sortColName="Hearing Date"
+      // defaultSort={{
+      //   sortColName: 'hearingDateColumn',
+      //   sortAscending: true
+      // }}
     />
   );
 };

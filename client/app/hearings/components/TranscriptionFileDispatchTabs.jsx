@@ -4,15 +4,15 @@ import Link from '../../components/Link';
 import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
 import { COLORS, ICON_SIZES } from '../../constants/AppConstants';
 import SearchBar from '../../components/SearchBar';
-import { css } from 'glamor';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable';
+import { css } from 'glamor';
 
 const searchBarStyles = css({
-  '> div': {
-    width: '100%'
-  },
+  '& input': {
+    width: '100% !important'
+  }
 });
 
 const styles = {
@@ -34,7 +34,7 @@ const styles = {
   },
   tableStyles: {
     marginTop: '5em'
-  }
+  },
 };
 
 const Description = ({ text, searchPrompt }) => {
@@ -43,7 +43,7 @@ const Description = ({ text, searchPrompt }) => {
       <div className="tab-description" style={styles.rowstyles} >
         {text}
         <div style={styles.rowstyles} className="cf-search-ahead-parent">
-          <div {...searchBarStyles}>
+          <div>
             <SearchBar
               placeholder="Type to search..."
               size="big"
@@ -74,7 +74,7 @@ export const tabConfig = [
           </div>
           <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
             Please select the files you would like to dispatch for transcription:
-            <div {...searchBarStyles}>
+            <div {...searchBarStyles} >
               <SearchBar
                 placeholder="Type to search..."
                 size="big"

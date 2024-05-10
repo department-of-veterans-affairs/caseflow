@@ -3,15 +3,35 @@ import COPY from '../../../COPY';
 import TRANSCRIPTION_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import Checkbox from '../../components/Checkbox';
 
+import { css } from 'glamor';
+
+const checkBoxHeaderStyles = css({
+  display: 'ruby',
+  '& label': {
+    marginTop: '10px',
+    marginLeft: '1px',
+  }
+});
+
+const checkBoxStyles = css({
+  '& label': {
+    marginTop: '20px'
+  }
+});
+
 export const selectColumn = (transcriptionFiles) => {
   return {
-    header: COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME,
+    header:
+    (<div {...checkBoxHeaderStyles}>
+      <Checkbox />
+      <p style={{ marginBottom: '18px' }} >{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
+    </div>),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.filterable,
     columnName: 'select_all',
     tableData: transcriptionFiles,
     valueName: 'Selected',
-    valueFunction: () => <Checkbox />
+    valueFunction: () => <div {...checkBoxStyles}><Checkbox /></div>
   };
 };
 
@@ -35,7 +55,7 @@ export const caseDetailsColumn = (transcriptionFiles) => {
     columnName: 'case_details',
     tableData: transcriptionFiles,
     valueName: 'Case Details',
-    valueFunction: (transcriptionFile) => transcriptionFile.case_details
+    valueFunction: (transcriptionFile) => transcriptionFile.caseDetails
   };
 };
 
@@ -59,7 +79,7 @@ export const hearingDateColumn = (transcriptionFiles) => {
     columnName: 'hearing_date',
     tableData: transcriptionFiles,
     valueName: 'Hearing Date',
-    valueFunction: (transcriptionFile) => transcriptionFile.hearing_date
+    valueFunction: (transcriptionFile) => transcriptionFile.hearingDate
   };
 };
 
@@ -71,7 +91,7 @@ export const hearingTypeColumn = (transcriptionFiles) => {
     columnName: 'hearing_type',
     tableData: transcriptionFiles,
     valueName: 'Hearing Type',
-    valueFunction: (transcriptionFile) => transcriptionFile.hearing_type
+    valueFunction: (transcriptionFile) => transcriptionFile.hearingType
   };
 };
 
