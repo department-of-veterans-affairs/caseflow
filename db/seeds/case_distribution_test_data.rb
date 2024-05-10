@@ -172,9 +172,9 @@ module Seeds
       end
     end
 
-    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, appeal_affinity_start_date)
+    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, assigned_at_date)
       number_of_appeals_to_create.times.each do
-        create_direct_review_appeal(receipt_date, appeal_affinity_start_date)
+        create_direct_review_appeal(receipt_date, assigned_at_date)
       end
     end
 
@@ -267,8 +267,8 @@ module Seeds
     end
 
     # Direct review appeal creation functions
-    def create_direct_review_appeal(receipt_date, appeal_affinity_start_date)
-      Timecop.travel(appeal_affinity_start_date)
+    def create_direct_review_appeal(receipt_date, assigned_at_date)
+      Timecop.travel(assigned_at_date)
       create(
         :appeal,
         :direct_review_docket,
