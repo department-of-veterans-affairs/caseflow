@@ -35,15 +35,17 @@ class Organizations::UsersController < OrganizationsController
     org_permission = organization.organization_permissions.find_by(permission: permission_name)
     target_user = organization.organizations_users.find_by(user_id: user_id)
 
-    if org_user_permission_cheker.can?(
+    if org_user_permission_checker.can?(
       permission_name: org_permission.permission,
       organization: organization,
       user: target_user.user
     )
-    organization.organizations_users
+      organization.organizations_users
         .find_by(user_id: user_id).organization_user_permissions
-        .find_by(organization_permission: org_permission,
-                 organizations_user: target_user)
+        .find_by(
+          organization_permission: org_permission,
+          organizations_user: target_user
+        )
         .update(permitted: false)
       render json: { checked: false }
 
@@ -92,8 +94,8 @@ class Organizations::UsersController < OrganizationsController
 
   private
 
-  def org_user_permission_cheker
-    @org_user_permission_cheker ||= OrganizationUserPermissionChecker.new
+  def org_user_permission_checker
+    @org_user_permission_checker ||= OrganizationUserPermissionChecker.new
   end
 
   def user_to_modify
