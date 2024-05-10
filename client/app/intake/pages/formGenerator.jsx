@@ -296,7 +296,6 @@ const FormGenerator = (props) => {
         />
       )}
 
-      {/* -- Banner scenario one -- */}
       {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && !props.featureToggles.removeCompAndPenIntake && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
@@ -305,7 +304,6 @@ const FormGenerator = (props) => {
         </div>
       )}
 
-      {/* -- Banner scenario two -- */}
       {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && props.featureToggles.removeCompAndPenIntake && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
@@ -317,12 +315,11 @@ const FormGenerator = (props) => {
         </div>
       )}
 
-      {/* -- Banner scenario three -- */}
       {isHlrOrScForm && props.featureToggles.removeCompAndPenIntake && ((props.featureToggles.vhaClaimReviewEstablishment && props.userIsVhaEmployee) || (!props.featureToggles.vhaClaimReviewEstablishment && !props.userIsVhaEmployee)) && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <ul>
-              <li dangerouslySetInnerHTML={{ __html: COPY.INTAKE_REMOVE_COMP_AND_PEN }} />
+              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
             </ul>
           </Alert>
         </div>
