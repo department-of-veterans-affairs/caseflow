@@ -7,11 +7,18 @@ import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import DateSelector from '../../../components/DateSelector';
 
-const TranscriptionDetailsInputs = ({ transcription, update, readOnly, transcriptionContractors }) => {
-  const contractorOptions = Object.entries(transcriptionContractors).map(([id, name]) => ({
-    label: name,
-    value: id
-  }));
+const TranscriptionDetailsInputs = ({
+  transcription,
+  update,
+  readOnly,
+  transcriptionContractors,
+}) => {
+  const contractorOptions = Object.entries(transcriptionContractors).map(
+    ([id, name]) => ({
+      label: name,
+      value: id,
+    })
+  );
 
   return (
     <React.Fragment>
@@ -24,6 +31,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly, transcrip
           value={transcription?.taskNumber}
           onChange={(taskNumber) => update({ taskNumber })}
         />
+
         <SearchableDropdown
           name="transcriber"
           label="Transcriber"
@@ -31,7 +39,9 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly, transcrip
           readOnly={readOnly}
           value={transcription?.transcriber}
           options={contractorOptions}
-          onChange={(option) => update({ transcriber: (option || {}).value })}
+          onChange={(option) => {
+            update({ transcriber: (option || {}).value });
+          }}
         />
         <div />
       </div>
@@ -43,7 +53,9 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly, transcrip
           type="date"
           readOnly={readOnly}
           value={transcription?.sentToTranscriberDate}
-          onChange={(sentToTranscriberDate) => update({ sentToTranscriberDate })}
+          onChange={(sentToTranscriberDate) =>
+            update({ sentToTranscriberDate })
+          }
         />
         <DateSelector
           name="expectedReturnDate"
