@@ -311,42 +311,5 @@ describe Organizations::UsersController, :postgres, type: :controller do
         expect(resp["errors"].first["detail"]).to eq COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
       end
     end
-    let(:user) {
-      create(:user).tap { |bva_user| Bva.singleton.add_user(bva_user) }
-    }
-    let(:iops_user) {
-      create(:user).tap { |iops_user| InboundOpsTeam.singleton.add_user(iops_user) }
-    }
-    let(:admin) {
-      create(:user).tap do |u|
-        OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
-      end
-    }
-    let(:params) { { user_id = user.user_id
-                      permission_name = params[:permissionName].strip
-                      org_url = params[:organization_url]
-                      org_permission = OrganizationPermission.find_by(permission: permission_name)} }
-    subject { patch(:update_permissions, params: params, as: :json) }
-
-
-    let(:authparams) { { id: admin.id } }
-
-    context "when current user is not authorized" do
-      it "returns unauthorized" do
-        User.authenticate!(user: user)
-        patch :modify_user_permission, params: params
-
-        expect(response.status).to eq(302)
-        # expect(response).to redirect_to("/unauthorized")
-      end
-    end
-
-    context "when current user is admin and authorized" do
-      it "returns a successful response" do
-        User.authenticate!(user: admin)
-        patch :modify_user_permission, params: authparams
-
-        expect(response).to have_http_status(:ok)
-      end
-    end
+  end
 end
