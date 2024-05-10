@@ -11,7 +11,7 @@ const TranscriptionDetailsInputs = ({
   transcription,
   update,
   readOnly,
-  transcriptionContractors,
+  transcriptionContractors = {},
 }) => {
   const contractorOptions = Object.entries(transcriptionContractors).map(
     ([id, name]) => ({
