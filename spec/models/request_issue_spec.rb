@@ -488,6 +488,14 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "check nonrating_issue_bgs_source can be set" do
+    let(:request_issue) { create(:request_issue, nonrating_issue_bgs_source: "Test Source") }
+
+    it "returns 'Test Source'" do
+      expect(request_issue.nonrating_issue_bgs_source).to eq("Test Source")
+    end
+  end
+
   context "#requires_record_request_task?" do
     context "issue is ineligible" do
       let(:benefit_type) { "education" }
@@ -1025,7 +1033,7 @@ describe RequestIssue, :all_dbs do
         vacols_sequence_id: 2,
         ineligible_reason: "untimely",
         ineligible_due_to_id: 345,
-        contested_rating_issue_diagnostic_code: "2222"
+        contested_rating_issue_diagnostic_code: "2222",
       )
     end
 
