@@ -3,10 +3,20 @@
 class Hearings::WorkOrderFileJob < CaseflowJob
   queue_with_priority :low_priority
 
+  S3_BUCKET = "vaec-appeals-caseflow"
+  TMP_FOLDER = Rails.root.join("tmp")
+
+  def initialize(work_order)
+    super(work_order)
+    @file_name = nil
+    @file_path = nil
+  end
+
   def perform(work_order)
     work_book = create_spreadsheet(work_order)
-    file_location(work_book, work_order[:work_order_name])
-    # upload to s3
+    write_to_workbook(work_book, work_order[:work_order_name])
+    upload_to_s3(work_order[:work_order_name])
+    cleanup_tmp_file
   end
 
   private
@@ -23,10 +33,10 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     workbook
   end
 
-  def file_location(workbook, work_order_name)
-    file_name = "BVA-#{work_order_name}.xls"
-    file_path = File.join(Rails.root, "tmp", file_name)
-    workbook.write(file_path)
+  def write_to_workbook(workbook, work_order_name)
+    @file_name = "BVA-#{work_order_name}.xls"
+    @file_path = TMP_FOLDER.join(@file_name)
+    workbook.write(@file_path)
   end
 
   def create_table(hearings_data, worksheet)
@@ -47,14 +57,18 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def populate_table_data(hearings, worksheet)
-    table_data = hearings.map do |hearing|
-      format_hearing_data(hearing)
-    end
+    table_data = hearings.map { |hearing| format_hearing_data(hearing) }
     append_table_data_to_worksheet(table_data, worksheet)
   end
 
   def format_hearing_data(hearing)
-    appeal = hearing.appeal
+    begin
+      appeal = hearing.appeal
+    rescue StandardError
+      Rails.logger.error "Work Order File Job failed to fetch appeal from hearing #{hearing.id}"
+      return default_hearing_data
+    end
+
     hearing_date = format_hearing_date(appeal)
     [
       appeal.docket_number,
@@ -68,12 +82,12 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     ]
   end
 
+  def default_hearing_data
+    ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
+  end
+
   def format_hearing_date(appeal)
-    if appeal.hearing_day_if_schedueled.present?
-      appeal.hearing_day_if_schedueled.strftime("%m/%d/%Y")
-    else
-      ""
-    end
+    appeal.hearing_day_if_schedueled&.strftime("%m/%d/%Y") || ""
   end
 
   def appeal_type(appeal)
@@ -87,8 +101,28 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def set_border_format(row, row_format)
-    (0..7).each do |col_index|
-      row.set_format(col_index, row_format)
+    (0..7).each { |col_index| row.set_format(col_index, row_format) }
+  end
+
+  def upload_to_s3(work_order_name)
+    begin
+      S3Service.store_file(s3_location, @file_path, :filepath)
+    rescue StandardError => error
+      Rails.logger.error "Work Order File Job failed to upload Work Order #{work_order_name} to S3: #{error.message}"
+      send_failure_notification
     end
+  end
+
+  def s3_location
+    folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
+    "#{folder_name}/transcript_text/#{@file_name}"
+  end
+
+  def cleanup_tmp_file
+    File.delete(@file_path) if File.exist?(@file_path)
+  end
+
+  def send_failure_notification
+    WorkOrderFileIssuesMailer.send_notification
   end
 end
