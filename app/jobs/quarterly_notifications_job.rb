@@ -22,13 +22,16 @@ class QuarterlyNotificationsJob < CaseflowJob
 
     begin
       NOTIFICATION_TYPES.each_key do |notification_type|
-        AppealState.eligible_for_quarterly.send(notification_type).each do |appeal_state|
-          NotificationInitializationJob.perform_later(
-            appeal_id: appeal_state.appeal_id,
-            appeal_type: appeal_state.appeal_type,
-            template_name: Constants.QUARTERLY_STATUSES.quarterly_notification,
-            appeal_status: notification_type.to_s
-          )
+        AppealState.eligible_for_quarterly.send(notification_type)
+          .find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batch_of_appeal_states|
+          batch_of_appeal_states.each do |appeal_state|
+            NotificationInitializationJob.perform_later(
+              appeal_id: appeal_state.appeal_id,
+              appeal_type: appeal_state.appeal_type,
+              template_name: "Quarterly Notification",
+              appeal_status: notification_type.to_s
+            )
+          end
         end
       end
     rescue StandardError => error
