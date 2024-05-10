@@ -9,23 +9,26 @@
       "filterable": false
     },
     "CASE_DETAILS": {
-      "name": "caseDetailseColumn",
+      "name": "caseDetailsColumn",
       "filterable": false
     },
     "TYPES": {
       "name": "typesColumn",
       "filterable": true,
-      "sorting_table": "appeals"
+      "sorting_table": "appeals",
+      "sorting_columns": ["stream_type"]
     },
     "HEARING_DATE": {
       "name": "hearingDateColumn",
-      "filterable": true,
-      "sorting_table": "hearings"
+      "filterable": "date",
+      "sorting_table": "hearings",
+      "sorting_columns": ["scheduled_time"]
     },
     "HEARING_TYPE": {
       "name": "hearingTypeColumn",
       "filterable": true,
-      "sorting_table": "hearings"
+      "sorting_table": "hearings",
+      "sorting_columns": ["hearing_type"]
     },
     "STATUS": {
       "name": "statusColumn",

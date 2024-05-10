@@ -161,6 +161,7 @@ export const HeaderRow = (props) => {
                 valueTransform={column.filterValueTransform}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                dateFilter={column.enableFilter === 'date'}
               />
             );
           } else if (props.useTaskPagesApi && column.filterOptions) {

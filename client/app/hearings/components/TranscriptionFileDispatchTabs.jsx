@@ -43,7 +43,7 @@ const Description = ({ text, searchPrompt }) => {
       <div className="tab-description" style={styles.rowstyles} >
         {text}
         <div style={styles.rowstyles} className="cf-search-ahead-parent">
-          <div>
+          <div {...searchBarStyles}>
             <SearchBar
               placeholder="Type to search..."
               size="big"
