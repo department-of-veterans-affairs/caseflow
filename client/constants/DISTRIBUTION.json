@@ -47,12 +47,12 @@
   "disable_ama_non_priority_hearing_title": "ACD Disable AMA Non-Priority Hearing",
   "disable_ama_non_priority_direct_review": "disable_ama_non_priority_direct_review",
   "disable_ama_non_priority_direct_review_title": "ACD Disable AMA Non-Priority Direct Review",
-  "disable_ama_non_priority_evidence_sub": "disable_ama_non_priority_evidence_sub",
-  "disable_ama_non_priority_evidence_sub_title": "ACD Disable AMA Non-Priority Evidence Submission",
+  "disable_ama_non_priority_evidence_submission": "disable_ama_non_priority_evidence_submission",
+  "disable_ama_non_priority_evidence_submission_title": "ACD Disable AMA Non-Priority Evidence Submission",
   "disable_ama_priority_hearing": "disable_ama_priority_hearing",
   "disable_ama_priority_hearing_title": "ACD Disable AMA Priority Hearing",
   "disable_ama_priority_direct_review": "disable_ama_priority_direct_review",
   "disable_ama_priority_direct_review_title": "ACD Disable AMA Priority Direct Review",
-  "disable_ama_priority_evidence_sub": "disable_ama_priority_evidence_sub",
-  "disable_ama_priority_evidence_sub_title": "ACD Disable AMA Priority Evidence Submission"
+  "disable_ama_priority_evidence_submission": "disable_ama_priority_evidence_submission",
+  "disable_ama_priority_evidence_submission_title": "ACD Disable AMA Priority Evidence Submission"
 }

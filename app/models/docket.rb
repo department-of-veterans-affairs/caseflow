@@ -29,10 +29,6 @@ class Docket
 
     scope = scope.nonpriority if priority == false
 
-    puts(scope.count)
-    puts(scope.first)
-    puts(scope)
-    puts(priority)
     scope.order("appeals.receipt_date")
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -43,13 +39,20 @@ class Docket
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
+    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value
 
-    return [] if lever_value == "true"
+    # Rails.logger.debug "Docket Type: #{docket_type}, Priority Status: #{priority_status}, Lever Item: #{lever_item}, Lever Value: #{lever_value}"
 
-    appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
+    if lever_value == "true"
+      # Rails.logger.debug "No appeals to be returned for Lever Item: #{lever_item} with TRUE setting."
+      appeals.none
+    else
+      # Rails.logger.debug "Returning appeals for Lever Item: #{lever_item} with FALSE setting."
+      appeals
+    end
   end
 
   def count(priority: nil, ready: nil)
@@ -173,7 +176,6 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    puts("scoped_for_priority")
     if use_by_docket_date?
       scope.priority.order("appeals.receipt_date")
     else
