@@ -326,7 +326,7 @@ const CorrespondenceTableBuilder = (props) => {
   return <div>
     <h1 className="correspondence-table-builder-title">{config.table_title}</h1>
     <QueueOrganizationDropdown
-      isMailTeamUser={props.isMailTeamUser}
+      isInboundOpsTeamUser={props.isInboundOpsTeamUser}
       isMailSupervisor={props.isMailSupervisor}
       isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
@@ -361,7 +361,7 @@ CorrespondenceTableBuilder.propTypes = {
   featureToggles: PropTypes.object,
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
-  isMailTeamUser: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool
 };

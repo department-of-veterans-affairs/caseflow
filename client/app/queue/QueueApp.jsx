@@ -26,7 +26,7 @@ import {
   setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
-  setMailTeamUser,
+  setInboundOpsTeamUser,
   setMailSupervisor,
   setInboundOpsSuperUser
 } from './uiReducer/uiActions';
@@ -132,7 +132,7 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
-    this.props.setMailTeamUser(this.props.isMailTeamUser);
+    this.props.setInboundOpsTeamUser(this.props.isInboundOpsTeamUser);
     this.props.setMailSupervisor(this.props.isMailSupervisor);
     this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
@@ -1532,10 +1532,10 @@ QueueApp.propTypes = {
   setUserCssId: PropTypes.func,
   setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
-  setMailTeamUser: PropTypes.func,
+  setInboundOpsTeamUser: PropTypes.func,
   setMailSupervisor: PropTypes.func,
   setInboundOpsSuperUser: PropTypes.func,
-  isMailTeamUser: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   mailTeamUsers: PropTypes.array,
@@ -1592,7 +1592,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
-      setMailTeamUser,
+      setInboundOpsTeamUser,
       setMailSupervisor,
       setInboundOpsSuperUser,
     },

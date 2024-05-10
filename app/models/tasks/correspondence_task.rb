@@ -18,7 +18,12 @@ class CorrespondenceTask < Task
       ReassignPackageTask.name,
       RemovePackageTask.name,
       SplitPackageTask.name,
-      MergePackageTask.name
+      MergePackageTask.name,
+      CorrespondenceMailTask.name,
+      ReviewPackageTask.name,
+      EfolderUploadFailedTask.name,
+      CorrespondenceRootTask.name,
+      CorrespondenceIntakeTask.name
     ]
   end
 
