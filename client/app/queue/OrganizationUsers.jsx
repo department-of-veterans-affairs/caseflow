@@ -102,7 +102,6 @@ export default class OrganizationUsers extends React.PureComponent {
       if (typeof stateValue !== 'undefined') {
         return stateValue.checked;
       }
-      // check props as the fallback
       const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id === user.id).attributes;
 
       if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
@@ -113,7 +112,15 @@ export default class OrganizationUsers extends React.PureComponent {
         return true;
       }
 
-      // check if user is marked as admin
+      // fallback to props if no state
+      const userData = (this.props.orgnizationUserPermissions.find((oup) => oup.user_id === Number(user.id)));
+
+      if (userData.organization_user_permissions.find((oup) =>
+        oup.organization_permission.permission === permission.permission && oup.permitted)) {
+        return true;
+      }
+
+      // check if user is marked as admin to auto check the checkbox.
       if (permission.default_for_admin && user.attributes.admin) {
         return true;
       }
