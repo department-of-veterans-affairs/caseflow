@@ -259,7 +259,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.removeUser(user)} /></div>
 
 getFilteredUsers = () => {
-  if (this.state.searchValue.length > 0) {
+  if (this.state.searchValue.length > 1) {
 
     // return name or css id if match
     return this.state.organizationUsers.filter((user) =>
@@ -364,6 +364,8 @@ getFilteredUsers = () => {
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
               COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+          </ul>
+          <div className="make-content-centered">
             <p className="text-styling-for-filter-search-bar">
           Filter by username or CSS ID</p>
             <div className="search-bar-styling-for-filter">
@@ -377,13 +379,13 @@ getFilteredUsers = () => {
                 value= {this.state.searchValue}
               />
             </div>
-          </ul>
+          </div>
         </div>
         { listOfUsers.length > 0 ? (
           <ul {...userListStyle}>{listOfUsers}</ul>
         ) : (
           <>
-            <b className="no-results-found-styling">No results found</b>
+            <p className="no-results-found-styling">No results found</p>
             <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
           </>
         )
