@@ -89,23 +89,23 @@ FactoryBot.define do
           create(
             :organization_permission,
             organization: inbound_ops_team,
-            permission: Constants.ORGANIZATION_PERMISSIONS.superuser.permission,
-            description: Constants.ORGANIZATION_PERMISSIONS.superuser.description,
+            permission: "superuser",
+            description: "Superuser: Split, Merge, and Reassign",
             default_for_admin: true,
             enabled: true
           )
           auto_assign = create(
             :organization_permission,
             organization: inbound_ops_team,
-            permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign.permission,
-            description: Constants.ORGANIZATION_PERMISSIONS.auto_assign.description,
+            permission: "auto_assign",
+            description: "Auto-Assignment",
             enabled: true
           )
           create(
             :organization_permission,
             organization: inbound_ops_team,
-            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.permission,
-            description: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.description,
+            permission: "receive_nod_mail",
+            description: "Receieve \"NOD Mail\"",
             parent_permission: auto_assign,
             enabled: true
           )
