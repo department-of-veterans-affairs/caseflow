@@ -9,6 +9,8 @@ class AppealsReadyForDistribution
     cavc: "CAVC",
     receipt_date: "Receipt Date",
     ready_for_distribution_at: "Ready for Distribution at",
+    # insert affinity_data heading here
+    affinity_date: "Affinity Date",
     hearing_judge: "Hearing Judge",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran"
@@ -64,6 +66,8 @@ class AppealsReadyForDistribution
         cavc: appeal["cavc"] == 1,
         receipt_date: appeal["bfd19"],
         ready_for_distribution_at: appeal["bfdloout"],
+        # insert affinity_date row data here
+        affinity_data: appeal["bfdpdcn"],
         hearing_judge: hearing_judge,
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
         veteran_name: veteran_name
@@ -90,6 +94,7 @@ class AppealsReadyForDistribution
         cavc: appeal.cavc,
         receipt_date: appeal.receipt_date,
         ready_for_distribution_at: ready_for_distribution_at,
+        # insert affinity_data row data here (probably doesn't apply here)
         hearing_judge: hearing_judge,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s
