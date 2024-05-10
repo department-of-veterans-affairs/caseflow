@@ -689,6 +689,19 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
   end
 
+  create_table "correspondence_response_letters", force: :cascade do |t|
+    t.integer "correspondence_id", comment: "Foreign key on correspondences table"
+    t.datetime "created_at", null: false
+    t.datetime "date_sent", comment: "Date at the time of sending correspondence response letters"
+    t.string "letter_type", null: false, comment: "Correspondence response letter type"
+    t.string "reason", comment: "Reason for selecting the response letter"
+    t.integer "response_window", comment: "The response window selected for the correspondence response letter"
+    t.string "subcategory", comment: "The subcategory selected for the correspondence response letter "
+    t.string "title", null: false, comment: "Correspondence response letters title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", comment: "The user who has created correspondence response letter"
+  end
+
   create_table "correspondence_types", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -702,6 +715,7 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.boolean "nod", default: false, null: false, comment: "NOD (Notice of Disagreement)"
     t.text "notes", comment: "Comes from CMP; can be updated by user"
     t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
     t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
@@ -716,15 +730,6 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
-  end
-
-  create_table "correspondences_appeals", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.bigint "correspondence_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index on appeal_id"
-    t.index ["correspondence_id"], name: "index on correspondence_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -2406,6 +2411,8 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
+  add_foreign_key "correspondence_appeals", "appeals"
+  add_foreign_key "correspondence_appeals", "correspondences"
   add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "correspondence_intakes", "tasks"
   add_foreign_key "correspondence_relations", "correspondences"
@@ -2415,8 +2422,6 @@ ActiveRecord::Schema.define(version: 2024_04_29_200120) do
   add_foreign_key "correspondences", "users", column: "assigned_by_id"
   add_foreign_key "correspondences", "users", column: "updated_by_id"
   add_foreign_key "correspondences", "veterans"
-  add_foreign_key "correspondences_appeals", "appeals"
-  add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
