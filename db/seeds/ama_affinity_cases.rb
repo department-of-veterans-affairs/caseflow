@@ -167,6 +167,8 @@ module Seeds
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
       create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
     end
 
     def create_case_ready_for_more_than_hearing_affinity_days(judge)
@@ -189,6 +191,8 @@ module Seeds
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
       create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
     end
   end
 end
