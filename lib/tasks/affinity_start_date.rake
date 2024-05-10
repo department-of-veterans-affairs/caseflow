@@ -28,6 +28,8 @@ namespace :db do
 
     # {Each receipt_date is then used here to get correlating appeals}
     docket_receipt_dates.each do |docket_result|
+      next if docket_result[:receipt_date].nil?
+
       appeals_to_update = Appeal.extending(DistributionScopes)
         .with_appeal_affinities
         .ready_for_distribution
