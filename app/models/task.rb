@@ -362,7 +362,7 @@ class Task < CaseflowRecord
     self.class.open_statuses.include?(status)
   end
 
-  def closed?
+  def closed? # CLOSED!!!!
     self.class.closed_statuses.include?(status)
   end
 
@@ -883,7 +883,6 @@ class Task < CaseflowRecord
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
         return all_children_cancelled_or_completed
       end
-
       update_task_if_children_tasks_are_completed
     end
   end
@@ -916,7 +915,6 @@ class Task < CaseflowRecord
 
   def cascade_closure_from_child_task?(child_task)
     return if is_a?(AssessDocumentationTask)
-
     type == child_task&.type
   end
 
@@ -988,16 +986,3 @@ class Task < CaseflowRecord
   end
 end
 # rubocop:enable Metrics/ClassLength
-# module SkipCallbacks
-#   def run_callbacks(kind, *args, &block)
-#     # binding.pry
-
-#     if [:create].include?(kind)
-#       # puts "(Skipping callbacks for #{kind}: #{args})"
-#       nil
-#     else
-#       super
-#     end
-#     yield(*args) if block_given?
-#   end
-# end

@@ -508,10 +508,10 @@ class Appeal < DecisionReview
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
     # define hash to store parent/child relationship values
     task_parent_to_child_hash = {}
-
     while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
       # cycle each task in the parent
       parent_ordered_tasks.each do |task|
+
         # skip this task if the task has been copied (already in the hash)
         next if task_parent_to_child_hash.key?(task.id)
 
@@ -554,7 +554,7 @@ class Appeal < DecisionReview
     dup_task.save
 
     # set the status to the correct status
-    dup_task.update_column(:status, original_task.status) # needed still?
+    dup_task.update_column(:status, original_task.status)
 
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id user_css_id
@@ -572,27 +572,20 @@ class Appeal < DecisionReview
     # assign the task to this appeal
     dup_task.appeal_id = id
 
-    # # set the status to assigned as placeholder
-    # dup_task.status = "assigned"
-
-    # # set the parent to the nil to skip over callbacks for the original parent or new parent
-    #  dup_task.parent_id = nil
     #  dup_task.parent_id = parent_task_id
 
     # set the appeal split process to true for the task
     dup_task.appeal.appeal_split_process = true
-
     # save the task
     dup_task.save(validate: false)
-
     # Set the status and the parent id to the correct values without triggering callbacks
-    dup_task.update_columns(status: original_task.status, parent_id: parent_task_id) #!!! still needed?
+    dup_task.update_columns(status: original_task.status, parent_id: parent_task_id)
 
     # if the status is cancelled, pull the original canceled ID
     if dup_task.status == "cancelled" && !original_task.cancelled_by_id.nil?
       # set request store to original task canceller to handle verification
       RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
-
+# binding.pry
       # confirm task just in case no prompt
       dup_task.cancelled_by_id = original_task.cancelled_by_id
       dup_task.save(validate: false)

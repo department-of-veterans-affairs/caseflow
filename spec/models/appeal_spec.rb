@@ -1958,6 +1958,11 @@ describe Appeal, :all_dbs do
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
         dup_appeal.finalize_split_appeal(original_appeal, params)
+
+        distribution_task.reload
+        informal_hearing_presentation_task.reload
+        final_letter_task.reload
+
         dup_distribution_task = dup_appeal.tasks.where(type: "DistributionTask").first
         dup_final_letter_task = dup_appeal.tasks.where(type: "SendFinalNotificationLetterTask").first
 
@@ -1977,15 +1982,16 @@ describe Appeal, :all_dbs do
         original_appeal = create(
           :appeal,
           :with_distribution_task_and_schedule_hearing_child_task,
-          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"))
+          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
+          )
 
         distribution_task = original_appeal.tasks.where(type: "DistributionTask").first
         hearing_task = original_appeal.tasks.where(type: "HearingTask").first
         schedule_hearing_task = original_appeal.tasks.where(type: "ScheduleHearingTask").first
 
-        distribution_task.update!(status: "completed")
-        hearing_task.update!(status: "completed")
-        schedule_hearing_task.update!(status: "completed")
+        distribution_task.update!(status: "assigned")
+        hearing_task.update!(status: "cancelled")
+        schedule_hearing_task.update!(status: "cancelled")
 
         newly_split_request_issue = original_appeal.request_issues.first.id.to_s
 
@@ -1999,12 +2005,16 @@ describe Appeal, :all_dbs do
 
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
+
         dup_appeal.finalize_split_appeal(original_appeal, params)
+        distribution_task.reload
+        hearing_task.reload
+        schedule_hearing_task.reload
 
         dup_distribution_task = dup_appeal.tasks.where(type: "DistributionTask").first
         dup_hearing_task = dup_appeal.tasks.where(type: "HearingTask").first
         dup_schedule_hearing_task = dup_appeal.tasks.where(type: "ScheduleHearingTask").first
-
+# binding.pry
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
