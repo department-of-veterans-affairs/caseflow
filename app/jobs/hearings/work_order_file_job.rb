@@ -15,7 +15,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   def perform(work_order)
     work_book = create_spreadsheet(work_order)
     write_to_workbook(work_book, work_order[:work_order_name])
-    upload_to_s3
+    upload_to_s3(work_order[:work_order_name])
     cleanup_tmp_file
   end
 
@@ -64,8 +64,8 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   def format_hearing_data(hearing)
     begin
       appeal = hearing.appeal
-    rescue StandardError => error
-      Rails.logger.error "Work Order File Job failed to fetch appeal from hearing: #{error.message}"
+    rescue StandardError
+      Rails.logger.error "Work Order File Job failed to fetch appeal from hearing #{hearing.id}"
       return default_hearing_data
     end
 
@@ -104,11 +104,11 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     (0..7).each { |col_index| row.set_format(col_index, row_format) }
   end
 
-  def upload_to_s3
+  def upload_to_s3(work_order_name)
     begin
       S3Service.store_file(s3_location, @file_path, :filepath)
     rescue StandardError => error
-      Rails.logger.error "Work Order File Job failed to upload to S3: #{error.message}"
+      Rails.logger.error "Work Order File Job failed to upload Work Order #{work_order_name} to S3: #{error.message}"
       send_failure_notification
     end
   end
