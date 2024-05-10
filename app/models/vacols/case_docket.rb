@@ -78,7 +78,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    select BFKEY, BFD19, BFCORLID, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
     #{FROM_READY_APPEALS}
   "
 
@@ -103,60 +104,86 @@ class VACOLS::CaseDocket < VACOLS::Record
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
 
+  # Provide access to legacy appeal decisions for more complete appeals history queries
+  JOIN_PREVIOUS_APPEALS = "
+  left join (
+      select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
+      B.BFMEMID as PREV_DECIDING_JUDGE, B.BFAC as PREV_TYPE_ACTION, F.TINUM as PREV_TINUM,
+      F.TITRNUM as PREV_TITRNUM
+      from BRIEFF B
+      inner join FOLDER F on F.TICKNUM = B.BFKEY
+
+      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+    ) PREV_APPEAL
+      on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
+      and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
+      and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN"
+
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ
+    select BFKEY, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
       )
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ
+    select BFKEY, BFD19, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFD19, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
         order by BFD19
       )
     "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
+    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+        PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION, PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
     )
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
+    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
       order by BFD19
     )
   "
@@ -166,14 +193,18 @@ class VACOLS::CaseDocket < VACOLS::Record
     select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
       CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
       STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
-      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
+         PREV_DECIDING_JUDGE
     from (
       select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
         #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
       order by BFD19
     ) APPEALS
     left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
@@ -315,6 +346,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
+  # {UPDATE}
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     conn = connection
 
@@ -334,6 +366,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
+  # {UPDATE}
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
 
@@ -423,6 +456,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_hash
   end
 
+  # {UPDATE}
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
@@ -470,6 +504,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
+  # {UPDATE}
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = if use_by_docket_date?
               <<-SQL
