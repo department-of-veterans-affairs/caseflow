@@ -21,7 +21,7 @@ class QuarterlyNotificationsJob < CaseflowJob
     ensure_current_user_is_set
 
     begin
-      NOTIFICATION_TYPES.keys_each do |notification_type|
+      NOTIFICATION_TYPES.each_key do |notification_type|
         AppealState.eligible_for_quarterly.send(notification_type).each do |appeal_state|
           NotificationInitializationJob.perform_later(
             appeal_id: appeal_state.appeal_id,
