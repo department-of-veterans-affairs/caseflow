@@ -25,11 +25,11 @@ class OrganizationPermission < CaseflowRecord
     end
 
     def auto_assign(organization)
-      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign.permission)
+      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign)
     end
 
     def receive_nod_mail(organization)
-      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.permission)
+      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail)
     end
   end
 end

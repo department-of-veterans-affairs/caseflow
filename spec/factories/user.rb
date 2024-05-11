@@ -46,10 +46,10 @@ FactoryBot.define do
 
         org_permission = OrganizationPermission.find_or_create_by!(
           organization: InboundOpsTeam.singleton,
-          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign.permission
+          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
         ) do |op|
           op.enabled = true
-          op.description = Constants.ORGANIZATION_PERMISSIONS.auto_assign.description
+          op.description = "Auto-Assignment"
         end
 
         # Has auto-assign permission
@@ -75,10 +75,10 @@ FactoryBot.define do
 
           org_permission = OrganizationPermission.find_or_create_by!(
             organization: InboundOpsTeam.singleton,
-            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.permission
+            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
           ) do |op|
             op.enabled = true
-            op.description = Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail.description
+            op.description = "Receive \"NOD Mail\""
           end
 
           OrganizationUserPermission.find_or_create_by!(
