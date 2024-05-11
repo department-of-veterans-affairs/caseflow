@@ -588,6 +588,7 @@ FactoryBot.define do
           create(:appeal,
                  :with_vha_issue,
                  :with_post_intake_tasks,
+                 :advanced_on_docket_due_to_age,
                  :direct_review_docket)
         end
         assigned_to { SpecialtyCaseTeam.singleton }

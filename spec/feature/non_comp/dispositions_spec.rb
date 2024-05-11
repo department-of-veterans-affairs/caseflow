@@ -447,7 +447,7 @@ feature "NonComp Dispositions Task Page", :postgres do
           click_on "Add issue"
           expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
           expect(page).to have_current_path(in_progress_task.caseflow_only_edit_issues_url)
-          expect(page).to have_content(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+          expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
         end
 
         step "should require decision date" do
@@ -471,7 +471,7 @@ feature "NonComp Dispositions Task Page", :postgres do
           click_on "Add issue"
           expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
           expect(page).to have_current_path(in_complete_task.caseflow_only_edit_issues_url)
-          expect(page).not_to have_content(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+          expect(page).not_to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
         end
 
         step "should require decision date" do

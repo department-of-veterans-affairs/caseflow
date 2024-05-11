@@ -210,7 +210,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       click_on "Add issue"
 
-      expect(page).to have_content(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+      expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
       expect(page).to have_button("Add this issue", disabled: true)
     end
   end
