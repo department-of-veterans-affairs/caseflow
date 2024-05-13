@@ -1,81 +1,4 @@
-export const mockedIssueModificationListProps = [
-  {
-    request_issue_id: '3311',
-    request_type: 'Modification',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonrating_issue_category: 'Caregiver | Eligibility',
-    nonrating_issue_description: 'Money for Care',
-    decision_text: 'New Caregiver | Eligibility text',
-    decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    status: 'approved',
-    remove_original_issue: true,
-    benefit_type: 'Veterans Health Administration',
-    request_issue: {
-      id: '3311',
-      benefit_type: 'Veterans Health Administration',
-      nonrating_issue_category: 'Beneficiary Travel',
-      nonrating_issue_description: 'Stuff',
-      decision_date: '2023-09-23'
-    }
-  },
-  {
-    request_issue_id: '3311',
-    request_type: 'Withdrawal',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonrating_issue_category: 'Caregiver | Eligibility',
-    nonrating_issue_description: 'Money for Care',
-    decision_text: 'New Caregiver | Eligibility text',
-    decision_date: '2024-01-30',
-    withdrawal_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested Withdrawal to this issue.',
-    status: 'approved',
-    benefit_type: 'Veterans Health Administration'
-  },
-  {
-    request_type: 'Addition',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonrating_issue_category: 'Beneficiary Travel',
-    nonrating_issue_description: 'Money for Travel',
-    decision_text: 'New note for this type of issue',
-    decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested Addition to this issue.',
-    status: 'approved',
-    benefit_type: 'Veterans Health Administration'
-  },
-  {
-    request_issue_id: '3311',
-    request_type: 'Removal',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonrating_issue_category: 'Caregiver | Eligibility',
-    nonrating_issue_description: 'Money for Care',
-    decision_text: 'New Caregiver | Eligibility text',
-    decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested Removal to this issue.',
-    status: 'approved',
-    benefit_type: 'Veterans Health Administration'
-  },
-  {
-    request_issue_id: '3311',
-    request_type: 'Modification',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonrating_issue_category: 'CHAMPVA',
-    nonrating_issue_description: 'Money for CHAMPVA',
-    decision_text: 'New CHAMPVA text',
-    decision_date: '2024-01-30',
-    request_reason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    benefit_type: 'Veterans Health Administration',
-    request_issue: {
-      id: '3311',
-      benefit_type: 'Veterans Health Administration',
-      nonrating_issue_category: 'Beneficiary Travel',
-      nonrating_issue_description: 'Stuff',
-      decision_date: '2023-09-23'
-    }
-  }
-];
-
-export const mockedModificationProps = [
+export const mockedModificationRequestProps = [
   {
     requestIssue_Id: '3311',
     requestType: 'Modification',
@@ -113,5 +36,50 @@ export const mockedModificationProps = [
       nonRatingIssueDescription: 'Stuff',
       decisionDate: '2023-09-23'
     }
+  }
+];
+
+export const mockedAdditionRequestTypeProps = [
+  {
+    request_type: 'Addition',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
+    nonrating_issue_category: 'Beneficiary Travel',
+    nonrating_issue_description: 'Money for Travel',
+    decision_text: 'New note for this type of issue',
+    decision_date: '2024-01-30',
+    request_reason: 'This is the reason that the user entered for the requested Addition to this issue.',
+    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
+  }
+];
+
+export const mockedRemovalRequestTypeProps = [
+  {
+    request_issue_id: '3311',
+    request_type: 'Removal',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    nonrating_issue_description: 'Money for Care',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
+    request_reason: 'This is the reason that the user entered for the requested Removal to this issue.',
+    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
+  }
+];
+
+export const mockedWithdrawalRequestTypeProps = [
+  {
+    request_issue_id: '3311',
+    request_type: 'Withdrawal',
+    requestor: 'Monte Mann (ACBAUERVVHA)',
+    nonrating_issue_category: 'Caregiver | Eligibility',
+    nonrating_issue_description: 'Money for Care',
+    decision_text: 'New Caregiver | Eligibility text',
+    decision_date: '2024-01-30',
+    withdrawal_date: '2024-01-30',
+    request_reason: 'This is the reason that the user entered for the requested Withdrawal to this issue.',
+    status: 'approved',
+    benefit_type: 'Veterans Health Administration'
   }
 ];
