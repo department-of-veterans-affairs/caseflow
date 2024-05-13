@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IssueModification from './IssueModificationRequest';
+import IssueModificationRequest from './IssueModificationRequest';
 
 const IssueModificationList = (
   {
@@ -10,7 +10,7 @@ const IssueModificationList = (
   }
 ) => {
   const issues = issuesArr.map((issue, id) => {
-    return <li key={id}><IssueModification issue={issue} /></li>;
+    return <li key={id}><IssueModificationRequest issue={issue} /></li>;
   });
 
   return (
