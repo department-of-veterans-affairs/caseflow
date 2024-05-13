@@ -36,10 +36,11 @@ FactoryBot.define do
   end
 
   # User factory
-  sequence :css_id do |n|
-    FactoryBot.sequence_by_name(:css_id).rewind if n == 999
-    shortened_time.concat(format("%<n>03d", n: n))
-  end
+  # sequence :css_id do |n|
+  #   FactoryBot.sequence_by_name(:css_id).rewind if n == 999
+  #   shortened_time.concat(format("%<n>03d", n: n))
+  # end
+  sequence :css_id
 
   sequence :sattyid
 end
