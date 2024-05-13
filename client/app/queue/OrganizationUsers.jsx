@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -75,8 +77,8 @@ export default class OrganizationUsers extends React.PureComponent {
       then((response) => {
         this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
       }, (error) => {
+        // eslint-disable-next-line no-console
         console.log(error);
-      // handle error
       });
   }
 
@@ -89,19 +91,17 @@ export default class OrganizationUsers extends React.PureComponent {
         return false;
       }
 
-      if (user.attributes?.user_permission.flat().find((userPer) => userPer.permission === permission)) {
+      if (user.attributes.user_permission.flat().find((userPer) => userPer.permission === permission)) {
         return true;
       }
     };
 
+    // this function determines if a checkbox is already checked by looking at state and then props as a fallback.
     const getCheckboxEnabled = (permission) => {
       const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) =>
         storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
 
-      // prioritize state
-      if (typeof stateValue !== 'undefined') {
-        return stateValue.checked;
-      }
+      // prioritize state values
       const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id === user.id).attributes;
 
       if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
@@ -110,6 +110,10 @@ export default class OrganizationUsers extends React.PureComponent {
 
       if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
         return true;
+      }
+
+      if (typeof stateValue !== 'undefined') {
+        return stateValue.checked;
       }
 
       // fallback to props if no state
@@ -134,11 +138,7 @@ export default class OrganizationUsers extends React.PureComponent {
         return false;
       }
 
-      if (user.attributes?.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
-        return true;
-      }
-
-      if (user.attributes?.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
+      if (user.attributes.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
         return true;
       }
     };
