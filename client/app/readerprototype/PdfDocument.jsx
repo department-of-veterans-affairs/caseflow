@@ -41,8 +41,11 @@ const PdfDocument = (doc) => {
             let canvas = document.createElement('canvas');
 
             canvas.setAttribute('id', `canvas-${page.pageNumber}`);
-            canvas.className = 'canvasWrapper';
+            canvas.className = 'cf-pdf-page-prototype';
             pdfContainer.appendChild(canvas);
+
+            // let canvasText = canvas.createTextNode(`Rendering page ${page.pageNumber}...`);
+            // canvas.appendChild(canvasText);
 
             const canvasContext = canvas.getContext('2d');
 
@@ -66,10 +69,9 @@ const PdfDocument = (doc) => {
         });
     };
 
-    if (doc) {
-      setPdfPages();
-    }
-  }, [doc]);
+    setPdfPages();
+
+  }, []);
 
   return (
     <div
