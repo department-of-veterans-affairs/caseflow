@@ -91,7 +91,7 @@ const formFieldMapping = (props) => {
     <Homelessness
       value={homelessnessFieldValue()}
       onChange={props.setHomelessnessType}
-      errorMessage={props.homelessnessError || props.errors ?.['homelessness'] ?.message}
+      errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
       register={props.register}
     />
   );
@@ -110,7 +110,7 @@ const formFieldMapping = (props) => {
             updateDocketType(value);
           }}
           errorMessage={
-            props.docketTypeError || props.errors ?.['docket-type'] ?.message
+            props.docketTypeError || props.errors?.['docket-type']?.message
           }
           value={props.docketType}
           inputRef={props.register}
@@ -125,7 +125,7 @@ const formFieldMapping = (props) => {
         onChange={props.setLegacyOptInApproved}
         errorMessage={
           props.legacyOptInApprovedError ||
-            props.errors ?.['legacy-opt-in'] ?.message
+            props.errors?.['legacy-opt-in']?.message
         }
         register={props.register}
       />
@@ -143,7 +143,7 @@ const formFieldMapping = (props) => {
         onChange={props.setBenefitType}
         errorMessage={
           props.benefitTypeError ||
-            props.errors ?.['benefit-type-options'] ?.message
+            props.errors?.['benefit-type-options']?.message
         }
         register={props.register}
         formName={props.formName}
@@ -163,7 +163,7 @@ const formFieldMapping = (props) => {
         }}
         errorMessage={
           props.informalConferenceError ||
-            props.errors ?.['informal-conference'] ?.message
+            props.errors?.['informal-conference']?.message
         }
         value={renderBooleanValue('informalConference')}
         inputRef={props.register}
@@ -180,7 +180,7 @@ const formFieldMapping = (props) => {
           props.setSameOffice(convertStringToBoolean(value));
         }}
         errorMessage={
-          props.sameOfficeError || props.errors ?.['same-office'] ?.message
+          props.sameOfficeError || props.errors?.['same-office']?.message
         }
         value={renderBooleanValue('sameOffice')}
         inputRef={props.register}
@@ -201,7 +201,7 @@ const formFieldMapping = (props) => {
           props.setFiledByVaGov(convertStringToBoolean(value));
         }}
         errorMessage={
-          props.filedByVaGovError || props.errors ?.['filed-by-va-gov'] ?.message
+          props.filedByVaGovError || props.errors?.['filed-by-va-gov']?.message
         }
         value={renderVaGovValue()}
         inputRef={props.register}
@@ -222,7 +222,7 @@ const formFieldMapping = (props) => {
           onChange={props.setOptionSelected}
           errorMessage={
             props.optionSelectedError ||
-              props.errors ?.['opt-in-election'] ?.message
+              props.errors?.['opt-in-election']?.message
           }
           value={props.optionSelected}
           inputRef={props.register}
@@ -236,7 +236,7 @@ const formFieldMapping = (props) => {
             onChange={props.setAppealDocket}
             errorMessage={
               props.appealDocketError ||
-                props.errors ?.['appeal-docket'] ?.message
+                props.errors?.['appeal-docket']?.message
             }
             value={props.appealDocket}
             inputRef={props.register}
