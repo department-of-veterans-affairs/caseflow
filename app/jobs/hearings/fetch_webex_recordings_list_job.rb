@@ -30,7 +30,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     topics = response.topics
     topic_num = 0
     response.ids.each do |id|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: id, topic: topics[topic_num])
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: id)
       topic_num += 1
     end
   end
