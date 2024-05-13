@@ -164,17 +164,6 @@ class AddIssuesPage extends React.Component {
       issue.isUnidentified || issue.decisionDate);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  // pendingRequestIssues(intakeData) {
-  //   if (intakeData.docketType === 'Legacy') {
-  //     return false;
-  //   }
-
-  //   const pendingRequestIssues = formatPendingRequestIssues(intakeData.pendingRequestIssues);
-
-  //   return pendingRequestIssues;
-  // }
-
   willRedirect(intakeData, hasClearedEp) {
     const { formType, processedAt, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
