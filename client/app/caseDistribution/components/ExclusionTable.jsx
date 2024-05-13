@@ -42,7 +42,7 @@ const ExclusionTable = () => {
   const filterOptionValue = (lever) => {
     let enabled = lever?.value;
 
-    if (enabled) {
+    if (enabled === 'true') {
       return COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_ON;
     }
 
@@ -136,7 +136,9 @@ const ExclusionTable = () => {
               </td>
               {nonPriorityRadios && nonPriorityRadios.map((lever) => (
                 <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, false)}>
-                  {filterOptionValue(lever)}
+                  <label className="exclusion-table-member-view-styling">
+                    {filterOptionValue(lever)}
+                  </label>
                 </td>
               ))}
             </tr>
@@ -148,7 +150,9 @@ const ExclusionTable = () => {
               </td>
               {priorityRadios && priorityRadios.map((lever) => (
                 <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, true)} >
-                  {filterOptionValue(lever)}
+                  <label className="exclusion-table-member-view-styling">
+                    {filterOptionValue(lever)}
+                  </label>
                 </td>
               ))}
             </tr>
