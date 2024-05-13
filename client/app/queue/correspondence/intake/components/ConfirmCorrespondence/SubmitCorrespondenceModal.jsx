@@ -37,16 +37,11 @@ export const SubmitCorrespondenceModal = ({
 
   // const history = useHistory();
 
-  const handleRouting = (status, props) => {
+  const handleRouting = (status) => {
     if (status === 201) {
       // window.location.href = '/queue/correspondence';
 
-      console.log(props.configUrl);
-      const configUrl = '/queue/correspondence.json?';
-
-      console.log(configUrl);
-
-      history.push('/queue/correspondence', configUrl);
+      history.push('/queue/correspondence');
       // history.go(0);
 
     } else {

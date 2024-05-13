@@ -132,16 +132,12 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    console.log('history: ', props.history);
-
     if (currentStep !== 1) {
       props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
     }
   }, [currentStep]);
 
   useEffect(() => {
-    console.log('history: ', props.history);
-
     // load previous correspondence intake from database (if any)
     if (props.reduxStore !== null) {
       setCurrentStep(3);
