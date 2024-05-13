@@ -63,17 +63,14 @@ UTM Option: Install UTM and VACOLS VM
 
 Colima/Docker Option with Oracle 19
 ---
-1. Clone the following repository: https://github.com/department-of-veterans-affairs/caseflow-facols
-2. Upon completion, navigate to caseflow-facols (cd ~/appeals/caseflow-facols)
-3. Run: git lfs install (needed to initialize large file storage in repo)
-4. Run: git checkout facols-arm-docker-build
-5. Run: git lfs pull (this will pull the large zipfile)
-6. Copy the ~/appeals/caseflow-facols/build_facols directory into ~/appeals/caseflow/local/vacols/ directory.
-7. Navigate to the caseflow directory in your terminal (type: cd ~/appeals/caseflow) and checkout the jshields/facols-arm-docker-build branch
-8. Navigate to the caseflow local vacols folder caseflow/local/vacols
-9. Run: ./build_push.sh local
-10. After the image builds a vacols image will now be in your docker images. When running make up vacols will spin up with the other container
-11. Running the first time: Right now when the container first starts the oracle database has to intialize. You can ssh into the contoner to see the logs and status. Once intialized should be good to go.
+
+1. In the Caseflow repo: Checkout the jshields/facols-arm-docker-build branch
+2. Run: git lfs install (needed to initialize large file storage in repo)
+3. Run: git lfs pull (this will pull the large zipfile)
+4. Navigate to the caseflow local vacols folder caseflow/local/vacols
+5. Run: ./build_push.sh local
+6. After the image builds a vacols image will now be in your docker images. When running make up vacols will spin up with the other container
+7. Running the first time: Right now when the container first starts the oracle database has to intialize. You can ssh into the contoner to see the logs and status. Once intialized should be good to go.
 
 
 Chromedriver, PDFtk Server, and wkhtmltox Installation
