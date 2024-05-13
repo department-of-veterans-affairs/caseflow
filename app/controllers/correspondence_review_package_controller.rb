@@ -93,7 +93,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_open_review_package_tasks
-    correspondence.tasks.open.where(type: ReviewPackageTask.name).each do |task|
+    correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
       task.update(status: Constants.TASK_STATUSES.in_progress)
     end
   end
