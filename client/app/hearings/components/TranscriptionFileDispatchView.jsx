@@ -7,7 +7,7 @@ import { tabConfig } from './TranscriptionFileDispatchTabs';
 
 export const TranscriptionFileDispatchView = () => {
   return (
-    <AppSegment filledBackground>
+    <AppSegment filledBackground >
       <h1 {...css({ display: 'inline-block' })}>Transcription file dispatch</h1>
       <QueueOrganizationDropdown organizations={[{ name: 'Transcription', url: 'transcription-team' }]} />
       <TabWindow

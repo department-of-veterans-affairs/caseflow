@@ -231,7 +231,10 @@ class TableFilter extends React.PureComponent {
       <>
         {dateFilter ?
           <span>
-            <DateSelector type="date" onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
+            <DateSelector
+              type="date"
+              value=""
+              onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
           </span> :
           renderFilterIcon()}
       </>

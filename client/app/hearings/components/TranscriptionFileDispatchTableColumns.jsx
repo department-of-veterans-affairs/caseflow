@@ -4,33 +4,48 @@ import TRANSCRIPTION_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE
 import Checkbox from '../../components/Checkbox';
 import { css } from 'glamor';
 
-const checkBoxHeaderStyles = css({
-  display: 'ruby',
-  '& label': {
-    marginTop: '10px',
-    marginLeft: '1px',
-  }
-});
-
-const checkBoxStyles = css({
-  '& label': {
-    marginTop: '20px'
-  }
-});
+const styles = {
+  checkBoxHeaderStyles: css({
+    display: 'flex',
+    '& .cf-form-checkbox': {
+      position: 'relative',
+      bottom: '0.2em',
+    },
+    '& p': {
+      marginBottom: '1em',
+      marginLeft: '0.2em'
+    }
+  }),
+  checkBoxStyles: css({
+    '& .cf-form-checkboxes': {
+      marginBottom: '0rem'
+    },
+    '& .checkbox-wrapper-undefined': {
+      marginTop: '1em'
+    },
+    '& .cf-form-checkbox': {
+      bottom: '0.7em'
+    },
+  }),
+  HeaderWithIconStyles: css({
+    position: 'relative',
+    top: '0.2em'
+  }),
+};
 
 export const selectColumn = (transcriptionFiles) => {
   return {
     header:
-    (<div {...checkBoxHeaderStyles}>
+    (<div {...styles.checkBoxHeaderStyles}>
       <Checkbox />
-      <p style={{ marginBottom: '18px' }} >{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
+      <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
     </div>),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.filterable,
     columnName: 'selectAll',
     tableData: transcriptionFiles,
     valueName: 'Selected',
-    valueFunction: () => <div {...checkBoxStyles}><Checkbox /></div>
+    valueFunction: () => <div {...styles.checkBoxStyles}><Checkbox /></div>
   };
 };
 
@@ -60,7 +75,7 @@ export const caseDetailsColumn = (transcriptionFiles) => {
 
 export const typesColumn = (transcriptionFiles) => {
   return {
-    header: COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.filterable,
     columnName: 'type',
@@ -73,7 +88,7 @@ export const typesColumn = (transcriptionFiles) => {
 
 export const hearingDateColumn = (transcriptionFiles) => {
   return {
-    header: <div>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</div>,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.filterable,
     columnName: 'hearingDate',
@@ -86,7 +101,7 @@ export const hearingDateColumn = (transcriptionFiles) => {
 
 export const hearingTypeColumn = (transcriptionFiles) => {
   return {
-    header: COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.filterable,
     columnName: 'hearingType',
@@ -98,7 +113,7 @@ export const hearingTypeColumn = (transcriptionFiles) => {
 
 export const statusColumn = (transcriptionFiles) => {
   return {
-    header: COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME,
+    header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.filterable,
     columnName: 'status',
