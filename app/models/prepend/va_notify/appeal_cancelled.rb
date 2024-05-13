@@ -8,7 +8,7 @@
 
 module AppealCancelled
   extend AppellantNotification
-  
+
   # Original Method in app/models/task.rb
   # Purpose: Update Record in Appeal States Table
   #

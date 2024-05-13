@@ -31,7 +31,8 @@ module PrivacyActPending
     super_return_value = super
     if (params[:type] == "PrivacyActTask" && params[:assigned_to_type].include?("Organization")) ||
        (params[:type] == "HearingAdminActionFoiaPrivacyRequestTask" && parent.type == "ScheduleHearingTask")
-      AppellantNotification.notify_appellant(parent.appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_pending)
+      AppellantNotification.notify_appellant(parent.appeal,
+                                             Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_pending)
     end
     super_return_value
   end
