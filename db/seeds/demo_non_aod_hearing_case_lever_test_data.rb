@@ -69,33 +69,33 @@ module Seeds
 
     end
 
-    def create_ama_hearing_held_aod_cavc_appeals(number_of_appeals_to_create, hearing_judge, distribution_task_assigned_at_date, receipt_date)
+    def create_ama_hearing_held_aod_cavc_appeals(number_of_appeals_to_create, hearing_judge, appeal_affinity_start_date, receipt_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_aod_cavc_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
+        create_ama_hearing_held_aod_cavc_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
       end
     end
 
-    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, distribution_task_assigned_at_date, receipt_date)
+    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, appeal_affinity_start_date, receipt_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_aod_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
+        create_ama_hearing_held_aod_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
       end
     end
 
-    def create_ama_hearing_held_cavc_appeals(number_of_appeals_to_create, hearing_judge, distribution_task_assigned_at_date, receipt_date)
+    def create_ama_hearing_held_cavc_appeals(number_of_appeals_to_create, hearing_judge, appeal_affinity_start_date, receipt_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_cavc_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
+        create_ama_hearing_held_cavc_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
       end
     end
 
-    def create_ama_hearing_held_appeals(number_of_appeals_to_create, hearing_judge, distribution_task_assigned_at_date, receipt_date)
+    def create_ama_hearing_held_appeals(number_of_appeals_to_create, hearing_judge, appeal_affinity_start_date, receipt_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
+        create_ama_hearing_held_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
       end
     end
 
-    def create_direct_review_appeals(number_of_appeals_to_create, associated_judge, distribution_task_assigned_at_date, receipt_date)
+    def create_direct_review_appeals(number_of_appeals_to_create, associated_judge, appeal_affinity_start_date, receipt_date)
       number_of_appeals_to_create.times.each do
-        create_direct_review_appeal(associated_judge, distribution_task_assigned_at_date, receipt_date)
+        create_direct_review_appeal(associated_judge, appeal_affinity_start_date, receipt_date)
       end
     end
 
@@ -192,8 +192,8 @@ module Seeds
 
     # Appeal Creation Functions
     # AMA Hearing Held AOD and CAVC appeal creation functions
-    def create_ama_hearing_held_aod_cavc_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
-      Timecop.travel(distribution_task_assigned_at_date + 1.day)
+    def create_ama_hearing_held_aod_cavc_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
+      Timecop.travel(appeal_affinity_start_date + 1.day)
         ama_hearing_aod_cavc_appeal= create(
           :appeal,
           :hearing_docket,
@@ -209,9 +209,10 @@ module Seeds
           associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
-      Timecop.travel(distribution_task_assigned_at_date)
+      Timecop.travel(appeal_affinity_start_date)
         remand = create(:cavc_remand, source_appeal: ama_hearing_aod_cavc_appeal)
         remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+        create(:appeal_affinity, appeal: remand.remand_appeal)
       Timecop.return
     end
 
@@ -225,8 +226,8 @@ module Seeds
     end
 
     # AMA Hearing Held AOD appeal creation functions
-    def create_ama_hearing_held_aod_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_ama_hearing_held_aod_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
+      Timecop.travel(appeal_affinity_start_date)
         create(
           :appeal,
           :hearing_docket,
@@ -234,6 +235,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_aod_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
@@ -252,8 +254,8 @@ module Seeds
     end
 
     # AMA Hearing Held CAVC appeal creation functions
-    def create_ama_hearing_held_cavc_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
-      Timecop.travel(distribution_task_assigned_at_date + 1.day)
+    def create_ama_hearing_held_cavc_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
+      Timecop.travel(appeal_affinity_start_date + 1.day)
         ama_hearing_cavc_appeal = create(
           :appeal,
           :hearing_docket,
@@ -268,9 +270,10 @@ module Seeds
           associated_attorney: find_attorney("CAVCATNY")
         )
       Timecop.return
-      Timecop.travel(distribution_task_assigned_at_date)
+      Timecop.travel(appeal_affinity_start_date)
         remand = create(:cavc_remand, source_appeal: ama_hearing_cavc_appeal)
         remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+        create(:appeal_affinity, appeal: remand.remand_appeal)
       Timecop.return
     end
 
@@ -284,14 +287,15 @@ module Seeds
     end
 
     # AMA Hearing Held Non-AOD, Non-CAVC appeal creation functions
-    def create_ama_hearing_held_appeal(hearing_judge, distribution_task_assigned_at_date, receipt_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_ama_hearing_held_appeal(hearing_judge, appeal_affinity_start_date, receipt_date)
+      Timecop.travel(appeal_affinity_start_date)
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
@@ -310,8 +314,8 @@ module Seeds
     end
 
     # Direct review appeal creation functions
-    def create_direct_review_appeal(associated_judge, distribution_task_assigned_at_date, receipt_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_direct_review_appeal(associated_judge, appeal_affinity_start_date, receipt_date)
+      Timecop.travel(appeal_affinity_start_date)
       create(
         :appeal,
         :direct_review_docket,

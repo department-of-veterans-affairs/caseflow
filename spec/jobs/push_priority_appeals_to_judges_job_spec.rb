@@ -70,6 +70,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: ready_priority_uuid,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
@@ -102,6 +103,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
+          :with_appeal_affinity,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -168,7 +170,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          :with_appeal_affinity,
+          uuid: ready_priority_uuid2,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -298,8 +301,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.hearing)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
     end
@@ -308,8 +312,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
     end
