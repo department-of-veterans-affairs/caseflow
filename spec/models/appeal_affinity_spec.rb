@@ -48,7 +48,8 @@ describe AppealAffinity do
       affinity = create(:appeal_affinity, appeal: appeal)
 
       dist_task.reload
-      expect(dist_task.instructions).to eq ["Affinity start date: #{affinity.affinity_start_date.to_date}"]
+      expect(dist_task.instructions)
+        .to eq ["Affinity start date: #{affinity.affinity_start_date.to_date.strftime('%m/%d/%Y')}"]
     end
 
     it "updates distribution task instructions when updated w/ new value" do
@@ -58,21 +59,22 @@ describe AppealAffinity do
       original_affinity_date = appeal.appeal_affinity.affinity_start_date
 
       expect(dist_task.instructions)
-        .to eq ["Affinity start date: #{original_affinity_date.to_date}"]
+        .to eq ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}"]
 
       appeal.appeal_affinity.update!(affinity_start_date: nil)
 
       dist_task.reload
       expect(dist_task.instructions)
-        .to eq ["Affinity start date: #{original_affinity_date.to_date}"]
+        .to eq ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}"]
 
       appeal.appeal_affinity.update!(affinity_start_date: Time.zone.now)
 
       appeal.reload
       dist_task.reload
-      expect(dist_task.instructions)
-        .to match_array ["Affinity start date: #{original_affinity_date.to_date}",
-                         "Affinity start date: #{appeal.appeal_affinity.affinity_start_date.to_date}"]
+      expect(dist_task.instructions).to match_array(
+        ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}",
+         "Affinity start date: #{appeal.appeal_affinity.affinity_start_date.to_date.strftime('%m/%d/%Y')}"]
+      )
     end
   end
 
