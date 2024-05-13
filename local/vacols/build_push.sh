@@ -7,7 +7,7 @@ USAGE=$(cat <<-END
 ./build_push.sh [local|remote|rake]
 
    This is a handy script which allows you to build, push or download FACOLS locally for your use.
-   ${bold}You must first mfa using the issue_mfa.sh since it will download dependencies.${normal}
+
    Example Usage (build but not push): ./build_push.sh local
    Example Usage (build and push): ./build_push.sh remote
 
@@ -57,13 +57,13 @@ build(){
   echo -e "\tDownloading FACOLS Dependencies..."
   aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
 
-  echo -e "\tChecking if Instant Client has been downloaded"
-  if [ $? -eq 0 ]; then
-    if [ ! -f $build_facols_dir/linuxx64_12201_database.zip ] ; then
-      echo -e "${bold}Error: ${normal}Couldn't download the file. Exiting"
-      exit 1
-    fi
-  fi
+  # echo -e "\tChecking if Instant Client has been downloaded"
+  # if [ $? -eq 0 ]; then
+  #   if [ ! -f $build_facols_dir/LINUX.ARM64_1919000_db_home.zip ] ; then
+  #     echo -e "${bold}Error: ${normal}Couldn't download the file. Exiting"
+  #     exit 1
+  #   fi
+  # fi
 
   # Build Docker
   echo -e "\tCreating FACOLS App Docker Image"
