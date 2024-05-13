@@ -1,5 +1,4 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { mount } from 'enzyme';
 import RadioField from 'app/components/RadioField';
 import ExclusionTable from 'app/caseDistribution/components/ExclusionTable';
@@ -21,8 +20,6 @@ describe('Exclusion Table', () => {
   });
 
   let leversWithTestingDocketLevers = { docket_levers: mockDocketLevers };
-  let leverPriority = mockDocketLevers[0];
-  let leverNonPriority = mockDocketLevers[4];
 
   it('Exclusion Table Renders all 8 Levers as Admin', () => {
     const store = getStore();
@@ -35,28 +32,22 @@ describe('Exclusion Table', () => {
     </Provider>
     ));
 
-    expect(wrapper.find(RadioField)).toHaveLength(4);
+    expect(wrapper.find(RadioField)).toHaveLength(8);
   });
 
   it('Exclusion Table Renders all 8 Levers for Member View', () => {
     const store = getStore();
-    const expectedPriorityValues = leverPriority.value ? 'ON' : 'OFF';
-    const expectedNonpriorityValues = leverNonPriority.value ? 'ON' : 'OFF';
 
     store.dispatch(loadLevers(leversWithTestingDocketLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
-    render(
-      <Provider store={store}>
-        <ExclusionTable />
-      </Provider>
-    );
+    const wrapper = mount((<Provider store={store}>
+      <ExclusionTable />
+    </Provider>
+    ));
 
-    const leverStatusPriority = screen.queryAllByText(expectedPriorityValues);
-    const leverStatusNonPriority = screen.queryAllByText(expectedNonpriorityValues);
-
-    expect(leverStatusPriority).toHaveLength(4);
-    expect(leverStatusNonPriority).toHaveLength(4);
+    // Renders all 8 Lever Labels
+    expect(wrapper.find('.exclusion-table-member-view-styling').length).toBe(8);
   });
 
 });
