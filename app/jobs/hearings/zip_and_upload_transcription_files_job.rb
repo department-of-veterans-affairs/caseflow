@@ -5,7 +5,6 @@ module Hearings
     include EnsureCurrentUserIsSet
 
     queue_as :low_priority
-
     attr_reader :tmp_files_to_cleanup
 
     class ZipFileUploadError < StandardError; end
