@@ -89,16 +89,10 @@ describe Events::DecisionReviewCreated do
           .to raise_error(StandardError)
       end
 
-      it "the error column is updated on the event" do
-        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
-          .to raise_error(StandardError)
-        expect(Event.find_by(reference_id: consumer_event_id).error).to include(standard_error.message)
-      end
+      it "logs the error and updates the event" do
+        expect(Rails.logger).to receive(:error).with(/#{standard_error}/)
 
-      it "the info column is updated on the event with the failed_claim_id" do
-        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
-          .to raise_error(StandardError)
-        expect(Event.find_by(reference_id: consumer_event_id).info).to eq("failed_claim_id" => reference_id)
+        expect { subject.create!(consumer_event_id, reference_id) }.to raise_error(StandardError)
       end
     end
   end

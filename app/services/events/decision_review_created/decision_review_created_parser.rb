@@ -45,7 +45,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
-    logical_date_int.nil? ? nil : Time.at(logical_date_int.to_i).to_date
+    return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
+
+    base_date = Date.new(1970, 1, 1)
+    converted_date = base_date + logical_date_int.to_i.days
+    return converted_date
   end
 
   def css_id
@@ -407,5 +411,9 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   def ri_nonrating_issue_bgs_id(issue)
     issue.dig(:nonrating_issue_bgs_id)
+  end
+
+  def ri_nonrating_issue_bgs_source(issue)
+    issue.dig(:nonrating_issue_bgs_source)
   end
 end
