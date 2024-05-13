@@ -24,16 +24,17 @@ class QuarterlyNotificationsJob < CaseflowJob
       NOTIFICATION_TYPES.each_key do |notification_type|
         jobs = AppealState.eligible_for_quarterly.send(notification_type).pluck(:appeal_id, :appeal_type)
           .map do |entry|
-
-            NotificationInitializationJob.new(
-              appeal_id: entry.first,
-              appeal_type: entry.last,
-              template_name: "Quarterly Notification",
-              appeal_status: notification_type.to_s
-            )
+          NotificationInitializationJob.new(
+            appeal_id: entry.first,
+            appeal_type: entry.last,
+            template_name: "Quarterly Notification",
+            appeal_status: notification_type.to_s
+          )
         end
 
-        jobs.in_groups_of(10) { |jobs_to_enqueue| enqueue_batch_of_jobs(jobs_to_enqueue.compact) }
+        Parallel.each(jobs.each_slice(10).to_a, in_threads: 5) do |jobs_to_enqueue|
+          enqueue_batch_of_jobs(jobs_to_enqueue.compact)
+        end
       end
     rescue StandardError => error
       log_error(error)
