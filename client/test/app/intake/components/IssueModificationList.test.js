@@ -1,9 +1,13 @@
-import React from "react";
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import COPY from '../../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
-import { mockedIssueModificationListProps, mockedModificationProps } from 'test/data/issueModificationListProps';
-import { formatModificationIssueRequestsBySection } from 'app/intake/util/issues';
+import {
+  mockedModificationRequestProps,
+  mockedAdditionRequestTypeProps,
+  mockedRemovalRequestTypeProps,
+  mockedWithdrawalRequestTypeProps
+} from 'test/data/issueModificationListProps';
 
 describe('IssueModificationList', () => {
   const setup = (testProps) => {
@@ -14,13 +18,35 @@ describe('IssueModificationList', () => {
     );
   };
 
-  const issueModificationProps = formatModificationIssueRequestsBySection(mockedIssueModificationListProps);
+  const additionalProps = {
+    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
+    issuesArr: mockedAdditionRequestTypeProps,
+    lastSection: true
+  };
 
   const modificationProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
-    issuesArr: mockedModificationProps,
+    issuesArr: mockedModificationRequestProps,
     lastSection: true
   };
+
+  const removalProps = {
+    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
+    issuesArr: mockedRemovalRequestTypeProps,
+    lastSection: true
+  };
+
+  const withdrawalProps = {
+    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
+    issuesArr: mockedWithdrawalRequestTypeProps,
+    lastSection: true
+  };
+
+  it('renders the section title for a "Addition" request type', () => {
+    setup(additionalProps);
+
+    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE)).toBeInTheDocument();
+  });
 
   it('renders the section title for a "Modification" request type', () => {
     setup(modificationProps);
@@ -28,9 +54,15 @@ describe('IssueModificationList', () => {
     expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE)).toBeInTheDocument();
   });
 
-  it('renders the information for "Modification" requests', () => {
-    setup(modificationProps);
+  it('renders the section title for a "Removal" request type', () => {
+    setup(removalProps);
 
-    expect(screen.getByText('CHAMPVA')).toBeInTheDocument();
+    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE)).toBeInTheDocument();
+  });
+
+  it('renders the section title for a "Withdrawal" request type', () => {
+    setup(withdrawalProps);
+
+    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE)).toBeInTheDocument();
   });
 });
