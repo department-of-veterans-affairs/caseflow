@@ -28,7 +28,10 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if request_issues_update.perform!
+    if !current_user.admin? && request_issues_update.perform!
+      render_success
+    elsif current_user.admin? && issues_modification_request_update.perform!
+      # OOP to handle the difference requests that come from non-admins
       render_success
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -56,11 +59,20 @@ class ClaimReviewController < ApplicationController
     fail "Must override source_type"
   end
 
+  def issues_modification_request_update
+    @issues_modification_request_update ||= NonAdmin::IssueModificationRequestsUpdater.new(
+      current_user: current_user,
+      review: claim_review,
+      issue_modifications_data: params[:issue_modification_requests]
+    )
+  end
+
   def request_issues_update
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: claim_review,
-      request_issues_data: params[:request_issues]
+      request_issues_data: params[:request_issues],
+      issue_modification_requests_data: params[:issue_modification_requests]
     )
   end
 
