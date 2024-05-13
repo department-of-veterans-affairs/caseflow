@@ -24,7 +24,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   after { cleanup_tmp_directories }
 
   it "temporarily downloads mp3s and rtfs for all the hearings in a work order" do
-    allow_any_instance_of(described_class).to receive(:cleanup_tmp).and_return(nil)
+    allow_any_instance_of(described_class).to receive(:cleanup_tmp_files).and_return(nil)
 
     %w(mp3 rtf).each do |directory|
       expect(Dir.empty?("tmp/transcription_files/#{directory}")).to eq(true)
@@ -42,7 +42,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   end
 
   it "temporarily saves a zip file for each hearing in the work order" do
-    allow_any_instance_of(described_class).to receive(:cleanup_tmp).and_return(nil)
+    allow_any_instance_of(described_class).to receive(:cleanup_tmp_files).and_return(nil)
 
     expect(Dir.empty?("tmp/transcription_files/zip")).to eq true
 
