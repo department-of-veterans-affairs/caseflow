@@ -33,7 +33,7 @@ export const CorrespondenceReviewPackage = (props) => {
     default_select_value: null,
     va_date_of_receipt: '',
   });
-  const correspondence = useSelector(
+  const stateCorrespondence = useSelector(
     (state) => state.reviewPackage.correspondence
   );
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
@@ -297,7 +297,7 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (displayIntakeAppeal || correspondence.nod) && (
+            { (displayIntakeAppeal || stateCorrespondence.nod) && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
