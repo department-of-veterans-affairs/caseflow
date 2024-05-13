@@ -13,17 +13,17 @@
 class Api::V3::Issues::Ama::RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
-  attributes :id, :added_by_css_id, :added_by_station_id, :benefit_type, :closed_at, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+  attributes :id, :benefit_type, :closed_at, :closed_status, :contention_reference_id, :contested_decision_issue_id,
              :contested_issue_description, :contested_rating_decision_reference_id,
              :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
-             :contested_rating_issue_reference_id, :corrected_by_css_id, :corrected_by_station_id, :corrected_by_request_issue_id,
+             :contested_rating_issue_reference_id, :corrected_by_request_issue_id,
              :correction_type, :created_at, :decision_date, :decision_review_id,
-             :decision_review_type, :development_item_reference_id, :edited_by_css_id, :edited_by_station_id, :edited_description, :end_product_establishment_id,
-             :ineligible_due_to_id, :ineligible_reason, :is_unidentified, :legacy_opt_in_approved,
-             :nonrating_issue_bgs_id, :nonrating_issue_bgs_source, :nonrating_issue_category, :nonrating_issue_description,
-             :notes, :ramp_claim_id, :removed_by_css_id, :removed_by_station_id, :same_office, :split_issue_status, :unidentified_issue_text,
+             :decision_review_type, :edited_description, :end_product_establishment_id,
+             :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
+             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_description,
+             :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
-             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id, :withdrawn_by_css_id, :withdrawn_by_station_id
+             :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
 
   attribute :caseflow_considers_decision_review_active, &:status_active?
   attribute :caseflow_considers_issue_active, &:active?
@@ -67,5 +67,18 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
         updated_at: di.updated_at
       }
     end
+  end
+# new attributes
+  attribute :development_item_reference_id do |object|
+    object&.end_product_establishment&.development_item_reference_id
+  end
+
+  attribute :same_office do |object|
+    fn = Veteran.find_by(participant_id: object&.veteran_participant_id).file_number
+    HigherLevelReview.find_by(veteran_file_number: fn)&.same_office
+  end
+
+  attribute :legacy_opt_in_approved do |object|
+    object&.decision_review&.legacy_opt_in_approved
   end
 end
