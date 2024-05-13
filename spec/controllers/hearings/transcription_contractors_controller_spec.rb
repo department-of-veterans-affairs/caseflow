@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Hearings::TranscriptionSettingsController, type: :controller do
+RSpec.describe Hearings::TranscriptionContractorsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
   let!(:transcription_contractor_1) { create(:transcription_contractor) }
   let!(:transcription_contractor_2) { create(:transcription_contractor) }

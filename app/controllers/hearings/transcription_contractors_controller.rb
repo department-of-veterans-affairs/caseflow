@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionSettingsController < ApplicationController
+class Hearings::TranscriptionContractorsController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
