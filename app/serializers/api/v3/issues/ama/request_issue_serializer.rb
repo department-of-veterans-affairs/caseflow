@@ -68,4 +68,17 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
       }
     end
   end
+
+  attribute :development_item_reference_id do |object|
+    object&.end_product_establishment&.development_item_reference_id
+  end
+
+  attribute :same_office do |object|
+    fn = Veteran.find_by(participant_id: object&.veteran_participant_id).file_number
+    HigherLevelReview.find_by(veteran_file_number: fn)&.same_office
+  end
+
+  attribute :legacy_opt_in_approved do |object|
+    object&.decision_review&.legacy_opt_in_approved
+  end
 end
