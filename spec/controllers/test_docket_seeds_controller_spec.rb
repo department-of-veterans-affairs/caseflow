@@ -11,6 +11,32 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
       context "single seed" do
         context "with judge CSS ID given" do
           it "creates a 30 day old AMA AOD Hearing case" do
+            params: {
+              json: {
+                row_entries: [
+                  {
+                    seed_type:
+                    seed_count:
+                    days_ago:
+                    judge_css_id:
+                  },
+                  {
+                    seed_type:
+                    seed_count:
+                    days_ago:
+                    judge_css_id:
+                  },
+                  {
+                    seed_type:
+                    seed_count:
+                    days_ago:
+                    judge_css_id:
+                  },
+                ]
+              }
+            }
+
+
             post :seed_dockets, params: {
               seed_type: "ama-aod-hearing-seeds",
               seed_count: "1",
