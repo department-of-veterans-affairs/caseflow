@@ -27,7 +27,7 @@ const IssueModificationRequest = (
 
   const originalIssue = (
     <div>
-      <h3>Originial Issue</h3>
+      <h3>Original Issue</h3>
       <p>issue?.requestIssue.nonratingIssueCategory - issue?.requestIssue.nonratingIssueDescription</p>
       <p>Benefit type: issue?.requestIssue.benefitType</p>
       <p>Decision date: issue?.requestIssue.decisionDate</p>
