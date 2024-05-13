@@ -43,13 +43,13 @@ const NonCompTabsUnconnected = (props) => {
   const getTabByIndex = findTab === -1 ? 0 : findTab;
 
   // Derive the different tab task counts from the task filters.
-  const values = useMemo(() => (
+  const taskCounts = useMemo(() => (
     mapValues(props.taskFilterDetails, (obj) => sumBy(Object.values(obj)))
   ), [props.taskFilterDetails]);
 
   const ALL_TABS = {
     incomplete: {
-      label: `Incomplete tasks (${values.incomplete})`,
+      label: `Incomplete tasks (${taskCounts.incomplete})`,
       page: <TaskTableTab
         key="incomplete"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=incomplete`}
@@ -63,7 +63,7 @@ const NonCompTabsUnconnected = (props) => {
           defaultSortIdx: 3 }} />
     },
     pending: {
-      label: `Pending tasks (${values.pending})`,
+      label: `Pending tasks (${taskCounts.pending})`,
       page: <TaskTableTab {...props}
         key="pending"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=pending`}
@@ -79,7 +79,7 @@ const NonCompTabsUnconnected = (props) => {
           defaultSortIdx: 3 }} />
     },
     in_progress: {
-      label: `In progress tasks (${values.in_progress})`,
+      label: `In progress tasks (${taskCounts.in_progress})`,
       page: <TaskTableTab {...props}
         key="inprogress"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}

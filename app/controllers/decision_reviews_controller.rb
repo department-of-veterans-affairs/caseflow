@@ -32,7 +32,8 @@ class DecisionReviewsController < ApplicationController
     "issueCountColumn" => "issue_count",
     "issueTypesColumn" => "issue_types_lower",
     "daysWaitingColumn" => "tasks.assigned_at",
-    "completedDateColumn" => "tasks.closed_at"
+    "completedDateColumn" => "tasks.closed_at",
+    "pendingIssueModificationRequests" => "pending_issue_count"
   }.freeze
 
   def index

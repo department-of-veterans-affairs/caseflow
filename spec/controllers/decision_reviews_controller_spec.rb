@@ -656,6 +656,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
           end
         end
 
+        let(:extra_issue_modifications_task) { pending_tasks.first }
+
+        before do
+          # Add an additional issue modification request to the first task for sorting
+          create(:issue_modification_request, decision_review: extra_issue_modifications_task.appeal, requestor: user)
+          extra_issue_modifications_task.reload
+        end
+
         include_examples "task query filtering"
         include_examples "issue type query filtering"
 
@@ -691,6 +699,35 @@ describe DecisionReviewsController, :postgres, type: :controller do
           expect(
             task_ids_from_response_body(response_body)
           ).to match_array task_ids_from_seed(pending_tasks, (-2..pending_tasks.size), :assigned_at)
+        end
+
+        it "sorts correctly by pending issue requests in descending order" do
+          query_params[:page] = 1
+          query_params[:sort_by] = "pendingIssueModificationRequest"
+
+          subject
+          response_body = JSON.parse(response.body)
+          expect(response.status).to eq(200)
+          expect(response_body["total_task_count"]).to eq 32
+          expect(response_body["tasks_per_page"]).to eq 15
+          expect(response_body["task_page_count"]).to eq 3
+
+          expect(task_ids_from_response_body(response_body).first).to eq(extra_issue_modifications_task.id)
+        end
+
+        it "sorts correctly by pending issue requests in ascending order" do
+          query_params[:page] = 3
+          query_params[:order] = "asc"
+          query_params[:sort_by] = "pendingIssueModificationRequest"
+
+          subject
+          response_body = JSON.parse(response.body)
+          expect(response.status).to eq(200)
+          expect(response_body["total_task_count"]).to eq 32
+          expect(response_body["tasks_per_page"]).to eq 15
+          expect(response_body["task_page_count"]).to eq 3
+
+          expect(task_ids_from_response_body(response_body).last).to eq(extra_issue_modifications_task.id)
         end
       end
     end
