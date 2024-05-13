@@ -55,10 +55,18 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def genpop_base_query
     join_distribution_tasks
       .with_original_appeal_and_judge_task
+      .include_aod_motions
   end
 
   def genpop_with_case_distribution_lever
-    results = if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+    genpop_cavc_affinity_days_query = generate_genpop_cavc_affinity_days_lever_query
+    genpop_cavc_aod_affinity_days_query = generate_genpop_cavc_aod_affinity_days_lever_query
+
+    genpop_cavc_affinity_days_query.or(genpop_cavc_aod_affinity_days_query)
+  end
+
+  def generate_genpop_cavc_affinity_days_lever_query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
       genpop
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
@@ -70,20 +78,19 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
       genpop_base_query
     end
+  end
 
+  def generate_genpop_cavc_aod_affinity_days_lever_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      results = results.or(priority.where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.cavc_aod_affinity_days.days.ago))
-    # elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-    #   genpop_base_query
-    #     .where(
-    #       "appeals.stream_type != ? OR original_judge_task.assigned_to_id in (?)",
-    #       Constants.AMA_STREAM_TYPES.court_remand,
-    #       exclude_affinity_and_ineligible_judge_ids
-    #     )
-    # elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
-    #   genpop_base_query
+      results1 = genpop_base_query.where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .where("original_judge_task.assigned_to_id in (?)",
+          exclude_affinity_and_ineligible_judge_ids
+        )
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query
     end
-    results
   end
 
   def non_genpop_with_case_distribution_lever(judge)
