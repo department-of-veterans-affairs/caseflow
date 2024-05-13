@@ -35,6 +35,18 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: this.props.pageIndex,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null
+    };
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
