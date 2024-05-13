@@ -135,6 +135,7 @@ module FeatureHelper
   end
 
   def click_dropdown_menu_item(dropdown, selector, keyword_args)
+    sleep 1
     dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
   end
 
