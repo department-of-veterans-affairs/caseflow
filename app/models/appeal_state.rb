@@ -19,7 +19,7 @@ class AppealState < CaseflowRecord
     privacy_act_complete: false,
     scheduled_in_error: false,
     appeal_cancelled: false
-  }.freeze
+  }
 
   # Purpose: Method to verify if the Appeal can receive a QuarterlyNotification
   #
@@ -213,7 +213,7 @@ class AppealState < CaseflowRecord
   # Response: None
   def vso_ihp_complete_appeal_state_update_action!(appeal)
     if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
-    appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
+       appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
       update_appeal_state!(:vso_ihp_complete)
     end
   end
@@ -227,10 +227,10 @@ class AppealState < CaseflowRecord
   def privacy_act_complete_appeal_state_update_action!(appeal)
     open_tasks = appeal.tasks.open
     if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-      open_tasks.where(type: PrivacyActTask.name).empty? &&
-      open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-      open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-      open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+       open_tasks.where(type: PrivacyActTask.name).empty? &&
+       open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+       open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+       open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
       update_appeal_state!(:privacy_act_complete)
     end
   end
@@ -244,10 +244,10 @@ class AppealState < CaseflowRecord
   def privacy_act_cancelled_appeal_state_update!(appeal)
     open_tasks = appeal.tasks.open
     if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-    open_tasks.where(type: PrivacyActTask.name).empty? &&
-    open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-    open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-    open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+       open_tasks.where(type: PrivacyActTask.name).empty? &&
+       open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+       open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+       open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
       update_appeal_state!
     end
   end
