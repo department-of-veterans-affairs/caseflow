@@ -125,6 +125,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       expect(parser.ri_ramp_claim_id(issue)).to eq response_hash.request_issues.first["ramp_claim_id"]
       expect(parser.ri_rating_issue_associated_at(issue)).to eq response_hash.request_issues.first["rating_issue_associated_at"]
       expect(parser.ri_nonrating_issue_bgs_id(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
+      expect(parser.ri_nonrating_issue_bgs_source(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_source"]
     end
   end
   def read_json_payload

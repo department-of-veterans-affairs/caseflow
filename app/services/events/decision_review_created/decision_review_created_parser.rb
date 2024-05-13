@@ -412,4 +412,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def ri_nonrating_issue_bgs_id(issue)
     issue.dig(:nonrating_issue_bgs_id)
   end
+
+  def ri_nonrating_issue_bgs_source(issue)
+    issue.dig(:nonrating_issue_bgs_source)
+  end
 end

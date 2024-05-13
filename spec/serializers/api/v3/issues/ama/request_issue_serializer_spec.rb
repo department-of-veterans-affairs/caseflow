@@ -33,6 +33,7 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:ineligible_reason)).to eq true
       expect(serialized_request_issue.key?(:is_unidentified)).to eq true
       expect(serialized_request_issue.key?(:nonrating_issue_bgs_id)).to eq true
+      expect(serialized_request_issue.key?(:nonrating_issue_bgs_source)).to eq true
       expect(serialized_request_issue.key?(:nonrating_issue_category)).to eq true
       expect(serialized_request_issue.key?(:nonrating_issue_description)).to eq true
       expect(serialized_request_issue.key?(:notes)).to eq true
