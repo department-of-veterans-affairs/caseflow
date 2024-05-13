@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
-# rubocop:disable Metrics/ModuleLength
 module AppellantNotification
   extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
@@ -35,7 +34,7 @@ module AppellantNotification
     message_attributes[:participant_id] = appeal.claimant_participant_id
     claimant = get_claimant(appeal)
 
-    error_handling_messages_and_attributes(claimant, message_attributes)
+    AppellantNotification.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
   end
   # Public: Updates/creates appeal state based on event type
   #
@@ -47,41 +46,9 @@ module AppellantNotification
   #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
   #   # => A new appeal state is created if it doesn't exist
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+
   def self.update_appeal_state(appeal, event)
-    appeal_type = appeal.class.to_s
-    appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
-                   AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
-    case event
-    when "decision_mailed"
-      appeal_state.decision_mailed_appeal_state_update_action!
-    when "appeal_docketed"
-      appeal_state.appeal_docketed_appeal_state_update_action!
-    when "appeal_cancelled"
-      appeal_state.appeal_cancelled_appeal_state_update_action!
-    when "hearing_postponed"
-      appeal_state.hearing_postponed_appeal_state_update_action!
-    when "hearing_withdrawn"
-      appeal_state.hearing_withdrawn_appeal_state_update_action!
-    when "hearing_scheduled"
-      appeal_state.hearing_scheduled_appeal_state_update_action!
-    when "scheduled_in_error"
-      appeal_state.scheduled_in_error_appeal_state_update_action!
-    when "vso_ihp_pending"
-      appeal_state.vso_ihp_pending_appeal_state_update_action!
-    when "vso_ihp_cancelled"
-      appeal_state.vso_ihp_cancelled_appeal_state_update_action!
-    when "vso_ihp_complete"
-      # Only updates appeal state if ALL ihp tasks are completed
-      appeal_state.vso_ihp_complete_appeal_state_update_action!(appeal)
-    when "privacy_act_pending"
-      appeal_state.privacy_act_pending_appeal_state_update_action!
-    when "privacy_act_complete"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      appeal_state.privacy_act_complete_appeal_state_update_action!(appeal)
-    when "privacy_act_cancelled"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      appeal_state.privacy_act_cancelled_appeal_state_update_action!(appeal)
-    end
+    appeal.appeal_state.process_event_to_update_appeal_state!(event)
   end
   # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
   #
@@ -172,9 +139,7 @@ module AppellantNotification
     claimant
   end
 
-  private
-
-  def error_handling_messages_and_attributes(claimant, message_attributes)
+  def self.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
     begin
       if claimant.nil?
         fail NoClaimantError, message_attributes[:appeal_id]
