@@ -1877,6 +1877,21 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
   end
 
+  create_table "transcription_contractors", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.string "directory", null: false, comment: "The contract house box.com folder full path"
+    t.string "email", null: false, comment: "The contract house contact email address"
+    t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
+    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
+    t.string "name", null: false, comment: "The contract house name"
+    t.string "phone", null: false, comment: "The contract house contact phone number"
+    t.string "poc", null: false, comment: "The contract house poc name"
+    t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
+  end
+
   create_table "transcription_files", force: :cascade do |t|
     t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
     t.datetime "created_at", null: false
