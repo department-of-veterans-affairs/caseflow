@@ -15,6 +15,14 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:created)
       end
+
+      it "returns ok response on second post with the same parameters" do
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
+        allow(::Events::DecisionReviewCreated).to receive(:create!).and_raise(StandardError.new("already exists"))
+        post :decision_review_created, params: JSON.parse(payload)
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context "when claim_id is already in Redis Cache" do
