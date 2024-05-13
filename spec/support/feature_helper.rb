@@ -136,7 +136,7 @@ module FeatureHelper
 
   def click_dropdown_menu_item(dropdown, selector, keyword_args)
     sleep 1
-    dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
+    dropdown.sibling(".cf-select__menu").wait_until { |menu| menu.has_css?(selector, **keyword_args) }.click
   end
 
   def generate_text(length)
