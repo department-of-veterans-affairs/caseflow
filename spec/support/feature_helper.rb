@@ -135,10 +135,9 @@ module FeatureHelper
   end
 
   def click_dropdown_menu_item(dropdown, selector, keyword_args)
-    # dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
     sleep(1)
 
-    dropdown.sibling(".cf-select__menu").find(selector, visible: false, **keyword_args).click
+    dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
   end
 
   def generate_text(length)
