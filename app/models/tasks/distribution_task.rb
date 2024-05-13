@@ -14,6 +14,8 @@
 class DistributionTask < Task
   before_validation :set_assignee
 
+  after_update :update_affinity_start_date, if: :affinity_task_assigned?
+
   def actions_available?(user)
     SpecialCaseMovementTeam.singleton.user_has_access?(user)
   end
@@ -58,5 +60,13 @@ class DistributionTask < Task
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
+  end
+
+  def update_affinity_start_date
+    # update affinity start date
+  end
+
+  def affinity_task_assigned?
+    saved_change_to_attribute?("status") # && check for affinity start date
   end
 end
