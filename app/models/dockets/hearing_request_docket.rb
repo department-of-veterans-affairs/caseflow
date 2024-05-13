@@ -15,19 +15,32 @@ class HearingRequestDocket < Docket
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_priority_nonpriority_appeals(priority: false, ready: true, judge: judge).limit(num), genpop: "only_genpop", judge: judge
+      base_relation: ready_priority_nonpriority_appeals(
+        priority: false,
+        ready: true,
+        judge: judge
+      ).limit(num), genpop: "only_genpop", judge: judge
     ).call.map(&:receipt_date)
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
   # Returns number of ready priority appeals that are not tied to a judge
   def genpop_priority_count
-    hearing_distribution_query(base_relation: ready_priority_nonpriority_appeals(priority: true, ready: true), genpop: "only_genpop").call.count
+    hearing_distribution_query(
+      base_relation: ready_priority_nonpriority_appeals(
+        priority: true,
+        ready: true
+      ), genpop: "only_genpop"
+    ).call.count
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_priority_nonpriority_appeals(priority: true, ready: true, judge: judge).limit(num), genpop: "only_genpop", judge: judge
+      base_relation: ready_priority_nonpriority_appeals(
+        priority: true,
+        ready: true,
+        judge: judge
+      ).limit(num), genpop: "only_genpop", judge: judge
     ).call.flatten.map(&:receipt_date)
   end
 

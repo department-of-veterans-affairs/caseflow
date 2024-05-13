@@ -44,13 +44,9 @@ class Docket
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value
 
-    # Rails.logger.debug "Docket Type: #{docket_type}, Priority Status: #{priority_status}, Lever Item: #{lever_item}, Lever Value: #{lever_value}"
-
     if lever_value == "true"
-      # Rails.logger.debug "No appeals to be returned for Lever Item: #{lever_item} with TRUE setting."
       appeals.none
     else
-      # Rails.logger.debug "Returning appeals for Lever Item: #{lever_item} with FALSE setting."
       appeals
     end
   end
