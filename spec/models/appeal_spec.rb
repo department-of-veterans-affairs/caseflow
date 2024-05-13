@@ -2014,7 +2014,7 @@ describe Appeal, :all_dbs do
         dup_distribution_task = dup_appeal.tasks.where(type: "DistributionTask").first
         dup_hearing_task = dup_appeal.tasks.where(type: "HearingTask").first
         dup_schedule_hearing_task = dup_appeal.tasks.where(type: "ScheduleHearingTask").first
-# binding.pry
+
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)

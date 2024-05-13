@@ -43,6 +43,7 @@ class ScheduleHearingTask < Task
   end
 
   def create_parent_hearing_task
+    return unless parent
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
