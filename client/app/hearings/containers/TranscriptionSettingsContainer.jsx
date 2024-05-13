@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import TranscriptionSettings from '../components/transcriptionProcessing/TranscriptionSettings';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
-export const TranscriptionSettingsContainer = ({ history }) => {
-  const [contractors, setContractors] = useState(null);
+export const TranscriptionSettingsContainer = () => {
+  const [setContractors] = useState(null);
 
   const getContractors = () => (
     setContractors([{ test: 'test' }])
@@ -23,7 +23,7 @@ export const TranscriptionSettingsContainer = ({ history }) => {
         title: 'Unable to load the transcription settings.'
       }}
     >
-      <TranscriptionSettings></TranscriptionSettings>
+      <TranscriptionSettings />
     </LoadingDataDisplay>
   );
 };
