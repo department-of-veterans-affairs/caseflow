@@ -39,13 +39,16 @@ class Docket
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
+    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
     lever_item = build_lever_item(docket_type, priority_status)
     lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
     lever_value = lever&.value
 
-    return [] if lever_value == "true"
-
-    appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
+    if lever_value == "true"
+      appeals.none
+    else
+      appeals
+    end
   end
 
   def count(priority: nil, ready: nil)
@@ -88,7 +91,7 @@ class Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
