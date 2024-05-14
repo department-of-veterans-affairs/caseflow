@@ -28,7 +28,7 @@ class QuarterlyNotificationsJob < CaseflowJob
           NotificationInitializationJob.new(
             appeal_id: entry.first,
             appeal_type: entry.last,
-            template_name: "Quarterly Notification",
+            template_name: Constants.QUARTERLY_STATUSES.quarterly_notification,
             appeal_status: notification_type.to_s
           )
         end
