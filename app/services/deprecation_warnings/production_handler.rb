@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "base_handler"
+
 # @note For use with `ActiveSupport::Deprecation.behavior=`.
 module DeprecationWarnings
   class ProductionHandler < BaseHandler
