@@ -362,7 +362,7 @@ class Task < CaseflowRecord
     self.class.open_statuses.include?(status)
   end
 
-  def closed? # CLOSED!!!!
+  def closed?
     self.class.closed_statuses.include?(status)
   end
 
@@ -953,13 +953,7 @@ class Task < CaseflowRecord
 
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
-      if appeal.appeal_split_process == true
-        true
-      else
-        fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
-      end
-    else
-      true
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
   end
 

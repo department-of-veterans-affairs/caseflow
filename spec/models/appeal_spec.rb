@@ -2005,8 +2005,8 @@ describe Appeal, :all_dbs do
 
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-
         dup_appeal.finalize_split_appeal(original_appeal, params)
+
         distribution_task.reload
         hearing_task.reload
         schedule_hearing_task.reload
