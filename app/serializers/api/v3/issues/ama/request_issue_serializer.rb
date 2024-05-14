@@ -20,11 +20,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :correction_type, :created_at, :decision_date, :decision_review_id,
              :decision_review_type, :edited_description, :end_product_establishment_id,
              :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-<<<<<<< HEAD
-             :nonrating_issue_bgs_id, :nonrating_issue_bgs_source, :nonrating_issue_category, :nonrating_issue_description,
-=======
              :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_description,
->>>>>>> bd91a6c2e7 (development_item_reference_id, same_office, legacy_opt_in_approved attributes were added)
              :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
@@ -72,11 +68,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
       }
     end
   end
-<<<<<<< HEAD
-
-=======
 # new attributes
->>>>>>> bd91a6c2e7 (development_item_reference_id, same_office, legacy_opt_in_approved attributes were added)
   attribute :development_item_reference_id do |object|
     object&.end_product_establishment&.development_item_reference_id
   end
