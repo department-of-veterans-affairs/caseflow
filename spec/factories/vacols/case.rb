@@ -231,6 +231,8 @@ FactoryBot.define do
                   case_issue.save
                 end
 
+                vacols_case.save
+
                 create(
                   :case,
                   bfdpdcn: vacols_case.bfddec,
@@ -471,7 +473,6 @@ FactoryBot.define do
           evaluator.original_case_issues.each do |case_issue, i|
             vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser",
                                                                       "issmdtime", "issdc", "issdcls")
-            byebug
             vacols_case.case_issues[i].save
           end
         end
