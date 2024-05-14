@@ -15,6 +15,11 @@ module Seeds
         organizations_user: OrganizationsUser.find_by(user_id: 72),
         permitted: true
       )
+      OrganizationUserPermission.find_or_create_by!(
+        organization_permission: superuser_permission,
+        organizations_user: OrganizationsUser.find_by(user_id: 73),
+        permitted: true
+      )
     end
   end
 end
