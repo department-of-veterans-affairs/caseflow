@@ -26,8 +26,7 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  formatIssueModificationRequests,
-  formatModificationIssueRequestsBySection,
+  formatIssueModificationRequestsBySection,
   fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
@@ -295,9 +294,8 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issues);
 
-    const modificationIssueRequests = formatIssueModificationRequests(fakeIssueModificationRequestsData);
     const modificationIssueRequestsBySection =
-      formatModificationIssueRequestsBySection(modificationIssueRequests);
+      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
