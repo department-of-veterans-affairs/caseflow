@@ -54,17 +54,20 @@ describe "affinity_start_date" do
     let!(:ready_appeal_drd_nonpriority) do
       create(:appeal, :direct_review_docket, :ready_for_distribution, receipt_date: 2.weeks.ago)
     end
+    let!(:ready_appeal_drd_nonpriority_no_receipt) do
+      create(:appeal, :direct_review_docket, :ready_for_distribution)
+    end
 
     # direct review appeals that should not be selected
     let!(:non_ready_appeal_drd_priority) do
-      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :with_post_intake_tasks)
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :mail_blocking_distribution)
     end
     let!(:receipt_ready_appeal_drd_priority_not_selectable) do
       create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
-             :with_appeal_affinity, receipt_date: 2.days.ago)
+             :with_appeal_affinity, affinity_start_date: 1.day.ago, receipt_date: 2.days.ago)
     end
-    let!(:ready_appeal_drd_priority_not_selectable) do
-      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution)
+    let!(:non_ready_appeal_drd_nonpriority) do
+      create(:appeal, :direct_review_docket, :mail_blocking_distribution)
     end
 
     it "is successful and adds expected appeal affinity records or values" do
@@ -73,8 +76,8 @@ describe "affinity_start_date" do
 
       expect { subject }.to output(output_match).to_stdout
 
-      # Only 4 of the staged appeals should have an affinity
-      expect(AppealAffinity.count).to eq 4
+      # Only 5 of the staged appeals should have an affinity
+      expect(AppealAffinity.count).to eq 5
 
       # Validate that only the expected appeals are the ones that were updated
       expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
@@ -83,9 +86,10 @@ describe "affinity_start_date" do
       expect(ready_appeal_drd_priority.appeal_affinity.affinity_start_date).to_not be nil
       expect(ready_appeal_drd_nonpriority.appeal_affinity.affinity_start_date).to_not be nil
       expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity.affinity_start_date).to_not be nil
+      expect(ready_appeal_drd_nonpriority_no_receipt.appeal_affinity).to_not be nil
 
       expect(non_ready_appeal_drd_priority.appeal_affinity).to be nil
-      expect(ready_appeal_drd_priority_not_selectable.appeal_affinity).to be nil
+      expect(non_ready_appeal_drd_nonpriority.appeal_affinity).to be nil
     end
   end
 end
