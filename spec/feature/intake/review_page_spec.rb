@@ -662,6 +662,24 @@ feature "Intake Review Page", :postgres do
       it "Pension benefit type radio option is disabled" do
         expect(page).to have_field pension_type_label, disabled: true, visible: false
       end
+
+      it "The tooltip appears whenenver Compensation radio field is hovered over" do
+        find("label", text: compensation_type_label).hover
+
+        # Checks for tooltip text
+        expect(page).to have_content(
+          format(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        )
+      end
+
+      it "The tooltip appears whenenver Pension radio field is hovered over" do
+        find("label", text: pension_type_label).hover
+
+        # Checks for tooltip text
+        expect(page).to have_content(
+          format(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        )
+      end
     end
   end
 

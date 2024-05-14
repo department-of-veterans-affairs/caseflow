@@ -143,6 +143,7 @@ class IntakesController < ApplicationController
     { unread_messages: unread_messages? }
   end
 
+  # rubocop:disable Metrics/AbcSize
   def feature_toggle_ui_hash
     {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
@@ -163,6 +164,7 @@ class IntakesController < ApplicationController
       removeCompAndPenIntake: FeatureToggle.enabled?(:remove_comp_and_pen_intake, user: current_user)
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   def user_information_ui_hash
     {
