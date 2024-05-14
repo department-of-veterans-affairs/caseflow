@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { TranscriptionFileDispatchTable } from './TranscriptionFileDispatchTable';
 import { css } from 'glamor';
+import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 
 const searchBarStyles = css({
   '& input': {
@@ -37,6 +38,23 @@ const styles = {
   },
 };
 
+/**
+ * Configuring a table for the unassigned tab
+ * @param {object} column - The json object that has all the columns listed with required attributes
+ * @returns An object for configuring the table
+ */
+export const unassignedColumns = (columns) => {
+  const { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE, STATUS } = columns;
+
+  return { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE, STATUS };
+};
+
+/**
+ * A mini template component used on most of the tabs
+ * @param {string} text - The descriptive text
+ * @param {string} searchPrompt - The label text for the search bar prompt
+ * @returns
+ */
 const Description = ({ text, searchPrompt }) => {
   return (
     <>
@@ -57,6 +75,7 @@ const Description = ({ text, searchPrompt }) => {
   );
 };
 
+// This maps the component to render for each tab
 export const tabConfig = [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
@@ -78,6 +97,7 @@ export const tabConfig = [
               <SearchBar
                 placeholder="Type to search..."
                 size="big"
+                id="transcription-table-search"
                 isSearchAhead
                 title="Search by Docket Number, Claimant Name, File Number, or SSN"
               />
@@ -86,12 +106,12 @@ export const tabConfig = [
           <div className="file-select" style={{ marginTop: '-2em' }}>
             <h2>0 files selected</h2>
             <div className="button-row" style={styles.buttonStyles} >
-              <Button disabled> Package files</Button>
+              <Button disabled>Package files</Button>
               <Button linkStyling>Cancel</Button>
             </div>
           </div>
           <div style={styles.tableStyles}>
-            <TranscriptionFileDispatchTable />
+            <TranscriptionFileDispatchTable columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)} />
           </div>
 
         </>

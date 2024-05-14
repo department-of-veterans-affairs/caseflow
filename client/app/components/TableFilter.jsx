@@ -234,6 +234,7 @@ class TableFilter extends React.PureComponent {
             <DateSelector
               type="date"
               value=""
+              ariaLabelText="date-selector"
               onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
           </span> :
           renderFilterIcon()}

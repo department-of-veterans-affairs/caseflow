@@ -37,7 +37,7 @@ export const selectColumn = (transcriptionFiles) => {
   return {
     header:
     (<div {...styles.checkBoxHeaderStyles}>
-      <Checkbox />
+      <Checkbox ariaLabel="select all files checkbox" />
       <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
     </div>),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
@@ -45,7 +45,7 @@ export const selectColumn = (transcriptionFiles) => {
     columnName: 'selectAll',
     tableData: transcriptionFiles,
     valueName: 'Selected',
-    valueFunction: () => <div {...styles.checkBoxStyles}><Checkbox /></div>
+    valueFunction: () => <div {...styles.checkBoxStyles}><Checkbox ariaLabel="select file checkbox" /></div>
   };
 };
 
@@ -54,6 +54,7 @@ export const docketNumberColumn = (transcriptionFiles) => {
     header: COPY.TRANSCRIPTION_FILE_DISPATCH_DOCKET_NUMBER_COLUMN_NAME,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.filterable,
+    label: 'filter by docket number',
     columnName: 'docketNumber',
     tableData: transcriptionFiles,
     valueName: 'Docket Number',
@@ -66,6 +67,7 @@ export const caseDetailsColumn = (transcriptionFiles) => {
     header: COPY.TRANSCRIPTION_FILE_DISPATCH_CASE_DETAILS_COLUMN_NAME,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.filterable,
+    label: 'filter by case details',
     columnName: 'caseDetails',
     tableData: transcriptionFiles,
     valueName: 'Case Details',
@@ -78,6 +80,7 @@ export const typesColumn = (transcriptionFiles) => {
     header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_TYPES_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.TYPES.filterable,
+    label: 'filter by types',
     columnName: 'type',
     tableData: transcriptionFiles,
     valueName: 'Type',
@@ -91,6 +94,7 @@ export const hearingDateColumn = (transcriptionFiles) => {
     header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_DATE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.filterable,
+    label: 'filter by hearing date',
     columnName: 'hearingDate',
     tableData: transcriptionFiles,
     valueName: 'Hearing Date',
@@ -104,6 +108,7 @@ export const hearingTypeColumn = (transcriptionFiles) => {
     header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_HEARING_TYPE_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.filterable,
+    label: 'filter by hearing type',
     columnName: 'hearingType',
     tableData: transcriptionFiles,
     valueName: 'Hearing Type',
@@ -116,6 +121,7 @@ export const statusColumn = (transcriptionFiles) => {
     header: <p {...styles.HeaderWithIconStyles}>{COPY.TRANSCRIPTION_FILE_DISPATCH_STATUS_COLUMN_NAME}</p>,
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.name,
     enableFilter: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.STATUS.filterable,
+    label: 'filter by status',
     columnName: 'status',
     tableData: transcriptionFiles,
     valueName: 'Status',

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
-import TRANSCRIPTION_FILE_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import
 { selectColumn,
   docketNumberColumn,
@@ -11,6 +10,7 @@ import
   hearingTypeColumn,
   statusColumn } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
+import { testTranscriptionFiles } from '../../../test/data/transcriptionFiles';
 
 const styles = css({
   '& div *': {
@@ -32,66 +32,64 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
-    top: '4em'
-  },
-  '& .cf-pagination-pages:nth-child(2)': {
-    position: 'relative',
     top: '2em'
+  },
+  '& .cf-pagination-pages': {
+    position: 'relative',
   }
 });
 
-export const TranscriptionFileDispatchTable = () => {
-  const items = [{
-    docketNumber: '1234-56789',
-    caseDetails: 'John Smith (1000001)',
-    type: 'Original',
-    hearingDate: '5/10/2024',
-    hearingType: 'AMA',
-    status: 'Unassigned'
-  },
-  {
-    docketNumber: '1234-56789',
-    caseDetails: 'Jane Smith (2000001)',
-    type: 'AOD',
-    hearingDate: '5/12/2024',
-    hearingType: 'Legacy',
-    status: 'Unassigned'
-  }
-  ]
-  const data = [].concat(...Array(8).fill(items));
-  const [transcriptionFiles, setTranscriptionFiles] = useState(data);
+export const TranscriptionFileDispatchTable = ({ columns }) => {
+  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
 
-  const createUnassignedColumnObject = (column) => {
+  useEffect(() => {
+    setTranscriptionFiles(testTranscriptionFiles);
+  });
+
+  /**
+   * A map for the column to determine which function to use
+   * @param {object} column - The current column
+   * @returns The specific function used for the column
+   */
+  const createColumnObject = (column) => {
     const functionForColumn = {
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name]: selectColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.CASE_DETAILS.name]: caseDetailsColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.TYPES.name]: typesColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.HEARING_DATE.name]: hearingDateColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles),
-      [TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS.STATUS.name]: statusColumn(transcriptionFiles)
+      [columns.SELECT_ALL.name]: selectColumn(transcriptionFiles),
+      [columns.DOCKET_NUMBER.name]: docketNumberColumn(transcriptionFiles),
+      [columns.CASE_DETAILS.name]: caseDetailsColumn(transcriptionFiles),
+      [columns.TYPES.name]: typesColumn(transcriptionFiles),
+      [columns.HEARING_DATE.name]: hearingDateColumn(transcriptionFiles),
+      [columns.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles),
+      [columns.STATUS.name]: statusColumn(transcriptionFiles),
     };
 
     return functionForColumn[column.name];
   };
 
-  const columnsFromConfig = (columns) => {
-    return Object.values(columns).map((column) => createUnassignedColumnObject(column));
+  /**
+   * Maps through a list of columns and find the function needed for each one
+   * @param {object} cols - the columns json object which has every column an attribute
+   * @returns The finished columns
+   */
+  const columnsFromConfig = (cols) => {
+    return Object.values(cols).map((column) => createColumnObject(column));
   };
 
   return (
     <div {...styles} >
       <QueueTable
-        columns={columnsFromConfig(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+        columns={columnsFromConfig(columns)}
         rowObjects={transcriptionFiles}
         enablePagination
         casesPerPage={15}
-        // sortColName="Hearing Date"
-        // defaultSort={{
-        //   sortColName: 'hearingDateColumn',
-        //   sortAscending: true
-        // }}
       />
     </div>
   );
+};
+
+TranscriptionFileDispatchTable.propTypes = {
+  columns: PropTypes.objectOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      filterable: PropTypes.bool || PropTypes.string
+    }))
 };
