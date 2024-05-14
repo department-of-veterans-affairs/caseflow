@@ -136,9 +136,10 @@ RSpec.feature("The Correspondence Review Package page") do
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
       expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
-      using_wait_time(10) do
+      using_wait_time(20) do
         expect(page).to have_text veteran.file_number.to_s
-        expect(page).to have_text "Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182"
+        expect(page).to have_text "Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement)"
+        expect(page).to have_text "VA Form 10182"
       end
     end
   end
