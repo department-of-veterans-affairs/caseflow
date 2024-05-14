@@ -14,13 +14,13 @@ FactoryBot.define do
     bfcorkey { generate :vacols_correspondent_key }
     bfcorlid { "#{generate :veteran_file_number}S" }
 
-    association :correspondent, factory: :correspondent
+    correspondent { association :correspondent, ssn: bfcorlid.chomp("S")}
 
     transient do
       docket_number { "150000#{bfkey}" }
     end
     # folder.tinum is the docket_number
-    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid.chomp("S") }
+    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid }
 
     bfregoff { "RO18" }
 
@@ -471,6 +471,7 @@ FactoryBot.define do
           evaluator.original_case_issues.each do |case_issue, i|
             vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser",
                                                                       "issmdtime", "issdc", "issdcls")
+            byebug
             vacols_case.case_issues[i].save
           end
         end

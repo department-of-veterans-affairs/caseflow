@@ -15,6 +15,16 @@ FactoryBot.define do
       appellant_relationship { nil }
     end
 
+    transient do
+      ssn { nil }
+
+      after(:create) do |correspondent, evaluator|
+        if evaluator.ssn
+          correspondent.ssn = evaluator.ssn
+        end
+      end
+    end
+
     sspare1 { appellant_last_name }
     sspare2 { appellant_first_name }
     sspare3 { appellant_middle_initial }
