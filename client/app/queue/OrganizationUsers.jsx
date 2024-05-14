@@ -69,7 +69,6 @@ export default class OrganizationUsers extends React.PureComponent {
     }
   }
 
-  // http://localhost:3000/organizations/inbound-ops-team/test
   modifyUserPermission = (userId, permissionName) => () => {
     const payload = { data: { userId, permissionName } };
 
