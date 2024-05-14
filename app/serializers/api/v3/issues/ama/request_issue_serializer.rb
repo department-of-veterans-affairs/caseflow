@@ -20,7 +20,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :correction_type, :created_at, :decision_date, :decision_review_id,
              :decision_review_type, :edited_description, :end_product_establishment_id,
              :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_description,
+             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_bgs_source, :nonrating_issue_description,
              :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
@@ -81,4 +81,74 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   attribute :legacy_opt_in_approved do |object|
     object&.decision_review&.legacy_opt_in_approved
   end
+
+  attribute :added_by_station_id do |object|
+    epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+    User.find(epe&.user_id).station_id
+  end
+
+  attribute :added_by_css_id do |object|
+    epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+    User.find(epe&.user_id).css_id
+  end
+
+  attribute :corrected_by_station_id do |object|
+    if !object&.correction_type.blank?
+      # note: probably we can use  epe.station ? In story says "comes from user"...
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).station_id
+    end
+  end
+
+  attribute :corrected_by_css_id do |object|
+    if !object&.correction_type.blank?
+      # note: probably we can use  epe.station ? In story says "comes from user"...
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).css_id
+    end
+  end
+
+  attribute :edited_by_station_id do |object|
+    if !object&.edited_description.blank?
+      # note: probably we can use  epe.station ? In story says "comes from user"...
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).station_id
+    end
+  end
+
+  attribute :edited_by_css_id do |object|
+    if !object&.edited_description.blank?
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).css_id
+    end
+  end
+
+  attribute :removed_by_css_id do |object|
+    if !object&.closed_status == "removed"
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).css_id
+    end
+  end
+
+  attribute :removed_by_station_id do |object|
+    if !object&.closed_status == "removed"
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).station_id
+    end
+  end
+
+  attribute :withdrawn_by_css_id do |object|
+    if !object&.closed_status == "withdrawn"
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).css_id
+    end
+  end
+
+  attribute :withdrawn_by_station_id do |object|
+    if !object&.closed_status == "withdrawn"
+      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
+      User.find(epe&.user_id).station_id
+    end
+  end
+
 end
