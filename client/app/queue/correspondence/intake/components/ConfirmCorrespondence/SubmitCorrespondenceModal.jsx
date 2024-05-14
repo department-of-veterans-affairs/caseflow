@@ -122,3 +122,4 @@ SubmitCorrespondenceModal.propTypes = {
   setSubmitCorrespondenceModalVisible: PropTypes.func,
   setErrorBannerVisible: PropTypes.func,
 };
+
