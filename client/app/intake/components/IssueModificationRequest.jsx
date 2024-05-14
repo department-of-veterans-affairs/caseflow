@@ -25,70 +25,64 @@ const IssueModificationRequest = (
     </div>
   );
 
-  const originalIssue = (
-    <div>
-      <h3>Original Issue</h3>
-      <p>issue?.requestIssue.nonratingIssueCategory - issue?.requestIssue.nonratingIssueDescription</p>
-      <p>Benefit type: issue?.requestIssue.benefitType</p>
-      <p>Decision date: issue?.requestIssue.decisionDate</p>
-    </div>
-  );
-
-  const additionalRequest = (
-    <div>
-      {modificationIssueInfo}
-      <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS}:</h4>
-      <p>{issue.requestReason}</p>
-      {requestedByUser}
-    </div>
-  );
-
-  const modificationRequest = (
-    <div>
-      {modificationIssueInfo}
-      <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS}:</h4>
-      <p>{issue.requestReason}</p>
-      {requestedByUser}
-      {originalIssue}
-      <br />
-    </div>
-  );
-
-  const removalRequest = (
-    <div>
-      {modificationIssueInfo}
-      <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS}:</h4>
-      <p>{issue.requestReason}</p>
-      {requestedByUser}
-    </div>
-  );
-
-  const withdrawalRequest = (
-    <div>
-      {modificationIssueInfo}
-      <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS}:</h4>
-      <p>{issue.requestReason}</p>
-      <br />
-      <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
-      <p>{issue.withdrawalDate}</p>
-      {requestedByUser}
-    </div>
-  );
-
   let requestIssue;
 
   switch (issue.requestType) {
   case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
-    requestIssue = additionalRequest;
+    requestIssue = (
+      <>
+        {modificationIssueInfo}
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS}:</h4>
+        <p>{issue.requestReason}</p>
+        {requestedByUser}
+      </>
+    );
     break;
   case COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE:
-    requestIssue = modificationRequest;
+    requestIssue = (
+      <>
+        {modificationIssueInfo}
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS}:</h4>
+        <p>{issue.requestReason}</p>
+        {requestedByUser}
+        <div>
+          <h3>Original Issue</h3>
+          <div className="issue-modification-request-original">
+            <ol>
+              <li>
+                <p>{issue.requestIssue.nonRatingIssueCategory} - {issue.requestIssue.nonRatingIssueDescription}</p>
+                <p>Benefit type: {issue.requestIssue.benefitType}</p>
+                <p>Decision date: {issue.requestIssue.decisionDate}</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <br />
+      </>
+    );
     break;
   case COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE:
-    requestIssue = removalRequest;
+    requestIssue = (
+      <>
+        {modificationIssueInfo}
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS}:</h4>
+        <p>{issue.requestReason}</p>
+        {requestedByUser}
+      </>
+    );
     break;
   case COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE:
-    requestIssue = withdrawalRequest;
+    requestIssue = (
+      <>
+        {modificationIssueInfo}
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS}:</h4>
+        <p>{issue.requestReason}</p>
+        <br />
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
+        <p>{issue.withdrawalDate}</p>
+        {requestedByUser}
+      </>
+    );
     break;
   default:
     break;
