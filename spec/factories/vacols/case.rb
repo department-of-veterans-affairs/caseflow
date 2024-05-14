@@ -20,7 +20,7 @@ FactoryBot.define do
       docket_number { "150000#{bfkey}" }
     end
     # folder.tinum is the docket_number
-    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid }
+    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid.chomp("S") }
 
     bfregoff { "RO18" }
 
@@ -231,9 +231,6 @@ FactoryBot.define do
                   case_issue.save
                 end
 
-                vacols_case.bfcorkey = vacols_case.correspondent.stafkey
-                vacols_case.save
-        
                 create(
                   :case,
                   bfdpdcn: vacols_case.bfddec,
@@ -241,6 +238,11 @@ FactoryBot.define do
                   bfcurloc: '81',
                   bfcorkey: vacols_case.bfcorkey,
                   bfcorlid: vacols_case.bfcorlid,
+                  bfdnod: vacols_case.bfdnod,
+                  bfdsoc: vacols_case.bfdsoc,
+                  bfd19: vacols_case.bfd19,
+                  bfmpro: "ACT",
+                  correspondent: vacols_case.correspondent,
                   folder_number_equal: true,
                   original_case: vacols_case,
                   case_issues_equal: true,
