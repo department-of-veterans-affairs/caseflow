@@ -58,6 +58,5 @@ namespace :db do
         end
       end
     end
-    return updated_appeal_affinities
   end
 end
