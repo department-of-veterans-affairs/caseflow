@@ -10,7 +10,7 @@ class NotificationInitializationJob < CaseflowJob
     begin
       ensure_current_user_is_set
 
-      appeal = appeal_type.constantize.find(appeal_id)
+      appeal = appeal_type.constantize.find_by(id: appeal_id)
 
       fail StandardError, "#{appeal_type} with ID #{appeal_id} could not be found." unless appeal
 
