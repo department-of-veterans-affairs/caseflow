@@ -32,9 +32,7 @@ class QuarterlyNotificationsJob < CaseflowJob
           )
         end
 
-        Parallel.each(jobs.each_slice(10).to_a, in_threads: 5) do |jobs_to_enqueue|
-          enqueue_batch_of_jobs(jobs_to_enqueue.compact)
-        end
+        Parallel.each(jobs.each_slice(10).to_a, in_threads: 5) { |jobs_to_enqueue| enqueue_init_jobs(jobs_to_enqueue) }
       end
     rescue StandardError => error
       log_error(error)
@@ -43,19 +41,16 @@ class QuarterlyNotificationsJob < CaseflowJob
 
   private
 
-  # Shoryuken::Client.sqs.get_queue_attributes(queue_url: Shoryuken::Client.queues(self.queue_name).url)
-
-  def serialize_job_for_enqueueing(job)
-    ActiveJob::QueueAdapters::ShoryukenAdapter.instance.send(:message, job)
-  end
-
-  # TODO: Allow for queue_name param, and make sure all jobs are configured to
-  # go onto that queue normally.
-  def enqueue_batch_of_jobs(jobs_to_enqueue)
-    fail StandardError, "Number of jobs must not exceed 10" if jobs_to_enqueue.size > 10
-
-    Shoryuken::Client.queues(queue_name).send_messages(
-      jobs_to_enqueue.map { |job| serialize_job_for_enqueueing(job) }
+  # Batches enqueueing of the NotificationInitializationJobs in order to reduce round-trips to the SQS API
+  #
+  # @param jobs [Array<NotificationInitializationJob>] An array of NotificationInitializationJob objects to enqueue.
+  #
+  # @return [Aws::SQS::Types::SendMessageBatchResult]
+  #   A struct containing the messages that were successfully enqueued and those that failed.
+  def enqueue_init_jobs(jobs)
+    CaseflowJob.enqueue_batch_of_jobs(
+      jobs_to_enqueue: jobs,
+      name_of_queue: NotificationInitializationJob.queue_name
     )
   end
 end

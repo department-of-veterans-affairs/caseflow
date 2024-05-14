@@ -3,7 +3,7 @@
 class NotificationInitializationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
-  queue_with_priority :low_priority
+  queue_as SendNotificationJob.queue_name_suffix
   application_attr :va_notify
 
   def perform(appeal_id:, appeal_type:, template_name:, appeal_status: nil)
