@@ -11,7 +11,7 @@ module PrivacyActPending
   def create_privacy_act_task
     # original method defined in app/models/tasks/foia_colocated_task.rb
     super_return_value = super
-    AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_pending)
+    AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending)
     super_return_value
   end
 
@@ -20,7 +20,7 @@ module PrivacyActPending
   def create_twin_of_type(params)
     super_return_value = super
     if params[:type] == "PrivacyActRequestMailTask" || params[:type] == "FoiaRequestMailTask"
-      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_pending)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending)
     end
     super_return_value
   end
@@ -32,7 +32,7 @@ module PrivacyActPending
     if (params[:type] == "PrivacyActTask" && params[:assigned_to_type].include?("Organization")) ||
        (params[:type] == "HearingAdminActionFoiaPrivacyRequestTask" && parent.type == "ScheduleHearingTask")
       AppellantNotification.notify_appellant(parent.appeal,
-                                             Constants.VA_NOTIFY_TEMPLATE_NAMES.privacy_act_request_pending)
+                                             Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending)
     end
     super_return_value
   end

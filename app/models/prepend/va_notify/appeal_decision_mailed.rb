@@ -4,8 +4,8 @@
 module AppealDecisionMailed
   extend AppellantNotification
 
-  CONTESTED_CLAIM = "#{Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_decision_mailed} (Contested claims)"
-  NON_CONTESTED_CLAIM = "#{Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_decision_mailed} (Non-contested claims)"
+  CONTESTED_CLAIM = "#{Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed} (Contested claims)"
+  NON_CONTESTED_CLAIM = "#{Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed} (Non-contested claims)"
 
   # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
   #

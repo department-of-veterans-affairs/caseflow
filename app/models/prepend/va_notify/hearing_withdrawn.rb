@@ -9,7 +9,7 @@ module HearingWithdrawn
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled && appeal.class.to_s == "Appeal"
-      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing)
     end
     super_return_value
   end
@@ -22,7 +22,7 @@ module HearingWithdrawn
     new_disposition = vacols_record.hearing_disp
     if cancelled? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
-      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing)
     end
     super_return_value
   end

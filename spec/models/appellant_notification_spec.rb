@@ -94,7 +94,7 @@ describe AppellantNotification do
     describe "docket_appeal" do
       let(:appeal) { create(:appeal, :with_pre_docket_task) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
-      let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed }
+      let(:template_name) { Constants.EVENT_TYPE_FILTERS.appeal_docketed }
       let!(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
       it "will update the appeal state after docketing the Predocketed Appeal" do
         pre_docket_task.docket_appeal
@@ -116,7 +116,7 @@ describe AppellantNotification do
     describe "create_tasks_on_intake_success!" do
       let(:appeal) { create(:appeal) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
-      let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed }
+      let(:template_name) { Constants.EVENT_TYPE_FILTERS.appeal_docketed }
       it "will notify appellant that appeal is docketed on successful intake" do
         appeal.create_tasks_on_intake_success!
         appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
@@ -263,7 +263,7 @@ describe AppellantNotification do
                appeal_type: appeal_hearing.class.to_s,
                created_by_id: user.id, updated_by_id: user.id)
       end
-      let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.hearing_scheduled }
+      let(:template_name) { Constants.EVENT_TYPE_FILTERS.hearing_scheduled }
       let(:hearing) { create(:hearing, appeal: appeal) }
       let(:schedule_hearing_task) { ScheduleHearingTask.find_by(appeal: appeal_hearing) }
       let(:task_values) do
@@ -319,7 +319,7 @@ describe AppellantNotification do
 
   describe HearingPostponed do
     describe "#postpone!" do
-      let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.postponement_of_hearing }
+      let(:template_name) { Constants.EVENT_TYPE_FILTERS.postponement_of_hearing }
       let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
       let(:appeal_state) do
         create(:appeal_state,
@@ -354,7 +354,7 @@ describe AppellantNotification do
       let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
       let(:appeal_state) { create(:appeal_state, appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s) }
       context "when a hearing coordinator selects 'postponed' on the daily docket page for an AMA Appeal" do
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.postponement_of_hearing }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.postponement_of_hearing }
         let(:params) do
           {
             hearing: hearing.reload,
@@ -387,7 +387,7 @@ describe AppellantNotification do
       let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
       let(:appeal_state) { create(:appeal_state, appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s) }
       context "when a hearing coordinator selects 'cancelled' on the daily docket page for an AMA Appeal" do
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing }
         let(:params) do
           {
             hearing: hearing.reload,
@@ -415,7 +415,7 @@ describe AppellantNotification do
   end
 
   describe DocketHearingPostponed do
-    let!(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.postponement_of_hearing }
+    let!(:template_name) { Constants.EVENT_TYPE_FILTERS.postponement_of_hearing }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
     describe ".update_hearing" do
@@ -477,7 +477,7 @@ describe AppellantNotification do
   end
 
   describe DocketHearingWithdrawn do
-    let!(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.withdrawal_of_hearing }
+    let!(:template_name) { Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
     describe ".update_hearing" do
@@ -802,7 +802,7 @@ describe AppellantNotification do
           )
         end
         let(:task_factory) { IhpTasksFactory.new(root_task) }
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_pending }
         before do
           allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
             .with([participant_id_with_pva]) do
@@ -841,7 +841,7 @@ describe AppellantNotification do
         end
         let(:root_task) { RootTask.find_by(appeal: appeal) }
         let(:task_factory) { IhpTasksFactory.new(root_task) }
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_pending }
         it "The appellant will NOT recieve an 'IhpTaskPending' notification" do
           expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_name)
           task_factory.create_ihp_tasks!
@@ -860,7 +860,7 @@ describe AppellantNotification do
         let(:colocated_task) do
           ColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: org)
         end
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_pending }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_pending }
         let(:params) do
           {
             instructions: "test",
@@ -940,7 +940,7 @@ describe AppellantNotification do
         let(:org) { create(:organization) }
         let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
         let(:appeal_state) { create(:appeal_state, appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s) }
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_complete }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_complete }
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
@@ -961,7 +961,7 @@ describe AppellantNotification do
         let(:org) { create(:organization) }
         let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
         let(:appeal_state) { create(:appeal_state, appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s) }
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_complete }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_complete }
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
@@ -994,7 +994,7 @@ describe AppellantNotification do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
         let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
-        let(:template_name) { Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_complete }
+        let(:template_name) { Constants.EVENT_TYPE_FILTERS.vso_ihp_complete }
         it "will update the 'vso_ihp_complete' column in the Appeal State table to TRUE" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           task.update!(status: "completed")

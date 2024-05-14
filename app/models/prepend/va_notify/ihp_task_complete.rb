@@ -31,7 +31,7 @@ module IhpTaskComplete
         "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.vso_ihp_complete)
+        AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.vso_ihp_complete)
       end
     end
     super_return_value

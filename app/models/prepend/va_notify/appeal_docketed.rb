@@ -36,7 +36,7 @@ module AppealDocketed
         "for #{self.class} ID #{self.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(self, Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed)
+        AppellantNotification.notify_appellant(self, Constants.EVENT_TYPE_FILTERS.appeal_docketed)
       end
     end
     super_return_value
@@ -56,7 +56,7 @@ module AppealDocketed
       "for #{appeal.class} ID #{appeal.id}",
                           service: nil,
                           name: "AppellantNotification.notify_appellant") do
-      AppellantNotification.notify_appellant(appeal, Constants.VA_NOTIFY_TEMPLATE_NAMES.appeal_docketed)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.appeal_docketed)
     end
     super_return_value
   end
