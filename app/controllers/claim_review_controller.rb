@@ -28,11 +28,14 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if !current_user.admin? && request_issues_update.perform!
-      render_success
-    elsif current_user.admin? && issues_modification_request_update.perform!
+    if !current_user.admin?
+      return render_success if request_issues_update.perform!
+    elsif current_user.admin?
       # OOP to handle the difference requests that come from non-admins
-      render_success
+      issues_modification_request_update.process!
+      return render_success if issues_modification_request_update.success?
+
+      render json: { error_code: issues_modification_request_update.error_code }, status: :unprocessable_entity
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
