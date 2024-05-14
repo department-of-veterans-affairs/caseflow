@@ -127,7 +127,7 @@ module FeatureHelper
   end
 
   def dropdown_menu_visible?(dropdown)
-    dropdown.sibling(".cf-select__menu", wait: 5)
+    dropdown.sibling(".cf-select__menu", wait: false)
   rescue Capybara::ElementNotFound
     false
   else
@@ -135,7 +135,7 @@ module FeatureHelper
   end
 
   def click_dropdown_menu_item(dropdown, selector, keyword_args)
-    dropdown.sibling(".cf-select__menu", wait: 5).find(selector, **keyword_args).click
+    dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
   end
 
   def generate_text(length)
