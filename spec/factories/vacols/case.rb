@@ -206,7 +206,7 @@ FactoryBot.define do
               bfmpro { "HIS" }
               bfddec { 1.day.ago }
               bfac { "1" }
-              bdfc { "3" }
+              bfdc { "3" }
               bfcurloc { "99" }
         
               after(:create) do |vacols_case, evaluator|
