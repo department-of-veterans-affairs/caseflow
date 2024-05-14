@@ -150,5 +150,4 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
       User.find(epe&.user_id).station_id
     end
   end
-
 end
