@@ -5,7 +5,9 @@ class Hearings::CreateBillOfMaterialsJob < CaseflowJob
 
   def perform(work_order)
     ensure_current_user_is_set
-    create_bom_hash(work_order)
+    hash = create_bom_hash(work_order)
+    path_to_json_file = save_json_file(hash)
+    upload_to_s3!(path_to_json_file)
   end
 
   private
@@ -74,7 +76,9 @@ class Hearings::CreateBillOfMaterialsJob < CaseflowJob
         :version => "1.0.0.x",
         :description => "",
         :hashes => [],
-        :content =>
+        :content => "",
+        :licenses => licenses(file),
+        :purl => purl(file)
       }
     end
   end
@@ -107,6 +111,18 @@ class Hearings::CreateBillOfMaterialsJob < CaseflowJob
     Digest::MD5.file(file_path)
   end
 
-  def upload_to_s3!
+  def licenses(file)
+    {
+      id: "",
+      specifiedType: "",
+      contentType: "",
+      encoding: ""
+    }
+  end
+
+  def purl(file)
+  end
+
+  def upload_to_s3!(file_path)
   end
 end
