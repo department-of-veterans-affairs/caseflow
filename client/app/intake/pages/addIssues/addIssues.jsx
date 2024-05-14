@@ -541,12 +541,14 @@ class AddIssuesPage extends React.Component {
     const modificationIssueRequestsObj =
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
 
-    const pendingSection = issueModificationRow({
-      modificationIssueRequestsObj,
-      fieldTitle: 'Pending admin review'
-    });
+    const pendingSection = modificationIssueRequestsObj ?
+      issueModificationRow({
+        modificationIssueRequestsObj,
+        fieldTitle: 'Pending admin review'
+      }) :
+      null;
 
-    if (modificationIssueRequestsObj !== null) {
+    if (pendingSection !== null) {
       rowObjects.push(pendingSection);
     }
 
