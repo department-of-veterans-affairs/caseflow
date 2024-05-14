@@ -248,11 +248,11 @@ const formFieldMapping = (props) => {
 };
 const FormGenerator = (props) => {
   switch (props.intakeStatus) {
-    case INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED} />;
-    default:
+  case INTAKE_STATES.NONE:
+    return <Redirect to={PAGE_PATHS.BEGIN} />;
+  case INTAKE_STATES.COMPLETED:
+    return <Redirect to={PAGE_PATHS.COMPLETED} />;
+  default:
   }
 
   const beginNextIntake = () => {
