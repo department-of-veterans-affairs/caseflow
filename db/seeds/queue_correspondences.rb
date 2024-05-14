@@ -14,7 +14,7 @@ module Seeds
     end
 
     def inbound_ops_team_user
-      @inobund_ops_team_user ||= User.find_by_css_id("JOLLY_POSTMAN")
+      @inbound_ops_team_user ||= User.find_by_css_id("JOLLY_POSTMAN")
     end
 
     def mail_team_superuser

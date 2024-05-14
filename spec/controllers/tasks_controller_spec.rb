@@ -611,7 +611,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       before do
         InboundOpsTeam = create(:user)
         InboundOpsTeam.singleton.add_user(inbound_ops_team_user)
-        User.authenticate!(user: inobund_ops_team_user)
+        User.authenticate!(user: inbound_ops_team_user)
       end
 
       context "when an AddressChangeMailTask is created for an inactive appeal" do
