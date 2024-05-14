@@ -11,7 +11,7 @@ module AutomaticCaseDistribution
   def priority_push_distribution(limit = nil)
     @appeals = []
     @rem = 0
-
+    puts "AutomaticCaseDistribution: priority_push_distribution"
     if limit.nil?
       # Distribute priority appeals that are tied to judges (not genpop) with no limit.
       args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
