@@ -102,7 +102,6 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
 
   attribute :corrected_by_css_id do |object|
     if !object&.correction_type.blank?
-      # note: probably we can use  epe.station ? In story says "comes from user"...
       epe = EndProductEstablishment.find(object&.end_product_establishment_id)
       User.find(epe&.user_id).css_id
     end
