@@ -94,7 +94,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def generate_genpop_cavc_aod_affinity_days_lever_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      genpop_base_query.where("distribution_task.assigned_at < ?", CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+      genpop_base_query.where("distribution_task.assigned_at < ?", CaseDistributionLever.cavc_aod_affinity_days.days.ago)
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
         .where(
