@@ -62,7 +62,12 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def create_file_name(topic, extension)
-    subject = topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+    type = topic.scan(/[A-Za-z]+?(?=-)/).first
+    subject = if type == "Hearing"
+                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+              else
+                topic.split("-").second.lstrip
+              end
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
   end

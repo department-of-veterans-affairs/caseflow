@@ -26,12 +26,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
-    response = fetch_recordings_list
-    topics = response.topics
-    topic_num = 0
-    response.ids.each do |id|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: id)
-      topic_num += 1
+    fetch_recordings_list.ids.each do |n|
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n)
     end
   end
 

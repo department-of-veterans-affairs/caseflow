@@ -10,11 +10,9 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   let(:mp4_file_name) { "180000304_1_LegacyHearing-1.mp4" }
   let(:vtt_file_name) { "180000304_1_LegacyHearing-1.vtt" }
   let(:mp3_file_name) { "180000304_1_LegacyHearing-1.mp3" }
-  let(:hearing) { create(:hearing) }
-  let(:file_name) { "#{hearing.docket_number}_#{hearing.id}_#{hearing.class}" }
   let(:access_token) { "sample_#{Rails.deploy_env}_token" }
 
-  subject { described_class.perform_now(id: id, file_name: file_name) }
+  subject { described_class.perform_now(id: id) }
 
   before do
     allow(CredStash).to receive(:get).with("webex_#{Rails.deploy_env}_access_token").and_return(access_token)
@@ -70,7 +68,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
     it "retries and logs errors" do
       subject
       expect(Rails.logger).to receive(:error).at_least(:once)
-      perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+      perform_enqueued_jobs { described_class.perform_later(id: id) }
     end
   end
 end
