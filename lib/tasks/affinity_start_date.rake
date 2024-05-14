@@ -34,7 +34,7 @@ namespace :db do
         .with_appeal_affinities
         .ready_for_distribution
         .where(docket_type: docket_result[:docket_type])
-        .where("appeal_affinities.affinity_start_date <= (?) OR appeal_affinities IS NULL", docket_result[:receipt_date])
+        .where("receipt_date <= (?)", docket_result[:receipt_date])
 
       appeals_to_update_adjusted_for_priority = if docket_result[:priority] == true
                                                   appeals_to_update.priority
@@ -58,5 +58,6 @@ namespace :db do
         end
       end
     end
+    return updated_appeal_affinities
   end
 end
