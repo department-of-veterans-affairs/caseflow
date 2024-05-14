@@ -20,7 +20,7 @@ FactoryBot.define do
       docket_number { "150000#{bfkey}" }
     end
     # folder.tinum is the docket_number
-    folder { association :folder, ticknum: bfkey, tinum: docket_number }
+    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid }
 
     bfregoff { "RO18" }
 
@@ -230,6 +230,9 @@ FactoryBot.define do
                   case_issue.issdc = "3"
                   case_issue.save
                 end
+
+                vacols_case.bfcorkey = vacols_case.correspondent.stafkey
+                vacols_case.save
         
                 create(
                   :case,
