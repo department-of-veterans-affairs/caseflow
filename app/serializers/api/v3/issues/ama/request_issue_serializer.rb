@@ -68,7 +68,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
       }
     end
   end
-# new attributes
+
   attribute :development_item_reference_id do |object|
     object&.end_product_establishment&.development_item_reference_id
   end
