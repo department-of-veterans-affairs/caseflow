@@ -24,10 +24,10 @@ class QuarterlyNotificationsJob < CaseflowJob
     begin
       NOTIFICATION_TYPES.each_key do |notification_type|
         jobs = AppealState.eligible_for_quarterly.send(notification_type).pluck(:appeal_id, :appeal_type)
-          .map do |entry|
+          .map do |related_appeal_info|
           NotificationInitializationJob.new(
-            appeal_id: entry.first,
-            appeal_type: entry.last,
+            appeal_id: related_appeal_info.first,
+            appeal_type: related_appeal_info.last,
             template_name: Constants.QUARTERLY_STATUSES.quarterly_notification,
             appeal_status: notification_type.to_s
           )
