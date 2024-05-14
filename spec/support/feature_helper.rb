@@ -127,7 +127,7 @@ module FeatureHelper
   end
 
   def dropdown_menu_visible?(dropdown)
-    dropdown.sibling(".cf-select__menu", wait: false)
+    dropdown.sibling(".cf-select__menu", wait: 3)
   rescue Capybara::ElementNotFound
     false
   else
