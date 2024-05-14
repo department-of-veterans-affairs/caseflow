@@ -12,11 +12,12 @@ class QuarterlyNotificationsJob < CaseflowJob
     types.delete(:quarterly_notification)
   end
 
-  # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
+  # Locates appeals eligible for quarterly notifications and queues a NotificationInitializationJob
+  # for each for further processing, and eventual (maybe) transmission of correspondence to an appellant.
   #
-  # Params: none
-  #
-  # Response: SendNotificationJob queued to send_notification SQS queue
+  # @return [Hash]
+  #   Returns the hash of NOTIFICATION_TYPES that were iterated over, though this value isn't designed
+  #     to be utilized by a caller due to the async nature of this job.
   def perform
     ensure_current_user_is_set
 
