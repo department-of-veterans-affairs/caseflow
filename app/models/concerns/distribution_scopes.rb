@@ -62,7 +62,23 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     genpop_cavc_affinity_days_query = generate_genpop_cavc_affinity_days_lever_query
     genpop_cavc_aod_affinity_days_query = generate_genpop_cavc_aod_affinity_days_lever_query
 
-    genpop_cavc_affinity_days_query.or(genpop_cavc_aod_affinity_days_query)
+    result = genpop_cavc_affinity_days_query.or(genpop_cavc_aod_affinity_days_query)
+
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      result = result.or(
+        genpop_base_query
+        .where("original_judge_task.assigned_to_id in (?)", HearingRequestDistributionQuery.ineligible_judges_id_cache)
+      )
+    end
+
+    if FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      result = result.or(
+        genpop_base_query
+        .where("original_judge_task.assigned_to_id in (?)", JudgeTeam.judges_with_exclude_appeals_from_affinity)
+      )
+    end
+
+    result
   end
 
   def generate_genpop_cavc_affinity_days_lever_query
@@ -85,9 +101,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       results1 = genpop_base_query.where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
-        .where("original_judge_task.assigned_to_id in (?)",
-          exclude_affinity_and_ineligible_judge_ids
-        )
+        .none
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
       genpop_base_query
     end
