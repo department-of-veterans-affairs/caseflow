@@ -12,11 +12,9 @@ const issueModificationRow = (
   const modificationIssueRequestsLength = Object.keys(modificationIssueRequestsObj).length - 1;
   const modificationIssueRequests = Object.entries(modificationIssueRequestsObj).sort();
 
-  let index = 0;
-
-  for (const [key, value] of modificationIssueRequests) {
+  for (const [i, [key, value]] of modificationIssueRequests.entries()) {
     const lastSection =
-      modificationIssueRequestsLength === index;
+      modificationIssueRequestsLength === i;
 
     const commonProps = {
       issuesArr: value,
@@ -59,8 +57,6 @@ const issueModificationRow = (
     default:
       break;
     }
-
-    index += 1;
   }
 
   return {
