@@ -12,6 +12,9 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
         .serializable_hash[:data][:attributes]
       expect(serialized_request_issue.key?(:id)).to eq true
+      expect(serialized_request_issue.key?(:legacy_opt_in_approvede)).to eq true
+      expect(serialized_request_issue.key?(:same_office)).to eq true
+      expect(serialized_request_issue.key?(:development_item_reference_id)).to eq true
       expect(serialized_request_issue.key?(:benefit_type)).to eq true
       expect(serialized_request_issue.key?(:closed_status)).to eq true
       expect(serialized_request_issue.key?(:contention_reference_id)).to eq true
