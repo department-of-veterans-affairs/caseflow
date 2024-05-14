@@ -6,8 +6,6 @@ class QuarterlyNotificationsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :va_notify
 
-  QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
-
   NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h.tap do |types|
     types.delete(:quarterly_notification)
   end
