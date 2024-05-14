@@ -8,7 +8,7 @@ module Seeds
       create_inbound_ops_team_auto_assign_user
       create_inbound_ops_team_user_with_no_permissions
       create_inbound_ops_team_supervisor
-      create_mail_team_user
+      create_inbound_ops_team_user
       create_mail_team_superuser
     end
 
@@ -108,11 +108,11 @@ module Seeds
       end
     end
 
-    def create_mail_team_user
+    def create_inbound_ops_team_user
       users_info = [
-        { css_id: "MAIL_TEAM_USER_U1", full_name: "Cedar Rain" },
-        { css_id: "MAIL_TEAM_USER_U2", full_name: "Ivy Stone" },
-        { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
+        { css_id: "INBOUND_OPS_TEAM_USER_U1", full_name: "Cedar Rain" },
+        { css_id: "INBOUND_OPS_TEAM_USER_U2", full_name: "Ivy Stone" },
+        { css_id: "INBOUND_OPS_TEAM_USER_U3", full_name: "Ocean Breeze" }
       ]
       users_info.map do |user_info|
         u = User.find_or_create_by!(

@@ -13,8 +13,8 @@ module Seeds
       RequestStore[:current_user] = User.find_by_css_id("JOLLY_POSTMAN") if RequestStore[:current_user].blank?
     end
 
-    def mail_team_user
-      @mail_team_user ||= User.find_by_css_id("JOLLY_POSTMAN")
+    def inbound_ops_team_user
+      @inobund_ops_team_user ||= User.find_by_css_id("JOLLY_POSTMAN")
     end
 
     def mail_team_superuser
@@ -27,7 +27,7 @@ module Seeds
 
       return create_queue_correspondences(user, veteran) unless user.blank? && veteran.blank?
 
-      create_queue_correspondences(mail_team_user)
+      create_queue_correspondences(inbound_ops_team_user)
       create_queue_correspondences(mail_team_superuser)
     end
 

@@ -8,20 +8,20 @@ module CorrespondenceControllerConcern
 
   MAX_QUEUED_ITEMS = 60
 
-  def process_tasks_if_applicable(mail_team_user, task_ids, tab)
+  def process_tasks_if_applicable(inbound_ops_team_user, task_ids, tab)
     # candidate for refactor using PATCH request
-    return unless mail_team_user && task_ids.present?
+    return unless inbound_ops_team_user && task_ids.present?
 
-    set_banner_params(mail_team_user, task_ids.count, tab)
-    update_tasks(mail_team_user, task_ids)
+    set_banner_params(inbound_ops_team_user, task_ids.count, tab)
+    update_tasks(inbound_ops_team_user, task_ids)
   end
 
-  def update_tasks(mail_team_user, task_ids)
+  def update_tasks(inbound_ops_team_user, task_ids)
     return unless @response_type == "success"
 
     tasks = Task.where(id: task_ids)
     tasks.update_all(
-      assigned_to_id: mail_team_user.id,
+      assigned_to_id: inbound_ops_team_user.id,
       assigned_to_type: "User",
       status: Constants.TASK_STATUSES.assigned
     )

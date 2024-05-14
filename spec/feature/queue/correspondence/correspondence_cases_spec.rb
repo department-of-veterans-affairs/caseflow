@@ -1230,7 +1230,7 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "Banner alert for approval and reject request" do
     let(:current_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
+    let(:inbound_ops_team_user) { create(:user) }
     before :each do
       MailTeam.singleton.add_user(current_user)
       InboundOpsTeam.singleton.add_user(current_user)
@@ -1451,7 +1451,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "Package document type column" do
     let(:current_user) { create(:user) }
     let(:alt_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
+    let(:inbound_ops_team_user) { create(:user) }
     before :each do
       MailTeam.singleton.add_user(current_user)
       MailTeam.singleton.add_user(alt_user)
