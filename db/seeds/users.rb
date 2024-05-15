@@ -91,7 +91,7 @@ module Seeds
       create_inbound_ops_team_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
-      create_inbound_ops_team_user
+      create_mail_team_user
       create_clerk_of_the_board_users
       create_case_search_only_user
       create_split_appeals_test_users
@@ -416,9 +416,9 @@ module Seeds
       PulacCerullo.singleton.add_user(u)
     end
 
-    def create_inbound_ops_team_user
+    def create_mail_team_user
       u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
-      InboundOpsTeam.singleton.add_user(u)
+      MailTeam.singleton.add_user(u)
     end
 
     def create_clerk_of_the_board_users

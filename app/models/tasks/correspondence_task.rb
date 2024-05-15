@@ -19,10 +19,6 @@ class CorrespondenceTask < Task
       RemovePackageTask.name,
       SplitPackageTask.name,
       MergePackageTask.name,
-      CorrespondenceIntakeTask.name,
-      CorrespondenceRootTask.name,
-      EfolderUploadFailedTask.name,
-      CorrespondenceMailTask.name
     ]
   end
 
@@ -115,5 +111,10 @@ class CorrespondenceTask < Task
 
   def package_action_task?
     self.class.package_action_task_names.include?(self.class.name)
+  end
+
+  def before_create
+    fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
+    InboundOpsTeam.singleton.user_has_access?(current_user)
   end
 end

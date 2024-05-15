@@ -22,7 +22,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
-  scope :inbound_ops_team_user, -> { joins(:organizations).where(organizations: { type: InboundOpsTeam.name }) }
+  scope :inbounds_ops_team_user, -> { joins(:organizations).where(organizations: { type: InboundOpsTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
