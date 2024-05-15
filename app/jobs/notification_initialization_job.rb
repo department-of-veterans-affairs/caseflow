@@ -17,6 +17,19 @@ class NotificationInitializationJob < CaseflowJob
   queue_as SendNotificationJob.queue_name_suffix
   application_attr :va_notify
 
+  # ...
+  #
+  # @param appeal_id [Integer] Foreign key ID of the appeal to be associated with the notification.
+  # @param appeal_type [String] Class name of appeal to be associated with the notification. Appeal or LegacyAppeal.
+  # @param template_name [String] VANotify template name to be requested transmission of.
+  #   Must be present in the configuration for our VANotify account, and must be a template represented in our
+  #   notification_events table.
+  # @param appeal_status [String] An optional status that is used to fill in a blank in the quarterly notification
+  #   template to let the claimant know what the status of their appeal is.
+  #
+  # @return [SendNotificationJob, nil]
+  #   A SendNotificationJob job object representing the job that was enqueued, or nil if a notification
+  #   wasn't ultimately attempted to be sent.
   def perform(appeal_id:, appeal_type:, template_name:, appeal_status: nil)
     begin
       ensure_current_user_is_set
