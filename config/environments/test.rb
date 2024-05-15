@@ -1,3 +1,4 @@
+require "active_support/core_ext/integer/time"
 require "fileutils"
 
 # The test environment is used exclusively to run your application's
@@ -50,15 +51,22 @@ Rails.application.configure do
   require_relative "../../app/services/deprecation_warnings/test_handler"
   ActiveSupport::Deprecation.behavior = DeprecationWarnings::TestHandler
 
+  # Raise exceptions for disallowed deprecations.
+  # config.active_support.disallowed_deprecation = :raise
+
+  # Tell Active Support which deprecation messages to disallow.
+  # config.active_support.disallowed_deprecation_warnings = []
+
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
     config.log_level = :error
   end
 
-  config.action_mailer.delivery_method = :test
-
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i18n.raise_on_missing_translations = true
+
+  # Annotate rendered view with file names.
+  # config.action_view.annotate_rendered_view_with_filenames = true
 
   #=====================================================================================================================
   # Please keep custom config settings below this comment.
