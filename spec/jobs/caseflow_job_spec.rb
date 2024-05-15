@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 describe CaseflowJob, :postgres do
+  # rubocop:disable Lint/ConstantDefinitionInBlock
   class SomeCaseflowJob < CaseflowJob
     queue_with_priority :low_priority
 
@@ -8,6 +9,7 @@ describe CaseflowJob, :postgres do
       Rails.logger.info "Doing something useful"
     end
   end
+  # rubocop:enable Lint/ConstantDefinitionInBlock
 
   subject { SomeCaseflowJob.perform_now }
 
