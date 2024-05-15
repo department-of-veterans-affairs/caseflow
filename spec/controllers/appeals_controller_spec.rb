@@ -759,23 +759,29 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let!(:notifications) do
       [
         create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: legacy_appeals_type,
-                              event_date: 6.days.ago, event_type: "Appeal docketed", notification_type: "SMS",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+                              notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "Success"),
         create(:notification, appeals_id: ama_appeal.uuid, appeals_type: ama_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+                              notification_type: "Email",
                               email_notification_status: "Success", sms_notification_status: nil),
         create(:notification, appeals_id: legacy_appeal_without_claimant.vacols_id, appeals_type: legacy_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+                              notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Claimant Found"),
         create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id,
                               appeals_type: legacy_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+                              notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Participant Id Found"),
         create(:notification, appeals_id: ama_appeal_without_claimant.uuid, appeals_type: ama_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+                              notification_type: "Email",
                               email_notification_status: "No Claimant Found", sms_notification_status: nil),
         create(:notification, appeals_id: ama_appeal_without_participant_id.uuid, appeals_type: ama_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
+                              event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+                              notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Participant Id Found")
       ]
     end
@@ -795,7 +801,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         it "should have the event type of 'Appeal docketed'" do
           subject
           response_body = JSON.parse(subject.body)
-          expect(response_body.first["attributes"]["event_type"]).to eq "Appeal docketed"
+          expect(response_body.first["attributes"]["event_type"]).to eq Constants.EVENT_TYPE_FILTERS.appeal_docketed
         end
         it "should return a successful response" do
           subject
@@ -857,7 +863,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         it "should have the event type of 'Hearing scheduled'" do
           subject
           response_body = JSON.parse(subject.body)
-          expect(response_body.first["attributes"]["event_type"]).to eq "Hearing scheduled"
+          expect(response_body.first["attributes"]["event_type"]).to eq Constants.EVENT_TYPE_FILTERS.hearing_scheduled
         end
         it "should return a succesful response" do
           subject

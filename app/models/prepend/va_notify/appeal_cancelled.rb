@@ -8,9 +8,6 @@
 
 module AppealCancelled
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Appeal Cancelled"
-  # rubocop:enable all
 
   # Original Method in app/models/task.rb
   # Purpose: Update Record in Appeal States Table

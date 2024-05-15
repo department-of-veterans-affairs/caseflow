@@ -180,11 +180,13 @@ module AppellantNotification
     msg_bdy = create_payload(appeal, template_name, appeal_status)
     appeal_docketed_event_enabled = FeatureToggle.enabled?(:appeal_docketed_event)
 
-    return nil if template_name == "Appeal docketed" &&
+    return nil if template_name == Constants.EVENT_TYPE_FILTERS.appeal_docketed &&
                   !appeal_docketed_event_enabled &&
                   msg_bdy.appeal_type == "LegacyAppeal"
 
-    if template_name == "Appeal docketed" && appeal_docketed_event_enabled && msg_bdy.appeal_type == "LegacyAppeal"
+    if template_name == Constants.EVENT_TYPE_FILTERS.appeal_docketed &&
+       appeal_docketed_event_enabled &&
+       msg_bdy.appeal_type == "LegacyAppeal"
       Notification.create!(
         appeals_id: msg_bdy.appeal_id,
         appeals_type: msg_bdy.appeal_type,
