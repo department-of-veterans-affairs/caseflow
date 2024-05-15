@@ -58,5 +58,6 @@ namespace :db do
         end
       end
     end
+    Rails.logger.info("The affinity_start_date rake task has been completed successfully")
   end
 end
