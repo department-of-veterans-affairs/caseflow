@@ -27,7 +27,6 @@ const ToggleSwitch = ({
     <button
       className={buttonStyles}
       disabled={disabled}
-      isIdle={isIdle}
       id={id}
       name={name}
       onClick={toggleSelected}>
