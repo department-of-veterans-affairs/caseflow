@@ -20,7 +20,7 @@ const modificationSchema = yup.object({
 
 const RequestIssueModificationContent = (props) => {
 
-  const { handleSubmit } = useFormContext();
+  const { handleSubmit, formState } = useFormContext();
 
   const onSubmit = (data) => {
     const enhancedData = {
@@ -44,7 +44,8 @@ const RequestIssueModificationContent = (props) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: 'Submit request',
-          onClick: handleSubmit(onSubmit)
+          onClick: handleSubmit(onSubmit),
+          disabled: !formState.isValid
         }
       ]}
       closeHandler={props.onCancel}

@@ -36,7 +36,7 @@ feature "Issue Modification Request", :postgres do
       expect(page).to have_content("Request additional issue")
     end
 
-    it "shows errors when a user tries to submit missing information" do
+    it "does not enable the submit button until all fields are touched" do
       visit "higher_level_reviews/#{in_progress_task.uuid}/edit"
 
       step "for modification" do
@@ -44,24 +44,34 @@ feature "Issue Modification Request", :postgres do
           first("select").select("Request modification")
         end
 
-        click_on "Submit request"
+        # binding.irb
+        expect(page).to have_button("Submit request", disabled: true)
 
-        expect(page).to have_content("Please select an issue type.")
-        expect(page).to have_content("Please select a decision date.")
-        expect(page).to have_content("Please enter an issue description.")
-        expect(page).to have_content("Please enter a request reason.")
+        fill_in "Issue type", with: "Beneficiary Travel"
+        find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+        fill_in "Prior decision date", with: "05/15/2024"
+        fill_in "Issue description", with: "An issue description"
+        fill_in "Please provide a reason for the issue modification request", with: "I wanted to"
+
+        expect(page).to have_button("Submit request", disabled: false)
 
         click_on "Cancel"
       end
 
       step "for addition" do
         click_on "Request additional issue"
-        click_on "Submit request"
 
-        expect(page).to have_content("Please select an issue type.")
-        expect(page).to have_content("Please select a decision date.")
-        expect(page).to have_content("Please enter an issue description.")
-        expect(page).to have_content("Please enter a request reason.")
+        expect(page).to have_button("Submit request", disabled: true)
+
+        fill_in "Issue type", with: "Beneficiary Travel"
+        find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+        fill_in "Prior decision date", with: "05/15/2024"
+        fill_in "Issue description", with: "An issue description"
+        fill_in "Please provide a reason for the issue addition request", with: "I wanted to"
+
+        expect(page).to have_button("Submit request", disabled: false)
 
         click_on "Cancel"
       end
@@ -71,10 +81,12 @@ feature "Issue Modification Request", :postgres do
           first("select").select("Request withdrawal")
         end
 
-        click_on "Submit request"
+        expect(page).to have_button("Submit request", disabled: true)
 
-        expect(page).to have_content("Please enter a withdrawal date.")
-        expect(page).to have_content("Please enter a request reason.")
+        fill_in "Request date for withdrawal", with: "05/15/2024"
+        fill_in "Please provide a reason for the issue withdrawal request", with: "I wanted to"
+
+        expect(page).to have_button("Submit request", disabled: false)
 
         click_on "Cancel"
       end
@@ -84,9 +96,11 @@ feature "Issue Modification Request", :postgres do
           first("select").select("Request removal")
         end
 
-        click_on "Submit request"
+        expect(page).to have_button("Submit request", disabled: true)
 
-        expect(page).to have_content("Please enter a request reason.")
+        fill_in "Please provide a reason for the issue removal request", with: "I wanted to"
+
+        expect(page).to have_button("Submit request", disabled: false)
 
         click_on "Cancel"
       end

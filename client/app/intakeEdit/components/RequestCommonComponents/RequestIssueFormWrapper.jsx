@@ -9,7 +9,7 @@ export const RequestIssueFormWrapper = (props) => {
     requestReason: '',
     nonratingIssueCategory: '',
   },
-  mode: 'onSubmit',
+  mode: 'onChange',
   resolver: yupResolver(props.schema),
   reValidateMode: 'onSubmit' });
 

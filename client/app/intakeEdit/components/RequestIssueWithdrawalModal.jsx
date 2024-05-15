@@ -15,7 +15,7 @@ const withdrawalSchema = yup.object({
 
 const RequestIssueWithdrawalContent = (props) => {
 
-  const { handleSubmit, register, errors } = useFormContext();
+  const { handleSubmit, register, errors, formState } = useFormContext();
 
   const onSubmit = (data) => {
     const enhancedData = {
@@ -39,7 +39,8 @@ const RequestIssueWithdrawalContent = (props) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: 'Submit request',
-          onClick: handleSubmit(onSubmit)
+          onClick: handleSubmit(onSubmit),
+          disabled: !formState.isValid
         }
       ]}
       closeHandler={props.onCancel}

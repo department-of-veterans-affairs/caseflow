@@ -21,11 +21,10 @@ const additionSchema = yup.object({
 
 const RequestIssueAdditionContent = (props) => {
 
-  const { handleSubmit } = useFormContext();
+  const { handleSubmit, formState } = useFormContext();
 
   const onSubmit = (data) => {
     const enhancedData = {
-      requestIssueId: props.currentIssue.id,
       requestType: 'Addition',
       ...data };
 
@@ -45,7 +44,8 @@ const RequestIssueAdditionContent = (props) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: 'Submit request',
-          onClick: handleSubmit(onSubmit)
+          onClick: handleSubmit(onSubmit),
+          disabled: !formState.isValid
         }
       ]}
       closeHandler={props.onCancel}
