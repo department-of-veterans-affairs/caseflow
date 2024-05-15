@@ -5,7 +5,7 @@ import { MemoryRouter, Route, useHistory, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import CorrespondenceReviewPackage
-  from '../../../../app/queue/correspondence/review_package/CorrespondenceReviewPackage';
+  from '../../../../app/queue/correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
