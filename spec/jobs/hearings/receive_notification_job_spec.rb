@@ -130,7 +130,8 @@ describe ReceiveNotificationJob, type: :job do
     end
     # create notification record
     let(:notification) do
-      create(:notification, id: 9, appeals_id: 4, appeals_type: "Appeal", event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
+      create(:notification, id: 9, appeals_id: 4, appeals_type: "Appeal",
+                            event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
                             participant_id: "123456789", notification_type: "Email", recipient_email: "",
                             event_date: Time.zone.now, email_notification_status: "Success")
     end
