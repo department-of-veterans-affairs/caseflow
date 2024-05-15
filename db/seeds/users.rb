@@ -381,9 +381,15 @@ module Seeds
       u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
       InboundOpsTeam.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
-      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER",
-                       full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
+
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake")
+      MailTeam.singleton.add_user(u)
+    end
+
+    def create_inbound_ops_team_super_user
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_SUPER_USER", full_name: "Charles Xavier")
       InboundOpsTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, MailTeam.singleton)
     end
 
     def create_cavc_lit_support_user
