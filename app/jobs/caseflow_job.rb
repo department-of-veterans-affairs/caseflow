@@ -35,7 +35,7 @@ class CaseflowJob < ApplicationJob
     # @return [Aws::SQS::Types::SendMessageBatchResult]
     #   A struct containing the messages that were successfully enqueued and those that failed.
     def enqueue_batch_of_jobs(jobs_to_enqueue:, name_of_queue:)
-      fail StandardError, "The bath size of jobs must not exceed 10" if jobs_to_enqueue.size > 10
+      fail Caseflow::Error::MaximumBatchSizeViolationError if jobs_to_enqueue.size > 10
 
       Shoryuken::Client.queues(name_of_queue).send_messages(
         jobs_to_enqueue.map { serialize_job_for_enqueueing(_1) }
