@@ -44,6 +44,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           ramp_claim_id: parser.ri_ramp_claim_id(issue),
           rating_issue_associated_at: parser.ri_rating_issue_associated_at(issue),
           nonrating_issue_bgs_id: parser.ri_nonrating_issue_bgs_id(issue),
+          nonrating_issue_bgs_source: parser.ri_nonrating_issue_bgs_source(issue),
           end_product_establishment_id: epe.id,
           veteran_participant_id: parser.veteran_participant_id,
           decision_review: decision_review
