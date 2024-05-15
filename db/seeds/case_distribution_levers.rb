@@ -684,7 +684,7 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 108,
+            lever_group_order: 104,
             control_group: Constants.ACD_LEVERS.non_priority,
             options: [
               {
@@ -765,7 +765,7 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 104,
+            lever_group_order: 108,
             control_group: Constants.ACD_LEVERS.priority,
             options: [
               {
