@@ -5,7 +5,7 @@ class CorrespondenceDocument < CaseflowRecord
   belongs_to :vbms_document_type
 
   # callbacks
-  after_update :update_correspondence_nod
+  after_save :update_correspondence_nod
 
   def pdf_name
     "#{uuid}.pdf"
