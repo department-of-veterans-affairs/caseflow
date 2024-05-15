@@ -49,7 +49,7 @@ const NonCompTabsUnconnected = (props) => {
 
   const ALL_TABS = {
     incomplete: {
-      label: `Incomplete tasks (${taskCounts.incomplete})`,
+      label: `Incomplete Tasks (${taskCounts.incomplete})`,
       page: <TaskTableTab
         key="incomplete"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=incomplete`}
@@ -63,7 +63,7 @@ const NonCompTabsUnconnected = (props) => {
           defaultSortIdx: 3 }} />
     },
     pending: {
-      label: `Pending tasks (${taskCounts.pending})`,
+      label: `Pending Tasks (${taskCounts.pending})`,
       page: <TaskTableTab {...props}
         key="pending"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=pending`}
@@ -79,7 +79,7 @@ const NonCompTabsUnconnected = (props) => {
           defaultSortIdx: 3 }} />
     },
     in_progress: {
-      label: `In progress tasks (${taskCounts.in_progress})`,
+      label: `In Progress Tasks (${taskCounts.in_progress})`,
       page: <TaskTableTab {...props}
         key="inprogress"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
@@ -91,7 +91,7 @@ const NonCompTabsUnconnected = (props) => {
           defaultSortIdx: 3 }} />
     },
     completed: {
-      label: 'Completed tasks',
+      label: 'Completed Tasks',
       page: <TaskTableTab {...props}
         key="completed"
         baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
