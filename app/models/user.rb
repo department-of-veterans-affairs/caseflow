@@ -107,7 +107,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def inbound_ops_team_supervisor?
-    organizations.include?(InboundOpsTeam.singleton)
+    administered_teams.include?(InboundOpsTeam.singleton)
   end
 
   def organization_permissions(org)
