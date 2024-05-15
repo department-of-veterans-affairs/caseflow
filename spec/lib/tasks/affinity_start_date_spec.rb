@@ -44,7 +44,8 @@ describe "affinity_start_date" do
              :ready_for_distribution, receipt_date: 2.weeks.ago)
     end
     let!(:ready_appeal_drd_priority_no_receipt) do
-      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution, receipt_date: 1.week.ago)
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age,
+             :ready_for_distribution, receipt_date: 1.week.ago)
     end
 
     # direct review appeals that should not be selected
