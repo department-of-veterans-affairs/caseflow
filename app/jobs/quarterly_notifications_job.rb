@@ -8,7 +8,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :va_notify
 
-  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h
+  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h.freeze
 
   # Locates appeals eligible for quarterly notifications and queues a NotificationInitializationJob
   # for each for further processing, and eventual (maybe) transmission of correspondence to an appellant.
