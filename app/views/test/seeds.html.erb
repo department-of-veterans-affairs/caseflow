@@ -1,0 +1,8 @@
+<% content_for :full_page_content do %>
+  <%= react_component("TestSeeds", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url
+  }) %>
+<% end %>
