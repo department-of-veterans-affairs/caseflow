@@ -149,8 +149,8 @@ describe AppellantNotification do
           file: "some file"
         }
       end
-      let(:contested) { "Appeal decision mailed (Contested claims)" }
-      let(:non_contested) { "Appeal decision mailed (Non-contested claims)" }
+      let(:contested) { Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_contested_claims }
+      let(:non_contested) { Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims }
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
       let(:dispatch_func) { "create_decision_document_and_submit_for_processing!" }
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
@@ -207,8 +207,8 @@ describe AppellantNotification do
           file: "some file"
         }
       end
-      let(:contested) { "Appeal decision mailed (Contested claims)" }
-      let(:non_contested) { "Appeal decision mailed (Non-contested claims)" }
+      let(:contested) { Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_contested_claims }
+      let(:non_contested) { Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims }
       let(:dispatch) do
         AmaAppealDispatch.new(
           appeal: appeal,
@@ -543,8 +543,8 @@ describe AppellantNotification do
   end
 
   describe "FOIA/Privacy Act tasks" do
-    let(:template_pending) { "Privacy Act request pending" }
-    let(:template_closed) { "Privacy Act request complete" }
+    let(:template_pending) { Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending }
+    let(:template_closed) { Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete }
 
     context "HearingAdminFoiaPrivacyRequestTask" do
       let(:appeal) { create(:appeal) }
@@ -1031,7 +1031,7 @@ describe AppellantNotification do
 
   describe SendNotificationJob do
     let(:appeal) { create(:appeal, :active) }
-    let(:template) { "Hearing scheduled" }
+    let(:template) { Constants.EVENT_TYPE_FILTERS.hearing_scheduled }
     let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
     describe "#perform" do
       it "pushes a new message" do

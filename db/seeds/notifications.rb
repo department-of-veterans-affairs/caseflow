@@ -275,213 +275,213 @@ module Seeds
 
     def create_notifications
       # Multiple Notifications for Legacy Appeal 2226048
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
         notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
         notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for Legacy Appeal 2309289
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
         notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
         notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for Legacy Appeal 2362049
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
         notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
         notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
         notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Single Notification for Legacy Appeal 2591483
-      Notification.create(appeals_id: "2591483", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2591483", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for Legacy Appeal 2687879
-      Notification.create(appeals_id: "2687879", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2687879", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for Legacy Appeal 2727431
-      Notification.create(appeals_id: "2727431", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2727431", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
         notification_content: notification_content[:appeal_docketed])
 
       # Multiple Notifications for AMA Appeal d31d7f91-91a0-46f8-b4bc-c57e139cee72
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
           notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
           notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for AMA Appeal 25c4857b-3cc5-4497-a066-25be73aa4b6b
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
           notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
           notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for AMA Appeal 7a060e04-1143-4e42-9ede-bdc42877f4f8
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
           notification_content: notification_content[:appeal_docketed])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_scheduled])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_pending])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 5.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:privacy_act_complete])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 4.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
           notification_content: notification_content[:hearing_withdrawn])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 3.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_pending, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_pending])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 2.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.vso_ihp_complete, notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
           notification_content: notification_content[:vso_ihp_complete])
-      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
+      Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 1.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
           notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Single Notification for AMA Appeal 952b6490-a10a-484b-a29b-31489e9a6e5a
-      Notification.create(appeals_id: "952b6490-a10a-484b-a29b-31489e9a6e5a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "952b6490-a10a-484b-a29b-31489e9a6e5a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
           notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for AMA Appeal fb3b029f-f07e-45bf-9277-809b44f7451a
-      Notification.create(appeals_id: "fb3b029f-f07e-45bf-9277-809b44f7451a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "fb3b029f-f07e-45bf-9277-809b44f7451a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
           notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for AMA Appeal 2b3afced-f698-4abe-84f9-6d44f26d20d4
-      Notification.create(appeals_id: "2b3afced-f698-4abe-84f9-6d44f26d20d4", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "2b3afced-f698-4abe-84f9-6d44f26d20d4", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
           notification_content: notification_content[:appeal_docketed])
 
       # Notifications of No Participant Id Found, No Claimant Found, and No External Id for Legacy Appeal 3565723
       3565723
-      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No Participant Id Found", sms_notification_status: "No Participant Id Found")
-      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No Claimant Found",  sms_notification_status: "No Claimant Found")
-      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No External Id",  sms_notification_status: "No External Id")
 
       # Notifications of No Participant Id Found, No Claimant Found, and No External Id for AMA Appeal ea2303e9-2bab-472b-a653-94b71bca8ca3
       3565723
-      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 8.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No Participant Id Found", sms_notification_status: "No Participant Id Found")
-      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 7.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No Claimant Found",  sms_notification_status: "No Claimant Found")
-      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
+      Notification.create(appeals_id: "ea2303e9-2bab-472b-a653-94b71bca8ca3", appeals_type: "Appeal", event_date: 6.days.ago, event_type: Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending, notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "No External Id",  sms_notification_status: "No External Id")
     end
   end
