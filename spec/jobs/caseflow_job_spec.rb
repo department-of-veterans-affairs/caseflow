@@ -58,7 +58,6 @@ describe CaseflowJob, :postgres do
       it "raises a MaximumBatchSizeViolationError" do
         expect { subject }.to raise_error(Caseflow::Error::MaximumBatchSizeViolationError)
       end
-
     end
 
     context "when the number of jobs doesn't exceed 10" do
