@@ -29,6 +29,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { described_class.perform_now }
 
     it "using Automatic Case Distribution module" do
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_non_genpop_priority_appeals).and_return([])
 
@@ -205,6 +206,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "using Automatic Case Distribution module" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
+        FeatureToggle.disable!(:acd_distribute_by_docket_date)
       end
 
       it "should only distribute the ready priority cases tied to a judge" do
@@ -232,7 +234,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
       after do
         FeatureToggle.disable!(:acd_distribute_by_docket_date)
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.disable!(:acd_exclude_from_affinity)
       end
 
       it "should only distribute the ready priority cases tied to a judge" do
@@ -335,6 +337,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     context "using Automatic Case Distribution module" do
       it "should distribute ready priority appeals to the judges" do
+        FeatureToggle.disable!(:acd_distribute_by_docket_date)
         expect(subject.count).to eq judges.count
 
         # Ensure we distributed all available ready cases from any docket that are not tied to a judge
@@ -503,6 +506,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
     it "using Automatic Case Distribution module" do
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
       expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
       expect(subject.third).to eq "*Number of general population cases distributed*: 10"
 
