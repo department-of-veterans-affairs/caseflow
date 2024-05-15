@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-# rubocop:disable all
+
+# rubocop:disable Layout/LineLength
 
 DT_API_URL = ENV["DT_API_URL"]
 DT_API_TOKEN = ENV["DT_API_TOKEN"]
@@ -9,11 +10,8 @@ OpenTelemetry::SDK.configure do |config|
   config.service_version = "1.0.1"
   # automatic instrumentation
   config.use_all
-  for name in ["dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties", "/var/lib/dynatrace/enrichment/dt_metadata.properties", "/var/lib/dynatrace/enrichment/dt_host_metadata.properties"] do
-    begin
-      config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
-    rescue
-    end
+  ["dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties", "/var/lib/dynatrace/enrichment/dt_metadata.properties", "/var/lib/dynatrace/enrichment/dt_host_metadata.properties"].each do |name|
+    config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
   end
   config.add_span_processor(
     OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
@@ -26,4 +24,4 @@ OpenTelemetry::SDK.configure do |config|
     )
   )
 end
-
+  # rubocop:enable Layout/LineLength
