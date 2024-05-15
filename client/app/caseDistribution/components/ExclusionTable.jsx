@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import cx from 'classnames';
@@ -38,6 +38,17 @@ const ExclusionTable = () => {
     options: lever.options,
     leverGroup: lever.lever_group,
   }));
+
+  const [priorityToggle, setPriorityToggle] = useState(false);
+  const [nonPriorityToggle, setNonPriorityToggle] = useState(false);
+
+  const handlePriorityToggleChange = () => {
+    setPriorityToggle(!priorityToggle);
+  };
+
+  const handleNonPriorityToggleChange = () => {
+    setNonPriorityToggle(!nonPriorityToggle);
+  };
 
   const filterOptionValue = (lever) => {
     let enabled = lever?.value;
@@ -93,8 +104,8 @@ const ExclusionTable = () => {
                   </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}
-                    selected = {false}
-                    disabled
+                    selected = {nonPriorityToggle}
+                    toggleSelected={handleNonPriorityToggleChange}
                   />
                 </span>
               </td>
@@ -115,8 +126,8 @@ const ExclusionTable = () => {
                   </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_priority}
-                    selected = {false}
-                    disabled
+                    selected = {priorityToggle}
+                    toggleSelected={handlePriorityToggleChange}
                   />
                 </span>
               </td>
