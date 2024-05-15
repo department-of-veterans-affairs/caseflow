@@ -262,4 +262,76 @@ describe "affinity_start_date" do
       expect(non_ready_appeal_hrd_nonpriority.appeal_affinity).to be nil
     end
   end
+
+  context "when appeal affinity is nil" do
+    let!(:distributed_appeal_hrd_priority) do
+      appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                      receipt_date: 4.days.ago, associated_judge: judge)
+      create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
+      appeal
+    end
+
+    let!(:ready_appeal_hrd_priority) do
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+             receipt_date: 5.days.ago)
+    end
+
+    it "successfully creates an appeal affinity with the correct type and priority" do
+      expect { subject }.to output(output_match).to_stdout
+
+      expect(ready_appeal_hrd_priority.appeal_affinity).to_not be nil
+      expect(ready_appeal_hrd_priority.appeal_affinity.docket).to eq("hearing")
+      expect(ready_appeal_hrd_priority.appeal_affinity.priority).to be true
+      expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date).to_not be nil
+    end
+  end
+
+  context "when appeal affinity has no affinity start date" do
+    let!(:distributed_appeal_esd_priority) do
+      appeal = create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                      receipt_date: 3.days.ago, associated_judge: judge)
+      create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
+      appeal
+    end
+
+    let!(:ready_appeal_esd_priority_no_start_date) do
+      create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+             :with_appeal_affinity_no_start_date, receipt_date: 4.days.ago)
+    end
+
+    it "successfully updates the appeal affinity with the correct type and priority" do
+      expect { subject }.to output(output_match).to_stdout
+
+      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
+      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date).to_not be nil
+    end
+  end
+
+  context "when appeal has no matching receipt date" do
+    let!(:distributed_appeal_drd_priority) do
+      appeal = create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
+                      receipt_date: 5.days.ago, associated_judge: judge)
+      create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
+      appeal
+    end
+
+    let!(:ready_appeal_drd_priority) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+             receipt_date: 3.days.ago)
+    end
+
+    let!(:ready_appeal_drd_priority_with_appeal_affinity) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+             :with_appeal_affinity, affinity_start_date: 2.days.ago, receipt_date: 4.days.ago)
+    end
+
+    it "does not update or create an appeal_affinity" do
+      expect { subject }.to output(output_match).to_stdout
+
+      expect(ready_appeal_drd_priority.appeal_affinity).to be nil
+      expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity).to_not be nil
+      expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity.affinity_start_date)
+        .to be_within(1.second).of 2.days.ago
+    end
+  end
 end
