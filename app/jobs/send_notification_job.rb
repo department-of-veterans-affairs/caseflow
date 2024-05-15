@@ -104,7 +104,7 @@ class SendNotificationJob < CaseflowJob
   end
 
   def quarterly_notification?
-    event_type == "Quarterly Notification"
+    event_type == Constants.EVENT_TYPE_FILTERS.quarterly_notification
   end
 
   # Purpose: Determine if email notifications enabled
@@ -153,7 +153,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Returns: Boolean
   def legacy_appeal_docketed_event?
-    event_type == "Appeal docketed" && appeal.is_a?(LegacyAppeal)
+    event_type == Constants.EVENT_TYPE_FILTERS.appeal_docketed && appeal.is_a?(LegacyAppeal)
   end
 
   # Purpose: Create notification audit record
