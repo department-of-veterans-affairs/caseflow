@@ -13,3 +13,8 @@ node@16.16.0:
   integrity sha512-uEZWEG6HuGbrRi6wEZIna4yWj197JByvJkMmi8Yxx9Z6y8GazVy0p2qYOwLYJqQRf4N37+eL+FBIdhT1mHGpFA==
   dependencies:
     node-bin-setup "^1.0.0"
+
+picocolors@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.1.tgz#a8ad579b571952f0e5d25892de5445bcfe25aaa1"
+  integrity sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==
