@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class QuarterlyNotificationsJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority

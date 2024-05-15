@@ -18,6 +18,15 @@ class ApplicationJob < ActiveJob::Base
       @app_name = app_name
     end
 
+    # Override in job classes if you anticipate that the job will take longer than the SQS visibility
+    # timeout value (ex: currently 5 hours for our low priority queue at the time of writing this)
+    # to prevent multiple instances of the job from being executed.
+    #
+    # See https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
+    def delete_sqs_message_before_start?
+      false
+    end
+
     attr_reader :app_name
   end
 
