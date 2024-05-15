@@ -58,6 +58,8 @@ namespace :db do
         end
       end
     end
-    Rails.logger.info("The affinity_start_date rake task has been completed successfully")
+    Rails.logger.tagged("rake db:affinity_start_date") do
+      Rails.logger.info("The affinity_start_date rake task has been completed successfully")
+    end
   end
 end
