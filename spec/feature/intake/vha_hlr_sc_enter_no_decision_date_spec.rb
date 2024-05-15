@@ -357,7 +357,6 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
   context "adding an issue without a decision date to an existing HLR/SC" do
     before do
       task.appeal.establish!
-      task.reload
     end
 
     let(:claim_review) do
@@ -374,7 +373,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
     context "an existing Higher-Level Review" do
       let(:task) do
-        FactoryBot.create(:higher_level_review_vha_task_on_hold, assigned_to: VhaBusinessLine.singleton)
+        create(:higher_level_review_vha_task_incomplete, assigned_to: VhaBusinessLine.singleton)
       end
 
       let(:edit_url) do
@@ -390,7 +389,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
     context "an existing Supplmental Claim" do
       let(:task) do
-        FactoryBot.create(:supplemental_claim_vha_task_on_hold, assigned_to: VhaBusinessLine.singleton)
+        create(:supplemental_claim_vha_task_incomplete, assigned_to: VhaBusinessLine.singleton)
       end
 
       let(:edit_url) do

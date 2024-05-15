@@ -26,6 +26,10 @@ const noteDiv = css({
   color: COLORS.GREY
 });
 
+const alertStyling = css({
+  fontSize: '17px !important',
+});
+
 const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
   return ISSUE_CATEGORIES[benefitType].map((category) => {
     return {
@@ -199,7 +203,7 @@ class NonratingRequestIssueModal extends React.Component {
       (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement ||
-      (this.isDecisionDateRequired() && !decisionDate)
+      (this.isVhaAdminAndTaskInProgress() && !decisionDate)
     );
   }
 
@@ -210,10 +214,11 @@ class NonratingRequestIssueModal extends React.Component {
     return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
-  isDecisionDateRequired() {
+  // if the user is vha admin and task is in progress tab then decision date should be required.
+  isVhaAdminAndTaskInProgress() {
     const { userIsVhaAdmin, isTaskInProgress } = this.state;
 
-    return this.vhaHlrOrSC() && userIsVhaAdmin && isTaskInProgress;
+    return userIsVhaAdmin && isTaskInProgress;
   }
 
   getModalButtons() {
@@ -287,8 +292,12 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <React.Fragment>
-        {(this.isDecisionDateRequired()) ?
-          <Alert message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER} type="info" /> :
+        {(this.vhaHlrOrSC() && this.isVhaAdminAndTaskInProgress()) ?
+          <Alert
+            message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
+            messageStyling={alertStyling}
+            type="info"
+          /> :
           null
         }
         <div className="decision-date">
@@ -300,7 +309,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={!this.isDecisionDateRequired()}
+            optional={this.vhaHlrOrSC() && !this.isVhaAdminAndTaskInProgress()}
           />
         </div>
 

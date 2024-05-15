@@ -306,11 +306,7 @@ class ClaimReview < DecisionReview
   end
 
   def task_in_progress?
-    task_status = tasks.map(&:status)
-
-    return false if task_status.empty?
-
-    (tasks&.active_statuses & task_status).size == task_status.size
+    tasks.any?(&:active?)
   end
 
   private

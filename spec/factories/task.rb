@@ -459,22 +459,22 @@ FactoryBot.define do
         assigned_to { VhaBusinessLine.singleton }
       end
 
-      factory :higher_level_review_vha_task_on_hold, class: DecisionReviewTask do
+      factory :higher_level_review_vha_task_incomplete, class: DecisionReviewTask do
         appeal do
-          FactoryBot.create(:higher_level_review,
-                            :with_intake,
-                            :without_decision_date,
-                            benefit_type: "vha",
-                            claimant_type: :veteran_claimant,
-                            issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                            description: "with decision date added",
-                            number_of_claimants: 1)
+          create(:higher_level_review,
+                 :with_intake,
+                 :without_decision_date,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant,
+                 issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                 description: "with no decision date added",
+                 number_of_claimants: 1)
         end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
 
         after(:create) do |task|
-          task.appeal.create_business_line_tasks!
+          task.appeal.handle_issues_with_no_decision_date!
         end
       end
 
@@ -511,7 +511,7 @@ FactoryBot.define do
         assigned_to { VhaBusinessLine.singleton }
       end
 
-      factory :supplemental_claim_vha_task_on_hold, class: DecisionReviewTask do
+      factory :supplemental_claim_vha_task_incomplete, class: DecisionReviewTask do
         appeal do
           create(
             :supplemental_claim,
@@ -528,7 +528,7 @@ FactoryBot.define do
         assigned_to { VhaBusinessLine.singleton }
 
         after(:create) do |task|
-          task.appeal.create_business_line_tasks!
+          task.appeal.handle_issues_with_no_decision_date!
         end
       end
 
@@ -588,7 +588,6 @@ FactoryBot.define do
           create(:appeal,
                  :with_vha_issue,
                  :with_post_intake_tasks,
-                 :advanced_on_docket_due_to_age,
                  :direct_review_docket)
         end
         assigned_to { SpecialtyCaseTeam.singleton }

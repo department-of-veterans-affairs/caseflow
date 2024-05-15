@@ -1315,7 +1315,7 @@ describe ClaimReview, :postgres do
         task.appeal.establish!
       end
       let(:task) do
-        FactoryBot.create(:higher_level_review_vha_task_on_hold, assigned_to: VhaBusinessLine.singleton)
+        create(:higher_level_review_vha_task_incomplete, assigned_to: VhaBusinessLine.singleton)
       end
 
       let(:claim_review) { task.appeal }
