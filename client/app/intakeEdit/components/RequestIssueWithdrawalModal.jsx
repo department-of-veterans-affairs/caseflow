@@ -15,57 +15,34 @@ const withdrawalSchema = yup.object({
 
 const RequestIssueWithdrawalContent = (props) => {
 
-  const { handleSubmit, register, errors, formState } = useFormContext();
-
-  const onSubmit = (data) => {
-    const enhancedData = {
-      requestIssueId: props.currentIssue.id,
-      requestType: 'Withdrawal',
-      ...data };
-
-    console.log(enhancedData); // add to state later once Sean is done
-
-    props.onCancel();
-  };
+  const { register, errors } = useFormContext();
 
   return (
-    <Modal
-      title="Request issue withdrawal"
-      buttons={[
-        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-          name: 'Cancel',
-          onClick: props.onCancel
-        },
-        {
-          classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Submit request',
-          onClick: handleSubmit(onSubmit),
-          disabled: !formState.isValid
-        }
-      ]}
-      closeHandler={props.onCancel}
-    >
+    <div>
+      <CurrentIssue currentIssue={props.currentIssue} />
 
-      <div>
-        <CurrentIssue currentIssue={props.currentIssue} />
-
-        <DateSelector
-          label="Request date for withdrawal"
-          name="withdrawalDate"
-          inputRef={register}
-          errorMessage={errors.withdrawalDate?.message}
-          type="date" />
-        <RequestReason
-          label="withdrawal" />
-      </div>
-    </Modal>
+      <DateSelector
+        label="Request date for withdrawal"
+        name="withdrawalDate"
+        inputRef={register}
+        errorMessage={errors.withdrawalDate?.message}
+        type="date" />
+      <RequestReason
+        label="withdrawal" />
+    </div>
   );
 };
 
 export const RequestIssueWithdrawalModal = (props) => {
 
+  const combinedProps = {
+    schema: withdrawalSchema,
+    type: 'withdrawal',
+    ...props
+  };
+
   return (
-    <RequestIssueFormWrapper schema={withdrawalSchema}>
+    <RequestIssueFormWrapper {...combinedProps}>
       <RequestIssueWithdrawalContent {...props} />
     </RequestIssueFormWrapper>
   );

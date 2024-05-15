@@ -12,51 +12,25 @@ const removalSchema = yup.object({
 });
 
 const RequestIssueRemovalContent = (props) => {
-
-  const { handleSubmit, formState } = useFormContext();
-
-  const onSubmit = (data) => {
-    const enhancedData = {
-      requestIssueId: props.currentIssue.id,
-      requestType: 'Removal',
-      ...data };
-
-    console.log(enhancedData); // add to state later once Sean is done
-
-    props.onCancel();
-  };
-
   return (
-    <Modal
-      title="Request issue removal"
-      buttons={[
-        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-          name: 'Cancel',
-          onClick: props.onCancel
-        },
-        {
-          classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Submit request',
-          onClick: handleSubmit(onSubmit),
-          disabled: !formState.isValid
-        }
-      ]}
-      closeHandler={props.onCancel}
-    >
+    <div>
+      <CurrentIssue currentIssue={props.currentIssue} />
 
-      <div>
-        <CurrentIssue currentIssue={props.currentIssue} />
-
-        <RequestReason label="removal" />
-      </div>
-    </Modal>
+      <RequestReason label="removal" />
+    </div>
   );
 };
 
 export const RequestIssueRemovalModal = (props) => {
 
+  const combinedProps = {
+    schema: removalSchema,
+    type: 'removal',
+    ...props
+  };
+
   return (
-    <RequestIssueFormWrapper schema={removalSchema}>
+    <RequestIssueFormWrapper {...combinedProps}>
       <RequestIssueRemovalContent {...props} />
     </RequestIssueFormWrapper>
   );

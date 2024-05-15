@@ -19,46 +19,15 @@ const additionSchema = yup.object({
   requestReason: yup.string().required('Please enter a request reason.')
 });
 
-const RequestIssueAdditionContent = (props) => {
-
-  const { handleSubmit, formState } = useFormContext();
-
-  const onSubmit = (data) => {
-    const enhancedData = {
-      requestType: 'Addition',
-      ...data };
-
-    console.log(enhancedData); // add to state later once Sean is done
-
-    props.onCancel();
-  };
-
+const RequestIssueAdditionContent = () => {
   return (
-    <Modal
-      title="Request issue addition"
-      buttons={[
-        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-          name: 'Cancel',
-          onClick: props.onCancel
-        },
-        {
-          classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Submit request',
-          onClick: handleSubmit(onSubmit),
-          disabled: !formState.isValid
-        }
-      ]}
-      closeHandler={props.onCancel}
-    >
-
-      <div>
-        <IssueTypeSelector />
-        <PriorDecisionDateAlert />
-        <PriorDecisionDateSelector />
-        <IssueDescription />
-        <RequestReason label="addition" />
-      </div>
-    </Modal>
+    <div>
+      <IssueTypeSelector />
+      <PriorDecisionDateAlert />
+      <PriorDecisionDateSelector />
+      <IssueDescription />
+      <RequestReason label="addition" />
+    </div>
   );
 };
 
@@ -68,8 +37,8 @@ RequestIssueAdditionContent.propTypes = {
 export const RequestIssueAdditionModal = (props) => {
 
   return (
-    <RequestIssueFormWrapper schema={additionSchema}>
-      <RequestIssueAdditionContent {...props} />
+    <RequestIssueFormWrapper schema={additionSchema} type="addition" onCancel={props.onCancel}>
+      <RequestIssueAdditionContent />
     </RequestIssueFormWrapper>
   );
 };

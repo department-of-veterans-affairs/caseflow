@@ -19,47 +19,15 @@ const modificationSchema = yup.object({
 });
 
 const RequestIssueModificationContent = (props) => {
-
-  const { handleSubmit, formState } = useFormContext();
-
-  const onSubmit = (data) => {
-    const enhancedData = {
-      requestIssueId: props.currentIssue.id,
-      requestType: 'Addition',
-      ...data };
-
-    console.log(enhancedData); // add to state later once Sean is done
-
-    props.onCancel();
-  };
-
   return (
-    <Modal
-      title="Request issue modification"
-      buttons={[
-        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-          name: 'Cancel',
-          onClick: props.onCancel
-        },
-        {
-          classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Submit request',
-          onClick: handleSubmit(onSubmit),
-          disabled: !formState.isValid
-        }
-      ]}
-      closeHandler={props.onCancel}
-    >
-
-      <div>
-        <CurrentIssue currentIssue={props.currentIssue} />
-        <IssueTypeSelector />
-        <PriorDecisionDateAlert />
-        <PriorDecisionDateSelector />
-        <IssueDescription />
-        <RequestReason label="modification" />
-      </div>
-    </Modal>
+    <div>
+      <CurrentIssue currentIssue={props.currentIssue} />
+      <IssueTypeSelector />
+      <PriorDecisionDateAlert />
+      <PriorDecisionDateSelector />
+      <IssueDescription />
+      <RequestReason label="modification" />
+    </div>
   );
 };
 
@@ -69,8 +37,14 @@ RequestIssueModificationContent.propTypes = {
 };
 export const RequestIssueModificationModal = (props) => {
 
+  const combinedProps = {
+    schema: modificationSchema,
+    type: 'modification',
+    ...props
+  };
+
   return (
-    <RequestIssueFormWrapper schema={modificationSchema}>
+    <RequestIssueFormWrapper {...combinedProps}>
       <RequestIssueModificationContent {...props} />
     </RequestIssueFormWrapper>
   );
