@@ -157,7 +157,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
     const root = createRoot(container);
 
     root.render(element);
-    // render(element, document.getElementById(domNodeId));
   };
 
   renderApp(component);
