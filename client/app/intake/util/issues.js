@@ -62,22 +62,14 @@ export const fakeIssueModificationRequestsData = [
     benefitType: 'Veterans Health Administration'
   },
   {
-    requestIssueId: '3311',
-    requestType: 'Modification',
+    requestType: 'Addition',
     requestor: 'Monte Mann (ACBAUERVVHA)',
     nonRatingIssueCategory: 'CHAMPVA',
     nonRatingIssueDescription: 'Money for CHAMPVA',
     decisionText: 'New CHAMPVA text',
     decisionDate: '2024-01-30',
     requestReason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    benefitType: 'Veterans Health Administration',
-    requestIssue: {
-      id: '3311',
-      benefitType: 'Veterans Health Administration',
-      nonRatingIssueCategory: 'Beneficiary Travel',
-      nonRatingIssueDescription: 'Stuff',
-      decisionDate: '2023-09-23'
-    }
+    benefitType: 'Veterans Health Administration'
   }
 ];
 
