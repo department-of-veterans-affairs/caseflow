@@ -159,6 +159,13 @@ describe "affinity_start_date" do
       expect(AppealAffinity.count).to eq 4
 
       # Validate that only the expected appeals are the ones that were updated
+      expect(ready_appeal_esd_priority.appeal_affinity).to_not be nil
+      expect(ready_appeal_esd_nonpriority.appeal_affinity).to_not be nil
+      expect(receipt_ready_appeal_esd_priority_not_selectable.appeal_affinity).to_not be nil
+      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
+
+      expect(ready_appeal_esd_priority_not_selectable.appeal_affinity).to be nil
+      expect(non_ready_appeal_esd_priority.appeal_affinity).to be nil
     end
   end
 
@@ -219,7 +226,8 @@ describe "affinity_start_date" do
       create(:appeal, :hearing_docket, :ready_for_distribution)
     end
     let!(:receipt_ready_appeal_hrd_priority_not_selectable) do
-      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution, receipt_date: 2.days.ago)
+      create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
+             receipt_date: 2.days.ago)
     end
     let!(:receipt_ready_appeal_hrd_nonpriority_not_selectable) do
       create(:appeal, :hearing_docket, :ready_for_distribution, receipt_date: 11.days.ago)
@@ -240,6 +248,18 @@ describe "affinity_start_date" do
       expect(AppealAffinity.count).to eq 5
 
       # Validate that only the expected appeals are the ones that were updated
+      expect(ready_appeal_hrd_priority.appeal_affinity).to_not be nil
+      expect(ready_appeal_hrd_nonpriority.appeal_affinity).to_not be nil
+      expect(ready_appeal_hrd_priority_no_start_date.appeal_affinity).to_not be nil
+      expect(ready_appeal_hrd_nonpriority_no_start_date.appeal_affinity).to_not be nil
+      expect(ready_appeal_hrd_nonpriority_with_appeal_affinity.appeal_affinity).to_not be nil
+
+      expect(ready_appeal_hrd_priority_not_selectable.appeal_affinity).to be nil
+      expect(ready_appeal_hrd_nonpriority_not_selectable.appeal_affinity).to be nil
+      expect(receipt_ready_appeal_hrd_priority_not_selectable.appeal_affinity).to be nil
+      expect(receipt_ready_appeal_hrd_nonpriority_not_selectable.appeal_affinity).to be nil
+      expect(non_ready_appeal_hrd_priority.appeal_affinity).to be nil
+      expect(non_ready_appeal_hrd_nonpriority.appeal_affinity).to be nil
     end
   end
 end
