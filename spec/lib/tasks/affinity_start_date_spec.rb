@@ -90,8 +90,8 @@ describe "affinity_start_date" do
 
       expect(non_ready_appeal_drd_priority.appeal_affinity).to be nil
       expect(non_ready_appeal_drd_nonpriority.appeal_affinity).to be nil
-      expect(receipt_ready_appeal_drd_priority_not_selectable.appeal_affinity.affinity_start_date)
-        .to be_within(1.second).of 1.day.ago
+      expect(receipt_ready_appeal_drd_priority_not_selectable.appeal_affinity.affinity_start_date.to_date)
+        .to eq(1.day.ago.to_date)
     end
   end
 
@@ -170,7 +170,7 @@ describe "affinity_start_date" do
   end
 
   context "hearing_request" do
-    # {}
+    # {most recent distributed appeals which should be used for appeal selection}
     let!(:distributed_appeal_hrd_priority) do
       appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
                       receipt_date: 4.days.ago, associated_judge: judge)
@@ -184,7 +184,7 @@ describe "affinity_start_date" do
       appeal
     end
 
-    # {}
+    # {old distributed appeals which should not be used}
     let!(:old_distributed_appeal_hrd_priority) do
       appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
                       receipt_date: 10.days.ago, associated_judge: judge)
@@ -276,13 +276,15 @@ describe "affinity_start_date" do
              receipt_date: 5.days.ago)
     end
 
-    it "successfully creates an appeal affinity with the correct type and priority" do
+    it "successfully creates an appeal affinity with the correct type/priority" do
       expect { subject }.to output(output_match).to_stdout
 
       expect(ready_appeal_hrd_priority.appeal_affinity).to_not be nil
       expect(ready_appeal_hrd_priority.appeal_affinity.docket).to eq("hearing")
       expect(ready_appeal_hrd_priority.appeal_affinity.priority).to be true
       expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date).to_not be nil
+      expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date.to_date)
+        .to eq(4.days.ago.to_date)
     end
   end
 
@@ -299,11 +301,13 @@ describe "affinity_start_date" do
              :with_appeal_affinity_no_start_date, receipt_date: 4.days.ago)
     end
 
-    it "successfully updates the appeal affinity with the correct type and priority" do
+    it "successfully updates the appeal affinity with the correct type/priority" do
       expect { subject }.to output(output_match).to_stdout
 
       expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
       expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date).to_not be nil
+      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date.to_date)
+        .to eq(3.days.ago.to_date)
     end
   end
 
@@ -330,8 +334,8 @@ describe "affinity_start_date" do
 
       expect(ready_appeal_drd_priority.appeal_affinity).to be nil
       expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity).to_not be nil
-      expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity.affinity_start_date)
-        .to be_within(1.second).of 2.days.ago
+      expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity.affinity_start_date.to_date)
+        .to eq(2.days.ago.to_date)
     end
   end
 end
