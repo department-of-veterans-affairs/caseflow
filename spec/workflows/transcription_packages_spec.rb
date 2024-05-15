@@ -25,7 +25,9 @@ describe TranscriptionPackages do
         expect(subject.instance_variable_get(:@work_order_params)[:work_order_name]).to eq("#1234567")
         expect(subject.instance_variable_get(:@work_order_params)[:return_date]).to eq("05/07/2024")
         expect(subject.instance_variable_get(:@work_order_params)[:contractor]).to eq("Contractor A")
-        expect(subject.instance_variable_get(:@work_order_params)[:hearings]).to eq(hearings_in_work_order(hearings + legacy_hearings))
+        expect(subject.instance_variable_get(:@work_order_params)[:hearings]).to eq(
+          hearings_in_work_order(hearings + legacy_hearings)
+        )
       end
 
       it "Call to Call method " do
