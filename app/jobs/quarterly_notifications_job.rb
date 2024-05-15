@@ -8,9 +8,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :va_notify
 
-  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h.tap do |types|
-    types.delete(:quarterly_notification)
-  end
+  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h
 
   # Locates appeals eligible for quarterly notifications and queues a NotificationInitializationJob
   # for each for further processing, and eventual (maybe) transmission of correspondence to an appellant.
@@ -28,7 +26,7 @@ class QuarterlyNotificationsJob < CaseflowJob
           NotificationInitializationJob.new(
             appeal_id: related_appeal_info.first,
             appeal_type: related_appeal_info.last,
-            template_name: Constants.QUARTERLY_STATUSES.quarterly_notification,
+            template_name: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
             appeal_status: notification_type.to_s
           )
         end
