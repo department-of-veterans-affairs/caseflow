@@ -26,6 +26,7 @@ class AppealsUpdatedSinceQuery
     request_decision_issues
     request_issues_updates
     vbms_uploaded_documents
+    issue_modification_requests
   ].freeze
 
   attr_reader :since_date

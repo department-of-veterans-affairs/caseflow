@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "database_cleaner"
+require "database_cleaner-active_record"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
 # base.rb needs to be loaded first because the other seeds inherit from it
@@ -75,6 +75,7 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     call_and_log_seed_step Seeds::AmaIntake
+    call_and_log_seed_step Seeds::IssueModificationRequest
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
