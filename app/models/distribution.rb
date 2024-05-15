@@ -149,15 +149,12 @@ class Distribution < CaseflowRecord
   # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
   def completed_statistics(stats)
     {
-      batch_size: stats[:batch_size],
+      batch_size: stats[:judge_stats][:batch_size],
       info: "See related row in distribution_stats for additional stats"
     }
   end
 
   def record_distribution_stats(stats)
-    create_distribution_stats!(
-      statistics: stats,
-      levers: CaseDistributionLever.snapshot
-    )
+    create_distribution_stats!(stats.merge(levers: CaseDistributionLever.snapshot))
   end
 end
