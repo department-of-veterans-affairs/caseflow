@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
+import { formatDateStr } from 'app/util/DateUtil';
 
-const IssueModificationRequest = (
-  {
-    issue
-  }
-) => {
+const IssueModificationRequest = ({ issue }) => {
+  const formatDecisionDate = (decisionDate) => {
+    return formatDateStr(decisionDate);
+  };
+
   const modificationIssueInfo = (
     <div>
       <p>{issue.nonRatingIssueCategory} - {issue.nonRatingIssueDescription}</p>
       <p>Benefit type: {issue.benefitType}</p>
-      <p>Decision date: {issue.decisionDate}</p>
+      <p>Decision date: {formatDecisionDate(issue.decisionDate)}</p>
       <br />
     </div>
   );
@@ -52,7 +53,7 @@ const IssueModificationRequest = (
               <li>
                 <p>{issue.requestIssue.nonRatingIssueCategory} - {issue.requestIssue.nonRatingIssueDescription}</p>
                 <p>Benefit type: {issue.requestIssue.benefitType}</p>
-                <p>Decision date: {issue.requestIssue.decisionDate}</p>
+                <p>Decision date: {formatDecisionDate(issue.requestIssue.decisionDate)}</p>
               </li>
             </ol>
           </div>
@@ -79,7 +80,7 @@ const IssueModificationRequest = (
         <p>{issue.requestReason}</p>
         <br />
         <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
-        <p>{issue.withdrawalDate}</p>
+        <p>{formatDecisionDate(issue.withdrawalDate)}</p>
         {requestedByUser}
       </>
     );
