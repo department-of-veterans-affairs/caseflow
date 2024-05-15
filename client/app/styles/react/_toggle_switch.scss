@@ -19,7 +19,7 @@
   }
 
   &:has(.switchIdle) {
-    background: $color-gray-lighter !important;
+    background: $color-gray-lighter;
   }
 
   :not(:focus) {
@@ -51,7 +51,7 @@
 }
 
 .switchIdle {
-  background: $color-gray-lighter !important;
+  background: $color-gray-lighter;
 }
 
 .toggleButtonSpace {
