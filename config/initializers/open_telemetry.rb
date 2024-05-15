@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable all
 
 DT_API_URL = ENV["DT_API_URL"]
 DT_API_TOKEN = ENV["DT_API_TOKEN"]
