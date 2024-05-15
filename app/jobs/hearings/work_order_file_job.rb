@@ -6,17 +6,25 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   S3_BUCKET = "vaec-appeals-caseflow"
   TMP_FOLDER = Rails.root.join("tmp")
 
-  def initialize(work_order)
-    super(work_order)
-    @file_name = nil
-    @file_path = nil
+  class WorkOrderFileUploadError < StandardError; end
+
+  retry_on WorkOrderFileUploadError, wait: :exponentially_longer do |job, _exception|
+    job.send_failure_notification
   end
 
   def perform(work_order)
+    @file_name = nil
+    @file_path = nil
     work_book = create_spreadsheet(work_order)
     write_to_workbook(work_book, work_order[:work_order_name])
     upload_to_s3(work_order[:work_order_name])
     cleanup_tmp_file
+    create_zip_file_job(work_order)
+    true
+  end
+
+  def send_failure_notification
+    WorkOrderFileIssuesMailer.send_notification
   end
 
   private
@@ -109,7 +117,8 @@ class Hearings::WorkOrderFileJob < CaseflowJob
       S3Service.store_file(s3_location, @file_path, :filepath)
     rescue StandardError => error
       Rails.logger.error "Work Order File Job failed to upload Work Order #{work_order_name} to S3: #{error.message}"
-      send_failure_notification
+      cleanup_tmp_file
+      raise WorkOrderFileUploadError
     end
   end
 
@@ -122,7 +131,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     File.delete(@file_path) if File.exist?(@file_path)
   end
 
-  def send_failure_notification
-    WorkOrderFileIssuesMailer.send_notification
+  def create_zip_file_job(work_order)
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order[:hearings])
   end
 end

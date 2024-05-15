@@ -78,18 +78,24 @@ describe Hearings::WorkOrderFileJob, type: :job do
       hearing
     end
     it "should upload the file to S3 bucket" do
+      allow_any_instance_of(described_class).to receive(:create_zip_file_job).with(work_order).and_return(nil)
       expect(S3Service).to receive(:store_file).with(
         "vaec-appeals-caseflow-test/transcript_text/BVA-#{work_order[:work_order_name]}.xls",
         file_path,
         :filepath
       )
-      subject
+      expect(subject).to eq true
     end
 
-    it "should send notification on S3 upload failure" do
-      expect(S3Service).to receive(:store_file).and_raise(StandardError)
-      allow_any_instance_of(described_class).to receive(:send_failure_notification).once
-      subject
+    it "should return true and trigger the zip file job" do
+      allow_any_instance_of(described_class).to receive(:create_zip_file_job).with(work_order)
+      expect(subject).to eq true
+    end
+
+    it "should retry and send notification on S3 upload failure" do
+      expect(S3Service).to receive(:store_file).exactly(5).times.and_raise(StandardError)
+      expect(WorkOrderFileIssuesMailer).to receive(:send_notification).once
+      perform_enqueued_jobs { subject }
     end
   end
 end
