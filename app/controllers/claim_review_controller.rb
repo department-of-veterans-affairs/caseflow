@@ -28,10 +28,9 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if !current_user.admin?
+    if user_vha_admin?(current_user)
       return render_success if request_issues_update.perform!
-    elsif current_user.admin?
-      # OOP to handle the difference requests that come from non-admins
+    elsif !user_vha_admin?(current_user)
       issues_modification_request_update.process!
       return render_success if issues_modification_request_update.success?
 
@@ -57,6 +56,10 @@ class ClaimReviewController < ApplicationController
   end
 
   private
+
+  def user_vha_admin?(user)
+    VhaBusinessLine.singleton.user_is_admin?(user)
+  end
 
   def source_type
     fail "Must override source_type"
