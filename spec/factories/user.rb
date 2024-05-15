@@ -64,8 +64,11 @@ FactoryBot.define do
       trait :super_user do
         after(:create) do |u|
           OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
-          OrganizationsUser.find_or_create_by!(organization: BvaIntake.singleton, user: u).update!(admin: true)
-          OrganizationsUser.find_or_create_by!(organization: MailTeam.singleton, user: u).update!(admin: true)
+          OrganizationUserPermission.find_or_create_by!(
+            permission_name: Constants.ORGANIZATION_PERMISSIONS.superuser,
+            organization: InboundOpsTeam.singleton,
+            user: u
+          )
         end
       end
 
