@@ -30,6 +30,7 @@ class NotificationInitializationJob < CaseflowJob
   # @return [SendNotificationJob, nil]
   #   A SendNotificationJob job object representing the job that was enqueued, or nil if a notification
   #   wasn't ultimately attempted to be sent.
+  # :reek:LongParameterList
   def perform(appeal_id:, appeal_type:, template_name:, appeal_status: nil)
     begin
       ensure_current_user_is_set
