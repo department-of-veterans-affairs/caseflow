@@ -8,6 +8,19 @@ FactoryBot.define do
     snamel { "Chamberlain" }
     ssalut { "PhD" }
 
+    after(:create) do |correspondent, _evaluator|
+      # Create a corresponding Veteran record in the Caseflow DB; this will also create a corresponding Redis record to
+      # make these cases searchable. Simply creating the redis record here will cause downstream issues when searching.
+      create(
+        :veteran,
+        first_name: correspondent.snamef,
+        last_name: correspondent.snamel,
+        name_suffix: correspondent.ssalut,
+        ssn: correspondent.ssn,
+        file_number: correspondent.ssn
+      )
+    end
+
     transient do
       appellant_first_name { nil }
       appellant_middle_initial { nil }
