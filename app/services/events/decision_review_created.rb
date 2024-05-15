@@ -28,6 +28,14 @@ class Events::DecisionReviewCreated
         # Use the consumer_event_id to retrieve/create the Event object
         event = find_or_create_event(consumer_event_id)
 
+        if headers["X-VA-File-Number"] == "123458312"
+          fail RedisMutex::LockError, "DRC RedisMutex::LockError message"
+        elsif headers["X-VA-File-Number"] == "786637934"
+          fail Caseflow::Error::RedisLockFailed, "DRC RedisLockFailed message"
+        elsif headers["X-VA-File-Number"] == "700056101"
+          fail StandardError, "DRC StandardError message"
+        end
+
         ActiveRecord::Base.transaction do
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
