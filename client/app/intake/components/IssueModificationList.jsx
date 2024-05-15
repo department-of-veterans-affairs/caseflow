@@ -10,7 +10,16 @@ const IssueModificationList = (
   }
 ) => {
   const issues = issuesArr.map((issue, id) => {
-    return <li key={id}><IssueModificationRequest issue={issue} /></li>;
+    return (
+      <li key={id}>
+        <IssueModificationRequest issue={issue} />
+        {issuesArr.length > 1 && id !== issuesArr.length - 1 ?
+          <>
+            <hr />
+            <br />
+          </> : null}
+      </li>
+    );
   });
 
   return (
