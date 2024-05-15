@@ -180,7 +180,7 @@ class AppealState < CaseflowRecord
     Constants.QUARTERLY_STATUSES.appeal_docketed
   end
 
-  def update_appeal_state!(new_state)
+  def update_appeal_state_action!(new_state)
     update!(DEFAULT_STATE.clone.tap { |state| state[new_state] = true })
   end
 
@@ -192,7 +192,7 @@ class AppealState < CaseflowRecord
   # Response: None
 
   def decision_mailed_appeal_state_update_action!
-    update_appeal_state!(:decision_mailed)
+    update_appeal_state_action!(:decision_mailed)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -202,7 +202,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def appeal_cancelled_appeal_state_update_action!
-    update_appeal_state!(:appeal_cancelled)
+    update_appeal_state_action!(:appeal_cancelled)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -214,7 +214,7 @@ class AppealState < CaseflowRecord
   def vso_ihp_complete_appeal_state_update_action!(appeal)
     if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
        appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
-      update_appeal_state!(:vso_ihp_complete)
+      update_appeal_state_action!(:vso_ihp_complete)
     end
   end
 
@@ -231,7 +231,7 @@ class AppealState < CaseflowRecord
        open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
        open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
        open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-      update_appeal_state!(:privacy_act_complete)
+      update_appeal_state_action!(:privacy_act_complete)
     end
   end
 
@@ -241,14 +241,14 @@ class AppealState < CaseflowRecord
   # Params: appeal
   #
   # Response: None
-  def privacy_act_cancelled_appeal_state_update!(appeal)
+  def privacy_act_cancelled_appeal_state_update_action!(appeal)
     open_tasks = appeal.tasks.open
     if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
        open_tasks.where(type: PrivacyActTask.name).empty? &&
        open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
        open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
        open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-      update_appeal_state!
+      update_appeal_state_action!(:privacy_act_pending)
     end
   end
 
@@ -259,7 +259,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def appeal_docketed_appeal_state_update_action!
-    update_appeal_state!(:appeal_docketed)
+    update_appeal_state_action!(:appeal_docketed)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -269,7 +269,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def hearing_postponed_appeal_state_update_action!
-    update_appeal_state!(:hearing_postponed)
+    update_appeal_state_action!(:hearing_postponed)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -279,7 +279,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def hearing_withdrawn_appeal_state_update_action!
-    update_appeal_state!(:hearing_withdrawn)
+    update_appeal_state_action!(:hearing_withdrawn)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -289,7 +289,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def hearing_scheduled_appeal_state_update_action!
-    update_appeal_state!(:hearing_scheduled)
+    update_appeal_state_action!(:hearing_scheduled)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -299,7 +299,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def scheduled_in_error_appeal_state_update_action!
-    update_appeal_state!(:scheduled_in_error)
+    update_appeal_state_action!(:scheduled_in_error)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -310,7 +310,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def vso_ihp_pending_appeal_state_update_action!
-    update_appeal_state!(:vso_ihp_pending)
+    update_appeal_state_action!(:vso_ihp_pending)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -321,7 +321,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def vso_ihp_cancelled_appeal_state_update_action!
-    update_appeal_state!
+    update!(vso_ihp_pending: false, vso_ihp_complete: false)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -332,7 +332,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_pending_appeal_state_update_action!
-    update_appeal_state!(:privacy_act_pending)
+    update_appeal_state_action!(:privacy_act_pending)
   end
 
   # Public: Updates/creates appeal state based on event type
@@ -345,7 +345,7 @@ class AppealState < CaseflowRecord
   #   # => A new appeal state is created if it doesn't exist
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
   # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-  def process_event_to_update_appeal_state!(event)
+  def process_event_to_update_appeal_state!(appeal, event)
     case event
     when "decision_mailed"
       decision_mailed_appeal_state_update_action!

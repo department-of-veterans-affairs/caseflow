@@ -48,7 +48,15 @@ module AppellantNotification
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
 
   def self.update_appeal_state(appeal, event)
-    appeal.appeal_state.process_event_to_update_appeal_state!(event)
+    begin
+      appeal_type = appeal.class.to_s
+      appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
+                     AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
+      appeal_state.process_event_to_update_appeal_state!(appeal, event)
+      # appeal.appeal_state.process_event_to_update_appeal_state!(appeal, event)
+    rescue StandardError => error
+      Rails.logger.error("Appeal could not be updated due to #{error.message}\n#{error.backtrace.join("\n")}")
+    end
   end
   # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
   #
@@ -110,20 +118,6 @@ module AppellantNotification
     message_attributes = AppellantNotification.handle_errors(appeal)
     VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
   end
-
-  # def self.notification_type
-  #   notification_type =
-  #     if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
-  #       "Email and SMS"
-  #     elsif FeatureToggle.enabled?(:va_notify_email)
-  #       "Email"
-  #     elsif FeatureToggle.enabled?(:va_notify_sms)
-  #       "SMS"
-  #     else
-  #       "None"
-  #     end
-  #   notification_type
-  # end
 
   def self.get_claimant(appeal)
     appeal_type = appeal.class.to_s
