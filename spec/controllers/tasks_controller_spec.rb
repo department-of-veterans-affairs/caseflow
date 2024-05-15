@@ -609,7 +609,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "When the current user is a member of the Mail team" do
       before do
-        InboundOpsTeam = create(:user)
+        inbound_ops_team_user = create(:user)
         InboundOpsTeam.singleton.add_user(inbound_ops_team_user)
         User.authenticate!(user: inbound_ops_team_user)
       end
