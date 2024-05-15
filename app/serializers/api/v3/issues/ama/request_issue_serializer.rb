@@ -74,8 +74,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   end
 
   attribute :same_office do |object|
-    fn = Veteran.find_by(participant_id: object&.veteran_participant_id).file_number
-    HigherLevelReview.find_by(veteran_file_number: fn)&.same_office
+    HigherLevelReview.find_by(veteran_file_number: object&.veteran&.file_number)&.same_office
   end
 
   attribute :legacy_opt_in_approved do |object|
@@ -83,71 +82,58 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   end
 
   attribute :added_by_station_id do |object|
-    epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-    User.find(epe&.user_id).station_id
+    object&.end_product_establishment&.user&.station_id
   end
 
   attribute :added_by_css_id do |object|
-    epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-    User.find(epe&.user_id).css_id
+    object&.end_product_establishment&.user&.css_id
   end
 
   attribute :corrected_by_station_id do |object|
-    if !object&.correction_type.blank?
-      # note: probably we can use  epe.station ? In story says "comes from user"...
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).station_id
+    if object&.correction_type.present?
+      object&.end_product_establishment&.user&.station_id
     end
   end
 
   attribute :corrected_by_css_id do |object|
-    if !object&.correction_type.blank?
-      # note: probably we can use  epe.station ? In story says "comes from user"...
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).css_id
+    if object&.correction_type.present?
+      object&.end_product_establishment&.user&.css_id
     end
   end
 
   attribute :edited_by_station_id do |object|
-    if !object&.edited_description.blank?
-      # note: probably we can use  epe.station ? In story says "comes from user"...
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).station_id
+    if object&.edited_description.present?
+      object&.end_product_establishment&.user&.station_id
     end
   end
 
   attribute :edited_by_css_id do |object|
-    if !object&.edited_description.blank?
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).css_id
+    if object&.edited_description.present?
+      object&.end_product_establishment&.user&.station_id
     end
   end
 
   attribute :removed_by_css_id do |object|
-    if !object&.closed_status == "removed"
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).css_id
+    if object&.closed_status == "removed"
+      object&.end_product_establishment&.user&.css_id
     end
   end
 
   attribute :removed_by_station_id do |object|
-    if !object&.closed_status == "removed"
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).station_id
+    if object&.closed_status == "removed"
+      object&.end_product_establishment&.user&.station_id
     end
   end
 
   attribute :withdrawn_by_css_id do |object|
-    if !object&.closed_status == "withdrawn"
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).css_id
+    if object&.closed_status == "withdrawn"
+      object&.end_product_establishment&.user&.css_id
     end
   end
 
   attribute :withdrawn_by_station_id do |object|
-    if !object&.closed_status == "withdrawn"
-      epe = EndProductEstablishment.find(object&.end_product_establishment_id)
-      User.find(epe&.user_id).station_id
+    if object&.closed_status == "withdrawn"
+      object&.end_product_establishment&.user&.station_id
     end
   end
 end
