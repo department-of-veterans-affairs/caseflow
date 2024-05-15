@@ -18,7 +18,6 @@ module ByDocketDateDistribution
     @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
-    puts "ByDocketDateDistribution: priority_push_distribution"
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
     @appeals
   end
@@ -44,7 +43,6 @@ module ByDocketDateDistribution
   end
 
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
-    puts "distribute_priority_appeals_from_all_dockets_by_age_to_limit"
     num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
@@ -139,8 +137,6 @@ module ByDocketDateDistribution
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
-    puts "num_oldest_priority_appeals_for_judge_by_docket"
-    puts num
     return {} unless num > 0
 
     mapped_dockets = dockets.flat_map do |sym, docket|

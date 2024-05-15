@@ -40,8 +40,7 @@ class Distribution < CaseflowRecord
 
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
-      puts "distribute!: priotity push: #{priority_push?}"
-      puts "FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user]): #{FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])}"
+
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
       ama_stats = ama_statistics
