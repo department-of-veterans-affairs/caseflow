@@ -2566,12 +2566,16 @@
     minimist "^1.2.0"
 
 "@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#upgrade-test":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#upgrade-test":
   version "2.6.1"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#43480e4e0c53dcd3454f35800e0ef6f84ac21936"
   resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#43480e4e0c53dcd3454f35800e0ef6f84ac21936"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
     lodash "^4.17.21"
+    react "18.2.0"
+    react-dom "18.2.0"
     react "18.2.0"
     react-dom "18.2.0"
     react-redux "^5.0.6"
@@ -14372,12 +14376,9 @@ react-dom@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
-react-dom@18.2.0:
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
-  integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
   dependencies:
     loose-envify "^1.1.0"
+    scheduler "^0.23.0"
     scheduler "^0.23.0"
 
 react-draft-wysiwyg@^1.12.11:
