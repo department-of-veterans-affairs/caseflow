@@ -747,8 +747,9 @@ RSpec.feature "MailTasks", :postgres do
       shared_context "async actions" do
         context "async actions" do
           it "sends withdrawal of hearing notification" do
-            withdrawal_payload = AppellantNotification.create_payload(appeal,
-                                  Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing).to_json
+            withdrawal_payload =
+              AppellantNotification.create_payload(appeal,
+                                                   Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing).to_json
             expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
 
             perform_enqueued_jobs do
