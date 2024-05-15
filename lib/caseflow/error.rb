@@ -488,7 +488,7 @@ module Caseflow::Error
   end
 
   class MaximumBatchSizeViolationError < StandardError
-    def initialize(msg="The batch size of jobs must not exceed 10")
+    def initialize(msg = "The batch size of jobs must not exceed 10")
       super(msg)
     end
   end
