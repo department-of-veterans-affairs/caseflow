@@ -549,6 +549,79 @@ feature "Intake Review Page", :postgres do
       end
     end
 
+    context "Correct banner shows when user is NOT a member of the VHA business line" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        User.authenticate!(user: current_user)
+      end
+
+      it "display both REMOVE_INTAKE_COMP_AND_PEN and VHA messages" do
+        FeatureToggle.enable!(:remove_comp_and_pen_intake)
+        FeatureToggle.enable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "display REMOVE_INTAKE_COMP_AND_PEN message and doesn't display VHA message" do
+        FeatureToggle.enable!(:remove_comp_and_pen_intake)
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "Display VHA message and doesn't display REMOVE_INTAKE_COMP_AND_PEN message" do
+        FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        FeatureToggle.enable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to_not have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "Doesn't display VHA message nor REMOVE_INTAKE_COMP_AND_PEN message if these features are disabled" do
+        FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to_not have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+    end
+
+    context "Correct banner shows when user IS a member of the VHA business line" do
+      let(:vha_business_line) { VhaBusinessLine.singleton }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        vha_business_line.add_user(current_user)
+        User.authenticate!(user: current_user)
+      end
+
+      it "display REMOVE_INTAKE_COMP_AND_PEN message and doesn't display VHA message" do
+        FeatureToggle.enable!(:remove_comp_and_pen_intake)
+        FeatureToggle.enable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "Doesn't display VHA message nor REMOVE_INTAKE_COMP_AND_PEN message if these features are disabled" do
+        FeatureToggle.disable!(:remove_comp_and_pen_intake)
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        navigate_to_review_page(form_type)
+
+        expect(page).to_not have_content(COPY::INTAKE_REMOVE_COMP_AND_PEN)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+    end
+
     context "Current user is not a member of the VHA business line with feature toggle disabled" do
       let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
