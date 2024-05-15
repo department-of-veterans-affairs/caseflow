@@ -11,9 +11,7 @@ import { genericRow } from './style';
 export const TranscriptionFormSection = (
   { hearing, transcription, readOnly, update, isLegacy }
 ) => (
-  <ContentSection header="Transcription Details - TEST">
-
-    <div>{JSON.stringify(hearing.transcriptionContractors)}</div>
+  <ContentSection header="Transcription Details">
 
     {/* If Legacy Hearing and conference provider Webex, only render Transcription Files table */}
     {!isLegacy && (
