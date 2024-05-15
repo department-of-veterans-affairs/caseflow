@@ -220,6 +220,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
         </span>
         <TableFilter
           columnName="type"
+          dateFilter={false}
           enableFilter={true}
           enableFilterTextTransform={true}
           header="Third"
@@ -307,6 +308,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
         </span>
         <TableFilter
           columnName="type"
+          dateFilter={false}
           enableFilterTextTransform={true}
           getFilterValues={[MockFunction]}
           header="Third"
@@ -968,6 +970,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 </span>
                 <TableFilter
                   columnName="type"
+                  dateFilter={false}
                   enableFilter={true}
                   enableFilterTextTransform={true}
                   filteredByList={Object {}}
