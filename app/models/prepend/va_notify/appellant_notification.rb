@@ -185,8 +185,8 @@ module AppellantNotification
                   msg_bdy.appeal_type == "LegacyAppeal"
 
     if template_name == Constants.EVENT_TYPE_FILTERS.appeal_docketed &&
-                        appeal_docketed_event_enabled &&
-                        msg_bdy.appeal_type == "LegacyAppeal"
+       appeal_docketed_event_enabled &&
+       msg_bdy.appeal_type == "LegacyAppeal"
       Notification.create!(
         appeals_id: msg_bdy.appeal_id,
         appeals_type: msg_bdy.appeal_type,

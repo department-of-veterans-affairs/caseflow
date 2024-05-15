@@ -113,8 +113,10 @@ describe SendNotificationJob, type: :job do
   let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
   let(:deceased_message) { VANotifySendMessageTemplate.new(deceased_message_attributes, good_template_name).to_json }
   let(:fail_create_message) { VANotifySendMessageTemplate.new(fail_create_message_attributes, error_template_name) }
-  let(:quarterly_message) { VANotifySendMessageTemplate.new(success_message_attributes,
-                            Constants.EVENT_TYPE_FILTERS.quarterly_notification) }
+  let(:quarterly_message) {
+    VANotifySendMessageTemplate.new(success_message_attributes,
+                                    Constants.EVENT_TYPE_FILTERS.quarterly_notification)
+  }
   let(:participant_id) { success_message_attributes[:participant_id] }
   let(:no_name_participant_id) { no_name_message_attributes[:participant_id] }
   let(:bad_participant_id) { "123" }

@@ -282,10 +282,10 @@ RSpec.feature "MailTasks", :postgres do
 
       it "sends proper notifications", skip: "test is failing in local env and github actions" do
         scheduled_payload = AppellantNotification.create_payload(appeal,
-                              Constants.EVENT_TYPE_FILTERS.hearing_scheduled).to_json
+                                                                 Constants.EVENT_TYPE_FILTERS.hearing_scheduled).to_json
         if appeal.hearings.any?
           postpone_payload = AppellantNotification.create_payload(appeal,
-                              Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
+                                                                  Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
             .to_json
           expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
         end
