@@ -812,7 +812,7 @@
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "User Name or CSS ID to add",
   "USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL": "Edit current team members",
   "USER_MANAGEMENT_ADMIN_RIGHTS_HEADING": "Add / Remove admin rights: ",
-  "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Determines which users have access to the team queue and the ability to manage the team membership.",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Grants the ability to manage team membership and perform superuser actions.",
   "USER_MANAGEMENT_REMOVE_USER_HEADING": "Remove from team: ",
   "USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION": "Remove an attorney from this judge team. Judges may not be removed from their own judge team.",
   "USER_MANAGEMENT_REMOVE_USER_DESCRIPTION": "Remove a user from this team.",

@@ -49,7 +49,7 @@ FactoryBot.define do
           permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
         ) do |op|
           op.enabled = true
-          op.description = Faker::Fantasy::Tolkien.poem
+          op.description = "Auto-Assignment"
         end
 
         # Has auto-assign permission
@@ -78,7 +78,7 @@ FactoryBot.define do
             permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
           ) do |op|
             op.enabled = true
-            op.description = Faker::Fantasy::Tolkien.poem
+            op.description = "Receive \"NOD Mail\""
           end
 
           OrganizationUserPermission.find_or_create_by!(
