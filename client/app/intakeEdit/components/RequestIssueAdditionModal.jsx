@@ -64,7 +64,6 @@ const RequestIssueAdditionContent = (props) => {
 
 RequestIssueAdditionContent.propTypes = {
   onCancel: PropTypes.func,
-  currentIssue: PropTypes.object
 };
 export const RequestIssueAdditionModal = (props) => {
 

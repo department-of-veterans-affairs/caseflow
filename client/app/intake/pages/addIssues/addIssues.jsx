@@ -658,7 +658,6 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
-            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
