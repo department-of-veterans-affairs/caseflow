@@ -7,13 +7,14 @@ import _ from 'lodash';
 
 export const RequestIssueFormWrapper = (props) => {
 
-  const methods = useForm({ defaultValues: {
-    requestReason: '',
-    nonratingIssueCategory: '',
-  },
-  mode: 'onChange',
-  resolver: yupResolver(props.schema),
-  reValidateMode: 'onSubmit' });
+  const methods = useForm({
+    defaultValues: {
+      requestReason: '',
+      nonratingIssueCategory: '',
+    },
+    mode: 'onChange',
+    resolver: yupResolver(props.schema),
+    reValidateMode: 'onSubmit' });
 
   const { handleSubmit, formState } = methods;
 

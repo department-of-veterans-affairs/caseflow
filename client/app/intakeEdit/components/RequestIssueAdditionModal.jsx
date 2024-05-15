@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Modal from 'app/components/Modal';
 import RequestReason from './RequestCommonComponents/RequestReason';
-import { useFormContext } from 'react-hook-form';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
 import IssueTypeSelector from './RequestCommonComponents/IssueTypeSelector';
 import PriorDecisionDateAlert from './RequestCommonComponents/PriorDecisionDateAlert';
