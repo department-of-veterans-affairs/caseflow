@@ -29,8 +29,6 @@ describe TranscriptionPackages do
       end
 
       it "Call to Call method " do
-        binding.pry
-        # allow_any_instance_of(TranscriptionPackages).to receive(:call).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_zip_file).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_bom_file).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_transcription_package).and_return(true)
