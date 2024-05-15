@@ -20,24 +20,12 @@ describe "affinity_start_date" do
       create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
       appeal
     end
-    let!(:distributed_appeal_drd_nonpriority) do
-      appeal = create(:appeal, :direct_review_docket, :assigned_to_judge,
-                      receipt_date: 1.week.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
-      appeal
-    end
 
     # older distributed appeals with distributed cases from direct review docket
     # which should not be selected
     let!(:old_distributed_appeal_drd_priority) do
       appeal = create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
                       receipt_date: 5.days.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
-      appeal
-    end
-    let!(:old_distributed_appeal_drd_nonpriority) do
-      appeal = create(:appeal, :direct_review_docket, :assigned_to_judge,
-                      receipt_date: 3.weeks.ago, associated_judge: judge)
       create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
       appeal
     end
@@ -51,11 +39,12 @@ describe "affinity_start_date" do
       create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
              :with_appeal_affinity, affinity_start_date: 6.days.ago, receipt_date: 7.days.ago)
     end
-    let!(:ready_appeal_drd_nonpriority) do
-      create(:appeal, :direct_review_docket, :ready_for_distribution, receipt_date: 2.weeks.ago)
+    let!(:other_ready_appeal_drd_priority) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age,
+             :ready_for_distribution, receipt_date: 2.weeks.ago)
     end
-    let!(:ready_appeal_drd_nonpriority_no_receipt) do
-      create(:appeal, :direct_review_docket, :ready_for_distribution, receipt_date: 1.week.ago)
+    let!(:ready_appeal_drd_priority_no_receipt) do
+      create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution, receipt_date: 1.week.ago)
     end
 
     # direct review appeals that should not be selected
@@ -65,9 +54,6 @@ describe "affinity_start_date" do
     let!(:receipt_ready_appeal_drd_priority_not_selectable) do
       create(:appeal, :direct_review_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
              :with_appeal_affinity, affinity_start_date: 1.day.ago, receipt_date: 1.day.ago)
-    end
-    let!(:non_ready_appeal_drd_nonpriority) do
-      create(:appeal, :direct_review_docket, :mail_blocking_distribution)
     end
 
     it "is successful and adds expected appeal affinity records or values" do
@@ -81,15 +67,14 @@ describe "affinity_start_date" do
 
       # Validate that only the expected appeals are the ones that were updated
       expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
-      expect(ready_appeal_drd_nonpriority.appeal_affinity).to_not be nil
+      expect(other_ready_appeal_drd_priority.appeal_affinity).to_not be nil
       expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity).to_not be nil
       expect(ready_appeal_drd_priority.appeal_affinity.affinity_start_date).to_not be nil
-      expect(ready_appeal_drd_nonpriority.appeal_affinity.affinity_start_date).to_not be nil
+      expect(other_ready_appeal_drd_priority.appeal_affinity.affinity_start_date).to_not be nil
       expect(ready_appeal_drd_priority_with_appeal_affinity.appeal_affinity.affinity_start_date).to_not be nil
-      expect(ready_appeal_drd_nonpriority_no_receipt.appeal_affinity).to_not be nil
+      expect(ready_appeal_drd_priority_no_receipt.appeal_affinity).to_not be nil
 
       expect(non_ready_appeal_drd_priority.appeal_affinity).to be nil
-      expect(non_ready_appeal_drd_nonpriority.appeal_affinity).to be nil
       expect(receipt_ready_appeal_drd_priority_not_selectable.appeal_affinity.affinity_start_date.to_date)
         .to eq(1.day.ago.to_date)
     end
@@ -103,12 +88,6 @@ describe "affinity_start_date" do
       create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
       appeal
     end
-    let!(:distributed_appeal_esd_nonpriority) do
-      appeal = create(:appeal, :evidence_submission_docket, :assigned_to_judge,
-                      receipt_date: 2.weeks.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: distribution, created_at: 1.day.ago)
-      appeal
-    end
 
     # older distributed appeals with distributed cases from evidence submission docket
     # which appeals with same receipt date should not be selected
@@ -118,20 +97,15 @@ describe "affinity_start_date" do
       create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
       appeal
     end
-    let!(:old_distributed_appeal_esd_nonpriority) do
-      appeal = create(:appeal, :evidence_submission_docket, :assigned_to_judge,
-                      receipt_date: 9.days.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
-      appeal
-    end
 
     # {select}
     let!(:ready_appeal_esd_priority) do
       create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
              receipt_date: 4.days.ago)
     end
-    let!(:ready_appeal_esd_nonpriority) do
-      create(:appeal, :evidence_submission_docket, :ready_for_distribution, receipt_date: 3.weeks.ago)
+    let!(:other_ready_appeal_esd_priority) do
+      create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age,
+             :ready_for_distribution, receipt_date: 3.weeks.ago)
     end
     let!(:receipt_ready_appeal_esd_priority_not_selectable) do
       create(:appeal, :evidence_submission_docket, :advanced_on_docket_due_to_age, :ready_for_distribution,
@@ -160,7 +134,7 @@ describe "affinity_start_date" do
 
       # Validate that only the expected appeals are the ones that were updated
       expect(ready_appeal_esd_priority.appeal_affinity).to_not be nil
-      expect(ready_appeal_esd_nonpriority.appeal_affinity).to_not be nil
+      expect(other_ready_appeal_esd_priority.appeal_affinity).to_not be nil
       expect(receipt_ready_appeal_esd_priority_not_selectable.appeal_affinity).to_not be nil
       expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
 
@@ -283,8 +257,8 @@ describe "affinity_start_date" do
       expect(ready_appeal_hrd_priority.appeal_affinity.docket).to eq("hearing")
       expect(ready_appeal_hrd_priority.appeal_affinity.priority).to be true
       expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date).to_not be nil
-      expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date.to_date)
-        .to eq(4.days.ago.to_date)
+      expect(ready_appeal_hrd_priority.appeal_affinity.affinity_start_date)
+        .to be_within(1.second).of Time.zone.now
     end
   end
 
@@ -306,8 +280,8 @@ describe "affinity_start_date" do
 
       expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
       expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date).to_not be nil
-      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date.to_date)
-        .to eq(3.days.ago.to_date)
+      expect(ready_appeal_esd_priority_no_start_date.appeal_affinity.affinity_start_date)
+        .to be_within(1.second).of Time.zone.now
     end
   end
 

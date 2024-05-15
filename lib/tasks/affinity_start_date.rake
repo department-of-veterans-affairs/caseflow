@@ -3,11 +3,12 @@
 namespace :db do
   desc "sets affinity_start_dates for all appeals that need them"
   task affinity_start_date: :environment do
-    dockets = %w[hearing direct_review evidence_submission]
+    priority_dockets = %w[hearing direct_review evidence_submission]
+    nonpriority_dockets = %w[hearing]
     docket_receipt_dates = []
 
     # {Gets receipt_date for recent priority distributed appeal in each docket}
-    dockets.each do |docket|
+    priority_dockets.each do |docket|
       docket_receipt_dates << {
         receipt_date: DistributedCase.where(docket: docket, priority: true)
           .order(created_at: :desc)&.first&.task&.appeal&.receipt_date,
@@ -17,7 +18,7 @@ namespace :db do
     end
 
     # {Gets receipt_date for recent nonpriority distributed appeal in each docket}
-    dockets.each do |docket|
+    nonpriority_dockets.each do |docket|
       docket_receipt_dates << {
         receipt_date: DistributedCase.where(docket: docket, priority: false)
           .order(created_at: :desc)&.first&.task&.appeal&.receipt_date,
@@ -47,13 +48,13 @@ namespace :db do
         existing_affinity = appeal.appeal_affinity
 
         if existing_affinity
-          existing_affinity.update!(affinity_start_date: docket_result[:receipt_date])
+          existing_affinity.update!(affinity_start_date: Time.zone.now)
           existing_affinity
         else
           appeal.create_appeal_affinity!(
             docket: appeal.docket_type,
             priority: docket_result[:priority],
-            affinity_start_date: docket_result[:receipt_date]
+            affinity_start_date: Time.zone.now
           )
         end
       end
