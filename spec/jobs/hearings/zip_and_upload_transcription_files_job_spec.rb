@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
+  include ActiveJob::TestHelper
+
   def hearings_in_work_order(hearings)
     hearings.map { |hearing| { hearing_id: hearing.id, hearing_type: hearing.class.to_s } }
   end
@@ -15,14 +17,14 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   let(:hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
   let(:legacy_hearings) { (1..5).map { create(:legacy_hearing, :with_transcription_files) } }
 
-  subject { described_class.new.perform(hearings_in_work_order(hearings + legacy_hearings)) }
+  subject { described_class.perform_now(hearings_in_work_order(hearings + legacy_hearings)) }
 
   before { User.authenticate!(user: create(:user)) }
 
   after { cleanup_tmp_directories }
 
   it "temporarily downloads mp3s and rtfs for all the hearings in a work order" do
-    allow_any_instance_of(described_class).to receive(:cleanup_tmp).and_return(nil)
+    allow_any_instance_of(described_class).to receive(:cleanup_tmp_files).and_return(nil)
 
     %w(mp3 rtf).each do |directory|
       expect(Dir.empty?("tmp/transcription_files/#{directory}")).to eq(true)
@@ -40,7 +42,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
   end
 
   it "temporarily saves a zip file for each hearing in the work order" do
-    allow_any_instance_of(described_class).to receive(:cleanup_tmp).and_return(nil)
+    allow_any_instance_of(described_class).to receive(:cleanup_tmp_files).and_return(nil)
 
     expect(Dir.empty?("tmp/transcription_files/zip")).to eq true
 
@@ -73,6 +75,17 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionFilesJob do
 
     TranscriptionFile.where(file_type: "zip").pluck("aws_link").each do |link|
       expect(link.include?("vaec-appeals-caseflow-test/transcript_text")).to eq true
+    end
+  end
+
+  context "fails to upload to s3" do
+    it "retries on failure to upload to s3" do
+      allow_any_instance_of(described_class).to receive(:perform)
+        .and_raise(TranscriptionFileUpload::FileUploadError)
+
+      expect { perform_enqueued_jobs { subject } }.to raise_error(
+        Hearings::ZipAndUploadTranscriptionFilesJob::ZipFileUploadError
+      )
     end
   end
 end
