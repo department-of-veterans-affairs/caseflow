@@ -47,13 +47,13 @@ namespace :db do
         existing_affinity = appeal.appeal_affinity
 
         if existing_affinity
-          existing_affinity.update!(affinity_start_date: Time.zone.now)
+          existing_affinity.update!(affinity_start_date: docket_result[:receipt_date])
           existing_affinity
         else
           appeal.create_appeal_affinity!(
             docket: appeal.docket_type,
             priority: docket_result[:priority],
-            affinity_start_date: Time.zone.now
+            affinity_start_date: docket_result[:receipt_date]
           )
         end
       end
