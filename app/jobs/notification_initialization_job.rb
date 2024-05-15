@@ -36,7 +36,7 @@ class NotificationInitializationJob < CaseflowJob
 
       appeal = appeal_type.constantize.find_by(id: appeal_id)
 
-      fail StandardError, "#{appeal_type} with ID #{appeal_id} could not be found." unless appeal
+      fail Caseflow::Error::AppealNotFound, "#{appeal_type} with ID #{appeal_id} could not be found." unless appeal
 
       AppellantNotification.notify_appellant(
         appeal,
