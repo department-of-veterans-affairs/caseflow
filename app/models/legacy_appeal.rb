@@ -962,6 +962,10 @@ class LegacyAppeal < CaseflowRecord
   end
   # rubocop:enable Naming/PredicateName
 
+  def appeal_state
+    super || AppealState.create!(appeal: self)
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)

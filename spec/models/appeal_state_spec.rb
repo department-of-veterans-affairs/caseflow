@@ -174,4 +174,15 @@ describe AppealState do
       end
     end
   end
+
+  context "process_event_to_update_appeal_state method updates appeal state according to event type" do
+    let(:appeal) { create(:appeal, :with_pre_docket_task) }
+    let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
+    let(:template_name) { "Appeal docketed" }
+    let!(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
+    it "will update the appeal state after docketing the Predocketed Appeal" do
+      expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, template_name)
+      pre_docket_task.docket_appeal
+    end
+  end
 end

@@ -49,11 +49,7 @@ module AppellantNotification
 
   def self.update_appeal_state(appeal, event)
     begin
-      appeal_type = appeal.class.to_s
-      appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
-                     AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
-      appeal_state.process_event_to_update_appeal_state!(appeal, event)
-      # appeal.appeal_state.process_event_to_update_appeal_state!(appeal, event)
+      appeal.appeal_state.process_event_to_update_appeal_state!(appeal, event)
     rescue StandardError => error
       Rails.logger.error("Appeal could not be updated due to #{error.message}\n#{error.backtrace.join("\n")}")
     end

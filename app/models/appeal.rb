@@ -958,6 +958,10 @@ class Appeal < DecisionReview
     false
   end
 
+  def appeal_state
+    super || AppealState.create!(appeal: self)
+  end
+
   private
 
   def business_lines_needing_assignment
