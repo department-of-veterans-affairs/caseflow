@@ -89,6 +89,7 @@ module Seeds
       create_oai_team_user
       create_occ_team_user
       create_inbound_ops_team_user
+      create_inbound_ops_team_super_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
