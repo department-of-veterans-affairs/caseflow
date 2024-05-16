@@ -317,25 +317,27 @@ getFilteredUsers = () => {
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
               COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
           </ul>
-          <p className="text-styling-for-filter-search-bar">
+          <div className="make-content-centered">
+            <p className="text-styling-for-filter-search-bar">
           Filter by username or CSS ID</p>
-          <div className="search-bar-styling-for-filter">
-            <SearchBar
-              id="searchBar"
-              placeholder="Type to filter..."
-              isSearchAhead
-              size="small"
-              onChange={(value) => handleSearchChange(value)}
-              onClearSearch={handleClearSearch}
-              value= {this.state.searchValue}
-            />
+            <div className="search-bar-styling-for-filter">
+              <SearchBar
+                id="searchBar"
+                placeholder="Type to filter..."
+                isSearchAhead
+                size="small"
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value= {this.state.searchValue}
+              />
+            </div>
           </div>
         </div>
         { listOfUsers.length > 0 ? (
           <ul>{listOfUsers}</ul>
         ) : (
           <>
-            <b className="no-results-found-styling">No results found</b>
+            <p className="no-results-found-styling">No results found</p>
             <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
           </>
         )
