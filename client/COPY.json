@@ -1482,5 +1482,28 @@
   "CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT": "Data Element Changed",
   "CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE": "Previous Value",
   "CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE": "Updated Value",
-  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values"
+  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
+  "ISSUE_MODIFICATION_REQUESTS": {
+    "ADDITION": {
+      "REQUEST_TYPE": "Addition",
+      "SECTION_TITLE": "Requested Additional Issues",
+      "DETAILS": "Reason for requested issue addition"
+    },
+    "MODIFICATION": {
+      "REQUEST_TYPE": "Modification",
+      "SECTION_TITLE": "Requested Changes",
+      "DETAILS": "Reason for requested modification"
+    },
+    "REMOVAL": {
+      "REQUEST_TYPE": "Removal",
+      "SECTION_TITLE": "Requested Issue Removal",
+      "DETAILS": "Reason for requested removal of issue"
+    },
+    "WITHDRAWAL": {
+      "REQUEST_TYPE": "Withdrawal",
+      "SECTION_TITLE": "Requested Issue Withdrawal",
+      "DETAILS": "Reason for requested withdrawal of issue",
+      "DATE": "Requested date for withdrawal"
+    }
+  }
 }
