@@ -6,9 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Track Active Storage variants in the database.
-# Rails.application.config.active_storage.track_variants = true
-
 # Apply random variation to the delay when retrying failed jobs.
 # Rails.application.config.active_job.retry_jitter = 0.15
 
