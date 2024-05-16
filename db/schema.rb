@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_23_190320) do
+ActiveRecord::Schema.define(version: 2024_05_09_023118) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1880,6 +1880,7 @@ ActiveRecord::Schema.define(version: 2024_04_23_190320) do
   create_table "transcription_contractors", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.datetime "deleted_at"
     t.string "directory", null: false, comment: "The contract house box.com folder full path"
     t.string "email", null: false, comment: "The contract house contact email address"
     t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
@@ -1889,6 +1890,7 @@ ActiveRecord::Schema.define(version: 2024_04_23_190320) do
     t.string "poc", null: false, comment: "The contract house poc name"
     t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
     t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
   end
 
@@ -1926,9 +1928,11 @@ ActiveRecord::Schema.define(version: 2024_04_23_190320) do
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
+    t.bigint "transcription_contractor_id"
     t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
     t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
+    t.index ["transcription_contractor_id"], name: "index_transcriptions_on_transcription_contractor_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 

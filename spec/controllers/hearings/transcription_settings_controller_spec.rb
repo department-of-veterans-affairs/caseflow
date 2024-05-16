@@ -1,77 +1,122 @@
 # frozen_string_literal: true
 
-describe Hearings::TranscriptionSettingsController, :all_dbs do
+require "rails_helper"
+
+RSpec.describe Hearings::TranscriptionSettingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
-
-  before do
-    @transcripton_contractor_1 = TranscriptionContractor.create!(
-      id: 1,
-      name: "First Contractor",
-      directory: "directory name",
-      email: "test1@va.gov",
-      phone: "phone_number",
-      poc: "contact"
-    )
-    @transcripton_contractor_2 = TranscriptionContractor.create!(
-      id: 2,
-      name: "Second Contractor",
-      directory: "directory name",
-      email: "test2@va.gov",
-      phone: "phone_number",
-      poc: "contact"
-    )
+  let!(:transcription_contractor_1) { create(:transcription_contractor) }
+  let!(:transcription_contractor_2) { create(:transcription_contractor) }
+  let(:error_response) do
+    {
+      errors: [
+        title: "Contractor Not Found",
+        detail: "Contractor with that ID is not found"
+      ]
+    }
   end
 
-  context "GET index" do
-    context "with JSON request" do
-      context "an invalid transcription contractor ID" do
-        subject { get :index, as: :json }
-        it "returns json result" do
-          response_body = JSON.parse(subject.body)
-          expect(subject.status).to eq 200
-          expect(response_body["transcription_contractors"][0]["id"]).to eq @transcripton_contractor_1.id
-          expect(response_body["transcription_contractors"][1]["id"]).to eq @transcripton_contractor_2.id
-        end
-      end
+  describe "GET index" do
+    it "returns blank when requesting HTML" do
+      get :index
+      expect(response.status).to eq 200
+      expect(response.body).to eq ""
     end
-
-    context "with HTML request" do
-      subject { get :index, as: :html }
-      it "no JSON is returned`" do
-        expect(subject.status).to eq 200
-        expect(subject.body).to eq ""
-      end
+    it "returns a JSON list of contractors when requesting JSON" do
+      get :index, as: :json
+      test_response = { transcription_contractors: [transcription_contractor_1, transcription_contractor_2] }
+      expect(response.status).to eq 200
+      expect(response.body).to eq test_response.to_json
     end
   end
 
-  context "GET show" do
-    context "with JSON request" do
-      context "an invalid transcription contractor ID" do
-        subject { get :show, params: { id: 45 }, as: :json }
-        it "redirects to 404 page" do
-          expect(subject.status).to eq 302
-          expect(subject).to redirect_to("/404")
-        end
-      end
+  describe "GET show" do
+    it "returns the contractor matching the ID" do
+      get :show, params: { id: transcription_contractor_1.id }
+      test_response = { transcription_contractor: transcription_contractor_1 }
+      expect(response.status).to eq 200
+      expect(response.body).to eq test_response.to_json
+    end
+    it "returns an error for an invalid ID" do
+      get :show, params: { id: 1950 }
+      expect(response.status).to eq 404
+      expect(response.body).to eq error_response.to_json
+    end
+  end
 
-      context "a valid transcription contractor ID" do
-        subject { get :show, params: { id: 1 }, as: :json }
-        it "returns json result" do
-          response_body = JSON.parse(subject.body)
-          expect(subject.status).to eq 200
-          expect(response_body["transcription_contractor"]["id"]).to eq @transcripton_contractor_1.id
-          expect(response_body["transcription_contractor"]["name"]).to eq @transcripton_contractor_1.name
-          expect(response_body["transcription_contractor"]["directory"]).to eq @transcripton_contractor_1.directory
-        end
-      end
+  describe "POST create" do
+    it "creates a new transcription contractor and returns it when using valid params" do
+      params = {
+        transcription_contractor: {
+          name: "New Name",
+          directory: "directory",
+          email: "test@va.gov",
+          phone: "phone",
+          poc: "person of contact"
+        }
+      }
+      post :create, params: params
+      test_response = {
+        transcription_contractor: TranscriptionContractor.last
+      }
+      expect(response.status).to eq 201
+      expect(response.body).to eq test_response.to_json
     end
 
-    context "with HTML request" do
-      subject { get :show, params: { id: 1 }, as: :html }
-      it "no JSON is returned`" do
-        expect(subject.status).to eq 200
-        expect(subject.body).to eq ""
-      end
+    it "returns an error for missing params" do
+      post :create
+      expect(response.status).to eq 404
+      expect(response.body).to eq error_response.to_json
+    end
+
+    it "returns validation errors for invalid params" do
+      params = { transcription_contractor: { directory: "test" } }
+      post :create, params: params
+      test_response = {
+        errors: [
+          title: "ActiveRecord::RecordInvalid",
+          detail: "Validation failed: Email can't be blank, Name can't be blank, " \
+            "Phone can't be blank, Poc can't be blank"
+        ]
+      }
+      expect(response.status).to eq 400
+      expect(response.body).to eq test_response.to_json
+    end
+  end
+
+  describe "PATCH update" do
+    it "returns validation errors for invalid params" do
+      params = { id: transcription_contractor_1.id, transcription_contractor: { directory: "" } }
+      patch :update, params: params
+      test_response = {
+        errors: [
+          title: "ActiveRecord::RecordInvalid",
+          detail: "Validation failed: Directory can't be blank"
+        ]
+      }
+      expect(response.status).to eq 400
+      expect(response.body).to eq test_response.to_json
+    end
+
+    it "returns an updated transcription contractor for valid params" do
+      params = { id: transcription_contractor_1.id, transcription_contractor: { directory: "new directory" } }
+      patch :update, params: params
+      expect(response.status).to eq 202
+      expect(JSON.parse(response.body)["transcription_contractor"]["directory"]).to eq "new directory"
+    end
+  end
+
+  describe "DELETE destroy" do
+    it "soft deletes a record for a valid ID" do
+      delete :destroy, params: { id: transcription_contractor_1.id }
+      expect(response.status).to eq 200
+      expect(response.body).to eq "{}"
+      expect(TranscriptionContractor.where(id: transcription_contractor_1.id).count).to eq 0
+      expect(TranscriptionContractor.with_deleted.where(id: transcription_contractor_1.id).count).to eq 1
+    end
+    it "returns an error for an invalid ID" do
+      delete :destroy, params: { id: 1950 }
+      expect(response.status).to eq 404
+      expect(response.body).to eq error_response.to_json
     end
   end
 end
