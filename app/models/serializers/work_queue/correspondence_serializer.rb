@@ -12,6 +12,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :portal_entry_date
   attribute :source_type
   attribute :va_date_of_receipt
+  attribute :nod
   # Is this a future table?
   attribute :cmp_queue_id
 
