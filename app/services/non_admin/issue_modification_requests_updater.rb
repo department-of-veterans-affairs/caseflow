@@ -9,7 +9,12 @@ class NonAdmin::IssueModificationRequestsUpdater
     @issue_modifications_data = issue_modifications_data
   end
 
-  attr_accessor :current_user, :review, :issue_modifications_data, :requestor, :error_code
+  attr_accessor :current_user,
+                :error_code,
+                :review,
+                :requestor,
+                :issue_modifications_data,
+                :issue_modification_request
 
   REQUEST_TYPE = {
     addition: "addition",
@@ -25,13 +30,13 @@ class NonAdmin::IssueModificationRequestsUpdater
     cancelled: "cancelled"
   }.freeze
 
-  NEW_REQUEST_ERROR = "Issue status must be in an assigned".freeze
-  MODIFICATION_ERROR = "Must be the same requestor or request must be in assigned state".freeze
+  NEW_REQUEST_ERROR = "Issue status must be in an assigned state".freeze
+  MODIFICATION_ERROR = "Must be the same requestor or request must be on an assigned state".freeze
 
   def process!
     new_modifications_process!(issue_modifications_data[:new]) if issue_modifications_data[:new].any?
-    edit_modifications_process!(issue_modifications_data[:edited]) if issue_modifications_data[:edited].any?
-    canceled_modifications_process!(issue_modifications_data[:canceled]) if issue_modifications_data[:canceled].any?
+    edited_modifications_process!(issue_modifications_data[:edited]) if issue_modifications_data[:edited].any?
+    cancelled_modifications_process!(issue_modifications_data[:cancelled]) if issue_modifications_data[:cancelled].any?
   end
 
   def success?
@@ -63,16 +68,16 @@ class NonAdmin::IssueModificationRequestsUpdater
     true
   end
 
-  def edit_modifications_process!(edited_issues)
+  def edited_modifications_process!(edited_issues)
     edited_issues.each do |edited_issue|
-      unless validate_issues_request?(
-          requestor_id: edited_issue[:requestor_id],
-          status: edited_issue[:status]
-        )
+
+      find_issue_modification_request(edited_issue[:id])
+
+      unless validate_issues_request?(status: edited_issue[:status])
         @error_code = MODIFICATION_ERROR
         return false
       end
-      find_modification_request(edited_issue[:id]).update!(
+      issue_modification_request.update!(
         nonrating_issue_category: edited_issue[:nonrating_issue_category],
         decision_date: edited_issue[:decision_date],
         nonrating_issue_description: edited_issue[:nonrating_issue_description],
@@ -83,15 +88,16 @@ class NonAdmin::IssueModificationRequestsUpdater
     true
   end
 
-  def canceled_modifications_process!(canceled_issues)
+  def cancelled_modifications_process!(canceled_issues)
     canceled_issues.each do |canceled_issue|
-      unless validate_issues_request?(
-        requestor_id: canceled_issue[:requestor_id],
-        status: canceled_issue[:status])
+
+      find_issue_modification_request(canceled_issue[:id])
+
+      unless validate_issues_request?(status: canceled_issue[:status])
         @error_code = MODIFICATION_ERROR
         return false
       end
-      find_modification_request(canceled_issue[:id]).update!(status: STATUS[:cancelled])
+      issue_modification_request.update!(status: STATUS[:cancelled])
     end
     true
   end
@@ -100,16 +106,16 @@ class NonAdmin::IssueModificationRequestsUpdater
     STATUS[:assigned] == status.downcase
   end
 
-  def validate_issues_request?(requestor_id:, status:)
-    current_user == requestor(requestor_id) && STATUS[:assigned] == status.downcase
+  def validate_issues_request?(status:)
+    current_user == requestor && STATUS[:assigned] == status.downcase
   end
 
-  def find_modification_request(id)
-    @issue_modification_request = IssueModificationRequest.find(id)
+  def find_issue_modification_request(id)
+    @issue_modification_request ||= IssueModificationRequest.find(id)
   end
 
-  def requestor(id)
-    @requestor = User.find(id)
+  def requestor
+    @requestor ||= issue_modification_request.requestor
   end
 end
 

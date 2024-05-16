@@ -77,8 +77,7 @@ class ClaimReviewController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: claim_review,
-      request_issues_data: params[:request_issues],
-      issue_modification_requests_data: params[:issue_modification_requests]
+      request_issues_data: params[:request_issues]
     )
   end
 
