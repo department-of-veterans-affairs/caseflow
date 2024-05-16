@@ -367,4 +367,3 @@ CorrespondenceTableBuilder.propTypes = {
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);
-
