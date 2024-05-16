@@ -7,43 +7,29 @@ class TranscriptionPackages
   include MailRequestValidator::Distribution
   include MailRequestValidator::DistributionDestination
 
+  attr_reader :work_order_params
+
   def initialize(work_order_params)
     @work_order_params = work_order_params
   end
 
   def call
-    create_work_order
-    create_zip_file
-    create_BoM_file
-    create_transcription_package
-    upload_transcription_package
-  end
-
-  private
-
-  def create_work_order
-    # call job work_order
-    Hearings::WorkOrderFileJob.perform_now(@work_order_params)
+    Hearings::WorkOrderFileJob.perform_now(work_order_params) ? create_zip_file : return
   end
 
   def create_zip_file
-    # call job to create a zip File
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(@work_order_params.hearings)
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params.hearings) ? create_bom_file : return
   end
 
-  def create_BoM_file
-    # TODO -- call to job
-    Hearings::CreateBomFileJob.perform_now(@work_order_params)
+  def create_bom_file
+    Hearings::CreateBomFileJob.perform_now(work_order_params) ? create_transcription_package : return
   end
 
   def create_transcription_package
-    # TODO -- call to job
-    Hearings::CreateTranscriptionPackageJob.perform_now(@work_order_params)
+    Hearings::CreateTranscriptionPackageJob.perform_now(work_order_params) ? upload_transcription_package : return
   end
 
   def upload_transcription_package
-    # TODO -- call to job
-    Hearings::UploadTranscriptionPackageJob.perform_now(@work_order_params)
+    Hearings::UploadTranscriptionPackageJob.perform_now(work_order_params)
   end
 end
-
