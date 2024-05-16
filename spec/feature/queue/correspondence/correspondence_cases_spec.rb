@@ -27,13 +27,11 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases form shell" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:veteran) { create(:veteran) }
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
       10.times do
         create(
@@ -212,11 +210,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence tasks completed tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:correspondence_auto_assignable_user, :super_user) }
 
     before do
       20.times do
@@ -358,11 +352,8 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases action required tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
       5.times do
@@ -522,11 +513,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases unassigned tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
@@ -675,11 +662,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases assigned tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
@@ -841,11 +824,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Your Correspondence assigned tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
@@ -1055,11 +1034,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases pending tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
@@ -1229,12 +1204,8 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Banner alert for approval and reject request" do
-    let(:current_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
 
@@ -1324,11 +1295,7 @@ RSpec.feature("The Correspondence Cases page") do
     end
   end
   context "correspondence tasks completed tab testing filters date " do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       20.times do
@@ -1449,14 +1416,10 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Package document type column" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:alt_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
       MailTeam.singleton.add_user(alt_user)
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
 
