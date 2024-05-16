@@ -4,6 +4,7 @@
 
 class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include Hearings::SendTranscriptionIssuesEmail
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -15,13 +16,14 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
+      provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       times: { from: from, to: to },
       docket_number: nil
     }
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   def perform

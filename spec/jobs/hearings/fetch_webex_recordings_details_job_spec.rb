@@ -56,10 +56,22 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   end
 
   context "job errors" do
+    let(:exception) { Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error") }
+    let(:error_details) do
+      {
+        error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
+        provider: "webex",
+        recording_id: id,
+        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{id}",
+        response: { status: exception.code, message: exception.message }.to_json,
+        docket_number: nil
+      }
+    end
+
     before do
       allow_any_instance_of(WebexService)
         .to receive(:fetch_recording_details)
-        .and_raise(Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error"))
+        .and_raise(exception)
     end
 
     it "Successfully catches errors and adds to retry queue" do
@@ -71,6 +83,23 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
       subject
       expect(Rails.logger).to receive(:error).at_least(:once)
       perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+    end
+
+    it "mailer receives correct params" do
+      allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).and_call_original
+      expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
+        .with(error_details)
+      expect_any_instance_of(described_class).to receive(:log_error).once
+      perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+    end
+
+    context "mailer fails to send email" do
+      it "captures external delivery error" do
+        allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
+          .and_raise(GovDelivery::TMS::Request::Error.new(500))
+        expect_any_instance_of(described_class).to receive(:log_error).twice
+        perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+      end
     end
   end
 end
