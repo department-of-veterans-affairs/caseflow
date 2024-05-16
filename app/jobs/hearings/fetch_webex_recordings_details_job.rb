@@ -25,9 +25,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
     job.send_transcription_issues_email(error_details)
   end
 
-  def perform(id:, file_name:)
+  def perform(id:)
     ensure_current_user_is_set
-    @file_name ||= file_name
     data = fetch_recording_details(id)
     topic = data.topic
 
@@ -64,7 +63,12 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def create_file_name(topic, extension)
-    subject = topic.split("-").second.lstrip
+    type = topic.scan(/[A-Za-z]+?(?=-)/).first
+    subject = if type == "Hearing"
+                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+              else
+                topic.split("-").second.lstrip
+              end
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
   end
