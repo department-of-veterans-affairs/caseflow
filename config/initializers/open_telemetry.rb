@@ -11,7 +11,12 @@ OpenTelemetry::SDK.configure do |config|
   # automatic instrumentation
   config.use_all
   ["dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties", "/var/lib/dynatrace/enrichment/dt_metadata.properties", "/var/lib/dynatrace/enrichment/dt_host_metadata.properties"].each do |name|
-    config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
+    begin
+      config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+      raise error.full_message
+    end
   end
   config.add_span_processor(
     OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
