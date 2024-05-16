@@ -26,8 +26,7 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  formatIssueModificationRequestsBySection,
-  fakeIssueModificationRequestsData } from '../../util/issues';
+  formatIssueModificationRequestsBySection } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import issueModificationRow from 'app/intake/components/issueModificationRow';
@@ -53,6 +52,7 @@ import {
   toggleRequestIssueRemovalModal,
   toggleRequestIssueWithdrawalModal,
   toggleRequestIssueAdditionModal,
+  moveToPendingReviewSection
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -304,7 +304,7 @@ class AddIssuesPage extends React.Component {
     const issuesBySection = formatIssuesBySection(issues);
 
     const modificationIssueRequestsBySection =
-      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
+      formatIssueModificationRequestsBySection(this.props.issueModificationRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -550,12 +550,12 @@ class AddIssuesPage extends React.Component {
     const modificationIssueRequestsObj =
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
 
-    const pendingSection = modificationIssueRequestsObj ?
+    const pendingSection = _.isEmpty(modificationIssueRequestsObj) ?
+      null :
       issueModificationRow({
         modificationIssueRequestsObj,
         fieldTitle: 'Pending admin review'
-      }) :
-      null;
+      });
 
     if (pendingSection !== null) {
       rowObjects.push(pendingSection);
@@ -660,27 +660,33 @@ class AddIssuesPage extends React.Component {
         {intakeData.requestIssueModificationModalVisible && (
           <RequestIssueModificationModal
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
           />
         )}
 
         {intakeData.requestIssueRemovalModalVisible && (
           <RequestIssueRemovalModal
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
-            onSubmit={() => this.props.toggleRequestIssueRemovalModal()} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
           <RequestIssueWithdrawalModal
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
-            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
         )}
+
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -794,7 +800,8 @@ export const EditAddIssuesPage = connect(
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    isLegacy: state.isLegacy
+    isLegacy: state.isLegacy,
+    issueModificationRequests: state.issueModificationRequests
   }),
   (dispatch) =>
     bindActionCreators(
@@ -810,6 +817,7 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueAdditionModal,
         removeIssue,
         withdrawIssue,
+        moveToPendingReviewSection,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,

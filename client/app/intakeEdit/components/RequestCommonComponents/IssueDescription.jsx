@@ -7,7 +7,7 @@ const IssueDescription = () => {
 
   return <TextField
     label="Issue description"
-    name="decisionText"
+    name="nonRatingIssueDescription"
     inputRef={register}
     errorMessage={errors.decisionText?.message}
   />;

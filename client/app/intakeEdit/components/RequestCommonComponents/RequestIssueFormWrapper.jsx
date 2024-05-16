@@ -4,13 +4,18 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import _ from 'lodash';
+import { useSelector } from 'react-redux';
 
 export const RequestIssueFormWrapper = (props) => {
 
-  const methods = useForm({
+  const userDisplayName = useSelector((state) => state.userDisplayName);
+
+  const methods = useForm({ // TODO MONDAY ASK HEATHER: Should we just pre-fill the modal with the existing information?
     defaultValues: {
       requestReason: '',
-      nonratingIssueCategory: '',
+      nonRatingIssueCategory: '',
+      decisionDate: '',
+      nonRatingIssueDescription: ''
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -18,15 +23,27 @@ export const RequestIssueFormWrapper = (props) => {
 
   const { handleSubmit, formState } = methods;
 
-  const onSubmit = (data) => {
+  const onSubmit = (issueModificationRequest) => {
+    const currentIssueFields = props.currentIssue ?
+      {
+        requestIssueId: props.currentIssue.id,
+        nonRatingIssueCategory: props.currentIssue.category,
+        nonRatingIssueDescription: props.currentIssue.nonRatingIssueDescription,
+        benefitType: props.currentIssue.benefitType,
+        decisionDate: props.currentIssue.decisionDate
+      } : {};
+
     const enhancedData = {
-      ...(props.currentIssue) && { requestIssueId: props.currentIssue.id },
+      ...currentIssueFields,
+      ...(props.type === 'modification') && { requestIssue: props.currentIssue },
+      requestor: userDisplayName,
       requestType: _.capitalize(props.type),
-      ...data };
+      ...issueModificationRequest };
 
-    console.log(enhancedData); // add to state later once Sean is done
-
+    // close modal and move the issue
     props.onCancel();
+    props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+
   };
 
   return (
@@ -60,8 +77,10 @@ export const RequestIssueFormWrapper = (props) => {
 RequestIssueFormWrapper.propTypes = {
   onCancel: PropTypes.func,
   currentIssue: PropTypes.object,
+  issueIndex: PropTypes.number,
   schema: PropTypes.object,
-  type: PropTypes.string
+  type: PropTypes.string,
+  moveToPendingReviewSection: PropTypes.func
 };
 
 export default RequestIssueFormWrapper;

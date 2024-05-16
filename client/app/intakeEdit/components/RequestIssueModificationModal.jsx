@@ -10,9 +10,9 @@ import IssueTypeSelector from 'app/intakeEdit/components/RequestCommonComponents
 import * as yup from 'yup';
 
 const modificationSchema = yup.object({
-  nonratingIssueCategory: yup.string().required('Please select an issue type.'),
+  nonRatingIssueCategory: yup.string().required('Please select an issue type.'),
   decisionDate: yup.string().required('Please select a decision date.'),
-  decisionText: yup.string().required('Please enter an issue description.'),
+  nonRatingIssueDescription: yup.string().required('Please enter an issue description.'),
   requestReason: yup.string().required('Please enter a request reason.')
 });
 

@@ -130,6 +130,12 @@ export const addIssue = (currentIssue) => (dispatch) => {
   });
 };
 
+export const moveToPendingReviewSection = (issueModificationRequest, index) => (
+  {
+    type: ACTIONS.MOVE_TO_PENDING_REVIEW,
+    payload: { issueModificationRequest, index }
+  });
+
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
@@ -186,3 +192,4 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
     }
   });
 };
+
