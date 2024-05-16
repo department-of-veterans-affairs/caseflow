@@ -6,9 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Set the default queue name for the analysis job to the queue adapter default.
-# Rails.application.config.active_storage.queues.analysis = nil
-
 # Set the default queue name for the purge job to the queue adapter default.
 # Rails.application.config.active_storage.queues.purge = nil
 
