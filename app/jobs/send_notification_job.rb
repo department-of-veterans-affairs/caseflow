@@ -6,7 +6,7 @@
 class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
-  queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
+  queue_as { self.class.queue_name_suffix }
   application_attr :va_notify
 
   class SendNotificationJobError < StandardError; end
@@ -34,6 +34,12 @@ class SendNotificationJob < CaseflowJob
       message = "Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}"
       err_level = exception.instance_of?(SendNotificationJobError) ? :error : :warn
       Rails.logger.send(err_level, message)
+    end
+  end
+
+  class << self
+    def queue_name_suffix
+      ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
     end
   end
 

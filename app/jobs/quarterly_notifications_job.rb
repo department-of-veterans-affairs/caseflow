@@ -6,48 +6,50 @@ class QuarterlyNotificationsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
-  application_attr :hearing_schedule
+  application_attr :va_notify
 
-  QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
+  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h.freeze
 
-  # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
+  # Locates appeals eligible for quarterly notifications and queues a NotificationInitializationJob
+  # for each for further processing, and eventual (maybe) transmission of correspondence to an appellant.
   #
-  # Params: none
-  #
-  # Response: SendNotificationJob queued to send_notification SQS queue
+  # @return [Hash]
+  #   Returns the hash of NOTIFICATION_TYPES that were iterated over, though this value isn't designed
+  #     to be utilized by a caller due to the async nature of this job.
   def perform
     ensure_current_user_is_set
 
-    AppealState.where(
-      decision_mailed: false, appeal_cancelled: false
-    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
-      batched_appeal_states.each do |appeal_state|
-        status = appeal_state.quarterly_notification_status
-
-        next unless status
-
-        begin
-          appeal = appeal_state.appeal
-          MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
-                                name: "send_quarterly_notifications(appeal_state, appeal)") do
-            AppellantNotification.notify_appellant(appeal, Constants.QUARTERLY_STATUSES.quarterly_notification, status)
-          end
-        rescue StandardError => error
-          log_error(error, appeal_state.appeal_type, appeal_state.appeal_id)
+    begin
+      NOTIFICATION_TYPES.each_key do |notification_type|
+        jobs = AppealState.eligible_for_quarterly.send(notification_type).pluck(:appeal_id, :appeal_type)
+          .map do |related_appeal_info|
+          NotificationInitializationJob.new(
+            appeal_id: related_appeal_info.first,
+            appeal_type: related_appeal_info.last,
+            template_name: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
+            appeal_status: notification_type.to_s
+          )
         end
+
+        Parallel.each(jobs.each_slice(10).to_a, in_threads: 5) { |jobs_to_enqueue| enqueue_init_jobs(jobs_to_enqueue) }
       end
+    rescue StandardError => error
+      log_error(error)
     end
   end
 
-  # Purpose: Log errors with the QuarterlyNotificationJob
-  #
-  # Params: none
-  #
-  # Response: none
-  def log_error(error, appeal_type, appeal_id)
-    Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-            "#{appeal_type} ID #{appeal_id} because of #{error}")
+  private
 
-    super(error)
+  # Batches enqueueing of the NotificationInitializationJobs in order to reduce round-trips to the SQS API
+  #
+  # @param jobs [Array<NotificationInitializationJob>] An array of NotificationInitializationJob objects to enqueue.
+  #
+  # @return [Aws::SQS::Types::SendMessageBatchResult]
+  #   A struct containing the messages that were successfully enqueued and those that failed.
+  def enqueue_init_jobs(jobs)
+    CaseflowJob.enqueue_batch_of_jobs(
+      jobs_to_enqueue: jobs,
+      name_of_queue: NotificationInitializationJob.queue_name
+    )
   end
 end
