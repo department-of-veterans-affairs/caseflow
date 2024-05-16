@@ -547,6 +547,9 @@ class Appeal < DecisionReview
     # assign the task to this appeal
     dup_task.appeal_id = id
 
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
     # set the appeal split process to true for the task
     dup_task.appeal.appeal_split_process = true
 
