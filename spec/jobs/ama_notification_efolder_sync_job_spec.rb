@@ -39,6 +39,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     before(:all) { Seeds::NotificationEvents.new.seed! }
     before(:each) { stub_const("AmaNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
 
+    after(:all) { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref]) }
+
     context "first run" do
       after(:all) { clean_up_after_threads }
 

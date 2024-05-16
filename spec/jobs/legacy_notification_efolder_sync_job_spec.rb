@@ -55,6 +55,8 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     before(:all) { ensure_notification_events_exist }
     before(:each) { stub_const("LegacyNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
 
+    after(:all) { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref]) }
+
     context "first run" do
       after(:all) { clean_up_after_threads }
 
