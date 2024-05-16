@@ -116,6 +116,11 @@ describe Docket, :all_dbs do
 
           context "when called for ready is true and judge is passed" do
             let(:judge) { judge_decision_review_task.assigned_to }
+            before do
+              denied_aod_motion_appeal.tasks.find_by(type: :DistributionTask)&.update!(assigned_at: 15.days.ago)
+              inapplicable_aod_motion_appeal.tasks.find_by(type: :DistributionTask)&.update!(assigned_at: 15.days.ago)
+            end
+
             subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
 
             it "returns non priority appeals" do
