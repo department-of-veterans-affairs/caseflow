@@ -17,7 +17,7 @@ class TranscriptionContractor < ApplicationRecord
   before_update :assign_previous_goal
 
   def self.all_contractors
-    all
+    all.order(:name)
   end
 
   private
