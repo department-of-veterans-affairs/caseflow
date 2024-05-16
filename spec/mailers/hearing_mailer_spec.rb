@@ -660,7 +660,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
@@ -741,7 +743,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
@@ -1223,7 +1227,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
