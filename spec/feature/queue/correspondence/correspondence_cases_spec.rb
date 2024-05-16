@@ -222,6 +222,8 @@ RSpec.feature("The Correspondence Cases page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
     end
 
     it "displays all completed correspondence tasks" do
@@ -354,6 +356,10 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases action required tab" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
+    before :each do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
       5.times do
@@ -515,6 +521,11 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases unassigned tab" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
+    before :each do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
       5.times do
@@ -547,6 +558,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "successfully loads the unassigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
+      binding.pry
       expect(page).to have_content("Correspondence owned by the Mail team are unassigned to an individual:")
       expect(page).to have_content("Assign to mail team user")
       expect(page).to have_button("Assign")
