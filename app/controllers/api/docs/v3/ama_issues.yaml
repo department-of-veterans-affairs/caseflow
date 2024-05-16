@@ -247,64 +247,61 @@ paths:
                       veteran_participant_id: 123456789
                       legacy_appeals_present: false,
                       request_issues:
-                      - id: 2
-                      benefit_type: "compensation"
-                      closed_at: nil
-                      closed_status: "removed"
-                      contention_reference_id: 987654003
-                      contested_decision_issue_id: nil
-                      contested_issue_description: nil
-                      contested_rating_decision_reference_id: nil
-                      contested_rating_issue_diagnostic_code: nil
-                      contested_rating_issue_profile_date: nil
-                      contested_rating_issue_reference_id: nil
-                      corrected_by_request_issue_id: nil
-                      correction_type: nil
-                      created_at: "2024-05-08T03:34:03.195Z"
-                      decision_date: "1970-01-01"
-                      decision_review_id: 12
-                      decision_review_type: "SupplementalClaim"
-                      edited_description: nil
-                      end_product_establishment_id: 69
-                      ineligible_due_to_id: nil
-                      ineligible_reason: nil
-                      is_unidentified: false
-                      nonrating_issue_bgs_id: "13"
-                      nonrating_issue_category: "Basic Eligibility"
-                      nonrating_issue_bgs_source: nil
-                      nonrating_issue_description: "service connection for ear infection denied"
-                      notes: nil
-                      ramp_claim_id: nil
-                      split_issue_status: nil
-                      unidentified_issue_text: nil
-                      untimely_exemption: false
-                      untimely_exemption_notes: nil
-                      updated_at: "2024-05-16T17:51:40.455Z"
-                      vacols_id: nil
-                      vacols_sequence_id: nil
-                      verified_unidentified_issue: nil
-                      veteran_participant_id: "123456789"
-                      caseflow_considers_decision_review_active: true
-                      caseflow_considers_issue_active: true
-                      caseflow_considers_title_of_active_review: nil
-                      caseflow_considers_eligible: true
-                      claimant_participant_id: "01010101"
-                      claim_id: "1234001"
-                      claim_errors: []
-                      decision_issues: []
-                      development_item_reference_id: "111"
-                      same_office: nil
-                      legacy_opt_in_approved: false
-                      added_by_station_id: "101"
-                      added_by_css_id: "BVADWISE101"
-                      corrected_by_station_id: nil
-                      corrected_by_css_id: nil
-                      edited_by_station_id: nil
-                      edited_by_css_id: nil
-                      removed_by_css_id: "BVADWISE101"
-                      removed_by_station_id: "101"
-                      withdrawn_by_css_id: nil
-                      withdrawn_by_station_id: nil
+                        - id: 1
+                          benefit_type: compensation
+                          closed_at: nil
+                          closed_status: nil
+                          contention_reference_id: 1
+                          contested_decision_issue_id: 453
+                          contested_issue_description: "I am rating decision issue 0"
+                          contested_rating_decision_reference_id: nil
+                          contested_rating_issue_diagnostic_code: "9999"
+                          contested_rating_issue_profile_date: nil
+                          contested_rating_issue_reference_id: nil
+                          corrected_by_request_issue_id: 1
+                          correction_type: nil
+                          created_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                          decision_date: Thu, 21 Sep 2023
+                          decision_review_id: 2237
+                          decision_review_type: "Appeal"
+                          edited_description: nil
+                          end_product_establishment_id: 1
+                          ineligible_due_to_id: 1
+                          ineligible_reason: nil
+                          is_unidentified: false
+                          nonrating_issue_bgs_id: nil
+                          nonrating_issue_category: nil
+                          nonrating_issue_description: nil
+                          notes: nil
+                          ramp_claim_id: nil
+                          split_issue_status: nil
+                          unidentified_issue_text: nil
+                          untimely_exemption: false
+                          untimely_exemption_notes: nil
+                          updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
+                          vacols_id: nil
+                          vacols_sequence_id: 1234
+                          verified_unidentified_issue: false
+                          veteran_participant_id: "574727684"
+                          caseflow_considers_status_active: true
+                          caseflow_considers_issue_active: true
+                          caseflow_considers_title_of_active_review: "some title"
+                          caseflow_considers_eligible: true
+                          claimant_participant_id: "111111"
+                          decision_issues:
+                          development_item_reference_id: "111"
+                          same_office: nil
+                          legacy_opt_in_approved: false
+                          added_by_station_id: "101"
+                          added_by_css_id: "BVADWISE101"
+                          corrected_by_station_id: nil
+                          corrected_by_css_id: nil
+                          edited_by_station_id: nil
+                          edited_by_css_id: nil
+                          removed_by_css_id: "BVADWISE101"
+                          removed_by_station_id: "101"
+                          withdrawn_by_css_id: nil
+                          withdrawn_by_station_id: nil
         '401':
           description: 401 Unauthorized
           content:
