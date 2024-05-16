@@ -12,7 +12,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
       hearings: [{ hearing_id: hearing.id, hearing_type: hearing.class.to_s }]
     }
   end
-  let(:file_path) { Rails.root.join("tmp/BVA-#{work_order[:work_order_name]}.xls") }
+  let(:file_path) { Rails.root.join("tmp/transcription_files/xls/#{work_order[:work_order_name]}.xls") }
 
   subject { described_class.perform_now(work_order) }
 
@@ -79,7 +79,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
     end
     it "should upload the file to S3 bucket" do
       expect(S3Service).to receive(:store_file).with(
-        "vaec-appeals-caseflow-test/transcript_text/BVA-#{work_order[:work_order_name]}.xls",
+        "vaec-appeals-caseflow-test/transcript_text/#{work_order[:work_order_name]}.xls",
         file_path,
         :filepath
       )

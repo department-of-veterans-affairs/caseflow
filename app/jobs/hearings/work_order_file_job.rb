@@ -4,7 +4,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   queue_with_priority :low_priority
 
   S3_BUCKET = "vaec-appeals-caseflow"
-  TMP_FOLDER = Rails.root.join("tmp")
+  TMP_FOLDER = Rails.root.join("tmp", "transcription_files", "xls")
 
   attr_reader :file_name, :file_path
 
@@ -47,7 +47,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def write_to_workbook(workbook, work_order_name)
-    @file_name = "BVA-#{work_order_name}.xls"
+    @file_name = "#{work_order_name}.xls"
     @file_path = TMP_FOLDER.join(@file_name)
     workbook.write(@file_path)
   end
