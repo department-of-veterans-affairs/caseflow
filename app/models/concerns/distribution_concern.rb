@@ -48,7 +48,7 @@ module DistributionConcern
   # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
-    appeals = appeals(appeals_args)
+    appeals = ready_priority_nonpriority_appeals(appeals_args)
       .limit(limit)
       .includes(:request_issues)
 
