@@ -20,6 +20,9 @@ class HearingSerializer
       }
     end
   end
+  attribute :transcription_contractors do
+    TranscriptionContractor.all_contractors.index_by(&:id).transform_values(&:name)
+  end
   attribute :appeal_external_id
   attribute :appeal_id
   attribute :appellant_address_line_1

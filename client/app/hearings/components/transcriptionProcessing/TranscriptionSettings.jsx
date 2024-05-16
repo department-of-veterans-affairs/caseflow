@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -19,7 +18,7 @@ const buttonStyle = css({
 
 const contractorButtonStyle = css({
   paddingLeft: '41.55rem'
-})
+});
 
 const headerContainerStyling = css({
   margin: '1.5rem 0 3rem 0',
@@ -46,11 +45,11 @@ const instructionListStyle = css({
 
 const returnLinkStyle = css({
   padding: '1.5rem 0 2rem 0rem'
-})
+});
 
 const toggleStyle = css({
   padding: '1.5rem 0 2rem 25rem'
-})
+});
 
 const userListItemStyle = css({
   display: 'flex',
@@ -96,18 +95,18 @@ export default class TranscriptionSettings extends React.PureComponent {
   addContractorButton = () =>
     <div {...buttonStyle}><Button
       name={COPY.TRANSCRIPTION_SETTINGS_ADD}
-      id={`Add-contractor`}
+      id="Add-contractor"
       classNames={['usa-button-primary']}
       // on click add contractor modal opens
-      /></div>
+    /></div>
 
   removeContractorButton = () =>
     <div {...buttonStyle}><Button
       name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
-      id={`Remove-contractor`}
+      id="Remove-contractor"
       classNames={['usa-button-secondary']}
       // on click contractor is removed
-      /></div>
+    /></div>
 
   mainContent = () => {
     const listOfContractors = () => {
@@ -118,12 +117,12 @@ export default class TranscriptionSettings extends React.PureComponent {
           <div {...userListItemStyle}>
             <div>
               <ul {...instructionListStyle}>
-              <h2>{COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}<EditContractorLink /></h2>
-              <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{`https://box.com/`}</li>
-              <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{`Address here`}</li>
-              <span>
-                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>{`50 of 160`}<EditHearingsSentLink /></li>
-              </span>
+                <h2>{COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}<EditContractorLink /></h2>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>`https://box.com/`</li>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>`Address here`</li>
+                <span>
+                  <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>`50 of 160`<EditHearingsSentLink /></li>
+                </span>
               </ul>
             </div>
             <span {...toggleStyle}>
@@ -133,7 +132,7 @@ export default class TranscriptionSettings extends React.PureComponent {
           </div>
         </React.Fragment>
       );
-    }
+    };
 
     return (
       <React.Fragment>
