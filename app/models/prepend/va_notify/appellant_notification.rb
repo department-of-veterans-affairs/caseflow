@@ -36,24 +36,7 @@ module AppellantNotification
 
     AppellantNotification.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
   end
-  # Public: Updates/creates appeal state based on event type
-  #
-  # appeal - appeal that was found in appeal_mapper
-  # event - The module that is being triggered to send a notification
-  #
-  # Examples
-  #
-  #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
-  #   # => A new appeal state is created if it doesn't exist
-  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
 
-  def self.update_appeal_state(appeal, event)
-    begin
-      appeal.appeal_state.process_event_to_update_appeal_state!(appeal, event)
-    rescue StandardError => error
-      Rails.logger.error("Appeal could not be updated due to #{error.message}\n#{error.backtrace.join("\n")}")
-    end
-  end
   # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
   #
   # appeal_id  - id of appeal
@@ -67,14 +50,12 @@ module AppellantNotification
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
 
   def self.appeal_mapper(appeal_id, appeal_type, event)
-    if appeal_type == "Appeal"
-      appeal = Appeal.find_by(id: appeal_id)
-      AppellantNotification.update_appeal_state(appeal, event)
-    elsif appeal_type == "LegacyAppeal"
-      appeal = LegacyAppeal.find_by(id: appeal_id)
-      AppellantNotification.update_appeal_state(appeal, event)
-    else
-      Rails.logger.error("Appeal type not supported for " + event)
+    begin
+      appeal = appeal_type.constantize.find(appeal_id)
+
+      appeal.appeal_state.process_event_to_update_appeal_state!(event)
+    rescue StandardError => error
+      Rails.logger.error("Appeal could not be updated due to #{error.message}\n#{error.backtrace.join("\n")}")
     end
   end
   # Purpose: Method to check appeal state for statuses and send out a notification based on
@@ -92,9 +73,6 @@ module AppellantNotification
     appeal_status = nil
   )
     msg_bdy = create_payload(appeal, template_name, appeal_status)
-
-    return nil if template_name == "Appeal docketed" &&
-                  msg_bdy.appeal_type == "LegacyAppeal"
 
     if template_name == "Appeal docketed" && msg_bdy.appeal_type == "LegacyAppeal"
       Notification.create!(
@@ -116,17 +94,11 @@ module AppellantNotification
   end
 
   def self.get_claimant(appeal)
-    appeal_type = appeal.class.to_s
-    participant_id = appeal.claimant_participant_id
-    claimant =
-      if appeal_type == "Appeal"
-        appeal.claimant
-      elsif appeal_type == "LegacyAppeal"
-        veteran = Veteran.find_by(participant_id: participant_id)
-        person = Person.find_by(participant_id: participant_id)
-        appeal.appellant_is_not_veteran ? person : veteran
-      end
-    claimant
+    if appeal.is_a?(Appeal)
+      appeal.claimant
+    elsif appeal.is_a?(LegacyAppeal)
+      appeal.appellant_is_not_veteran ? appeal.person_for_appellant : appeal.veteran
+    end
   end
 
   def self.error_handling_messages_and_attributes(appeal, claimant, message_attributes)

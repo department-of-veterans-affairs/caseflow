@@ -180,6 +180,52 @@ class AppealState < CaseflowRecord
     Constants.QUARTERLY_STATUSES.appeal_docketed
   end
 
+  # Public: Updates/creates appeal state based on event type
+  #
+  # event - The module that is being triggered to send a notification
+  #
+  # Examples
+  #
+  #  AppellantNotification.update_appeal_state("hearing_postponed")
+  #   # => A new appeal state is created if it doesn't exist
+  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+  def process_event_to_update_appeal_state!(event)
+    case event
+    when "decision_mailed"
+      decision_mailed_appeal_state_update_action!
+    when "appeal_docketed"
+      appeal_docketed_appeal_state_update_action!
+    when "appeal_cancelled"
+      appeal_cancelled_appeal_state_update_action!
+    when "hearing_postponed"
+      hearing_postponed_appeal_state_update_action!
+    when "hearing_withdrawn"
+      hearing_withdrawn_appeal_state_update_action!
+    when "hearing_scheduled"
+      hearing_scheduled_appeal_state_update_action!
+    when "scheduled_in_error"
+      scheduled_in_error_appeal_state_update_action!
+    when "vso_ihp_pending"
+      vso_ihp_pending_appeal_state_update_action!
+    when "vso_ihp_cancelled"
+      vso_ihp_cancelled_appeal_state_update_action!
+    when "vso_ihp_complete"
+      # Only updates appeal state if ALL ihp tasks are completed
+      vso_ihp_complete_appeal_state_update_action!
+    when "privacy_act_pending"
+      privacy_act_pending_appeal_state_update_action!
+    when "privacy_act_complete"
+      # Only updates appeal state if ALL privacy act tasks are completed
+      privacy_act_complete_appeal_state_update_action!
+    when "privacy_act_cancelled"
+      # Only updates appeal state if ALL privacy act tasks are completed
+      privacy_act_cancelled_appeal_state_update_action!
+    end
+  end
+
+  private
+
   def update_appeal_state_action!(new_state)
     update!(DEFAULT_STATE.clone.tap { |state| state[new_state] = true })
   end
@@ -208,10 +254,10 @@ class AppealState < CaseflowRecord
   # Purpose: Method to update appeal_state in the case of
   # a completed informal hearing presentaiton(IHP).
   #
-  # Params: appeal
+  # Params: None
   #
   # Response: None
-  def vso_ihp_complete_appeal_state_update_action!(appeal)
+  def vso_ihp_complete_appeal_state_update_action!
     if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
        appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
       update_appeal_state_action!(:vso_ihp_complete)
@@ -221,10 +267,10 @@ class AppealState < CaseflowRecord
   # Purpose: Method to update appeal_state in the case of
   # a privacy related tasks marked as complete.
   #
-  # Params: appeal
+  # Params: None
   #
   # Response: None
-  def privacy_act_complete_appeal_state_update_action!(appeal)
+  def privacy_act_complete_appeal_state_update_action!
     open_tasks = appeal.tasks.open
     if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
        open_tasks.where(type: PrivacyActTask.name).empty? &&
@@ -238,17 +284,17 @@ class AppealState < CaseflowRecord
   # Purpose: Method to update appeal_state in the case of
   # privacy related tasks being cancelled.
   #
-  # Params: appeal
+  # Params: None
   #
   # Response: None
-  def privacy_act_cancelled_appeal_state_update_action!(appeal)
+  def privacy_act_cancelled_appeal_state_update_action!
     open_tasks = appeal.tasks.open
     if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
        open_tasks.where(type: PrivacyActTask.name).empty? &&
        open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
        open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
        open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-      update_appeal_state_action!(:privacy_act_pending)
+      update!(privacy_act_pending: false)
     end
   end
 
@@ -333,49 +379,5 @@ class AppealState < CaseflowRecord
   # Response: None
   def privacy_act_pending_appeal_state_update_action!
     update_appeal_state_action!(:privacy_act_pending)
-  end
-
-  # Public: Updates/creates appeal state based on event type
-  #
-  # event - The module that is being triggered to send a notification
-  #
-  # Examples
-  #
-  #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
-  #   # => A new appeal state is created if it doesn't exist
-  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
-  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-  def process_event_to_update_appeal_state!(appeal, event)
-    case event
-    when "decision_mailed"
-      decision_mailed_appeal_state_update_action!
-    when "appeal_docketed"
-      appeal_docketed_appeal_state_update_action!
-    when "appeal_cancelled"
-      appeal_cancelled_appeal_state_update_action!
-    when "hearing_postponed"
-      hearing_postponed_appeal_state_update_action!
-    when "hearing_withdrawn"
-      hearing_withdrawn_appeal_state_update_action!
-    when "hearing_scheduled"
-      hearing_scheduled_appeal_state_update_action!
-    when "scheduled_in_error"
-      scheduled_in_error_appeal_state_update_action!
-    when "vso_ihp_pending"
-      vso_ihp_pending_appeal_state_update_action!
-    when "vso_ihp_cancelled"
-      vso_ihp_cancelled_appeal_state_update_action!
-    when "vso_ihp_complete"
-      # Only updates appeal state if ALL ihp tasks are completed
-      vso_ihp_complete_appeal_state_update_action!(appeal)
-    when "privacy_act_pending"
-      privacy_act_pending_appeal_state_update_action!
-    when "privacy_act_complete"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_complete_appeal_state_update_action!(appeal)
-    when "privacy_act_cancelled"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_cancelled_appeal_state_update_action!(appeal)
-    end
   end
 end
