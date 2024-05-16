@@ -3,6 +3,11 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # When `config.assets.debug == true`, there is an edge case where the length of the Link header could become
+  # exceptionally long, due to the way concatenated assets are split and included separately, thus exceeding the
+  # maximum 8192 bytes for HTTP response headers. To preclude this from happening, we override the default here:
+  config.action_view.preload_links_header = false
+
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
