@@ -10,7 +10,7 @@ namespace :db do
     # {Gets receipt_date for recent priority distributed appeal in each docket}
     priority_dockets.each do |docket|
       docket_receipt_dates << {
-        receipt_date: DistributedCase.where(docket: docket, priority: true)
+        receipt_date: DistributedCase.where(docket: docket, priority: true).where("created_at >= ?", 1.week.ago)
           .order(created_at: :desc)&.first&.task&.appeal&.receipt_date,
         priority: true,
         docket_type: docket
@@ -20,7 +20,7 @@ namespace :db do
     # {Gets receipt_date for recent nonpriority distributed appeal in each docket}
     nonpriority_dockets.each do |docket|
       docket_receipt_dates << {
-        receipt_date: DistributedCase.where(docket: docket, priority: false)
+        receipt_date: DistributedCase.where(docket: docket, priority: false).where("created_at >= ?", 1.week.ago)
           .order(created_at: :desc)&.first&.task&.appeal&.receipt_date,
         priority: false,
         docket_type: docket
