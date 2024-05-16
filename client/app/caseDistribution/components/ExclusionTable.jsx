@@ -159,7 +159,11 @@ const ExclusionTable = () => {
               </td>
 
               {nonPriorityRadios && nonPriorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, false)} >
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, false)}
+                  key={lever.item}
+                >
                   <ExcludeDocketLever lever={lever} />
                 </td>
               ))}
@@ -181,7 +185,11 @@ const ExclusionTable = () => {
                 </span>
               </td>
               {priorityRadios && priorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, true)} >
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, true)}
+                  key={lever.item}
+                >
                   <ExcludeDocketLever lever={lever} />
                 </td>
               ))}
@@ -195,7 +203,11 @@ const ExclusionTable = () => {
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
               {nonPriorityRadios && nonPriorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, false)}>
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, false)}
+                  key={lever.item}
+                >
                   <label className="exclusion-table-member-view-styling">
                     {filterOptionValue(lever)}
                   </label>
@@ -209,7 +221,11 @@ const ExclusionTable = () => {
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3>
               </td>
               {priorityRadios && priorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, true)} >
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, true)}
+                  key={lever.item}
+                >
                   <label className="exclusion-table-member-view-styling">
                     {filterOptionValue(lever)}
                   </label>
