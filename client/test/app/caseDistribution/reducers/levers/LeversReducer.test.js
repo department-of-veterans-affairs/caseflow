@@ -11,7 +11,6 @@ import {
   mockTextLeverReturn,
   mockDocketDistributionPriorLeversReturn,
 } from 'test/data/adminCaseDistributionLevers';
-import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 let mockInitialLevers = {
   static: mockStaticLevers,
@@ -38,6 +37,7 @@ describe('Lever reducer', () => {
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
     isUserAcdAdmin: false,
+    acdExcludeFromAffinity: false
   };
 
   afterEach(() => {
@@ -182,9 +182,9 @@ describe('Lever reducer', () => {
     const action = {
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
-        leverGroup: ACD_LEVERS.lever_groups.affinity,
+        leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        optionItem: ACD_LEVERS.value,
+        value: '0',
         optionValue: 0
       }
     };
@@ -194,9 +194,7 @@ describe('Lever reducer', () => {
       if (lever.item === 'ama_hearing_case_affinity_days') {
         return {
           ...lever,
-          value: 80,
-          selectedOption: ACD_LEVERS.value,
-          valueOptionValue: 80
+          currentValue: 80
         };
       }
 

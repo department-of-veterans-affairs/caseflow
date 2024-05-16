@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
 import {
-  findOption,
+  findSelectedOption,
   hasCombinationLeverChanged,
   radioValueOptionSelected,
   findValueOption,
@@ -176,7 +176,7 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
- * Used when updating a radio lever
+ * Used when updating the a radio lever
  * Pass in the selected option and a value if the selected option is value
  *
  * This will break if a Radio lever has more than one option that has an input
@@ -190,13 +190,13 @@ export const hasNoLeverErrors = createSelector(
  *   Set valueOptionValue to value in value's option
  */
 export const updateLeverGroupForRadioLever = (state, action) => {
-  const { leverGroup, leverItem, optionItem, optionValue } = action.payload;
+  const { leverGroup, leverItem, value, optionValue } = action.payload;
 
   const updateLeverValue = (lever) => {
-    const selectedOption = findOption(lever, optionItem);
-    const isValueOption = radioValueOptionSelected(optionItem);
+    const selectedOption = findSelectedOption(lever);
+    const isValueOption = radioValueOptionSelected(value);
     const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
-    const leverValue = isValueOption ? optionValue : optionItem;
+    const leverValue = isValueOption ? optionValue : value;
     // Set all options to not selected
 
     lever.options.forEach((option) => option.selected = false);
@@ -207,7 +207,7 @@ export const updateLeverGroupForRadioLever = (state, action) => {
     return {
       ...lever,
       value: leverValue,
-      selectedOption: optionItem,
+      selectedOption: value,
       valueOptionValue
     };
   };

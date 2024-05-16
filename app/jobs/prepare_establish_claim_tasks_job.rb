@@ -28,6 +28,10 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
     msg = "PrepareEstablishClaimTasksJob successfully ran: #{count[:success]} tasks " \
           "prepared and #{count[:fail]} tasks failed"
     Rails.logger.info msg
-    SlackService.new.send_notification(msg)
+    SlackService.new(url: url).send_notification(msg)
+  end
+
+  def url
+    ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 end

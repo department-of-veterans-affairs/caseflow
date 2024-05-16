@@ -4,27 +4,22 @@ describe QualityReviewCaseSelector, :all_dbs do
   describe ".reached_monthly_limit_in_quality_reviews?" do
     subject { QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews? }
     context "when a realistic number of cases are completed" do
-      # Originally pulled from prod with:
+      # Pulled from prod with:
       # Task.where(
       #   appeal_type: Appeal.name,
       #   assigned_to_type: Organization.name,
       #   type: [QualityReviewTask.name, BvaDispatchTask.name],
       #   created_at: 2.month.ago.beginning_of_month..2.month.ago.end_of_month
       # ).count
-      # Updated to use the constants provided in the file with margin to not be a seemingly arbitrary number.
-      # As of 4/2024, there were over 4000 cases being completed each month.
-      let(:complete_cases_count) do
-        limit = QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUALITY_REVIEWS
-        probability = QualityReviewCaseSelector::QUALITY_REVIEW_SELECTION_PROBABILITY
-
-        ((limit / probability) * 1.2).to_i
+      let(:complete_cases_count) { 1600 }
+      let!(:qr_tasks) do
+        complete_cases_count.times do
+          create(:qr_task) if QualityReviewCaseSelector.select_case_for_quality_review?
+        end
       end
 
       it "should hit at least the monthly minimum of QR tasks" do
-        count = 0
-        complete_cases_count.times { count += 1 if QualityReviewCaseSelector.select_case_for_quality_review? }
-
-        expect(count).to be >= QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUALITY_REVIEWS
+        expect(QualityReviewTask.count).to be >= 164
       end
     end
 

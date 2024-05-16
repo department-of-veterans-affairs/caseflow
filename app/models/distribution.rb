@@ -52,9 +52,6 @@ class Distribution < CaseflowRecord
     end
   rescue StandardError => error
     process_error(error)
-    title = "Distribution Failed"
-    msg = "Distribution #{id} failed: #{error.message}}"
-    SlackService.new.send_notification(msg, title)
 
     raise error
   end
