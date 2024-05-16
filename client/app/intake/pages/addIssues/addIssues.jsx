@@ -52,7 +52,8 @@ import {
   toggleRequestIssueRemovalModal,
   toggleRequestIssueWithdrawalModal,
   toggleRequestIssueAdditionModal,
-  moveToPendingReviewSection
+  moveToPendingReviewSection,
+  addToPendingReviewSection
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -573,6 +574,8 @@ class AddIssuesPage extends React.Component {
       });
     }
 
+    console.log(this.props.addToPendingReviewSection);
+
     return (
       <div className="cf-intake-edit">
         {this.state.addingIssue && (
@@ -684,7 +687,8 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
-            onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
+            onCancel={() => this.props.toggleRequestIssueAdditionModal()}
+            addToPendingReviewSection={this.props.addToPendingReviewSection} />
         )}
 
         <h1 className="cf-txt-c">{messageHeader}</h1>
@@ -818,6 +822,7 @@ export const EditAddIssuesPage = connect(
         removeIssue,
         withdrawIssue,
         moveToPendingReviewSection,
+        addToPendingReviewSection,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,

@@ -136,6 +136,13 @@ export const moveToPendingReviewSection = (issueModificationRequest, index) => (
     payload: { issueModificationRequest, index }
   });
 
+export const addToPendingReviewSection = (issueModificationRequest) => (
+  {
+    type: ACTIONS.ADD_TO_PENDING_REVIEW,
+    payload: { issueModificationRequest }
+  }
+);
+
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 

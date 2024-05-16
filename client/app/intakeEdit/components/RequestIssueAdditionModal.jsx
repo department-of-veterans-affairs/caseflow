@@ -8,12 +8,10 @@ import PriorDecisionDateSelector from './RequestCommonComponents/PriorDecisionDa
 import IssueDescription from './RequestCommonComponents/IssueDescription';
 import * as yup from 'yup';
 
-// TODO: move these strings to a constants file
-// is it worth DRYing the schemas? probably not
 const additionSchema = yup.object({
-  nonratingIssueCategory: yup.string().required('Please select an issue type.'),
+  nonRatingIssueCategory: yup.string().required('Please select an issue type.'),
   decisionDate: yup.string().required('Please select a decision date.'),
-  decisionText: yup.string().required('Please enter an issue description.'),
+  nonRatingIssueDescription: yup.string().required('Please enter an issue description.'),
   requestReason: yup.string().required('Please enter a request reason.')
 });
 
@@ -34,8 +32,14 @@ RequestIssueAdditionContent.propTypes = {
 };
 export const RequestIssueAdditionModal = (props) => {
 
+  const combinedProps = {
+    schema: additionSchema,
+    type: 'addition',
+    ...props
+  };
+
   return (
-    <RequestIssueFormWrapper schema={additionSchema} type="addition" onCancel={props.onCancel}>
+    <RequestIssueFormWrapper {...combinedProps}>
       <RequestIssueAdditionContent />
     </RequestIssueFormWrapper>
   );

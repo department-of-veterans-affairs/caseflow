@@ -193,6 +193,13 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.ADD_TO_PENDING_REVIEW] = () => {
+    return {
+      ...state,
+      issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
+    };
+  };
+
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,

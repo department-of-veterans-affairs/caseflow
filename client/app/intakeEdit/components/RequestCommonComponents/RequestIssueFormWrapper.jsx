@@ -42,8 +42,12 @@ export const RequestIssueFormWrapper = (props) => {
 
     // close modal and move the issue
     props.onCancel();
-    props.moveToPendingReviewSection(enhancedData, props.issueIndex);
 
+    if (props.type === 'addition') {
+      props.addToPendingReviewSection(enhancedData);
+    } else {
+      props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+    }
   };
 
   return (
@@ -80,7 +84,8 @@ RequestIssueFormWrapper.propTypes = {
   issueIndex: PropTypes.number,
   schema: PropTypes.object,
   type: PropTypes.string,
-  moveToPendingReviewSection: PropTypes.func
+  moveToPendingReviewSection: PropTypes.func,
+  addToPendingReviewSection: PropTypes.func
 };
 
 export default RequestIssueFormWrapper;
