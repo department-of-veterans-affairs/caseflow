@@ -47,7 +47,20 @@ export const CorrespondenceIntake = (props) => {
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [returnToQueueModal, setReturnToQueueModal] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
+  const [correspondenceObj, setCorrespondenceObj] = useState({});
   const history = useHistory();
+
+  const fetchCorrespondence = async () => {
+    try {
+      const response = await ApiUtil.get(
+        `/queue/correspondence/${props.correspondence_uuid}`
+      );
+
+      setCorrespondenceObj(response.body.correspondence);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleBannerState = (bannerState) => {
     dispatch(setErrorBanner(bannerState));
@@ -139,6 +152,7 @@ export const CorrespondenceIntake = (props) => {
 
   useEffect(() => {
     // load previous correspondence intake from database (if any)
+    fetchCorrespondence();
     if (props.reduxStore !== null) {
       setCurrentStep(3);
       props.loadSavedIntake(props.reduxStore);
@@ -170,7 +184,7 @@ export const CorrespondenceIntake = (props) => {
         disableContinue={handleContinueStatusChange}
         unrelatedTasks={props.unrelatedTasks}
         setUnrelatedTasks={props.setUnrelatedTasks}
-        correspondence={props.correspondence}
+        correspondence={correspondenceObj}
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
       />
@@ -178,7 +192,7 @@ export const CorrespondenceIntake = (props) => {
     {currentStep === 3 &&
       <div>
         <ConfirmCorrespondenceView
-          correspondence={props.correspondence}
+          correspondence={correspondenceObj}
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
           toggledCorrespondences={props.toggledCorrespondences}
@@ -227,7 +241,7 @@ export const CorrespondenceIntake = (props) => {
       </Button>}
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
-          correspondence={props.correspondence}
+          correspondence={correspondenceObj}
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
           setErrorBannerVisible={handleBannerState}
         />
