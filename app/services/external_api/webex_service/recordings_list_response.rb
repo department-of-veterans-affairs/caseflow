@@ -4,8 +4,4 @@ class ExternalApi::WebexService::RecordingsListResponse < ExternalApi::WebexServ
   def ids
     data.nil? ? [] : data["items"].pluck("id")
   end
-
-  def topics
-    data.nil? ? [] : data["items"].pluck("topic")
-  end
 end

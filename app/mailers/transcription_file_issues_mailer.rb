@@ -2,14 +2,35 @@
 
 # rubocop:disable Rails/ApplicationMailer
 ##
-# TranscriptionFileIssuesMailerr will:
+# TranscriptionFileIssuesMailer:
 # - Generate emails from the templates in app/views/transcription_file_issues
 ##
 class TranscriptionFileIssuesMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "transcription_file_issues_mailer"
 
-  # Builds email from view in app/views/transcription_file_issues_mailer/issue_notification
+  # Purpose: Builds email from view in app/views/transcription_file_issues_mailer/issue_notification
+  #
+  # Params: details - Hash of key-value pairs required to populate email template:
+  #                     - error: { type: string, explanation: string }
+  #                              - type: to render subject in #build_subject
+  #                              - explanation: "Caseflow attempted to #{explanation} and received a fatal error."
+  #                     - provider: string, to build subject and closing statement in #build_outro
+  #                     - docket_number: string, optional, but if present renders in subject
+  #                     - appeal_id: string, optional, but if present renders Case Details link
+  #
+  #                 - Optionally, any additional key-value pairs are iterated over and included in body as bullets
+  #                   according to following formats:
+  #                     - key: value => <li>key.to_s: value</li>
+  #                     - key: { link: value } => <li><a href=value>key.to_s</a></li>
+  #                     - key: { nested_key_1: value_1, nested_key_2: value_2 } =>
+  #                            <li>key:
+  #                              <ul>
+  #                                <li>nested_key_1.to_s: value_1</li>
+  #                                  <li>nested_key_2.to_us: value 2</li>
+  #                              </ul>
+  #                            </li>
+  #
   def issue_notification(details)
     @details = details
     build_mailer_params
