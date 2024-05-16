@@ -25,9 +25,12 @@ import { formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues } from '../../util/issues';
+  formatLegacyAddedIssues,
+  formatIssueModificationRequestsBySection,
+  fakeIssueModificationRequestsData } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
+import issueModificationRow from 'app/intake/components/issueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -297,7 +300,11 @@ class AddIssuesPage extends React.Component {
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
+
     const issuesBySection = formatIssuesBySection(issues);
+
+    const modificationIssueRequestsBySection =
+      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -517,14 +524,14 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Requested issues',
+              fieldTitle: 'Requested issues'
             }),
           );
         } else if (key === 'withdrawnIssues') {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Withdrawn issues',
+              fieldTitle: 'Withdrawn issues'
             }),
           );
         } else {
@@ -532,13 +539,27 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: ' ',
+              fieldTitle: ' '
             }),
           );
         }
 
         return rowObjects;
       });
+
+    const modificationIssueRequestsObj =
+      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
+
+    const pendingSection = modificationIssueRequestsObj ?
+      issueModificationRow({
+        modificationIssueRequestsObj,
+        fieldTitle: 'Pending admin review'
+      }) :
+      null;
+
+    if (pendingSection !== null) {
+      rowObjects.push(pendingSection);
+    }
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
