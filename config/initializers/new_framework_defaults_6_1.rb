@@ -6,10 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Specify whether `ActiveSupport::TimeZone.utc_to_local` returns a time with an
-# UTC offset or a UTC time.
-# ActiveSupport.utc_to_local_returns_utc_offset_times = true
-
 # Change the default HTTP status code to `308` when redirecting non-GET/HEAD
 # requests to HTTPS in `ActionDispatch::SSL` middleware.
 # Rails.application.config.action_dispatch.ssl_default_redirect_status = 308
