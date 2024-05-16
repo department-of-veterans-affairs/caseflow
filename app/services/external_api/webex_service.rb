@@ -94,7 +94,7 @@ class ExternalApi::WebexService
   def fetch_recordings_list
     body = nil
     method = "GET"
-    @api_endpoint += "recordings"
+    @api_endpoint += "admin/recordings"
     ExternalApi::WebexService::RecordingsListResponse.new(send_webex_request(body, method))
   end
 

@@ -2185,6 +2185,7 @@ GEM
     ziptz (2.1.6)
 
 PLATFORMS
+  x86_64-darwin-21
   x86_64-darwin-22
   x86_64-linux
 
