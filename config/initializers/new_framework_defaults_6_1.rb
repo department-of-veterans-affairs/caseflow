@@ -6,9 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Apply random variation to the delay when retrying failed jobs.
-# Rails.application.config.active_job.retry_jitter = 0.15
-
 # Stop executing `after_enqueue`/`after_perform` callbacks if
 # `before_enqueue`/`before_perform` respectively halts with `throw :abort`.
 # Rails.application.config.active_job.skip_after_callbacks_if_terminated = true
