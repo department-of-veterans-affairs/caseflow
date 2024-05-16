@@ -5,7 +5,7 @@
 # ORACLE DOCKERFILES PROJECT
 # --------------------------
 # This is the Dockerfile for Oracle Database 19c
-# 
+#
 # REQUIRED FILES TO BUILD THIS IMAGE
 # ----------------------------------
 # (1) db_home.zip
@@ -15,8 +15,8 @@
 # HOW TO BUILD THIS IMAGE
 # -----------------------
 # Put all downloaded files in the same directory as this Dockerfile
-# Run: 
-#      $ docker build -t oracle/database:19.3.0-${EDITION} . 
+# Run:
+#      $ docker build -t oracle/database:19.3.0-${EDITION} .
 #
 # Pull base image
 # ---------------
@@ -148,12 +148,12 @@ ENV ORACLE_SID=BVAP
 ENV ORACLE_PWD=Oradoc_db1
 
 # Copy FACOLS files
-ADD setup_vacols.sql /opt/oracle/scripts/setup/
-ADD vacols_copy* /ORCL/
+ADD ../setup_vacols.sql /opt/oracle/scripts/setup/
+ADD ../vacols_copy* /ORCL/
 
 # Start everything up and install FACOLS then remove the setup files
 # RUN $ORACLE_BASE/$RUN_FILE_1 && \
 #     rm -rf /opt/oracle/scripts/setup/setup_vacols.sql
 
-# Define default command to start Oracle Database. 
+# Define default command to start Oracle Database.
 CMD [ "/bin/bash", "-c", "exec $ORACLE_BASE/$RUN_FILE" ]

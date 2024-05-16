@@ -47,12 +47,12 @@ build(){
 
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
-  echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
+  # echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
 #  rm -rf $build_facols_dir && mkdir $build_facols_dir
 
   parent_dir=$PWD
 
-  cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* $build_facols_dir
+  # cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* $build_facols_dir
 
 #  echo -e "\tDownloading FACOLS Dependencies..."
 #  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ $build_facols_dir
@@ -75,8 +75,8 @@ build(){
   echo ""
   echo "--------"
   if [[ $docker_build_result -eq 0 ]]; then
-    echo -e "\tCleaning Up..."
-    rm -rf $build_facols_dir
+    # echo -e "\tCleaning Up..."
+    # rm -rf $build_facols_dir
     docker_build="SUCCESS"
     echo ""
     echo "Building FACOLS Docker App: ${bold}${docker_build}${normal}"
