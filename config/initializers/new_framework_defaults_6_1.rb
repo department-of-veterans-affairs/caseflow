@@ -6,10 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Stop executing `after_enqueue`/`after_perform` callbacks if
-# `before_enqueue`/`before_perform` respectively halts with `throw :abort`.
-# Rails.application.config.active_job.skip_after_callbacks_if_terminated = true
-
 # Specify cookies SameSite protection level: either :none, :lax, or :strict.
 #
 # This change is not backwards compatible with earlier Rails versions.
