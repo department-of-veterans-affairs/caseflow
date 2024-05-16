@@ -78,17 +78,11 @@ describe Hearings::WorkOrderFileJob, type: :job do
       hearing
     end
     it "should upload the file to S3 bucket" do
-      allow_any_instance_of(described_class).to receive(:create_zip_file_job).with(work_order).and_return(nil)
       expect(S3Service).to receive(:store_file).with(
         "vaec-appeals-caseflow-test/transcript_text/BVA-#{work_order[:work_order_name]}.xls",
         file_path,
         :filepath
       )
-      expect(subject).to eq true
-    end
-
-    it "should return true and trigger the zip file job" do
-      allow_any_instance_of(described_class).to receive(:create_zip_file_job).with(work_order)
       expect(subject).to eq true
     end
 
