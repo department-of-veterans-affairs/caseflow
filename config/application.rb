@@ -92,6 +92,14 @@ module CaseflowCertification
     # Default as of 6.0: true
     config.active_record.collection_cache_versioning = false
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rails 6.1 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Support for inversing belongs_to -> has_many Active Record associations.
+    # Default as of 6.1: true
+    config.active_record.has_many_inversing = false
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
