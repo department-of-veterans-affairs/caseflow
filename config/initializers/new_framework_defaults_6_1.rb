@@ -6,9 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Set the default queue name for the incineration job to the queue adapter default.
-# Rails.application.config.action_mailbox.queues.incineration = nil
-
 # Set the default queue name for the routing job to the queue adapter default.
 # Rails.application.config.action_mailbox.queues.routing = nil
 
