@@ -11,10 +11,13 @@
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     },
+    configUrl: '/queue/correspondence/team?json',
+    isMailTeamUser: current_user.mail_team_user?,
+    isMailSupervisor: current_user.mail_supervisor?,
+    isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
     priorMail: @prior_mail,
     correspondence: @correspondence,
-    configUrl: '/queue/correspondence/team?json',
-    isMailSupervisor: current_user.mail_supervisor?,
+    mailTeamUsers: @mail_team_users,
     reduxStore: @redux_store,
     autoTexts: @auto_texts,
   }) %>

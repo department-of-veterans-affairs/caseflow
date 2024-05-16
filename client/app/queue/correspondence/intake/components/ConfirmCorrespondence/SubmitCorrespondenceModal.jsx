@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
-import { withRouter } from 'react-router';
+import { useHistory, withRouter } from 'react-router';
 import { useSelector } from 'react-redux';
 import ApiUtil from 'app/util/ApiUtil';
 import {
@@ -12,8 +12,7 @@ import {
 export const SubmitCorrespondenceModal = ({
   setSubmitCorrespondenceModalVisible,
   setErrorBannerVisible,
-  correspondence,
-  history
+  correspondence
 }) => {
 
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
@@ -35,10 +34,11 @@ export const SubmitCorrespondenceModal = ({
     setSubmitCorrespondenceModalVisible(false);
   };
 
-  // const history = useHistory();
+  const history = useHistory();
 
-  const handleRouting = (status) => {
+  const handleRouting = (status, props) => {
     if (status === 201) {
+      console.log(props);
       // window.location.href = '/queue/correspondence';
 
       history.push('/queue/correspondence');

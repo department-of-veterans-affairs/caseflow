@@ -55,10 +55,13 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
 
 export const loadCorrespondenceConfig = (configUrl) =>
   (dispatch) => {
+    console.log(configUrl);
     ApiUtil.get(configUrl).then(
       (response) => {
         const returnedObject = response.body;
+        console.log(returnedObject)
         const correspondenceConfig = returnedObject.correspondence_config;
+        console.log(correspondenceConfig)
 
         dispatch(
           {

@@ -139,6 +139,7 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const queueConfig = () => {
+    console.log(props)
     const { config } = props;
 
     config.active_tab_index = calcActiveTabIndex(config);
