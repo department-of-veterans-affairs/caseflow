@@ -12,7 +12,7 @@ describe Hearings::WorkOrderFileJob, type: :job do
       hearings: [{ hearing_id: hearing.id, hearing_type: hearing.class.to_s }]
     }
   end
-  let(:file_path) { Rails.root.join("tmp/BVA-#{work_order[:work_order_name]}.xls") }
+  let(:file_path) { Rails.root.join("tmp/transcription_files/xls/#{work_order[:work_order_name]}.xls") }
 
   subject { described_class.perform_now(work_order) }
 
@@ -79,17 +79,17 @@ describe Hearings::WorkOrderFileJob, type: :job do
     end
     it "should upload the file to S3 bucket" do
       expect(S3Service).to receive(:store_file).with(
-        "vaec-appeals-caseflow-test/transcript_text/BVA-#{work_order[:work_order_name]}.xls",
+        "vaec-appeals-caseflow-test/transcript_text/#{work_order[:work_order_name]}.xls",
         file_path,
         :filepath
       )
-      subject
+      expect(subject).to eq true
     end
 
-    it "should send notification on S3 upload failure" do
-      expect(S3Service).to receive(:store_file).and_raise(StandardError)
-      allow_any_instance_of(described_class).to receive(:send_failure_notification).once
-      subject
+    it "should retry and send notification on S3 upload failure" do
+      expect(S3Service).to receive(:store_file).exactly(5).times.and_raise(StandardError)
+      expect(WorkOrderFileIssuesMailer).to receive(:send_notification).once
+      perform_enqueued_jobs { subject }
     end
   end
 end
