@@ -75,26 +75,26 @@ const ExclusionTable = () => {
     }
   }, [priorityRadios, nonPriorityRadios]);
 
-  const handlePriorityToggleChange = () => {
-    const toggleState = priorityToggle !== true;
+  const handleToggleChange = (isPriority) => {
+    if (isPriority) {
+      const toggleState = priorityToggle !== true;
 
-    setPriorityToggle(toggleState);
-    const newToggleState = toggleState ? 'true' : 'false';
+      setPriorityToggle(toggleState);
+      const newToggleState = toggleState ? 'true' : 'false';
 
-    priorityRadios.forEach((lever) => {
-      dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
-    });
-  };
+      priorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+      });
+    } else {
+      const toggleState = nonPriorityToggle !== true;
 
-  const handleNonPriorityToggleChange = () => {
-    const toggleState = nonPriorityToggle !== true;
+      setNonPriorityToggle(toggleState);
+      const newToggleState = toggleState ? 'true' : 'false';
 
-    setNonPriorityToggle(toggleState);
-    const newToggleState = toggleState ? 'true' : 'false';
-
-    nonPriorityRadios.forEach((lever) => {
-      dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
-    });
+      nonPriorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+      });
+    }
   };
 
   const filterOptionValue = (lever) => {
@@ -152,7 +152,7 @@ const ExclusionTable = () => {
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}
                     selected = {nonPriorityToggle}
-                    toggleSelected = {handleNonPriorityToggleChange}
+                    toggleSelected = {() => handleToggleChange(false)}
                     isIdle = {comboNonPriorityToggle}
                   />
                 </span>
@@ -175,7 +175,7 @@ const ExclusionTable = () => {
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_priority}
                     selected = {priorityToggle}
-                    toggleSelected = {handlePriorityToggleChange}
+                    toggleSelected = {() => handleToggleChange(true)}
                     isIdle = {comboPriorityToggle}
                   />
                 </span>
