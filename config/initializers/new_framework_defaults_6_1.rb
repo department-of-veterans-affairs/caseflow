@@ -6,11 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Use new connection handling API. For most applications this won't have any
-# effect. For applications using multiple databases, this new API provides
-# support for granular connection swapping.
-# Rails.application.config.active_record.legacy_connection_handling = false
-
 # Make `form_with` generate non-remote forms by default.
 # Rails.application.config.action_view.form_with_generates_remote_forms = false
 
