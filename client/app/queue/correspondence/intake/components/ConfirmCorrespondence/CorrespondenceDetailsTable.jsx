@@ -1,13 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 
 export const CorrespondenceDetailsTable = (props) => {
-
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
-  );
 
   return (
     <div>
@@ -22,7 +17,7 @@ export const CorrespondenceDetailsTable = (props) => {
           </tr>
           <tr>
             <td className="corr-table-borderless-first-item">
-              {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
+              {props.correspondence.nod ? 'NOD' : 'Non-NOD'}
             </td>
             <td>{moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}</td>
             <td>{props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})</td>
