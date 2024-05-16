@@ -6,10 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Change the default HTTP status code to `308` when redirecting non-GET/HEAD
-# requests to HTTPS in `ActionDispatch::SSL` middleware.
-# Rails.application.config.action_dispatch.ssl_default_redirect_status = 308
-
 # Use new connection handling API. For most applications this won't have any
 # effect. For applications using multiple databases, this new API provides
 # support for granular connection swapping.
