@@ -26,10 +26,6 @@ const noteDiv = css({
   color: COLORS.GREY
 });
 
-const alertStyling = css({
-  fontSize: '17px !important',
-});
-
 const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
   return ISSUE_CATEGORIES[benefitType].map((category) => {
     return {
@@ -295,7 +291,6 @@ class NonratingRequestIssueModal extends React.Component {
         {(this.vhaHlrOrSC() && this.isVhaAdminAndTaskInProgress()) ?
           <Alert
             message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
-            messageStyling={alertStyling}
             type="info"
           /> :
           null

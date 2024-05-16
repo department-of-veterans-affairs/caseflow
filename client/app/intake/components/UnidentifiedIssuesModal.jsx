@@ -11,11 +11,6 @@ import { generateSkipButton } from '../util/buttonUtils';
 import Alert from 'app/components/Alert';
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 
-const alertStyling = css({
-  fontSize: '17px !important',
-  marginBotton: '10px'
-});
-
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
     super(props);
@@ -137,7 +132,6 @@ class UnidentifiedIssuesModal extends React.Component {
         {(userIsVhaAdmin && isTaskInProgress && this.vhaHlrOrSC()) ?
           <Alert
             message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
-            messageStyling={alertStyling}
             type="info"
           /> :
           null
