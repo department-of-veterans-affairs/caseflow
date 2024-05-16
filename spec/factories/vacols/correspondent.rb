@@ -11,7 +11,9 @@ FactoryBot.define do
     after(:create) do |correspondent, _evaluator|
       # Create a corresponding Veteran record in the Caseflow DB; this will also create a corresponding Redis record to
       # make these cases searchable. Simply creating the redis record here will cause downstream issues when searching.
-      unless Veteran.exists?(file_number: correspondent.ssn)
+      unless 
+        Veteran.exists?(file_number: correspondent.ssn) 
+      end
 
       create(
         :veteran,
