@@ -373,6 +373,11 @@
   p {
     margin: .5rem 0;
   }
+
+  .issue-modification-request-original p {
+    color: $color-gray;
+    opacity: 0.5;
+  }
 }
 
 .cf-benefit-type {
