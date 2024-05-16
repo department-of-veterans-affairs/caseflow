@@ -25,8 +25,7 @@ module Seeds
         end
       end
       OrganizationPermission.find_by(permission: "superuser").update!(
-        description: "Superuser: Split, Merge, and Reassign",
-        default_for_admin: true
+        description: "Superuser: Split, Merge, and Reassign"
       )
       OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
       OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
