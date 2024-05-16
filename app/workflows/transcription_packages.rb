@@ -14,22 +14,22 @@ class TranscriptionPackages
   end
 
   def call
-    Hearings::WorkOrderFileJob.perform_now(@work_order_params) ? create_zip_file : return
+    Hearings::WorkOrderFileJob.perform_now(work_order_params) ? create_zip_file : return
   end
 
   def create_zip_file
-    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(@work_order_params.hearings) ? create_bom_file : return
+    Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order_params.hearings) ? create_bom_file : return
   end
 
   def create_bom_file
-    Hearings::CreateBomFileJob.perform_now(@work_order_params) ? create_transcription_package : return
+    Hearings::CreateBomFileJob.perform_now(work_order_params) ? create_transcription_package : return
   end
 
   def create_transcription_package
-    Hearings::CreateTranscriptionPackageJob.perform_now(@work_order_params) ? upload_transcription_package : return
+    Hearings::CreateTranscriptionPackageJob.perform_now(work_order_params) ? upload_transcription_package : return
   end
 
   def upload_transcription_package
-    Hearings::UploadTranscriptionPackageJob.perform_now(@work_order_params)
+    Hearings::UploadTranscriptionPackageJob.perform_now(work_order_params)
   end
 end
