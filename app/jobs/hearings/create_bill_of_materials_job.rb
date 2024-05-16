@@ -32,6 +32,7 @@ module Hearings
       hash = create_bom_hash
       save_json_file(hash)
       upload_to_s3!(@bom_file_path)
+      true
     end
 
     def clean_up_tmp_file
@@ -143,7 +144,7 @@ module Hearings
 
     def bom_ref(file)
       bucket = "vaec-appeals-caseflow-#{Rails.deploy_env}"
-      base = "https://#{bucket}.s3.#{ENV["AWS_REGION"]}.amazonaws.com"
+      base = "https://#{bucket}.s3.#{ENV['AWS_REGION']}.amazonaws.com"
       case file
       when TranscriptionFile
         "#{base}/#{file.aws_link}"
@@ -181,26 +182,26 @@ module Hearings
         hearing_id: hearing_ids,
         file_type: %w(mp3 rtf),
         file_status: "Successful upload (AWS)"
-        )
-      end
+      )
+    end
 
-      def save_json_file(hash)
-        tmp_path = Rails.root + "tmp/transcription_files/json/"
-        file_path = tmp_path + "#{@work_order[:work_order_name].sub('BVA', 'BOM')}.json"
-        json_file = File.open(file_path, "w") do |f|
-          f.write(JSON.pretty_generate(hash))
-          f
-        end
-        @bom_file_path = json_file.path
+    def save_json_file(hash)
+      tmp_path = Rails.root + "tmp/transcription_files/json/"
+      file_path = tmp_path + "#{@work_order[:work_order_name].sub('BVA', 'BOM')}.json"
+      json_file = File.open(file_path, "w") do |f|
+        f.write(JSON.pretty_generate(hash))
+        f
       end
+      @bom_file_path = json_file.path
+    end
 
-      def create_md5_hash(file_path)
-        Digest::MD5.file(file_path)
-      end
+    def create_md5_hash(file_path)
+      Digest::MD5.file(file_path)
+    end
 
-      def licenses(file_name, id = "MIT")
-        extension = file_name.split(".")[-1]
-        case extension
+    def licenses(file_name, id = "MIT")
+      extension = file_name.split(".")[-1]
+      case extension
       when "mp3"
         content_type = "audio/mp3"
       when "rtf"
