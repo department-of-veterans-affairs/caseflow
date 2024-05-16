@@ -21,9 +21,9 @@ module Hearings
       def update_status!(*args); end
     end
 
-    retry_on(BomFileUploadError) do |job, _exception|
+    retry_on(TranscriptionFileUpload::FileUploadError) do |job, _exception|
       job.clean_up_tmp_file
-      return false
+      fail BomFileUploadError
     end
 
     def perform(work_order)
@@ -241,11 +241,7 @@ module Hearings
 
     def upload_to_s3!(file_path)
       ruby_object = BomFile.new(file_path)
-      begin
-        TranscriptionFileUpload.new(ruby_object).call
-      rescue TranscriptionFileUpload::FileUploadError
-        raise BomFileUploadError
-      end
+      TranscriptionFileUpload.new(ruby_object).call
     end
   end
 end

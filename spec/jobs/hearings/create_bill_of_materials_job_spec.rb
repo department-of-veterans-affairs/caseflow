@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Hearings::CreateBillOfMaterialsJob do
+  include ActiveJob::TestHelper
+
   let(:hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
   let(:legacy_hearings) { (1..5).map { create(:legacy_hearing, :with_transcription_files) } }
 
@@ -112,5 +114,14 @@ RSpec.describe Hearings::CreateBillOfMaterialsJob do
       expect(hash[:licenses][0][:license][:text][:encoding]).to be_a String
       expect(hash[:purl]).to be_a String
     end
+  end
+
+  it "retries on aws upload failure" do
+    allow_any_instance_of(described_class).to receive(:perform)
+        .and_raise(TranscriptionFileUpload::FileUploadError)
+
+      expect { perform_enqueued_jobs { subject } }.to raise_error(
+        Hearings::CreateBillOfMaterialsJob::BomFileUploadError
+      )
   end
 end
