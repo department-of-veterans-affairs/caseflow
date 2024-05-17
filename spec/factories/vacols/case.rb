@@ -202,13 +202,13 @@ FactoryBot.define do
                 judge { nil }
                 attorney { nil }
               end
-        
+
               bfmpro { "HIS" }
               bfddec { 1.day.ago }
               bfac { "1" }
               bfdc { "3" }
               bfcurloc { "99" }
-        
+
               after(:create) do |vacols_case, evaluator|
                 vacols_case.bfmemid = if evaluator.judge
                                         existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
@@ -217,7 +217,7 @@ FactoryBot.define do
                                         new_judge = create(:staff, :judge_role, user: evaluator.judge)
                                         new_judge.sattyid
                                       end
-        
+
                 vacols_case.bfattid = if evaluator.attorney
                                         existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
                                         existing_attorney.sattyid
@@ -225,13 +225,13 @@ FactoryBot.define do
                                         new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
                                         new_attorney.sattyid
                                       end
-        
+
                 vacols_case.case_issues.each do |case_issue|
                   case_issue.issdc = "3"
                   case_issue.save
                 end
 
-                vacols_case.correspondent.ssn = vacols_case.bfcorlid.chomp("S")
+                vacols_case.correspondent.update!(ssn: vacols_case.bfcorlid.chomp("S"))
                 vacols_case.save
 
                 create(
@@ -247,7 +247,7 @@ FactoryBot.define do
                   :case,
                   bfdpdcn: vacols_case.bfddec,
                   bfac: "7",
-                  bfcurloc: '81',
+                  bfcurloc: "81",
                   bfcorkey: vacols_case.bfcorkey,
                   bfcorlid: vacols_case.bfcorlid,
                   bfdnod: vacols_case.bfdnod,
