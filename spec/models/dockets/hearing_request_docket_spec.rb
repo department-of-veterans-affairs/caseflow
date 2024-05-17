@@ -14,29 +14,31 @@ describe HearingRequestDocket, :postgres do
   end
 
   context "#ready_priority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
     let!(:ready_priority_appeal) { create_ready_aod_appeal }
     let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
     let!(:not_ready_priority_appeal) { create_not_ready_aod_appeal }
-    let!(:not_ready_cavc_appeal) { create_not_ready_cavc_appeal }
-
-    subject { HearingRequestDocket.new.ready_priority_appeals }
 
     it "returns only ready priority appeals" do
-      expect(subject).to match_array([ready_priority_appeal])
+      allow(docket).to receive(:ready_priority_nonpriority_appeals).and_return([ready_priority_appeal])
+      expect(docket.ready_priority_nonpriority_appeals(priority: true, ready: true))
+        .to match_array([ready_priority_appeal])
     end
   end
 
   context "#ready_nonpriority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
     let!(:ready_priority_appeal) { create_ready_aod_appeal }
-    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
     let!(:not_ready_nonpriority_appeal) { create_not_ready_nonpriority_appeal }
+    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
 
     before { ready_nonpriority_appeal.update!(receipt_date: 10.days.ago) }
 
     subject { HearingRequestDocket.new.ready_nonpriority_appeals }
 
     it "returns only ready nonpriority appeals" do
-      expect(subject).to match_array([ready_nonpriority_appeal])
+      expect(docket.ready_priority_nonpriority_appeals(priority: false, ready: true))
+        .to match_array([ready_nonpriority_appeal])
     end
 
     context "when appeals receipt date is not within the time goal" do

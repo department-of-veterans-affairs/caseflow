@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
-  Rails.application.load_tasks
+  unless Rake::Task.task_defined?("assets:precompile")
+    Rails.application.load_tasks
+  end
   let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
 
   describe "POST run-demo?seed_type=ii?seed_count=x&days_ago=y&judge_css_id=zzz" do

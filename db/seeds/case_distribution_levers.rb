@@ -576,7 +576,7 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 10,
+            lever_group_order: 105,
             control_group: Constants.ACD_LEVERS.priority,
             options: [
               {
@@ -675,8 +675,8 @@ module Seeds
             ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
@@ -689,13 +689,13 @@ module Seeds
             options: [
               {
                 displayText: 'On',
-                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
                 value:  'true',
                 disabled: false
               },
               {
                 displayText: 'Off',
-                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
                 value:  'false',
                 disabled: false
               }
@@ -711,7 +711,7 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 105,
+            lever_group_order: 106,
             control_group: Constants.ACD_LEVERS.priority,
             options: [
               {
@@ -738,7 +738,7 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 106,
+            lever_group_order: 107,
             control_group: Constants.ACD_LEVERS.priority,
             options: [
               {
@@ -756,8 +756,8 @@ module Seeds
             ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
@@ -765,18 +765,18 @@ module Seeds
             is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 107,
+            lever_group_order: 108,
             control_group: Constants.ACD_LEVERS.priority,
             options: [
               {
                 displayText: 'On',
-                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
                 value:  'true',
                 disabled: false
               },
               {
                 displayText: 'Off',
-                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
                 value:  'false',
                 disabled: false
               }
