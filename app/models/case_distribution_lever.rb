@@ -21,6 +21,7 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.cavc_aod_affinity_days}
+    #{Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
   ).freeze

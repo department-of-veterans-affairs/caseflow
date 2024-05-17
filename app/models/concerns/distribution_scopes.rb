@@ -104,7 +104,11 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
       genpop_base_query
         .ama_aod_appeals
-        .where("distribution_task.assigned_at < ?", CaseDistributionLever.cavc_aod_affinity_days.days.ago)
+        .where(
+          "appeals.stream_type != ? OR distribution_task.assigned_at < ?",
+          Constants.AMA_STREAM_TYPES.court_remand,
+          CaseDistributionLever.cavc_aod_affinity_days.days.ago
+        )
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       genpop_base_query
         .ama_aod_appeals
@@ -160,14 +164,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def ama_non_aod_appeals
-    where("advance_on_docket_motions.granted = ?", false)
-      .where("DATE(people.date_of_birth) > ?", 75.years.ago.to_date)
+    where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted "\
+        "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
   end
 
   def ama_aod_appeals
-    where("advance_on_docket_motions.person_id IS NOT NULL")
+    where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
-      .where("people.date_of_birth <= ?", 75.years.ago.to_date)
+      .or(where("people.date_of_birth <= ?", 75.years.ago))
   end
 
   def with_original_appeal_and_judge_task
