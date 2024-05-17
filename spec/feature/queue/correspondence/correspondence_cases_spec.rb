@@ -1339,7 +1339,6 @@ RSpec.feature("The Correspondence Cases page") do
         expect(page).to have_content("Review the mail package details below.")
       end
     end
-  end
 
   context "correspondence tasks completed tab testing filters date " do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
@@ -1548,3 +1547,4 @@ RSpec.feature("The Correspondence Cases page") do
       expect all("td", text: "Non-NOD").length == 5
     end
   end
+end
