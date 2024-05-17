@@ -30,13 +30,6 @@ const instructionListStyle = css({
   borderBottom: '.1rem solid black',
 });
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
-});
-
-
 const userListStyle = css({
   margin: '0'
 });
@@ -71,12 +64,6 @@ const radioButtonsStyle = css({
 const buttonStyle = css({
   padding: '1rem 2.5rem 2rem 0',
   display: 'inline-block'
-});
-
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -293,44 +280,47 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
-
       const { conferenceSelectionVisibility } = this.props;
 
       return (
         <React.Fragment key={user.id}>
-          <li key={user.id} {...userListItemStyle}>{this.formatName(user)}
-            { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-            { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-            { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-            { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-          </li>
-          { (judgeTeam || dvcTeam) && admin ?
-            <div {...topUserBorder}></div> :
-            <div {...buttonContainerStyle}>
-              { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-              { this.removeUserButton(user) }
-            </div>
-          }
-          <div {...radioButtonsStyle}>
-            {this.state.organizationName === 'Hearings Management' &&
-                  conferenceSelectionVisibility && (
-              <div>
-                <SelectConferenceTypeRadioField
-                  key={`${user.id}-conference-selection`}
-                  name={user.id}
-                  conferenceProvider={
-                    user.attributes.conference_provider
-                  }
-                  organization={this.props.organization}
-                  user={user}
-                />
-              </div>
-            )}
-          </div>
+          <li key={user.id} {...userListItemStyle}>
+            <div {...titleButtonsStyle}>
+              { this.formatName(user) }
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
 
+              {
+                (judgeTeam || dvcTeam) && admin ?
+                  <div {...topUserBorder}></div> :
+                  <div>
+                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                    { this.removeUserButton(user) }
+                  </div>
+              }
+
+            </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
+                    conferenceSelectionVisibility && (
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
+                </div>
+              )}
+            </div>
+          </li>
         </React.Fragment>
       );
     });
