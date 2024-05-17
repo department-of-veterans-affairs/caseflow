@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Seeds::ApiKey do
+describe Seeds::ConsumerApiKey do
   describe "#seed!" do
     subject { described_class.new.seed! }
     let(:consumer_name) { "appeals_consumer" }

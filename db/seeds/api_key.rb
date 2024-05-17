@@ -3,7 +3,7 @@
 # create ApiKey seeds
 
 module Seeds
-  class ApiKey
+  class ConsumerApiKey < Base
     def seed!
       create_api_key
     end
@@ -11,7 +11,7 @@ module Seeds
     private
 
     def create_api_key
-      Generators::ApiKey.create(consumer_name: "appeals_consumer", key_digest: "z1VxSVb2iae07+bYq8ZjQZs3ll4ZgSeVIUC9O5u+HfA=",
+      ApiKey.create(consumer_name: "appeals_consumer", key_digest: "z1VxSVb2iae07+bYq8ZjQZs3ll4ZgSeVIUC9O5u+HfA=",
                                 key_string: "5ecb5d7b440e429bb5fac331419c7e1a")
     end
   end
