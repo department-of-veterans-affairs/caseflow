@@ -6,6 +6,7 @@ require_relative "base_handler"
 module DeprecationWarnings
   class ProductionHandler < BaseHandler
     APP_NAME = "caseflow"
+    SLACK_ALERT_TITLE = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"
     SLACK_ALERT_CHANNEL = "#appeals-deprecation-alerts"
 
     class << self
@@ -46,9 +47,7 @@ module DeprecationWarnings
       end
 
       def emit_warning_to_slack_alerts_channel(message)
-        slack_alert_title = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"
-
-        SlackService.new.send_notification(message, slack_alert_title, SLACK_ALERT_CHANNEL)
+        SlackService.new.send_notification(message, SLACK_ALERT_TITLE, SLACK_ALERT_CHANNEL)
       end
     end
   end
