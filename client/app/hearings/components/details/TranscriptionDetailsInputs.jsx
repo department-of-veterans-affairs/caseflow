@@ -18,7 +18,8 @@ const TranscriptionDetailsInputs = ({
       label: name,
       value: id,
     })
-  );
+  ).
+    sort((stringA, stringB) => stringA.label.localeCompare(stringB.label));
 
   return (
     <React.Fragment>

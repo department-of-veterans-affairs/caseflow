@@ -218,6 +218,7 @@ Rails.application.routes.draw do
     namespace :hearing_day do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
+    resources :find_by_contractor, controller: "transcription_contractors", except: [:edit, :new]
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -239,9 +240,6 @@ Rails.application.routes.draw do
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
-  get 'hearings/find_by_contractor/:id', to: 'hearings/transcription_settings#show'
-  get 'hearings/find_by_contractor', to: 'hearings/transcription_settings#index'
-
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
