@@ -4,7 +4,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
   include CorrespondenceTaskHelpers
 
   describe "When a user clicks a task link in veterans details column" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       MailTeam.singleton.add_user(current_user)
