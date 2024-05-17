@@ -92,6 +92,12 @@ module Seeds
         )
         InboundOpsTeam.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, InboundOpsTeam.singleton)
+        superuser_permission = OrganizationPermission.find_by(permission: 'superuser', organization_id: InboundOpsTeam.singleton.id)
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: superuser_permission,
+          organizations_user: OrganizationsUser.find_by(user_id: new_user.id),
+          permitted: true
+        )
       end
     end
 
