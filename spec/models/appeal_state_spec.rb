@@ -238,7 +238,6 @@ describe AppealState do
       let(:event) { "vso_ihp_pending" }
 
       it "sets vso_ihp_pending to true and all others false" do
-
         subject
 
         expect(appeal_state.appeal_docketed).to eq false
@@ -260,7 +259,6 @@ describe AppealState do
       let(:event) { "vso_ihp_cancelled" }
 
       it "sets vso_ihp_pending to false and vso_ihp_complete to false" do
-
         subject
 
         expect(appeal_state.vso_ihp_pending).to eq false
@@ -282,7 +280,6 @@ describe AppealState do
       let(:event) { "vso_ihp_complete" }
 
       it "sets vso_ihp_complete to true and all others false" do
-
         subject
 
         expect(appeal_state.vso_ihp_pending).to eq false
@@ -304,7 +301,6 @@ describe AppealState do
       let(:event) { "appeal_cancelled" }
 
       it "sets appeal_cancelled to true and all others false" do
-
         subject
 
         expect(appeal_state.appeal_docketed).to eq false
@@ -325,7 +321,6 @@ describe AppealState do
       let(:event) { "appeal_docketed" }
 
       it "sets appeal_docketed to true and all others false" do
-
         subject
 
         expect(appeal_state.appeal_docketed).to eq true
@@ -345,7 +340,6 @@ describe AppealState do
       let(:event) { "decision_mailed" }
 
       it "sets decision_mailed to true and all others false" do
-
         subject
 
         expect(appeal_state.decision_mailed).to eq true
@@ -365,7 +359,6 @@ describe AppealState do
       let(:event) { "privacy_act_pending" }
 
       it "sets privacy_act_pending to true and all others false" do
-
         subject
 
         expect(appeal_state.privacy_act_pending).to eq true
@@ -386,7 +379,6 @@ describe AppealState do
       let(:event) { "privacy_act_cancelled" }
 
       it "sets privacy_act_pending and privacy_act_complete to false" do
-
         subject
 
         expect(appeal_state.privacy_act_pending).to eq false
@@ -408,7 +400,6 @@ describe AppealState do
       let(:event) { "privacy_act_complete" }
 
       it "sets privacy_act_complete to true and all others to false." do
-
         subject
 
         expect(appeal_state.privacy_act_pending).to eq false
@@ -430,7 +421,6 @@ describe AppealState do
       let(:event) { "hearing_scheduled" }
 
       it "sets hearing_scheduled to true and all others to false." do
-
         subject
 
         expect(appeal_state.appeal_docketed).to eq false
@@ -452,7 +442,6 @@ describe AppealState do
       let(:event) { "hearing_withdrawn" }
 
       it "sets hearing_withdrawn to true and all others to false." do
-
         subject
 
         expect(appeal_state.hearing_scheduled).to eq false
@@ -474,7 +463,6 @@ describe AppealState do
       let(:event) { "hearing_postponed" }
 
       it "sets hearing_postponed to true and all others to false." do
-
         subject
 
         expect(appeal_state.hearing_scheduled).to eq false
@@ -496,7 +484,6 @@ describe AppealState do
       let(:event) { "scheduled_in_error" }
 
       it "sets scheduled_in_error to true and all others to false." do
-
         subject
 
         expect(appeal_state.hearing_scheduled).to eq false
