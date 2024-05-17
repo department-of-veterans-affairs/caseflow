@@ -253,7 +253,7 @@ const CorrespondenceCases = (props) => {
         )}
         {config &&
         <CorrespondenceTableBuilder
-          inboundOpsTeamUser={props.inboundOpsTeamUser}
+          inboundOpsTeamUsers={props.inboundOpsTeamUsers}
           isInboundOpsTeamUser={props.isInboundOpsTeamUser}
           isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           isMailSupervisor={props.isMailSupervisor} />}
@@ -306,7 +306,7 @@ CorrespondenceCases.propTypes = {
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string,
-  inboundOpsTeamUser: PropTypes.arrayOf(string),
+  inboundOpsTeamUsers: PropTypes.arrayOf(string),
   responseType: PropTypes.string,
   responseHeader: PropTypes.string,
   responseMessage: PropTypes.string,

@@ -49,7 +49,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.LOAD_INBOUND_OPS_TEAM_USER:
+  case ACTIONS.LOAD_INBOUND_OPS_TEAM_USERS:
     return update(state, {
       inboundOpsTeamUsers: {
         $set: action.payload.inboundOpsTeamUsers
