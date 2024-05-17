@@ -4,7 +4,7 @@ class CorrespondenceTask < Task
   belongs_to :correspondence, foreign_type: "Correspondence", foreign_key: "appeal_id"
   self.abstract_class = true
 
-  before_create :verify_org_task_unique
+  before_create :verify_org_task_unique, :verify_correspondence_access
   belongs_to :appeal, class_name: "Correspondence"
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
@@ -113,7 +113,7 @@ class CorrespondenceTask < Task
     self.class.package_action_task_names.include?(self.class.name)
   end
 
-  def before_create
+  def verify_correspondence_access
     fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
     InboundOpsTeam.singleton.user_has_access?(current_user)
   end
