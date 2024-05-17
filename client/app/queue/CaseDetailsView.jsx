@@ -91,7 +91,6 @@ const editAppellantInformationLinkStyling = css({
 
 const topAlertStyles = css({ marginBottom: '2.4rem' });
 
-
 export const CaseDetailsView = (props) => {
   const { push } = useHistory();
   const { appealId, featureToggles, canViewCavcDashboards } = props;

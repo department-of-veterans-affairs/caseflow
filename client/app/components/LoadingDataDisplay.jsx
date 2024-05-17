@@ -5,8 +5,8 @@ import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
 import COPY from '../../COPY';
 import { recordAsyncMetrics } from '../util/Metrics';
-import {ExternalLinkIcon} from "./icons";
-import {css} from "glamor";
+import { ExternalLinkIcon } from './icons';
+import { css } from 'glamor';
 
 const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
 
@@ -18,20 +18,20 @@ const PROMISE_RESULTS = {
 const accessDeniedTitle = { title: COPY.ACCESS_DENIED_TITLE };
 const accessDeniedMsg = <div>
   VBA employs a sensitive access system and to access records at any designated level requires approval for the same or
-  higher-level access.<br/>
-  You are receiving this message because you do not have an authorized access level required to view this page.<br/>
-  <br/>
+  higher-level access.<br />
+  You are receiving this message because you do not have an authorized access level required to view this page.<br />
+  <br />
   To request access, please click the button below
   <div><a href="https://leaf.va.gov/VBA/335/sensitive_level_access_request/">
     <button className="btn btn-default">Request Access &nbsp;
       <span {...ICON_POSITION_FIX}><ExternalLinkIcon /></span>
     </button>
-  </a></div><br/>
+  </a></div><br />
   If you have any questions or need assistance with the request form linked above, please contact the Restricted
   Portfolio Management team at <a href="mailto:VBA.RPM@va.gov">VBA.RPM@va.gov</a>.
 </div>;
 
-const duplicateNumberTitle = {title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
+const duplicateNumberTitle = { title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
 const duplicateNumberMsg = <div>
         Duplicate phone numbers documented.<br />
   { COPY.DUPLICATE_PHONE_NUMBER_MESSAGE }</div>;
