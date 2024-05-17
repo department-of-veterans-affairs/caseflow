@@ -455,9 +455,10 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == first_day_amount)
       # return to Z-A, compare details again
       find("[aria-label='Sort by Days Waiting']").click
-      using_wait_time(wait_time) do
+      using_wait_time(10) do
         expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == second_day_amount)
       end
+    end
 
       it "uses notes sort correctly" do
         visit "/queue/correspondence/team?tab=correspondence_action_required"
@@ -1547,4 +1548,3 @@ RSpec.feature("The Correspondence Cases page") do
       expect all("td", text: "Non-NOD").length == 5
     end
   end
-end
