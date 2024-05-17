@@ -200,12 +200,21 @@ RSpec.feature("The Correspondence Intake page") do
   end
 
   context "Step 3 - Confirm" do
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user
+      ).update!(admin: true)
+      User.authenticate!(user: current_user)
+    end
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(4)
+        expect(all("button > span", text: "Edit Section").length).to eq(5)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -214,7 +223,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        all("button > span", text: "Edit Section")[1].click
+        all("button > span", text: "Edit Section")[2].click
         expect(page).to have_content("Review Tasks & Appeals")
         expect(page).to have_content("Tasks not related to an Appeal")
       end
