@@ -127,6 +127,12 @@ FactoryBot.define do
       end
     end
 
+    trait :vha_intake do
+      after(:create) do |user|
+        VhaBusinessLine.singleton.add_user(user)
+      end
+    end
+
 
     trait :bva_intake_admin do
       after(:create) do |user|

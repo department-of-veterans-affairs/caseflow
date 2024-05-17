@@ -31,8 +31,8 @@ class ClaimReviewController < ApplicationController
     if user_vha_admin?(current_user)
       return render_success if request_issues_update.perform!
     elsif !user_vha_admin?(current_user)
-      issues_modification_request_update.process!
-      return render_success if issues_modification_request_update.success?
+      issues_modification_request_updater.process!
+      return render_success if issues_modification_request_updater.success?
 
       render json: { error_code: issues_modification_request_update.error_code }, status: :unprocessable_entity
     else
@@ -65,8 +65,8 @@ class ClaimReviewController < ApplicationController
     fail "Must override source_type"
   end
 
-  def issues_modification_request_update
-    @issues_modification_request_update ||= NonAdmin::IssueModificationRequestsUpdater.new(
+  def issues_modification_request_updater
+    @issues_modification_request_updater ||= NonAdmin::IssueModificationRequestsUpdater.new(
       current_user: current_user,
       review: claim_review,
       issue_modifications_data: params[:issue_modification_requests]
