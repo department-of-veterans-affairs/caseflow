@@ -192,35 +192,35 @@ class AppealState < CaseflowRecord
   # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
   def process_event_to_update_appeal_state!(event)
     case event
-    when "decision_mailed"
-      decision_mailed_appeal_state_update_action!
-    when "appeal_docketed"
-      appeal_docketed_appeal_state_update_action!
-    when "appeal_cancelled"
-      appeal_cancelled_appeal_state_update_action!
-    when "hearing_postponed"
-      hearing_postponed_appeal_state_update_action!
-    when "hearing_withdrawn"
-      hearing_withdrawn_appeal_state_update_action!
-    when "hearing_scheduled"
-      hearing_scheduled_appeal_state_update_action!
-    when "scheduled_in_error"
-      scheduled_in_error_appeal_state_update_action!
-    when "vso_ihp_pending"
-      vso_ihp_pending_appeal_state_update_action!
-    when "vso_ihp_cancelled"
-      vso_ihp_cancelled_appeal_state_update_action!
-    when "vso_ihp_complete"
-      # Only updates appeal state if ALL ihp tasks are completed
-      vso_ihp_complete_appeal_state_update_action!
-    when "privacy_act_pending"
-      privacy_act_pending_appeal_state_update_action!
-    when "privacy_act_complete"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_complete_appeal_state_update_action!
-    when "privacy_act_cancelled"
-      # Only updates appeal state if ALL privacy act tasks are completed
-      privacy_act_cancelled_appeal_state_update_action!
+      when "decision_mailed"
+        decision_mailed_appeal_state_update_action!
+      when "appeal_docketed"
+        appeal_docketed_appeal_state_update_action!
+      when "appeal_cancelled"
+        appeal_cancelled_appeal_state_update_action!
+      when "hearing_postponed"
+        hearing_postponed_appeal_state_update_action!
+      when "hearing_withdrawn"
+        hearing_withdrawn_appeal_state_update_action!
+      when "hearing_scheduled"
+        hearing_scheduled_appeal_state_update_action!
+      when "scheduled_in_error"
+        scheduled_in_error_appeal_state_update_action!
+      when "vso_ihp_pending"
+        vso_ihp_pending_appeal_state_update_action!
+      when "vso_ihp_cancelled"
+        vso_ihp_cancelled_appeal_state_update_action!
+      when "vso_ihp_complete"
+        # Only updates appeal state if ALL ihp tasks are completed
+        vso_ihp_complete_appeal_state_update_action!
+      when "privacy_act_pending"
+        privacy_act_pending_appeal_state_update_action!
+      when "privacy_act_complete"
+        # Only updates appeal state if ALL privacy act tasks are completed
+        privacy_act_complete_appeal_state_update_action!
+      when "privacy_act_cancelled"
+        # Only updates appeal state if ALL privacy act tasks are completed
+        privacy_act_cancelled_appeal_state_update_action!
     end
   end
 
