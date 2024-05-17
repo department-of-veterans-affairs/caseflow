@@ -902,9 +902,9 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
 
-      # route to decision if mst/pact toggles are enabled.
+      # bypass special issues page if MST is enabled
       return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if
-        FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
+        FeatureToggle.enabled?(:mst_identification)
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
