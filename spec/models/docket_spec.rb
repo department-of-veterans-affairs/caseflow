@@ -116,12 +116,11 @@ describe Docket, :all_dbs do
 
           context "when called for ready is true and judge is passed" do
             let(:judge) { judge_decision_review_task.assigned_to }
-            subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
+
+            subject { DirectReviewDocket.new.appeals(ready: true, priority: false, judge: judge) }
 
             it "returns non priority appeals" do
-              expect(subject).to include appeal
-              expect(subject).to include denied_aod_motion_appeal
-              expect(subject).to include inapplicable_aod_motion_appeal
+              expect(subject).to match_array([appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal])
             end
           end
         end

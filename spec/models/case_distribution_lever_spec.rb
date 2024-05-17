@@ -11,6 +11,8 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        ama_direct_review_start_distribution_prior_to_goals
        ama_hearing_case_affinity_days
        cavc_affinity_days
+       cavc_aod_affinity_days
+       ama_hearing_case_aod_affinity_days
        ama_evidence_submission_docket_time_goals
        ama_hearings_docket_time_goals]
   end
