@@ -14,7 +14,7 @@ FactoryBot.define do
     bfcorkey { generate :vacols_correspondent_key }
     bfcorlid { "#{generate :veteran_file_number}S" }
 
-    correspondent { association :correspondent, ssn: bfcorlid.chomp("S")}
+    correspondent { association :correspondent }
 
     transient do
       docket_number { "150000#{bfkey}" }
@@ -231,6 +231,9 @@ FactoryBot.define do
                   case_issue.save
                 end
 
+                vacols_case.correspondent.ssn = vacols_case.bfcorlid.chomp("S")
+                vacols_case.save
+
                 create(
                   :veteran,
                   first_name: vacols_case.correspondent.snamef,
@@ -239,8 +242,6 @@ FactoryBot.define do
                   ssn: vacols_case.correspondent.ssn,
                   file_number: vacols_case.correspondent.ssn
                 )
-
-                vacols_case.save
 
                 create(
                   :case,
