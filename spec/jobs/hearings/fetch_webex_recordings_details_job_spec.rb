@@ -88,7 +88,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
       expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
         .with(error_details)
       expect_any_instance_of(described_class).to receive(:log_error).once
-      perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+      perform_enqueued_jobs { described_class.perform_later(id: id) }
     end
 
     context "mailer fails to send email" do
@@ -96,7 +96,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
         allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
           .and_raise(GovDelivery::TMS::Request::Error.new(500))
         expect_any_instance_of(described_class).to receive(:log_error).twice
-        perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
+        perform_enqueued_jobs { described_class.perform_later(id: id) }
       end
     end
   end
