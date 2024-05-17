@@ -175,6 +175,20 @@ describe SendNotificationJob, type: :job do
     clear_performed_jobs
   end
 
+  context "#queue_name_suffix" do
+    subject { described_class.queue_name_suffix }
+
+    it "returns non-FIFO name in development environment" do
+      is_expected.to eq :send_notifications
+    end
+
+    it "returns FIFO name in non-development environment" do
+      allow(ApplicationController).to receive(:dependencies_faked?).and_return(false)
+
+      is_expected.to eq :"send_notifications.fifo"
+    end
+  end
+
   it "it is the correct queue" do
     expect(SendNotificationJob.new.queue_name).to eq(queue_name)
   end
