@@ -1,4 +1,6 @@
 require "active_support/core_ext/integer/time"
+require_relative "../../app/services/deprecation_warnings/production_handler"
+require_relative "../../config/initializers/deprecation_warnings"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -79,16 +81,14 @@ Rails.application.configure do
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
-  # Send deprecation notices to registered listeners.
-  # config.active_support.deprecation = :notify
-  require_relative "../../app/services/deprecation_warnings/production_handler"
-  ActiveSupport::Deprecation.behavior = DeprecationWarnings::ProductionHandler
+  # Send deprecation notices to handler.
+  config.active_support.deprecation = DeprecationWarnings::ProductionHandler
 
   # Log disallowed deprecations.
-  # config.active_support.disallowed_deprecation = :log
+  config.active_support.disallowed_deprecation = :log
 
   # Tell Active Support which deprecation messages to disallow.
-  # config.active_support.disallowed_deprecation_warnings = []
+  config.active_support.disallowed_deprecation_warnings = DeprecationWarnings::DISALLOWED_DEPRECATION_WARNING_REGEXES
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new

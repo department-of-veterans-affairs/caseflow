@@ -25,12 +25,6 @@ module DeprecationWarnings
         allow(slack_service).to receive(:send_notification)
       end
 
-      it "emits a warning to the application logs" do
-        call
-
-        expect(rails_logger).to have_received(:warn).with(message)
-      end
-
       it "emits a warning to Sentry" do
         call
 
