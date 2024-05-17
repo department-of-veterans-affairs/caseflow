@@ -399,7 +399,7 @@ describe HearingRequestDocket, :postgres do
     # all of these are currently failing
     context "ama_hearing_case_aod_affinity_days" do
       let!(:ready_aod_tied_to_requesting_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
@@ -408,7 +408,7 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 40.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
@@ -417,7 +417,7 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 40.days.ago)
       end
       let!(:ready_aod_hearing_cancelled) do
-        create_ready_aod_appeal_hearing_cancelled(created_date: 20.days.ago)
+        create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
       end
 
       let(:priority) { true }
@@ -426,9 +426,6 @@ describe HearingRequestDocket, :postgres do
         before do
           CaseDistributionLever
             .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
-            .update!(value: "omit")
-          CaseDistributionLever
-            .find_by_item(Constants.DISTRIBUTION.cavc_aod_affinity_days)
             .update!(value: "omit")
         end
 
@@ -450,9 +447,6 @@ describe HearingRequestDocket, :postgres do
           CaseDistributionLever
             .find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days)
             .update!(value: "15")
-          CaseDistributionLever
-            .find_by_item(Constants.DISTRIBUTION.cavc_aod_affinity_days)
-            .update!(value: "15")
         end
 
         it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
@@ -460,7 +454,6 @@ describe HearingRequestDocket, :postgres do
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
-             ready_aod_tied_to_other_judge_in_window.uuid,
              ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
              ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
              ready_aod_hearing_cancelled.uuid]
@@ -610,13 +603,13 @@ describe HearingRequestDocket, :postgres do
 
       # ready aod appeals
       let!(:ready_aod_tied_to_requesting_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
@@ -624,7 +617,7 @@ describe HearingRequestDocket, :postgres do
 
       # appeal which is always genpop
       let!(:ready_aod_hearing_cancelled) do
-        create_ready_aod_appeal_hearing_cancelled(created_date: 20.days.ago)
+        create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
       end
 
       let!(:sct_ready_priority_appeal_not_tied_to_a_judge) do

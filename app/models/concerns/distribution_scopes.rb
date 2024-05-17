@@ -160,13 +160,14 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def ama_non_aod_appeals
-    where("advance_on_docket_motions.person_id IS NULL")
-      .where("people.date_of_birth > ?", 75.years.ago)
+    where("advance_on_docket_motions.granted = ?", false)
+      .where("DATE(people.date_of_birth) > ?", 75.years.ago.to_date)
   end
 
   def ama_aod_appeals
     where("advance_on_docket_motions.person_id IS NOT NULL")
-      .or(where("people.date_of_birth <= ?", 75.years.ago))
+      .where("advance_on_docket_motions.granted = ?", true)
+      .where("people.date_of_birth <= ?", 75.years.ago.to_date)
   end
 
   def with_original_appeal_and_judge_task
