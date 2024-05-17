@@ -10,7 +10,7 @@ class HearingRequestDocket < Docket
   end
 
   def ready_nonpriority_appeals
-    nonpriority_appeals_with_time_goal
+    appeals(priority: false, ready: true)
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)

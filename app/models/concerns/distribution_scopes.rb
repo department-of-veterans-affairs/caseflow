@@ -183,13 +183,4 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
     true
   end
-
-  def nonpriority_appeals_with_time_goal
-    appeals_list = appeals(priority: false, ready: true)
-    if calculate_days_for_time_goal_with_prior_to_goal > 0
-      appeals_list = appeals_list.where("receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
-    end
-
-    appeals_list
-  end
 end

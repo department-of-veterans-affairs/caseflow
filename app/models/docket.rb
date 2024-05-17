@@ -46,6 +46,8 @@ class Docket
 
     if lever_value == "true"
       appeals.none
+    elsif calculate_days_for_time_goal_with_prior_to_goal > 0
+      appeals.where("receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
     else
       appeals
     end
@@ -91,7 +93,7 @@ class Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    nonpriority_appeals_with_time_goal.limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
@@ -161,21 +163,19 @@ class Docket
   end
 
   def calculate_days_for_time_goal_with_prior_to_goal
-    docket_time_goal - start_distribution_prior_to_goal if docket_time_goal > 0
+    return 0 unless docket_time_goal > 0
+
+    docket_time_goal - start_distribution_prior_to_goal
   end
 
   def docket_time_goal
-    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{lever_name}_docket_time_goals").to_i
+    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals").to_i
   end
 
   def start_distribution_prior_to_goal
     @start_distribution_prior_to_goal ||= CaseDistributionLever.public_send(
-      "ama_#{lever_name}_start_distribution_prior_to_goals"
+      "ama_#{docket_type}_start_distribution_prior_to_goals"
     ).to_i
-  end
-
-  def lever_name
-    docket_type == "hearing" ? "hearings" : docket_type
   end
 
   private
