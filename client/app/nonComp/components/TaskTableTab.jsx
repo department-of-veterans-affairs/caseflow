@@ -10,6 +10,7 @@ import {
   veteranParticipantIdColumn,
   veteranSsnColumn,
   decisionReviewTypeColumn,
+  pendingIssueModificationColumn
 } from './TaskTableColumns';
 import {
   issueCountColumn,
@@ -90,7 +91,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
       ...issueTypesColumn(),
       filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
     },
-  ];
+    this.state.tabName === 'pending' ? pendingIssueModificationColumn() : null
+  ].filter((column) => column !== null);
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
     this.props.tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]
@@ -100,9 +102,9 @@ class TaskTableTabUnconnected extends React.PureComponent {
     this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.searchValue;
 
     return <React.Fragment>
-      {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
-      <div className="non-comp-queue-table-wrapper">
-        <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
+      <div className="search-and-description-container">
+        <div className="cf-noncomp-queue-completed-task noncomp-tab-description">{this.props.description}</div>
+        <div className="cf-search-ahead-parent cf-noncomp-search">
           <SearchBar
             id="searchBar"
             size="small"
@@ -116,6 +118,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
             isSearchAhead
             value={this.state.searchText} />
         </div>
+      </div>
+      <div className="non-comp-queue-table-wrapper">
         <div className="section-hearings-list">
           <TaskTableUnconnected
             {...this.state.predefinedColumns}

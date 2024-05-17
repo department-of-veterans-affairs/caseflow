@@ -26,6 +26,10 @@ class IssueModificationRequest < CaseflowRecord
     withdrawal: "Withdrawal"
   }
 
+  def serialize
+    Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
   private
 
   def set_decided_at

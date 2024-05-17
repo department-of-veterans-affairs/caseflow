@@ -50,3 +50,13 @@ export const decisionReviewTypeColumn = (tasks) => {
     order: -1
   };
 };
+
+export const pendingIssueModificationColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_PENDING_REQUESTS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.PENDING_ISSUE_MODIFICATION_COUNT.name,
+    valueFunction: (task) => task.appeal.pendingIssueModificationCount,
+    backendCanSort: true,
+    getSortValue: (task) => task.appeal.pendingIssueModificationCount
+  };
+};
