@@ -193,14 +193,9 @@ describe HearingMailer do
         vh.meeting_type.update!(service_name: "webex")
       end
     end
-    let(:hearing_link) { double("hearing_link") }
-
-    before do
-      allow(hearing_link).to receive(:nil?).and_return(false)
-    end
 
     it "Webex test link appears" do
-      allow(virtual_hearing).to receive(:guest_link).and_return("link")
+      allow(virtual_hearing).to receive(:guest_link).and_return("linK")
       expect(subject.html_part.body).to include("https://instant-usgov.webex.com/mediatest")
     end
   end
