@@ -20,7 +20,8 @@ module DeprecationWarnings
     /ActionView::Base instances must implement `compiled_method_container`/,
     /render file: should be given the absolute path to a file/,
     /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/,
-    /Class level methods will no longer inherit scoping/
+    /Class level methods will no longer inherit scoping/,
+    /NOT conditions will no longer behave as NOR in Rails 6\.1/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
