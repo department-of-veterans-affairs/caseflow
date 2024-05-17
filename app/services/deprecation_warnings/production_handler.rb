@@ -2,7 +2,7 @@
 
 require_relative "base_handler"
 
-# @note For use with `ActiveSupport::Deprecation.behavior=`.
+# @note For use with `ActiveSupport::Deprecation.behavior=` or `Rails.application.config.active_support.deprecation=`
 module DeprecationWarnings
   class ProductionHandler < BaseHandler
     APP_NAME = "caseflow"
@@ -12,7 +12,6 @@ module DeprecationWarnings
     class << self
       # :reek:LongParameterList
       def call(message, callstack, deprecation_horizon, gem_name)
-        emit_warning_to_application_logs(message)
         emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
         emit_warning_to_slack_alerts_channel(message)
       rescue StandardError => error
@@ -20,10 +19,6 @@ module DeprecationWarnings
       end
 
       private
-
-      def emit_warning_to_application_logs(message)
-        Rails.logger.warn(message)
-      end
 
       # :reek:LongParameterList
       def emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
