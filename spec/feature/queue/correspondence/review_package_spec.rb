@@ -5,7 +5,7 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
   let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
-  let(:mail_team_supervisor_user) { create(:user, roles: ["Mail Intake"]) }
+  let(:mail_team_supervisor_user) { create(:inbound_ops_team_supervisor)}
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:mail_team_user) { create(:user) }
   let(:mail_team_org) { MailTeam.singleton }
