@@ -21,19 +21,24 @@ class AutoAssignableUserFinder
     run_auto_assign_algorithm(correspondence)
   end
 
+  def can_user_work_this_correspondence?(user, correspondence)
+    return false if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
+    return false unless permission_checker.can?(
+      permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
+      organization: InboundOpsTeam.singleton,
+      user: user
+    )
+
+    sensitivity_levels_compatible?(user: user, veteran: correspondence.veteran)
+  end
+
   private
 
   attr_accessor :current_user
 
   def run_auto_assign_algorithm(correspondence)
     assignable_users.each do |user|
-      next if correspondence.nod && !user.nod?
-
-      user_obj = user.user_obj
-
-      if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
-        return user_obj
-      end
+      return user.user_obj if can_user_work_this_correspondence?(user.user_obj, correspondence)
     end
 
     nil
@@ -43,10 +48,6 @@ class AutoAssignableUserFinder
     users = []
 
     find_users.each do |user|
-      num_assigned = num_assigned_user_tasks(user)
-
-      next if num_assigned >= CorrespondenceAutoAssignmentLever.max_capacity
-
       nod_eligible = permission_checker.can?(
         permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
         organization: InboundOpsTeam.singleton,
@@ -56,7 +57,7 @@ class AutoAssignableUserFinder
       assignable = AssignableUser.new(
         user_obj: user,
         last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
-        num_assigned: num_assigned,
+        num_assigned: num_assigned_user_tasks(user),
         nod?: nod_eligible
       )
 
