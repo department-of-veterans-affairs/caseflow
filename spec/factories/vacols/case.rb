@@ -231,6 +231,15 @@ FactoryBot.define do
                   case_issue.save
                 end
 
+                create(
+                  :veteran,
+                  first_name: vacols_case.correspondent.snamef,
+                  last_name: vacols_case.correspondent.snamel,
+                  name_suffix: vacols_case.correspondent.ssalut,
+                  ssn: vacols_case.correspondent.ssn,
+                  file_number: vacols_case.correspondent.ssn
+                )
+
                 vacols_case.save
 
                 create(
