@@ -264,6 +264,21 @@ class AppealState < CaseflowRecord
     end
   end
 
+  # Purpose: Move the conditional of the appeal state
+  # update action into it's own method
+  #
+  # Params: None
+  #
+  # Response: None
+  def privacy_act_appeal_state_update_action_conditional!
+    open_tasks = appeal.tasks.open
+    open_tasks.where(type: FoiaColocatedTask.name).empty? &&
+    open_tasks.where(type: PrivacyActTask.name).empty? &&
+    open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+    open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+    open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+  end
+
   # Purpose: Method to update appeal_state in the case of
   # a privacy related tasks marked as complete.
   #
@@ -271,12 +286,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_complete_appeal_state_update_action!
-    open_tasks = appeal.tasks.open
-    if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-       open_tasks.where(type: PrivacyActTask.name).empty? &&
-       open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-       open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-       open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+    if privacy_act_appeal_state_update_action_conditional!
       update_appeal_state_action!(:privacy_act_complete)
     end
   end
@@ -288,12 +298,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_cancelled_appeal_state_update_action!
-    open_tasks = appeal.tasks.open
-    if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-       open_tasks.where(type: PrivacyActTask.name).empty? &&
-       open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-       open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-       open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+    if privacy_act_appeal_state_update_action_conditional!
       update!(privacy_act_pending: false)
     end
   end
