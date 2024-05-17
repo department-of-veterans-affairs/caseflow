@@ -7,7 +7,7 @@ class AppealState < CaseflowRecord
 
   # Purpose: Default state of a hash of attributes for an appeal_state, all set to false.
   #          This will be used in the `update_appeal_state` method.
-  DEFAULT_STATE = {
+  DEFAULT_STATE.freeze = {
     decision_mailed: false,
     appeal_docketed: false,
     hearing_postponed: false,
@@ -223,6 +223,7 @@ class AppealState < CaseflowRecord
         privacy_act_cancelled_appeal_state_update_action!
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
 
   private
 
@@ -272,11 +273,11 @@ class AppealState < CaseflowRecord
   # Response: None
   def privacy_act_appeal_state_update_action_conditional!
     open_tasks = appeal.tasks.open
-    open_tasks.where(type: FoiaColocatedTask.name).empty? &&
-    open_tasks.where(type: PrivacyActTask.name).empty? &&
-    open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-    open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
-    open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+      open_tasks.where(type: FoiaColocatedTask.name).empty? &&
+      open_tasks.where(type: PrivacyActTask.name).empty? &&
+      open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+      open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+      open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
   end
 
   # Purpose: Method to update appeal_state in the case of
