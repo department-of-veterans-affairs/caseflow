@@ -14,13 +14,13 @@ FactoryBot.define do
     bfcorkey { generate :vacols_correspondent_key }
     bfcorlid { "#{generate :veteran_file_number}S" }
 
-    association :correspondent, factory: :correspondent
+    correspondent { association :correspondent }
 
     transient do
       docket_number { "150000#{bfkey}" }
     end
     # folder.tinum is the docket_number
-    folder { association :folder, ticknum: bfkey, tinum: docket_number }
+    folder { association :folder, ticknum: bfkey, tinum: docket_number, titrnum: bfcorlid }
 
     bfregoff { "RO18" }
 
@@ -194,6 +194,72 @@ FactoryBot.define do
                 transient do
                   decision_document { [create(:document, type: "BVA Decision", received_at: 7.days.ago)] }
                 end
+              end
+            end
+
+            factory :legacy_cavc_appeal do
+              transient do
+                judge { nil }
+                attorney { nil }
+              end
+
+              bfmpro { "HIS" }
+              bfddec { 1.day.ago }
+              bfac { "1" }
+              bfdc { "3" }
+              bfcurloc { "99" }
+
+              after(:create) do |vacols_case, evaluator|
+                vacols_case.bfmemid = if evaluator.judge
+                                        existing_judge = VACOLS::Staff.find_by_sattyid(evaluator.judge.sattyid)
+                                        existing_judge.sattyid
+                                      else
+                                        new_judge = create(:staff, :judge_role, user: evaluator.judge)
+                                        new_judge.sattyid
+                                      end
+
+                vacols_case.bfattid = if evaluator.attorney
+                                        existing_attorney = VACOLS::Staff.find_by_sattyid(evaluator.attorney.sattyid)
+                                        existing_attorney.sattyid
+                                      else
+                                        new_attorney = create(:staff, :attorney_role, user: evaluator.attorney)
+                                        new_attorney.sattyid
+                                      end
+
+                vacols_case.case_issues.each do |case_issue|
+                  case_issue.issdc = "3"
+                  case_issue.save
+                end
+
+                vacols_case.correspondent.update!(ssn: vacols_case.bfcorlid.chomp("S"))
+                vacols_case.save
+
+                create(
+                  :veteran,
+                  first_name: vacols_case.correspondent.snamef,
+                  last_name: vacols_case.correspondent.snamel,
+                  name_suffix: vacols_case.correspondent.ssalut,
+                  ssn: vacols_case.correspondent.ssn,
+                  file_number: vacols_case.correspondent.ssn
+                )
+
+                create(
+                  :case,
+                  bfdpdcn: vacols_case.bfddec,
+                  bfac: "7",
+                  bfcurloc: "81",
+                  bfcorkey: vacols_case.bfcorkey,
+                  bfcorlid: vacols_case.bfcorlid,
+                  bfdnod: vacols_case.bfdnod,
+                  bfdsoc: vacols_case.bfdsoc,
+                  bfd19: vacols_case.bfd19,
+                  bfmpro: "ACT",
+                  correspondent: vacols_case.correspondent,
+                  folder_number_equal: true,
+                  original_case: vacols_case,
+                  case_issues_equal: true,
+                  original_case_issues: vacols_case.case_issues
+                )
               end
             end
           end
@@ -387,6 +453,38 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         if evaluator.remand_return_date
           create(:priorloc, lockey: vacols_case.bfkey, locstto: "96", locdout: evaluator.remand_return_date)
+        end
+      end
+    end
+
+    transient do
+      folder_number_equal { false }
+      original_case { nil }
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.folder_number_equal
+          folder_json = evaluator.original_case.folder.to_json
+          folder_attributes = JSON.parse(folder_json)
+          folder_attributes.except!("bfkey", "ticknum", "tidrecv", "tidcls", "tiaduser",
+                                    "tiadtime", "tikeywrd", "tiread2", "tioctime", "tiocuser",
+                                    "tidktime", "tidkuser")
+          vacols_case.folder.assign_attributes(folder_attributes)
+          vacols_case.folder.save(validate: false)
+        end
+      end
+    end
+
+    transient do
+      case_issues_equal { false }
+      original_case_issues { [] }
+
+      after(:create) do |vacols_case, evaluator|
+        if evaluator.case_issues_equal
+          evaluator.original_case_issues.each do |case_issue, i|
+            vacols_case.case_issues[i] = case_issue.attributes.except("issaduser", "issadtime", "issmduser",
+                                                                      "issmdtime", "issdc", "issdcls")
+            vacols_case.case_issues[i].save
+          end
         end
       end
     end
