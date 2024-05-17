@@ -36,7 +36,7 @@ class CorrespondenceQueueController < CorrespondenceController
 
     respond_to do |format|
       format.html do
-        @inbound_ops_team_user = User.inbound_ops_team_user.pluck(:css_id)
+        @inbound_ops_team_user = User.inbound_ops_team_users.pluck(:css_id)
         correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
       end
       format.json { correspondence_team_json_response }
@@ -50,7 +50,7 @@ class CorrespondenceQueueController < CorrespondenceController
   def correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
     if inbound_ops_team_user && task_ids.present?
       # candidate for refactor using PATCH request
-      process_tasks_if_applicable(inbound_ops_team_userr, task_ids, tab)
+      process_tasks_if_applicable(inbound_ops_team_user, task_ids, tab)
     elsif %w[continue_later cancel_intake].include?(action_type)
       intake_cancel_message(action_type)
     end

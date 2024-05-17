@@ -112,7 +112,7 @@ const CorrespondenceCases = (props) => {
         className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-        options={buildMailUserData(props.mailTeamUsers)}
+        options={buildMailUserData(props.inboundOpsTeamUsers)}
       />
     </div>);
 
