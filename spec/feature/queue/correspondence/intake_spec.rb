@@ -7,6 +7,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:supervisor_user) { create(:inbound_ops_team_supervisor)}
   let(:unauthorized_user) { create(:user) }
   let(:correspondence) { create :correspondence }
   let(:correspondence_intake_task) do
@@ -61,6 +62,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form shell" do
     before :each do
+      User.authenticate!(user: supervisor_user)
       setup_and_visit_intake
     end
 
@@ -72,7 +74,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[3].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(20) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
     end
 
     it "successfully advances to the second step" do
