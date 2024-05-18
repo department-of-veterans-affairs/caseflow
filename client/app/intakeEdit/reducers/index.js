@@ -5,6 +5,7 @@ import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
+import { formatIssueModificationRequests } from '../../intake/util/issueModificationRequests';
 
 export const mapDataToInitialState = function(props = {}) {
   const {
@@ -49,6 +50,7 @@ export const mapDataToInitialState = function(props = {}) {
     unidentifiedIssuesModalVisible: false,
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
     addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
     originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED

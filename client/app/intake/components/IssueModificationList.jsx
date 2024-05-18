@@ -5,15 +5,14 @@ import IssueModificationRequest from './IssueModificationRequest';
 const IssueModificationList = (
   {
     sectionTitle,
-    issuesArr,
-    lastSection
+    issueModificationRequests,
   }
 ) => {
-  const issues = issuesArr.map((issue, id) => {
+  const issues = issueModificationRequests.map((issueModificationRequest, id) => {
     return (
       <li key={id}>
-        <IssueModificationRequest issue={issue} />
-        {issuesArr.length > 1 && id !== issuesArr.length - 1 ?
+        <IssueModificationRequest issueModificationRequest={issueModificationRequest} />
+        {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
             <hr />
             <br />
@@ -32,7 +31,6 @@ const IssueModificationList = (
           {issues}
         </ol>
       </div>
-      {lastSection ? null : <hr />}
     </>
   );
 };
@@ -41,6 +39,5 @@ export default IssueModificationList;
 
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
-  issuesArr: PropTypes.arrayOf(PropTypes.object).isRequired,
-  lastSection: PropTypes.bool.isRequired
+  issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

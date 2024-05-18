@@ -2,17 +2,46 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
+import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 
-const IssueModificationRequest = ({ issue }) => {
-  const formatDecisionDate = (decisionDate) => {
-    return formatDateStr(decisionDate);
+const IssueModificationRequest = ({ issueModificationRequest }) => {
+  const {
+    benefitType,
+    requestType,
+    requestor,
+    decisionDate,
+    nonratingIssueCategory,
+    nonratingIssueDescription,
+    requestReason,
+    requestIssue,
+    withdrawalDate
+  } = issueModificationRequest;
+
+  const formattedRequestorName = `${requestor.fullName} (${requestor.cssID})`;
+
+  const readableBenefitType = BENEFIT_TYPES[benefitType];
+
+  const requestDetailsMapping = {
+    [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS,
   };
 
-  const modificationIssueInfo = (
+  const details = requestDetailsMapping[requestType];
+
+  const requestReasonSection = (
+    <>
+      <h4>{details}:</h4>
+      <p>{requestReason}</p>
+    </>
+  );
+
+  const modificationRequestInfoSection = (
     <div>
-      <p>{issue.nonRatingIssueCategory} - {issue.nonRatingIssueDescription}</p>
-      <p>Benefit type: {issue.benefitType}</p>
-      <p>Decision date: {formatDecisionDate(issue.decisionDate)}</p>
+      <p>{nonratingIssueCategory} - {nonratingIssueDescription}</p>
+      <p>Benefit type: {readableBenefitType}</p>
+      <p>Decision date: {formatDateStr(decisionDate)}</p>
       <br />
     </div>
   );
@@ -21,77 +50,52 @@ const IssueModificationRequest = ({ issue }) => {
     <div>
       <br />
       <h4>Requested by:</h4>
-      <p>{issue.requestor}</p>
+      <p>{formattedRequestorName}</p>
       <br />
     </div>
   );
 
-  let requestIssue;
+  const requestIssueInfo = () => {
+    if (!requestIssue) {
+      return;
+    }
 
-  switch (issue.requestType) {
-  case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
-    requestIssue = (
-      <>
-        {modificationIssueInfo}
-        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS}:</h4>
-        <p>{issue.requestReason}</p>
-        {requestedByUser}
-      </>
-    );
-    break;
-  case COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE:
-    requestIssue = (
-      <>
-        {modificationIssueInfo}
-        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS}:</h4>
-        <p>{issue.requestReason}</p>
-        {requestedByUser}
-        <div>
-          <h3>Original Issue</h3>
-          <div className="issue-modification-request-original">
-            <ol>
-              <li>
-                <p>{issue.requestIssue.nonRatingIssueCategory} - {issue.requestIssue.nonRatingIssueDescription}</p>
-                <p>Benefit type: {issue.requestIssue.benefitType}</p>
-                <p>Decision date: {formatDecisionDate(issue.requestIssue.decisionDate)}</p>
-              </li>
-            </ol>
-          </div>
+    return <>
+      <div>
+        <h3>Original Issue</h3>
+        <div className="issue-modification-request-original">
+          <ol>
+            <li>
+              <p>{requestIssue.nonratingIssueCategory} - {requestIssue.nonratingIssueDescription}</p>
+              <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
+              <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
+            </li>
+          </ol>
         </div>
-        <br />
-      </>
-    );
-    break;
-  case COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE:
-    requestIssue = (
+      </div>
+      <br />
+    </>;
+  };
+
+  const extraContentMapping = {
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: requestIssueInfo(),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: (
       <>
-        {modificationIssueInfo}
-        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS}:</h4>
-        <p>{issue.requestReason}</p>
-        {requestedByUser}
-      </>
-    );
-    break;
-  case COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE:
-    requestIssue = (
-      <>
-        {modificationIssueInfo}
-        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS}:</h4>
-        <p>{issue.requestReason}</p>
         <br />
         <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
-        <p>{formatDecisionDate(issue.withdrawalDate)}</p>
-        {requestedByUser}
+        <p>{formatDateStr(withdrawalDate)}</p>
       </>
-    );
-    break;
-  default:
-    break;
-  }
+    ),
+  };
+
+  const extraContent = extraContentMapping[requestType] || null;
 
   return (
     <div>
-      {requestIssue}
+      {modificationRequestInfoSection}
+      {requestReasonSection}
+      {requestedByUser}
+      {extraContent}
     </div>
   );
 };
@@ -99,5 +103,5 @@ const IssueModificationRequest = ({ issue }) => {
 export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
-  issue: PropTypes.object
+  issueModificationRequest: PropTypes.object
 };

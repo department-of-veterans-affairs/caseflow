@@ -3,7 +3,7 @@ class CreateIssueModificationRequest < ActiveRecord::Migration[6.0]
     create_table :issue_modification_requests, comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues" do |t|
       t.references :request_issue, foreign_key: true, null: true, comment: "Specifies the request issue targeted by the modification request."
       t.references :decision_review, polymorphic: true, null: true, index: {name: :index_issue_modification_requests_decision_review}, comment: "The decision review that this issue modification request belongs to"
-      t.string "request_type", default: "Addition", comment:  "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+      t.string "request_type", default: "addition", comment:  "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
       t.text "request_reason", null: true, comment: "The reason behind the modification request provided by the user initiating it."
       t.string "benefit_type", null: true, comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
       t.datetime "decision_date", null: true, comment: "The decision date of the request issue that is being modified"

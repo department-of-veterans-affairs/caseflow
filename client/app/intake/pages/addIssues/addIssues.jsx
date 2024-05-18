@@ -25,9 +25,7 @@ import { formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues,
-  formatIssueModificationRequestsBySection,
-  fakeIssueModificationRequestsData } from '../../util/issues';
+  formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import issueModificationRow from 'app/intake/components/issueModificationRow';
@@ -257,7 +255,8 @@ class AddIssuesPage extends React.Component {
       userCanEditIntakeIssues,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
-      isLegacy
+      isLegacy,
+      pendingIssueModificationRequests
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
@@ -293,9 +292,6 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issues);
-
-    const modificationIssueRequestsBySection =
-      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -538,18 +534,12 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
-    const modificationIssueRequestsObj =
-      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
-
-    const pendingSection = modificationIssueRequestsObj ?
-      issueModificationRow({
-        modificationIssueRequestsObj,
+    // Pending modifications table section
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
+      rowObjects = rowObjects.concat(issueModificationRow({
+        issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review'
-      }) :
-      null;
-
-    if (pendingSection !== null) {
-      rowObjects.push(pendingSection);
+      }));
     }
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
@@ -775,6 +765,7 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
+    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
