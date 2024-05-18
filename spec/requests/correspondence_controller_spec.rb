@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
-  let(:current_user) { create(:inbound_ops_team_supervisor) }
+  let(:current_user) { create(:user) }
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
   let(:correspondence) do
     create(
@@ -91,6 +91,8 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
   describe "correspondence_team" do
     before do
+      current_user = create(:inbound_ops_team_supervisor)
+      User.authenticate!(user: current_user)
       get correspondence_team_path, as: :json
     end
 
