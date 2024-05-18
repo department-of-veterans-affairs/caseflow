@@ -257,9 +257,11 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
+      expect(all("#Add-autotext-button-id-0").length).to eq 1
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 1
+      expect(all("#Add-autotext-button-id-0").length).to eq 0
+
+
     end
 
     it "The user can close the modal with the x button located in the top right." do
