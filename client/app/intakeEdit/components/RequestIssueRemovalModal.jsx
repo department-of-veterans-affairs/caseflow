@@ -6,7 +6,7 @@ import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormW
 import * as yup from 'yup';
 
 const removalSchema = yup.object({
-  requestReason: yup.string().required('Please enter a request reason.')
+  requestReason: yup.string().required()
 });
 
 const RequestIssueRemovalContent = (props) => {
@@ -17,6 +17,10 @@ const RequestIssueRemovalContent = (props) => {
       <RequestReason label="removal" />
     </div>
   );
+};
+
+RequestIssueRemovalContent.propTypes = {
+  currentIssue: PropTypes.object
 };
 
 export const RequestIssueRemovalModal = (props) => {

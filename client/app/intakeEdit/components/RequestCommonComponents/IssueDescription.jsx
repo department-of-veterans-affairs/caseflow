@@ -3,13 +3,12 @@ import { useFormContext } from 'react-hook-form';
 import TextField from 'app/components/TextField';
 
 const IssueDescription = () => {
-  const { register, errors } = useFormContext();
+  const { register } = useFormContext();
 
   return <TextField
     label="Issue description"
     name="nonRatingIssueDescription"
     inputRef={register}
-    errorMessage={errors.decisionText?.message}
   />;
 };
 

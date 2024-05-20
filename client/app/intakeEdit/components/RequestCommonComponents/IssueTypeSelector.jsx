@@ -5,10 +5,10 @@ import ISSUE_CATEGORIES from 'constants/ISSUE_CATEGORIES';
 import { useSelector } from 'react-redux';
 
 const IssueTypeSelector = () => {
-  const { control, errors } = useFormContext();
+  const { control } = useFormContext();
   const benefitType = useSelector((state) => state.benefitType);
 
-  const formattedIssueTypes = ISSUE_CATEGORIES[benefitType].map((issue) => { // TODO: Grab benefit type form redux
+  const formattedIssueTypes = ISSUE_CATEGORIES[benefitType].map((issue) => {
     return {
       value: issue,
       label: issue
@@ -24,7 +24,6 @@ const IssueTypeSelector = () => {
         label="Issue type"
         options={formattedIssueTypes}
         inputRef={ref}
-        errorMessage={errors.nonratingIssueCategory?.message}
         onChange={(valObj) => {
           onChange(valObj?.value);
         }}

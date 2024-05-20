@@ -8,13 +8,13 @@ import DateSelector from 'app/components/DateSelector';
 import * as yup from 'yup';
 
 const withdrawalSchema = yup.object({
-  requestReason: yup.string().required('Please enter a request reason.'),
-  withdrawalDate: yup.string().required('Please enter a withdrawal date.')
+  requestReason: yup.string().required(),
+  withdrawalDate: yup.string().required()
 });
 
 const RequestIssueWithdrawalContent = (props) => {
 
-  const { register, errors } = useFormContext();
+  const { register } = useFormContext();
 
   return (
     <div>
@@ -24,12 +24,15 @@ const RequestIssueWithdrawalContent = (props) => {
         label="Request date for withdrawal"
         name="withdrawalDate"
         inputRef={register}
-        errorMessage={errors.withdrawalDate?.message}
         type="date" />
       <RequestReason
         label="withdrawal" />
     </div>
   );
+};
+
+RequestIssueWithdrawalContent.propTypes = {
+  currentIssue: PropTypes.object
 };
 
 export const RequestIssueWithdrawalModal = (props) => {

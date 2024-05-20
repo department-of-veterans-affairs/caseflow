@@ -82,6 +82,7 @@ export const RequestIssueFormWrapper = (props) => {
 
 RequestIssueFormWrapper.propTypes = {
   onCancel: PropTypes.func,
+  children: PropTypes.node,
   currentIssue: PropTypes.object,
   issueIndex: PropTypes.number,
   schema: PropTypes.object,
