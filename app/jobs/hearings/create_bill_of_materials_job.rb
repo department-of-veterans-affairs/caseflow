@@ -13,7 +13,7 @@ module Hearings
       attr_reader :file_name, :file_type, :tmp_location
 
       def initialize(file_path)
-        @file_name = file_path.split("/")[-1]
+        @file_name = File.basename(file_path)
         @file_type = "json"
         @tmp_location = file_path
       end
@@ -29,8 +29,8 @@ module Hearings
     def perform(work_order)
       @work_order = work_order
       ensure_current_user_is_set
-      hash = create_bom_hash
-      save_json_file(hash)
+      bom_hash = create_bom_hash
+      save_json_file(bom_hash)
       upload_to_s3!(@bom_file_path)
       true
     end
@@ -73,7 +73,7 @@ module Hearings
     end
 
     def hashes_for_metadata_tools
-      job_file_path = Rails.root + "app/jobs/hearings/create_bill_of_materials_job.rb"
+      job_file_path = Rails.root.join("app", "jobs", "hearings", "create_bill_of_materials_job.rb")
       [
         {
           alg: "MD5",
@@ -155,13 +155,13 @@ module Hearings
     end
 
     def component_hashes(file_name)
-      base_path = Rails.root + "tmp/transcription_files/"
-      tmp_dirs = { mp3: base_path + "mp3/", rtf: base_path + "rtf/", xls: base_path + "xls/" }
-      extension = file_name.split(".")[-1].to_sym
+      base_path = Rails.root.join("tmp", "transcription_files")
+      tmp_dirs = { mp3: base_path.join("mp3"), rtf: base_path.join("rtf"), xls: base_path.join("xls") }
+      extension = file_name.split(".").last.to_sym
       [
         {
           alg: "MD5",
-          content: create_md5_hash(tmp_dirs[extension] + file_name)
+          content: create_md5_hash(tmp_dirs[extension].join(file_name))
         }
       ]
     end
@@ -186,13 +186,12 @@ module Hearings
     end
 
     def save_json_file(hash)
-      tmp_path = Rails.root + "tmp/transcription_files/json/"
-      file_path = tmp_path + "#{@work_order[:work_order_name].sub('BVA', 'BOM')}.json"
-      json_file = File.open(file_path, "w") do |f|
-        f.write(JSON.pretty_generate(hash))
-        f
-      end
-      @bom_file_path = json_file.path
+      tmp_path = Rails.root.join("tmp", "transcription_files", "json")
+      FileUtils.mkdir_p(tmp_path) unless File.directory?(tmp_path)
+      file_name = "#{@work_order[:work_order_name].sub('BVA', 'BOM')}.json"
+      file_path = tmp_path.join(file_name)
+      File.open(file_path, "w") { |f| f.write(JSON.pretty_generate(hash)) }
+      @bom_file_path = file_path.to_s
     end
 
     def create_md5_hash(file_path)
@@ -200,16 +199,14 @@ module Hearings
     end
 
     def licenses(file_name, id = "MIT")
-      extension = file_name.split(".")[-1]
-      case extension
-      when "mp3"
-        content_type = "audio/mp3"
-      when "rtf"
-        content_type = "application/rtf"
-      when "xls"
-        id = "GPL-3.0"
-        content_type = "application/vnd.ms-excel"
-      end
+      extension = file_name.split(".").last
+      content_type = case extension
+                     when "mp3" then "audio/mp3"
+                     when "rtf" then "application/rtf"
+                     when "xls"
+                       id = "GPL-3.0"
+                       "application/vnd.ms-excel"
+                     end
       generate_license_hash(id, content_type, extension)
     end
 
