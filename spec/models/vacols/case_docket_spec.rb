@@ -353,6 +353,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:limit) { 1 }
       it "only distributes cases to the limit" do
         expect(subject.count).to eq(1)
+        expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -363,6 +364,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:range) { 1 }
       it "only distributes cases within the range" do
         expect(subject.count).to eq(1)
+        expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -372,6 +374,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:another_nonpriority_ready_case_docket_number) { "9901002" }
         it "correctly orders the docket" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq another_nonpriority_ready_case.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -402,6 +405,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -421,6 +425,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "only_genpop" }
         it "does distribute the case only tied to inactive judge" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq third_nonpriority_ready_case.bfkey
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -469,6 +474,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "only distributes the one case to get back down to 30" do
             expect(subject.count).to eq(number_of_cases_over_backlog)
+            expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
             expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           end
