@@ -336,6 +336,7 @@ class Issue
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def load_from_vacols(hash)
       disposition = nil
       if hash["issdc"]
@@ -358,6 +359,7 @@ class Issue
         pact_status: hash["isspact"]&.casecmp("y")&.zero? || false
       )
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def create_in_vacols!(issue_attrs:)
       repository.create_vacols_issue!(issue_attrs: issue_attrs)

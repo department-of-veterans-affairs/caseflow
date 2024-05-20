@@ -227,6 +227,7 @@ class Intake < CaseflowRecord
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def veteran_invalid_fields
     missing_fields = veteran.errors.details
       .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
@@ -268,6 +269,7 @@ class Intake < CaseflowRecord
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   # Optionally implement this methods in subclass
   def validate_detail_on_start

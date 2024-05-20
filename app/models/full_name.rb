@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/PerceivedComplexity
+
 class FullName
   attr_accessor :first_name, :middle_initial, :last_name
 
@@ -41,5 +43,5 @@ class FullName
       fail InvalidFormatError
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

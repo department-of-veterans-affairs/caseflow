@@ -93,6 +93,7 @@ class BaseHearingUpdateForm
     ].any?(false) && (hearing.virtual? || virtual_hearing_cancelled?)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def should_create_or_update_virtual_hearing?
     virtual_hearing = hearing&.virtual_hearing
 
@@ -111,6 +112,7 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes.present? ||
       (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?))
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def only_time_updated_or_timezone_updated?
     # Always false if the virtual hearing was just created or if any emails were changed
@@ -162,6 +164,7 @@ class BaseHearingUpdateForm
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def appellant_email
     email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
       att.fetch("email_address", nil).present? && att.fetch("type", nil) == "AppellantHearingEmailRecipient"
@@ -171,7 +174,9 @@ class BaseHearingUpdateForm
 
     email&.strip
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def representative_email
     email_recipient_attributes = hearing_updates.fetch(:email_recipients_attributes, {}).find do |_, att|
       att.fetch("email_address", nil).present? && att.fetch("type", nil) == "RepresentativeHearingEmailRecipient"
@@ -202,6 +207,7 @@ class BaseHearingUpdateForm
 
     email&.strip
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def judge_email
     hearing.judge&.email

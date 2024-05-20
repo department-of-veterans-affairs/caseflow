@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # transformed Task model, with denormalized User/Org attributes
+# rubocop:disable  Metrics/PerceivedComplexity
 
 class ETL::Task < ETL::Record
   acts_as_tree
@@ -25,7 +26,7 @@ class ETL::Task < ETL::Record
     end
 
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
       assigned_to = fetch_assigned_to(original)
@@ -59,6 +60,7 @@ class ETL::Task < ETL::Record
       target
     end
     # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
   end
 end
+# rubocop:enable Metrics/PerceivedComplexity

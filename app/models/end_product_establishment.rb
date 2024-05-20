@@ -104,6 +104,7 @@ class EndProductEstablishment < CaseflowRecord
 
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_contentions!
     records_ready_for_contentions = calculate_records_ready_for_contentions
     return if records_ready_for_contentions.empty?
@@ -132,6 +133,7 @@ class EndProductEstablishment < CaseflowRecord
 
     fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def build_contentions(records_ready_for_contentions)
     records_ready_for_contentions.map do |issue|

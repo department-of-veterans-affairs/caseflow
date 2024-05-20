@@ -65,7 +65,7 @@ class ETL::HearingRecord < ETL::Record
     private
 
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def merge_original_attributes_to_target(original, target)
       # memoize
       hearing_day = original.hearing_day
@@ -136,7 +136,7 @@ class ETL::HearingRecord < ETL::Record
 
       target
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
   end
 end

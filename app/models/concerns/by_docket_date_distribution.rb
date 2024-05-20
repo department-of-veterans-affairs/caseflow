@@ -125,6 +125,7 @@ module ByDocketDateDistribution
         &.include?(hearing_judge_id(appeal))
     end
   end
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def hearing_judge_id(appeal)
     if appeal[:docket] == "legacy"
@@ -135,6 +136,7 @@ module ByDocketDateDistribution
       Appeal.find_by(uuid: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0

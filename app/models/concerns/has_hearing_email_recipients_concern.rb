@@ -57,12 +57,14 @@ module HasHearingEmailRecipientsConcern
 
     recipient
   end
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def all_emails_sent?
     appellant_recipient&.email_sent &&
       (judge_recipient&.email_address.nil? || judge_recipient&.email_sent) &&
       (representative_recipient&.email_address.nil? || representative_recipient&.email_sent)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def cancellation_emails_sent?
     appellant_recipient&.email_sent &&

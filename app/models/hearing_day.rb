@@ -136,7 +136,7 @@ class HearingDay < CaseflowRecord
     caseflow_and_vacols_hearings
   end
 
-  def to_hash(include_conference_link = false)
+  def to_hash(include_conference_link: false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
