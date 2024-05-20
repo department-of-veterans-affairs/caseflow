@@ -55,7 +55,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for addition" do
@@ -72,7 +74,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for withdrawal" do
@@ -87,7 +91,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for removal" do
@@ -101,7 +107,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
     end
 
