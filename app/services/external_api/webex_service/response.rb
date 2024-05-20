@@ -23,7 +23,7 @@ class ExternalApi::WebexService::Response
   private
 
   def check_for_errors
-    return if success?
+    return false if success?
 
     msg = error_message
     case code
