@@ -386,6 +386,7 @@ RSpec.feature("The Correspondence Intake page") do
     let(:current_user) { create(:user) }
     before do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
 
