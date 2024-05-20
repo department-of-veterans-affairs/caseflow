@@ -31,6 +31,7 @@ etl_default: &etl_default
   <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   <% end %>
+  migrations_paths: db/etl_migrate
 
 development:
   primary:
