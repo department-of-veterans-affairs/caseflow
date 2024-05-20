@@ -37,6 +37,7 @@ class VirtualHearing < CaseflowRecord
   class LinkMismatchError < StandardError; end
 
   include UpdatedByUserConcern
+  include ConferenceableConcern
 
   class << self
     def client_host_or_default
@@ -67,8 +68,7 @@ class VirtualHearing < CaseflowRecord
         lambda {
           joins(:establishment)
             .where("
-              conference_deleted = false AND
-              conference_id IS NOT NULL AND (
+              conference_deleted = false AND (
               request_cancelled = true OR
               virtual_hearing_establishments.processed_at IS NOT NULL
             )")
@@ -165,26 +165,36 @@ class VirtualHearing < CaseflowRecord
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{guest_pin}&role=guest"
+    if conference_provider == "pexip"
+      "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{formatted_alias_or_alias_with_host}&" \
+      "pin=#{guest_pin}&role=guest"
+    end
+  end
+
+  def co_host_hearing_link
+    self[:co_host_hearing_link]
   end
 
   def host_link
     return host_hearing_link if host_hearing_link.present?
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{host_pin}&role=host"
+    if conference_provider == "pexip"
+      "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{formatted_alias_or_alias_with_host}&" \
+      "pin=#{host_pin}&role=host"
+    end
   end
 
   def test_link(title)
+    return "https://instant-usgov.webex.com/mediatest" if conference_provider == "webex"
+
     if use_vc_test_link?
       if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
-        fail(VirtualHearings::LinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
+        fail(VirtualHearings::PexipLinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
       end
       if ENV["VIRTUAL_HEARING_URL_PATH"].blank?
-        fail(VirtualHearings::LinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
+        fail(VirtualHearings::PexipLinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
       end
 
       host_and_path = "#{ENV['VIRTUAL_HEARING_URL_HOST']}#{ENV['VIRTUAL_HEARING_URL_PATH']}"
@@ -215,7 +225,7 @@ class VirtualHearing < CaseflowRecord
   # Determines if the hearing conference has been created
   def active?
     # the conference has been created the virtual hearing is active
-    conference_id.present? || (guest_hearing_link.present? && host_hearing_link.present?)
+    guest_hearing_link.present? && host_hearing_link.present?
   end
 
   # Determines if the conference was deleted
@@ -225,7 +235,7 @@ class VirtualHearing < CaseflowRecord
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
     # the conference has been created the virtual hearing was deleted
-    conference_id.present? && conference_deleted?
+    conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
@@ -264,7 +274,7 @@ class VirtualHearing < CaseflowRecord
     fail NoAliasWithHostPresentError if alias_with_host.blank?
 
     conference_id = alias_with_host[/BVA(\d+)@/, 1]
-    link_service = VirtualHearings::LinkService.new(conference_id)
+    link_service = VirtualHearings::PexipLinkService.new(conference_id)
 
     # confirm that we extracted the conference ID correctly,
     # and that the original link was generated with the link service
@@ -275,6 +285,19 @@ class VirtualHearing < CaseflowRecord
     end
 
     update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
+  end
+
+  # :reek:FeatureEnvy
+  def subject_for_conference
+    "#{hearing.docket_number}_#{hearing.id}_#{hearing.class}"
+  end
+
+  def nbf
+    hearing.scheduled_for.beginning_of_day.to_i
+  end
+
+  def exp
+    hearing.scheduled_for.end_of_day.to_i
   end
 
   private
