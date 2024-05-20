@@ -328,7 +328,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:bust_backlog) { false }
 
     before do
-      # FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+      FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
       nonpriority_ready_case.reload
       another_nonpriority_ready_case.reload
       third_nonpriority_ready_case.reload
@@ -362,6 +362,10 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when range is specified" do
       let(:range) { 1 }
+
+      # We do not provide a range if this feature toggle is enabled
+      before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+
       it "only distributes cases within the range" do
         expect(subject.count).to eq(1)
         expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
