@@ -111,11 +111,11 @@ class NonAdmin::IssueModificationRequestsUpdater
   end
 
   def find_issue_modification_request(id)
-    @issue_modification_request ||= IssueModificationRequest.find(id)
+    @issue_modification_request = IssueModificationRequest.find(id)
   end
 
   def requestor
-    @requestor ||= issue_modification_request.requestor
+    @requestor = issue_modification_request.requestor
   end
 end
 
