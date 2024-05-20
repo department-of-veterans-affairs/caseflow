@@ -2,6 +2,8 @@
 import { ACTIONS } from '../constants';
 import { formatRelationships } from '../util';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { formatIssueModificationRequests } from '../util/issueModificationRequests';
+
 import { update } from '../../util/ReducerUtil';
 
 export const commonReducers = (state, action) => {
@@ -299,6 +301,9 @@ export const commonStateFromServerIntake = (serverIntake) => {
     },
     requestIssues: {
       $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
+    },
+    pendingIssueModificationRequests: {
+      $set: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)

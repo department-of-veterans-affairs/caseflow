@@ -482,11 +482,14 @@ class BusinessLine < Organization
 
     def issue_count
       # Issue count alias for sorting and serialization
-      "COUNT(request_issues.id) AS issue_count"
+      # This needs a distinct count because the query returns 1 row for each request issue and
+      # now it can return 1 additional row for each issue modification request with a duplicated request issue.id
+      "COUNT(DISTINCT request_issues.id) AS issue_count"
     end
 
     def pending_issue_count
-      "COUNT(issue_modification_requests.id) AS pending_issue_count"
+      # Issue modification request count alias for sorting and serialization
+      "COUNT(DISTINCT issue_modification_requests.id) AS pending_issue_count"
     end
 
     # Alias for the issue_categories on request issues for sorting and serialization
