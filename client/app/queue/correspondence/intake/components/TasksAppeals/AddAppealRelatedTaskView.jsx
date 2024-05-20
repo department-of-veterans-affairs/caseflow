@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForSearchStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
-import { COLORS, LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
@@ -151,61 +151,53 @@ export const AddAppealRelatedTaskView = (props) => {
         </LoadingContainer>
       }
       {existingAppealRadio === RELATED_YES && !loading &&
-        <div className="gray-border"
+        <div className="gray-border corr"
           style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
-          <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
-            <div style={{ backgroundColor: COLORS.GREY_BACKGROUND,
-              width: '100%',
-              height: '50px',
-              paddingTop: '1.5rem' }}>
-              <b style={{
-                verticalAlign: 'center',
-                paddingLeft: '2.5rem',
-                paddingTop: '1.5rem',
-                border: '0',
-                paddingBottom: '1.5rem',
-                paddingRigfht: '5.5rem'
-              }}>Existing Appeals</b>
-            </div>
-            <ul style={{ paddingLeft: '2.5rem' }}>
-              Please select prior appeal(s) to link to this correspondence
-            </ul>
-            <ul style={{ paddingLeft: '2.5rem' }}>
-              <div style={{ paddingRight: '1rem' }}>
-                <CaseListTable
-                  // Need to use this as key to force React to re-render checkboxes
-                  key={tableUpdateTrigger}
-                  appeals={appeals}
-                  showCheckboxes
-                  paginate
-                  linkOpensInNewTab
-                  checkboxOnChange={appealCheckboxOnChange}
-                  taskRelatedAppealIds={taskRelatedAppeals}
-                  currentPage={currentAppealPage}
-                  updatePageHandlerCallback={appealsPageUpdateHandler}
-                />
+          <div className="entire-tasks-related-to-existing-appeals">
+            <div className="existing-appeals-box">
+              <div className="bottom-of-existing-appeals-title">
+                <b className="existing-appeals-title">Existing Appeals</b>
               </div>
-            </ul>
-          </div>
-          <div>
-            {taskRelatedAppeals.toSorted().map((appealId, index) => {
-              return (
-                <ExistingAppealTasksView
-                  key={index}
-                  appeal={appealById(appealId)}
-                  newTasks={newTasks}
-                  setNewTasks={setNewTasks}
-                  waivedTasks={waivedTasks}
-                  setWaivedTasks={setWaivedTasks}
-                  nextTaskId={nextTaskId}
-                  setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
-                  unlinkAppeal={appealCheckboxOnChange}
-                  allTaskTypeOptions={props.allTaskTypeOptions}
-                  filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
-                  autoTexts={props.autoTexts}
-                />
-              );
-            })}
+              <ul className="selection-for-prior-appeals-linked-to-corr">
+              Please select prior appeal(s) to link to this correspondence
+              </ul>
+              <ul className="left-side-of-docket">
+                <div className="right-side-of-assigned-to" >
+                  <CaseListTable
+                  // Need to use this as key to force React to re-render checkboxes
+                    key={tableUpdateTrigger}
+                    appeals={appeals}
+                    showCheckboxes
+                    paginate
+                    linkOpensInNewTab
+                    checkboxOnChange={appealCheckboxOnChange}
+                    taskRelatedAppealIds={taskRelatedAppeals}
+                    currentPage={currentAppealPage}
+                    updatePageHandlerCallback={appealsPageUpdateHandler}
+                  />
+                </div>
+              </ul>
+            </div>
+            <div>
+              {taskRelatedAppeals.toSorted().map((appealId, index) => {
+                return (
+                  <ExistingAppealTasksView
+                    key={index}
+                    appeal={appealById(appealId)}
+                    newTasks={newTasks}
+                    setNewTasks={setNewTasks}
+                    waivedTasks={waivedTasks}
+                    setWaivedTasks={setWaivedTasks}
+                    nextTaskId={nextTaskId}
+                    setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+                    unlinkAppeal={appealCheckboxOnChange}
+                    allTaskTypeOptions={props.allTaskTypeOptions}
+                    filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                    autoTexts={props.autoTexts}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       }
