@@ -11,4 +11,13 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
       params[:organization].dvc&.eql?(object)
     end
   end
+  attribute :user_permission do |object, params|
+    object&.organization_permissions(params[:organization])
+  end
+  attribute :user_admin_permission do |object, params|
+    object&.organization_admin_permissions(params[:organization])
+  end
+  attribute :description do |object, params|
+    object&.organization_admin_permissions(params[:organization])
+  end
 end

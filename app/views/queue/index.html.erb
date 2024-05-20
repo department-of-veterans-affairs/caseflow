@@ -5,6 +5,8 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
+    organizationPermissions: @permissions,
+    userPermissions: @user_permissions,
     userIsVsoEmployee: current_user.vso_employee?,
     userIsCamoEmployee: current_user.camo_employee?,
     userIsSCTCoordinator: current_user.specialty_case_team_coordinator?,
