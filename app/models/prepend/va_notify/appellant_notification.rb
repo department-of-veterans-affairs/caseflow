@@ -37,27 +37,6 @@ module AppellantNotification
     AppellantNotification.error_handling_messages_and_attributes(appeal, claimant, message_attributes)
   end
 
-  # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
-  #
-  # appeal_id  - id of appeal
-  # appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
-  # event - The module that is being triggered to send a notification
-  #
-  # Examples
-  #
-  #  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
-  #   # => A new appeal state is created if it doesn't exist
-  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
-
-  def self.appeal_mapper(appeal_id, appeal_type, event)
-    begin
-      appeal = appeal_type.constantize.find(appeal_id)
-
-      appeal.appeal_state.process_event_to_update_appeal_state!(event)
-    rescue StandardError => error
-      Rails.logger.error("Appeal could not be updated due to #{error.message}\n#{error.backtrace.join("\n")}")
-    end
-  end
   # Purpose: Method to check appeal state for statuses and send out a notification based on
   # which statuses are turned on in the appeal state
   #

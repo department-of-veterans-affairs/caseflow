@@ -26,7 +26,7 @@ class AppealState < CaseflowRecord
                                                                privacy_act_complete: false,
                                                                scheduled_in_error: false,
                                                                appeal_cancelled: false
-                                                               ).with_indifferent_access.freeze
+                                                              ).freeze
 
   # Locates appeal states that are related to appeals eligible to potentially receive quarterly notifications.
   #   These appeals must not have been cancelled and their decisions must not have already been mailed.
@@ -321,8 +321,8 @@ class AppealState < CaseflowRecord
   def privacy_act_pending_appeal_state_update_action!
     update_appeal_state_action!(:privacy_act_pending)
   end
-end
 
-def update_appeal_state_action!(new_state)
-  update!(DEFAULT_STATE.dup.tap { |state| state[new_state] = true })
+  def update_appeal_state_action!(new_state)
+    update!(DEFAULT_STATE.dup.tap { |state| state[new_state] = true })
+  end
 end

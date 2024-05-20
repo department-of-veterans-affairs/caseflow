@@ -219,6 +219,30 @@ describe AppealState do
     end
   end
 
+  context "#appeal_docketed_appeal_state_update!" do
+    let(:user) { create(:user) }
+
+    subject { appeal_state.appeal_docketed_appeal_state_update_action! }
+
+    context "updates the appeal_docketed attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          appeal_docketed: false
+        )
+      end
+
+      it "sets appeal_docketed to true and all others false" do
+        subject
+
+        expect(appeal_state.appeal_docketed).to eq true
+      end
+    end
+  end
+
   context "#vso_ihp_pending_appeal_state_update!" do
     let(:user) { create(:user) }
 
@@ -244,250 +268,272 @@ describe AppealState do
     end
   end
 
-  #   context "receives vso_ihp_cancelled event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         vso_ihp_pending: true
-  #       )
-  #     end
+  context "#vso_ihp_cancelled_appeal_state_update!" do
+    let(:user) { create(:user) }
 
-  #     let(:event) { "vso_ihp_cancelled" }
+    subject { appeal_state.vso_ihp_cancelled_appeal_state_update_action! }
 
-  #     it "sets vso_ihp_pending to false and vso_ihp_complete to false" do
-  #       subject
+    context "updates the vso_ihp_pending attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          vso_ihp_pending: true
+        )
+      end
 
-  #       expect(appeal_state.vso_ihp_pending).to eq false
-  #       expect(appeal_state.vso_ihp_complete).to eq false
-  #     end
-  #   end
+      it "sets vso_ihp_pending to false and all others false" do
+        subject
 
-  #   context "receives vso_ihp_complete event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         vso_ihp_pending: true
-  #       )
-  #     end
+        expect(appeal_state.vso_ihp_pending).to eq false
+      end
+    end
+  end
 
-  #     let(:event) { "vso_ihp_complete" }
+  context "#vso_ihp_complete_appeal_state_update_action!" do
+    let(:user) { create(:user) }
 
-  #     it "sets vso_ihp_complete to true and all others false" do
-  #       subject
+    subject { appeal_state.vso_ihp_complete_appeal_state_update_action! }
 
-  #       expect(appeal_state.vso_ihp_pending).to eq false
-  #       expect(appeal_state.vso_ihp_complete).to eq true
-  #     end
-  #   end
+    context "updates the vso_ihp_complete attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          vso_ihp_complete: true
+        )
+      end
 
-  #   context "receives appeal_cancelled event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         appeal_docketed: true
-  #       )
-  #     end
+      it "sets vso_ihp_complete to true and all others false" do
+        subject
 
-  #     let(:event) { "appeal_cancelled" }
+        expect(appeal_state.vso_ihp_complete).to eq true
+      end
+    end
+  end
 
-  #     it "sets appeal_cancelled to true and all others false" do
-  #       subject
 
-  #       expect(appeal_state.appeal_docketed).to eq false
-  #       expect(appeal_state.appeal_cancelled).to eq true
-  #     end
-  #   end
+  context "#privacy_act_pending_appeal_state_update!" do
+    let(:user) { create(:user) }
 
-  #   context "receives appeal_docketed event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id
-  #       )
-  #     end
+    subject { appeal_state.privacy_act_pending_appeal_state_update_action! }
 
-  #     let(:event) { "appeal_docketed" }
+    context "updates the privacy_act_pending attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          privacy_act_pending: false
+        )
+      end
 
-  #     it "sets appeal_docketed to true and all others false" do
-  #       subject
+      it "sets privacy_act_pending to true and all others false" do
+        subject
 
-  #       expect(appeal_state.appeal_docketed).to eq true
-  #     end
-  #   end
+        expect(appeal_state.privacy_act_pending).to eq true
+      end
+    end
+  end
 
-  #   context "receives decision_mailed event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id
-  #       )
-  #     end
+  context "#privacy_act_cancelled_appeal_state_update_action!" do
+    let(:user) { create(:user) }
 
-  #     let(:event) { "decision_mailed" }
+    subject { appeal_state.privacy_act_cancelled_appeal_state_update_action! }
 
-  #     it "sets decision_mailed to true and all others false" do
-  #       subject
+    context "updates the privacy_act_pending attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          privacy_act_pending: true
+        )
+      end
 
-  #       expect(appeal_state.decision_mailed).to eq true
-  #     end
-  #   end
+      it "sets privacy_act_cancelled to true and all others false" do
+        subject
 
-  #   context "receives privacy_act_pending event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id
-  #       )
-  #     end
+        expect(appeal_state.privacy_act_pending).to eq false
+      end
+    end
+  end
 
-  #     let(:event) { "privacy_act_pending" }
+  context "#privacy_act_complete_appeal_state_update_action!" do
+    let(:user) { create(:user) }
 
-  #     it "sets privacy_act_pending to true and all others false" do
-  #       subject
+    subject { appeal_state.privacy_act_complete_appeal_state_update_action! }
 
-  #       expect(appeal_state.privacy_act_pending).to eq true
-  #     end
-  #   end
+    context "updates the privacy_act_complete attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          privacy_act_pending: true
+        )
+      end
 
-  #   context "receives privacy_act_cancelled event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         privacy_act_pending: true
-  #       )
-  #     end
+      it "sets privacy_act_complete to true and all others false" do
+        subject
 
-  #     let(:event) { "privacy_act_cancelled" }
+        expect(appeal_state.privacy_act_pending).to eq false
+        expect(appeal_state.privacy_act_complete).to eq true
+      end
+    end
+  end
 
-  #     it "sets privacy_act_pending and privacy_act_complete to false" do
-  #       subject
+  context "#decision_mailed_appeal_state_update_action!" do
+    let(:user) { create(:user) }
 
-  #       expect(appeal_state.privacy_act_pending).to eq false
-  #       expect(appeal_state.privacy_act_complete).to eq false
-  #     end
-  #   end
+    subject { appeal_state.decision_mailed_appeal_state_update_action! }
 
-  #   context "receives privacy_act_complete event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         privacy_act_pending: true
-  #       )
-  #     end
+    context "updates the decision_mailed attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          decision_mailed: false
+        )
+      end
 
-  #     let(:event) { "privacy_act_complete" }
+      it "sets decision_mailed to true and all others false" do
+        subject
 
-  #     it "sets privacy_act_complete to true and all others to false." do
-  #       subject
+        expect(appeal_state.decision_mailed).to eq true
+      end
+    end
+  end
 
-  #       expect(appeal_state.privacy_act_pending).to eq false
-  #       expect(appeal_state.privacy_act_complete).to eq true
-  #     end
-  #   end
+  context "#appeal_cancelled_appeal_state_update_action!" do
+    let(:user) { create(:user) }
 
-  #   context "receives hearing_scheduled event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         appeal_docketed: true
-  #       )
-  #     end
+    subject { appeal_state.appeal_cancelled_appeal_state_update_action! }
 
-  #     let(:event) { "hearing_scheduled" }
+    context "updates the appeal_cancelled attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          hearing_scheduled: true
+        )
+      end
 
-  #     it "sets hearing_scheduled to true and all others to false." do
-  #       subject
+      it "sets appeal_cancelled to true and all others false" do
+        subject
 
-  #       expect(appeal_state.appeal_docketed).to eq false
-  #       expect(appeal_state.hearing_scheduled).to eq true
-  #     end
-  #   end
+        expect(appeal_state.hearing_scheduled).to eq false
+        expect(appeal_state.appeal_cancelled).to eq true
+      end
+    end
+  end
+  context "#hearing_postponed_appeal_state_update!" do
+    let(:user) { create(:user) }
 
-  #   context "receives hearing_withdrawn event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         hearing_scheduled: true
-  #       )
-  #     end
+    subject { appeal_state.hearing_postponed_appeal_state_update_action! }
 
-  #     let(:event) { "hearing_withdrawn" }
+    context "updates the hearing_postponed attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          hearing_scheduled: true
+        )
+      end
 
-  #     it "sets hearing_withdrawn to true and all others to false." do
-  #       subject
+      it "sets hearing_postponed to true and all others false" do
+        subject
 
-  #       expect(appeal_state.hearing_scheduled).to eq false
-  #       expect(appeal_state.hearing_withdrawn).to eq true
-  #     end
-  #   end
+        expect(appeal_state.hearing_scheduled).to eq false
+        expect(appeal_state.hearing_postponed).to eq true
+      end
+    end
+  end
 
-  #   context "receives hearing_postponed event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         hearing_scheduled: true
-  #       )
-  #     end
+  context "#hearing_withdrawn_appeal_state_update!" do
+    let(:user) { create(:user) }
 
-  #     let(:event) { "hearing_postponed" }
+    subject { appeal_state.hearing_withdrawn_appeal_state_update_action! }
 
-  #     it "sets hearing_postponed to true and all others to false." do
-  #       subject
+    context "updates the hearing_withdrawn attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          hearing_scheduled: true
+        )
+      end
 
-  #       expect(appeal_state.hearing_scheduled).to eq false
-  #       expect(appeal_state.hearing_postponed).to eq true
-  #     end
-  #   end
+      it "sets hearing_withdrawn to true and all others false" do
+        subject
 
-  #   context "receives scheduled_in_error event" do
-  #     let(:appeal_state) do
-  #       create(
-  #         :appeal_state,
-  #         :ama,
-  #         created_by_id: user.id,
-  #         updated_by_id: user.id,
-  #         hearing_scheduled: true
-  #       )
-  #     end
+        expect(appeal_state.appeal_docketed).to eq false
+        expect(appeal_state.hearing_withdrawn).to eq true
+      end
+    end
+  end
+  context "#hearing_scheduled_appeal_state_update!" do
+    let(:user) { create(:user) }
 
-  #     let(:event) { "scheduled_in_error" }
+    subject { appeal_state.hearing_scheduled_appeal_state_update_action! }
 
-  #     it "sets scheduled_in_error to true and all others to false." do
-  #       subject
+    context "updates the hearing_scheduled attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          appeal_docketed: true
+        )
+      end
 
-  #       expect(appeal_state.hearing_scheduled).to eq false
-  #       expect(appeal_state.scheduled_in_error).to eq true
-  #     end
-  #   end
-  # end
+      it "sets hearing_scheduled to true and all others false" do
+        subject
+
+        expect(appeal_state.appeal_docketed).to eq false
+        expect(appeal_state.hearing_scheduled).to eq true
+      end
+    end
+  end
+
+  context "#scheduled_in_error_appeal_state_update!" do
+  let(:user) { create(:user) }
+
+  subject { appeal_state.scheduled_in_error_appeal_state_update_action! }
+
+  context "updates the scheduled_in_error attribute" do
+    let(:appeal_state) do
+      create(
+        :appeal_state,
+        :ama,
+        created_by_id: user.id,
+        updated_by_id: user.id,
+        hearing_scheduled: true
+      )
+    end
+
+    it "sets scheduled_in_error to true and all others false" do
+      subject
+
+      expect(appeal_state.hearing_scheduled).to eq false
+      expect(appeal_state.scheduled_in_error).to eq true
+    end
+  end
+end
 end
