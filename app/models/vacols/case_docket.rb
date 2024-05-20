@@ -85,7 +85,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this version of the query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_APPEALS_ADDITIONAL_COLS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORKEY, BFCORLID
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFMEMID, BFDPDCN,
+    BFCORKEY, BFCORLID
     #{FROM_READY_APPEALS}
   "
 
