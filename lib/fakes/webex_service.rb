@@ -69,7 +69,7 @@ class Fakes::WebexService
     )
   end
 
-  def fetch_recording_details
+  def fetch_recording_details(recording_id)
     if error?
       return ExternalApi::WebexService::RecordingDetailsResponse.new(
         HTTPI::Response.new(@status_code, {}, error_response)
@@ -205,7 +205,7 @@ class Fakes::WebexService
       "temporaryDirectDownloadLinks": {
         "recordingDownloadLink": "https://www.learningcontainer.com/mp4-sample-video-files-download/#",
         "audioDownloadLink": "https://freetestdata.com/audio-files/mp3/",
-        "transcriptionDownloadLink": "https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt",
+        "transcriptDownloadLink": "https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt",
         "expiration": "2022-05-01T10:30:25Z"
       },
       "format": "ARF",
