@@ -20,7 +20,8 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :correction_type, :created_at, :decision_date, :decision_review_id,
              :decision_review_type, :edited_description, :end_product_establishment_id,
              :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_bgs_source, :nonrating_issue_description,
+             :nonrating_issue_bgs_id, :nonrating_issue_category,
+             :nonrating_issue_bgs_source, :nonrating_issue_description,
              :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
