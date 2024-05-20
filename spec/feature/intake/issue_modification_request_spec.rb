@@ -44,7 +44,6 @@ feature "Issue Modification Request", :postgres do
           first("select").select("Request modification")
         end
 
-        # binding.irb
         expect(page).to have_button("Submit request", disabled: true)
 
         fill_in "Issue type", with: "Beneficiary Travel"
@@ -104,6 +103,40 @@ feature "Issue Modification Request", :postgres do
 
         click_on "Cancel"
       end
+    end
+
+    it "moves issues to the pending admin review section when the issue modification modal is submitted" do
+      visit "higher_level_reviews/#{in_progress_task.uuid}/edit"
+
+      expect(page).not_to have_text("Pending admin review")
+
+      within "#issue-#{in_progress_task.request_issues.first.id}" do
+        first("select").select("Request modification")
+      end
+
+      fill_in "Issue type", with: "Beneficiary Travel"
+      find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+      fill_in "Prior decision date", with: "05/15/2024"
+      fill_in "Issue description", with: "An issue description"
+      fill_in "Please provide a reason for the issue modification request", with: "I wanted to"
+
+      click_on "Submit request"
+
+      expect(page).to have_text("Pending admin review")
+
+      pending_section = find("tr", text: "Pending admin review")
+
+      expect(pending_section).to have_text("An issue description")
+      expect(pending_section).to have_text("I wanted to")
+      expect(pending_section).to have_text("05/15/2024")
+      expect(pending_section).to have_text("Beneficiary Travel")
+
+      ri = in_progress_task.request_issues.first
+      expect(pending_section).to have_text("#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}".strip)
+      expect(pending_section).to have_text(Constants::BENEFIT_TYPES["vha"])
+      expect(pending_section).to have_text("Original Issue")
+      expect(pending_section).to have_text(ri.decision_date.strftime("%m/%d/%Y").to_s)
     end
   end
 
