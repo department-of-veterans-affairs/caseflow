@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 describe AppellantSubstitution do
   describe ".same_appeal_substitution_allowed?" do

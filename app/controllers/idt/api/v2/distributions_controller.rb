@@ -70,7 +70,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   def render_error(status, message, distribution_id)
     error_uuid = SecureRandom.uuid
     error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
-    Rails.logger.error(error_message.to_s + "Error ID: " + error_uuid)
+    Rails.logger.error("#{error_message}Error ID: #{error_uuid}")
     Raven.capture_exception(error_message, extra: { error_uuid: error_uuid })
     render json: { message: error_message + " #{error_uuid}" }, status: status
   end

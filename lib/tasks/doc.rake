@@ -5,9 +5,9 @@ require "csv"
 
 # required for ERD diagrams
 require "ruby-graphviz"
-require "tasks/support/erd_record_associations.rb"
-require "tasks/support/erd_graph_styling.rb"
-require "tasks/support/jailer_polymorphic_associations.rb"
+require "tasks/support/erd_record_associations"
+require "tasks/support/erd_graph_styling"
+require "tasks/support/jailer_polymorphic_associations"
 
 namespace :doc do
   desc "prepare environment"
@@ -140,7 +140,7 @@ namespace :doc do
         # remove 'pos', 'lp' (label position), and 'rects' attributes
         output_string.gsub!(/\b(pos|head_lp|lp|rects)="[^"]*"/m, "")
         # remove 'width' and 'height' attributes
-        output_string.gsub!(/\b(width|height)=[0-9\.]*/m, "")
+        output_string.gsub!(/\b(width|height)=[0-9.]*/m, "")
         # And also remove extraneous commas resulting from attribute removal
         output_string.gsub!(/^\t*,\n/, "").gsub!(/\[,/, "[")
         file.write output_string.force_encoding("UTF-8")

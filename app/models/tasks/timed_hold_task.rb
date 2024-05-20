@@ -13,12 +13,12 @@ class TimedHoldTask < Task
             presence: true,
             inclusion: { in: 1..120 },
             on: :create,
-            unless: proc { |task| task.parent.class == PostSendInitialNotificationLetterHoldingTask }
+            unless: proc { |task| task.parent.instance_of?(PostSendInitialNotificationLetterHoldingTask) }
   validates :days_on_hold,
             presence: true,
             inclusion: { in: 45..364 },
             on: :create,
-            if: proc { |task| task.parent.class == PostSendInitialNotificationLetterHoldingTask }
+            if: proc { |task| task.parent.instance_of?(PostSendInitialNotificationLetterHoldingTask) }
   after_create :cancel_active_siblings
 
   attr_accessor :days_on_hold

@@ -130,18 +130,18 @@ describe Form8, :all_dbs do
       expect(form8.remarks_initial).to eq("Hello, World")
       expect(form8.remarks_continued).to be_nil
 
-      form8.remarks = "A" * 606 + "Hello, World!"
+      form8.remarks = "#{'A' * 606}Hello, World!"
 
       expect(form8.remarks_rollover?).to be_truthy
-      expect(form8.remarks_initial).to eq("A" * 575 + " (see continued remarks page 2)")
-      expect(form8.remarks_continued).to eq("\n \nContinued:\n" + ("A" * 31) + "Hello, World!")
+      expect(form8.remarks_initial).to eq("#{'A' * 575} (see continued remarks page 2)")
+      expect(form8.remarks_continued).to eq("\n \nContinued:\n#{'A' * 31}Hello, World!")
     end
 
     it "rolls over remarks with newlines properly" do
-      form8.remarks = "\n" * 6 + "Hello, World!"
+      form8.remarks = "#{"\n" * 6}Hello, World!"
 
       expect(form8.remarks_rollover?).to be_truthy
-      expect(form8.remarks_initial).to eq("\n" * 5 + " (see continued remarks page 2)")
+      expect(form8.remarks_initial).to eq("#{"\n" * 5} (see continued remarks page 2)")
       expect(form8.remarks_continued).to eq("\n \nContinued:\nHello, World!")
     end
 

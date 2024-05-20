@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "faker"
-require_relative "tasks/task_shared_examples.rb"
+require_relative "tasks/task_shared_examples"
 
 describe TaskPager, :all_dbs do
   let(:assignee) { create(:organization) }

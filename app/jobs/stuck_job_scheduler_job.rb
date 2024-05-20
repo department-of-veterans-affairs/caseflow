@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/master_scheduler_interface.rb"
+require_relative "../../lib/helpers/master_scheduler_interface"
 class StuckJobSchedulerJob < CaseflowJob
   queue_with_priority :low_priority
   include MasterSchedulerInterface

@@ -66,6 +66,6 @@ class UploadDocumentToVbmsJob < CaseflowJob
 
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + " ID: " + uuid)
+    Rails.logger.info("#{info_message} ID: #{uuid}")
   end
 end

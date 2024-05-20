@@ -363,7 +363,6 @@ module Caseflow::Error
       @error_code = error_code
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -383,7 +382,6 @@ module Caseflow::Error
         error
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end
@@ -394,6 +392,7 @@ module Caseflow::Error
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end
+
   class UserRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
     attr_accessor :code, :message, :title
@@ -403,6 +402,7 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
   class IssueRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
     attr_accessor :code, :message, :title
@@ -412,6 +412,7 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
+
   class RemandReasonRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
@@ -463,6 +464,7 @@ module Caseflow::Error
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
   class InvalidNotificationStatusFormat < StandardError; end
+
   class NotificationInitializationError < SerializableError
     attr_accessor :message
 
@@ -476,6 +478,7 @@ module Caseflow::Error
     include Caseflow::Error::ErrorSerializer
     attr_accessor :code, :message
   end
+
   class PacmanBadRequestError < PacmanApiError; end
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
@@ -487,6 +490,7 @@ module Caseflow::Error
       true
     end
   end
+
   class RedisLockFailed < StandardError; end
 
   # Event Decision Review Create Errors

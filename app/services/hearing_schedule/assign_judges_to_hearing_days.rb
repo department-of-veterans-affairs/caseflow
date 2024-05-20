@@ -4,7 +4,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   class << self
     def load_spreadsheet_data(file_name)
       spreadsheet_location = File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)
-      s3_file_location = SchedulePeriod::S3_SUB_BUCKET + "/" + file_name
+      s3_file_location = "#{SchedulePeriod::S3_SUB_BUCKET}/#{file_name}"
 
       S3Service.fetch_file(s3_file_location, spreadsheet_location)
       spreadsheet = Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)

@@ -83,7 +83,7 @@ class LegacyTask
       appeal_id: appeal.id,
       assigned_to: user,
       assigned_at: record.assigned_to_location_date.try(:to_datetime),
-      task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
+      task_id: record.created_at ? "#{record.vacols_id}-#{record.created_at.strftime('%Y-%m-%d')}" : nil,
       document_id: record.document_id,
       assigned_by: record.assigned_by,
       appeal: appeal,

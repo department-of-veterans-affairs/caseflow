@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/retry_decision_review_processes.rb"
-require_relative "../../lib/helpers/master_scheduler_interface.rb"
+require_relative "../../lib/helpers/retry_decision_review_processes"
+require_relative "../../lib/helpers/master_scheduler_interface"
 
 class RetryDecisionReviewProcessJob < CaseflowJob
   include MasterSchedulerInterface

@@ -57,11 +57,9 @@ module ExplainAppealEventsConcern
       dec_issue = dec_issues[req_dec_issue["decision_issue_id"]]
       events += Explain::RequestIssueRecordEventMapper.new(req_issue).events
       events += Explain::DecisionIssueRecordEventMapper.new(dec_issue, req_issue).events
-    end
 
-    # Remove records after processing them.
-    # Don't remove them while processing because multiple request_issues can map to the same decision_issue.
-    exported_records(RequestDecisionIssue).each do |req_dec_issue|
+      # Remove records after processing them.
+      # Don't remove them while processing because multiple request_issues can map to the same decision_issue.
       req_issues.delete(req_dec_issue["request_issue_id"])
       dec_issues.delete(req_dec_issue["decision_issue_id"])
     end

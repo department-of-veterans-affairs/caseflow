@@ -85,7 +85,7 @@ class HigherLevelReview < ClaimReview
     # the deadline to contest the decision for this claim
     return remand_decision_event_date + 365.days if remand_decision_event_date
 
-    return decision_event_date + 365.days if decision_event_date
+    decision_event_date + 365.days if decision_event_date
   end
 
   def decision_date_for_api_alert

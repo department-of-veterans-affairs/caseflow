@@ -85,7 +85,8 @@ namespace :emails do
     task :reminder, [:request_type] => :environment do |_task, args|
       include FactoryBot::Syntax::Methods
 
-      if args.request_type.to_sym == :video
+      case args.request_type.to_sym
+      when :video
         hearing_day = build(
           :hearing_day,
           :video,
@@ -99,7 +100,7 @@ namespace :emails do
           regional_office: "RO15",
           hearing_day: hearing_day
         )
-      elsif args.request_type.to_sym == :central || args.request_type.to_sym == :travel
+      when :central, :travel
         hearing_day = build(
           :hearing_day,
           created_by: User.last,
@@ -111,7 +112,7 @@ namespace :emails do
           :hearing,
           hearing_day: hearing_day
         )
-      elsif args.request_type.to_sym == :virtual
+      when :virtual
         hearing = build(
           :hearing,
           judge: User.last,

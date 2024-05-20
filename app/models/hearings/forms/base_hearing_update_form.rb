@@ -79,8 +79,8 @@ class BaseHearingUpdateForm
   def show_update_alert?
     # if user only changes the hearing time for a virtual hearing, don't show update alert
     # scheduled_time for hearing, scheduled_for for legacy
-    return false if hearing.virtual? && (hearing_updates.dig(:scheduled_time).present? ||
-                    hearing_updates.dig(:scheduled_for).present?)
+    return false if hearing.virtual? && (hearing_updates[:scheduled_time].present? ||
+                    hearing_updates[:scheduled_for].present?)
 
     hearing_updated? || (virtual_hearing_updates.present? && !show_virtual_hearing_progress_alerts?)
   end
@@ -107,10 +107,9 @@ class BaseHearingUpdateForm
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
     #   3. Judge is being changed
-    (
-      virtual_hearing_attributes.present? ||
+
+    virtual_hearing_attributes.present? ||
       (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?))
-    )
   end
 
   def only_time_updated_or_timezone_updated?
@@ -159,7 +158,7 @@ class BaseHearingUpdateForm
                         appellant_email.present? ||
                         appellant_timezone.present?
 
-    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    # NOTE: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
@@ -214,7 +213,7 @@ class BaseHearingUpdateForm
                         representative_email.present? ||
                         representative_timezone.present?
 
-    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    # NOTE: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
     !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
@@ -224,7 +223,7 @@ class BaseHearingUpdateForm
                         judge_id.present? ||
                         virtual_hearing_attributes&.key?(:judge_email)
 
-    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    # NOTE: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
     !should_send_email || virtual_hearing_cancelled? || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 

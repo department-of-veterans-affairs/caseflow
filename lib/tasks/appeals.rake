@@ -20,7 +20,7 @@ namespace :appeals do
 
     logger_tag = "rake appeals:change_vacols_location"
     message = "Invoked with: #{args.to_a.join(', ')}"
-    message = "(dry run) " + message if dry_run
+    message = "(dry run) #{message}" if dry_run
     Rails.logger.tagged(logger_tag) { Rails.logger.info(message) }
     puts_output = ""
 
@@ -50,7 +50,7 @@ namespace :appeals do
     # step through the passed vacols IDs
     message = "Changing location for #{extras.length} legacy appeals"
     Rails.logger.tagged(logger_tag) { Rails.logger.info(message) } if !dry_run
-    puts_output += message + "\n"
+    puts_output += "#{message}\n"
 
     appeals_moved = 0
     extras.each do |vacols_id|
@@ -58,7 +58,7 @@ namespace :appeals do
       if la.blank?
         message = "No legacy appeal found for vacols_id #{vacols_id}; skipping."
         Rails.logger.tagged(logger_tag) { Rails.logger.info(message) } if !dry_run
-        puts_output += message + "\n"
+        puts_output += "#{message}\n"
         next
       end
 
@@ -68,7 +68,7 @@ namespace :appeals do
         message = "Legacy appeal with vacols_id #{vacols_id} is in location " \
                   "#{current_location}, not #{args.from_location}; skipping."
         Rails.logger.tagged(logger_tag) { Rails.logger.info(message) } if !dry_run
-        puts_output += message + "\n"
+        puts_output += "#{message}\n"
         next
       end
 
@@ -80,7 +80,7 @@ namespace :appeals do
         Rails.logger.tagged(logger_tag) { Rails.logger.info(message) }
       end
 
-      puts_output += message + "\n"
+      puts_output += "#{message}\n"
 
       appeals_moved += 1
     end
@@ -88,7 +88,7 @@ namespace :appeals do
     message = "Moved #{appeals_moved} of #{extras.length} legacy appeals from " \
               "location #{args.from_location} to #{args.to_location}."
     Rails.logger.tagged(logger_tag) { Rails.logger.info(message) } if !dry_run
-    puts_output += message + "\n"
+    puts_output += "#{message}\n"
     puts puts_output
   end
 end

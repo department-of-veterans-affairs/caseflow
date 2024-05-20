@@ -13,7 +13,7 @@ class DispatchEmailJob < CaseflowJob
   LOG_PREFIX = "BVADispatchEmail"
   TYPE_LABEL = "BVA Dispatch POA notification email"
 
-  def initialize(appeal: nil, type:, email_address:)
+  def initialize(type:, email_address:, appeal: nil)
     @appeal = appeal
     @type = type.to_s
     @email_address = email_address.to_s

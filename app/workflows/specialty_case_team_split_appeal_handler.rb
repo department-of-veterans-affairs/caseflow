@@ -3,9 +3,7 @@
 # The SpecialtyCaseTeamSplitAppealHandler handles cancelling, moving, and creating tasks after splitting an appeal
 # That contains Specialty Case Team issues
 class SpecialtyCaseTeamSplitAppealHandler
-  attr_reader :old_appeal
-  attr_reader :new_appeal
-  attr_reader :current_user
+  attr_reader :old_appeal, :new_appeal, :current_user
 
   def initialize(old_appeal, new_appeal, current_user)
     @old_appeal = old_appeal

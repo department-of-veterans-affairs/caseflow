@@ -128,7 +128,7 @@ class VaDotGovAddressValidator
   def closest_regional_office
     @closest_regional_office ||= begin
       return unless closest_ro_response.success?
-      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
+      # NOTE: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
       # as a valid RO for any veteran living in Texas.
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
       return "RO49" if closest_regional_office_facility_id_is_el_paso?

@@ -118,7 +118,7 @@ class RampReview < CaseflowRecord
   end
 
   def intake_processed_by
-    intake ? intake.user : nil
+    intake&.user
   end
 
   def new_end_product_establishment

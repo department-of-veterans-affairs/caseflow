@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
-require "./app/models/batch_processes/batch_process.rb"
+require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job"
+require "./app/models/batch_processes/batch_process"
 
 describe PriorityEpSyncBatchProcessJob, type: :job do
   include ActiveJob::TestHelper

@@ -85,11 +85,9 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
 
   # Find affected Request Issue using the contention id from the Cannot Delete Contention Error
   def find_removed_or_withdrawn_request_issue(request_issues_update, contention_id)
-    affected_request_issue = request_issues_update.removed_or_withdrawn_issues.find do |ri|
+    request_issues_update.removed_or_withdrawn_issues.find do |ri|
       ri.contention_reference_id == contention_id
     end
-
-    affected_request_issue
   end
 
   # Resets closed_at and closed_status values to nil

@@ -143,7 +143,7 @@ class TaskFilter
   private
 
   def filter_params_is_array
-    errors.add(:filter_params, "must be an array") unless filter_params&.is_a?(Array)
+    errors.add(:filter_params, "must be an array") unless filter_params.is_a?(Array)
   end
 
   def tasks_type_is_valid

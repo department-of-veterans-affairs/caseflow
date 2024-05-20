@@ -26,8 +26,7 @@ class Hearings::ReminderService
 
   private
 
-  attr_reader :hearing
-  attr_reader :last_sent_reminder
+  attr_reader :hearing, :last_sent_reminder
 
   def log_reminder_type(type)
     Rails.logger.info(

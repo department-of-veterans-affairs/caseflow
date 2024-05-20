@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./shared_setup.rb"
+require_relative "./shared_setup"
 
 RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   describe "with a dismissed appeal" do

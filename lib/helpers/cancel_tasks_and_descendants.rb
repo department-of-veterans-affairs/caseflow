@@ -63,7 +63,7 @@ class CancelTasksAndDescendants
   end
 
   def cancellable_descendants_for(task)
-    # Note: The result of `Task #descendants` also includes the instance itself
+    # NOTE: The result of `Task #descendants` also includes the instance itself
     Task.open.where(id: task.descendants)
   end
 

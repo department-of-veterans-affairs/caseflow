@@ -3,14 +3,12 @@
 class DocumentFetcher
   include ActiveModel::Model
 
-  attr_accessor :appeal, :use_efolder
+  attr_accessor :appeal, :use_efolder, :documents
 
   def initialize(attributes)
     super(attributes)
     patiently_fetch_documents_from_service!
   end
-
-  attr_accessor :documents
   attr_reader :manifest_vbms_fetched_at, :manifest_vva_fetched_at
 
   def number_of_documents

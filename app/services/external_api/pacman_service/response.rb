@@ -23,11 +23,11 @@ class ExternalApi::PacmanService::Response
   # Parses response body to an object
   def body
     @body ||= begin
-                JSON.parse(resp.body).with_indifferent_access
-              rescue JSON::ParserError
-                log(JSON::ParserError)
-                {}
-              end
+      JSON.parse(resp.body).with_indifferent_access
+    rescue JSON::ParserError
+      log(JSON::ParserError)
+      {}
+    end
   end
 
   private
@@ -55,8 +55,8 @@ class ExternalApi::PacmanService::Response
 
   def log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error(error.name + " " + error.message + "Error ID: " + uuid)
-    Raven.capture_exception(error.name + " " + error.message, extra: { error_uuid: uuid })
+    Rails.logger.error("#{error.name} #{error.message}Error ID: #{uuid}")
+    Raven.capture_exception("#{error.name} #{error.message}", extra: { error_uuid: uuid })
   end
 
   # Gets the error message from the response

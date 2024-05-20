@@ -9,8 +9,7 @@
 # :reek:RepeatedConditionals
 # :reek:TooManyInstanceVariables
 class SanitizedJsonExporter
-  attr_accessor :value_mapping
-  attr_accessor :records_hash
+  attr_accessor :value_mapping, :records_hash
 
   # :reek:BooleanParameter
   def initialize(*initial_records,

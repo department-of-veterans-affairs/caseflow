@@ -86,9 +86,9 @@ RSpec.describe Events::CreateClaimantOnEvent do
 
       it "a new record of the new person that was created is added to the event_record table" do
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to eq(nil)
-        expect {
+        expect do
           described_class.process!(event: event, parser: veteran_is_not_claimant_and_person_does_not_exist_parser, decision_review: decision_review)
-        }.to change { EventRecord.count }.by(1)
+        end.to change { EventRecord.count }.by(1)
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to be_present
         expect(EventRecord.last.evented_record_id).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).id)
         expect(EventRecord.last.evented_record_type).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).class.to_s)

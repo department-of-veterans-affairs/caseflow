@@ -467,7 +467,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         number_of_days = all_ros_all_types.count
         average = total / number_of_days
         # For each ro
-        all_ros_all_types.each do |_date, count|
+        all_ros_all_types.each_value do |count|
           expect(count).to be_within(5).of(average)
         end
       end
@@ -475,7 +475,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       # Test each type Vi(R)tual and (V)ideo and see that for each RO the docket allocation
       # on each date is fairly even (min - max is within three)
       it "allocates each type of days evenly across available dates for each ro" do
-        day_counts_and_summary_per_ro.each do |_ro_key, info|
+        day_counts_and_summary_per_ro.each_value do |info|
           types = %w[R V]
           types.each do |type|
             min_label = "min_#{type}"

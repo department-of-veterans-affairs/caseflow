@@ -3,10 +3,8 @@
 class QueueRepository
   class << self
     # :nocov:
-    def transaction
-      VACOLS::Record.transaction do
-        yield
-      end
+    def transaction(&block)
+      VACOLS::Record.transaction(&block)
     end
 
     def tasks_for_user(css_id)

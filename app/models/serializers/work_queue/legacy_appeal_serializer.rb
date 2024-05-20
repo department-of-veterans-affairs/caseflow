@@ -60,7 +60,7 @@ class WorkQueue::LegacyAppealSerializer
   attribute :paper_case, &:paper_case?
   attribute :overtime, &:overtime?
   attribute :caseflow_veteran_id do |object|
-    object.veteran ? object.veteran.id : nil
+    object.veteran&.id
   end
 
   attribute :closest_regional_office

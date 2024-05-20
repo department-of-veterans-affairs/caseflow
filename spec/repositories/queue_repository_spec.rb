@@ -190,26 +190,26 @@ describe QueueRepository, :all_dbs do
     end
 
     context "when note with multi-byte characters causes it to be greater than 350 characters" do
-      let(:decass_attrs) { { note: ("a" * 341) + "Veteran’s" } }
+      let(:decass_attrs) { { note: "#{'a' * 341}Veteran’s" } }
       let(:date_added) { "2018-04-18".to_date }
       let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
 
       it "converts multi-byte characters to ASCII (VACOLS Oracle DB is in ASCII format)" do
         subject
 
-        expect(decass.reload.deatcom).to eq(("a" * 341) + "Veteran's")
+        expect(decass.reload.deatcom).to eq("#{'a' * 341}Veteran's")
       end
     end
 
     context "when comment with multi-byte characters causes it to be greater than 600 characters" do
-      let(:decass_attrs) { { comment: ("a" * 575) + "“pleadings” and ‘motions”" } }
+      let(:decass_attrs) { { comment: "#{'a' * 575}“pleadings” and ‘motions”" } }
       let(:date_added) { "2018-04-18".to_date }
       let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
 
       it "converts multi-byte characters to ASCII (VACOLS Oracle DB is in ASCII format)" do
         subject
 
-        expect(decass.reload.debmcom).to eq(("a" * 575) + "\"pleadings\" and 'motions\"")
+        expect(decass.reload.debmcom).to eq("#{'a' * 575}\"pleadings\" and 'motions\"")
       end
     end
   end

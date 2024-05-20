@@ -11,10 +11,8 @@ class QuerySubscriber
     @queries = []
   end
 
-  def track
-    ActiveSupport::Notifications.subscribed(method(:call), "sql.active_record") do
-      yield
-    end
+  def track(&block)
+    ActiveSupport::Notifications.subscribed(method(:call), "sql.active_record", &block)
   end
 
   def call(_name, _started, _finished, _unique_id, payload)

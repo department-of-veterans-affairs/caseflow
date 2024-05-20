@@ -148,11 +148,12 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def as_claimant
-    type = if reptype == "C"
+    type = case reptype
+           when "C"
              "Claimant"
-           elsif reptype == "D"
+           when "D"
              "Attorney"
-           elsif reptype == "E"
+           when "E"
              "Agent"
            end
 

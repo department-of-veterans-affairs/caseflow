@@ -25,7 +25,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   # There will be a 5 second rest between each iteration
   # Job will end if there are no records are left to batch
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform
     setup_job
     loop do
@@ -54,7 +54,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 

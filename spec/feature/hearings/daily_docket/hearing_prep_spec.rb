@@ -9,7 +9,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
     scenario "User can update hearing prep fields" do
-      visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
+      visit "hearings/schedule/docket/#{legacy_hearing.hearing_day.id}"
 
       expect(page).to have_button("Print all Hearing Worksheets", disabled: false)
       click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
@@ -33,7 +33,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
     let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
 
     scenario "no hearings are shown" do
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
       expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS)
     end
@@ -44,7 +44,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
     let!(:person) { Person.find_by(participant_id: hearing.appeal.appellant.participant_id) }
 
     scenario "User can update hearing prep fields" do
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
       click_dropdown(name: "#{hearing.external_id}-disposition", index: 0)
       click_button("Confirm")
@@ -72,7 +72,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
 
       scenario "judge can overwrite previous AOD motion" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
         click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
         click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
         click_button("Save")
@@ -98,7 +98,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
       end
 
       scenario "judge can overwrite AOD motion" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
         click_dropdown(name: "#{hearing.external_id}-aod", text: "Denied")
         click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
         click_button("Save")
@@ -116,7 +116,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         let(:reason) { Constants.AOD_REASONS.age }
 
         scenario "judge can change AOD reason without changing Granted/Denied status" do
-          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
           step "change AOD" do
             click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
@@ -131,7 +131,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           end
 
           step "reload page and check saved AOD" do
-            visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+            visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
             expect(page.find(".dropdown-#{hearing.external_id}-aod")).to have_content("Granted")
             expect(page.find(".dropdown-#{hearing.external_id}-aodReason")).to have_content("Financial Distress")
@@ -142,7 +142,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
 
     context "with no existing AOD motion" do
       scenario "judge can create a new AOD motion" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
         click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
         click_button("Save")
         expect(page).to have_content("Please select an AOD reason")

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./app/models/batch_processes/batch_process.rb"
+require "./app/models/batch_processes/batch_process"
 
 describe BatchProcess, :postgres do
   describe ".needs_reprocessing" do
@@ -158,9 +158,9 @@ describe BatchProcess, :postgres do
       end
 
       it "the record is inspected to see if it's STUCK" do
-        batch.send(:error_out_record!, subject, error + " 1")
-        batch.send(:error_out_record!, subject, error + " 2")
-        batch.send(:error_out_record!, subject, error + " 3")
+        batch.send(:error_out_record!, subject, "#{error} 1")
+        batch.send(:error_out_record!, subject, "#{error} 2")
+        batch.send(:error_out_record!, subject, "#{error} 3")
         subject.reload
         expect(subject.status).to eq(Constants.PRIORITY_EP_SYNC.stuck)
       end

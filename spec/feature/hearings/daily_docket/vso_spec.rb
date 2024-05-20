@@ -7,7 +7,7 @@ RSpec.feature "Hearing Schedule Daily Docket for VSO", :all_dbs do
   let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
 
   scenario "User has no assigned hearings" do
-    visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+    visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
     expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_NO_VETERANS)
     expect(page).to_not have_content("Edit Hearing Day")
     expect(page).to_not have_content("Lock Hearing Day")

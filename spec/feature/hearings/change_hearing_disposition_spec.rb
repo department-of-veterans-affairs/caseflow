@@ -75,14 +75,14 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
           User.authenticate!(user: hearing_user)
-          visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          visit "/hearings/schedule/docket/#{hearing.hearing_day.id}"
           expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq(
             Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
           )
         end
 
         step "visit and verify that the new hearing disposition is on the hearing details page" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
           disposition_div = find("p", text: "DISPOSITION").first(:xpath, "ancestor::div")
           expect(disposition_div).to have_css("div", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held)
         end

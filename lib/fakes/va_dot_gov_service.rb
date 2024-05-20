@@ -3,7 +3,8 @@
 class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
-    if endpoint == VADotGovService::FACILITIES_ENDPOINT
+    case endpoint
+    when VADotGovService::FACILITIES_ENDPOINT
       facilities = query[:facilityIds].split(",").map do |id|
         data = fake_facilities_data[:data][0]
         data["id"] = id
@@ -14,7 +15,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       fake_facilities[:data] = facilities
       fake_facilities[:meta][:distances] = distances(query)
       HTTPI::Response.new 200, {}, fake_facilities.to_json
-    elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
+    when VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       request_address_keys = args[:body][:requestAddress].keys
 
       # If request was built by self.zip_code_validations_request
@@ -24,7 +25,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       else
         HTTPI::Response.new 200, {}, fake_address_data.to_json
       end
-    elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
+    when VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
     end
   end
@@ -163,9 +164,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
             "lat": 40.4454392100001,
             "long": -99.37959413,
             "address": {
-              "mailing": {
-
-              },
+              "mailing": {},
               "physical": {
                 "zip": "68949-1705",
                 "city": "Holdrege",
@@ -206,9 +205,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
               "lastUpdated": "2019-01-02"
             },
             "satisfaction": {
-              "health": {
-
-              },
+              "health": {},
               "effectiveDate": nil
             },
             "waitTimes": {

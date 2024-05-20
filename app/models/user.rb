@@ -355,7 +355,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def job_title
-    security_profile.dig(:job_title)
+    security_profile[:job_title]
   end
 
   def can_intake_decision_reviews?

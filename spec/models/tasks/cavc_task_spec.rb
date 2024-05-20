@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe CavcTask, :postgres do
-  require_relative "task_shared_examples.rb"
+  require_relative "task_shared_examples"
 
   describe ".create" do
     subject { described_class.create(appeal: appeal, parent: parent_task) }

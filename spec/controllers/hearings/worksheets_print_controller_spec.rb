@@ -7,7 +7,7 @@ RSpec.describe Hearings::WorksheetsPrintController, :postgres, type: :controller
         %w[],
         %w[VSO],
         %w[Invalid],
-        %w[Mail\ Intake]
+        ["Mail Intake"]
       ].each do |roles|
         it "returns 302 status code and redirects with invalid roles #{roles}" do
           User.authenticate!(roles: roles)
@@ -21,11 +21,11 @@ RSpec.describe Hearings::WorksheetsPrintController, :postgres, type: :controller
     context "user with valid roles" do
       [
         %w[Reader],
-        %w[Hearing\ Prep],
-        %w[Edit\ HearSched],
-        %w[Build\ HearSched],
-        %w[Reader Hearing\ Prep],
-        %w[System\ Admin]
+        ["Hearing Prep"],
+        ["Edit HearSched"],
+        ["Build HearSched"],
+        ["Reader", "Hearing Prep"],
+        ["System Admin"]
       ].each do |roles|
         it "returns 200 status code with valid roles #{roles}" do
           User.authenticate!(roles: roles)

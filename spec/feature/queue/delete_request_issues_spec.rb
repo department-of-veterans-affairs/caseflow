@@ -144,7 +144,7 @@ feature "correcting issues", :postgres do
     appeal
   end
 
-  def create_request_issue(notes: nil, contested_issue_description: nil, decision_issues:)
+  def create_request_issue(decision_issues:, notes: nil, contested_issue_description: nil)
     create(
       :request_issue,
       :rating,

@@ -3,17 +3,16 @@
 class Events::CreateClaimantOnEvent
   class << self
     def process!(event:, parser:, decision_review:)
-      if parser.claim_review_veteran_is_not_claimant
+      if parser.claim_review_veteran_is_not_claimant && !Person.find_by(participant_id: parser.claimant_participant_id)
         # We will create the Person record and add it to the People table if the record does not already exist
-        create_person(event, parser) unless Person.find_by(participant_id: parser.claimant_participant_id)
+        create_person(event, parser)
       end
-      claimant = Claimant.create!(
+      Claimant.create!(
         decision_review: decision_review,
         participant_id: parser.claimant_participant_id,
         payee_code: parser.claimant_payee_code,
         type: parser.claimant_type
       )
-      claimant
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedClaimantError, error.message
     end

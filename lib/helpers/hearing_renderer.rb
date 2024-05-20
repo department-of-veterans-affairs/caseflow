@@ -106,7 +106,7 @@ class HearingRenderer
 
   def appeal_type_conversions(appeal)
     unformatted_versions = appeal.versions
-    versions = unformatted_versions.map do |version|
+    unformatted_versions.map do |version|
       change = version.changeset["changed_hearing_request_type"] ||
                version.changeset["changed_request_type"]
       {
@@ -116,8 +116,6 @@ class HearingRenderer
         "converted_at" => readable_date(version.created_at)
       }
     end
-
-    versions
   end
 
   def format_original_and_current_type(appeal)
@@ -172,7 +170,7 @@ class HearingRenderer
 
     ro_label = ro_location(appeal.closest_regional_office)
 
-    unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
+    open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
       instructions = sh_task.parent&.instructions
 
@@ -183,8 +181,6 @@ class HearingRenderer
         unscheduled_hearing_label
       end
     end
-
-    unscheduled_hearings
   end
 
   def shared_appeal_children(appeal)
@@ -260,7 +256,7 @@ class HearingRenderer
     formatted_text = "HearingDay #{hearing_day.id}"
     formatted_text += " (#{ro_label(hearing_day.regional_office, hearing_day.request_type)}"
     formatted_text += ", VLJ #{hearing_day.judge&.full_name&.split(' ')&.last}" if hearing_day.judge.present?
-    formatted_text + ")"
+    "#{formatted_text})"
   end
 
   def format_hearing_label(hearing)

@@ -529,7 +529,7 @@ class ClaimHistoryEvent
   end
 
   def format_date_string(date)
-    if date.class == String
+    if date.instance_of?(String)
       DateTime.iso8601(date).strftime("%-m/%-d/%Y")
     elsif date.present?
       date.strftime("%-m/%-d/%Y")

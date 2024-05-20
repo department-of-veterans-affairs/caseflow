@@ -2,7 +2,7 @@
 
 class Api::V1::MpiController < Api::ApplicationController
   # {POST Method for Veteran ID, Deceased Indicator, Deceased Time}
-  # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def veteran_updates
     Rails.logger.info(
       "Queue ART says start. veterans_id: #{allowed_params[:veterans_ssn]}, " \
@@ -40,7 +40,7 @@ class Api::V1::MpiController < Api::ApplicationController
     mpi_update.update!(update_type: :error, completed_at: Time.zone.now, info: response_info_column)
     raise error
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def allowed_params
     params.permit(:veterans_ssn, :veterans_pat, :deceased_time)

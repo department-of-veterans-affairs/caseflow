@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReviews::Errors::SchemerToJsonApiMissingAttribute < StandardError
-  attr_accessor :code
-  attr_accessor :details
+  attr_accessor :code, :details
 
   def initialize(details)
     @code = 422

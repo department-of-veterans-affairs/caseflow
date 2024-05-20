@@ -9,7 +9,7 @@ namespace :local do
     system("RAILS_ENV=development bundle exec rake db:drop") || abort
 
     puts ">>> 02/02 Tearing down docker volumes"
-    # Note: In some cases, there may be dangling images or volumes that
+    # NOTE: In some cases, there may be dangling images or volumes that
     #       can interfere with setup. One may want to try `docker volume prune`
     #       and `docker image prune`, but be aware that it may remove
     #       non-Caseflow Docker volumes/images.

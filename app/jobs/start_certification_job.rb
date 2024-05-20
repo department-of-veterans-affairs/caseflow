@@ -40,7 +40,7 @@ class StartCertificationJob < ApplicationJob
       vacols_hearing_preference: @certification.appeal.current_hearing_request_type,
       certifying_office: @certification.appeal.regional_office_name,
       certifying_username: @certification.appeal.regional_office_key,
-      certifying_official_name: user ? user.full_name : nil
+      certifying_official_name: user&.full_name
     )
   end
 

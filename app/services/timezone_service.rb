@@ -65,10 +65,9 @@ class TimezoneService
     def iso3166_alpha2_code_to_timezone(iso3166_code)
       country = TZInfo::Country.get(iso3166_code)
 
-      unambiguous_timezone = (
+      unambiguous_timezone =
         country.zones.size == 1 ||
         country.zones.map(&:current_period).map(&:utc_offset).uniq.size == 1
-      )
 
       return country.zones.first.canonical_zone if unambiguous_timezone
 

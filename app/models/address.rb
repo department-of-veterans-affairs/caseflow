@@ -16,8 +16,7 @@ class Address
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(
-    address_line_1: nil, address_line_2: nil, address_line_3: nil,
-    city:, zip: nil, country: nil, state: nil, zip4: nil, international_postal_code: nil,
+    city:, address_line_1: nil, address_line_2: nil, address_line_3: nil, zip: nil, country: nil, state: nil, zip4: nil, international_postal_code: nil,
     state_name: nil, country_name: nil, address_pou: nil
   )
     # rubocop:enable Metrics/ParameterLists

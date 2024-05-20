@@ -53,13 +53,13 @@ class Events::DecisionReviewCreated::CreateRequestIssues
         newly_created_issues.push(ri)
 
         # LegacyIssue
-        if vacols_ids_exist?(ri)
-          legacy_issue = create_legacy_issue_backfill(event, ri)
+        next unless vacols_ids_exist?(ri)
 
-          # LegacyIssueOptin
-          if optin?(decision_review) && ri.ineligible_reason.blank?
-            create_legacy_optin_backfill(event, ri, legacy_issue)
-          end
+        legacy_issue = create_legacy_issue_backfill(event, ri)
+
+        # LegacyIssueOptin
+        if optin?(decision_review) && ri.ineligible_reason.blank?
+          create_legacy_optin_backfill(event, ri, legacy_issue)
         end
       end
       newly_created_issues

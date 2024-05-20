@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe SendCavcRemandProcessedLetterTask, :postgres do
-  require_relative "task_shared_examples.rb"
+  require_relative "task_shared_examples"
   SendCRPLetterTask = SendCavcRemandProcessedLetterTask
 
   let(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }

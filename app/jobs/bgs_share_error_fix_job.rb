@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/helpers/master_scheduler_interface.rb"
+require_relative "../../lib/helpers/master_scheduler_interface"
 class BgsShareErrorFixJob < CaseflowJob
   include MasterSchedulerInterface
 
@@ -80,9 +80,7 @@ class BgsShareErrorFixJob < CaseflowJob
     rius = rius_with_errors
     bges = bges_with_errors
 
-    all_records_with_errors = hlrs + rius + bges
-
-    all_records_with_errors
+    hlrs + rius + bges
   end
 
   def log_processing_time

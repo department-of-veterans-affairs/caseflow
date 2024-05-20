@@ -46,7 +46,7 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         if evaluator.user
           existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
-          staff = (existing_staff || create(:staff, user: evaluator.user))
+          staff = existing_staff || create(:staff, user: evaluator.user)
           slogid = staff.slogid
           sattyid = staff.sattyid
         end

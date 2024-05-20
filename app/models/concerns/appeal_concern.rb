@@ -25,10 +25,10 @@ module AppealConcern
     return nil if regional_office_key.nil?
 
     @regional_office ||= begin
-                           RegionalOffice.find!(regional_office_key)
-                         rescue RegionalOffice::NotFoundError
-                           nil
-                         end
+      RegionalOffice.find!(regional_office_key)
+    rescue RegionalOffice::NotFoundError
+      nil
+    end
   end
 
   def regional_office_name
@@ -155,7 +155,7 @@ module AppealConcern
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   def timezone_identifier_for_address(addr)
     return if addr.blank?
 
@@ -197,6 +197,6 @@ module AppealConcern
       nil
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ModuleLength

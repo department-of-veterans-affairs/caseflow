@@ -130,12 +130,12 @@ module Api
 
         def receipt_date
           @receipt_date ||= begin
-                              Date.iso8601 receipt_date_header
-                            rescue ArgumentError => error
-                              raise unless error.message == "invalid date"
+            Date.iso8601 receipt_date_header
+          rescue ArgumentError => error
+            raise unless error.message == "invalid date"
 
-                              nil
-                            end
+            nil
+          end
         end
 
         def receipt_date_header

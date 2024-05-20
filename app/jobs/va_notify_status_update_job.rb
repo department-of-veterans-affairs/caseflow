@@ -23,7 +23,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
           update_attributes = get_current_status(email_external_id, "Email")
           update_notification_audit_record(notification, update_attributes)
         else
-          log_error("Notification Record " + notification.id.to_s + "With Email type does not have an external id.")
+          log_error("Notification Record #{notification.id}With Email type does not have an external id.")
           update_notification_audit_record(notification, "email_notification_status" => "No External Id")
         end
       when "SMS"
@@ -31,7 +31,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
           update_attributes = get_current_status(sms_external_id, "SMS")
           update_notification_audit_record(notification, update_attributes)
         else
-          log_error("Notification Record " + notification.id.to_s + "With SMS type does not have an external id.")
+          log_error("Notification Record #{notification.id}With SMS type does not have an external id.")
           update_notification_audit_record(notification, "sms_notification_status" => "No External Id")
         end
       when "Email and SMS"
@@ -156,12 +156,12 @@ class VANotifyStatusUpdateJob < CaseflowJob
           response.body["phone_number"] }
       else
         message = "Type neither email nor sms"
-        log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)
+        log_error("VA Notify API returned error for notificiation #{notification_id} with type #{type}")
         Raven.capture_exception(type, extra: { error_uuid: error_uuid, message: message })
       end
     rescue Caseflow::Error::VANotifyApiError => error
       log_error(
-        "VA Notify API returned error for notification " + notification_id + " with error #{error}"
+        "VA Notify API returned error for notification #{notification_id} with error #{error}"
       )
       Raven.capture_exception(error, extra: { error_uuid: error_uuid })
       nil

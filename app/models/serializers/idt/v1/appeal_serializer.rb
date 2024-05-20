@@ -20,7 +20,7 @@ class Idt::V1::AppealSerializer
   attribute :number_of_issues
 
   attribute :days_waiting do |_object, params|
-    params[:task] ? params[:task].days_waiting : nil
+    params[:task]&.days_waiting
   end
 
   attribute :assigned_by, &:reviewing_judge_name

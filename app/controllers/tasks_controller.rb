@@ -268,7 +268,6 @@ class TasksController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def process_contested_claim_final_task
     case task.status
     when "cancelled"
@@ -289,7 +288,6 @@ class TasksController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
@@ -366,7 +364,7 @@ class TasksController < ApplicationController
       appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
       task = task.merge(instructions: [task[:instructions]].flatten.compact)
       task = task.permit(:type, { instructions: [] }, :assigned_to_id,
-                         :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
+                         :assigned_to_type, :parent_id, business_payloads: [:description, { values: {} }])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
 
@@ -385,7 +383,7 @@ class TasksController < ApplicationController
       :radio_value,
       :parent_id,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
-      business_payloads: [:description, values: {}]
+      business_payloads: [:description, { values: {} }]
     )
   end
 

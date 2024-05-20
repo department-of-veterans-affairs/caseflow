@@ -20,10 +20,10 @@ class ExternalApi::GovDeliveryService::Response
 
   def body
     @body ||= begin
-                JSON.parse(resp.body)
-              rescue JSON::ParserError
-                {}
-              end
+      JSON.parse(resp.body)
+    rescue JSON::ParserError
+      {}
+    end
   end
 
   private

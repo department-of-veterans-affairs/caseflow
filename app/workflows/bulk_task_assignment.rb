@@ -54,7 +54,7 @@ class BulkTaskAssignment
           .where("closest_regional_office = ?", regional_office) +
                 tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = #{Task.table_name}.appeal_id "\
                       "AND #{Task.table_name}.appeal_type = '#{LegacyAppeal.name}'")
-          .where("closest_regional_office = ?", regional_office)
+                  .where("closest_regional_office = ?", regional_office)
       end
       tasks
     end
@@ -69,7 +69,7 @@ class BulkTaskAssignment
   end
 
   def task_type_is_valid
-    return true if task_type.constantize
+    true if task_type.constantize
   rescue NameError
     errors.add(:task_type, "#{task_type} is not a valid task type")
   end

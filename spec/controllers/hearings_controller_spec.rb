@@ -647,7 +647,7 @@ RSpec.describe HearingsController, type: :controller do
             params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 500
-        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+        expect(JSON.parse(response.body)["errors"].first["detail"])
           .to eq("Could not connect to the Lighthouse API, please try again later.")
       end
     end
@@ -671,7 +671,7 @@ RSpec.describe HearingsController, type: :controller do
             params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 500
-        expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
+        expect(JSON.parse(response.body)["errors"].first["detail"])
           .to eq("Could not connect to the Lighthouse API, please try again later.")
       end
     end

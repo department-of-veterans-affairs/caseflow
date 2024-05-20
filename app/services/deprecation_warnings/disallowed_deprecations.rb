@@ -8,7 +8,7 @@ module DisallowedDeprecations
 
   # Regular expressions for Rails 6.0 deprecation warnings that we have addressed in the codebase
   RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES = [
-    /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/,
+    /Dangerous query method \(method whose arguments are used as raw SQL\) called with non-attribute argument\(s\)/,
     /The success\? predicate is deprecated and will be removed in Rails 6\.0/
   ].freeze
 

@@ -37,8 +37,6 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
           scheduled_for: Date.new(2019, 4, 14),
           room: n.to_s
         )
-      end
-      (1..3).each do |n|
         create(
           :hearing_day,
           regional_office: "RO10",
@@ -165,7 +163,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       headers = {
         "ACCEPT" => "application/json"
       }
-      get "/hearings/hearing_day/" + hearing_day.id.to_s, headers: headers
+      get "/hearings/hearing_day/#{hearing_day.id}", headers: headers
       expect(response).to be_successful
       expect(JSON.parse(response.body)["hearing_day"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)

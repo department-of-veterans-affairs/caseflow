@@ -183,7 +183,7 @@ class Task < CaseflowRecord
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
       if !parent&.actions_allowable?(user) || !can_create
@@ -200,7 +200,8 @@ class Task < CaseflowRecord
 
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
-      return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
+
+      parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end
 
     def most_recently_updated
@@ -526,7 +527,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [instructions, params.dig(:instructions).presence].flatten.compact
+    [instructions, params[:instructions].presence].flatten.compact
   end
 
   def append_instruction(instruction)

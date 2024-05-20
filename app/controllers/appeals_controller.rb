@@ -50,7 +50,7 @@ class AppealsController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -65,14 +65,14 @@ class AppealsController < ApplicationController
         begin
           if !appeal.nil?
             pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-            pdf_file_name = "Notification Report " + appeals_id + " " + date + ".pdf"
+            pdf_file_name = "Notification Report #{appeals_id} #{date}.pdf"
             send_data pdf, filename: pdf_file_name, type: "application/pdf", disposition: :attachment
           else
             fail ActionController::RoutingError, "Appeal Not Found"
           end
         rescue StandardError => error
           uuid = SecureRandom.uuid
-          Rails.logger.error(error.to_s + "Error ID: " + uuid)
+          Rails.logger.error("#{error}Error ID: #{uuid}")
           Raven.capture_exception(error, extra: { error_uuid: uuid })
           render json: { "errors": ["message": uuid] }, status: :internal_server_error
         end
@@ -85,7 +85,7 @@ class AppealsController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -156,7 +156,7 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
-    return not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
+    not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -195,7 +195,7 @@ class AppealsController < ApplicationController
 
       # check if an existing letter task is open
       existing_letter_task_open = appeal.tasks.any? do |task|
-        task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+        task.instance_of?(SendInitialNotificationLetterTask) && task.status == "assigned"
       end
       # create SendInitialNotificationLetterTask unless one is open
       send_initial_notification_letter unless existing_letter_task_open
@@ -266,7 +266,7 @@ class AppealsController < ApplicationController
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully #{[added_issues, removed_issues, withdrawn_issues].compact.to_sentence}."
   end
 
   # check if changes in params
@@ -431,11 +431,10 @@ class AppealsController < ApplicationController
     end
 
     # After check, recreate safe_params object and include vacols_uniq_id
-    safe_params = {
+    {
       request_issues: request_issue_params,
       vacols_user_id: current_user.vacols_uniq_id
     }
-    safe_params
   end
 
   def create_params

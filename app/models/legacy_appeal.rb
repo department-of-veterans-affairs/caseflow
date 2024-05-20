@@ -106,12 +106,12 @@ class LegacyAppeal < CaseflowRecord
   end
 
   cache_attribute :remand_return_date do
-    # Note: Returns nil if the appeal is active, returns false if the appeal is
+    # NOTE: Returns nil if the appeal is active, returns false if the appeal is
     # closed but does not have a remand return date (false is cached, nil is not).
-    (self.class.repository.remand_return_date(vacols_id) || false) unless active?
+    self.class.repository.remand_return_date(vacols_id) || false unless active?
   end
 
-  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
+  # NOTE: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Layout/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
@@ -349,7 +349,7 @@ class LegacyAppeal < CaseflowRecord
 
   ## BEGIN Hearing specific attributes and methods
 
-  attr_writer :hearings
+  attr_writer :hearings, :cavc_decisions, :issues
 
   def hearings
     @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
@@ -380,8 +380,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   ## END Hearing specific attributes and methods
-
-  attr_writer :cavc_decisions
 
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
@@ -553,10 +551,9 @@ class LegacyAppeal < CaseflowRecord
   def decisions
     return [] unless decision_date
 
-    decisions = documents_with_type(*Document::DECISION_TYPES).select do |decision|
+    documents_with_type(*Document::DECISION_TYPES).select do |decision|
       (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
-    decisions
   end
 
   # This represents the *date* that the decision occurred,
@@ -587,7 +584,8 @@ class LegacyAppeal < CaseflowRecord
   def dispatch_decision_type
     return "Full Grant" if full_grant_on_dispatch?
     return "Partial Grant" if partial_grant_on_dispatch?
-    return "Remand" if remand_on_dispatch?
+
+    "Remand" if remand_on_dispatch?
   end
 
   def activated?
@@ -661,8 +659,6 @@ class LegacyAppeal < CaseflowRecord
     @documents = []
     @documents_by_type = {}
   end
-
-  attr_writer :issues
 
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -1115,7 +1111,7 @@ class LegacyAppeal < CaseflowRecord
 
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:)
+    def close(user:, closed_on:, disposition:, appeal: nil, appeals: nil)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do

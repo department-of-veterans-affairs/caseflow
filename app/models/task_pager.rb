@@ -58,10 +58,10 @@ class TaskPager
 
   def pagination_enabled
     @pagination_enabled ||= begin
-                              assignee.use_task_pages_api? &&
-                                !queue_tab.contains_legacy_tasks? &&
-                                !queue_tab.no_task_limit
-                            end
+      assignee.use_task_pages_api? &&
+        !queue_tab.contains_legacy_tasks? &&
+        !queue_tab.no_task_limit
+    end
   end
 
   private

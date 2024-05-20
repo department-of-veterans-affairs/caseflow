@@ -133,7 +133,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully #{[added_issues, removed_issues, withdrawn_issues].compact.to_sentence}."
   end
 
   def vha_edited_decision_date_message

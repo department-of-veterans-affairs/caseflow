@@ -18,10 +18,8 @@ class EstablishmentTask < Task
       next if !issue.mst_status && !issue.pact_status
 
       # Logic for checking if a prior decision from vbms with mst/pact designation was updated in intake process
-      if issue.contested_issue_description
-        if issue.vbms_mst_status != issue.mst_status || issue.vbms_pact_status != issue.pact_status
-          original_special_issue_status = format_special_issues_text(issue.vbms_mst_status, issue.vbms_pact_status).to_s
-        end
+      if issue.contested_issue_description && (issue.vbms_mst_status != issue.mst_status || issue.vbms_pact_status != issue.pact_status)
+        original_special_issue_status = format_special_issues_text(issue.vbms_mst_status, issue.vbms_pact_status).to_s
       end
 
       special_issue_status = format_special_issues_text(issue.mst_status, issue.pact_status).to_s
@@ -45,25 +43,24 @@ class EstablishmentTask < Task
 
   def format_description_text(issue)
     if issue.contested_issue_description || issue.nonrating_issue_category && issue.nonrating_issue_description
-      issue.contested_issue_description || issue.nonrating_issue_category + " - " + issue.nonrating_issue_description
+      issue.contested_issue_description || "#{issue.nonrating_issue_category} - #{issue.nonrating_issue_description}"
     else
       # we should probably remove this before pushing to prod
       "Description unavailable"
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def format_special_issues_text(mst_status, pact_status)
     # same method as issues_update_task
     # format the special issues comment to display the change in the special issues status(es)
     special_issue_phrase = "Special Issues:"
 
-    return special_issue_phrase + " None" if !mst_status && !pact_status
-    return special_issue_phrase + " MST, PACT" if mst_status && pact_status
-    return special_issue_phrase + " MST" if mst_status
-    return special_issue_phrase + " PACT" if pact_status
+    return "#{special_issue_phrase} None" if !mst_status && !pact_status
+    return "#{special_issue_phrase} MST, PACT" if mst_status && pact_status
+    return "#{special_issue_phrase} MST" if mst_status
+
+    "#{special_issue_phrase} PACT" if pact_status
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # :reek:FeatureEnvy
   def create_special_issue_changes_record(issue)

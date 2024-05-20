@@ -83,11 +83,9 @@ class ContentionNotFoundRemediationJob < CaseflowJob
 
   # Find affected Edited Request Issue using the Contention ID from the ContentionNotFound Error
   def find_edited_request_issue(request_issues_update, contention_id)
-    affected_request_issue = request_issues_update.edited_issues.find do |ri|
+    request_issues_update.edited_issues.find do |ri|
       ri.contention_reference_id == contention_id
     end
-
-    affected_request_issue
   end
 
   # Cancel the Request Issues Update

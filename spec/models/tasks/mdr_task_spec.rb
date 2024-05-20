@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe MdrTask, :postgres do
-  require_relative "task_shared_examples.rb"
+  require_relative "task_shared_examples"
   let(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
   let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let(:other_user) { create(:user) }

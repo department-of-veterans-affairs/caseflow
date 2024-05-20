@@ -267,7 +267,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :caseflow_veteran_id do |object|
-    object.veteran ? object.veteran.id : nil
+    object.veteran&.id
   end
 
   attribute :document_id do |object|

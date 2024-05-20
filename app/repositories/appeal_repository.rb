@@ -3,6 +3,7 @@
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
+
   class AppealNotValidToReopen < StandardError
     def initialize(appeal_id)
       super("Appeal id #{appeal_id} is not valid to reopen")
@@ -12,10 +13,8 @@ class AppealRepository
   # :nocov:
 
   class << self
-    def transaction
-      VACOLS::Case.transaction do
-        yield
-      end
+    def transaction(&block)
+      VACOLS::Case.transaction(&block)
     end
 
     def eager_load_legacy_appeals_for_tasks(tasks)
@@ -210,7 +209,7 @@ class AppealRepository
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
         video_hearing_requested: case_record.bfdocind == "V",
-        hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+        hearing_requested: case_record.bfhr == "1" || case_record.bfhr == "2",
         hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
@@ -551,8 +550,8 @@ class AppealRepository
       close_date = case_record.bfddec
       close_disposition = case_record.bfdc
 
-      if safeguards
-        fail not_valid_to_reopen_err unless %w[9 E F G P O].include? close_disposition
+      if safeguards && !(%w[9 E F G P O].include? close_disposition)
+        fail not_valid_to_reopen_err
       end
 
       previous_active_location = case_record.previous_active_location
@@ -597,7 +596,7 @@ class AppealRepository
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def reopen_remand!(appeal:, user:, disposition_code:)
       case_record = appeal.case_record
       folder_record = case_record.folder
@@ -633,7 +632,7 @@ class AppealRepository
         VACOLS::CaseIssue.where(isskey: follow_up_appeal_key).delete_all
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # If an appeal was previously decided, we are just restoring data, we do not have to reset the appeal to active
     # original_data example: { disposition_code: "G", decision_date: "2019-11-30", folder_decision_date: "2019-11-30" }

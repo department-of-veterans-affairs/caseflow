@@ -109,7 +109,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   shared_examples "always updatable fields" do
     scenario "user can select judge, hearing room, hearing coordinator, and add notes" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       # wait until the label displays before trying to interact with the dropdowns
       find("div", class: "dropdown-judgeDropdown", text: COPY::DROPDOWN_LABEL_JUDGE)
@@ -135,7 +135,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   shared_examples "non-virtual hearing types" do
     scenario "user can convert hearing type to virtual" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
@@ -185,7 +185,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
 
     scenario "user can optionally change emails and timezone" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       # Update the POA and Appellant emails
       fill_in "Veteran Email", with: fill_in_veteran_email
@@ -210,7 +210,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
       visit "/queue/appeals/#{hearing.appeal_external_id}"
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
@@ -222,7 +222,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     scenario "vso user can convert hearing type to virtual" do
       User.authenticate!(user: vso_user)
 
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
@@ -336,7 +336,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "user can optionally change emails and timezone" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           # Change the hearing type
           click_dropdown(name: "hearingType", index: 0)
@@ -365,7 +365,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "email notifications and links display correctly" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           click_dropdown(name: "hearingType", index: 0)
 
@@ -394,7 +394,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
 
         scenario "displays in progress when the virtual hearing is being scheduled" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           # Test the links are not present
           within "#vlj-hearings-link" do
@@ -417,20 +417,20 @@ RSpec.feature "Hearing Details", :all_dbs do
           end
 
           scenario "displays details when the date is before the hearing date" do
-            visit "hearings/" + hearing.external_id.to_s + "/details"
+            visit "hearings/#{hearing.external_id}/details"
             check_virtual_hearings_links(virtual_hearing)
           end
 
           scenario "displays expired when the date is after the hearing date" do
             hearing.update(hearing_day_id: hearing_day.id)
-            visit "hearings/" + hearing.external_id.to_s + "/details"
+            visit "hearings/#{hearing.external_id}/details"
             hearing.reload
             check_virtual_hearings_links_expired(virtual_hearing)
           end
 
           scenario "displays expired when the virtual hearing is cancelled" do
             virtual_hearing.update(request_cancelled: true)
-            visit "hearings/" + hearing.external_id.to_s + "/details"
+            visit "hearings/#{hearing.external_id}/details"
             hearing.reload
             check_virtual_hearings_links_expired(virtual_hearing)
           end
@@ -439,7 +439,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             virtual_hearing.hearing.appellant_recipient.update!(email_sent: false)
             virtual_hearing.hearing.representative_recipient.update!(email_sent: false)
             virtual_hearing.hearing.judge_recipient.update!(email_sent: false)
-            visit "hearings/" + hearing.external_id.to_s + "/details"
+            visit "hearings/#{hearing.external_id}/details"
             hearing.reload
             check_virtual_hearings_links(virtual_hearing, true)
           end
@@ -450,7 +450,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
 
         scenario "async job is not completed" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
           expect(find(".dropdown-hearingType")).to have_css(".cf-select__control--is-disabled")
           expect(page).to have_field("Veteran Email", readonly: true)
           expect(page).to have_field("POA/Representative Email", readonly: true)
@@ -464,7 +464,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           virtual_hearing.conference_id = "0"
 
           virtual_hearing.established!
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
           hearing.reload
           expect(find(".dropdown-hearingType")).to have_no_css(".cf-select__control--is-disabled")
           expect(page).to have_field("Veteran Email", readonly: false)
@@ -486,7 +486,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         let(:fill_in_rep_email) { "rep@example.com" }
 
         scenario "user can update emails" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
           fill_in "Veteran Email", with: fill_in_veteran_email
           fill_in "POA/Representative Email", with: fill_in_rep_email
           click_button("Save")
@@ -495,7 +495,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
           expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
@@ -514,7 +514,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "input empty veteran email and valid representative email shows validation error" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "Veteran Email", with: ""
           fill_in "POA/Representative Email", with: fill_in_rep_email
@@ -536,7 +536,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends confirmation email only to the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "POA/Representative Email", with: fill_in_rep_email
           click_button("Save")
@@ -545,7 +545,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
 
@@ -561,7 +561,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Removing POA/Representative email address gives expected alert" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "POA/Representative Email", with: ""
           click_button("Save")
@@ -571,7 +571,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Entering invalid representative email and shows validation error" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "POA/Representative Email", with: "123456"
           click_button("Save")
@@ -596,7 +596,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends confirmation email only to the Appellant" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "Veteran Email", with: fill_in_veteran_email
           click_button("Save")
@@ -605,7 +605,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
 
@@ -631,7 +631,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends update hearing time email only to the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           click_dropdown(name: "representativeTz", index: 1)
           click_button("Save")
@@ -640,7 +640,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("representative-tz")
           events = SentHearingEmailEvent.where(hearing_id: hearing.id)
@@ -665,7 +665,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends update hearing time email only to the Appellant" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           click_dropdown(name: "appellantTz", index: 1)
           click_button("Save")
@@ -674,7 +674,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("appellant-tz")
 
@@ -700,7 +700,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           click_dropdown(name: "representativeTz", index: 1)
           click_dropdown(name: "appellantTz", index: 1)
@@ -710,7 +710,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("appellant-tz")
 
@@ -738,7 +738,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "Sends the confirmation email" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           fill_in "POA/Representative Email", with: fill_in_rep_email
           click_dropdown(name: "appellantTz", index: 1)
@@ -748,7 +748,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
           click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
 
           expect(page).to have_field("appellant-tz")
 
@@ -772,7 +772,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     let!(:current_user) { User.authenticate!(user: user) }
 
     scenario "Fields are not editable" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
       expect(page).to have_field("Notes", disabled: true)
     end
   end
@@ -788,7 +788,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       include_examples "all hearing types"
 
       scenario "user can update transcription fields" do
-        visit "hearings/" + hearing.external_id.to_s + "/details"
+        visit "hearings/#{hearing.external_id}/details"
 
         fill_in "taskNumber", with: "123456789"
         click_dropdown(name: "transcriber", index: 1)
@@ -889,7 +889,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       scenario "user cannot update transcription fields" do
-        visit "hearings/" + hearing.external_id.to_s + "/details"
+        visit "hearings/#{hearing.external_id}/details"
 
         expect(page).to have_no_field("taskNumber")
         expect(page).to have_no_field("transcriber")
@@ -915,7 +915,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       User.authenticate!(user: vso_user)
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
@@ -932,13 +932,13 @@ RSpec.feature "Hearing Details", :all_dbs do
         click_dropdown(name: "appellantTz", index: 5)
 
         expect(page).to have_button("Save", disabled: true)
-        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+        expect(page).to have_current_path("/hearings/#{hearing.external_id}/details")
       end
 
       step "the submit button is disabled after one checkbox is selected" do
         click_label "affirmPermission"
         expect(page).to have_button("Save", disabled: true)
-        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+        expect(page).to have_current_path("/hearings/#{hearing.external_id}/details")
       end
 
       step "the submit button goes through after both checkboxes are selected" do
@@ -977,7 +977,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
 
     scenario "convert to virtual form hides sensitive data for vso user" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
       ["Hearing Time", "Hearing Date"].each do |label|
         expect(page).to_not have_content(label)
       end
@@ -990,12 +990,12 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
 
     scenario "user is not immediately redirected to the convert to virtual hearing form" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
       expect(page).to_not have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
     end
 
     scenario "user can visit convert to virtual hearing form" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
 
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
@@ -1004,7 +1004,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
 
     scenario "convert to virtual hearing form does not hide data for hearings user" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+      visit "hearings/#{hearing.external_id}/details"
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
       ["Hearing Time", "Hearing Date"].each do |label|

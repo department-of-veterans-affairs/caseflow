@@ -1117,9 +1117,9 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css(".cf-select__menu", wait: 5)
 
         # submit entering the tag
-        fill_in "tags", with: (TAG1 + "\n")
+        fill_in "tags", with: "#{TAG1}\n"
 
-        fill_in "tags", with: (TAG2 + "\n")
+        fill_in "tags", with: "#{TAG2}\n"
 
         # expecting the multi-selct to have the two new fields
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
@@ -1138,7 +1138,7 @@ RSpec.feature "Reader", :all_dbs do
           expect(tag_options[index]).to have_content(tag.text)
         end
 
-        fill_in "tags", with: (DOC2_TAG1 + "\n")
+        fill_in "tags", with: "#{DOC2_TAG1}\n"
 
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
 
@@ -1352,5 +1352,5 @@ end
 # Generate some combination of whitespace characters between 1 and len characters long.
 # Do not include tab character becuase inserting tab will cause Capybara to change the focused DOM element.
 def random_whitespace_no_tab(len = 16)
-  Generators::Random.from_set([" ", "\n", "\r"], len) + " "
+  "#{Generators::Random.from_set([' ', "\n", "\r"], len)} "
 end

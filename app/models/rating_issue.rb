@@ -47,7 +47,7 @@ class RatingIssue
         percent_number: bgs_data[:prcnt_no],
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
+        rba_contentions_data: ensure_array_of_hashes(bgs_data[:rba_issue_contentions]),
         reference_id: bgs_data[:rba_issue_id],
         subject_text: bgs_data[:subjct_txt],
         special_issues: bgs_data[:special_issues]
@@ -136,7 +136,7 @@ class RatingIssue
 
   def calculate_contention_reference_ids
     result = rba_contentions_data.map do |contention_data|
-      contention_data.dig(:cntntn_id)
+      contention_data[:cntntn_id]
     end
 
     result.compact

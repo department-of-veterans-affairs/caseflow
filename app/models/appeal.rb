@@ -782,15 +782,13 @@ class Appeal < DecisionReview
 
     return if affected_issues.blank?
 
-    issues_report = {
+    {
       affected_issues: affected_issues,
       unaffected_issues: unaffected_issues
     }
-
-    issues_report
   end
 
-  # Note: Currently Caseflow only supports one claimant per decision review
+  # NOTE: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
   end

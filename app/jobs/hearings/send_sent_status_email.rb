@@ -27,8 +27,7 @@ class Hearings::SendSentStatusEmail
     email = HearingEmailStatusMailer.notification(
       sent_hearing_email_event: @sent_hearing_email_event
     )
-    message = email.deliver_now!
-    message
+    email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     Raven.capture_exception(error)
 
@@ -42,8 +41,8 @@ class Hearings::SendSentStatusEmail
   def get_external_message_id(message)
     if message.is_a?(GovDelivery::TMS::EmailMessage)
       response = message.response
-      response_external_url = response.body.dig("_links", "self")
-      response_external_url
+      response.body.dig("_links", "self")
+
     end
   end
   # :nocov:

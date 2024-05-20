@@ -197,7 +197,7 @@ class MailRequestJob < CaseflowJob
     uuid = SecureRandom.uuid
     error_msg = ERROR_MESSAGES[error.code] || "#{error.code} Unknown error has occurred."
 
-    Rails.logger.error(error_msg + "Error ID: " + uuid)
+    Rails.logger.error("#{error_msg}Error ID: #{uuid}")
     Raven.capture_exception(error, extra: { error_uuid: uuid })
   end
 

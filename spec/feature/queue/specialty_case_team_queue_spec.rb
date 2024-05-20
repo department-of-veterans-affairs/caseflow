@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./queue_shared_examples_spec.rb"
+require_relative "./queue_shared_examples_spec"
 
 feature "SpecialtyCaseTeamQueue", :all_dbs do
   context "Load Specialty Case Team Queue" do

@@ -294,7 +294,7 @@ class IntakeRenderer
 
   def truncate(text, size)
     if text
-      (text.size > size) ? text[0, size - 1] + "…" : text
+      (text.size > size) ? "#{text[0, size - 1]}…" : text
     end
   end
   # :nocov:

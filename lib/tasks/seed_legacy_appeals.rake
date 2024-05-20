@@ -130,9 +130,9 @@ namespace :db do
 
       # request CSS ID for task assignment if not given
       if USER_ID.blank?
-        STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-        STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-        css_id = STDIN.gets.chomp.upcase
+        $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+        $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+        css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
       else
         user = User.find_by_css_id(USER_ID)

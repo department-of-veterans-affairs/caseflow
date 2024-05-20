@@ -20,7 +20,8 @@ class Events::DecisionReviewCreated
 
       # exit out if Key is already in Redis Cache
       if redis.exists("RedisMutex:EndProductEstablishment:#{reference_id}")
-        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
+        fail Caseflow::Error::RedisLockFailed,
+             message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
@@ -32,7 +33,7 @@ class Events::DecisionReviewCreated
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
-          # Note: createdByStation == station_id, createdByUsername == css_id
+          # NOTE: createdByStation == station_id, createdByUsername == css_id
           user = Events::CreateUserOnEvent.handle_user_creation_on_event(event: event, css_id: parser.css_id,
                                                                          station_id: parser.station_id)
 
@@ -42,25 +43,25 @@ class Events::DecisionReviewCreated
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
           decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
 
-          # Note: Create the Claimant, parsed schema info passed through vbms_claimant
+          # NOTE: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: decision_review)
 
-          # Note: event, user, and veteran need to be before this call.
+          # NOTE: event, user, and veteran need to be before this call.
           Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
-           decision_review: decision_review)
+                                                               decision_review: decision_review)
 
-          # Note: end_product_establishment & station_id is coming from the payload
+          # NOTE: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
           epe = Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser: parser,
                                                                               claim_review: decision_review,
                                                                               user: user, event: event)
 
-          # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
+          # NOTE: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
-            decision_review: decision_review)
+                                                                      decision_review: decision_review)
 
-          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
+          # NOTE: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
           Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
 
@@ -73,7 +74,7 @@ class Events::DecisionReviewCreated
       event = Event.find_by(reference_id: consumer_event_id)
       event&.update!(error: error.message)
       raise error
-    rescue RedisMutex::LockError => error
+    rescue RedisMutex::LockError
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
     rescue StandardError => error

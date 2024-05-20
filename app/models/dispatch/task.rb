@@ -152,7 +152,7 @@ class Dispatch::Task < CaseflowRecord
     end
 
     event :complete do
-      before { |*args| assign_completion_attribtues(*args); }
+      before { |*args| assign_completion_attribtues(*args) }
       success :create_quota!
 
       transitions from: :reviewed, to: :completed

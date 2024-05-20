@@ -46,11 +46,11 @@ class EstablishClaim < Dispatch::Task
   # Makes calls to BGS, which can make it much slower.
   def to_hash_with_bgs_call
     serializable_hash(
-      include: [:user, appeal: {
+      include: [:user, { appeal: {
         include: [
           :pending_eps,
           :non_canceled_end_products_within_30_days,
-          decisions: { methods: :received_at }
+          { decisions: { methods: :received_at } }
         ],
         methods: [
           :serialized_decision_date,
@@ -62,7 +62,7 @@ class EstablishClaim < Dispatch::Task
           :issues,
           :sanitized_vbms_id
         ]
-      }],
+      } }],
       methods: [:progress_status, :aasm_state]
     ).tap { |hash| hash["appeal"]["issues"] = (hash["appeal"]["issues"] || []).map(&:attributes) }
   end

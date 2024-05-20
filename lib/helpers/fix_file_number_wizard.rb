@@ -107,7 +107,7 @@ class FixFileNumberWizard
     collections.each do |collection|
       prompt += "#{collection.count} #{collection.klass.name} records\n" if collection.count > 0
     end
-    stop unless get_input(prompt + "Continue") == "y"
+    stop unless get_input("#{prompt}Continue") == "y"
 
     collections.each { |collection| collection.update!(file_number) }
     veteran.update!(file_number: file_number)

@@ -3,8 +3,7 @@
 class AppealEvents
   include ActiveModel::Model
 
-  attr_accessor :appeal
-  attr_accessor :version
+  attr_accessor :appeal, :version
 
   def all
     case appeal

@@ -29,10 +29,8 @@ namespace :letter_tasks do
           assigned_to: cob,
           assigned_by: cob_user
         )
-      end
 
-      # create post letter for each appeal
-      factory_appeals.each do |a|
+        # create post letter for each appeal
         task = a.tasks.find_by(type: "SendInitialNotificationLetterTask")
         psi = PostSendInitialNotificationLetterHoldingTask.create!(
           appeal: a,
@@ -47,7 +45,7 @@ namespace :letter_tasks do
       # return timecop to normal
       Timecop.return
     else
-      STDOUT.puts("This script can only run in development(local) and demo; it cannot run in this environment")
+      $stdout.puts("This script can only run in development(local) and demo; it cannot run in this environment")
     end
   end
 
@@ -85,7 +83,7 @@ namespace :letter_tasks do
         )
       end
     else
-      STDOUT.puts("This script can only run in development(local) and demo; it cannot run in this environment")
+      $stdout.puts("This script can only run in development(local) and demo; it cannot run in this environment")
     end
   end
 end

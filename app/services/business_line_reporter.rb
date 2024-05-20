@@ -13,7 +13,7 @@ class BusinessLineReporter
 
   def tasks
     business_line.tasks.completed.includes(
-      [:assigned_to, appeal: [:request_issues, :decision_issues, intake: [:user]]]
+      [:assigned_to, { appeal: [:request_issues, :decision_issues, { intake: [:user] }] }]
     ).order(id: :asc)
   end
 

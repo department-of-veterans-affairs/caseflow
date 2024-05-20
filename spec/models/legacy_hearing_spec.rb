@@ -447,7 +447,7 @@ describe LegacyHearing, :all_dbs do
     end
   end
 
-  # Note: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
+  # NOTE: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
   context "#scheduled_for" do
     let(:hearing) do
       create(
@@ -461,7 +461,7 @@ describe LegacyHearing, :all_dbs do
 
     subject { hearing.scheduled_for }
 
-    # Note: This can happen if the hearing is scheduled across state lines
+    # NOTE: This can happen if the hearing is scheduled across state lines
     context "if case hearing regional office differs from hearing day regional office" do
       # Oakland regional office
       let(:regional_office) { "RO43" }

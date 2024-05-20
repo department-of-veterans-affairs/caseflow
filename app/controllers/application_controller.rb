@@ -45,7 +45,7 @@ class ApplicationController < ApplicationBaseController
 
     error_type = err.class.name
     if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      code = err.instance_of?(ActiveRecord::RecordNotFound) ? 404 : 500
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
@@ -418,7 +418,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :release_history_url
 
   def build_date
-    return Rails.application.config.build_version[:date] if Rails.application.config.build_version
+    Rails.application.config.build_version[:date] if Rails.application.config.build_version
   end
   helper_method :build_date
 

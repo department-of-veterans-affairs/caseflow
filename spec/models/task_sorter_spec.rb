@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "tasks/task_shared_examples.rb"
+require_relative "tasks/task_shared_examples"
 
 describe TaskSorter, :all_dbs do
   describe ".new" do

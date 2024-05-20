@@ -38,7 +38,7 @@ describe MpiUpdatePersonEvent do
     it "succeeds with an api_key and each valid update_type" do
       updates = []
       i = 0
-      valid_update_types.each do |update_type_sym, _update_type_text|
+      valid_update_types.each_key do |update_type_sym|
         updates[i] = MpiUpdatePersonEvent.new(api_key: api_key, update_type: update_type_sym)
         i += 1
       end

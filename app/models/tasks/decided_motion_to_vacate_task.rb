@@ -14,8 +14,8 @@ class DecidedMotionToVacateTask < Task
   end
 
   def update_status_if_children_tasks_are_closed(_child_task)
-    if assigned_to.is_a?(Organization)
-      return update!(status: :completed) unless all_children_cancelled?
+    if assigned_to.is_a?(Organization) && !all_children_cancelled?
+      return update!(status: :completed)
     end
 
     super

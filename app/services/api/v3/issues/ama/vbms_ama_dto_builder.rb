@@ -2,7 +2,7 @@
 
 # This class is responsible for building the AMA Request Issue Response.
 
-#:reek:TooManyInstanceVariables
+# :reek:TooManyInstanceVariables
 class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
   attr_reader :hash_response
 

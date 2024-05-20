@@ -24,8 +24,8 @@ class ExternalApi::VANotifyService::Response
   def body
     @body ||= begin
       JSON.parse(resp.body)
-              rescue JSON::ParserError
-                {}
+    rescue JSON::ParserError
+      {}
     end
   end
 

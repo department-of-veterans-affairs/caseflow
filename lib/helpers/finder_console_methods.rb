@@ -47,7 +47,6 @@ module FinderConsoleMethods
   #   pp _user 3
   #   pp _user "BvaAAbshire"
   #   pp _user 'ABS'
-  # rubocop:disable Metrics/CyclomaticComplexity
   def _user(identifier)
     user = User.find(identifier) if identifier.is_a? Numeric
     return user if user
@@ -64,7 +63,6 @@ module FinderConsoleMethods
     puts "Found #{users.count} users with full_name like %#{identifier.upcase}%: #{users.pluck(:css_id, :full_name)}"
     users
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # The case-insensitive `identifier` argument can be a User, CSS_ID (sdomainid), VACOLS slogid, or partial last name.
   # Usage examples:

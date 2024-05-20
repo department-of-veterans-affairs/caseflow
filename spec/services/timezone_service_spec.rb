@@ -36,7 +36,7 @@ describe TimezoneService do
         end
       end
 
-      # Note: The ziptz library doesn't provide super granular timezone mappings. I found cases where
+      # NOTE: The ziptz library doesn't provide super granular timezone mappings. I found cases where
       # it mapped a zip code to one with the same UTC offset, but a different than expected name.
       shared_examples "zip code resolves to equivalent timezone" do |zip_code, location, expected_timezone_name|
         context "zip code is in #{location}" do
@@ -62,7 +62,7 @@ describe TimezoneService do
       include_examples "zip code resolves to timezone", " 27605", "Raleigh, NC", "America/New_York"
       include_examples "zip code resolves to timezone", "78744 ", "Austin, TX", "America/Chicago"
 
-      # Note: These tests resolve to the incorrect IANA timezone (ex. 00803 should resolve to America/St_Thomas),
+      # NOTE: These tests resolve to the incorrect IANA timezone (ex. 00803 should resolve to America/St_Thomas),
       # but the offsets from UTC are the same.
       include_examples "zip code resolves to equivalent timezone", "00803",
                        "US Virgin Islands", "America/St_Thomas"

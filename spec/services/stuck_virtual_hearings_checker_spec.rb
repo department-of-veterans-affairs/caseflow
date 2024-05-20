@@ -196,7 +196,7 @@ describe StuckVirtualHearingsChecker, :postgres do
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       pending_line = report_lines[1]
       expect(pending_line).to include "VirtualHearing.find(#{virtual_hearing_no_emails.id})"
-      expect(pending_line).to match(/last attempted\:( about | )4 days ago/)
+      expect(pending_line).to match(/last attempted:( about | )4 days ago/)
       display_scheduled_for = virtual_hearing_no_emails.hearing.scheduled_for.strftime("%a %m/%d")
       expect(pending_line).to include "scheduled for: #{display_scheduled_for}"
       expect(pending_line).to include "updated by: #{virtual_hearing_no_emails.updated_by.css_id}"

@@ -20,10 +20,10 @@ class ExternalApi::VADotGovService::Response
 
   def body
     @body ||= begin
-                JSON.parse(response.body).deep_symbolize_keys
-              rescue JSON::ParserError
-                {}
-              end
+      JSON.parse(response.body).deep_symbolize_keys
+    rescue JSON::ParserError
+      {}
+    end
   end
 
   private

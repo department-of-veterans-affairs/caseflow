@@ -744,7 +744,7 @@ class Fakes::BGSService
       }
     else
       claimant = Array.wrap(find_all_relationships(participant_id: participant_id)).find do |rel|
-        rel.dig(:ptcpnt_id) == participant_id
+        rel[:ptcpnt_id] == participant_id
       end
 
       {
@@ -768,7 +768,7 @@ class Fakes::BGSService
     return if ssn_not_found
 
     person = fetch_person_by_ssn(ssn)
-    return person[:file_number] if person
+    person[:file_number] if person
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -827,7 +827,7 @@ class Fakes::BGSService
   end
 
   def rating_at_issue_profile_data(rating)
-    promulgated_rating_data = rating.dig(:comp_id)
+    promulgated_rating_data = rating[:comp_id]
 
     # If a PromulgatedRating was originally stored in rating_store
     # convert to be compatible with RatingAtIssue

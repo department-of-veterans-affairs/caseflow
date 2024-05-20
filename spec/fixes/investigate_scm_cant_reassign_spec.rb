@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 feature "CaseMovementTeam task actions" do
   let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Talam") }

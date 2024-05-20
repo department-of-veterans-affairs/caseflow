@@ -10,7 +10,7 @@ class InboxController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
   def update
-    attribute = allowed_params.require(:message_action) + "_at"
+    attribute = "#{allowed_params.require(:message_action)}_at"
     message.update!(attribute.to_sym => Time.zone.now)
     render json: message.to_json
   end
@@ -45,6 +45,6 @@ class InboxController < ApplicationController
   end
 
   def verify_access
-    return true if current_user
+    true if current_user
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 feature "Missing org task in Case Details" do
   # Relates to CASEFLOW-1125 and CASEFLOW-1549

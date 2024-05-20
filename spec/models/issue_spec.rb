@@ -178,7 +178,7 @@ describe Issue, :all_dbs do
   context "#formatted_disposition" do
     subject { issue.formatted_disposition }
 
-    it { is_expected.to eq("Allowed\n" + 4.days.ago.to_formatted_s(:short_date)) }
+    it { is_expected.to eq("Allowed\n#{4.days.ago.to_formatted_s(:short_date)}") }
   end
 
   context "#friendly_description" do

@@ -160,7 +160,7 @@ class AppealHistory
       (appeal.issue_categories & candidate.issue_categories).empty?
     end
 
-    return candidates_by_issue.first if candidates_by_issue.length == 1
+    candidates_by_issue.first if candidates_by_issue.length == 1
   end
 
   def merged_appeal_tree_nodes_with_target
@@ -200,7 +200,7 @@ class AppealHistory
       end
     end
 
-    return matches.first if matches.length == 1
+    matches.first if matches.length == 1
   end
 
   class << self

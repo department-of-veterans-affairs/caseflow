@@ -26,9 +26,7 @@ class Generators::LegacyHearing
     def build(attrs = {})
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal.id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
-      hearing = ::LegacyHearing.new(default_attrs.merge(attrs))
-
-      hearing
+      ::LegacyHearing.new(default_attrs.merge(attrs))
     end
 
     def create(attrs = {})

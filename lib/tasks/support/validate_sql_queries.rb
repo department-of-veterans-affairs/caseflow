@@ -249,9 +249,9 @@ class ValidateSqlQueries
         return block_contents if in_block && line.start_with?("*/")
 
         if in_block
-          block_contents += "\n" + line
+          block_contents += "\n#{line}"
         elsif line.start_with?(block_prefix)
-          block_contents += "\n" + line.sub(block_prefix, "").strip
+          block_contents += "\n#{line.sub(block_prefix, '').strip}"
           in_block = true
         end
       end

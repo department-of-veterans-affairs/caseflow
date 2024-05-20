@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/hearing_renderer.rb"
+require "helpers/hearing_renderer"
 
 describe "HearingRenderer" do
   let(:show_pii) { false }

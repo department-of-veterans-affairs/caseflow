@@ -116,7 +116,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
     nonunique_ro_dates = filter_nonunique_ro_dates
     if nonunique_ro_dates.count > 0
-      @errors << RoDatesNotUnique.new("The following ROs have nonunique dates: " + nonunique_ro_dates.to_s)
+      @errors << RoDatesNotUnique.new("The following ROs have nonunique dates: #{nonunique_ro_dates}")
     end
     out_of_range_ro_dates = filter_out_of_range_ro_dates
     if out_of_range_ro_dates.count > 0

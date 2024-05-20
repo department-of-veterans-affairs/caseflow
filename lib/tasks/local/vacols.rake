@@ -128,7 +128,7 @@ namespace :local do
     end
 
     def write_csv(klass, rows, sanitizer)
-      CSV.open(Rails.root.join("local/vacols", klass.name + "_dump.csv"), "wb") do |csv|
+      CSV.open(Rails.root.join("local/vacols", "#{klass.name}_dump.csv"), "wb") do |csv|
         names = klass.attribute_names
         csv << names
         rows.to_a.flatten.select { |e| e }.sort.each do |row|

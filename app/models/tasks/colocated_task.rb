@@ -161,9 +161,6 @@ class ColocatedTask < Task
   # This change means that update_task_type no longer creates a user task for ColocatedTasks, even if one existed
   # on the original task whose type is being changed. This appears to be consistent with what the Board wants, but
   # is worth calling out in case it leads to potential unexpected side-effects.
-  def update_task_type(params)
-    super(params)
-  end
 
   private
 

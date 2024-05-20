@@ -83,8 +83,8 @@ module SanitizedJsonDifference
   def self.compare_values(key, value_a, value_b, ignore_id_offset: false, convert_timestamps: true)
     return nil if value_a == value_b
 
-    if ignore_id_offset && (value_a.is_a?(Integer) || value_b.is_a?(Integer))
-      return nil if (value_b.to_i - value_a.to_i).abs == ID_OFFSET
+    if ignore_id_offset && (value_a.is_a?(Integer) || value_b.is_a?(Integer)) && ((value_b.to_i - value_a.to_i).abs == ID_OFFSET)
+      return nil
     end
 
     if convert_timestamps

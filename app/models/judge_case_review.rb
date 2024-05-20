@@ -35,7 +35,7 @@ class JudgeCaseReview < CaseflowRecord
   def update_in_vacols!
     MetricsService.record("VACOLS: judge_case_review #{task_id}",
                           service: :vacols,
-                          name: "judge_case_review_" + location) do
+                          name: "judge_case_review_#{location}") do
       sign_decision_or_create_omo!
       update_issue_dispositions_in_vacols! if bva_dispatch? || quality_review?
     end

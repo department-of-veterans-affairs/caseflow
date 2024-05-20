@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GenericQueue
-  def initialize(limit: 10_000, user:)
+  def initialize(user:, limit: 10_000)
     @limit = limit
     @user = user
   end

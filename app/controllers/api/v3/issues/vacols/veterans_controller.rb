@@ -45,7 +45,7 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
 
   def show
     MetricsService.record("VACOLS: Get VACOLS Issues information for Veteran",
-    name: "Api::V3::Issues::Vacols::VeteransController.show") do
+                          name: "Api::V3::Issues::Vacols::VeteransController.show") do
       page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
       # per_page uses the default value defined in the DtoBuilder unless a param is given,
       # but it cannot exceed the upper bound

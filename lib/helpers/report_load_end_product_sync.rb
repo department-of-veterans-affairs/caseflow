@@ -125,7 +125,7 @@ module WarRoom
 
     # Grab txt file of previously errored EP reference ids from s3 and return as an array
     def get_error_ids # rubocop:disable Naming/AccessorMethodName
-      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt = S3Service.fetch_content("#{S3_BUCKET_NAME}/error_ids.txt")
       error_txt.delete("\r").split("\n").map { |obj| obj[1...-1] }
     end
 
@@ -134,10 +134,10 @@ module WarRoom
     # S3 does not support appending or modifying files in any way so the current txt file
     # of errors has to be pulled and stored locally, modified locally, and then re-uploaded
     def realtime_log_error_to_s3(reference_id)
-      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt = S3Service.fetch_content("#{S3_BUCKET_NAME}/error_ids.txt")
       error_txt << "\r\n"
-      error_txt << '"' + reference_id.to_s + '"'
-      S3Service.store_file(S3_BUCKET_NAME + "/error_ids.txt", error_txt)
+      error_txt << "\"#{reference_id}\""
+      S3Service.store_file("#{S3_BUCKET_NAME}/error_ids.txt", error_txt)
     end
 
     # Grab cleared EPs that are out of sync
@@ -258,7 +258,7 @@ module WarRoom
 
     # Save Logs to S3 Bucket
     def log_to_s3(log_file, filename)
-      S3Service.store_file(S3_BUCKET_NAME + "/" + filename + "--#{Time.zone.now}.csv", log_file)
+      S3Service.store_file("#{S3_BUCKET_NAME}/#{filename}--#{Time.zone.now}.csv", log_file)
     end
 
     # Spit out metrics at the end of the priority sync

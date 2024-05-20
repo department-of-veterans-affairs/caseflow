@@ -38,9 +38,9 @@ class LegacyTasksController < ApplicationController
 
   def needs_redirect?
     # fixes incorrectly cased css_id param
-    return (use_normalized_css_id && redirect_to_updated_url) if non_normalized_css_id?(params[:user_id])
+    return use_normalized_css_id && redirect_to_updated_url if non_normalized_css_id?(params[:user_id])
     # changes param from user_id to css_id if user is judge
-    return (use_css_id && redirect_to_updated_url) if positive_integer?(params[:user_id])
+    return use_css_id && redirect_to_updated_url if positive_integer?(params[:user_id])
 
     nil
   end
@@ -136,7 +136,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def validate_user_role
-    return invalid_role_error unless ROLES.include?(user_role)
+    invalid_role_error unless ROLES.include?(user_role)
   end
 
   def user

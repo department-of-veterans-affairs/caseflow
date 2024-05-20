@@ -19,7 +19,7 @@ module SanitizationTransforms
       Faker::Internet.email
     else
       case field_value
-      when /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+      when /\A([\w+-].?)+@[a-z\d-]+(\.[a-z]+)*\.[a-z]+\z/i
         Faker::Internet.email
       end
     end
@@ -44,7 +44,7 @@ module SanitizationTransforms
   def unique_citation_number(field_name, field_value, obj_class: nil)
     case field_name
     when "citation_number"
-      "A00" + Faker::Number.number(digits: 2).to_s + field_value[-4..field_value.length]
+      "A00#{Faker::Number.number(digits: 2)}#{field_value[-4..field_value.length]}"
     end
   end
 
@@ -92,7 +92,6 @@ module SanitizationTransforms
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def random_pin(field_name, field_value, obj_class: nil)
     case field_name
     when "alias"
@@ -107,7 +106,6 @@ module SanitizationTransforms
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # Keep field value recognizable but different to reduce risk of exploitation (e.g., username scraping)
   def mixup_css_id(field_name, field_value, obj_class: nil)

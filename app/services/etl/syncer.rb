@@ -18,7 +18,7 @@ class ETL::Syncer
     end
   end
 
-  def initialize(since: nil, etl_build:, id_offset: 0)
+  def initialize(etl_build:, since: nil, id_offset: 0)
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
     @id_offset = id_offset

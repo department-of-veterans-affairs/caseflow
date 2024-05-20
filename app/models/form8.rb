@@ -102,7 +102,7 @@ class Form8 < CaseflowRecord
   end
 
   def hearing_on_file
-    (hearing_held == "Yes" && hearing_transcript_on_file)
+    hearing_held == "Yes" && hearing_transcript_on_file
   end
 
   def increased_rating_for_initial
@@ -177,7 +177,7 @@ class Form8 < CaseflowRecord
   end
 
   def fetch_from_s3_and_save(destination_path)
-    S3Service.fetch_file(FORM8_S3_SUB_BUCKET + "/" + pdf_filename, destination_path)
+    S3Service.fetch_file("#{FORM8_S3_SUB_BUCKET}/#{pdf_filename}", destination_path)
   end
 
   def pdf_filename
@@ -198,13 +198,13 @@ class Form8 < CaseflowRecord
     ]
     date_fields.each do |f|
       raw_value = params[f]
-      next unless raw_value&.is_a?(String)
+      next unless raw_value.is_a?(String)
 
       params[f] = begin
-                    Date.strptime(raw_value, "%m/%d/%Y")
-                  rescue StandardError
-                    nil
-                  end
+        Date.strptime(raw_value, "%m/%d/%Y")
+      rescue StandardError
+        nil
+      end
     end
     update(params)
   end

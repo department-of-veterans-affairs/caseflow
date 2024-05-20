@@ -10,7 +10,7 @@ class HearingRequestDistributionQuery
     @use_by_docket_date = use_by_docket_date
   end
 
-  def call # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def call # rubocop:disable Metrics/CyclomaticComplexity
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
@@ -84,97 +84,85 @@ class HearingRequestDistributionQuery
   end
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
-    query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
-        base_relation
-          .most_recent_hearings
-          .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
-          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
-        base_relation
-          .most_recent_hearings
-          .tied_to_distribution_judge(judge)
-          .ama_non_aod_hearing_appeals
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .none
-      end
-
-    query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+      base_relation
+        .most_recent_hearings
+        .tied_to_distribution_judge(judge)
+        .ama_non_aod_hearing_appeals
+        .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+      base_relation
+        .most_recent_hearings
+        .tied_to_distribution_judge(judge)
+        .ama_non_aod_hearing_appeals
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    end
   end
 
   def generate_ama_not_genpop_aod_hearing_query(base_relation)
-    query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-        base_relation
-          .most_recent_hearings
-          .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
-          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
-        base_relation
-          .most_recent_hearings
-          .tied_to_distribution_judge(judge)
-          .ama_aod_hearing_appeals
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .none
-      end
-
-    query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      base_relation
+        .most_recent_hearings
+        .tied_to_distribution_judge(judge)
+        .ama_aod_hearing_appeals
+        .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      base_relation
+        .most_recent_hearings
+        .tied_to_distribution_judge(judge)
+        .ama_aod_hearing_appeals
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    end
   end
 
   def generate_ama_only_genpop_non_aod_hearing_query(base_relation)
-    query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .ama_non_aod_hearing_appeals
-          .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .none
-      elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .with_held_hearings
-          .ama_non_aod_hearing_appeals
-      end
-
-    query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .ama_non_aod_hearing_appeals
+        .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.infinite
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == Constants.ACD_LEVERS.omit
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .with_held_hearings
+        .ama_non_aod_hearing_appeals
+    end
   end
 
   def generate_ama_only_genpop_aod_hearing_query(base_relation)
-    query =
-      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .ama_aod_hearing_appeals
-          .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .none
-      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
-        base_relation
-          .most_recent_hearings
-          .join_distribution_tasks
-          .with_held_hearings
-          .ama_aod_hearing_appeals
-      end
-
-    query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .ama_aod_hearing_appeals
+        .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == Constants.ACD_LEVERS.omit
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .with_held_hearings
+        .ama_aod_hearing_appeals
+    end
   end
 
   delegate :with_no_hearings, to: :base_relation

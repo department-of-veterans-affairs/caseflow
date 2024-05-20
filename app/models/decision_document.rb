@@ -34,7 +34,7 @@ class DecisionDocument < CaseflowRecord
   end
 
   def pdf_name
-    appeal.external_id + ".pdf"
+    "#{appeal.external_id}.pdf"
   end
 
   alias document_name pdf_name
@@ -157,7 +157,7 @@ class DecisionDocument < CaseflowRecord
   end
 
   def s3_location
-    DecisionDocument::S3_SUB_BUCKET + "/" + pdf_name
+    "#{DecisionDocument::S3_SUB_BUCKET}/#{pdf_name}"
   end
 
   def output_location
@@ -210,6 +210,6 @@ class DecisionDocument < CaseflowRecord
 
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + " ID: " + uuid)
+    Rails.logger.info("#{info_message} ID: #{uuid}")
   end
 end

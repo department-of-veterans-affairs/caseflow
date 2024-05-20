@@ -820,7 +820,7 @@ feature "NonComp Reviews Queue", :postgres do
       end
 
       let(:url_with_params) do
-        BASE_URL + "?tab=in_progress&page=1&filter%5B%5D=col%3DissueTypesColumn%26val%3DCaregiver%20%7C%20Eligibility"
+        "#{BASE_URL}?tab=in_progress&page=1&filter%5B%5D=col%3DissueTypesColumn%26val%3DCaregiver%20%7C%20Eligibility"
       end
 
       let!(:dispositions_url) { BASE_URL + "/tasks/#{extra_task.id}" }
@@ -891,7 +891,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Review each issue and assign the appropriate dispositions.")
 
         # Return to the completed tab
-        visit BASE_URL + "?tab=completed&page=1"
+        visit "#{BASE_URL}?tab=completed&page=1"
         expect(page).to have_content(pipe_issue_category)
         expect(page).to have_content("Filtering by: Issue Type (1)")
       end

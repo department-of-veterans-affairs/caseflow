@@ -39,9 +39,9 @@ class IssuesController < ApplicationController
     return record_not_found unless appeal
 
     issue = appeal.issues.find { |iss| iss.vacols_sequence_id == params[:vacols_sequence_id].to_i }
-    if issue.mst_status != convert_to_bool(params[:issues][:mst_status]) ||
-       issue.pact_status != convert_to_bool(params[:issues][:pact_status])
-      create_legacy_issue_update_task(issue) if FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+    if (issue.mst_status != convert_to_bool(params[:issues][:mst_status]) ||
+       issue.pact_status != convert_to_bool(params[:issues][:pact_status])) && FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+      create_legacy_issue_update_task(issue)
     end
 
     Issue.update_in_vacols!(

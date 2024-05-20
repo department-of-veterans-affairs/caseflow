@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 describe "Appeals with unrecognized appellants" do
   shared_examples "appeal has an engineering task added to it" do |path|

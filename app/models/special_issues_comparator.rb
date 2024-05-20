@@ -196,26 +196,26 @@ class SpecialIssuesComparator
   # takes the contention given and tries to match it to the current rating issue (issue)
   def link_contention_to_rating(contention, rba_contention, contention_matches)
     # if only one contention, check the contention info
-    if contention.dig(:contentions).is_a?(Hash)
+    if contention[:contentions].is_a?(Hash)
       # get the single contention from the response
-      single_contention_info = contention.dig(:contentions)
+      single_contention_info = contention[:contentions]
 
       return if single_contention_info.blank?
 
       # see if the contention ties to the rating. if it does, add it to the matches list
-      if single_contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+      if single_contention_info[:cntntn_id] == rba_contention[:cntntn_id]
         contention_matches << single_contention_info
       end
 
     # if the response contains an array of contentions, unpack each one and compare
-    elsif contention.dig(:contentions).is_a?(Array)
+    elsif contention[:contentions].is_a?(Array)
 
       # cycle the contentions within the array to make the comparison to the rba_contention
-      contention.dig(:contentions).each do |contention_info|
-        next if contention_info.dig(:cntntn_id).blank?
+      contention[:contentions].each do |contention_info|
+        next if contention_info[:cntntn_id].blank?
 
         # see if the contention ties to the rating. if it does, add it to the matches list
-        contention_matches << contention_info if contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+        contention_matches << contention_info if contention_info[:cntntn_id] == rba_contention[:cntntn_id]
       end
     end
     contention_matches

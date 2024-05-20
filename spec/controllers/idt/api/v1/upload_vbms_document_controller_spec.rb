@@ -130,7 +130,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "when appeal id doesn't match in database" do
         it "returns an AppealNotFound error" do
-          params["appeal_id"] = appeal.uuid + "123"
+          params["appeal_id"] = "#{appeal.uuid}123"
           post :create, params: params
           expect(response).to have_attributes(status: 400)
           error_msg = JSON.parse(response.body)["message"]

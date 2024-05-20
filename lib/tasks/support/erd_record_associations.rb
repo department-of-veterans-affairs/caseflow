@@ -31,7 +31,7 @@ module ErdRecordAssociations
 
   POLYMORPHIC_COLOR ||= "#0000ff" # blue
 
-  #:reek:UtilityFunction
+  # :reek:UtilityFunction
   def add_polymorphic_node(graph, node_name, subclasses)
     # To avoid clutter, don't list all the subclasses if there are too many (e.g., Task subclasses)
     subclasses_string = if subclasses.size > 5

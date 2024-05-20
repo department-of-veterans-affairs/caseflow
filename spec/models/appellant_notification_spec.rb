@@ -606,7 +606,7 @@ describe AppellantNotification do
       end
     end
 
-    # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
+    # NOTE: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
     describe "mail task" do
       let(:appeal) { create(:appeal) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }

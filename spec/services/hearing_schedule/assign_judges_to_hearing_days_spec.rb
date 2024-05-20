@@ -5,7 +5,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
   context "#load_spreadsheet_data" do
     before do
-      S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name,
+      S3Service.store_file("#{SchedulePeriod::S3_SUB_BUCKET}/#{file_name}",
                            "spec/support/#{file_name}", :filepath)
     end
 

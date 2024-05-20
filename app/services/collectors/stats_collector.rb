@@ -31,7 +31,7 @@ module Collectors::StatsCollector
 
   # See valid tag name rules at https://docs.datadoghq.com/tagging/#defining-tags
   def to_valid_tag(name)
-    name.gsub(/[^a-zA-Z_\-\:\.\d\/]/, "__")
+    name.gsub(/[^a-zA-Z_\-:.\d\/]/, "__")
   end
 
   def to_valid_tag_key(name)
@@ -45,7 +45,7 @@ module Collectors::StatsCollector
     # "dsva_appeals.stats_collector_job." prepended, let's just stick with a 150 character limit.
     return false if metric_name.length > 150
 
-    return true if metric_name.match?(/\A[a-zA-Z][a-zA-Z\d_\.]*\Z/)
+    return true if metric_name.match?(/\A[a-zA-Z][a-zA-Z\d_.]*\Z/)
 
     false
   end

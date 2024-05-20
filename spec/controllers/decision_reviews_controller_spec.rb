@@ -817,7 +817,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         expect(response.headers["Content-Type"]).to eq("text/csv")
         expect(response.headers["Content-Disposition"]).to match(
-          /^attachment; filename=\"taskreport-20180101_0700.csv\"/
+          /^attachment; filename="taskreport-20180101_0700.csv"/
         )
       end
 

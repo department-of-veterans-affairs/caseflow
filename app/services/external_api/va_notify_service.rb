@@ -102,8 +102,7 @@ class ExternalApi::VANotifyService
       token = "#{encoded_header}.#{encoded_data}"
       signature = OpenSSL::HMAC.digest("SHA256", jwt_secret, token)
       signature = base64url(signature)
-      signed_token = "#{token}.#{signature}"
-      signed_token
+      "#{token}.#{signature}"
     end
 
     # Purpose: Build an email request object
@@ -184,7 +183,7 @@ class ExternalApi::VANotifyService
     #
     # Return: service_response: JSON from VA Notify or error
     # rubocop:disable
-    def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
+    def send_va_notify_request(endpoint:, query: {}, headers: {}, method: :get, body: nil)
       url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
@@ -193,7 +192,7 @@ class ExternalApi::VANotifyService
       request.body = body.to_json unless body.nil?
       request.auth.ssl.ssl_version  = :TLSv1_2
       request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
-      request.headers = headers.merge(Authorization: "Bearer " + generate_token)
+      request.headers = headers.merge(Authorization: "Bearer #{generate_token}")
       sleep 1
       MetricsService.record("api.notifications.va.gov #{method.to_s.upcase} request to #{url}",
                             service: :va_notify,

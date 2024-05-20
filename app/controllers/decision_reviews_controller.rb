@@ -232,7 +232,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def verify_task
-    unless task&.is_a?(DecisionReviewTask)
+    unless task.is_a?(DecisionReviewTask)
       render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end

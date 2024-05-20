@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/finder_console_methods.rb"
+require "helpers/finder_console_methods"
 
 describe "FinderConsoleMethods" do
   let(:appeal) { create(:appeal) }

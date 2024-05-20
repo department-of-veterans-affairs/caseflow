@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 describe "Fixing dispatched appeals" do
   # https://dsva.slack.com/archives/CJL810329/p1619450075282800

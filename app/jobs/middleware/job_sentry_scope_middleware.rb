@@ -22,7 +22,7 @@ class JobSentryScopeMiddleware
       job: job_class.name,
       queue: queue
     }
-    # Note: job class and job id are already sent to Sentry by default.
+    # NOTE: job class and job id are already sent to Sentry by default.
     context = {
       application: application,
       aws_log_url: job_info.url,

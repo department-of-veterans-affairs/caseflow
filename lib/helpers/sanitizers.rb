@@ -31,7 +31,7 @@ class Helpers::Sanitizers
 
   VETID_REGEX = /((?:^|[^0-9]|SS\ )[0-9]{3}[-\ ]?[0-9]{2}[-\ ]?[0-9]{4}(?![0-9])S?|(?:^|[^0-9]|C )
     [0-9]{1,2}\ ?[0-9]{3}\ ?[0-9]{3}(?![0-9])C?)/x.freeze
-  EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i.freeze
+  EMAIL_REGEX = /\A([\w+-].?)+@[a-z\d-]+(\.[a-z]+)*\.[a-z]+\z/i.freeze
   PHONE_REGEX = /\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})/.freeze
   SENTENCE_REGEX = /[^\s]\s[^\s]/.freeze
 
@@ -172,8 +172,8 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new((travel_board.tbyear + travel_board.tbtrip.to_s).to_i)
 
     travel_board.assign_attributes(
-      tbbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
-      tbropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
+      tbbvapoc: "#{::Faker::Name.name} #{::Faker::PhoneNumber.phone_number}",
+      tbropoc: "#{::Faker::Name.name} #{::Faker::PhoneNumber.phone_number}"
     )
   end
 
@@ -218,7 +218,7 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(folder.ticknum.to_i)
 
     folder.assign_attributes(
-      titrnum: ::Faker::Number.number(digits: 9) + "S",
+      titrnum: "#{::Faker::Number.number(digits: 9)}S",
       tinum: ::Faker::Number.number(digits: 7),
       tiwpptr: random_or_nil(::Faker::Lorem.sentence),
       tispare1: exist_hash["tispare1"] ? ::Faker::Name.last_name : nil,
@@ -265,7 +265,7 @@ class Helpers::Sanitizers
       snamef: ::Faker::Name.first_name,
       snamemi: ::Faker::Name.initials(number: 1),
       snamel: ::Faker::Name.last_name,
-      slogid: ::Faker::Number.number(digits: 9) + "S",
+      slogid: "#{::Faker::Number.number(digits: 9)}S",
       stitle: ::Faker::Name.prefix,
       sorg: random_or_nil(::Faker::Lorem.sentence),
       sdept: random_or_nil(::Faker::Lorem.sentence),
@@ -338,8 +338,8 @@ class Helpers::Sanitizers
       repname: ::Faker::Name.name,
       rep_state: ::Faker::Address.state_abbr,
       notes1: random_or_nil(::Faker::Lorem.sentence),
-      vdbvapoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number,
-      vdropoc: ::Faker::Name.name + " " + ::Faker::PhoneNumber.phone_number
+      vdbvapoc: "#{::Faker::Name.name} #{::Faker::PhoneNumber.phone_number}",
+      vdropoc: "#{::Faker::Name.name} #{::Faker::PhoneNumber.phone_number}"
     )
   end
 
@@ -376,7 +376,7 @@ class Helpers::Sanitizers
     ::Faker::Config.random = Random.new(vacols_case.bfkey.to_i)
 
     vacols_case.assign_attributes(
-      bfcorlid: ::Faker::Number.number(digits: 9) + "S",
+      bfcorlid: "#{::Faker::Number.number(digits: 9)}S",
       bfcclkid: ::Faker::Number.number(digits: 7)
     )
   end

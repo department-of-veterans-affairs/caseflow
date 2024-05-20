@@ -31,11 +31,12 @@ module JailerPolymorphicAssociations
 
   # :reek:UtilityFunction
   def jailer_record_classes(base_class)
-    if base_class == "CaseflowRecord"
+    case base_class
+    when "CaseflowRecord"
       base_class.descendants - [CaseflowRecord] - Task.descendants
-    elsif base_class == "ETL::Record"
+    when "ETL::Record"
       base_class.descendants - [ETL::Record]
-    elsif base_class == "VACOLS::Record"
+    when "VACOLS::Record"
       base_class.descendants - [VACOLS::Record]
     else
       base_class.descendants

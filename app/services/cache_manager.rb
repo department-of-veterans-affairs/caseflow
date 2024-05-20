@@ -32,7 +32,7 @@ class CacheManager
     ]
   }.freeze
 
-  # NOTE that development and test envs currently do not use the Redis store, so this only applies
+  # NOTE: that development and test envs currently do not use the Redis store, so this only applies
   # to production environments (AWS)
   def self.cache_store
     @cache_store ||= begin
@@ -56,7 +56,7 @@ class CacheManager
     fail NoSuchBucket, bucket unless key_names
 
     key_names.each do |key|
-      if key.match?(/[\*\[\?]/)
+      if key.match?(/[*\[?]/)
         Rails.cache.delete_matched(key)
       else
         Rails.cache.delete(key)

@@ -8,14 +8,14 @@ end
 # Helper for multi-database transactions
 # http://technology.customink.com/blog/2015/06/22/rails-multi-database-best-practices-roundup/
 ActiveRecord::Base.class_eval do
-  def self.multi_transaction
+  def self.multi_transaction(&block)
     ActiveRecord::Base.transaction do
-      VACOLS::Record.transaction { yield }
+      VACOLS::Record.transaction(&block)
     end
   end
 
-  def multi_transaction
-    self.class.multi_transaction { yield }
+  def multi_transaction(&block)
+    self.class.multi_transaction(&block)
   end
 end
 # :nocov:

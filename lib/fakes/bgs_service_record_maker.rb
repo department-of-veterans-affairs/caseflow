@@ -388,7 +388,7 @@ class Fakes::BGSServiceRecordMaker
 
   def has_higher_level_review_with_vbms_claim_id(veteran)
     claim_id = "600118951"
-    contention_reference_id = veteran.file_number[0..4] + "1234"
+    contention_reference_id = "#{veteran.file_number[0..4]}1234"
     hlr = HigherLevelReview.find_or_create_by!(
       veteran_file_number: veteran.file_number
     )

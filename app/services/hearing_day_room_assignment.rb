@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HearingDayRoomAssignment
-  def initialize(request_type:, assign_room: nil, scheduled_for:, room:)
+  def initialize(request_type:, scheduled_for:, room:, assign_room: nil)
     @request_type = request_type
     # if assign_room is nil, then this was invoked by judge algorithm
     @assign_room = assign_room.nil? ? false : ActiveRecord::Type::Boolean.new.deserialize(assign_room)

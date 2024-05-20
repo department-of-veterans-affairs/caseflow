@@ -52,7 +52,7 @@ class AttorneyTask < Task
   end
 
   def update_parent_status
-    parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
+    parent.begin_decision_review_phase if parent.is_a?(JudgeAssignTask)
     super
   end
 

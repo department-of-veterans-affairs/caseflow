@@ -55,7 +55,7 @@ describe Idt::Token do
       key, token = key_token_pair
       Idt::Token.activate_proposed_token(key, css_id)
       expect(Idt::Token.active?(token)).to eq(true)
-      Idt::Token.client.expire("valid_tokens_key" + token, -1)
+      Idt::Token.client.expire("valid_tokens_key#{token}", -1)
       expect(Idt::Token.active?(token)).to eq(false)
     end
   end

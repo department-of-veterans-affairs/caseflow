@@ -42,7 +42,7 @@ describe Reader::DocumentsController, :postgres, type: :controller do
           doc = Generators::Document.create(
             type: "SOC",
             series_id: fetched_document.series_id,
-            vbms_document_id: fetched_document.vbms_document_id + ".old",
+            vbms_document_id: "#{fetched_document.vbms_document_id}.old",
             category_medical: true
           )
           Generators::Annotation.create(document_id: doc.id, comment: "existing comment", x: rand(100), y: rand(100))

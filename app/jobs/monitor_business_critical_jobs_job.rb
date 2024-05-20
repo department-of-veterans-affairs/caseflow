@@ -61,7 +61,7 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
         message
       end
 
-      failure_message += "<!here>\n" if !failure_message.length.zero?
+      failure_message += "<!here>\n" if !failure_message.empty?
       failure_message
     end
   end

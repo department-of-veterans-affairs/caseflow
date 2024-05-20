@@ -27,7 +27,7 @@ class AttorneySearch
     return [] if first_letters.empty?
 
     @candidates ||= begin
-      regexes = first_letters.map { |ch| "\\m" + ch } # \m is POSIX regex for start-of-word
+      regexes = first_letters.map { |ch| "\\m#{ch}" } # \m is POSIX regex for start-of-word
       where = (["name ~* ?"] * regexes.length).join(" AND ")
       BgsAttorney.where(where, *regexes)
     end

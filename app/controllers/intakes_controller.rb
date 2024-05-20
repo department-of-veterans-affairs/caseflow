@@ -113,7 +113,7 @@ class IntakesController < ApplicationController
     Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
-    flash[:error] = error.message + ". Intake has been cancelled, please retry."
+    flash[:error] = "#{error.message}. Intake has been cancelled, please retry."
     raise
   end
 

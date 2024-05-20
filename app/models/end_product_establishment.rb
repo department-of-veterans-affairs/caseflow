@@ -557,7 +557,6 @@ class EndProductEstablishment < CaseflowRecord
     result
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def matches_end_product?(end_product)
     return true if ep_created? && reference_id == end_product.claim_id
     return false unless end_product.active? &&
@@ -568,10 +567,9 @@ class EndProductEstablishment < CaseflowRecord
     # Call it a match once we confirm that other EPE has the same claim ID
     EndProductEstablishment.find_by(reference_id: end_product.claim_id).nil?
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def sync_source!
-    return unless source&.respond_to?(:on_sync)
+    return unless source.respond_to?(:on_sync)
 
     source.on_sync(self)
   end

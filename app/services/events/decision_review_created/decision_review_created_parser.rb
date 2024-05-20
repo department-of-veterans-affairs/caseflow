@@ -35,12 +35,12 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   def initialize(headers, payload_json)
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
-    @veteran = @payload.dig(:veteran)
+    @veteran = @payload[:veteran]
   end
 
   # Generic/universal methods
   def convert_milliseconds_to_datetime(milliseconds)
-    milliseconds.nil? ? nil : Time.at(milliseconds.to_i / 1000).to_datetime
+    milliseconds.nil? ? nil : Time.zone.at(milliseconds.to_i / 1000).to_datetime
   end
 
   # convert logical date int to date
@@ -48,33 +48,32 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
     return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
 
     base_date = Date.new(1970, 1, 1)
-    converted_date = base_date + logical_date_int.to_i.days
-    return converted_date
+    base_date + logical_date_int.to_i.days
   end
 
   def css_id
-    @payload.dig(:css_id)
+    @payload[:css_id]
   end
 
   def detail_type
-    @payload.dig(:detail_type)
+    @payload[:detail_type]
   end
 
   def station_id
-    @payload.dig(:station)
+    @payload[:station]
   end
 
   def event_id
-    @payload.dig(:event_id)
+    @payload[:event_id]
   end
 
   def claim_id
-    @payload.dig(:claim_id)
+    @payload[:claim_id]
   end
 
   # Intake attributes
   def intake
-    @payload.dig(:intake)
+    @payload[:intake]
   end
 
   def intake_started_at
@@ -106,7 +105,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # Veteran attributes
   def veteran
-    @payload.dig(:veteran)
+    @payload[:veteran]
   end
 
   def veteran_file_number
@@ -174,7 +173,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # Claimant attributes
   def claimant
-    @payload.dig(:claimant)
+    @payload[:claimant]
   end
 
   def claimant_payee_code
@@ -195,7 +194,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # ClaimReview attributes
   def claim_review
-    @payload.dig(:claim_review)
+    @payload[:claim_review]
   end
 
   def claim_review_benefit_type
@@ -249,7 +248,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # EndProductEstablishment attr
   def epe
-    @payload.dig(:end_product_establishment)
+    @payload[:end_product_establishment]
   end
 
   def epe_benefit_type_code
@@ -311,109 +310,109 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   # RequestIssues attr
   # return the array of RI objects
   def request_issues
-    @payload.dig(:request_issues)
+    @payload[:request_issues]
   end
 
   # Individual RequestIssue parsing methods
   # An RI instance will be passed in as you iterate through the array
   def ri_benefit_type(issue)
-    issue.dig(:benefit_type)
+    issue[:benefit_type]
   end
 
   def ri_contested_issue_description(issue)
-    issue.dig(:contested_issue_description)
+    issue[:contested_issue_description]
   end
 
   def ri_contention_reference_id(issue)
-    issue.dig(:contention_reference_id)
+    issue[:contention_reference_id]
   end
 
   def ri_contested_rating_decision_reference_id(issue)
-    issue.dig(:contested_rating_decision_reference_id)
+    issue[:contested_rating_decision_reference_id]
   end
 
   def ri_contested_rating_issue_profile_date(issue)
-    issue.dig(:contested_rating_issue_profile_date)
+    issue[:contested_rating_issue_profile_date]
   end
 
   def ri_contested_rating_issue_reference_id(issue)
-    issue.dig(:contested_rating_issue_reference_id)
+    issue[:contested_rating_issue_reference_id]
   end
 
   def ri_contested_decision_issue_id(issue)
-    issue.dig(:contested_decision_issue_id)
+    issue[:contested_decision_issue_id]
   end
 
   def ri_decision_date(issue)
-    decision_date_int = issue.dig(:decision_date)
+    decision_date_int = issue[:decision_date]
     logical_date_converter(decision_date_int)
   end
 
   def ri_ineligible_due_to_id(issue)
-    issue.dig(:ineligible_due_to_id)
+    issue[:ineligible_due_to_id]
   end
 
   def ri_ineligible_reason(issue)
-    issue.dig(:ineligible_reason)
+    issue[:ineligible_reason]
   end
 
   def ri_is_unidentified(issue)
-    issue.dig(:is_unidentified)
+    issue[:is_unidentified]
   end
 
   def ri_unidentified_issue_text(issue)
-    issue.dig(:unidentified_issue_text)
+    issue[:unidentified_issue_text]
   end
 
   def ri_nonrating_issue_category(issue)
-    issue.dig(:nonrating_issue_category)
+    issue[:nonrating_issue_category]
   end
 
   def ri_nonrating_issue_description(issue)
-    issue.dig(:nonrating_issue_description)
+    issue[:nonrating_issue_description]
   end
 
   def ri_untimely_exemption(issue)
-    issue.dig(:untimely_exemption)
+    issue[:untimely_exemption]
   end
 
   def ri_untimely_exemption_notes(issue)
-    issue.dig(:untimely_exemption_notes)
+    issue[:untimely_exemption_notes]
   end
 
   def ri_vacols_id(issue)
-    issue.dig(:vacols_id)
+    issue[:vacols_id]
   end
 
   def ri_vacols_sequence_id(issue)
-    issue.dig(:vacols_sequence_id)
+    issue[:vacols_sequence_id]
   end
 
   def ri_closed_at(issue)
-    issue.dig(:closed_at)
+    issue[:closed_at]
   end
 
   def ri_closed_status(issue)
-    issue.dig(:closed_status)
+    issue[:closed_status]
   end
 
   def ri_contested_rating_issue_diagnostic_code(issue)
-    issue.dig(:contested_rating_issue_diagnostic_code)
+    issue[:contested_rating_issue_diagnostic_code]
   end
 
   def ri_ramp_claim_id(issue)
-    issue.dig(:ramp_claim_id)
+    issue[:ramp_claim_id]
   end
 
   def ri_rating_issue_associated_at(issue)
-    issue.dig(:rating_issue_associated_at)
+    issue[:rating_issue_associated_at]
   end
 
   def ri_nonrating_issue_bgs_id(issue)
-    issue.dig(:nonrating_issue_bgs_id)
+    issue[:nonrating_issue_bgs_id]
   end
 
   def ri_nonrating_issue_bgs_source(issue)
-    issue.dig(:nonrating_issue_bgs_source)
+    issue[:nonrating_issue_bgs_source]
   end
 end

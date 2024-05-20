@@ -55,7 +55,7 @@ class SchedulePeriod < CaseflowRecord
   end
 
   def s3_file_location
-    S3_SUB_BUCKET + "/" + file_name
+    "#{S3_SUB_BUCKET}/#{file_name}"
   end
 
   def spreadsheet

@@ -59,7 +59,7 @@ module AssociatedBgsRecord
   end
 
   def bgs_record
-    @bgs_record ||= (try_and_retry_bgs_record || :not_found)
+    @bgs_record ||= try_and_retry_bgs_record || :not_found
   end
 
   private
@@ -96,7 +96,7 @@ module AssociatedBgsRecord
     self[attr_name] ||= begin
       return if not_found?
 
-      bgs_record.dig(bgs_attr)
+      bgs_record[bgs_attr]
     end
   end
 

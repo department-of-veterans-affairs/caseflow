@@ -203,7 +203,7 @@ describe AppealRepository, :all_dbs do
     subject { AppealRepository.ssoc_dates_from(case_record) }
     it do
       is_expected.to be_an_instance_of(Array)
-      expect(subject.all? { |d| d.class == ActiveSupport::TimeWithZone }).to be_truthy
+      expect(subject.all? { |d| d.instance_of?(ActiveSupport::TimeWithZone) }).to be_truthy
     end
   end
 

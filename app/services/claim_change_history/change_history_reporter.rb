@@ -1,27 +1,25 @@
 # frozen_string_literal: true
 
 class ChangeHistoryReporter
-  attr_reader :events
-  attr_reader :event_filters
-  attr_reader :tasks_url
+  attr_reader :events, :event_filters, :tasks_url
 
-  CHANGE_HISTORY_CSV_COLUMNS = %w[
-    Veteran\ File\ Number
-    Claimant
-    Task\ URL
-    Current\ Claim\ Status
-    Days\ Waiting
-    Claim\ Type
-    Facility
-    Edit\ User\ Name
-    Edit\ Date
-    Edit\ Action
-    Issue\ Type
-    Issue\ Description
-    Prior\ Decision\ Date
-    Disposition
-    Disposition\ Description
-    Disposition\ Date
+  CHANGE_HISTORY_CSV_COLUMNS = [
+    "Veteran File Number",
+    "Claimant",
+    "Task URL",
+    "Current Claim Status",
+    "Days Waiting",
+    "Claim Type",
+    "Facility",
+    "Edit User Name",
+    "Edit Date",
+    "Edit Action",
+    "Issue Type",
+    "Issue Description",
+    "Prior Decision Date",
+    "Disposition",
+    "Disposition Description",
+    "Disposition Date"
   ].freeze
 
   def initialize(events, tasks_url, event_filters = {})

@@ -24,11 +24,8 @@ class Fakes::VBMSService
   HOLD_REQUEST_TIMEOUT_SECONDS = 2
 
   class << self
-    attr_accessor :document_records
-    attr_accessor :end_product_claim_id
-    attr_accessor :uploaded_form8, :uploaded_form8_appeal
-    attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
-    attr_accessor :end_product_claim_ids_by_file_number
+    attr_accessor :document_records, :end_product_claim_id, :uploaded_form8, :uploaded_form8_appeal,
+                  :manifest_vbms_fetched_at, :manifest_vva_fetched_at, :end_product_claim_ids_by_file_number
   end
 
   def self.load_vbms_ids_mappings
@@ -54,7 +51,6 @@ class Fakes::VBMSService
     @hold_request = false
   end
 
-  # rubocop:disable  Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
       case document.vbms_document_id.to_i
@@ -75,7 +71,6 @@ class Fakes::VBMSService
       end
     IO.binread(path)
   end
-  # rubocop:enable  Metrics/CyclomaticComplexity
 
   def self.document_count(veteran_file_number, _user = nil)
     docs = (document_records || {})[veteran_file_number] || @documents || []

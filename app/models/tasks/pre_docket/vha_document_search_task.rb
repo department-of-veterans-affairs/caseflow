@@ -11,7 +11,8 @@ class VhaDocumentSearchTask < Task
     if assigned_to.user_has_access?(user) &&
        FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
       return VHA_CAMO_TASK_ACTIONS if assigned_to.is_a?(VhaCamo)
-      return caregiver_actions if assigned_to.is_a?(VhaCaregiverSupport)
+
+      caregiver_actions if assigned_to.is_a?(VhaCaregiverSupport)
     else
       []
     end

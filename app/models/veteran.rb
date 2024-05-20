@@ -137,7 +137,7 @@ class Veteran < CaseflowRecord
     # If the result is nil, the veteran wasn't found.
     # If the participant id is nil, that's another way of saying the veteran wasn't found.
     # rescue PowerOfAttorneyFolderDenied errors from BGS for VSO's that should actually have access
-    return result if result && result[:ptcpnt_id]
+    result if result && result[:ptcpnt_id]
   rescue BGS::PowerOfAttorneyFolderDenied
     { ptcpnt_id: participant_id }
   rescue BGS::ShareError => error
@@ -214,9 +214,9 @@ class Veteran < CaseflowRecord
   def validate_zip_code
     return unless zip_code
 
-    if country == "USA"
+    if country == "USA" && !zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
       # This regex validation checks for that zip code is 5 characters long
-      errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+      errors.add(:zip_code, "invalid_zip_code")
     end
   end
 
@@ -253,7 +253,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
-    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
+    errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
       bgs.pay_grade_list.map { |pay_grade| pay_grade[:code] }.exclude?(pay_grades.strip)
     end
   end
@@ -325,8 +325,8 @@ class Veteran < CaseflowRecord
   end
 
   def stale?
-    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
-      email_address.nil?)
+    first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      email_address.nil?
   end
 
   def stale_attributes?
@@ -346,10 +346,10 @@ class Veteran < CaseflowRecord
       fetched_attr = bgs_record[bgs_attr]
       if bgs_attr == :date_of_death && fetched_attr.present?
         fetched_attr = begin
-                         Date.strptime(fetched_attr, "%m/%d/%Y")
-                       rescue ArgumentError
-                         nil
-                       end
+          Date.strptime(fetched_attr, "%m/%d/%Y")
+        rescue ArgumentError
+          nil
+        end
       end
       self[local_attr] = fetched_attr
     end
@@ -411,12 +411,12 @@ class Veteran < CaseflowRecord
 
     def find_by_file_number_and_sync(file_number, sync_name: false)
       veteran = begin
-            # Only make request to BGS if finding by file number is nil
-            find_by(file_number: file_number) ||
-              find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
-                rescue BGS::ShareError
-                  nil
-          end
+        # Only make request to BGS if finding by file number is nil
+        find_by(file_number: file_number) ||
+          find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
+      rescue BGS::ShareError
+        nil
+      end
 
       return nil if veteran.blank?
 
@@ -507,10 +507,7 @@ class Veteran < CaseflowRecord
   end
 
   def period_of_service(service_attributes)
-    service_attributes[:branch_of_service].strip + " " +
-      service_date(service_attributes[:entered_on_duty_date]) + " - " +
-      service_date(service_attributes[:released_active_duty_date]) +
-      character_of_service(service_attributes)
+    "#{service_attributes[:branch_of_service].strip} #{service_date(service_attributes[:entered_on_duty_date])} - #{service_date(service_attributes[:released_active_duty_date])}#{character_of_service(service_attributes)}"
   end
 
   def character_of_service(service_attributes)

@@ -94,7 +94,6 @@ module ErdGraphStyling
         node[:shape] = "note"
         node[:style] = "filled"
         node[:fillcolor] = "#ff5050"
-      elsif apply_ancestor_styling(name, node)
       elsif name.starts_with?("Ramp")
         node[:style] = "filled"
         node[:fillcolor] = "#cc99ff"
@@ -111,10 +110,10 @@ module ErdGraphStyling
 
   def apply_ancestor_styling(name, node)
     class_ancestors = begin
-                        name.constantize.ancestors
-                      rescue StandardError
-                        nil
-                      end
+      name.constantize.ancestors
+    rescue StandardError
+      nil
+    end
 
     class_ancestors&.find { |ancestor| subclass_styling_config[ancestor] }&.tap do |ancestor|
       subclass_styling_config[ancestor].each { |key, value| node[key] = value }

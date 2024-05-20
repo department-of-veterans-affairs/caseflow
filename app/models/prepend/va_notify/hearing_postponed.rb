@@ -24,7 +24,7 @@ module HearingPostponed
   # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)
     super_return_value = super
-    if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.class.to_s == "Appeal"
+    if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.instance_of?(::Appeal)
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value

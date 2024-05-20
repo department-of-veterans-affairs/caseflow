@@ -32,14 +32,14 @@ class FetchHearingLocationsForVeteransJob < CaseflowJob
   #   and `QUERY_TRAVEL_BOARD_LIMIT`.
   def appeals
     @appeals ||= begin
-                   legacy_appeals = find_appeals_ready_for_geomatching(
-                     LegacyAppeal,
-                     select_fields: [:vacols_id]
-                   ).first(QUERY_LIMIT / 2)
+      legacy_appeals = find_appeals_ready_for_geomatching(
+        LegacyAppeal,
+        select_fields: [:vacols_id]
+      ).first(QUERY_LIMIT / 2)
 
-                   ama_appeals = find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
-                   legacy_appeals + ama_appeals
-                 end
+      ama_appeals = find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
+      legacy_appeals + ama_appeals
+    end
   end
 
   NONACTIONABLE_ERRORS = [Caseflow::Error::VaDotGovMissingFacilityError].freeze

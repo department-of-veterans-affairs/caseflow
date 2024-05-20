@@ -42,7 +42,8 @@ class CaseReviewsController < ApplicationController
 
   def complete_params
     return attorney_case_review_params if case_review_class == "AttorneyCaseReview"
-    return judge_case_review_params if case_review_class == "JudgeCaseReview"
+
+    judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
   def attorney_case_review_params
@@ -84,11 +85,11 @@ class CaseReviewsController < ApplicationController
       :diagnostic_code,
       :mst_status,
       :pact_status,
-      request_issue_ids: [],
-      remand_reasons: [
-        :code,
-        :post_aoj
-      ]
+      { request_issue_ids: [],
+        remand_reasons: [
+          :code,
+          :post_aoj
+        ] }
     ]
   end
 end

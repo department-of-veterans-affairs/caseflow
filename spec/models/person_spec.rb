@@ -46,9 +46,7 @@ describe Person, :postgres do
     it "populates attributes on accessor method use" do
       attributes.each do |attr|
         expect(person[attr]).to be_nil
-      end
 
-      attributes.each do |attr|
         expect(person.send(attr)).to eq(bgs_person[attr])
       end
     end

@@ -25,13 +25,14 @@ module AppellantNotification
   end
 
   class NoAppealError < StandardError; end
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def self.handle_errors(appeal)
     fail NoAppealError if appeal.nil?
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
-    message_attributes[:appeal_id] = (appeal.class.to_s == "Appeal") ? appeal.uuid : appeal.vacols_id
+    message_attributes[:appeal_id] = appeal.instance_of?(::Appeal) ? appeal.uuid : appeal.vacols_id
     message_attributes[:participant_id] = appeal.claimant_participant_id
     claimant = get_claimant(appeal)
 
@@ -159,7 +160,7 @@ module AppellantNotification
       appeal = LegacyAppeal.find_by(id: appeal_id)
       AppellantNotification.update_appeal_state(appeal, event)
     else
-      Rails.logger.error("Appeal type not supported for " + event)
+      Rails.logger.error("Appeal type not supported for #{event}")
     end
   end
   # Purpose: Method to check appeal state for statuses and send out a notification based on
@@ -170,7 +171,6 @@ module AppellantNotification
   #         appeal_status (only used for quarterly notifications)
   #
   # Response: Create notification and return it to SendNotificationJob
-  # rubocop:disable Metrics/CyclomaticComplexity
 
   def self.notify_appellant(
     appeal,
@@ -196,7 +196,6 @@ module AppellantNotification
     end
     SendNotificationJob.perform_later(msg_bdy.to_json)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.create_payload(appeal, template_name, appeal_status = nil)
     message_attributes = AppellantNotification.handle_errors(appeal)
@@ -204,31 +203,27 @@ module AppellantNotification
   end
 
   def self.notification_type
-    notification_type =
-      if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
-        "Email and SMS"
-      elsif FeatureToggle.enabled?(:va_notify_email)
-        "Email"
-      elsif FeatureToggle.enabled?(:va_notify_sms)
-        "SMS"
-      else
-        "None"
-      end
-    notification_type
+    if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+      "Email and SMS"
+    elsif FeatureToggle.enabled?(:va_notify_email)
+      "Email"
+    elsif FeatureToggle.enabled?(:va_notify_sms)
+      "SMS"
+    else
+      "None"
+    end
   end
 
   def self.get_claimant(appeal)
     appeal_type = appeal.class.to_s
     participant_id = appeal.claimant_participant_id
-    claimant =
-      if appeal_type == "Appeal"
-        appeal.claimant
-      elsif appeal_type == "LegacyAppeal"
-        veteran = Veteran.find_by(participant_id: participant_id)
-        person = Person.find_by(participant_id: participant_id)
-        appeal.appellant_is_not_veteran ? person : veteran
-      end
-    claimant
+    if appeal_type == "Appeal"
+      appeal.claimant
+    elsif appeal_type == "LegacyAppeal"
+      veteran = Veteran.find_by(participant_id: participant_id)
+      person = Person.find_by(participant_id: participant_id)
+      appeal.appellant_is_not_veteran ? person : veteran
+    end
   end
 end
 # rubocop:enable Metrics/ModuleLength

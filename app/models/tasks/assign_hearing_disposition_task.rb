@@ -31,6 +31,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
+
   class HearingAssociationMissing < StandardError
     def initialize(hearing_task_id)
       super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task_id))
@@ -254,7 +255,7 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def reschedule_or_schedule_later(instructions: nil, after_disposition_update:)
+  def reschedule_or_schedule_later(after_disposition_update:, instructions: nil)
     case after_disposition_update[:action]
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]

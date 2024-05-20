@@ -1033,7 +1033,7 @@ describe RequestIssue, :all_dbs do
         vacols_sequence_id: 2,
         ineligible_reason: "untimely",
         ineligible_due_to_id: 345,
-        contested_rating_issue_diagnostic_code: "2222",
+        contested_rating_issue_diagnostic_code: "2222"
       )
     end
 
@@ -2633,9 +2633,9 @@ describe RequestIssue, :all_dbs do
             epe_id = request_issue2.end_product_establishment.id.to_s
             allow(Rails.logger).to receive(:info)
             expect(request_issue2.sync_decision_issues!).to eq(true)
-            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been created")
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:#{epe_id} has been created")
             expect(request_issue2.processed?).to eq(true)
-            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been released")
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:#{epe_id} has been released")
             expect(SupplementalClaim.count).to eq(2)
           end
 

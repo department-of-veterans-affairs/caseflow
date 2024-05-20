@@ -135,9 +135,9 @@ class Person < CaseflowRecord
     bgs_record = bgs.fetch_person_info(participant_id)
     return :not_found unless bgs_record.keys.any?
 
-    bgs_record[:date_of_birth] = bgs_record.dig(:birth_date)&.to_date
-    bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr)
-    bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id) || participant_id
+    bgs_record[:date_of_birth] = bgs_record[:birth_date]&.to_date
+    bgs_record[:ssn] ||= bgs_record[:ssn_nbr]
+    bgs_record[:participant_id] ||= bgs_record[:ptcpnt_id] || participant_id
     bgs_record
   end
 
@@ -145,13 +145,13 @@ class Person < CaseflowRecord
     bgs_record = bgs.fetch_person_by_ssn(ssn)
     return :not_found unless bgs_record
 
-    bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
-    bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr) || ssn
-    bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id)
-    bgs_record[:first_name] ||= bgs_record.dig(:first_nm)
-    bgs_record[:last_name] ||= bgs_record.dig(:last_nm)
-    bgs_record[:middle_name] ||= bgs_record.dig(:middle_nm)
-    bgs_record[:email_address] ||= bgs_record.dig(:email_addr)
+    bgs_record[:date_of_birth] = bgs_record[:brthdy_dt]&.to_date
+    bgs_record[:ssn] ||= bgs_record[:ssn_nbr] || ssn
+    bgs_record[:participant_id] ||= bgs_record[:ptcpnt_id]
+    bgs_record[:first_name] ||= bgs_record[:first_nm]
+    bgs_record[:last_name] ||= bgs_record[:last_nm]
+    bgs_record[:middle_name] ||= bgs_record[:middle_nm]
+    bgs_record[:email_address] ||= bgs_record[:email_addr]
     bgs_record
   end
 end

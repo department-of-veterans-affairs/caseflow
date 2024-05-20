@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+require_relative "../../../app/services/claim_change_history/claim_history_service"
+require_relative "../../../app/services/claim_change_history/claim_history_event"
 
 describe ClaimHistoryService do
   let!(:hlr_task) { create(:higher_level_review_vha_task_with_decision) }

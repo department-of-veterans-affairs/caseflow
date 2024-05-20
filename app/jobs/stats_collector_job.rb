@@ -20,8 +20,7 @@ class StatsCollectorJob < CaseflowJob
   DAILY_COLLECTORS = {
     "daily_counts" => Collectors::DailyCountsStatsCollector
   }.freeze
-  WEEKLY_COLLECTORS = {
-  }.freeze
+  WEEKLY_COLLECTORS = {}.freeze
   MONTHLY_COLLECTORS = {
     "unidentified_request_issues_with_contention" => Collectors::RequestIssuesStatsCollector
   }.freeze

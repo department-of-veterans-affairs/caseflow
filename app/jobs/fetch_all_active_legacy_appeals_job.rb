@@ -99,7 +99,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
         appeal_type: appeal&.class,
         appeal_id: appeal&.id,
         error: error,
-        message: error.message + "\n",
+        message: "#{error.message}\n",
         callstack: error.backtrace
       )
     end
@@ -139,7 +139,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   def upload_csv_to_s3
     csv = build_errors_csv
     filename = Time.zone.now.strftime("legacy-migration-%Y-%m-%d--%H-%M.csv")
-    S3Service.store_file(S3_BUCKET_NAME + "/" + filename, csv)
+    S3Service.store_file("#{S3_BUCKET_NAME}/#{filename}", csv)
   end
 
   # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
@@ -277,13 +277,12 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def ihp_appeal_state(ihp_task)
-    ihp_state = if Task.open_statuses.include?(ihp_task.status)
-                  { vso_ihp_pending: true, vso_ihp_complete: false }
-                elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-                  { vso_ihp_pending: false, vso_ihp_complete: true }
-                else
-                  { vso_ihp_pending: false, vso_ihp_complete: false }
-                end
-    ihp_state
+    if Task.open_statuses.include?(ihp_task.status)
+      { vso_ihp_pending: true, vso_ihp_complete: false }
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      { vso_ihp_pending: false, vso_ihp_complete: true }
+    else
+      { vso_ihp_pending: false, vso_ihp_complete: false }
+    end
   end
 end

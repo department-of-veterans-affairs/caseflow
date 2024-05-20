@@ -162,7 +162,7 @@ class ClaimReview < DecisionReview
   # Cancel an unprocessed job, add a job note, and send a message to the job user's inbox.
   # Currently this only happens manually by an engineer, and requires a message explaining
   # why the job was cancelled and describing any additional action necessary.
-  def cancel_with_note!(user: RequestStore[:current_user], note:)
+  def cancel_with_note!(note:, user: RequestStore[:current_user])
     fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless user
     fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
 
@@ -333,7 +333,7 @@ class ClaimReview < DecisionReview
   end
 
   def intake_processed_by
-    intake ? intake.user : nil
+    intake&.user
   end
 
   def matching_request_issue(contention_id)
@@ -367,7 +367,7 @@ class ClaimReview < DecisionReview
     )
   end
 
-  # Note: this does not do a deep copy for unrecognized claimants
+  # NOTE: this does not do a deep copy for unrecognized claimants
   # Currently this is only in use for claims processed in VBMS which are not impacted
   def create_stream!(attributes)
     self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }

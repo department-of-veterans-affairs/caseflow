@@ -4,9 +4,7 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
   def call
     task_ids = open_tasks_with_parent_not_on_hold.pluck(:id) - ignored_tasks_with_closed_root_task_parent.pluck(:id)
     if task_ids.count > 0
-      add_to_report "#{task_ids.count} open " +
-                    "task".pluralize(task_ids.count) +
-                    " with a non-on_hold parent task (ignoring TrackVeteranTask and *MailTasks)"
+      add_to_report "#{task_ids.count} open #{'task'.pluralize(task_ids.count)} with a non-on_hold parent task (ignoring TrackVeteranTask and *MailTasks)"
       tasks_with_parents = Task.where(id: task_ids).joins(:parent).includes(:parent)
       grouped_tasks = tasks_with_parents.group(:appeal_type, :type, "parents_tasks.type", "parents_tasks.status").count
       add_to_report "Counts: \n#{grouped_tasks.entries.map(&:to_s).join("\n")}"

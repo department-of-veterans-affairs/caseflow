@@ -47,7 +47,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     end
 
     scenario "Virtual hearing time is updated" do
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
       hearing.reload
       expect(page).to have_content("Daily Docket")
       click_dropdown(name: "optionalHearingTime0", text: updated_video_hearing_time)
@@ -107,7 +107,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     end
 
     scenario "Virtual Hearing time is updated" do
-      visit "hearings/schedule/docket/" + central_hearing.hearing_day.id.to_s
+      visit "hearings/schedule/docket/#{central_hearing.hearing_day.id}"
       central_hearing.reload
       expect(page).to have_content("Daily Docket")
 
@@ -148,7 +148,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   scenario "Virtual hearing time update is cancelled" do
-    visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+    visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
     hearing.reload
     expect(page).to have_content("Daily Docket")
     click_dropdown(name: "optionalHearingTime0", index: 3)
@@ -160,7 +160,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
     context "Hearing Coordinator view" do
       scenario "User has the host link" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
         expect(page).to have_content(vlj_virtual_hearing_link)
         expect(page).to have_xpath "//a[contains(@href,'role=host')]"
@@ -170,7 +170,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       let(:current_user) { User.authenticate!(css_id: hearing.judge.css_id, roles: ["Hearing Prep"]) }
 
       scenario "User has the host link" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        visit "hearings/schedule/docket/#{hearing.hearing_day.id}"
 
         expect(page).to have_content(vlj_virtual_hearing_link)
         expect(page).to have_xpath "//a[contains(@href,'role=host')]"

@@ -129,7 +129,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
-    return power_of_attorney if unassociated_claimant.power_of_attorney&.poa_participant_id == poa_participant_id
+    power_of_attorney if unassociated_claimant.power_of_attorney&.poa_participant_id == poa_participant_id
 
     # To-do: fail "Not yet implemented: create BgsPowerOfAttorney for unknown substitute"
   end

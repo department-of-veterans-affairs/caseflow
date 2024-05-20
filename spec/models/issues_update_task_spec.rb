@@ -84,7 +84,7 @@ describe IssuesUpdateTask do
       issues_update_task.save!
     end
 
-    # Note: MST/PACT edit reasons are removed on release and commented out in case they are needed in the future
+    # NOTE: MST/PACT edit reasons are removed on release and commented out in case they are needed in the future
     context "changes occur to the MST status on an issue" do
       let(:params) do
         {

@@ -274,9 +274,7 @@ class HearingDay < CaseflowRecord
     # Parse the combined string into a ruby DateTime
     combined_datetime = time_and_date_string.in_time_zone(timezone)
     # Format the DateTime to iso8601 like "2021-04-23T08:30:00-06:00"
-    formatted_datetime_string = combined_datetime.iso8601
-
-    formatted_datetime_string
+    combined_datetime.iso8601
   end
 
   # Method to get the associated conference link record if exists and if not create  new one

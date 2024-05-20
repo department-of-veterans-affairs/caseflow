@@ -7,14 +7,14 @@ module ApiV3FeatureToggleConcern
     return true if FeatureToggle.enabled?(feature)
 
     render json: {
-      errors: [
-        {
-          status: "501",
-          title: "Not Implemented",
-          detail: "This endpoint is not yet supported."
-        }
-      ]
-    },
+             errors: [
+               {
+                 status: "501",
+                 title: "Not Implemented",
+                 detail: "This endpoint is not yet supported."
+               }
+             ]
+           },
            status: :not_implemented
   end
 end

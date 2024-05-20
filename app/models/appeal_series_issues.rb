@@ -75,12 +75,10 @@ class AppealSeriesIssues
       if issue.close_date && (memo[:date].nil? || issue.close_date > memo[:date])
         type = last_action_type_from_disposition(issue.disposition)
 
-        if type
-          # Prevent draft decisions from being shared publicly
-          unless [:allowed, :denied, :remand].include?(type) && issue.appeal.activated?
-            memo[:date] = issue.close_date
-            memo[:type] = type
-          end
+        # Prevent draft decisions from being shared publicly
+        if type && !([:allowed, :denied, :remand].include?(type) && issue.appeal.activated?)
+          memo[:date] = issue.close_date
+          memo[:type] = type
         end
       end
 

@@ -26,7 +26,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
-    return render "no_decisions" if task.appeal.decisions.nil?
+    render "no_decisions" if task.appeal.decisions.nil?
   end
 
   def pdf

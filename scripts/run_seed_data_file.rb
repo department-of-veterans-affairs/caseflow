@@ -8,7 +8,7 @@ if ARGV[0].blank?
   puts "No seeding class was provided. Please provide a class name or file name from db/seeds/"
 end
 
-seed_class = "Seeds::#{ARGV[0].gsub('db/seeds/', '').gsub('.rb', '').camelize}"&.constantize
+seed_class = "Seeds::#{ARGV[0].gsub('db/seeds/', '').gsub('.rb', '').camelize}".constantize
 
 if seed_class.present?
   seed_class.new.send("seed!")

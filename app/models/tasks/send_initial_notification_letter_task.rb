@@ -10,9 +10,7 @@ class SendInitialNotificationLetterTask < LetterTask
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user)
 
-    task_actions = Array.new(SEND_INITIAL_NOTIFICATION_LETTER_TASK_ACTIONS)
-
-    task_actions
+    Array.new(SEND_INITIAL_NOTIFICATION_LETTER_TASK_ACTIONS)
   end
 
   SEND_INITIAL_NOTIFICATION_LETTER_TASK_ACTIONS = [

@@ -15,7 +15,7 @@ describe ApiKey, :postgres do
     let(:api_key) { ApiKey.create!(consumer_name: "CaseSlow") }
 
     context "when key is not authorized" do
-      let(:key_string) { api_key.key_string + "A" }
+      let(:key_string) { "#{api_key.key_string}A" }
       it { is_expected.to be_falsey }
     end
 

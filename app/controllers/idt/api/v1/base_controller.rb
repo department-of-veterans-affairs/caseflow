@@ -12,12 +12,12 @@ class Idt::Api::V1::BaseController < ActionController::Base
   rescue_from StandardError do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error("IDT Standard Error ID: " + uuid)
+    Rails.logger.error("IDT Standard Error ID: #{uuid}")
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
       render json: {
-        message: "IDT Standard Error ID: " + uuid + " Unexpected error: #{error.message}"
+        message: "IDT Standard Error ID: #{uuid} Unexpected error: #{error.message}"
       }, status: :internal_server_error
     end
   end
@@ -26,42 +26,41 @@ class Idt::Api::V1::BaseController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error("IDT Standard Error ID: " + uuid)
-    render(json: { message: "IDT Standard Error ID: " + uuid + " Record not found" }, status: :not_found)
+    Rails.logger.error("IDT Standard Error ID: #{uuid}")
+    render(json: { message: "IDT Standard Error ID: #{uuid} Record not found" }, status: :not_found)
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error("IDT Standard Error ID: " + uuid)
+    Rails.logger.error("IDT Standard Error ID: #{uuid}")
     render(json:
             { message:
-              "IDT Standard Error ID: " +
-                uuid +
-                " Please enter a file number in the 'FILENUMBER' header" },
+              "IDT Standard Error ID: #{uuid} Please enter a file number in the 'FILENUMBER' header" },
            status: :unprocessable_entity)
   end
 
   rescue_from Caseflow::Error::MissingRecipientInfo do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    render(json: { message: "IDT Exception ID: " + uuid + " Recipient information received was invalid or incomplete.",
+    render(json: { message: "IDT Exception ID: #{uuid} Recipient information received was invalid or incomplete.",
                    errors: JSON.parse(error.message) }, status: :bad_request)
   end
 
   rescue_from Caseflow::Error::VeteranNotFound do |error|
     log_error(error)
-    render(json: { message: "IDT Exception ID: " + error.message }, status: :bad_request)
+    render(json: { message: "IDT Exception ID: #{error.message}" }, status: :bad_request)
   end
 
   rescue_from Caseflow::Error::AppealNotFound do |error|
     log_error(error)
-    render(json: { message: "IDT Exception ID: " + error.message }, status: :bad_request)
+    render(json: { message: "IDT Exception ID: #{error.message}" }, status: :bad_request)
   end
 
   def validate_token
     return render json: { message: "Missing token" }, status: :bad_request unless token
-    return render json: { message: "Invalid token" }, status: :forbidden unless Idt::Token.active?(token)
+
+    render json: { message: "Invalid token" }, status: :forbidden unless Idt::Token.active?(token)
   end
 
   def verify_access

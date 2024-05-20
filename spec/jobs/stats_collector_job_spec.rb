@@ -32,6 +32,7 @@ describe StatsCollectorJob do
         {}
       end
     end
+
     class ExampleMonthlyCollector
       def collect_stats
         {}

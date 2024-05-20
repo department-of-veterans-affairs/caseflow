@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "../../../app/services/claim_change_history/change_history_reporter.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
-require_relative "../../../app/services/claim_change_history/change_history_filter_parser.rb"
+require_relative "../../../app/services/claim_change_history/change_history_reporter"
+require_relative "../../../app/services/claim_change_history/claim_history_service"
+require_relative "../../../app/services/claim_change_history/claim_history_event"
+require_relative "../../../app/services/claim_change_history/change_history_filter_parser"
 
 feature "NonComp Report Page", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }

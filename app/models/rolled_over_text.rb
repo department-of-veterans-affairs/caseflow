@@ -4,8 +4,8 @@ class RolledOverText
   include ActionView::Helpers::TextHelper
 
   def initialize(raw, max_lines, opts = {})
-    @initial_append = " " + (opts[:initial_append] || "(see continued remarks page 2)").strip
-    @continued_prepend = "\n \n" + (opts[:continued_prepend] || "Continued:").strip + "\n"
+    @initial_append = " #{(opts[:initial_append] || '(see continued remarks page 2)').strip}"
+    @continued_prepend = "\n \n#{(opts[:continued_prepend] || 'Continued:').strip}\n"
     @max_lines = max_lines
     @max_line_length = opts[:max_line_length] || 101
 

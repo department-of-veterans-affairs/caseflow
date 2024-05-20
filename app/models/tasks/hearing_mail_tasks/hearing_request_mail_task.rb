@@ -79,7 +79,7 @@ class HearingRequestMailTask < MailTask
 
   # Ensure create is called on a descendant mail task and not directly on the HearingRequestMailTask class
   def verify_request_type_designated
-    if self.class == HearingRequestMailTask
+    if instance_of?(HearingRequestMailTask)
       fail Caseflow::Error::InvalidTaskTypeOnTaskCreate, task_type: type
     end
   end

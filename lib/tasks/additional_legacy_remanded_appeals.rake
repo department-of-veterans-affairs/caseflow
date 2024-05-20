@@ -21,7 +21,8 @@ namespace :additional_legacy_remand_reasons do
           # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
           decass_creation = if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
                               true
-                            else false
+                            else
+                              false
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do |_element, _idx|
             if Rails.env.development? || Rails.env.test?

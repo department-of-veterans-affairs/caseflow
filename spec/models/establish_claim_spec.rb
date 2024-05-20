@@ -140,7 +140,7 @@ describe EstablishClaim, :all_dbs do
           expect(subject).to eq(:success)
 
           expect(establish_claim.reload).to be_unassigned
-          expect(S3Service.files[Document::S3_BUCKET_NAME + "/" + filename]).to eq("yay content!")
+          expect(S3Service.files["#{Document::S3_BUCKET_NAME}/#{filename}"]).to eq("yay content!")
         end
       end
     end

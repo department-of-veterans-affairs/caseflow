@@ -31,9 +31,9 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
 
   # Route to create a hearing schedule
   def create
-    file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
+    file_name = "#{params['schedule_period']['type']}#{Time.zone.now}.xlsx"
     uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
-    S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
+    S3Service.store_file("#{SchedulePeriod::S3_SUB_BUCKET}/#{file_name}", uploaded_file.tempfile, :filepath)
     create_params = schedule_period_params.merge(user_id: current_user.id, file_name: file_name)
 
     assign_hearing_days_or_create_schedule_period(create_params)

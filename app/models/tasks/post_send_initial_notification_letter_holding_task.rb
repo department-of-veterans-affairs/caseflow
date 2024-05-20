@@ -40,6 +40,6 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
 
     # Check for last existing associated TaskTimer
     task_timer = TaskTimer.find_by(task: self)
-    return task_timer.submitted_at if task_timer
+    task_timer&.submitted_at
   end
 end

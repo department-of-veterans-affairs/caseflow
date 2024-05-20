@@ -151,7 +151,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     subject { get(:index, params: { css_id: css_id, exclude_org: org.name }) }
 
     context "when there are zero matches" do
-      let(:css_id) { users.first.css_id + "foobar" }
+      let(:css_id) { "#{users.first.css_id}foobar" }
 
       it "returns empty array" do
         subject

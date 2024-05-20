@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./app/models/batch_processes/priority_ep_sync_batch_process.rb"
+require "./app/models/batch_processes/priority_ep_sync_batch_process"
 require "test_prof/recipes/rspec/let_it_be"
 
 describe PriorityEpSyncBatchProcess, :postgres do

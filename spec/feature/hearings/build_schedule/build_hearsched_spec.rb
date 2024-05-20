@@ -15,7 +15,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     find("label", text: "RO/CO hearings").click
 
     # Set the file based on request type
-    attach_file("ro_co_file_upload", Rails.root + "spec/support/" + file, visible: false)
+    attach_file("ro_co_file_upload", "#{Rails.root}spec/support/#{file}", visible: false)
 
     # Fill in the required firleds to continue
     fill_in "startDate", with: start_date.tr("/", "")
@@ -124,7 +124,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       visit "hearings/schedule/build"
       click_on "Upload files"
       find("label", text: "Judge assignment").click
-      attach_file("judge_file_upload", Rails.root + "spec/support/validJudgeSpreadsheet.xlsx", visible: false)
+      attach_file("judge_file_upload", "#{Rails.root}spec/support/validJudgeSpreadsheet.xlsx", visible: false)
       click_on "Continue"
 
       expect(page).to have_content("We have assigned your judges", wait: 30)
@@ -149,7 +149,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       visit "hearings/schedule/build"
       click_on "Upload files"
       find("label", text: "Judge assignment").click
-      attach_file("judge_file_upload", Rails.root + "spec/support/judgeNotInDb.xlsx", visible: false)
+      attach_file("judge_file_upload", "#{Rails.root}spec/support/judgeNotInDb.xlsx", visible: false)
       click_on "Continue"
 
       error_message = "These judges are not in the database: [[\"BVALAMPHERE\", \"Huels, Stuart\"]]"

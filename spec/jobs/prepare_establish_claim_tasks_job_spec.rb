@@ -69,7 +69,7 @@ describe PrepareEstablishClaimTasksJob, :all_dbs do
   end
 
   context ".perform" do
-    let(:filename) { Document::S3_BUCKET_NAME + "/" + appeal_with_decision_document.decisions.first.file_name }
+    let(:filename) { "#{Document::S3_BUCKET_NAME}/#{appeal_with_decision_document.decisions.first.file_name}" }
 
     before do
       slack_service = double("slack")

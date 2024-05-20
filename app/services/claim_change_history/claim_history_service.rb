@@ -2,10 +2,9 @@
 
 # :reek:TooManyInstanceVariables
 class ClaimHistoryService
-  attr_reader :business_line, :processed_task_ids,
-              :processed_request_issue_ids, :processed_request_issue_update_ids,
-              :processed_decision_issue_ids, :events, :filters
-  attr_writer :filters
+  attr_accessor :filters
+  attr_reader :business_line, :processed_task_ids, :processed_request_issue_ids, :processed_request_issue_update_ids,
+              :processed_decision_issue_ids, :events
 
   TIMING_RANGES = %w[
     before
@@ -45,8 +44,8 @@ class ClaimHistoryService
     @events.sort_by! do |event|
       [
         event.task_id,
-        event.event_type == :claim_creation ? 0 : 1,
-        event.event_type == :completed ? 1 : 0,
+        (event.event_type == :claim_creation) ? 0 : 1,
+        (event.event_type == :completed) ? 1 : 0,
         event.event_date
       ]
     end

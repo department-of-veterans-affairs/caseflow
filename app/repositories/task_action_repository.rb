@@ -397,32 +397,27 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def resend_initial_notification_letter_post_holding(_task, _user = nil)
-      params = {
+      {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY,
         modal_button_text: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
       }
-
-      params
     end
 
     def resend_initial_notification_letter_final(_task, _user = nil)
-      params = {
+      {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY,
         modal_button_text: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
       }
-
-      params
     end
 
     def resend_final_notification_letter_task_data(_task, _user = nil)
-      params = {
+      {
         modal_title: COPY::RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY,
         modal_button_text: COPY::RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
       }
-      params
     end
 
     def vha_complete_data(task, _user)

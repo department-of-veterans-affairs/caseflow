@@ -136,7 +136,7 @@ class WorkQueue::AppealSearchSerializer
   end
 
   attribute :caseflow_veteran_id do |object|
-    object.veteran ? object.veteran.id : nil
+    object.veteran&.id
   end
 
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type

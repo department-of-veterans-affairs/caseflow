@@ -2578,7 +2578,7 @@ describe Appeal, :all_dbs do
     context "if a request issue has already been copied (status of 'on_hold')" do
       it "should throw an error and not duplicate the appeal" do
         original_appeal = create(
-          :appeal, #:with_decision_issue,
+          :appeal, # :with_decision_issue,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
           decision_issues: create_list(:decision_issue, 1)
         )
@@ -2663,7 +2663,7 @@ describe Appeal, :all_dbs do
 
       it "duplicates the request issues selected, sets the original issue to 'on hold' and not active" do
         original_appeal = create(
-          :appeal, #:with_decision_issue,
+          :appeal, # :with_decision_issue,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
           decision_issues: create_list(:decision_issue, 1)
         )

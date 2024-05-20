@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
-require "helpers/intake_renderer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
+require "helpers/intake_renderer"
 
 ##
 # This RSpec replicates the "Unassigned" nomenclature in the "Assigned To" column of the search results.

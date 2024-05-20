@@ -30,9 +30,9 @@ class FullName
     when :readable_full_nonformatted
       [first_name, middle_initial, last_name].select(&:present?).join(" ")
     when :readable_mi_formatted
-      [first_name, middle_initial + ".", last_name].select(&:present?).join(" ").titleize
+      [first_name, "#{middle_initial}.", last_name].select(&:present?).join(" ").titleize
     when :readable_fi_last_formatted
-      [first_name[0] + ".", last_name].select(&:present?).join(" ").titleize
+      ["#{first_name[0]}.", last_name].select(&:present?).join(" ").titleize
     when :readable_short
       [first_name, last_name].select(&:present?).join(" ").titleize
     when :form

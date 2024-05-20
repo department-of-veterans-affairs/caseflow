@@ -362,7 +362,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
           doc = Generators::Document.create(
             type: "SOC",
             series_id: fetched_document.series_id,
-            vbms_document_id: fetched_document.vbms_document_id + ".old",
+            vbms_document_id: "#{fetched_document.vbms_document_id}.old",
             category_medical: true
           )
           Generators::Annotation.create(document_id: doc.id, comment: "existing comment", x: rand(100), y: rand(100))
@@ -474,7 +474,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
           doc = Generators::Document.create(
             type: "SOC",
             series_id: fetched_document.series_id,
-            vbms_document_id: fetched_document.vbms_document_id + ".old",
+            vbms_document_id: "#{fetched_document.vbms_document_id}.old",
             category_medical: true
           )
           Generators::Annotation.create(document_id: doc.id, comment: "existing comment", x: rand(100), y: rand(100))
@@ -580,7 +580,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
 
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
-        expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
+        expect(S3Service.files["decisions/#{root_task.appeal.external_id}.pdf"]).to_not eq nil
         expect(DecisionDocument.find_by(appeal_id: root_task.appeal.id)&.submitted_at).to_not be_nil
         expect(JSON.parse(response.body)["message"]).to eq("Successful dispatch!")
       end

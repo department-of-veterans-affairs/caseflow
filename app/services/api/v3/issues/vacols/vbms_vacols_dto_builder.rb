@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-#:reek:TooManyInstanceVariables
+# :reek:TooManyInstanceVariables
 class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
 

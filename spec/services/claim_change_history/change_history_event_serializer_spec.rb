@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "../../../app/services/claim_change_history/change_history_event_serializer.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+require_relative "../../../app/services/claim_change_history/change_history_event_serializer"
+require_relative "../../../app/services/claim_change_history/claim_history_service"
+require_relative "../../../app/services/claim_change_history/claim_history_event"
 
 describe ChangeHistoryEventSerializer do
   let(:expected_uuid) { "709ab60d-3c5f-48d8-ac55-dc6b8f4f85bf" }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
+# NOTE: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue
@@ -20,13 +20,11 @@ class Issue
     @labels
   end
 
-  attr_writer :appeal
+  attr_writer :appeal, :cavc_decisions, :remand_reasons
 
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(id)
   end
-
-  attr_writer :cavc_decisions
 
   def cavc_decisions
     # This should probably always be preloaded to avoid each issue triggering an additional VACOLS query.
@@ -246,8 +244,6 @@ class Issue
     }
   end
 
-  attr_writer :remand_reasons
-
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
@@ -316,7 +312,7 @@ class Issue
       return if diagnostic_code_description.nil?
 
       # Some description strings are templates. This is a no-op unless the description string contains %s.
-      issue_description = issue_description % diagnostic_code_description["status_description"]
+      issue_description %= diagnostic_code_description["status_description"]
     end
 
     issue_description

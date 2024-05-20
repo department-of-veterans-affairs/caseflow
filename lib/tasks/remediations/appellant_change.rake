@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../helpers/appellant_change.rb"
+require_relative "../../helpers/appellant_change"
 
 namespace :remediations do
   desc "Changes the Claimant on the appeal"

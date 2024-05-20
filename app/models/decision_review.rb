@@ -103,7 +103,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
+    claimant.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   def serialized_ratings

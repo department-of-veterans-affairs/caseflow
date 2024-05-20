@@ -6,10 +6,6 @@
 class Hearings::ScheduleHearingTaskPager < TaskPager
   attr_accessor :regional_office_key
 
-  def initialize(args)
-    super(args)
-  end
-
   def tasks_for_tab
     tab = AssignHearingTab.new(
       appeal_type: appeal_type,

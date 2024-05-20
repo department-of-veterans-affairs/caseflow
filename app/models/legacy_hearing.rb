@@ -162,7 +162,7 @@ class LegacyHearing < CaseflowRecord
   # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
     if original_request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
-      return (venue_key || appeal&.regional_office_key)
+      return venue_key || appeal&.regional_office_key
     end
 
     hearing_day&.regional_office || "C"
@@ -336,8 +336,8 @@ class LegacyHearing < CaseflowRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      if !HearingDay.find_by(id: hearing_day_vacols_id).nil? || !HearingDay.find_by(id: hearing_day_id).nil?
-        update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      if (!HearingDay.find_by(id: hearing_day_vacols_id).nil? || !HearingDay.find_by(id: hearing_day_id).nil?) && (persisted? && veteran)
+        update(military_service: veteran.periods_of_service.join("\n"))
       end
       super
     end

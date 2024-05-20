@@ -106,7 +106,7 @@ class CavcRemand < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    instructions + " - " + params.dig(:instructions).presence
+    "#{instructions} - #{params[:instructions].presence}"
   end
 
   def cavc_remand_form_complete?

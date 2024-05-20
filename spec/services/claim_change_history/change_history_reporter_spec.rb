@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "../../../app/services/claim_change_history/change_history_reporter.rb"
-require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+require_relative "../../../app/services/claim_change_history/change_history_reporter"
+require_relative "../../../app/services/claim_change_history/claim_history_event"
 
 describe ChangeHistoryReporter do
   let(:events) { [] }

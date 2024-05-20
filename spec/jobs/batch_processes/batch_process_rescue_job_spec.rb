@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
+require "./app/jobs/batch_processes/batch_process_rescue_job"
 
 describe BatchProcessRescueJob, type: :job do
   include ActiveJob::TestHelper

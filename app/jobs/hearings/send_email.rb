@@ -14,7 +14,7 @@ class Hearings::SendEmail
 
   attr_reader :hearing, :virtual_hearing, :type, :reminder_info
 
-  def initialize(virtual_hearing: nil, type:, hearing: nil, reminder_info: {}, custom_subject: nil)
+  def initialize(type:, virtual_hearing: nil, hearing: nil, reminder_info: {}, custom_subject: nil)
     @hearing = virtual_hearing&.hearing || hearing
     @type = type.to_s
     @reminder_info = reminder_info
@@ -167,10 +167,9 @@ class Hearings::SendEmail
   def create_sent_hearing_email_event(recipient_info, external_id)
     # The "appellant" title is used in the email and is consistent whether or not the
     # veteran is or isn't the appellant, but the email event can be more specific.
-    recipient_is_veteran = (
+    recipient_is_veteran =
       recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] &&
       !appeal.appellant_is_not_veteran
-    )
 
     ::SentHearingEmailEvent.create!(
       hearing: hearing,

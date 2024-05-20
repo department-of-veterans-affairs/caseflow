@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_difference.rb"
+require "helpers/sanitized_json_difference"
 
 # Given JSON, this class parses it as records and creates those records in the database.
 #

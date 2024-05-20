@@ -112,7 +112,7 @@ class ExternalApi::GovDeliveryService
     def strip_html_and_format(text)
       # remove all HTML tags and newline characters, then replace any
       # group of more than one space with a newline character
-      Rails::Html::FullSanitizer.new.sanitize(text).gsub(/(\n|\r)/, "").gsub(/[ ]{2,}/, "\n")
+      Rails::Html::FullSanitizer.new.sanitize(text).gsub(/(\n|\r)/, "").gsub(/ {2,}/, "\n")
     end
   end
 end

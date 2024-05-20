@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/association_wrapper.rb"
+require "helpers/association_wrapper"
 
 describe "AssocationWrapper" do
   subject { AssocationWrapper.new(target_class) }

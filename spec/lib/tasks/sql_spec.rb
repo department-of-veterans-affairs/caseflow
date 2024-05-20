@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "tasks/support/validate_sql_queries.rb"
+require "tasks/support/validate_sql_queries"
 
 describe "sql", :postgres do
   include_context "rake"

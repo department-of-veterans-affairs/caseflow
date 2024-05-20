@@ -316,7 +316,7 @@ describe DocumentFetcher, :postgres do
             doc = Generators::Document.create(
               type: "Form 9",
               series_id: fetched_document.series_id,
-              vbms_document_id: fetched_document.vbms_document_id + ".old"
+              vbms_document_id: "#{fetched_document.vbms_document_id}.old"
             )
             Generators::Annotation.create(document_id: doc.id, comment: "existing comment", x: rand(100), y: rand(100))
             DocumentsTag.create(document_id: doc.id, tag_id: doc_tag.id)

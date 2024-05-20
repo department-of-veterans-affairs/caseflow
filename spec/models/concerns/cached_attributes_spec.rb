@@ -4,8 +4,7 @@ describe CachedAttributes do
   class TestThing
     include CachedAttributes
 
-    attr_accessor :not_cached_rating
-    attr_accessor :date_key, :not_cached_date
+    attr_accessor :not_cached_rating, :date_key, :not_cached_date
 
     # ID is required to create a key to store the hash
     def id

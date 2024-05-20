@@ -641,7 +641,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
-        expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
+        expect(S3Service.files["decisions/#{root_task.appeal.external_id}.pdf"]).to_not eq nil
         expect(DecisionDocument.find_by(appeal_id: root_task.appeal.id)&.submitted_at).to_not be_nil
       end
     end

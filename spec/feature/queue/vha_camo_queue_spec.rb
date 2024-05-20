@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./queue_shared_examples_spec.rb"
+require_relative "./queue_shared_examples_spec"
 
 feature "CamoQueue", :all_dbs do
   context "Load CAMO Queue" do

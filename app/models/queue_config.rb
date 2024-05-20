@@ -11,7 +11,7 @@ class QueueConfig
   def initialize(args)
     super
 
-    if !assignee&.is_a?(Organization) && !assignee&.is_a?(User)
+    if !assignee.is_a?(Organization) && !assignee.is_a?(User)
       fail(
         Caseflow::Error::MissingRequiredProperty,
         message: "assignee property must be an instance of Organization or User"

@@ -93,7 +93,7 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
 
     it "continues" do
       # This only applies to VACOLS (Legacy) Hearings
-      if @se.hearing.class.name == "LegacyHearing"
+      if @se.hearing.instance_of?(LegacyHearing)
         expect(Raven).to receive(:capture_exception)
           .with(Caseflow::Error::VacolsRecordNotFound, any_args)
         subject

@@ -31,6 +31,6 @@ class QueueFilterParameter
   private
 
   def values_is_array
-    errors.add(:values, "must be an array") unless values&.is_a?(Array)
+    errors.add(:values, "must be an array") unless values.is_a?(Array)
   end
 end
