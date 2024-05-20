@@ -90,7 +90,7 @@ class CorrespondenceAutoAssignLogger
       error_info: { message: unassignable_reason },
       nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
-      started_at: started_at,
+      started_at: started_at
     )
 
     if correspondence.nod
