@@ -4,6 +4,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
 
   after do
@@ -444,6 +445,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:limit) { 2 }
         let(:bust_backlog) { true }
         let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+        # We don't use bust backlog if this feature toggle is enabled
+        before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
         context "when the judge does not have 30 cases in their backlog" do
           it "does not distribute any appeals" do
