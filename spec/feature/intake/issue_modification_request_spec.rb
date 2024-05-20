@@ -123,8 +123,6 @@ feature "Issue Modification Request", :postgres do
 
       click_on "Submit request"
 
-      expect(page).to have_text("Pending admin review")
-
       pending_section = find("tr", text: "Pending admin review")
 
       expect(pending_section).to have_text("An issue description")
