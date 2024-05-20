@@ -49,6 +49,7 @@ class RoSchedulePeriod < SchedulePeriod
 
   # Validate fields for each video or virtual hearing day
   # :reek:RepeatedConditionals
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
@@ -72,6 +73,7 @@ class RoSchedulePeriod < SchedulePeriod
       acc
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Generate hearing days for ROs and CO based on non-availibility days and allocated days
   def generate_ro_hearing_schedule

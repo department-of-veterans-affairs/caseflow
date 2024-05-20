@@ -61,6 +61,7 @@ class RampRefiling < RampReview
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created. This method assumes there are no
   # pre-existing contentions on the end product. Since it was also just created.
+  # rubocop:disable Metrics/CyclomaticComplexity
   def create_contentions_on_new_end_product!
     # Load all the issues so we can match them in memory
     issues.all.tap do |issues|
@@ -84,6 +85,7 @@ class RampRefiling < RampReview
     Raven.capture_exception(error)
     false
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def create_contentions_in_vbms
     VBMSService.create_contentions!(

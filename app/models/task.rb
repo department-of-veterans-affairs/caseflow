@@ -179,6 +179,7 @@ class Task < CaseflowRecord
       false
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/MultilineBlockChain
     def verify_user_can_create!(user, parent)
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
@@ -193,6 +194,7 @@ class Task < CaseflowRecord
         fail Caseflow::Error::ActionForbiddenError, message: message
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/MultilineBlockChain
 
     def child_task_assignee(_parent, params)
       Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])

@@ -27,6 +27,7 @@ module AppellantNotification
   class NoAppealError < StandardError; end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize
   def self.handle_errors(appeal)
     fail NoAppealError if appeal.nil?
 
@@ -52,6 +53,7 @@ module AppellantNotification
     end
     message_attributes
   end
+  # rubocop:enable Metrics/AbcSize
   # Public: Updates/creates appeal state based on event type
   #
   # appeal - appeal that was found in appeal_mapper

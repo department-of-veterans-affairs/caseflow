@@ -274,6 +274,7 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.status_active?
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def mst_contention_status?
     return false if bgs_contention.nil?
 
@@ -301,6 +302,7 @@ class RequestIssue < CaseflowRecord
     end
     false
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def active?
     eligible? &&
@@ -774,6 +776,7 @@ class RequestIssue < CaseflowRecord
     )
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_legacy_issue_optin!
     return unless legacy_issue_opted_in?
 
@@ -787,6 +790,7 @@ class RequestIssue < CaseflowRecord
       folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # When a request issue contention is connected to a new rating issue, it can no longer be removed in VBMS.
   def contention_connected_to_rating?

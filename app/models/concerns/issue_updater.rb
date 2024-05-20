@@ -36,7 +36,7 @@ module IssueUpdater
 
   private
 
-  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   # :reek:FeatureEnvy
   def create_decision_issues!
     ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
@@ -71,7 +71,7 @@ module IssueUpdater
       create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def fail_if_not_all_request_issues_have_decision!
     unless appeal.every_request_issue_has_decision?

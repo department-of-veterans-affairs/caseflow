@@ -95,6 +95,7 @@ class SpecialIssuesComparator
 
   # :reek:UtilityFunction
   # checks if rating special issue meets PACT criteria
+  # rubocop:disable Metrics/CyclomaticComplexity
   def special_issue_has_pact?(special_issue)
     special_issue.transform_keys!(&:to_s)
     if special_issue["spis_tn"]&.casecmp("gulf war presumptive 3.320")&.zero?
@@ -103,6 +104,7 @@ class SpecialIssuesComparator
 
     PACT_SPECIAL_ISSUES.include?(special_issue["spis_tn"]&.downcase)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   # cycle contentions tied to the rating issue/decision and return true if there is a match for mst
   def mst_from_contention?
@@ -130,6 +132,7 @@ class SpecialIssuesComparator
 
   # checks single contention special issue status for MST
   # :reek:UtilityFunction
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def mst_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -140,9 +143,11 @@ class SpecialIssuesComparator
       bgs_contention["special_issues"].any? { |issue| CONTENTION_MST_ISSUES.include?(issue[:spis_tc]&.downcase) }
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # checks single contention special issue status for PACT
   # :reek:UtilityFunction
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def pact_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -153,6 +158,7 @@ class SpecialIssuesComparator
       bgs_contention["special_issues"].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]&.downcase) }
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # get the contentions for the veteran, find the contentions that are tied to the rating issue
   def contentions_tied_to_issue

@@ -19,6 +19,7 @@ class LegacyWorkQueue
 
     private
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def tasks_from_vacols_tasks(vacols_tasks, user = nil)
       return [] if vacols_tasks.empty?
 
@@ -38,6 +39,7 @@ class LegacyWorkQueue
         task_class.from_vacols(task, appeal, user)
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def validate_or_create_user(user, css_id)
       if css_id && (css_id == user&.css_id) && (user&.station_id == User::BOARD_STATION_ID)

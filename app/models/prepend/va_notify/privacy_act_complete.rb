@@ -8,7 +8,7 @@ module PrivacyActComplete
   # rubocop:enable all
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask
                          PrivacyActRequestMailTask FoiaRequestMailTask].freeze
-
+  # rubocop:disable Metrics/CyclomaticComplexity
   def update_status_if_children_tasks_are_closed(child_task)
     # original method defined in app/models/task.rb
     super_return_value = super
@@ -20,6 +20,7 @@ module PrivacyActComplete
     end
     super_return_value
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   # original method defined in app/models/task.rb
   # for Privacy Act Tasks that are only assigned to an Organization

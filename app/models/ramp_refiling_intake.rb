@@ -70,6 +70,7 @@ class RampRefilingIntake < Intake
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def validate_detail_on_start
     if !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
@@ -86,6 +87,7 @@ class RampRefilingIntake < Intake
       self.error_code = :ramp_refiling_already_processed
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def ramp_refiling_already_processed?
     duplicate_refilings = RampRefiling.where(veteran_file_number: veteran_file_number)
