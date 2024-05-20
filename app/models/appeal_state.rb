@@ -323,6 +323,6 @@ class AppealState < CaseflowRecord
   end
 
   def update_appeal_state_action!(new_state)
-    update!(DEFAULT_STATE.dup.tap { |state| state[new_state] = true })
+    update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
   end
 end

@@ -960,7 +960,7 @@ class LegacyAppeal < CaseflowRecord
   # rubocop:enable Naming/PredicateName
 
   def appeal_state
-    super || AppealState.create!(appeal: self)
+    super || AppealState.find_or_create_by(appeal: self)
   end
 
   private
