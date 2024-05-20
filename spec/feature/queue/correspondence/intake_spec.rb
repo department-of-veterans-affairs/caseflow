@@ -412,6 +412,8 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
       click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[1].click
+      click_on("Confirm")
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end
