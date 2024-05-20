@@ -63,7 +63,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:third_nonpriority_ready_case_docket_number) { "1801005" }
   let(:third_nonpriority_ready_case) do
     create(:case,
-           bfd19: 1.year.ago,
+           bfd19: 10.months.ago,
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "83",

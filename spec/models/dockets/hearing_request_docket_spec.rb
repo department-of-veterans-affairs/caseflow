@@ -717,18 +717,20 @@ describe HearingRequestDocket, :postgres do
     (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
     Timecop.return
 
-    if aod
-      create(
-        :advance_on_docket_motion,
-        appeal: remand_appeal,
-        granted: true,
-        person: source_appeal.claimant.person,
-        reason: Constants.AOD_REASONS.financial_distress,
-        user_id: User.system_user.id
-      )
-    end
+    create_aod_motion(remand_appeal, remand_appeal.claimant.person) if aod
 
     remand_appeal
+  end
+
+  def create_aod_motion(appeal, person)
+    create(
+      :advance_on_docket_motion,
+      appeal: appeal,
+      granted: true,
+      person: person,
+      reason: Constants.AOD_REASONS.financial_distress,
+      user_id: User.system_user.id
+    )
   end
 
   def create_ready_nonpriority_appeal(tied_judge: nil, created_date: 1.year.ago)
