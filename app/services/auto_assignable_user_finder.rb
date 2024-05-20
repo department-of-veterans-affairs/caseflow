@@ -86,7 +86,7 @@ class AutoAssignableUserFinder
       user: user
     )
 
-    assignable = AssignableUser.new(
+    AssignableUser.new(
       user_obj: user,
       last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
       num_assigned: num_assigned_user_tasks(user),

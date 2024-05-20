@@ -48,7 +48,8 @@ class CorrespondenceAutoAssigner
       logger.no_eligible_assignees(
         task: task,
         started_at: started_at,
-        unassignable_reason: assignable_user_finder.unassignable_reason)
+        unassignable_reason: assignable_user_finder.unassignable_reason
+      )
       return
     end
 
