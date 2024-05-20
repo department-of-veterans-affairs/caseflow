@@ -5,9 +5,11 @@ require "test_prof/recipes/rspec/let_it_be"
 describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
   context "request issue object" do
     let(:vet) { create(:veteran) }
-    let(:epe) { create (:end_product_establishment)}
+    let(:epe) { create(:end_product_establishment) }
     let(:request_issue) do
-      create(:request_issue, :with_associated_decision_issue, edited_description: "Somehow edited", end_product_establishment_id: epe.id, veteran_participant_id: vet.participant_id)
+      create(:request_issue, :with_associated_decision_issue, edited_description: "Somehow edited",
+                                                              end_product_establishment_id: epe.id,
+                                                              veteran_participant_id: vet.participant_id)
     end
     it "should have all eligiblity fields" do
       serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
