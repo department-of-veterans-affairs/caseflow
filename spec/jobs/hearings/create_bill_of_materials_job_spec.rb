@@ -118,10 +118,10 @@ RSpec.describe Hearings::CreateBillOfMaterialsJob do
 
   it "retries on aws upload failure" do
     allow_any_instance_of(described_class).to receive(:perform)
-        .and_raise(TranscriptionFileUpload::FileUploadError)
+      .and_raise(TranscriptionFileUpload::FileUploadError)
 
-      expect { perform_enqueued_jobs { subject } }.to raise_error(
-        Hearings::CreateBillOfMaterialsJob::BomFileUploadError
-      )
+    expect { perform_enqueued_jobs { subject } }.to raise_error(
+      Hearings::CreateBillOfMaterialsJob::BomFileUploadError
+    )
   end
 end
