@@ -105,6 +105,13 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
   end
 
+  def fetch_webex_room_meeting_details_job(room_id)
+    body = nil
+    method = "GET"
+    @api_endpoint += "rooms/#{room_id}/meetingInfo"
+    ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
+  end
+
   private
 
   # :nocov:
