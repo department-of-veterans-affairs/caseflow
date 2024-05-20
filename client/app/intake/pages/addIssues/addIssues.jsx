@@ -304,7 +304,7 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issues);
 
-    const modificationIssueRequestsBySection =
+    const modificationIssueRequestsBySection = editPage &&
       formatIssueModificationRequestsBySection(this.props.issueModificationRequests);
 
     const withdrawReview =
@@ -345,10 +345,13 @@ class AddIssuesPage extends React.Component {
       return intakeData.originalIssues.some((issue) => issue.decisionDate === null);
     };
 
-    const showRequestIssueUpdateOptions = userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
+    const showRequestIssueUpdateOptions = editPage &&
+    userCanRequestIssueUpdates &&
+    !originalIssuesHaveNoDecisionDate() &&
+    intakeData.benefitType === 'vha';
 
     const renderButtons = () => {
-      if (showRequestIssueUpdateOptions && intakeData.benefitType === 'vha') {
+      if (showRequestIssueUpdateOptions) {
         return (
           <div className="cf-actions">
             <Button
@@ -548,7 +551,7 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
-    const modificationIssueRequestsObj =
+    const modificationIssueRequestsObj = editPage &&
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
 
     const pendingSection = _.isEmpty(modificationIssueRequestsObj) ?
