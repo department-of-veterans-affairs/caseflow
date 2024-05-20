@@ -1,32 +1,50 @@
 # frozen_string_literal: true
 
 module VirtualHearings::ConferenceClient
-  # rubocop:disable Metrics/MethodLength
   def client(virtual_hearing)
-    case virtual_hearing.conference_provider
-    when "pexip"
-      @client ||= PexipService.new(
-        host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
-        port: ENV["PEXIP_MANAGEMENT_NODE_PORT"],
-        user_name: ENV["PEXIP_USERNAME"],
-        password: ENV["PEXIP_PASSWORD"],
-        client_host: ENV["PEXIP_CLIENT_HOST"]
-      )
-    when "webex"
-      config = {
-        host: ENV["WEBEX_HOST_IC"],
-        port: ENV["WEBEX_PORT"],
-        aud: ENV["WEBEX_ORGANIZATION"],
-        apikey: ENV["WEBEX_BOTTOKEN"],
-        domain: ENV["WEBEX_DOMAIN_IC"],
-        api_endpoint: ENV["WEBEX_API_IC"],
-        query: nil
-      }
-      @client ||= WebexService.new(config: config)
-    else
-      msg = "Conference Provider for the Virtual Hearing Not Found"
-      fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
-    end
+    @client ||= case virtual_hearing.conference_provider
+                when "pexip" then create_pexip_client
+                when "webex" then create_webex_client
+                when nil
+                  virtual_hearing.set_default_meeting_type
+
+                  return create_pexip_client if virtual_hearing.conference_provider == "pexip"
+
+                  return create_webex_client if virtual_hearing.conference_provider == "webex"
+
+                  raise_not_found_error
+                else
+                  raise_not_found_error
+                end
   end
-  # rubocop:enable Metrics/MethodLength
+
+  private
+
+  def raise_not_found_error
+    msg = "Conference Provider for the Virtual Hearing Not Found"
+
+    fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
+  end
+
+  def create_webex_client
+    WebexService.new(
+      host: ENV["WEBEX_HOST_IC"],
+      port: ENV["WEBEX_PORT"],
+      aud: ENV["WEBEX_ORGANIZATION"],
+      apikey: ENV["WEBEX_BOTTOKEN"],
+      domain: ENV["WEBEX_DOMAIN_IC"],
+      api_endpoint: ENV["WEBEX_API_IC"],
+      query: nil
+    )
+  end
+
+  def create_pexip_client
+    PexipService.new(
+      host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
+      port: ENV["PEXIP_MANAGEMENT_NODE_PORT"],
+      user_name: ENV["PEXIP_USERNAME"],
+      password: ENV["PEXIP_PASSWORD"],
+      client_host: ENV["PEXIP_CLIENT_HOST"]
+    )
+  end
 end

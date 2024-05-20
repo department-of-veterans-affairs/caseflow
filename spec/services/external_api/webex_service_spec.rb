@@ -8,8 +8,8 @@ describe ExternalApi::WebexService do
   let(:domain) { "gov.fake.com" }
   let(:api_endpoint) { "/api/v2/fake" }
   let(:query) { nil }
-  let(:config) do
-    {
+  let(:webex_service) do
+    ExternalApi::WebexService.new(
       host: host,
       domain: domain,
       api_endpoint: api_endpoint,
@@ -17,11 +17,7 @@ describe ExternalApi::WebexService do
       apikey: apikey,
       port: port,
       query: query
-    }
-  end
-
-  let(:webex_service) do
-    ExternalApi::WebexService.new(config: config)
+    )
   end
 
   describe "webex requests" do
@@ -57,6 +53,7 @@ describe ExternalApi::WebexService do
       subject { webex_service.create_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes the correct body" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
         expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
@@ -109,6 +106,7 @@ describe ExternalApi::WebexService do
       subject { webex_service.delete_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes correct body" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
         expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
@@ -164,6 +162,7 @@ describe ExternalApi::WebexService do
       subject { webex_service.fetch_recordings_list }
 
       it "it calls send webex request with nil body and GET method" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
         expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
@@ -219,9 +218,12 @@ describe ExternalApi::WebexService do
 
       let(:method) { "GET" }
 
-      subject { webex_service.fetch_recording_details }
+      let(:recording_id) { "fake_id" }
+
+      subject { webex_service.fetch_recording_details(recording_id) }
 
       it "it calls send webex request with nil body and GET method" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
         expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
