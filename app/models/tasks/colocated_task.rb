@@ -24,6 +24,7 @@ class ColocatedTask < Task
       create!(params)
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
@@ -51,6 +52,7 @@ class ColocatedTask < Task
         all_tasks
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def verify_user_can_create!(user, parent)
       if parent

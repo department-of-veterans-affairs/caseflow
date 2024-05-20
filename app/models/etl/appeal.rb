@@ -20,7 +20,7 @@ class ETL::Appeal < ETL::Record
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
       veteran = original.veteran
@@ -75,7 +75,7 @@ class ETL::Appeal < ETL::Record
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 
   def root_task

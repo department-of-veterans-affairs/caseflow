@@ -12,6 +12,11 @@
 module Asyncable
   extend ActiveSupport::Concern
 
+  REQUIRES_PROCESSING_WINDOW_DAYS = 4
+  EXPIRATION_WINDOW_BUFFER_HOURS = 1
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+  PROCESS_DELAY_VBMS_OFFSET_HOURS = 7
+
   include RunAsyncable
 
   included do
@@ -27,11 +32,6 @@ module Asyncable
   #  * error        : any error message captured from a failed attempt.
   # These column names can be overridden in consuming classes as needed.
   class_methods do
-    REQUIRES_PROCESSING_WINDOW_DAYS = 4
-    EXPIRATION_WINDOW_BUFFER_HOURS = 1
-    DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
-    PROCESS_DELAY_VBMS_OFFSET_HOURS = 7
-
     def processing_retry_interval_hours
       self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
     end

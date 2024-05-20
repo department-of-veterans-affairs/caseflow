@@ -49,6 +49,7 @@ class AppealHistory
     AppealSeries.where(id: appeals.map(&:appeal_series_id).uniq).destroy_all
   end
 
+  # rubocop:disable Metrics/AbcSize
   def generate_appeal_series
     merge_table = {}
     series_table = {}
@@ -83,6 +84,7 @@ class AppealHistory
 
     burn_appeal_trees
   end
+  # rubocop:enable Metrics/AbcSize
 
   def appeal_tree_nodes
     grow_appeal_trees unless @nodes
@@ -144,6 +146,7 @@ class AppealHistory
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def find_parent_appeal_by_decision_date_and_issues(appeal)
     # Prevents loops
     return nil if appeal.prior_decision_date.nil? ||
@@ -192,6 +195,7 @@ class AppealHistory
       node[:merge_target] = find_merge_target(abbr_merge_str)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def find_merge_target(merge_str)
     matches = appeal_tree_nodes.select do |candidate|

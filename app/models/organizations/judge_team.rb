@@ -9,7 +9,7 @@ class JudgeTeam < Organization
       user.administered_judge_teams.detect { |team| team.judge.eql?(user) }
     end
 
-    def create_for_judge(user, ama_only_push = false, ama_only_request = false)
+    def create_for_judge(user, ama_only_push: false, ama_only_request: false)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
       create!(name: user.css_id,

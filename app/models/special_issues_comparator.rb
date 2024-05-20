@@ -82,6 +82,7 @@ class SpecialIssuesComparator
 
   # :reek:UtilityFunction
   # checks if rating special issue meets MST criteria
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def special_issue_has_mst?(special_issue)
     special_issue.transform_keys!(&:to_s)
     if special_issue["spis_tn"]&.casecmp("ptsd - personal trauma")&.zero?
@@ -92,6 +93,7 @@ class SpecialIssuesComparator
       MST_SPECIAL_ISSUES.include?(special_issue["spis_basis_tn"]&.downcase)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # :reek:UtilityFunction
   # checks if rating special issue meets PACT criteria

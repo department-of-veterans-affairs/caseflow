@@ -148,6 +148,7 @@ class BoardGrantEffectuation < CaseflowRecord
     )
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def claimant_payee_code
     if claimant&.payee_code.present?
       claimant.payee_code
@@ -155,6 +156,7 @@ class BoardGrantEffectuation < CaseflowRecord
       veteran&.relationship_with_participant_id(claimant.participant_id)&.default_payee_code
     end || EndProduct::DEFAULT_PAYEE_CODE
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def end_product_code
     return unless processed_in_vbms?

@@ -141,6 +141,7 @@ class Person < CaseflowRecord
     bgs_record
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def fetch_bgs_record_by_ssn
     bgs_record = bgs.fetch_person_by_ssn(ssn)
     return :not_found unless bgs_record
@@ -154,4 +155,5 @@ class Person < CaseflowRecord
     bgs_record[:email_address] ||= bgs_record[:email_addr]
     bgs_record
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

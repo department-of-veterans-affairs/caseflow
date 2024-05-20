@@ -39,6 +39,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
   # Response: Returns True if batch is processed successfully
   # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def process_batch!
     batch_processing!
 
@@ -69,6 +70,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
     batch_complete!
     destroy_synced_records_from_queue!
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # rubocop:enable Metrics/MethodLength
 
   # Purpose: Assigns the Batch Process batch_id to Priority End Product Sync Queue (PEPSQ) records.
