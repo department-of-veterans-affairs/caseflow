@@ -12,7 +12,6 @@ class NonAdmin::IssueModificationRequestsUpdater
   attr_accessor :current_user,
                 :error_code,
                 :review,
-                :requestor,
                 :issue_modifications_data,
                 :issue_modification_request
 
@@ -30,8 +29,8 @@ class NonAdmin::IssueModificationRequestsUpdater
     cancelled: "cancelled"
   }.freeze
 
-  NEW_REQUEST_ERROR = "Issue status must be in an assigned state".freeze
-  MODIFICATION_ERROR = "Must be the same requestor or request must be on an assigned state".freeze
+  NEW_REQUEST_ERROR = "Issue status must be in an assigned state"
+  MODIFICATION_ERROR = "Must be the same requestor or request must be on an assigned state"
 
   def process!
     new_modifications_process!(issue_modifications_data[:new]) if issue_modifications_data[:new].any?
@@ -57,7 +56,7 @@ class NonAdmin::IssueModificationRequestsUpdater
         request_reason: new_issue[:request_reason],
         benefit_type: new_issue[:benefit_type],
         decision_date: new_issue[:decision_date],
-        decider_note: new_issue[:decider_note],
+        decision_reason: new_issue[:decision_reason],
         nonrating_issue_category: new_issue[:nonrating_issue_category],
         nonrating_issue_description: new_issue[:nonrating_issue_description],
         status: new_issue[:status],
@@ -70,7 +69,6 @@ class NonAdmin::IssueModificationRequestsUpdater
 
   def edited_modifications_process!(edited_issues)
     edited_issues.each do |edited_issue|
-
       find_issue_modification_request(edited_issue[:id])
 
       unless validate_issues_request?(status: edited_issue[:status])
@@ -90,7 +88,6 @@ class NonAdmin::IssueModificationRequestsUpdater
 
   def cancelled_modifications_process!(canceled_issues)
     canceled_issues.each do |canceled_issue|
-
       find_issue_modification_request(canceled_issue[:id])
 
       unless validate_issues_request?(status: canceled_issue[:status])
@@ -118,4 +115,3 @@ class NonAdmin::IssueModificationRequestsUpdater
     @requestor = issue_modification_request.requestor
   end
 end
-

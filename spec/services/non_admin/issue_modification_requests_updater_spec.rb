@@ -48,7 +48,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
           decision_review_id: review.id,
           decision_review_type: "HigherLevelReview",
           benefit_type: "VHA",
-          decider_note: "New Decision text",
+          decider_reason: "New Decision text",
           decision_date: "2024-01-30",
           request_reason: "This is my reason.",
           requestor_id: 1,
