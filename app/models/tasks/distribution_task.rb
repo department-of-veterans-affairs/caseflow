@@ -63,7 +63,8 @@ class DistributionTask < Task
   end
 
   def update_affinity_start_date
-    # update affinity start date
+    # update affinity start date with instructions
+    update_with_instructions(affinity_start_date: nil, instructions: ) 
   end
 
   def affinity_task_assigned?
