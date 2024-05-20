@@ -7,7 +7,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
-  let(:supervisor_user) { create(:inbound_ops_team_supervisor)}
+  let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:unauthorized_user) { create(:user) }
   let(:correspondence) { create :correspondence }
   let(:correspondence_intake_task) do
@@ -259,8 +259,6 @@ RSpec.feature("The Correspondence Intake page") do
       end
       find_by_id("Add-autotext-button-id-0").click
       expect(all("#Add-autotext-button-id-0").length).to eq 0
-
-
     end
 
     it "The user can close the modal with the x button located in the top right." do
@@ -373,7 +371,6 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("Return-To-Queue-button-id-1")
       using_wait_time(20) do
         expect(page).to have_content("You have successfully saved the intake form")
-
       end
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("#task-link").click
