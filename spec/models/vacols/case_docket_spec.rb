@@ -328,8 +328,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:bust_backlog) { false }
 
     before do
-      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      third_nonpriority_ready_case
+      # FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+      nonpriority_ready_case.reload
+      another_nonpriority_ready_case.reload
+      third_nonpriority_ready_case.reload
     end
 
     subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
