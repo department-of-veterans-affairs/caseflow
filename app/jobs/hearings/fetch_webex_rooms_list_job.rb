@@ -27,7 +27,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
-    fetch_rooms_list.data.each do |n|
+    fetch_rooms_list.rooms.each do |n|
       Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
     end
   end
@@ -38,8 +38,9 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
 
   private
 
-  def filter_title
+  def filter_title(title)
     # placeholder
+    # "#{docket_number}#{id}#{self.class}"
   end
 
   def fetch_rooms_list
