@@ -426,6 +426,7 @@ module Caseflow::Error
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
+  class PexipServiceNotReachableError < PexipApiError; end
 
   class WebexApiError < ConferenceCreationError; end
   class WebexNotFoundError < WebexApiError; end
