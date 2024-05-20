@@ -7,8 +7,11 @@
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
+  attr_reader :unassignable_reason
+
   def initialize(current_user)
     self.current_user = current_user
+    self.unassignable_reason = ""
   end
 
   def assignable_users_exist?
@@ -18,34 +21,53 @@ class AutoAssignableUserFinder
   end
 
   def get_first_assignable_user(correspondence:)
-    run_auto_assign_algorithm(correspondence)
+    run_auto_assign_algorithm(correspondence, assignable_users)
+  end
+
+  def can_user_work_this_correspondence?(user:, correspondence:)
+    return false if user_is_at_max_capacity?(user)
+
+    run_auto_assign_algorithm(correspondence, [user]).present?
   end
 
   private
 
   attr_accessor :current_user
+  attr_writer :unassignable_reason
 
-  def run_auto_assign_algorithm(correspondence)
-    assignable_users.each do |user|
-      next if correspondence.nod && !user.nod?
+  def run_auto_assign_algorithm(correspondence, users)
+    users.each do |user|
+      if correspondence.nod && !user.nod?
+        self.unassignable_reason = "User cannot work NOD correspondences"
+        next
+      end
 
       user_obj = user.user_obj
 
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
+      else
+        self.unassignable_reason = "User's sensitivity level is not compatible with veteran's sensitivity level"
       end
     end
 
     nil
   end
 
+  def user_is_at_max_capacity?(user)
+    if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
+      self.unassignable_reason = "User is at max capacity"
+      true
+    else
+      false
+    end
+  end
+
   def assignable_users
     users = []
 
     find_users.each do |user|
-      num_assigned = num_assigned_user_tasks(user)
-
-      next if num_assigned >= CorrespondenceAutoAssignmentLever.max_capacity
+      next if user_is_at_max_capacity?(user)
 
       nod_eligible = permission_checker.can?(
         permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
