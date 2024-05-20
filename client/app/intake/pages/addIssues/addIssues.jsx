@@ -574,8 +574,6 @@ class AddIssuesPage extends React.Component {
       });
     }
 
-    console.log(this.props.addToPendingReviewSection);
-
     return (
       <div className="cf-intake-edit">
         {this.state.addingIssue && (

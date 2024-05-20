@@ -9,8 +9,9 @@ import { useSelector } from 'react-redux';
 export const RequestIssueFormWrapper = (props) => {
 
   const userDisplayName = useSelector((state) => state.userDisplayName);
+  const benefitType = useSelector((state) => state.benefitType);
 
-  const methods = useForm({ // TODO MONDAY ASK HEATHER: Should we just pre-fill the modal with the existing information?
+  const methods = useForm({
     defaultValues: {
       requestReason: '',
       nonRatingIssueCategory: '',
@@ -36,6 +37,7 @@ export const RequestIssueFormWrapper = (props) => {
     const enhancedData = {
       ...currentIssueFields,
       ...(props.type === 'modification') && { requestIssue: props.currentIssue },
+      ...(props.type === 'addition') && { benefitType },
       requestor: userDisplayName,
       requestType: _.capitalize(props.type),
       ...issueModificationRequest };
