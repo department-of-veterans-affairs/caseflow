@@ -131,9 +131,9 @@ feature "Issue Modification Request", :postgres do
       expect(pending_section).to have_text("Beneficiary Travel")
 
       ri = in_progress_task.request_issues.first
+      expect(pending_section).to have_text("Original Issue")
       expect(pending_section).to have_text("#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}".strip)
       expect(pending_section).to have_text(Constants::BENEFIT_TYPES["vha"])
-      expect(pending_section).to have_text("Original Issue")
       expect(pending_section).to have_text(ri.decision_date.strftime("%m/%d/%Y").to_s)
     end
   end
