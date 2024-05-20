@@ -70,12 +70,7 @@ module AppealDocketed
   # Response: Update 'appeal_docketed' column to True
   def update_appeal_state_when_appeal_docketed
     if type == "DistributionTask"
-      MetricsService.record("Updating APPEAL_DOCKETED column in Appeal States Table to TRUE for #{appeal.class} "\
-        "ID #{appeal.id}",
-                            service: nil,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "appeal_docketed")
-      end
+      appeal.appeal_state.appeal_docketed_appeal_state_update_action!
     end
   end
 end
