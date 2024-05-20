@@ -151,7 +151,7 @@ feature "Issue Modification Request", :postgres do
     it "should open the edit issues page and not see the new non-admin content" do
       visit "higher_level_reviews/#{in_progress_task.uuid}/edit"
 
-      expect(page).has_no_content("Request additional issue").to eq(true)
+      expect(page.has_no_content?("Request additional issue")).to eq(true)
     end
   end
 end
