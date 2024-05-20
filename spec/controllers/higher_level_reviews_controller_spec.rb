@@ -57,7 +57,7 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
   end
 
   describe "#udpate" do
-    let(:higher_level_review) { create(:higher_level_review, :with_vha_issue)}
+    let(:higher_level_review) { create(:higher_level_review, :with_vha_issue) }
 
     before do
       User.stub = user
@@ -73,11 +73,10 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
             current_user: user,
             review: higher_level_review,
             issue_modifications_data: { issue_modification_requests:
-              { new: [], edited: [], cancelled: [] }
-            }
+              { new: [], edited: [], cancelled: [] } }
           }
         )
-        
+
         allow(NonAdmin::IssueModificationRequestsUpdater).to receive(:new).and_return(updater)
         allow(updater).to receive(:success?).and_return(true)
 
@@ -86,7 +85,7 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
         post :update, params: {
           claim_id: higher_level_review.uuid,
           issue_modification_requests: { new: [], edited: [], cancelled: [] },
-          request_issues: [ { request_issue_id: higher_level_review.request_issues.first.id } ]
+          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }]
         }
 
         expect(response.status).to eq 200
@@ -95,20 +94,19 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
 
     context "When an admin user is requesting an issue modification" do
       let(:user) { create(:intake_admin_user, :vha_intake_admin) }
-      let(:request_issues_data) {
+      let(:request_issues_data) do
         {
           request_issues: [
             { request_issue_id: higher_level_review.request_issues.first.id }
           ]
         }
-      }
+      end
 
       it "should call #request_issues_update.perform! and return 204" do
         request_issues_update = instance_double(RequestIssuesUpdate, {
-            user: user,
-            review: higher_level_review
-          }
-        )
+                                                  user: user,
+                                                  review: higher_level_review
+                                                })
 
         allow(RequestIssuesUpdate).to receive(:new).and_return(request_issues_update)
         allow(request_issues_update).to receive(:request_issues_data=).and_return(request_issues_data)
@@ -117,7 +115,7 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
 
         post :update, params: {
           claim_id: higher_level_review.uuid,
-          request_issues: [ { request_issue_id: higher_level_review.request_issues.first.id } ]
+          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }]
         }
 
         expect(response.status).to eq 204

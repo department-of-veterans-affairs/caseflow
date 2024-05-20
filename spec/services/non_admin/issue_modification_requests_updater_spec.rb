@@ -1,67 +1,71 @@
+# frozen_string_literal: true
+
 describe NonAdmin::IssueModificationRequestsUpdater do
   let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_intake_admin) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
-  let(:issue_modification_request) { create(:issue_modification_request, requestor: non_admin_requestor)}
+  let(:issue_modification_request) { create(:issue_modification_request, requestor: non_admin_requestor) }
   let(:status) { "assigned" }
   let(:edited_request_reason) { "Editing request reason text" }
 
-  let(:cancelled_modification_requests) {
+  let(:cancelled_modification_requests) do
     {
       cancelled: [
-          {
-              id: issue_modification_request.id,
-              status: status,
-          }
+        {
+          id: issue_modification_request.id,
+          status: status
+        }
       ],
       edited: [],
-      new:[]
+      new: []
     }
-  }
+  end
 
-    let(:edited_modification_requests) {
-      {
-        cancelled: [],
-        edited: [
-          {
-              id: issue_modification_request.id,
-              nonrating_issue_category: "Caregiver | Other",
-              nonrating_issue_description: "Decision text",
-              decision_date: "2024-01-30",
-              request_reason: edited_request_reason,
-              status: status,
-          }
-        ],
-        new:[]
-      }
+  let(:edited_modification_requests) do
+    {
+      cancelled: [],
+      edited: [
+        {
+          id: issue_modification_request.id,
+          nonrating_issue_category: "Caregiver | Other",
+          nonrating_issue_description: "Decision text",
+          decision_date: "2024-01-30",
+          request_reason: edited_request_reason,
+          status: status
+        }
+      ],
+      new: []
     }
+  end
 
-    let(:new_modification_requests) {
-      {
-        cancelled: [],
-        edited: [],
-        new: [
-          {
-            request_type: "Addition",
-            nonrating_issue_category: "Caregiver | Eligibility",
-            decision_review_id: review.id,
-            decision_review_type: "HigherLevelReview",
-            benefit_type: "VHA",
-            decider_note: "New Decision text",
-            decision_date: "2024-01-30",
-            request_reason: "This is my reason.",
-            requestor_id: 1,
-            status: status
-          }
-        ]
-      }
+  let(:new_modification_requests) do
+    {
+      cancelled: [],
+      edited: [],
+      new: [
+        {
+          request_type: "Addition",
+          nonrating_issue_category: "Caregiver | Eligibility",
+          decision_review_id: review.id,
+          decision_review_type: "HigherLevelReview",
+          benefit_type: "VHA",
+          decider_note: "New Decision text",
+          decision_date: "2024-01-30",
+          request_reason: "This is my reason.",
+          requestor_id: 1,
+          status: status
+        }
+      ]
     }
+  end
 
   describe "when new request modifications issues is made" do
-    subject { described_class.new(
-      current_user: non_admin_requestor,
-      review: review,
-      issue_modifications_data: new_modification_requests)
-    }
+    subject do
+      described_class.new(
+        current_user: non_admin_requestor,
+        review: review,
+        issue_modifications_data: new_modification_requests
+      )
+    end
 
     context "and in assigned status" do
       it "should create new issue modifications request record" do
@@ -86,11 +90,13 @@ describe NonAdmin::IssueModificationRequestsUpdater do
   end
 
   describe "when editing an exisitng issue modifications request" do
-    subject { described_class.new(
-      current_user: non_admin_requestor,
-      review: review,
-      issue_modifications_data: edited_modification_requests)
-    }
+    subject do
+      described_class.new(
+        current_user: non_admin_requestor,
+        review: review,
+        issue_modifications_data: edited_modification_requests
+      )
+    end
 
     context "and request is still in an assigned status, edited by the same requestor" do
       it "should edit issue modifications request record" do
@@ -117,7 +123,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     end
 
     context "and editing is attempted by a different user than original requestor" do
-      before { subject.instance_variable_set(:@current_user, create(:user) ) }
+      before { subject.instance_variable_set(:@current_user, create(:user)) }
 
       it "should return false and set error message" do
         subject.process!
@@ -132,11 +138,13 @@ describe NonAdmin::IssueModificationRequestsUpdater do
   end
 
   describe "when cancelling an exisitng issue modifications request" do
-    subject { described_class.new(
-      current_user: non_admin_requestor,
-      review: review,
-      issue_modifications_data: cancelled_modification_requests)
-    }
+    subject do
+      described_class.new(
+        current_user: non_admin_requestor,
+        review: review,
+        issue_modifications_data: cancelled_modification_requests
+      )
+    end
 
     context "and request is still in an assigned status, cancelled by the same requestor" do
       it "should change issues modification request status to cancelled" do
@@ -163,7 +171,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     end
 
     context "and cancelling is attempted by a different user than original requestor" do
-      before { subject.instance_variable_set(:@current_user, create(:user) ) }
+      before { subject.instance_variable_set(:@current_user, create(:user)) }
 
       it "should return false and set error message" do
         subject.process!
@@ -177,4 +185,3 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     end
   end
 end
-

@@ -2,7 +2,7 @@
 
 describe SupplementalClaimsController, :postgres, type: :controller do
   describe "#udpate" do
-    let(:supplemental_claim) { create(:supplemental_claim, :with_vha_issue)}
+    let(:supplemental_claim) { create(:supplemental_claim, :with_vha_issue) }
 
     before do
       User.stub = user
@@ -18,8 +18,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
             current_user: user,
             review: supplemental_claim,
             issue_modifications_data: { issue_modification_requests:
-              { new: [], edited: [], cancelled: [] }
-            }
+              { new: [], edited: [], cancelled: [] } }
           }
         )
 
@@ -31,7 +30,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
         post :update, params: {
           claim_id: supplemental_claim.uuid,
           issue_modification_requests: { new: [], edited: [], cancelled: [] },
-          request_issues: [ { request_issue_id: supplemental_claim.request_issues.first.id } ]
+          request_issues: [{ request_issue_id: supplemental_claim.request_issues.first.id }]
         }
 
         expect(response.status).to eq 200
@@ -40,20 +39,19 @@ describe SupplementalClaimsController, :postgres, type: :controller do
 
     context "When an admin user is requesting an issue modification" do
       let(:user) { create(:intake_admin_user, :vha_intake_admin) }
-      let(:request_issues_data) {
+      let(:request_issues_data) do
         {
           request_issues: [
             { request_issue_id: supplemental_claim.request_issues.first.id }
           ]
         }
-      }
+      end
 
       it "should call #request_issues_update.perform! and return 204" do
         request_issues_update = instance_double(RequestIssuesUpdate, {
-            user: user,
-            review: supplemental_claim
-          }
-        )
+                                                  user: user,
+                                                  review: supplemental_claim
+                                                })
 
         allow(RequestIssuesUpdate).to receive(:new).and_return(request_issues_update)
         allow(request_issues_update).to receive(:request_issues_data=).and_return(request_issues_data)
@@ -62,7 +60,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
 
         post :update, params: {
           claim_id: supplemental_claim.uuid,
-          request_issues: [ { request_issue_id: supplemental_claim.request_issues.first.id } ]
+          request_issues: [{ request_issue_id: supplemental_claim.request_issues.first.id }]
         }
 
         expect(response.status).to eq 204
