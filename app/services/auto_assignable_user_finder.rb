@@ -27,7 +27,9 @@ class AutoAssignableUserFinder
   def can_user_work_this_correspondence?(user:, correspondence:)
     return false if user_is_at_max_capacity?(user)
 
-    run_auto_assign_algorithm(correspondence, [user]).present?
+    assignable = user_to_assignable_user(user)
+
+    run_auto_assign_algorithm(correspondence, [assignable]).present?
   end
 
   private
@@ -69,23 +71,27 @@ class AutoAssignableUserFinder
     find_users.each do |user|
       next if user_is_at_max_capacity?(user)
 
-      nod_eligible = permission_checker.can?(
-        permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
-        organization: InboundOpsTeam.singleton,
-        user: user
-      )
-
-      assignable = AssignableUser.new(
-        user_obj: user,
-        last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
-        num_assigned: num_assigned,
-        nod?: nod_eligible
-      )
+      assignable = user_to_assignable_user(user)
 
       users.push(assignable)
     end
 
     sorted_assignable_users(users)
+  end
+
+  def user_to_assignable_user(user)
+    nod_eligible = permission_checker.can?(
+      permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
+      organization: InboundOpsTeam.singleton,
+      user: user
+    )
+
+    AssignableUser.new(
+      user_obj: user,
+      last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
+      num_assigned: num_assigned_user_tasks(user),
+      nod?: nod_eligible
+    )
   end
 
   # :reek:UncommunicativeVariableName
