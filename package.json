@@ -1,5 +1,9 @@
 {
   "dependencies": {
+<<<<<<< Updated upstream
     "node": "14.20.0"
+=======
+    "node": "16.16.0"
+>>>>>>> Stashed changes
   }
 }
