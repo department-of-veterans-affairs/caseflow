@@ -80,13 +80,14 @@ class CorrespondenceAutoAssignLogger
     )
   end
 
-  def no_eligible_assignees(task:, started_at:)
+  def no_eligible_assignees(task:, started_at:, unassignable_reason:)
     correspondence = task.correspondence
 
     attempt = individual_auto_assignment_attempt
     attempt.assign_attributes(
       correspondence: correspondence,
       errored_at: Time.current,
+      error_info: { message: unassignable_reason },
       nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       started_at: started_at
