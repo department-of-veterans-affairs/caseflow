@@ -4,6 +4,7 @@
 
 class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include Hearings::SendTranscriptionIssuesEmail
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -15,23 +16,20 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
+      provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       times: { from: from, to: to },
       docket_number: nil
     }
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   def perform
     ensure_current_user_is_set
-    response = fetch_recordings_list
-    topics = response.topics
-    topic_num = 0
-    response.ids.each do |id|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: id, topic: topics[topic_num])
-      topic_num += 1
+    fetch_recordings_list.ids.each do |n|
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n)
     end
   end
 
@@ -42,8 +40,8 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   private
 
   def fetch_recordings_list
-    from = CGI.escape(2.hours.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601)
-    to = CGI.escape(1.hour.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601)
+    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601
+    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601
     max = 100
     query = { "from": from, "to": to, "max": max }
 
@@ -51,7 +49,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_BOTTOKEN"],
+      apikey: CredStash.get("webex_#{Rails.deploy_env}_access_token"),
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query

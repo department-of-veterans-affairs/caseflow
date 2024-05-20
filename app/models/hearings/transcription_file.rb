@@ -6,7 +6,7 @@ class TranscriptionFile < CaseflowRecord
   belongs_to :transcription
   belongs_to :docket
 
-  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv].freeze
+  VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
