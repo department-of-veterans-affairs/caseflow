@@ -21,6 +21,8 @@ module Seeds
         :appeal,
         :direct_review_docket,
         :ready_for_distribution,
+        :tied_to_judge,
+        tied_judge: @associated_judge,
         associated_judge: @associated_judge,
         veteran: create_demo_veteran_for_docket,
         receipt_date: @days_ago
@@ -42,7 +44,7 @@ module Seeds
     end
 
     def find_or_create_demo_seed_judge(judge_ccs_id)
-      unless judge_ccs_id.empty?
+      unless judge_ccs_id.nil?
         User.find_by_css_id(judge_ccs_id) ||
           create(:user, :judge, :with_vacols_judge_record, css_id: judge_ccs_id, full_name: "Demo Judge " + judge_ccs_id)
       else
