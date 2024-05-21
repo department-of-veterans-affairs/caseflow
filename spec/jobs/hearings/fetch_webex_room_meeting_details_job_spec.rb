@@ -17,7 +17,7 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
   let(:room_id) { "YhOGfIvifid8996hlfsHo28F" }
   let(:meeting_title) { "fake meeting" }
   let(:subject) do
-    Hearings::FetchWebexRoomMeetingDetailsJob
+    described_class
   end
 
   describe "#perform" do
@@ -30,6 +30,12 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
 
     it "returns correct response" do
       expect(subject.new.send(:fetch_room_details, room_id).resp.raw_body).to eq(room_details)
+    end
+
+    it "retries and logs errors" do
+      subject.perform_now
+      expect(Rails.logger).to receive(:error).at_least(:once)
+      perform_enqueued_jobs { described_class.perform_later }
     end
   end
 end

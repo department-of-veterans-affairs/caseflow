@@ -30,7 +30,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
     fetch_rooms_list.rooms.each do |n|
       next if filter_title(n.title)
 
-      # Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
+      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
     end
   end
 
