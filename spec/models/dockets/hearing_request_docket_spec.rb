@@ -33,12 +33,10 @@ describe HearingRequestDocket, :postgres do
     let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
 
     before { ready_nonpriority_appeal.update!(receipt_date: 10.days.ago) }
-
-    subject { HearingRequestDocket.new.ready_nonpriority_appeals }
+    subject { docket.ready_priority_nonpriority_appeals(priority: false, ready: true) }
 
     it "returns only ready nonpriority appeals" do
-      expect(docket.ready_priority_nonpriority_appeals(priority: false, ready: true))
-        .to match_array([ready_nonpriority_appeal])
+      expect(subject).to match_array([ready_nonpriority_appeal])
     end
 
     context "when appeals receipt date is not within the time goal" do
@@ -60,8 +58,9 @@ describe HearingRequestDocket, :postgres do
       end
 
       it "returns only receipt_date nonpriority appeals with in the time goal" do
-        expect(subject).to include(ready_nonpriority_appeal_1)
-        expect(subject).not_to include(ready_nonpriority_appeal)
+        result = subject
+        expect(result).to include(ready_nonpriority_appeal_1)
+        expect(result).not_to include(ready_nonpriority_appeal)
       end
     end
   end
