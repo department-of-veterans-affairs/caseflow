@@ -69,7 +69,7 @@ module ByDocketDateDistribution
       hearing_priority_stats: {},
       hearing_stats: {},
       legacy_priority_stats: {},
-      legacy_stats: {},
+      legacy_stats: {}
     }
 
     dockets.each_pair do |sym, docket|
@@ -101,7 +101,7 @@ module ByDocketDateDistribution
 
     docket_counts.merge({
       ineligible_judge_stats: {
-        distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges,
+        distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges
       },
       judge_stats: {
         team_size: team_size,
@@ -116,7 +116,7 @@ module ByDocketDateDistribution
         priority_count: priority_count,
         nonpriority_count: nonpriority_count,
         nonpriority_iterations: @nonpriority_iterations,
-        sct_appeals: sct_appeals_counts,
+        sct_appeals: sct_appeals_counts
       }
     })
   rescue StandardError => error
