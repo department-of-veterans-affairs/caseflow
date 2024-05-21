@@ -10,7 +10,7 @@ export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
     const { isInboundOpsTeamUser } = this.props;
-    const { isMailSupervisor } = this.props;
+    const { isInboundOpsSupervisor } = this.props;
     const { isInboundOpsSuperuser } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
@@ -18,7 +18,7 @@ export default class QueueOrganizationDropdown extends React.Component {
     let correspondenceItems = {};
 
     const isInboundOpsTeamAffiliated = () => {
-      if (isInboundOpsSuperuser || isMailSupervisor || isInboundOpsTeamUser) {
+      if (isInboundOpsSuperuser || isInboundOpsSupervisor || isInboundOpsTeamUser) {
         return true;
       }
 
@@ -48,7 +48,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (isInboundOpsSuperuser === true || isMailSupervisor === true) {
+    if (isInboundOpsSuperuser === true || isInboundOpsSupervisor === true) {
       const orgHref = '/queue/correspondence/team';
 
       correspondenceItems = {
@@ -80,7 +80,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
 QueueOrganizationDropdown.propTypes = {
   isInboundOpsTeamUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,

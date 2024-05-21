@@ -256,7 +256,7 @@ const CorrespondenceCases = (props) => {
           inboundOpsTeamUsers={props.inboundOpsTeamUsers}
           isInboundOpsTeamUser={props.isInboundOpsTeamUser}
           isInboundOpsSuperuser={props.isInboundOpsSuperuser}
-          isMailSupervisor={props.isMailSupervisor} />}
+          isInboundOpsSupervisor={props.isInboundOpsSupervisor} />}
         {showReassignPackageModal &&
         <Modal
           closeHandler={handleReassignClose}
@@ -313,7 +313,7 @@ CorrespondenceCases.propTypes = {
   taskIds: PropTypes.array,
   isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 

@@ -145,7 +145,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "Checking VADOR field is enabled for Mail Supervisor" do
       click_button "Edit"
-      expect(page).to have_field("VA DOR", readonly: false)
+      expect find_by_id("va-dor-input").readonly?
     end
   end
 

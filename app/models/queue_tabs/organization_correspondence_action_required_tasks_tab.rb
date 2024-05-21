@@ -20,7 +20,7 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   def tasks
     tasks = CorrespondenceTask.includes(*task_includes).package_action_tasks
 
-    if RequestStore[:current_user].mail_supervisor?
+    if RequestStore[:current_user].inbound_ops_team_supervisor?
       tasks.where(assigned_to: assignee).active
     else
       tasks.where.not(type: RemovePackageTask.name).where(assigned_to: assignee).active

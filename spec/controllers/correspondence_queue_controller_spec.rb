@@ -22,7 +22,12 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
 
     it "redirects mail supervisor" do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user).update!(admin: true)
       User.authenticate!(user: current_user)
+
       get :correspondence_cases
 
       expect(response.status).to eq 302
@@ -41,6 +46,10 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
   describe "GET #correspondence_team" do
     before do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user).update!(admin: true)
       User.authenticate!(user: current_user)
       get :correspondence_team
     end
@@ -61,7 +70,12 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
   describe "GET #correspondence_team" do
     before do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user).update!(admin: true)
       User.authenticate!(user: current_user)
+
     end
 
     it "returns cancel intake response" do
