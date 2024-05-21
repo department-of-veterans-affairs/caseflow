@@ -13,6 +13,7 @@ class Events::DecisionReviewCreated
   #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
       return if event_exists_and_is_completed?(consumer_event_id)
 
@@ -20,7 +21,8 @@ class Events::DecisionReviewCreated
 
       # exit out if Key is already in Redis Cache
       if redis.exists("RedisMutex:EndProductEstablishment:#{reference_id}")
-        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
+        fail Caseflow::Error::RedisLockFailed,
+             message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
@@ -29,13 +31,6 @@ class Events::DecisionReviewCreated
         event = find_or_create_event(consumer_event_id)
 
         ActiveRecord::Base.transaction do
-          # Throws error for specific Consumer Event IDs to test Consumer error handling
-          if consumer_event_id == 20
-            fail Caseflow::Error::RedisLockFailed, "DRC RedisLockFailed message"
-          elsif consumer_event_id == 21
-            fail StandardError, "DRC StandardError message"
-          end
-
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
@@ -49,17 +44,13 @@ class Events::DecisionReviewCreated
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
           decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
 
-          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
-          # decision_review.legacy_opt_in_approved is true
-          Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
-
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
                                                  decision_review: decision_review)
 
           # Note: event, user, and veteran need to be before this call.
           Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
-           decision_review: decision_review)
+                                                               decision_review: decision_review)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
@@ -69,7 +60,12 @@ class Events::DecisionReviewCreated
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
-            decision_review: decision_review)
+                                                                      decision_review: decision_review)
+
+          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
+          # decision_review.legacy_opt_in_approved is true
+          Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review: decision_review)
+
           # Update the Event after all backfills have completed
           event.update!(completed_at: Time.now.in_time_zone, error: nil)
         end
@@ -88,6 +84,7 @@ class Events::DecisionReviewCreated
       event&.update!(error: "#{error.class} : #{error.message}", info: { "failed_claim_id" => reference_id })
       raise error
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID and
     # was successfully completed

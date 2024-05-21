@@ -14,6 +14,7 @@ class Claimant < CaseflowRecord
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
   }, dependent: :destroy
   has_one :event_record, as: :evented_record
+  has_one :event_record, as: :evented_record
 
   # rubocop:disable Rails/UniqueValidationWithoutIndex
   validates :participant_id,
@@ -87,10 +88,8 @@ class Claimant < CaseflowRecord
     # no-op except on BgsRelatedClaimants
   end
 
-  def from_decision_review_created_event?
-    # refer back to the associated Person record to see if both objects came from DRCE
-    person.from_decision_review_created_event?
-  end
+  # refer back to the associated Person record to see if both objects came from DRCE
+  delegate :from_decision_review_created_event?, to: :person
 
   private
 

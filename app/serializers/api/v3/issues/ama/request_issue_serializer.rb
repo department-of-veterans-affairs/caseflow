@@ -20,7 +20,8 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :correction_type, :created_at, :decision_date, :decision_review_id,
              :decision_review_type, :edited_description, :end_product_establishment_id,
              :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-             :nonrating_issue_bgs_id, :nonrating_issue_category, :nonrating_issue_description,
+             :nonrating_issue_bgs_id, :nonrating_issue_category,
+             :nonrating_issue_bgs_source, :nonrating_issue_description,
              :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
@@ -66,6 +67,74 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
         subject_text: di.subject_text,
         updated_at: di.updated_at
       }
+    end
+  end
+
+  attribute :development_item_reference_id do |object|
+    object&.end_product_establishment&.development_item_reference_id
+  end
+
+  attribute :same_office do |object|
+    HigherLevelReview.find_by(veteran_file_number: object&.veteran&.file_number)&.same_office
+  end
+
+  attribute :legacy_opt_in_approved do |object|
+    object&.decision_review&.legacy_opt_in_approved
+  end
+
+  attribute :added_by_station_id do |object|
+    object&.end_product_establishment&.user&.station_id
+  end
+
+  attribute :added_by_css_id do |object|
+    object&.end_product_establishment&.user&.css_id
+  end
+
+  attribute :corrected_by_station_id do |object|
+    if object&.correction_type.present?
+      object&.end_product_establishment&.user&.station_id
+    end
+  end
+
+  attribute :corrected_by_css_id do |object|
+    if object&.correction_type.present?
+      object&.end_product_establishment&.user&.css_id
+    end
+  end
+
+  attribute :edited_by_station_id do |object|
+    if object&.edited_description.present?
+      object&.end_product_establishment&.user&.station_id
+    end
+  end
+
+  attribute :edited_by_css_id do |object|
+    if object&.edited_description.present?
+      object&.end_product_establishment&.user&.station_id
+    end
+  end
+
+  attribute :removed_by_css_id do |object|
+    if object&.closed_status == "removed"
+      object&.end_product_establishment&.user&.css_id
+    end
+  end
+
+  attribute :removed_by_station_id do |object|
+    if object&.closed_status == "removed"
+      object&.end_product_establishment&.user&.station_id
+    end
+  end
+
+  attribute :withdrawn_by_css_id do |object|
+    if object&.closed_status == "withdrawn"
+      object&.end_product_establishment&.user&.css_id
+    end
+  end
+
+  attribute :withdrawn_by_station_id do |object|
+    if object&.closed_status == "withdrawn"
+      object&.end_product_establishment&.user&.station_id
     end
   end
 end
