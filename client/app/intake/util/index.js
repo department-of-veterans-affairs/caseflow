@@ -4,7 +4,8 @@ import { sprintf } from 'sprintf-js';
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import {
   INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT,
-  VHA_BENEFIT_EMAIL_ADDRESS
+  VHA_BENEFIT_EMAIL_ADDRESS,
+  INTAKE_REMOVE_COMP_AND_PEN
 } from '../../../COPY';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
@@ -91,7 +92,7 @@ export const getDefaultPayeeCode = (state, claimant) => {
   return null;
 };
 
-export const formatBenefitTypeRadioOptions = (options, userCanSelectVha) => {
+export const formatBenefitTypeRadioOptions = (options, userCanSelectVha, userCanSelectCompAndPen) => {
   return _.map(options, (value, key) => {
     const radioData = { value: key, displayText: value };
 
@@ -100,6 +101,12 @@ export const formatBenefitTypeRadioOptions = (options, userCanSelectVha) => {
         ...radioData,
         disabled: true,
         tooltipText: sprintf(INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, VHA_BENEFIT_EMAIL_ADDRESS)
+      };
+    } else if ((key === 'compensation' || key === 'pension') && !userCanSelectCompAndPen) {
+      return {
+        ...radioData,
+        disabled: true,
+        tooltipText: sprintf(INTAKE_REMOVE_COMP_AND_PEN)
       };
     }
 
