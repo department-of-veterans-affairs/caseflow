@@ -33,6 +33,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri1.nonrating_issue_category).to eq("DIC")
         expect(ri1.decision_date).to eq(parser.logical_date_converter(20_240_314))
         expect(ri1.nonrating_issue_bgs_id).to eq("12")
+        expect(ri1.nonrating_issue_bgs_source).to eq("Test Source")
         expect(ri1.end_product_establishment_id).to eq(epe.id)
         expect(ri1.decision_review_id).to eq(higher_level_review.id)
         expect(ri1.decision_review_type).to eq("HigherLevelReview")
@@ -44,6 +45,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri2.nonrating_issue_category).to eq(nil)
         expect(ri2.decision_date).to eq(parser.logical_date_converter(20_240_314))
         expect(ri2.nonrating_issue_bgs_id).to eq(nil)
+        expect(ri2.nonrating_issue_bgs_source).to eq(nil)
         expect(ri2.end_product_establishment_id).to eq(epe.id)
         expect(ri2.decision_review_id).to eq(higher_level_review.id)
         expect(ri2.decision_review_type).to eq("HigherLevelReview")
@@ -123,7 +125,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "contested_rating_issue_diagnostic_code": nil,
             "ramp_claim_id": nil,
             "rating_issue_associated_at": nil,
-            "nonrating_issue_bgs_id": "12"
+            "nonrating_issue_bgs_id": "12",
+            "nonrating_issue_bgs_source": "Test Source"
           },
           {
             "benefit_type": "pension",
