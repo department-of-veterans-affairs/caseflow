@@ -20,25 +20,25 @@ describe('IssueModificationList', () => {
 
   const additionalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
-    issuesArr: mockedAdditionRequestTypeProps,
+    issueModificationRequests: mockedAdditionRequestTypeProps,
     lastSection: true
   };
 
   const modificationProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
-    issuesArr: mockedModificationRequestProps,
+    issueModificationRequests: mockedModificationRequestProps,
     lastSection: true
   };
 
   const removalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
-    issuesArr: mockedRemovalRequestTypeProps,
+    issueModificationRequests: mockedRemovalRequestTypeProps,
     lastSection: true
   };
 
   const withdrawalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
-    issuesArr: mockedWithdrawalRequestTypeProps,
+    issueModificationRequests: mockedWithdrawalRequestTypeProps,
     lastSection: true
   };
 
