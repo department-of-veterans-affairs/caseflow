@@ -17,14 +17,19 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
   let(:room_id) { "YhOGfIvifid8996hlfsHo28F" }
   let(:meeting_title) { "fake meeting" }
   let(:subject) do
-    Hearings::FetchWebexRoomMeetingDetailsJob.perform_now(room_id: room_id, meeting_title: meeting_title)
+    Hearings::FetchWebexRoomMeetingDetailsJob
   end
 
   describe "#perform" do
-    it "fetches correct response" do
+    it "can run the job" do
+      allow_any_instance_of(Hearings::FetchWebexRecordingsListJob).to receive(:perform).and_return([])
       expect_any_instance_of(Hearings::FetchWebexRoomMeetingDetailsJob)
         .to receive(:fetch_room_details).with(room_id).and_return([])
-      subject
+      subject.perform_now(room_id: room_id, meeting_title: meeting_title)
+    end
+
+    it "returns correct response" do
+      expect(subject.new.send(:fetch_room_details, room_id).resp.raw_body).to eq(room_details)
     end
   end
 end
