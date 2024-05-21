@@ -1,5 +1,30 @@
 # frozen_string_literal: true
 
+# Explicitly clear any generated database tasks for the vacols DB.
+#
+# Once on Rails 7+, we can instead add the `database_tasks: false` option to the `database.yml` to permit connection to
+# the vacols database without generating database tasks for it:
+# https://github.com/rails/rails/blob/984c3ef2775781d47efa9f541ce570daa2434a80/guides/source/active_record_multiple_databases.md?plain=1#L203-L219
+
+%w[
+  db:create:vacols
+  db:drop:vacols
+  db:migrate:vacols
+  db:migrate:status:vacols
+  db:migrate:up:vacols
+  db:migrate:down:vacols
+  db:migrate:redo:vacols
+  db:rollback:vacols
+  db:schema:dump:vacols
+  db:schema:load:vacols
+  db:structure:dump:vacols
+  db:structure:load:vacols
+].each do |task_name|
+  Rake::Task[task_name].clear if Rake::Task.task_defined?(task_name)
+end
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 # After transitioning to Rails-native multi-DB support, the behavior of some DB tasks changed such that they will now
 # act on ALL databases and not just the primary database (ex. `rake db:migrate` will now migrate ALL databases).
 # To avoid accidents, we re-define these tasks here to no-op and output a helpful message to redirect developers toward
