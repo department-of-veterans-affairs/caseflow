@@ -41,9 +41,7 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false,
-      toggledAutoAssignmentCheckboxes: [],
-      toggledNodCheckboxes: []
+      isVhaOrg: false
     };
   }
 
