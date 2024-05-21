@@ -1231,14 +1231,13 @@ RSpec.feature("The Correspondence Cases page") do
 
         corres_array.each_with_index do |corres, index|
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-          assigned_by_id = User.find_by(id: rpt.assigned_to_id)&.id
           task_array[index].create!(
             parent_id: rpt.id,
             appeal_type: "Correspondence",
             appeal_id: corres.id,
             assigned_to: InboundOpsTeam.singleton,
             instructions: ["This was the default"],
-            assigned_by_id: assigned_by_id
+            assigned_by_id: rpt.assigned_to_id
           )
         end
       end
