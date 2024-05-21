@@ -90,6 +90,8 @@ const OrganizationPermissions = (props) => {
   };
 
   const getCheckboxEnabled = (user, orgUserData, permission) => {
+
+    // uses the local state over what comes in over props
     const stateValue = (toggledCheckboxes.find((storedCheckbox) =>
       storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
 
@@ -100,7 +102,7 @@ const OrganizationPermissions = (props) => {
       return true;
     }
 
-    // // check if user is marked as admin to auto check the checkbox.
+    // check if user is marked as admin to auto check the checkbox.
     if (permission.default_for_admin && user.attributes.admin) {
       return true;
     }
@@ -109,12 +111,7 @@ const OrganizationPermissions = (props) => {
       return stateValue.checked;
     }
 
-    // problematic angry method that doesn't work right :(, might not be needed
-    // if (user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
-    //   return true;
-    // }
-
-    // default state that came in when page loads
+    // default state that came in when page loads, used as final fallback.
     const relevantPermissions = props.orgnizationUserPermissions.find((oup) =>
       oup.user_id === Number(user.id)).organization_user_permissions;
 
