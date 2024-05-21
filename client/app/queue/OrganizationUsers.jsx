@@ -19,6 +19,7 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import Checkbox from '../components/Checkbox';
+import OrganizationPermissions from './OrganizationPermissions';
 
 const listStyle = css({
   listStyle: 'none'
@@ -67,18 +68,6 @@ export default class OrganizationUsers extends React.PureComponent {
         toggledCheckboxes: [...[newData], ...stateCopy]
       });
     }
-  }
-
-  modifyUserPermission = (userId, permissionName) => () => {
-    const payload = { data: { userId, permissionName } };
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).
-      then((response) => {
-        this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
-      }, (error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
-      });
   }
 
   generatePermissionsCheckboxes = (user) => {
@@ -426,8 +415,8 @@ getFilteredUsers = () => {
             }
           </div>
           {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
-            <p className={['user-permissions-text']}>User permissions:</p>
-            {this.generatePermissionsCheckboxes(user)}
+            <OrganizationPermissions organization={this.props.organization} permissions={this.props.organizationPermissions} user={user}/>
+            {/* {this.generatePermissionsCheckboxes(user)} */}
           </div>}
         </div>
       </React.Fragment>;
