@@ -17,7 +17,7 @@ const OrganizationPermissions = (props) => {
     // add the item to state if it didn't exist, update it otherwise.
     if (existsInState > -1) {
       stateCopy[existsInState].checked = !stateCopy[existsInState].checked;
-      setToggledCheckboxes(stateCopy);
+      setToggledCheckboxes([...stateCopy]);
     } else {
       setToggledCheckboxes([...[newData], ...stateCopy]);
     }
@@ -65,28 +65,27 @@ const OrganizationPermissions = (props) => {
     // prioritize state values
     const orgUserPermissions = props.orgUserData.attributes;
 
-    // console.log(orgUserPermissions.user_permission)
-
-    if(user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
-      // console.log("true found permission")
+    if (toggledCheckboxes.find((checkboxInState) =>
+      checkboxInState.userId === user.id &&
+    checkboxInState.permissionName === permission.permission &&
+  checkboxInState.checked)) {
       return true;
     }
-
-    // if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
-    //   return true;
-    // }
 
     // if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
     //   return true;
     // }
 
-    // if (typeof stateValue !== 'undefined') {
-    //   return stateValue.checked;
-    // }
+    if (typeof stateValue !== 'undefined') {
+      return stateValue.checked;
+    }
 
     // // fallback to props if no state
     // const userData = (this.props.orgnizationUserPermissions.find((oup) => oup.user_id === Number(user.id)));
 
+    if (user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
+      return true;
+    }
     // if (userData.organization_user_permissions.find((oup) =>
     //   oup.organization_permission.permission === permission.permission && oup.permitted)) {
     //   return true;
@@ -114,7 +113,7 @@ const OrganizationPermissions = (props) => {
         }
       };
 
-      getCheckboxEnabled(user, props.orgUserData, permission)
+      getCheckboxEnabled(user, props.orgUserData, permission);
 
       return (true && <Checkbox
         name={`${user.id}-${permission.permission}`}
