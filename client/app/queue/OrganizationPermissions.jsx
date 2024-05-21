@@ -60,12 +60,38 @@ const OrganizationPermissions = (props) => {
     }
   };
 
+  const parentPermissionChecked = (userId, parentId) => {
+    if (typeof parentId !== 'number') {
+      return true;
+    }
+
+    let result = false;
+    const parentPermission = props.permissions.find((permission) => permission.id === parentId);
+    const orgUserPermissions = props.orgnizationUserPermissions.find((x) =>
+      x.user_id === Number(userId)).organization_user_permissions;
+
+    const checkboxInState = toggledCheckboxes.find((permission) =>
+      permission.userId === userId &&
+    permission.permissionName === parentPermission.permission);
+
+    if (typeof checkboxInState !== 'undefined' && checkboxInState.checked) {
+      return true;
+    }
+
+    orgUserPermissions.forEach((permission) => {
+      if (permission.organization_permission.permission === parentPermission.permission &&
+        permission.permitted &&
+        typeof checkboxInState === 'undefined') {
+        result = true;
+      }
+    });
+
+    return result;
+  };
+
   const getCheckboxEnabled = (user, orgUserData, permission) => {
     const stateValue = (toggledCheckboxes.find((storedCheckbox) =>
       storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
-
-    // prioritize state values
-    const orgUserPermissions = props.orgUserData.attributes;
 
     if (toggledCheckboxes.find((checkboxInState) =>
       checkboxInState.userId === user.id &&
@@ -139,15 +165,14 @@ const OrganizationPermissions = (props) => {
         }
       };
 
-      getCheckboxEnabled(user, props.orgUserData, permission)
-
-      return (true && <Checkbox
+      return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
         name={`${user.id}-${permission.permission}`}
         label={permission.description}
         key={`${user.id}-${permission.permission}`}
         styling={checkboxStyle}
         onChange={modifyUserPermission(user.id, permission.permission)}
-        defaultValue={(userPermissions(user, permission.permission) || checkAdminPermission(user, permission.permission))}
+        defaultValue={(userPermissions(user, permission.permission) ||
+           checkAdminPermission(user, permission.permission))}
         disabled={checkAdminPermission(user, permission.permission)}
         value={getCheckboxEnabled(user, props.orgUserData, permission)}
       />);
@@ -166,6 +191,8 @@ export default OrganizationPermissions;
 OrganizationPermissions.propTypes = {
   permissions: PropTypes.array,
   user: PropTypes.object,
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  orgUserData: PropTypes.object,
+  orgnizationUserPermissions: PropTypes.array
 
 };
