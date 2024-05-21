@@ -113,6 +113,7 @@ class SendNotificationJob < CaseflowJob
   # Params: message: object containing details from appeal for notification
   #
   # Returns: message
+  # :reek:FeatureEnvy
   def validate_message(message_to_validate)
     nil_attributes = [:appeal_id, :appeal_type, :template_name].filter { |attr| message_to_validate.send(attr).nil? }
 
@@ -166,6 +167,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Updates and saves notification status for notification object
   #
   # Response: Updated notification object
+  # :reek:RepeatedConditional
   def update_notification_statuses
     status = format_message_status
     params = {}
@@ -200,6 +202,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Send message to VA Notify to send notification
   #
   # Response: Updated Notification object
+  # :reek:RepeatedConditional
   def send_to_va_notify
     send_va_notify_email
     send_va_notify_sms if sms_enabled?
@@ -253,6 +256,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Determine notification type depending on enabled feature toggles and event type
   #
   # Response: String
+  # :reek:RepeatedConditional
   def notification_type
     if sms_enabled?
       "Email and SMS"
