@@ -105,11 +105,18 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
   end
 
-  def fetch_webex_room_meeting_details_job(room_id)
+  def fetch_rooms_list
+    body = nil
+    method = "GET"
+    @api_endpoint += "rooms"
+    ExternalApi::WebexService::RoomsListResponse.new(send_webex_request(body, method))
+  end
+
+  def fetch_room_details(room_id)
     body = nil
     method = "GET"
     @api_endpoint += "rooms/#{room_id}/meetingInfo"
-    ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
+    ExternalApi::WebexService::RoomDetailsResponse.new(send_webex_request(body, method))
   end
 
   private
