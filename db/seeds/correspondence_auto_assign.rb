@@ -9,7 +9,7 @@ module Seeds
       create_inbound_ops_team_user_with_no_permissions
       create_inbound_ops_team_supervisor
       create_inbound_ops_team_superuser
-      create_mail_team_user
+      create_inbound_ops_team_user
     end
 
     private
@@ -150,7 +150,7 @@ module Seeds
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        MailTeam.singleton.add_user(u)
+        InboundOpsTeam.singleton.add_user(u)
       end
     end
 
