@@ -86,6 +86,16 @@ const OrganizationPermissions = (props) => {
     if (user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
       return true;
     }
+
+    // default state that came in when page loads
+    const relevantPermissions = props.orgnizationUserPermissions.find((oup) =>
+      oup.user_id === Number(user.id)).organization_user_permissions;
+
+    if (relevantPermissions.find((perm) =>
+      perm.organization_permission.permission === permission.permission &&
+    perm.permitted)) {
+      return true;
+    }
     // if (userData.organization_user_permissions.find((oup) =>
     //   oup.organization_permission.permission === permission.permission && oup.permitted)) {
     //   return true;
