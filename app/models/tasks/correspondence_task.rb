@@ -114,6 +114,8 @@ class CorrespondenceTask < Task
   end
 
   def verify_correspondence_access
+    return true if current_user.blank?
+
     fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
     InboundOpsTeam.singleton.user_has_access?(current_user)
   end

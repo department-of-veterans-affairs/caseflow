@@ -13,8 +13,6 @@ class CorrespondenceIntakeTask < CorrespondenceTask
       }
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
-      verify_current_user_can_create!(user)
-
       current_params = modify_params_for_create(params)
       CorrespondenceIntakeTask.create!(
         appeal_type: Correspondence.name,
@@ -25,12 +23,6 @@ class CorrespondenceIntakeTask < CorrespondenceTask
         instructions: current_params[:instructions],
         status: current_params[:status]
       )
-    end
-
-    private
-
-    def verify_current_user_can_create!(user)
-      MailTeam.singleton.user_has_access?(user)
     end
   end
 
