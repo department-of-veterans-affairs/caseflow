@@ -84,7 +84,7 @@ module AppellantNotification
     begin
       if claimant.nil?
         fail NoClaimantError, message_attributes[:appeal_id]
-      elsif message_attributes[:participant_id] == "" || message_attributes[:participant_id].nil?
+      elsif message_attributes[:participant_id].blank?
         fail NoParticipantIdError, message_attributes[:appeal_id]
       elsif appeal.veteran_appellant_deceased?
         message_attributes[:status] = "Failure Due to Deceased"
