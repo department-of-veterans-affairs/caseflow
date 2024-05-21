@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   let!(:current_user) do
     user = create(:user, css_id: "BVATTWAYNE")
     CDAControlGroup.singleton.add_user(user)
