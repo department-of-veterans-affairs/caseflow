@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :issue_modification_request do
-    request_type { "Addition" }
+    request_type { "addition" }
     request_reason { Faker::Lorem.sentence }
 
     benefit_type { "vha" }
@@ -30,7 +30,7 @@ FactoryBot.define do
                     decision_review: imr.decision_review,
                     decision_date: 1.month.ago)
 
-        if evaluator.request_type != "Addition"
+        if evaluator.request_type != "addition"
           imr.request_issue = ri
           imr.save!
         end

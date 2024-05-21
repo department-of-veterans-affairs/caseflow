@@ -15,20 +15,8 @@ class NonAdmin::IssueModificationRequestsUpdater
                 :issue_modifications_data,
                 :issue_modification_request
 
-  REQUEST_TYPE = {
-    addition: "addition",
-    removal: "removal",
-    modification: "modification",
-    withdrawal: "withdrawal"
-  }.freeze
-
-  STATUS = {
-    assigned: "assigned",
-    approved: "approved",
-    denied: "denied",
-    cancelled: "cancelled"
-  }.freeze
-
+  ASSIGNED_STATUS = "assigned"
+  CANCELLED_STATUS = "cancelled"
   NEW_REQUEST_ERROR = "Issue status must be in an assigned state"
   MODIFICATION_ERROR = "Must be the same requestor or request must be on an assigned state"
 
@@ -94,17 +82,17 @@ class NonAdmin::IssueModificationRequestsUpdater
         @error_code = MODIFICATION_ERROR
         return false
       end
-      issue_modification_request.update!(status: STATUS[:cancelled])
+      issue_modification_request.update!(status: CANCELLED_STATUS)
     end
     true
   end
 
   def validate_new_issues?(status:)
-    STATUS[:assigned] == status.downcase
+    ASSIGNED_STATUS == status.downcase
   end
 
   def validate_issues_request?(status:)
-    current_user == requestor && STATUS[:assigned] == status.downcase
+    current_user == requestor && ASSIGNED_STATUS == status.downcase
   end
 
   def find_issue_modification_request(id)

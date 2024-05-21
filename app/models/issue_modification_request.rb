@@ -10,6 +10,8 @@ class IssueModificationRequest < CaseflowRecord
 
   validates :status, :requestor, presence: true
 
+  before_create :open_issue_modification_request, if: :not_addition?
+
   before_save :set_decided_at
 
   enum status: {
@@ -20,10 +22,10 @@ class IssueModificationRequest < CaseflowRecord
   }
 
   enum request_type: {
-    addition: "Addition",
-    removal: "Removal",
-    modification: "Modification",
-    withdrawal: "Withdrawal"
+    addition: "addition",
+    removal: "removal",
+    modification: "modification",
+    withdrawal: "withdrawal"
   }
 
   def serialize
@@ -32,9 +34,19 @@ class IssueModificationRequest < CaseflowRecord
 
   private
 
+  def open_issue_modification_request
+    if assigned? && !!request_issue && request_issue.issue_modification_requests.any?(&:assigned?)
+      errors.add("Cannot exceed more than one issue modification request at a time")
+    end
+  end
+
   def set_decided_at
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
+  end
+
+  def not_addition?
+    request_type != "addition"
   end
 end

@@ -30,7 +30,9 @@ class ClaimReviewController < ApplicationController
   def update
     if process_modification?
       issues_modification_request_updater.process!
-      render_success if issues_modification_request_updater.success?
+      return render_success if issues_modification_request_updater.success?
+
+      render json: { error_code: issues_modification_request_updater.error_code }, status: :unprocessable_entity
     elsif request_issues_update.perform!
       render_success
     else
@@ -151,7 +153,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully #{[added_issues, removed_issues, withdrawn_issues].compact.to_sentence}."
   end
 
   def vha_edited_decision_date_message
