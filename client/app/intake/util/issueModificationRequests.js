@@ -1,5 +1,3 @@
-// import { formatRequestIssues } from './issues';
-
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
     return;
@@ -48,6 +46,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       decisionReason: modificationRequest.decision_reason,
       requestReason: modificationRequest.request_reason,
       requestIssueId: modificationRequest.request_issue_id,
+      withdrawalDate: modificationRequest.withdrawal_date,
       // Serialized Object fields
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),

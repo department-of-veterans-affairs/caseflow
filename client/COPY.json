@@ -1231,7 +1231,7 @@
   "VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION": "Cases below have requests for issue modification and require action. Please review each case and take the appropriate action for each. Once the issue modification is complete, each case will return to the appropriate queue tab for work by the VHA team.",
   "VHA_PENDING_REQUESTS_TAB_DESCRIPTION": "Cases below have requests for issue modification and are waiting Admin review. Once the Admin has taken action on the requested changes, the cases will be returned to the proper queue tab for work by the VHA team. Select the Claimant name if you need to edit a modification request.",
   "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE": "This case has pending issue modification requests",
-  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_BODY": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA Admin completes review of the requested changes.",
+  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA Admin completes review of the requested changes.",
   "EDUCATION_LABEL": "Education Service",
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",

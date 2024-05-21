@@ -78,14 +78,22 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
   };
 
   const extraContentMapping = {
-    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: requestIssueInfo(),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: (
+      <>
+        {requestedByUser}
+        {requestIssueInfo()}
+      </>
+    ),
     [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: (
       <>
         <br />
         <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
         <p>{formatDateStr(withdrawalDate)}</p>
+        {requestedByUser}
       </>
     ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]: requestedByUser,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE]: requestedByUser,
   };
 
   const extraContent = extraContentMapping[requestType] || null;
@@ -94,7 +102,6 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
     <div>
       {modificationRequestInfoSection}
       {requestReasonSection}
-      {requestedByUser}
       {extraContent}
     </div>
   );

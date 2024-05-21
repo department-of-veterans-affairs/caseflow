@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
+import { groupBy } from 'lodash';
 
 const issueModificationRow = (
   {
@@ -20,8 +21,7 @@ const issueModificationRow = (
   };
 
   // Group the modification requests by sections based on their request type e.g. addition, modification
-  const groupedIssueModificationRequests =
-    Object.groupBy(issueModificationRequests, ({ requestType }) => requestType);
+  const groupedIssueModificationRequests = groupBy(issueModificationRequests, 'requestType');
 
   // Sort and map over the key value pairs to display the issue modification requests grouped by request type in the UI
   const sections = Object.entries(groupedIssueModificationRequests).sort().

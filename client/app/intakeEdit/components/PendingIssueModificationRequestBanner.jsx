@@ -11,7 +11,7 @@ const PendingIssueModificationBanner = () => {
     !isEmpty(pendingIssueModificationRequests) && <div>
       <Alert type="info"
         title={COPY.PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE}>
-        {COPY.PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_BODY}
+        {COPY.PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE}
       </Alert>
     </div>
   );

@@ -18,4 +18,5 @@ class Intake::IssueModificationRequestSerializer
   attribute :request_issue
   attribute :requestor
   attribute :decider
+  attribute :withdrawal_date
 end
