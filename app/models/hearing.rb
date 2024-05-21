@@ -187,12 +187,19 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def scheduled_for
+    scheduled_for_hearing_day(hearing_day, updated_by_timezone, regional_office_timezone)
+  end
+
+  def updated_by_timezone
+    updated_by&.timezone || Time.zone.name
+  end
+
   # returns scheduled datetime object considering the timezones
   # @return [nil] if hearing_day is nil
   # @return [Time] in scheduled_in_timezone timezone - if scheduled_datetime and scheduled_in_timezone are present
   # @return [Time] else datetime in regional office timezone
-  # rubocop:disable Metrics/AbcSize
-  def scheduled_for
+  def scheduled_for_hearing_day(hearing_day, updated_by_timezone, regional_office_timezone)
     return nil unless hearing_day
 
     # returns datetime in scheduled_in_timezone timezone
@@ -220,7 +227,6 @@ class Hearing < CaseflowRecord
     # to explicitly convert it to the time zone of the person who scheduled it,
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
-    updated_by_timezone = updated_by&.timezone || Time.zone.name
     scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 
     Time.use_zone(regional_office_timezone) do
@@ -234,7 +240,6 @@ class Hearing < CaseflowRecord
       )
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
