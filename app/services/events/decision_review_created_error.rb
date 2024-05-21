@@ -23,17 +23,16 @@ class Events::DecisionReviewCreatedError
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
+      # Throws error for specific Consumer Event IDs to test Consumer error handling
+      if consumer_event_id == 24
+        fail Caseflow::Error::RedisLockFailed, "DRCE RedisLockFailed message"
+      elsif consumer_event_id == 25
+        fail StandardError, "DRCE StandardError message"
+      end
+
       if redis.exists("RedisMutex:EndProductEstablishment:#{errored_claim_id}")
         fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id}
          is already in the Redis Cache"
-      end
-
-      if errored_claim_id == 4
-        fail RedisMutex::LockError, "DRCE RedisMutex::LockError message"
-      elsif errored_claim_id == 5
-        fail Caseflow::Error::RedisLockFailed, "DRCE RedisLockFailed message"
-      elsif errored_claim_id == 6
-        fail StandardError, "DRCE StandardError message"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
