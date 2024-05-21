@@ -206,7 +206,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def vso_ihp_complete_appeal_state_update_action!
-    if appeal.active_vso_ihp_task?
+    if !appeal.active_vso_ihp_task?
       update_appeal_state_action!(:vso_ihp_complete)
     end
   end
@@ -219,7 +219,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_complete_appeal_state_update_action!
-    if appeal.active_foia_task?
+    if !appeal.active_foia_task?
       update_appeal_state_action!(:privacy_act_complete)
     end
   end
@@ -232,7 +232,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_cancelled_appeal_state_update_action!
-    if appeal.active_foia_task?
+    if !appeal.active_foia_task?
       update!(privacy_act_pending: false)
     end
   end
