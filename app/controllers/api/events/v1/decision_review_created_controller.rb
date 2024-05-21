@@ -10,7 +10,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
-# check if error.message about record already exists in Caseflow
+    # check if error.message about record already exists in Caseflow
     if error.message.include?("already exists")
       render json: { message: "Record already exists in Caseflow" }, status: :ok
     else
@@ -36,6 +36,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     params.permit(:event_id, :errored_claim_id, :error)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def drc_params
     params.permit(:event_id,
                   :claim_id,
@@ -71,7 +72,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
                                    :ramp_claim_id,
                                    :rating_issue_associated_at,
                                    :nonrating_issue_bgs_id,
-                                   :nonrating_issue_bgs_source]
-                  )
+                                   :nonrating_issue_bgs_source])
   end
+  # rubocop:enable Metrics/MethodLength
 end

@@ -1033,7 +1033,7 @@ describe RequestIssue, :all_dbs do
         vacols_sequence_id: 2,
         ineligible_reason: "untimely",
         ineligible_due_to_id: 345,
-        contested_rating_issue_diagnostic_code: "2222",
+        contested_rating_issue_diagnostic_code: "2222"
       )
     end
 

@@ -29,14 +29,17 @@ describe Events::DecisionReviewCreated::CreateIntake do
       expect(EventRecord).to receive(:create!).with(event: event_double, evented_record: intake_double)
         .and_return(event_record_double)
       described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser,
-       decision_review: decision_review_double)
+                               decision_review: decision_review_double)
     end
     context "when an error occurs" do
+      # rubocop:disable Layout/MultilineBlockLayout, Style/BlockDelimiters
       it "raises the error" do
         allow(Intake).to receive(:create!).and_raise(Caseflow::Error::DecisionReviewCreatedIntakeError)
         expect { described_class.process!(event: event_double, user: user_double, veteran: veteran_double, parser: parser,
-        decision_review: decision_review_double) }.to raise_error(Caseflow::Error::DecisionReviewCreatedIntakeError)
+                                          decision_review: decision_review_double)
+        }.to raise_error(Caseflow::Error::DecisionReviewCreatedIntakeError)
       end
+      # rubocop:enable Layout/MultilineBlockLayout, Style/BlockDelimiters
     end
   end
 end

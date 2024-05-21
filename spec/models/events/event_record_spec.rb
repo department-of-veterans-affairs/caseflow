@@ -55,7 +55,9 @@ describe EventRecord, :postgres do
     let!(:request_issue) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review) }
     let!(:request_issue_event_record) { EventRecord.create!(event: event2, evented_record: request_issue) }
     # Legacy Issue
-    let!(:legacy_issue) { LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1) }
+    let!(:legacy_issue) do
+      LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1)
+    end
     let!(:legacy_issue_event_record) { EventRecord.create!(event: event2, evented_record: legacy_issue) }
     # Legacy Issue Optin
     let!(:legacy_issue_optin) { LegacyIssueOptin.new(request_issue_id: request_issue.id) }
@@ -127,7 +129,8 @@ describe EventRecord, :postgres do
     let!(:attorney) { create(:bgs_attorney, name: "Brock Purdy") }
     let!(:event3) { DecisionReviewCreatedEvent.create!(reference_id: "3") }
     it "should not create an EventRecord and should raise an error" do
-      expect { EventRecord.create!(event_id: event3.id, evented_record: attorney) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { EventRecord.create!(event_id: event3.id, evented_record: attorney) }
+        .to raise_error(ActiveRecord::RecordInvalid)
       expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
