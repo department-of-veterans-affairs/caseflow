@@ -3,7 +3,7 @@
 # Determine the BVA workflow status of an Appeal (symbol and string) based on its Tasks.
 
 class BVAAppealStatus
-  attr_reader :status
+  attr_reader :status, :tasks
 
   SORT_KEYS = {
     not_distributed: 1,
@@ -69,8 +69,18 @@ class BVAAppealStatus
     end
   end
 
-  def initialize(appeal:)
-    @appeal = appeal
+  Tasks = Struct.new(
+    :open,
+    :active,
+    :in_progress,
+    :cancelled,
+    :completed,
+    :assigned,
+    keyword_init: true
+  )
+
+  def initialize(tasks:)
+    @tasks = tasks
     @status = compute
   end
 
@@ -86,15 +96,12 @@ class BVAAppealStatus
     SORT_KEYS[status]
   end
 
-  def as_json(_args)
+  def as_json(_args = nil)
     to_sym
   end
 
   private
 
-  attr_reader :appeal
-
-  delegate :tasks, to: :appeal
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def compute
     if open_pre_docket_task?
@@ -113,7 +120,7 @@ class BVAAppealStatus
       :ready_for_signature
     elsif active_sign_task?
       :signed
-    elsif completed_dispatch_task? && open_tasks.empty?
+    elsif completed_dispatch_task? && tasks.open.empty?
       :dispatched
     elsif completed_dispatch_task?
       :post_dispatch
@@ -133,84 +140,60 @@ class BVAAppealStatus
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
-  def open_tasks
-    @open_tasks ||= tasks.open
-  end
-
-  def active_tasks
-    @active_tasks ||= tasks.active
-  end
-
-  def assigned_tasks
-    @assigned_tasks ||= tasks.assigned
-  end
-
-  def in_progress_tasks
-    @in_progress_tasks ||= tasks.in_progress
-  end
-
-  def cancelled_tasks
-    @cancelled_tasks ||= tasks.cancelled
-  end
-
-  def completed_tasks
-    @completed_tasks ||= tasks.completed
-  end
-
   def open_pre_docket_task?
-    open_tasks.any? { |task| task.is_a?(PreDocketTask) }
+    tasks.open.any? { |task| task.type == "PreDocketTask" }
   end
 
   def open_distribution_task?
-    open_tasks.any? { |task| task.is_a?(DistributionTask) }
+    tasks.open.any? { |task| task.type == "DistributionTask" }
   end
 
   def open_timed_hold_task?
-    open_tasks.any? { |task| task.is_a?(TimedHoldTask) }
+    tasks.open.any? { |task| task.type == "TimedHoldTask" }
   end
 
   def active_judge_assign_task?
-    active_tasks.any? { |task| task.is_a?(JudgeAssignTask) }
+    tasks.active.any? { |task| task.type == "JudgeAssignTask" }
   end
 
   def assigned_attorney_task?
-    assigned_tasks.any? { |task| self.class.attorney_task_names.include?(task.type) }
+    tasks.assigned.any? { |task| self.class.attorney_task_names.include?(task.type) }
   end
 
   def active_colocated_task?
-    active_tasks.any? { |task| self.class.colocated_task_names.include?(task.type) }
+    tasks.active.any? { |task| self.class.colocated_task_names.include?(task.type) }
   end
 
   def attorney_task_in_progress?
-    in_progress_tasks.any? { |task| self.class.attorney_task_names.include?(task.type) }
+    tasks.in_progress.any? { |task| self.class.attorney_task_names.include?(task.type) }
   end
 
   def active_judge_decision_review_task?
-    active_tasks.any? { |task| task.is_a?(JudgeDecisionReviewTask) }
+    tasks.active.any? { |task| task.type == "JudgeDecisionReviewTask" }
   end
 
   def active_sign_task?
-    active_tasks.any? { |task| %w[BvaDispatchTask QualityReviewTask].include?(task.type) }
+    tasks.active.any? { |task| %w[BvaDispatchTask QualityReviewTask].include?(task.type) }
   end
 
   def completed_dispatch_task?
-    completed_tasks.any? { |task| task.is_a?(BvaDispatchTask) }
+    tasks.completed.any? { |task| task.type == "BvaDispatchTask" }
   end
 
   def docket_switched?
     # TODO: this should be updated to check that there are no active tasks once the task handling is implemented
-    completed_tasks.any? { |task| task.is_a?(DocketSwitchGrantedTask) }
+    tasks.completed.any? { |task| task.type == "DocketSwitchGrantedTask" }
   end
 
   def cancelled_root_task?
-    cancelled_tasks.any? { |task| task.is_a?(RootTask) }
+    tasks.cancelled.any? { |task| task.type == "RootTask" }
   end
 
   def misc_task?
-    active_tasks.any? { |task| self.class.misc_task_names.include?(task.type) }
+    tasks.active.any? { |task| self.class.misc_task_names.include?(task.type) }
   end
 
   def active_specialty_case_team_assign_task?
-    active_tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }
+    tasks.active.any? { |task| task.type == "SpecialtyCaseTeamAssignTask" }
   end
 end
