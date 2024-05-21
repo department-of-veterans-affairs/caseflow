@@ -33,14 +33,14 @@ const ReturnToQueueModal = (props) => {
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
           name: 'Close',
-          onClick: props.onCancel
+          onClick: props.onCancel,
         },
         {
           classNames: ['usa-button'],
           name: 'Confirm',
           disabled: !selectedRadio,
           onClick: handleConfirm,
-        }
+        },
       ]}
       closeHandler={props.onCancel}
     >
@@ -52,10 +52,15 @@ const ReturnToQueueModal = (props) => {
         onChange={onRadioChange}
         vertical
       />
-      {selectedRadio === 'continue_later' && <Alert
-        message="Saving the intake form to continue it at a later date will resume the intake form at step three of the process."
-        type="info"
-      />}
+      {selectedRadio === 'continue_later' && (
+        <Alert
+          message={
+            'Saving the intake form to continue it at a later date will resume ' +
+            'the intake form at step three of the process.'
+          }
+          type="info"
+        />
+      )}
     </Modal>
   );
 };
