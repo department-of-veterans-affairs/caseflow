@@ -5,6 +5,7 @@
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
     userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
     userCanRequestIssueUpdates: current_user.can_request_for_issue_updates?,
+    userIsVhaAdmin: current_user.vha_business_line_admin_user?,
     appeal: appeal,
     hearings: appeal.hearings,
     hearingDayDate: appeal.hearing_day_if_schedueled,

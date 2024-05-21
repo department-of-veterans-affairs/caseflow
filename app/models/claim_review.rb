@@ -305,6 +305,10 @@ class ClaimReview < DecisionReview
     false
   end
 
+  def task_in_progress?
+    tasks.any?(&:active?)
+  end
+
   private
 
   def cleared_end_products

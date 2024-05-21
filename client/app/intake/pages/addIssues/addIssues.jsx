@@ -255,6 +255,7 @@ class AddIssuesPage extends React.Component {
       addingIssue,
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
+      userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
       isLegacy
@@ -506,6 +507,7 @@ class AddIssuesPage extends React.Component {
           sectionIssues,
           userCanWithdrawIssues,
           userCanEditIntakeIssues,
+          userIsVhaAdmin,
           userCanRequestIssueUpdates,
           withdrawReview,
           showRequestIssueUpdateOptions
@@ -571,6 +573,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
             featureToggles={featureToggles}
             editPage={editPage}
             onComplete={() => {
@@ -778,6 +781,7 @@ export const EditAddIssuesPage = connect(
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
+    userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy
