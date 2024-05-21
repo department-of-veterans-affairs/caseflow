@@ -121,19 +121,16 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
-          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
-          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{JOIN_PREVIOUS_APPEALS}
       )
     "
 
@@ -147,7 +144,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
-          order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
         #{JOIN_PREVIOUS_APPEALS}
@@ -156,10 +152,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION, PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
@@ -167,7 +162,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-      #{JOIN_PREVIOUS_APPEALS}
     )
   "
 
@@ -180,7 +174,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
-        order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       #{JOIN_PREVIOUS_APPEALS}
