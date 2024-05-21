@@ -225,9 +225,9 @@ export const setMailTeamUser = (isMailTeamUser) => ({
   payload: { isMailTeamUser }
 });
 
-export const setMailSupervisor = (isMailSupervisor) => ({
-  type: ACTIONS.SET_MAIL_SUPERVISOR,
-  payload: { isMailSupervisor }
+export const setMailSupervisor = (isInboundOpsSupervisor) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERVISOR,
+  payload: { isInboundOpsSupervisor }
 });
 
 export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({

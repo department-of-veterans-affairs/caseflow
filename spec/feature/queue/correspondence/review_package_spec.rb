@@ -5,7 +5,7 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
   let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
-  let(:mail_team_supervisor_user) { create(:user, roles: ["Mail Intake"]) }
+  let(:mail_team_supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:mail_team_user) { create(:user) }
   let(:mail_team_org) { MailTeam.singleton }
@@ -128,15 +128,17 @@ RSpec.feature("The Correspondence Review Package page") do
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
-      User.authenticate!(user: mail_team_supervisor_user)
+      mail_team_supervisor_org.add_user(mail_team_user)
+      MailTeam.singleton.add_user(mail_team_user)
+      mail_team_user.update!(roles: ["Mail Intake"])
+      User.authenticate!(user: mail_team_user)
     end
 
     it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
       expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
-      using_wait_time(10) do
+      using_wait_time(20) do
         expect(page).to have_text veteran.file_number.to_s
         expect(page).to have_text "Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182"
       end
