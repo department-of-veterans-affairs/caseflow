@@ -19,23 +19,27 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
   let(:subject) do
     described_class
   end
+  let(:exception) { Caseflow::Error::WebexApiError.new(code: 300, message: "Error", title: "Bad Error") }
 
   describe "#perform" do
     it "can run the job" do
       allow_any_instance_of(Hearings::FetchWebexRecordingsListJob).to receive(:perform).and_return([])
-      expect_any_instance_of(Hearings::FetchWebexRoomMeetingDetailsJob)
-        .to receive(:fetch_room_details).with(room_id).and_return([])
+      expect_any_instance_of(described_class)
+        .to receive(:fetch_room_details).and_return([])
       subject.perform_now(room_id: room_id, meeting_title: meeting_title)
     end
 
     it "returns correct response" do
-      expect(subject.new.send(:fetch_room_details, room_id).resp.raw_body).to eq(room_details)
+      expect(subject.new.send(:fetch_room_details).resp.raw_body).to eq(room_details)
     end
 
     it "retries and logs errors" do
-      subject.perform_now
+      allow_any_instance_of(described_class)
+        .to receive(:fetch_room_details)
+        .and_raise(exception)
+
       expect(Rails.logger).to receive(:error).at_least(:once)
-      perform_enqueued_jobs { described_class.perform_later }
+      perform_enqueued_jobs { described_class.perform_later(room_id: room_id, meeting_title: meeting_title) }
     end
   end
 end
