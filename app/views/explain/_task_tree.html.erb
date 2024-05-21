@@ -41,6 +41,9 @@
     <br/>la.location_history.map(&:summary)
   <% end %>
 </code>
+<% if appeal_affinity&.affinity_start_date %>
+  <p>Affinity Start Date: <%= appeal_affinity&.affinity_start_date&.strftime('%F %T %z') %></p>
+<% end %>
 <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
 
 <a class="resourceLink" target="_blank" rel="noopener noreferrer"

@@ -37,6 +37,47 @@ describe AppealAffinity do
     end
   end
 
+  context "after_save" do
+    let!(:appeal_affinity) { nil }
+
+    it "updates distribution task instructions when created" do
+      appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+      dist_task = appeal.tasks.find_by(type: DistributionTask.name)
+      expect(dist_task.instructions).to eq []
+
+      affinity = create(:appeal_affinity, appeal: appeal)
+
+      dist_task.reload
+      expect(dist_task.instructions)
+        .to eq ["Affinity start date: #{affinity.affinity_start_date.to_date.strftime('%m/%d/%Y')}"]
+    end
+
+    it "updates distribution task instructions when updated w/ new value" do
+      appeal = create(:appeal, :direct_review_docket, :ready_for_distribution_with_appeal_affinity,
+                      affinity_start_date: 1.week.ago)
+      dist_task = appeal.tasks.find_by(type: DistributionTask.name)
+      original_affinity_date = appeal.appeal_affinity.affinity_start_date
+
+      expect(dist_task.instructions)
+        .to eq ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}"]
+
+      appeal.appeal_affinity.update!(affinity_start_date: nil)
+
+      dist_task.reload
+      expect(dist_task.instructions)
+        .to eq ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}"]
+
+      appeal.appeal_affinity.update!(affinity_start_date: Time.zone.now)
+
+      appeal.reload
+      dist_task.reload
+      expect(dist_task.instructions).to match_array(
+        ["Affinity start date: #{original_affinity_date.to_date.strftime('%m/%d/%Y')}",
+         "Affinity start date: #{appeal.appeal_affinity.affinity_start_date.to_date.strftime('%m/%d/%Y')}"]
+      )
+    end
+  end
+
   context "factory" do
     before { Timecop.freeze }
     after { Timecop.return }

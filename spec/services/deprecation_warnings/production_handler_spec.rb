@@ -21,7 +21,7 @@ module DeprecationWarnings
         allow(Raven).to receive(:capture_message)
         allow(Raven).to receive(:capture_exception)
 
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+        allow(SlackService).to receive(:new).and_return(slack_service)
         allow(slack_service).to receive(:send_notification)
       end
 
