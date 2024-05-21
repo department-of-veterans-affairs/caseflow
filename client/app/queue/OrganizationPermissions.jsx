@@ -64,10 +64,12 @@ const OrganizationPermissions = (props) => {
 
     // prioritize state values
     const orgUserPermissions = props.orgUserData.attributes;
-    console.log(orgUserPermissions);
 
-    if(orgUserPermissions.user_permission.find((per) => per.permission === permission.permission)) {
-      return true
+    // console.log(orgUserPermissions.user_permission)
+
+    if(user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
+      // console.log("true found permission")
+      return true;
     }
 
     // if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
@@ -122,7 +124,7 @@ const OrganizationPermissions = (props) => {
         onChange={modifyUserPermission(user.id, permission.permission)}
         defaultValue={(userPermissions(user, permission.permission) || checkAdminPermission(user, permission.permission))}
         disabled={checkAdminPermission(user, permission.permission)}
-        // value={getCheckboxEnabled(user, permission)}
+        value={getCheckboxEnabled(user, props.orgUserData, permission)}
       />);
     });
   };
