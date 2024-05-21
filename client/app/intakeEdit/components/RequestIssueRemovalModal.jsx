@@ -9,10 +9,10 @@ const removalSchema = yup.object({
   requestReason: yup.string().required()
 });
 
-const RequestIssueRemovalContent = (props) => {
+const RequestIssueRemovalContent = ({ currentIssue }) => {
   return (
     <div>
-      <CurrentIssue currentIssue={props.currentIssue} />
+      <CurrentIssue currentIssue={currentIssue} />
 
       <RequestReason label="removal" />
     </div>

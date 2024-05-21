@@ -16,10 +16,10 @@ const modificationSchema = yup.object({
   requestReason: yup.string().required()
 });
 
-const RequestIssueModificationContent = (props) => {
+const RequestIssueModificationContent = ({ currentIssue }) => {
   return (
     <div>
-      <CurrentIssue currentIssue={props.currentIssue} />
+      <CurrentIssue currentIssue={currentIssue} />
       <IssueTypeSelector />
       <PriorDecisionDateAlert />
       <PriorDecisionDateSelector />

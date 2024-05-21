@@ -12,13 +12,13 @@ const withdrawalSchema = yup.object({
   withdrawalDate: yup.string().required()
 });
 
-const RequestIssueWithdrawalContent = (props) => {
+const RequestIssueWithdrawalContent = ({ currentIssue }) => {
 
   const { register } = useFormContext();
 
   return (
     <div>
-      <CurrentIssue currentIssue={props.currentIssue} />
+      <CurrentIssue currentIssue={currentIssue} />
 
       <DateSelector
         label="Request date for withdrawal"
