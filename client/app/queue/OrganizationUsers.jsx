@@ -419,7 +419,8 @@ getFilteredUsers = () => {
               organization={this.props.organization}
               permissions={this.props.organizationPermissions}
               user={user}
-              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)} />
+              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+              orgnizationUserPermissions={this.props.orgnizationUserPermissions}/>
             {/* {this.generatePermissionsCheckboxes(user)} */}
           </div>}
         </div>
