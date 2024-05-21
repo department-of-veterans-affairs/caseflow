@@ -16,7 +16,27 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
     validate_veterans_exist if current_user_is_vso_employee?
   end
 
-  def validate_file_number_or_ssn_presence
+  def appeals
+    if user.vso_employee?
+      vso_user_search_results
+    else
+      search_results
+    end
+  end
+
+  def vso_user_search_results
+    SearchQueryService::VsoUserSearchResults.new(user: user, search_results: search_results).call
+  end
+
+  def search_results
+    @search_results ||= SearchQueryService.new(file_number: file_number_or_ssn).search_by_veteran_file_number
+  end
+
+  def appeal_finder_appeals
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
+  end
+
+  def file_number_or_ssn_presence
     return if file_number_or_ssn
 
     errors.add(:workflow, missing_veteran_file_number_or_ssn_error)
