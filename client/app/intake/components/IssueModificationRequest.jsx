@@ -22,7 +22,7 @@ const IssueModificationRequest = ({ issue }) => {
     <div>
       <br />
       <h4>Requested by:</h4>
-      <p>{issue.requestor}</p>
+      <p>{issue.requestor.full_name} ({issue.requestor.css_id})</p>
       <br />
     </div>
   );

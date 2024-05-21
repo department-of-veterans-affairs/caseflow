@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 
 export const RequestIssueFormWrapper = (props) => {
 
-  const userDisplayName = useSelector((state) => state.userDisplayName);
+  const userFullName = useSelector((state) => state.userFullName);
+  const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
 
   const methods = useForm({
@@ -38,7 +39,7 @@ export const RequestIssueFormWrapper = (props) => {
       ...currentIssueFields,
       ...(props.type === 'modification') && { requestIssue: props.currentIssue },
       ...(props.type === 'addition') && { benefitType },
-      requestor: userDisplayName,
+      requestor: { full_name: userFullName, css_id: userCssId },
       requestType: _.capitalize(props.type),
       ...issueModificationRequest };
 
