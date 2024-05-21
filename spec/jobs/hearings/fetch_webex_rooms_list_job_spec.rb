@@ -34,4 +34,17 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
       perform_enqueued_jobs { described_class.perform_later }
     end
   end
+
+  # context "filter test" do
+  #   before do
+  #     allow_any_instance_of(WebexService)
+  #       .to receive(:fetch_rooms_list)
+  #       .and_return([@id = "12345", @title = "Virtual Visit - 221218-977_933_AMA-20240508 1426-1"])
+  #   end
+  #   it "does not send an invalid title and it to the fetch room details job" do
+  #     expect(subject.first.title).to eq("Virtual Visit - 221218-977_933_AMA-20240508 1426-1")
+  #     subject
+  #     expect_any_instance_of(Hearings::FetchWebexRoomMeetingDetailsJob).to_not receive(:perform)
+  #   end
+  # end
 end
