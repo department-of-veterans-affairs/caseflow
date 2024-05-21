@@ -39,9 +39,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Generic/universal methods
+  # rubocop:disable Rails/TimeZone
   def convert_milliseconds_to_datetime(milliseconds)
     milliseconds.nil? ? nil : Time.at(milliseconds.to_i / 1000).to_datetime
   end
+  # rubocop:enable Rails/TimeZone
 
   # convert logical date int to date
   def logical_date_converter(logical_date_int)
@@ -49,7 +51,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
     base_date = Date.new(1970, 1, 1)
     converted_date = base_date + logical_date_int.to_i.days
-    return converted_date
+    converted_date
   end
 
   def css_id

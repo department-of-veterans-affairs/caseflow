@@ -13,6 +13,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
     private
 
     # iterate through the array of issues and create backfill object from each one
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def create_request_issue_backfill(event, parser, epe, decision_review)
       request_issues = parser.request_issues
       newly_created_issues = []
@@ -64,6 +65,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
       end
       newly_created_issues
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def create_event_record(event, issue)
       EventRecord.create!(event: event, evented_record: issue)
