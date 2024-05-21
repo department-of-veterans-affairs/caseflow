@@ -79,11 +79,11 @@ jobs:
           POSTGRES_USER: postgres
         run: |
           echo "::group::Set up Caseflow DB"
-          bin/rails db:create && bin/rails db:schema:load
+          bin/rails db:create:primary && bin/rails db:schema:load:primary
           echo "::endgroup::"
 
           echo "::group::Set up Caseflow ETL DB"
-          DB=etl bundle exec rake db:create db:schema:load
+          bundle exec rake db:create:etl db:schema:load:etl
           echo "::endgroup::"
 
           # Skipping VACOLS since Oracle DB is not set up

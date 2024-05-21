@@ -10,4 +10,5 @@ Dir[Rails.root.join("lib/tasks/support/**/*.rb")].sort.each { |f| require f }
 
 Rails.application.load_tasks
 
-task "db:schema:dump": "strong_migrations:alphabetize_columns"
+task "db:schema:dump:primary": "strong_migrations:alphabetize_columns"
+task "db:schema:dump:etl": "strong_migrations:alphabetize_columns"
