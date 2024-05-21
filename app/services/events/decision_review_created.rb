@@ -30,9 +30,9 @@ class Events::DecisionReviewCreated
 
         ActiveRecord::Base.transaction do
           # Throws error for specific Consumer Event IDs to test Consumer error handling
-          if consumer_event_id == 26
+          if consumer_event_id == 20
             fail Caseflow::Error::RedisLockFailed, "DRC RedisLockFailed message"
-          elsif consumer_event_id == 27
+          elsif consumer_event_id == 21
             fail StandardError, "DRC StandardError message"
           end
 

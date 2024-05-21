@@ -24,9 +24,9 @@ class Events::DecisionReviewCreatedError
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
       # Throws error for specific Consumer Event IDs to test Consumer error handling
-      if consumer_event_id == 24
+      if consumer_event_id == 18
         fail Caseflow::Error::RedisLockFailed, "DRCE RedisLockFailed message"
-      elsif consumer_event_id == 25
+      elsif consumer_event_id == 19
         fail StandardError, "DRCE StandardError message"
       end
 
