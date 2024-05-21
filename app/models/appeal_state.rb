@@ -253,7 +253,6 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def hearing_postponed_appeal_state_update_action!
     update_appeal_state_action!(:hearing_postponed)
   end
