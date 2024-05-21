@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-// import ReduxBase from '../components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
@@ -11,7 +11,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import CaseSearchLink from '../components/CaseSearchLink';
 import SeedsBannerDisplay from './components/SeedsBannerDisplay';
-// import rootReducer from '../testSeeds/reducers/root';
+import rootReducer from '../testSeeds/reducers/root';
 import TestSeedsApp from './pages/TestSeedsApp';
 
 class TestSeeds extends React.PureComponent {
@@ -22,7 +22,7 @@ class TestSeeds extends React.PureComponent {
     const appName = 'Test Seeds';
 
     return (
-      // <ReduxBase reducer={rootReducer}>
+      <ReduxBase reducer={rootReducer}>
       <Router {...this.props.routerTestProps}>
         <div>
           <NavigationBar
@@ -69,7 +69,7 @@ class TestSeeds extends React.PureComponent {
           />
         </div>
       </Router>
-      // </ReduxBase>
+      </ReduxBase>
     );
   }
 }
