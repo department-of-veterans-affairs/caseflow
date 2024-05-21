@@ -98,7 +98,7 @@ module AppealConcern
                        HearingAdminActionFoiaPrivacyRequestTask.name,
                        FoiaRequestMailTask.name,
                        PrivacyActRequestMailTask.name
-                     ]).empty?
+                     ]).any?
   end
 
   # Checks for any active vso ihp tasks on an appeal.
@@ -106,7 +106,7 @@ module AppealConcern
     tasks.open.where(type: [
                        IhpColocatedTask.name,
                        InformalHearingPresentationTask.name
-                     ]).empty?
+                     ]).any?
   end
 
   def accessible?
