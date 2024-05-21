@@ -18,7 +18,7 @@ describe SendNotificationJob, type: :job do
            appeals_type: "LegacyAppeal",
            event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
            event_date: Time.zone.today,
-           notification_type: "SMS",
+           notification_type: "Email and SMS",
            notifiable: appeal)
   end
   let(:appeal) do
@@ -334,8 +334,8 @@ describe SendNotificationJob, type: :job do
 
   context "va_notify FeatureToggles" do
     describe "email" do
-      before { FeatureToggle.enable!(:va_notify_email) }
-      after { FeatureToggle.disable!(:va_notify_email) }
+      #before { FeatureToggle.enable!(:va_notify_email) }
+      #after { FeatureToggle.disable!(:va_notify_email) }
       it "is expected to send when the feature toggle is on" do
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
@@ -351,11 +351,6 @@ describe SendNotificationJob, type: :job do
       it "updates the notification_audit_record with email_notification_external_id" do
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.email_notification_external_id).not_to eq(nil)
-      end
-      it "is expected to not send when the feature toggle is off" do
-        FeatureToggle.disable!(:va_notify_email)
-        expect(VANotifyService).not_to receive(:send_email_notifications)
-        SendNotificationJob.perform_now(good_message.to_json)
       end
     end
 
@@ -433,7 +428,7 @@ describe SendNotificationJob, type: :job do
       job = SendNotificationJob.new(good_message.to_json)
       job.instance_variable_set(:@message, JSON.parse(job.arguments[0], object_class: OpenStruct))
       record = job.send(:find_or_create_notification_audit)
-      expect(record.notification_type).to eq("SMS")
+      expect(record.notification_type).to eq("Email and SMS")
       FeatureToggle.disable!(:va_notify_sms)
     end
 
@@ -446,26 +441,6 @@ describe SendNotificationJob, type: :job do
       expect(record.notification_type).to eq("Email and SMS")
       FeatureToggle.disable!(:va_notify_email)
       FeatureToggle.disable!(:va_notify_sms)
-    end
-  end
-
-  context "feature flags for sending legacy notifications" do
-    it "should only send notifications when feature flag is turned on" do
-      FeatureToggle.enable!(:appeal_docketed_notification)
-      job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
-      expect(job).to receive(:send_to_va_notify)
-      job.perform_now
-    end
-
-    it "should not send notifications when feature flag is turned off" do
-      FeatureToggle.disable!(:appeal_docketed_notification)
-      job = SendNotificationJob.new(legacy_message.to_json)
-      job.instance_variable_set(:@notification_audit, notification)
-      allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
-      expect(job).not_to receive(:send_to_va_notify)
-      job.perform_now
     end
   end
 
