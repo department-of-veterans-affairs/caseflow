@@ -10,7 +10,7 @@ class Hearings::FetchWebexRoomMeetingDetailsJob < CaseflowJob
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     error_details = {
-      error: { type: "retrieval", explanation: "retrieve a details of room from Webex" },
+      error: { type: "retrieval", explanation: "retrieve details of room from Webex" },
       provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}",
       response: { status: exception.code, message: exception.message }.to_json,
