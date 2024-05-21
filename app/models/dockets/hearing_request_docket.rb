@@ -5,14 +5,6 @@ class HearingRequestDocket < Docket
     Constants.AMA_DOCKETS.hearing
   end
 
-  def ready_priority_appeals
-    appeals(priority: true, ready: true)
-  end
-
-  def ready_nonpriority_appeals
-    appeals(priority: false, ready: true)
-  end
-
   def age_of_n_oldest_genpop_priority_appeals(num)
     hearing_distribution_query(
       base_relation: ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num), genpop: "only_genpop"
