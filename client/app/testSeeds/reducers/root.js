@@ -1,10 +1,9 @@
 import { timeFunction } from '../../util/PerfDebug';
 import { combineReducers } from 'redux';
-
-//TODO: Needs to Implement TestSeeds Reducer
+import seedsReducer from './seeds/seedsReducer';
 
 const rootReducer = combineReducers({
-  testSeedObjects: {}
+  testSeeds: seedsReducer
 });
 
 export default timeFunction(
