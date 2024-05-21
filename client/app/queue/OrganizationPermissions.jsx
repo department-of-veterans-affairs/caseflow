@@ -100,6 +100,11 @@ const OrganizationPermissions = (props) => {
       return true;
     }
 
+    // // check if user is marked as admin to auto check the checkbox.
+    if (permission.default_for_admin && user.attributes.admin) {
+      return true;
+    }
+
     if (typeof stateValue !== 'undefined') {
       return stateValue.checked;
     }
@@ -116,11 +121,6 @@ const OrganizationPermissions = (props) => {
     if (relevantPermissions.find((perm) =>
       perm.organization_permission.permission === permission.permission &&
     perm.permitted)) {
-      return true;
-    }
-
-    // // check if user is marked as admin to auto check the checkbox.
-    if (permission.default_for_admin && user.attributes.admin) {
       return true;
     }
 
@@ -150,11 +150,7 @@ const OrganizationPermissions = (props) => {
   };
 
   const generateCheckboxes = (permissions, user) => {
-
-    // order the checkboxes for the organization
-    const orderedPermissions = orderCheckboxes(permissions);
-
-    return orderedPermissions.map((permission) => {
+    return orderCheckboxes(permissions).map((permission) => {
       const marginL = permission.parent_permission_id ? '25px' : '0px';
 
       const checkboxStyle = {
