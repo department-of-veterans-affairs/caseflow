@@ -334,8 +334,6 @@ describe SendNotificationJob, type: :job do
 
   context "va_notify FeatureToggles" do
     describe "email" do
-      #before { FeatureToggle.enable!(:va_notify_email) }
-      #after { FeatureToggle.disable!(:va_notify_email) }
       it "is expected to send when the feature toggle is on" do
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
