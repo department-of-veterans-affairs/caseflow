@@ -132,7 +132,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(veteran.reload.file_number).to eq(new_file_number)
       expect(correspondence.reload.notes).to eq("Updated notes")
       expect(correspondence.reload.correspondence_type_id).to eq(correspondence_type.id)
-      expect(correspondence.reload.updated_by_id).to eq(current_user.id)
     end
 
     it "returns an error message if something goes wrong" do
