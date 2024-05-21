@@ -239,6 +239,7 @@ Rails.application.routes.draw do
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
+  get 'hearings/transcription_package/:task_number', to: 'hearings/transcription_package#show'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
