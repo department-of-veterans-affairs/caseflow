@@ -28,16 +28,21 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if user_vha_admin?(current_user)
-      return render_success if request_issues_update.perform!
-    elsif !user_vha_admin?(current_user)
+    if process_modification?
       issues_modification_request_updater.process!
       return render_success if issues_modification_request_updater.success?
-
-      render json: { error_code: issues_modification_request_update.error_code }, status: :unprocessable_entity
+    elsif request_issues_update.perform!
+      render_success
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
+  end
+
+  def process_modification?
+    params.dig(:issue_modification_requests).present? ||
+     params[:issue_modification_requests].try(:cancelled).present? ||
+      params[:issue_modification_requests].try(:edited).present? ||
+       params[:issue_modification_requests].try(:new).present?
   end
 
   validates :edit_ep, using: ClaimReviewSchemas.edit_ep
@@ -56,10 +61,6 @@ class ClaimReviewController < ApplicationController
   end
 
   private
-
-  def user_vha_admin?(user)
-    VhaBusinessLine.singleton.user_is_admin?(user)
-  end
 
   def source_type
     fail "Must override source_type"

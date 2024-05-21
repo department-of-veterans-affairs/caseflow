@@ -51,7 +51,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
           decider_reason: "New Decision text",
           decision_date: "2024-01-30",
           request_reason: "This is my reason.",
-          requestor_id: 1,
+          requestor_id: non_admin_requestor.id,
           status: status
         }
       ]
