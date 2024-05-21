@@ -28,7 +28,9 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
     fetch_rooms_list.rooms.each do |n|
-      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
+      next if filter_title(n.title)
+
+      # Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
     end
   end
 
@@ -39,8 +41,8 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   private
 
   def filter_title(title)
-    # placeholder
-    # "#{docket_number}#{id}#{self.class}"
+    type = title.scan(/[A-Za-z]+?(?=-)/).first
+    type != ("Hearing" || "LegacyHearing")
   end
 
   def fetch_rooms_list
