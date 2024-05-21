@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import Checkbox from '../components/Checkbox';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
+import INBOUND_OPS_PERMISSIONS from '../../../client/constants/ORGANIZATION_PERMISSIONS';
 
 const OrganizationPermissions = (props) => {
   const [toggledCheckboxes, setToggledCheckboxes] = useState([]);
+  const organization = props.organization;
 
   const updateToggledCheckBoxes = (userId, permissionName, checked) => {
     const newData = { userId, permissionName, checked };
@@ -100,9 +102,33 @@ const OrganizationPermissions = (props) => {
 
   };
 
+  const orderInboundOpsCheckboxes = (permissions) => {
+    const orderedPermissions = [];
+
+    // sort through permissions and order based on constants file
+    Object.keys(INBOUND_OPS_PERMISSIONS).map((orgPermission) => {
+      return orderedPermissions.push(permissions.find((permission) => permission.permission === orgPermission));
+    });
+
+    return orderedPermissions;
+  };
+
+  // switch statement to order permissions for the organization
+  const orderCheckboxes = (permissions) => {
+    switch (organization) {
+    case 'inbound-ops-team':
+      return orderInboundOpsCheckboxes(permissions);
+    default:
+      return permissions;
+    }
+  };
+
   const generateCheckboxes = (permissions, user) => {
 
-    return permissions.map((permission) => {
+    // order the checkboxes for the organization
+    const orderedPermissions = orderCheckboxes(permissions);
+
+    return orderedPermissions.map((permission) => {
       const marginL = permission.parent_permission_id ? '25px' : '0px';
 
       const checkboxStyle = {
@@ -113,7 +139,7 @@ const OrganizationPermissions = (props) => {
         }
       };
 
-      getCheckboxEnabled(user, props.orgUserData, permission);
+      getCheckboxEnabled(user, props.orgUserData, permission)
 
       return (true && <Checkbox
         name={`${user.id}-${permission.permission}`}
