@@ -196,7 +196,7 @@ describe Docket, :all_dbs do
         let(:user) { create(:user) }
 
         before do
-          InboundOpsTeam.singleton.add_user(user)
+          MailTeam.singleton.add_user(user)
         end
 
         context "nonblocking mail tasks" do

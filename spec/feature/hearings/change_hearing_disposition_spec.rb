@@ -22,7 +22,7 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
-      InboundOpsTeam.singleton.add_user(mail_user)
+      MailTeam.singleton.add_user(mail_user)
       TranscriptionTeam.singleton.add_user(transcription_user)
     end
 
@@ -57,7 +57,7 @@ RSpec.shared_examples "Change hearing disposition" do
       if appeal.is_a? Appeal
         step "visit and verify that the evidence submission window task is in the mail team queue" do
           User.authenticate!(user: mail_user)
-          visit "/organizations/#{InboundOpsTeam.singleton.url}"
+          visit "/organizations/#{MailTeam.singleton.url}"
           expect(page).to have_content("Unassigned (1)")
           expect(page).to have_content "Evidence Submission Window Task"
           click_on veteran_link_text

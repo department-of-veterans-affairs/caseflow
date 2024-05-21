@@ -685,7 +685,7 @@ FactoryBot.define do
       end
 
       factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         parent { create(:root_task, appeal: appeal) }
       end
 
@@ -732,7 +732,7 @@ FactoryBot.define do
       end
 
       factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         parent { create(:assign_hearing_disposition_task, appeal: appeal) }
       end
 
@@ -853,13 +853,13 @@ FactoryBot.define do
 
       factory :aod_motion_mail_task, class: AodMotionMailTask do
         parent { create(:root_task, appeal: appeal) }
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :reconsideration_motion_mail_task, class: ReconsiderationMotionMailTask do
         parent { create(:root_task, appeal: appeal) }
-        assigned_to { InboundOpsTeampsTeampsTeampsTeampsTeampsTeampsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
@@ -886,13 +886,13 @@ FactoryBot.define do
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
         parent { create(:root_task, appeal: appeal) }
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :extension_request_mail_task, class: ExtensionRequestMailTask do
         parent { create(:root_task, appeal: appeal) }
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
@@ -924,7 +924,7 @@ FactoryBot.define do
 
       factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, appeal: appeal) }
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         instructions do
           ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
         end
@@ -932,14 +932,14 @@ FactoryBot.define do
 
       factory :hearing_withdrawal_request_mail_task, class: HearingWithdrawalRequestMailTask do
         parent { create(:distribution_task, appeal: appeal) }
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         instructions do
           ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
         end
       end
 
       factory :hearing_related_mail_task, class: HearingRelatedMailTask do
-        assigned_to { InboundOpsTeam.singleton }
+        assigned_to { MailTeam.singleton }
         parent { create(:root_task, appeal: appeal) }
       end
     end

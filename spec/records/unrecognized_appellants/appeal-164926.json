@@ -5644,7 +5644,7 @@
       },
       {
         "id": 18,
-        "type": "InboundOpsTeam",
+        "type": "MailTeam",
         "name": "Mail",
         "role": null,
         "url": "mail",

@@ -63,7 +63,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
       let!(:task) do
         EvidenceSubmissionWindowTask.create!(
           appeal: appeal_no_vso,
-          assigned_to: InboundOpsTeam.singleton,
+          assigned_to: MailTeam.singleton,
           parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
         )
       end
@@ -86,7 +86,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
       let!(:task) do
         EvidenceSubmissionWindowTask.create!(
           appeal: appeal_no_vso,
-          assigned_to: InboundOpsTeam.singleton,
+          assigned_to: MailTeam.singleton,
           parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
         )
       end
@@ -104,7 +104,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
 
   context "on manual completion by user" do
     let(:mail_user) { create(:user) }
-    let(:mail_team) { InboundOpsTeam.singleton }
+    let(:mail_team) { MailTeam.singleton }
     let(:instructions) { "here are the instructions" }
     let(:params) do
       {
@@ -250,7 +250,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
     let(:appeal) { create(:appeal, :ready_for_distribution) }
     let(:distribution_task) { appeal.tasks.find_by_type(:DistributionTask) }
     let(:parent) do
-      EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: InboundOpsTeam.singleton, parent: distribution_task)
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: MailTeam.singleton, parent: distribution_task)
     end
     let!(:child) { create(:evidence_submission_window_task, parent: parent, assigned_to: create(:user)) }
     before { expect(parent.status).to eq "on_hold" }
