@@ -3,11 +3,13 @@
 # Purpose: Active Job that handles the processing of VA Notifcation event trigger.
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
+# :reek:RepeatedConditional
 class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_as { self.class.queue_name_suffix }
   application_attr :va_notify
+  attr_accessor :notification_audit, :message
 
   class SendNotificationJobError < StandardError; end
 
@@ -31,9 +33,9 @@ class SendNotificationJob < CaseflowJob
 
   DISCARD_ERRORS.each do |err|
     discard_on(err) do |job, exception|
-      message = "Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}"
+      error_message = "Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}"
       err_level = exception.instance_of?(SendNotificationJobError) ? :error : :warn
-      Rails.logger.send(err_level, message)
+      Rails.logger.send(err_level, error_message)
     end
   end
 
@@ -56,7 +58,7 @@ class SendNotificationJob < CaseflowJob
       ActiveRecord::Base.transaction do
         @notification_audit = find_or_create_notification_audit
         update_notification_statuses
-        maybe_send_to_va_notify if message_status_valid?
+        send_to_va_notify if message_status_valid?
       end
     rescue StandardError => error
       log_error(error)
@@ -66,7 +68,7 @@ class SendNotificationJob < CaseflowJob
   private
 
   def event_type
-    @message.template_name
+    message.template_name
   end
 
   def event
@@ -81,11 +83,11 @@ class SendNotificationJob < CaseflowJob
   #
   # Returns: Appeal object
   def find_appeal_by_external_id
-    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(@message.appeal_id)
+    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(message.appeal_id)
 
     return appeal unless appeal.nil?
 
-    fail SendNotificationJobError, "Associated appeal cannot be found for external ID #{@message.appeal_id}"
+    fail SendNotificationJobError, "Associated appeal cannot be found for external ID #{message.appeal_id}"
   end
 
   # Purpose: Determine if either a quarterly sms notification or non-quarterly sms notification
@@ -107,22 +109,16 @@ class SendNotificationJob < CaseflowJob
     event_type == Constants.EVENT_TYPE_FILTERS.quarterly_notification
   end
 
-  # Purpose: Determine if email notifications enabled
-  #
-  # Returns: Boolean
-  def email_enabled?
-    @email_enabled ||= FeatureToggle.enabled?(:va_notify_email)
-  end
-
   # Purpose: Ensure necessary message attributes present to send notification
   #
-  # Params: messag: object containing details from appeal for notification
+  # Params: message: object containing details from appeal for notification
   #
   # Returns: message
-  def validate_message(message)
-    nil_attributes = [:appeal_id, :appeal_type, :template_name].filter { |attr| message.send(attr).nil? }
+  # :reek:FeatureEnvy
+  def validate_message(message_to_validate)
+    nil_attributes = [:appeal_id, :appeal_type, :template_name].filter { |attr| message_to_validate.send(attr).nil? }
 
-    return message unless nil_attributes.any?
+    return message_to_validate unless nil_attributes.any?
 
     fail SendNotificationJobError, "Nil message attribute(s): #{nil_attributes.map(&:to_s).join(', ')}"
   end
@@ -132,8 +128,8 @@ class SendNotificationJob < CaseflowJob
   # Returns: Notification active model or nil
   def find_or_create_notification_audit
     params = {
-      appeals_id: @message.appeal_id,
-      appeals_type: @message.appeal_type,
+      appeals_id: message.appeal_id,
+      appeals_type: message.appeal_type,
       event_type: event_type,
       event_date: Time.zone.today,
       notification_type: notification_type,
@@ -146,7 +142,7 @@ class SendNotificationJob < CaseflowJob
       return notification unless notification.nil?
     end
 
-    create_notification(params.merge(participant_id: @message.participant_id, notified_at: Time.zone.now))
+    create_notification(params.merge(participant_id: message.participant_id, notified_at: Time.zone.now))
   end
 
   # Purpose: Determine if the notification event is for a legacy appeal that has been docketed
@@ -175,24 +171,24 @@ class SendNotificationJob < CaseflowJob
   def update_notification_statuses
     status = format_message_status
     params = {}
-    params[:email_notification_status] = status if email_enabled?
+    params[:email_notification_status] = status
     params[:sms_notification_status] = status if sms_enabled?
 
-    @notification_audit.update(params)
+    notification_audit.update(params)
   end
 
   # Purpose: Reformat message status if status belongs to invalid category
   #
   # Response: Message string
   def format_message_status
-    return @message.status if message_status_valid?
+    return message.status if message_status_valid?
 
-    case @message.status
+    case message.status
     when "No participant_id" then "No Participant Id Found"
     when "No claimant" then "No Claimant Found"
     when "Failure Due to Deceased" then "Failure Due to Deceased"
     else
-      fail StandardError, "Message status #{@message.status} is not recognized."
+      fail StandardError, "Message status #{message.status} is not recognized."
     end
   end
 
@@ -200,32 +196,14 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Boolean
   def message_status_valid?
-    ["No participant_id", "No claimant", "Failure Due to Deceased"].exclude?(@message.status)
-  end
-
-  # Purpose: Send message to VA Notify unless certain feature toggles are disabled
-  #
-  # Response: Updated notification object
-  def maybe_send_to_va_notify
-    if legacy_appeal_docketed_and_notifications_disabled?
-      @notification_audit.update(email_enabled: false)
-    else
-      send_to_va_notify
-    end
-  end
-
-  # Purpose: Determine whether notification should be sent for legacy docketed appeal
-  #
-  # Response: Boolean
-  def legacy_appeal_docketed_and_notifications_disabled?
-    legacy_appeal_docketed_event? && !FeatureToggle.enabled?(:appeal_docketed_notification)
+    ["No participant_id", "No claimant", "Failure Due to Deceased"].exclude?(message.status)
   end
 
   # Purpose: Send message to VA Notify to send notification
   #
   # Response: Updated Notification object
   def send_to_va_notify
-    send_va_notify_email if email_enabled?
+    send_va_notify_email
     send_va_notify_sms if sms_enabled?
   end
 
@@ -234,11 +212,11 @@ class SendNotificationJob < CaseflowJob
   # Response: Payload object
   def va_notify_payload
     {
-      participant_id: @message.participant_id,
-      notification_id: @notification_audit.id.to_s,
+      participant_id: message.participant_id,
+      notification_id: notification_audit.id.to_s,
       first_name: first_name || "Appellant",
       docket_number: appeal.docket_number,
-      status: @message.appeal_status || ""
+      status: message.appeal_status || ""
     }
   end
 
@@ -246,15 +224,16 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated notification object
   def send_va_notify_email
-    response = VANotifyService.send_email_notifications(
+    email_response = VANotifyService.send_email_notifications(
       va_notify_payload.merge(email_template_id: event.email_template_id)
     )
 
-    if response.present?
-      @notification_audit.update(
-        notification_content: response.body["content"]["body"],
-        email_notification_content: response.body["content"]["body"],
-        email_notification_external_id: response.body["id"]
+    if email_response.present?
+      body = email_response.body
+      notification_audit.update(
+        notification_content: body["content"]["body"],
+        email_notification_content: body["content"]["body"],
+        email_notification_external_id: body["id"]
       )
     end
   end
@@ -266,7 +245,7 @@ class SendNotificationJob < CaseflowJob
     response = VANotifyService.send_sms_notifications(va_notify_payload.merge(sms_template_id: event.sms_template_id))
 
     if response.present?
-      @notification_audit.update(
+      notification_audit.update(
         sms_notification_content: response.body["content"]["body"],
         sms_notification_external_id: response.body["id"]
       )
@@ -277,12 +256,10 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: String
   def notification_type
-    if email_enabled?
-      sms_enabled? ? "Email and SMS" : "Email"
-    elsif sms_enabled?
-      "SMS"
+    if sms_enabled?
+      "Email and SMS"
     else
-      "None"
+      "Email"
     end
   end
 
