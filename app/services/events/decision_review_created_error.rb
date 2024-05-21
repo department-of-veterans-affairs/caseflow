@@ -17,6 +17,7 @@ class Events::DecisionReviewCreatedError
   # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
   #                 # with the one who held the lock and failed to unlock. (default: 10)
   class << self
+    # rubocop:disable Metrics/MethodLength
     def handle_service_error(consumer_event_id, errored_claim_id, error_message)
       # check if consumer_event_id Event.reference_id exist if not Create DecisionReviewCreated Event
       event = DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
@@ -26,6 +27,13 @@ class Events::DecisionReviewCreatedError
       if redis.exists("RedisMutex:EndProductEstablishment:#{errored_claim_id}")
         fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id}
          is already in the Redis Cache"
+      end
+
+      # Throws error for specific Consumer Event IDs to test Consumer error handling
+      if consumer_event_id == 18
+        fail Caseflow::Error::RedisLockFailed, "DRCE RedisLockFailed message"
+      elsif consumer_event_id == 19
+        fail StandardError, "DRCE StandardError message"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
@@ -41,4 +49,5 @@ class Events::DecisionReviewCreatedError
       raise error
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
