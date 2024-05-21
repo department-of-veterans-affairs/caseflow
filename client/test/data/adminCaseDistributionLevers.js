@@ -437,7 +437,7 @@ export const testingBatchLeversUpdatedToSave = [
 
 export const mockDocketTimeGoalsLevers = [
   {
-    item: 'ama_hearings_docket_time_goals',
+    item: 'ama_hearing_docket_time_goals',
     title: 'AMA Hearings Docket Time Goals',
     data_type: 'number',
     value: 365,

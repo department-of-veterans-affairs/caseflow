@@ -13,8 +13,8 @@ export const sectionTitles = {
 };
 
 export const docketTimeGoalPriorMappings = {
-  [DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals]:
-    DISTRIBUTION.ama_hearings_docket_time_goals,
+  [DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals]:
+    DISTRIBUTION.ama_hearing_docket_time_goals,
   [DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals]:
     DISTRIBUTION.ama_direct_review_docket_time_goals,
   [DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals]:

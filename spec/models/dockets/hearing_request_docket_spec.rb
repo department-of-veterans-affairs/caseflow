@@ -10,7 +10,7 @@ describe HearingRequestDocket, :postgres do
     # back to what the tests were originally written for
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearings_docket_time_goals).update!(value: 60)
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 60)
   end
 
   context "#ready_priority_appeals" do
@@ -43,7 +43,7 @@ describe HearingRequestDocket, :postgres do
 
     context "when appeals receipt date is not within the time goal" do
       before do
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearings_docket_time_goals).update!(value: 160)
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 160)
       end
 
       it "returns an empty results" do
@@ -55,7 +55,7 @@ describe HearingRequestDocket, :postgres do
       let!(:ready_nonpriority_appeal_1) { create_ready_nonpriority_appeal }
 
       before do
-        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearings_docket_time_goals).update!(value: 90)
+        CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 90)
         ready_nonpriority_appeal_1.update!(receipt_date: 40.days.ago)
       end
 

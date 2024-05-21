@@ -719,7 +719,7 @@ export const updatedLevers = [
   },
   {
     id: 20,
-    item: DISTRIBUTION.ama_hearings_docket_time_goals,
+    item: DISTRIBUTION.ama_hearing_docket_time_goals,
     title: 'AMA Hearings Docket Time Goals',
     data_type: ACD_LEVERS.data_types.number,
     value: 435,
