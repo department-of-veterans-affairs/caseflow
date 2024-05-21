@@ -25,8 +25,7 @@ class AppealState < CaseflowRecord
                                                                privacy_act_pending: false,
                                                                privacy_act_complete: false,
                                                                scheduled_in_error: false,
-                                                               appeal_cancelled: false
-                                                              ).freeze
+                                                               appeal_cancelled: false).freeze
 
   # Locates appeal states that are related to appeals eligible to potentially receive quarterly notifications.
   #   These appeals must not have been cancelled and their decisions must not have already been mailed.
@@ -185,20 +184,20 @@ class AppealState < CaseflowRecord
   # Params: appeal_state
   #
   # Response: None
-
   def decision_mailed_appeal_state_update_action!
     update_appeal_state_action!(:decision_mailed)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a cancelled appeal.
   #
   # Params: appeal_state
   #
   # Response: None
-
   def appeal_cancelled_appeal_state_update_action!
     update_appeal_state_action!(:appeal_cancelled)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a completed informal hearing presentaiton(IHP).
   #
@@ -206,7 +205,6 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def vso_ihp_complete_appeal_state_update_action!
     if appeal.active_vso_ihp_task?
       update_appeal_state_action!(:vso_ihp_complete)
@@ -225,6 +223,7 @@ class AppealState < CaseflowRecord
       update_appeal_state_action!(:privacy_act_complete)
     end
   end
+
   # Purpose: Method to update appeal_state in the case of
   # privacy related tasks being cancelled.
   #
@@ -232,7 +231,6 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def privacy_act_cancelled_appeal_state_update_action!
     if appeal.active_foia_task?
       update!(privacy_act_pending: false)
@@ -248,6 +246,7 @@ class AppealState < CaseflowRecord
   def appeal_docketed_appeal_state_update_action!
     update_appeal_state_action!(:appeal_docketed)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a hearing being postponed.
   #
@@ -258,36 +257,37 @@ class AppealState < CaseflowRecord
   def hearing_postponed_appeal_state_update_action!
     update_appeal_state_action!(:hearing_postponed)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a hearing being withdrawn.
   #
   # Params: None
   #
   # Response: None
-
   def hearing_withdrawn_appeal_state_update_action!
     update_appeal_state_action!(:hearing_withdrawn)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a hearing being scheduled.
   #
   # Params: None
   #
   # Response: None
-
   def hearing_scheduled_appeal_state_update_action!
     update_appeal_state_action!(:hearing_scheduled)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # a hearing being scheduled in error.
   #
   # Params: None
   #
   # Response: None
-
   def scheduled_in_error_appeal_state_update_action!
     update_appeal_state_action!(:scheduled_in_error)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # the most recent VSO IHP Organizational task in the task
   # tree being in an opened state.
@@ -295,10 +295,10 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def vso_ihp_pending_appeal_state_update_action!
     update_appeal_state_action!(:vso_ihp_pending)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # the most recent VSO IHP Organizational task in the task
   # tree being cancelled.
@@ -306,10 +306,10 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def vso_ihp_cancelled_appeal_state_update_action!
     update!(vso_ihp_pending: false, vso_ihp_complete: false)
   end
+
   # Purpose: Method to update appeal_state in the case of
   # there being at least one of the privacy act related
   # tasks is still in an opened status.
@@ -317,7 +317,6 @@ class AppealState < CaseflowRecord
   # Params: None
   #
   # Response: None
-
   def privacy_act_pending_appeal_state_update_action!
     update_appeal_state_action!(:privacy_act_pending)
   end
