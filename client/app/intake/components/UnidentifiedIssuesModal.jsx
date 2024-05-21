@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'glamor';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
