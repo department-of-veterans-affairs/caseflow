@@ -3,6 +3,7 @@
 # Purpose: Active Job that handles the processing of VA Notifcation event trigger.
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
+# :reek:RepeatedConditional
 class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
@@ -167,7 +168,6 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Updates and saves notification status for notification object
   #
   # Response: Updated notification object
-  # :reek:RepeatedConditional
   def update_notification_statuses
     status = format_message_status
     params = {}
@@ -202,7 +202,6 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Send message to VA Notify to send notification
   #
   # Response: Updated Notification object
-  # :reek:RepeatedConditional
   def send_to_va_notify
     send_va_notify_email
     send_va_notify_sms if sms_enabled?
@@ -256,7 +255,6 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Determine notification type depending on enabled feature toggles and event type
   #
   # Response: String
-  # :reek:RepeatedConditional
   def notification_type
     if sms_enabled?
       "Email and SMS"
