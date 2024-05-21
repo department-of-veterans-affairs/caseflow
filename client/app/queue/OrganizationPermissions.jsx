@@ -74,20 +74,14 @@ const OrganizationPermissions = (props) => {
       return true;
     }
 
-    // if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
-    //   return true;
-    // }
-
     if (typeof stateValue !== 'undefined') {
       return stateValue.checked;
     }
 
-    // // fallback to props if no state
-    // const userData = (this.props.orgnizationUserPermissions.find((oup) => oup.user_id === Number(user.id)));
-
-    if (user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
-      return true;
-    }
+    // problematic angry method that doesn't work right :(, might not be needed
+    // if (user.attributes.user_permission.find((perm) => perm.permission === permission.permission)) {
+    //   return true;
+    // }
 
     // default state that came in when page loads
     const relevantPermissions = props.orgnizationUserPermissions.find((oup) =>
@@ -98,17 +92,13 @@ const OrganizationPermissions = (props) => {
     perm.permitted)) {
       return true;
     }
-    // if (userData.organization_user_permissions.find((oup) =>
-    //   oup.organization_permission.permission === permission.permission && oup.permitted)) {
-    //   return true;
-    // }
 
     // // check if user is marked as admin to auto check the checkbox.
-    // if (permission.default_for_admin && user.attributes.admin) {
-    //   return true;
-    // }
+    if (permission.default_for_admin && user.attributes.admin) {
+      return true;
+    }
 
-    // return false;
+    return false;
 
   };
 
