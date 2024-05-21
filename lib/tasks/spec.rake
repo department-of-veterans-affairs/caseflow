@@ -25,7 +25,7 @@ namespace :spec do
         task :spec_name do # rubocop:disable Rails/RakeEnvironment
           envs = "export TEST_SUBCATEGORY=#{spec_name} && export RAILS_ENV=test &&"
 
-          ["rake db:create", "rake db:schema:load"].each do |cmd|
+          ["rake db:create:primary", "rake db:schema:load:primary"].each do |cmd|
             ShellCommand.run_and_batch_output("#{envs} #{cmd}")
           end
         end
