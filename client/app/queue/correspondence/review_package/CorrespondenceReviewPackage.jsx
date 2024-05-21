@@ -235,7 +235,7 @@ export const CorrespondenceReviewPackage = (props) => {
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
-            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <ReviewPackageData
@@ -316,7 +316,7 @@ CorrespondenceReviewPackage.propTypes = {
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
-  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool
 };
 
