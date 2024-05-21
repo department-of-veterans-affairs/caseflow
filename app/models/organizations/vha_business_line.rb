@@ -6,7 +6,7 @@ class VhaBusinessLine < BusinessLine
   end
 
   def included_tabs
-    [:incomplete, :in_progress, :completed, :pending]
+    [:incomplete, :pending, :in_progress, :completed]
   end
 
   def tasks_query_type
