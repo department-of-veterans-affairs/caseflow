@@ -79,5 +79,38 @@ FactoryBot.define do
       type { "HearingsManagement" }
       name { "Hearings Management" }
     end
+
+    factory :inbound_ops_team, class: InboundOpsTeam do
+      type { "InboundOpsTeam" }
+      name { "Inbound Ops Team" }
+      url { "inbound-ops-team" }
+      trait :inbound_ops_team_permissions do
+        after(:create) do |inbound_ops_team|
+          create(
+            :organization_permission,
+            organization: inbound_ops_team,
+            permission: "superuser",
+            description: "Superuser: Split, Merge, and Reassign",
+            default_for_admin: true,
+            enabled: true
+          )
+          auto_assign = create(
+            :organization_permission,
+            organization: inbound_ops_team,
+            permission: "auto_assign",
+            description: "Auto-Assignment",
+            enabled: true
+          )
+          create(
+            :organization_permission,
+            organization: inbound_ops_team,
+            permission: "receive_nod_mail",
+            description: "Receieve \"NOD Mail\"",
+            parent_permission: auto_assign,
+            enabled: true
+          )
+        end
+      end
+    end
   end
 end
