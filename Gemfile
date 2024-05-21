@@ -36,9 +36,6 @@ gem "icalendar"
 gem "kaminari"
 gem "logstasher"
 gem "moment_timezone-rails"
-# Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
-# https://github.com/ankane/multiverse#upgrading-to-rails-6
-gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 12.0"
