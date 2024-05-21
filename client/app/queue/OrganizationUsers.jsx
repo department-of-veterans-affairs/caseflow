@@ -415,7 +415,11 @@ getFilteredUsers = () => {
             }
           </div>
           {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
-            <OrganizationPermissions organization={this.props.organization} permissions={this.props.organizationPermissions} user={user}/>
+            <OrganizationPermissions
+              organization={this.props.organization}
+              permissions={this.props.organizationPermissions}
+              user={user}
+              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)} />
             {/* {this.generatePermissionsCheckboxes(user)} */}
           </div>}
         </div>
