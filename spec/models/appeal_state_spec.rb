@@ -316,7 +316,6 @@ describe AppealState do
     end
   end
 
-
   context "#privacy_act_pending_appeal_state_update!" do
     let(:user) { create(:user) }
 
@@ -513,27 +512,27 @@ describe AppealState do
   end
 
   context "#scheduled_in_error_appeal_state_update!" do
-  let(:user) { create(:user) }
+    let(:user) { create(:user) }
 
-  subject { appeal_state.scheduled_in_error_appeal_state_update_action! }
+    subject { appeal_state.scheduled_in_error_appeal_state_update_action! }
 
-  context "updates the scheduled_in_error attribute" do
-    let(:appeal_state) do
-      create(
-        :appeal_state,
-        :ama,
-        created_by_id: user.id,
-        updated_by_id: user.id,
-        hearing_scheduled: true
-      )
-    end
+    context "updates the scheduled_in_error attribute" do
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          hearing_scheduled: true
+        )
+      end
 
-    it "sets scheduled_in_error to true and all others false" do
-      subject
+      it "sets scheduled_in_error to true and all others false" do
+        subject
 
-      expect(appeal_state.hearing_scheduled).to eq false
-      expect(appeal_state.scheduled_in_error).to eq true
+        expect(appeal_state.hearing_scheduled).to eq false
+        expect(appeal_state.scheduled_in_error).to eq true
+      end
     end
   end
-end
 end

@@ -320,6 +320,8 @@ class AppealState < CaseflowRecord
     update_appeal_state_action!(:privacy_act_pending)
   end
 
+  private
+
   def update_appeal_state_action!(new_state)
     update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
   end

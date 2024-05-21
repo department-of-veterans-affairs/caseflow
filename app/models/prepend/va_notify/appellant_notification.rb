@@ -58,7 +58,7 @@ module AppellantNotification
         appeals_id: msg_bdy.appeal_id,
         appeals_type: msg_bdy.appeal_type,
         event_type: template_name,
-        notification_type: notification_type,
+        notification_type: "Email and SMS",
         participant_id: msg_bdy.participant_id,
         event_date: Time.zone.today,
         notifiable: appeal
