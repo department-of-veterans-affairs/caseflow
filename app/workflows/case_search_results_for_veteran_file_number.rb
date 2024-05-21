@@ -10,10 +10,17 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   private
 
   attr_reader :file_number_or_ssn
-
+  
   def validation_hook
     validate_file_number_or_ssn_presence
     validate_veterans_exist if current_user_is_vso_employee?
+  end
+
+  def validate_file_number_or_ssn_presence
+    return if file_number_or_ssn
+
+    errors.add(:workflow, missing_veteran_file_number_or_ssn_error)
+    @status = :bad_request
   end
 
   def appeals

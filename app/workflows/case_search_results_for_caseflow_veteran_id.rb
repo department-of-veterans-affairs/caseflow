@@ -16,10 +16,6 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
 
   attr_reader :caseflow_veteran_ids
 
-  def validation_hook
-    validate_veterans_exist
-  end
-
   def appeal_finder_appeals
     AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
   end
@@ -40,6 +36,10 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
     else
       search_results
     end
+  end
+
+  def validation_hook
+    validate_veterans_exist
   end
 
   def not_found_error
