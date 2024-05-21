@@ -420,8 +420,7 @@ getFilteredUsers = () => {
               permissions={this.props.organizationPermissions}
               user={user}
               orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
-              orgnizationUserPermissions={this.props.orgnizationUserPermissions}/>
-            {/* {this.generatePermissionsCheckboxes(user)} */}
+              orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
           </div>}
         </div>
       </React.Fragment>;

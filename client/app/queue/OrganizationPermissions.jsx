@@ -128,6 +128,17 @@ const OrganizationPermissions = (props) => {
 
   };
 
+  const permissionAdminCheck = (user, permission) => {
+    if (user.attributes.admin && permission.default_for_admin) {
+      return true;
+    }
+    if (user.attributes.admin && !permission.default_for_admin) {
+      return false;
+    }
+
+    return true;
+  };
+
   const orderInboundOpsCheckboxes = (permissions) => {
     const orderedPermissions = [];
 
@@ -161,17 +172,19 @@ const OrganizationPermissions = (props) => {
         }
       };
 
-      return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
-        name={`${user.id}-${permission.permission}`}
-        label={permission.description}
-        key={`${user.id}-${permission.permission}`}
-        styling={checkboxStyle}
-        onChange={modifyUserPermission(user.id, permission.permission)}
-        defaultValue={(userPermissions(user, permission.permission) ||
+      return (parentPermissionChecked(user.id, permission.parent_permission_id) &&
+      permissionAdminCheck(user, permission) &&
+       <Checkbox
+         name={`${user.id}-${permission.permission}`}
+         label={permission.description}
+         key={`${user.id}-${permission.permission}`}
+         styling={checkboxStyle}
+         onChange={modifyUserPermission(user.id, permission.permission)}
+         defaultValue={(userPermissions(user, permission.permission) ||
            checkAdminPermission(user, permission.permission))}
-        disabled={checkAdminPermission(user, permission.permission)}
-        value={getCheckboxEnabled(user, props.orgUserData, permission)}
-      />);
+         disabled={checkAdminPermission(user, permission.permission)}
+         value={getCheckboxEnabled(user, props.orgUserData, permission)}
+       />);
     });
   };
 
