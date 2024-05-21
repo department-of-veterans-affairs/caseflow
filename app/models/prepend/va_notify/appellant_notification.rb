@@ -30,7 +30,7 @@ module AppellantNotification
 
     message_attributes = {}
     message_attributes[:appeal_type] = appeal.class.to_s
-    message_attributes[:appeal_id] = (appeal.class.to_s == "Appeal") ? appeal.uuid : appeal.vacols_id
+    message_attributes[:appeal_id] = appeal.external_id
     message_attributes[:participant_id] = appeal.claimant_participant_id
     claimant = get_claimant(appeal)
 
