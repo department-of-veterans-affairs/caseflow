@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextareaField from 'app/components/TextareaField';
-import _ from 'lodash';
+import { capitalize } from 'lodash';
 import { useFormContext } from 'react-hook-form';
 
 export const RequestReason = ({ label }) => {
@@ -9,7 +9,7 @@ export const RequestReason = ({ label }) => {
 
   return (
     <div>
-      <h3 style={{ marginBottom: '0px' }}>{_.capitalize(label)} request reason</h3>
+      <h3 style={{ marginBottom: '0px' }}>{capitalize(label)} request reason</h3>
       <TextareaField
         name="requestReason"
         label={`Please provide a reason for the issue ${label} request`}

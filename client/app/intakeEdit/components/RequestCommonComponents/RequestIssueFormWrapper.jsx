@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
-import _ from 'lodash';
+import { capitalize } from 'lodash';
 import { useSelector } from 'react-redux';
 
 export const RequestIssueFormWrapper = (props) => {
@@ -40,7 +40,7 @@ export const RequestIssueFormWrapper = (props) => {
       ...(props.type === 'modification') && { requestIssue: props.currentIssue },
       ...(props.type === 'addition') && { benefitType },
       requestor: { full_name: userFullName, css_id: userCssId },
-      requestType: _.capitalize(props.type),
+      requestType: capitalize(props.type),
       ...issueModificationRequest };
 
     // close modal and move the issue
