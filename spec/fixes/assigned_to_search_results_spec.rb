@@ -29,7 +29,7 @@ feature "Search results for AMA appeal" do
     end
 
     it "creates tasks and other records associated with a dispatched appeal" do
-      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :unknown # We will fix this
+      expect(BVAAppealStatus.new(tasks: appeal.tasks).status).to eq :unknown # We will fix this
       expect(appeal.root_task.status).to eq "on_hold"
 
       visit "/search?veteran_ids=#{appeal.veteran.id}"
@@ -57,7 +57,7 @@ feature "Search results for AMA appeal" do
       }
       visit "/search?veteran_ids=#{appeal.veteran.id}"
       expect(page).to have_content("Signed") # in the "Appellant Name" column
-      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :signed
+      expect(BVAAppealStatus.new(tasks: appeal.tasks).status).to eq :signed
       bva_dispatcher = org_dispatch_task.children.first.assigned_to
       expect(page).to have_content(bva_dispatcher.css_id) # in the "Assigned To" column
       expect(appeal.assigned_to_location).to eq bva_dispatcher.css_id
@@ -65,7 +65,7 @@ feature "Search results for AMA appeal" do
       BvaDispatchTask.outcode(appeal, params, bva_dispatcher)
       visit "/search?veteran_ids=#{appeal.veteran.id}"
       expect(page).to have_content("Dispatched") # in the "Appellant Name" column
-      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :dispatched
+      expect(BVAAppealStatus.new(tasks: appeal.tasks).status).to eq :dispatched
       expect(page).to have_content("Post-decision") # in the "Assigned To" column
       expect(appeal.assigned_to_location).to eq "Post-decision"
       expect(appeal.root_task.status).to eq "completed"
