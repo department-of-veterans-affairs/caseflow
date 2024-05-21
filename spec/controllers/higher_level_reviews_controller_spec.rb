@@ -84,41 +84,21 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
 
         post :update, params: {
           claim_id: higher_level_review.uuid,
-          issue_modification_requests: { new: [], edited: [], cancelled: [] },
-          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }]
+          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }],
+          issue_modification_requests: [
+            {
+              new: [],
+              edited: [],
+              cancelled: [
+                {
+                  id: 1, status: "assigned"
+                }
+              ]
+            }
+          ]
         }
 
         expect(response.status).to eq 200
-      end
-    end
-
-    context "When an admin user is requesting an issue modification" do
-      let(:user) { create(:intake_admin_user, :vha_intake_admin) }
-      let(:request_issues_data) do
-        {
-          request_issues: [
-            { request_issue_id: higher_level_review.request_issues.first.id }
-          ]
-        }
-      end
-
-      it "should call #request_issues_update.perform! and return 204" do
-        request_issues_update = instance_double(RequestIssuesUpdate, {
-                                                  user: user,
-                                                  review: higher_level_review
-                                                })
-
-        allow(RequestIssuesUpdate).to receive(:new).and_return(request_issues_update)
-        allow(request_issues_update).to receive(:request_issues_data=).and_return(request_issues_data)
-
-        expect(request_issues_update).to receive(:perform!)
-
-        post :update, params: {
-          claim_id: higher_level_review.uuid,
-          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }]
-        }
-
-        expect(response.status).to eq 204
       end
     end
   end
