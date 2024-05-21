@@ -17,7 +17,7 @@ export default class QueueOrganizationDropdown extends React.Component {
     const queueHref = (location === 'queue') ? '#' : '/queue';
     let correspondenceItems = {};
 
-    const isMailTeamAffiliated = () => {
+    const isInboundOpsTeamAffiliated = () => {
       if (isInboundOpsSuperuser || isMailSupervisor || isInboundOpsTeamUser) {
         return true;
       }
@@ -25,7 +25,7 @@ export default class QueueOrganizationDropdown extends React.Component {
       return false;
     };
 
-    if (organizations.length < 1 && !isMailTeamAffiliated()) {
+    if (organizations.length < 1 && !isInboundOpsTeamAffiliated()) {
       return null;
     }
 
