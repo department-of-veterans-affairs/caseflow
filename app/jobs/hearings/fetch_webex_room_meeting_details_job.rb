@@ -41,7 +41,7 @@ class Hearings::FetchWebexRoomMeetingDetailsJob < CaseflowJob
       apikey: ENV["WEBEX_MASTER_BOT_TOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
-      # query: nil
+      query: nil
     ).fetch_room_details(room_id)
   end
 end
