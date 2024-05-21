@@ -106,8 +106,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       )
   end
 
+  # check for user that is not an admin of the inbound ops team
   def inbound_ops_team_user?
-    organizations.include?(InboundOpsTeam.singleton)
+    organizations.include?(InboundOpsTeam.singleton) &&
+      !inbound_ops_team_supervisor?
   end
 
   def inbound_ops_team_supervisor?
