@@ -73,8 +73,8 @@ module ByDocketDateDistribution
     }
 
     dockets.each_pair do |sym, docket|
-      docket_counts[`#{sym}_priority_stats`][:count] = docket.count(priority: true, ready: true)
-      docket_counts[`#{sym}_stats`][:count] = docket.count(priority: false, ready: true)
+      docket_counts["#{sym}_priority_stats".to_sym][:count] = docket.count(priority: true, ready: true)
+      docket_counts["#{sym}_stats".to_sym][:count] = docket.count(priority: false, ready: true)
     end
 
     unless FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
@@ -84,7 +84,7 @@ module ByDocketDateDistribution
 
     sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
 
-    distributed_cases_tied_to_ineligible_judges = {
+    cases_tied_to_ineligible_judges = {
       ama: ama_distributed_cases_tied_to_ineligible_judges,
       legacy: distributed_cases_tied_to_ineligible_judges
     }
@@ -101,17 +101,17 @@ module ByDocketDateDistribution
 
     docket_counts.merge({
       ineligible_judge_stats: {
-        distributed_cases_tied_to_ineligible_judges: distributed_cases_tied_to_ineligible_judges,
+        distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges,
       },
       judge_stats: {
-        team_size: batch_size,
-        total_batch_size: total_batch_size,
+        team_size: team_size,
         ama_judge_assigned_tasks: judge_tasks.length,
         legacy_assigned_tasks: judge_legacy_tasks.length,
         settings: settings
       },
       statistics: {
         batch_size: @appeals.count,
+        total_batch_size: total_batch_size,
         priority_target: @push_priority_target || @request_priority_count,
         priority_count: priority_count,
         nonpriority_count: nonpriority_count,

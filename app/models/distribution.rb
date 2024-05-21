@@ -120,17 +120,21 @@ class Distribution < CaseflowRecord
     end
   end
 
+  def team_size
+    @team_size ||= JudgeTeam.for_judge(judge)&.attorneys&.size
+  end
+
   def batch_size
-    team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
+    return CaseDistributionLever.alternative_batch_size if team_size.nil? || team_size == 0
 
-    return CaseDistributionLever.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
-
-    team_batch_size * CaseDistributionLever.batch_size_per_attorney
+    team_size * CaseDistributionLever.batch_size_per_attorney
   end
 
   def error_statistics(error)
     {
-      error: error&.full_message
+      statistics: {
+        error: error&.full_message
+      }
     }
   end
 
@@ -149,7 +153,7 @@ class Distribution < CaseflowRecord
   # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
   def completed_statistics(stats)
     {
-      batch_size: stats[:judge_stats][:batch_size],
+      batch_size: stats[:statistics][:batch_size],
       info: "See related row in distribution_stats for additional stats"
     }
   end
