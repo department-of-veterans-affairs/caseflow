@@ -6,7 +6,7 @@ describe CavcCorrespondenceMailTask do
   let(:cavc_task) { create(:cavc_task) }
 
   before do
-    MailTeam.singleton.add_user(mail_user)
+    InboundOpsTeam.singleton.add_user(mail_user)
     CavcLitigationSupport.singleton.add_user(cavc_lit_user)
   end
 
@@ -175,7 +175,7 @@ describe CavcCorrespondenceMailTask do
           expect(CavcCorrespondenceMailTask.all.size).to eq(0)
           subject
           expect(CavcCorrespondenceMailTask.assigned_to_any_org.size).to eq(2)
-          expect(CavcCorrespondenceMailTask.first.assigned_to).to eq(MailTeam.singleton)
+          expect(CavcCorrespondenceMailTask.first.assigned_to).to eq(InboundOpsTeam.singleton)
           expect(CavcCorrespondenceMailTask.second.assigned_to).to eq(CavcLitigationSupport.singleton)
         end
       end

@@ -262,10 +262,10 @@ describe Task, :all_dbs do
     let(:root_task) { create(:root_task) }
     let(:mail_user) { create(:user) }
     let!(:mail_grandparent_organization_task) do
-      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: root_task)
+      create(:aod_motion_mail_task, assigned_to: InboundOpsTeam.singleton, parent: root_task)
     end
     let!(:mail_parent_organization_task) do
-      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
+      create(:aod_motion_mail_task, assigned_to: InboundOpsTeam.singleton, parent: mail_grandparent_organization_task)
     end
     let!(:mail_task) do
       create(:aod_motion_mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
@@ -1630,7 +1630,7 @@ describe Task, :all_dbs do
 
     context "when other task is assigned to another org" do
       let(:task) { create(:task, assigned_to: Colocated.singleton) }
-      let(:other_task) { create(:task, assigned_to: MailTeam.singleton) }
+      let(:other_task) { create(:task, assigned_to: InboundOpsTeam.singleton) }
 
       it "should be false" do
         expect(subject).to eq(false)
@@ -1971,8 +1971,8 @@ describe Task, :all_dbs do
     end
 
     context "when the users are a part of a non hearing team" do
-      let!(:user) { create(:user).tap { |user| MailTeam.singleton.add_user(user) } }
-      let!(:admin) { create(:user).tap { |user| OrganizationsUser.make_user_admin(user, MailTeam.singleton) } }
+      let!(:user) { create(:user).tap { |user| InboundOpsTeam.singleton.add_user(user) } }
+      let!(:admin) { create(:user).tap { |user| OrganizationsUser.make_user_admin(user, InboundOpsTeam.singleton) } }
 
       it "cannot reassign any task assigned to a hearing management team member" do
         tasks.each do |task|

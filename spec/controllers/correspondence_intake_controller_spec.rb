@@ -28,7 +28,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
     FeatureToggle.enable!(:correspondence_queue)
     User.authenticate!(roles: ["Mail Intake"])
     correspondence.update(veteran: veteran)
-    MailTeam.singleton.add_user(current_user)
+    InboundOpsTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
     correspondence.update(veteran: veteran)
 
@@ -38,7 +38,7 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
 
   describe "GET #intake" do
     it "returns 200 status" do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       3.times { create(:correspondence, veteran: veteran) }
       get :intake, params: { correspondence_uuid: correspondence.uuid }

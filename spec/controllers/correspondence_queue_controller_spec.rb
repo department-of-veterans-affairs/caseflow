@@ -11,7 +11,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
 
   describe "GET #correspondence_cases" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :correspondence_cases
     end

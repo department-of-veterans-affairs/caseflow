@@ -8,7 +8,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
     end
@@ -51,7 +51,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence tasks in-progress tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -922,7 +922,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "Your Correspondence completed tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -1232,7 +1232,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:user) }
     let(:inbound_ops_team_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
@@ -1453,8 +1453,8 @@ RSpec.feature("The Correspondence Cases page") do
     let(:alt_user) { create(:user) }
     let(:inbound_ops_team_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
-      MailTeam.singleton.add_user(alt_user)
+      InboundOpsTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(alt_user)
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)

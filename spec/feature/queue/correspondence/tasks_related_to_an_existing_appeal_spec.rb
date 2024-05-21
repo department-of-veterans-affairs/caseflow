@@ -2,7 +2,7 @@
 
 RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page step 2.3") do
   include CorrespondenceHelpers
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
   let(:wait_time) { 30 }
 

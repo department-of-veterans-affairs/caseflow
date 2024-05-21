@@ -2,7 +2,7 @@
 
 describe MailTask, :postgres do
   let(:user) { create(:user) }
-  let(:mail_team) { MailTeam.singleton }
+  let(:mail_team) { InboundOpsTeam.singleton }
   let(:root_task) { create(:root_task) }
   before do
     mail_team.add_user(user)
@@ -23,7 +23,7 @@ describe MailTask, :postgres do
     end
 
     context "when root_task exists for appeal" do
-      it "creates AodMotionMailTask assigned to MailTeam and AodTeam" do
+      it "creates AodMotionMailTask assigned to InboundOpsTeam and AodTeam" do
         expect(task_class.create_from_params(params, user)).to eq root_task.children[0].children[0]
         expect(root_task.children.length).to eq(1)
 
@@ -54,7 +54,7 @@ describe MailTask, :postgres do
 
     context "when the default assignee is the mail team" do
       before do
-        allow(task_class).to receive(:child_task_assignee).and_return(MailTeam.singleton)
+        allow(task_class).to receive(:child_task_assignee).and_return(InboundOpsTeam.singleton)
       end
 
       it "should not create any child tasks" do
@@ -300,7 +300,7 @@ describe MailTask, :postgres do
 
       context "when the appeal is active" do
         it "should route to the Mail Team" do
-          expect(subject).to eq(MailTeam.singleton)
+          expect(subject).to eq(InboundOpsTeam.singleton)
         end
       end
     end

@@ -7,7 +7,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
     let(:current_user) { create(:user) }
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 

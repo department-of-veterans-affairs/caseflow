@@ -787,7 +787,7 @@ describe AssignHearingDispositionTask, :all_dbs do
               window_task = disposition_task.children.find_by(type: EvidenceSubmissionWindowTask.name)
               expect(window_task.parent).to eq disposition_task
               expect(window_task.appeal).to eq appeal
-              expect(window_task.assigned_to).to eq MailTeam.singleton
+              expect(window_task.assigned_to).to eq InboundOpsTeam.singleton
               expect(window_task.timer_ends_at).to eq hearing_scheduled_for + 90.days
               expect(disposition_task.reload.on_hold?).to be_truthy
             end

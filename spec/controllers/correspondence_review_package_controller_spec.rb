@@ -23,7 +23,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #review_package" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :review_package, params: { correspondence_uuid: correspondence.uuid }
     end
@@ -35,7 +35,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "PUT #update_cmp" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       put :update_cmp, params: {
         correspondence_uuid: correspondence.uuid,
@@ -51,7 +51,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #package_documents" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       Seeds::PackageDocumentTypes.new.seed!
       get :package_documents
@@ -80,7 +80,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #show" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :show, params: { correspondence_uuid: correspondence.uuid }
     end
@@ -117,7 +117,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
   describe "PATCH #update" do
     let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       correspondence.update(veteran: veteran)
       patch :update, params: {
@@ -189,7 +189,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
 
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       allow(ExternalApi::ClaimEvidenceService).to receive(:document_types).and_return(document_types_response)
     end

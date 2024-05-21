@@ -14,7 +14,7 @@ module CorrespondenceHelpers
 
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
-    MailTeam.singleton.add_user(current_user)
+    InboundOpsTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
 
     mock_doc_uploader = instance_double(CorrespondenceDocumentsEfolderUploader)

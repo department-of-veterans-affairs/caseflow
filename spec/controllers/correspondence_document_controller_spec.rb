@@ -4,7 +4,7 @@ RSpec.describe CorrespondenceDocumentController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence, :with_single_doc) }
   let(:document) { correspondence.correspondence_documents.first }
   let(:current_user) { create(:user) }
-  let(:mail_team) { MailTeam.singleton }
+  let(:mail_team) { InboundOpsTeam.singleton }
 
   before do
     Fakes::Initializer.load!

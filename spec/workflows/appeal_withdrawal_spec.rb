@@ -65,7 +65,7 @@ describe "Withdrawing an appeal", :postgres do
   end
 
   def add_blocking_mail_task_to_appeal
-    MailTeam.singleton.add_user(user)
+    InboundOpsTeam.singleton.add_user(user)
     CongressionalInterestMailTask.create_from_params(
       {
         appeal: appeal,

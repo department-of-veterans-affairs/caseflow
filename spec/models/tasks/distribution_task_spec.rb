@@ -13,7 +13,7 @@ describe DistributionTask, :postgres do
   end
 
   before do
-    MailTeam.singleton.add_user(user)
+    InboundOpsTeam.singleton.add_user(user)
     scm_org.add_user(scm_user)
   end
 
@@ -41,7 +41,7 @@ describe DistributionTask, :postgres do
       AodMotionMailTask.create!(
         appeal: distribution_task.appeal,
         parent_id: distribution_task.appeal.root_task.id,
-        assigned_to: MailTeam.singleton
+        assigned_to: InboundOpsTeam.singleton
       )
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end

@@ -16,7 +16,7 @@ describe DistributionConcern do
     let(:appeal_open_dist_task) { create(:appeal, :direct_review_docket, :ready_for_distribution) }
     let(:appeal_open_dist_and_non_blocking_task) do
       appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-      create(:evidence_or_argument_mail_task, assigned_to: MailTeam.singleton, parent: appeal.root_task)
+      create(:evidence_or_argument_mail_task, assigned_to: InboundOpsTeampsTeampsTeam.singleton, parent: appeal.root_task)
 
       appeal
     end

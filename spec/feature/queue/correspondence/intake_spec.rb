@@ -331,7 +331,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "correspondence tasks in-progress tab and navigate to step 3 when we click on intake task" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 

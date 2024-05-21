@@ -6,8 +6,8 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:package_document_type) { PackageDocumentType.create!(id: 15, active: true, created_at: Time.zone.now, name: "10_182", updated_at: Time.zone.now) }
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
   let(:inbound_ops_team_user) { create(:user) }
-  let(:mail_team_org) { MailTeam.singleton }
-  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin") }
+  let(:mail_team_org) { InboundOpsTeam.singleton }
+  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon InboundOpsTeam Snow Admin") }
   let!(:correspondence_type) { CorrespondenceType.create!(name: "a correspondence type.") }
   let(:correspondence) do
     create(

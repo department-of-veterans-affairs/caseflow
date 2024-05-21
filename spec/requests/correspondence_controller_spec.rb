@@ -13,7 +13,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
   before do
     FeatureToggle.enable!(:correspondence_queue)
-    MailTeam.singleton.add_user(current_user)
+    InboundOpsTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
 
     allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
@@ -81,7 +81,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
       expect(response.body.include?("/unauthorized")).to be true
 
       # redirects to under_construction with valid correspondence access
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       get correspondence_path
 
       expect(response.status).to eq 302

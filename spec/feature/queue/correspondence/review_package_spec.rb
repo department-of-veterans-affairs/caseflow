@@ -8,7 +8,7 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:mail_team_supervisor_user) { create(:user, roles: ["Mail Intake"]) }
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:inbound_ops_team_user) { create(:user) }
-  let(:mail_team_org) { MailTeam.singleton }
+  let(:mail_team_org) { InboundOpsTeam.singleton }
 
   context "Review package feature toggle" do
     before :each do

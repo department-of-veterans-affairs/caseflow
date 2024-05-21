@@ -2375,7 +2375,7 @@ RSpec.feature "Case details", :all_dbs do
         new_task = new_tasks.first
         expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
         expect(appeal_withdrawal_bva_task.assigned_to).to eq(CaseReview.singleton)
-        expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
+        expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(InboundOpsTeam.singleton)
       end
     end
   end
