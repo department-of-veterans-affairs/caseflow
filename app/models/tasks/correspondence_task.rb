@@ -113,6 +113,8 @@ class CorrespondenceTask < Task
     self.class.package_action_task_names.include?(self.class.name)
   end
 
+  # block users from creating correspondence tasks if they are not members of Inbound Ops Team
+  # ignore check if there is no current user on correspondence creation
   def verify_correspondence_access
     return true if current_user.blank?
 
