@@ -454,12 +454,13 @@ class VACOLS::CaseDocket < VACOLS::Record
   # {UPDATE}
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
+    non_priority_cdl_aod_query = generate_non_priority_case_distribution_lever_aod_query(judge)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_aod_query})
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -479,7 +480,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_aod_query})
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -501,16 +502,17 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # {UPDATE}
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+    priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query(judge)
     query = if use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
                 and (rownum <= ? or 1 = ?)
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
                 and (rownum <= ? or 1 = ?)
               SQL
             end
@@ -553,6 +555,38 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
+  def self.generate_priority_case_distribution_lever_aod_query(_judge)
+    query = if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+              <<-SQL
+              #{VACOLS::Case::JOIN_AOD}
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and rownum <= ?
+              SQL
+            elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+              <<-SQL
+              #{VACOLS::Case::JOIN_AOD}
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and rownum <= ?
+              SQL
+            end
+  end
+
+  def self.generate_nonpriority_case_distribution_lever_aod_query(_judge)
+    query = if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+              <<-SQL
+              #{VACOLS::Case::JOIN_AOD}
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and rownum <= ?
+              SQL
+            elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+              <<-SQL
+              #{VACOLS::Case::JOIN_AOD}
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and rownum <= ?
+              SQL
+            end
+  end
+
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
@@ -585,5 +619,11 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def self.case_affinity_days_lever_value_is_selected?(lever_value)
+    return false if lever_value == "omit" || lever_value == "infinite"
+
+    true
+  end
 end
 # rubocop:enable Metrics/ClassLength
