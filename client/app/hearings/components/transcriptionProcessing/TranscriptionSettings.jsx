@@ -3,11 +3,11 @@
 import React from 'react';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-
 import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
+import HelloWorldModal from './HelloWorldModal';
 
 import COPY from '../../../../COPY';
 
@@ -88,40 +88,74 @@ export default class TranscriptionSettings extends React.PureComponent {
     super(props);
 
     this.state = {
-      loading: true
+      loading: true,
+      isRemoveModalOpen: false,
     };
   }
 
-  addContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_ADD}
-      id="Add-contractor"
-      classNames={['usa-button-primary']}
-      // on click add contractor modal opens
-    /></div>
+  openRemoveModal = () => {
+    this.setState({ isRemoveModalOpen: true });
+  };
 
-  removeContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
-      id="Remove-contractor"
-      classNames={['usa-button-secondary']}
-      // on click contractor is removed
-    /></div>
+  closeRemoveModal = () => {
+    this.setState({ isRemoveModalOpen: false });
+  };
+
+  addContractorButton = () => (
+    <div {...buttonStyle}>
+      <Button
+        name={COPY.TRANSCRIPTION_SETTINGS_ADD}
+        id="Add-contractor"
+        classNames={["usa-button-primary"]}
+        // on click add contractor modal opens
+      />
+    </div>
+  );
+
+  removeContractorButton = () => (
+    <div {...buttonStyle}>
+      <Button
+        name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
+        id="Remove-contractor"
+        classNames={["usa-button-secondary"]}
+        onClick={this.openRemoveModal}
+        // on click contractor is removed
+      />
+    </div>
+  );
 
   mainContent = () => {
     const listOfContractors = () => {
       // pass in and iterate over contractors
-
       return (
         <React.Fragment>
           <div {...userListItemStyle}>
             <div>
               <ul {...instructionListStyle}>
-                <h2>{COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}<EditContractorLink /></h2>
-                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>`https://box.com/`</li>
-                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>`Address here`</li>
+                <h2>
+                  {COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}
+                  <EditContractorLink />
+                </h2>
+                <li>
+                  <strong>
+                    {COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}
+                  </strong>
+                  `https://box.com/`
+                </li>
+                <li>
+                  <strong>
+                    {COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}
+                  </strong>
+                  `Address here`
+                </li>
                 <span>
-                  <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>`50 of 160`<EditHearingsSentLink /></li>
+                  <li>
+                    <strong>
+                      {COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}
+                    </strong>
+                    `50 of 160`
+                    <EditHearingsSentLink />
+                  </li>
                 </span>
               </ul>
             </div>
@@ -150,22 +184,33 @@ export default class TranscriptionSettings extends React.PureComponent {
             </span>
           </div>
         </div>
-        <div>
-          {listOfContractors()}
-        </div>
+        <div>{listOfContractors()}</div>
       </React.Fragment>
     );
-  }
+  };
 
-  render = () =>
-    <AppSegment filledBackground>
-      <div {...returnLinkStyle}>
-        <span><Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>&nbsp;</span>
-      </div>
-      <div>
-        {this.mainContent()}
-      </div>
-    </AppSegment>;
+  render = () => (
+    <>
+
+      <AppSegment filledBackground>
+        <div {...returnLinkStyle}>
+          <span>
+            <Link linkStyling>
+              &lt; {COPY.TRANSCRIPTION_QUEUE_LINK}
+            </Link>
+            &nbsp;
+          </span>
+        </div>
+        <div>{this.mainContent()}</div>
+        {this.state.isRemoveModalOpen && ( // Conditionally render the modal based on state
+          <HelloWorldModal
+            show={this.state.isRemoveModalOpen}
+            handleClose={this.closeRemoveModal}
+          />
+        )}
+      </AppSegment>
+    </>
+  );
 }
 
 TranscriptionSettings.propTypes = {
