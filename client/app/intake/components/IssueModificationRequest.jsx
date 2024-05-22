@@ -60,13 +60,16 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
       return;
     }
 
+    const requestIsssueDescription = requestIssue.description ||
+     `${requestIssue.nonratingIssueCategory} - ${requestIssue.nonratingIssueDescription}`;
+
     return <>
       <div>
         <h3>Original Issue</h3>
         <div className="issue-modification-request-original">
           <ol>
             <li>
-              <p>{requestIssue.nonratingIssueCategory} - {requestIssue.nonratingIssueDescription}</p>
+              <p>{requestIsssueDescription}</p>
               <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
               <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
             </li>
