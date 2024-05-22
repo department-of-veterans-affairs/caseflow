@@ -26,14 +26,25 @@ class AddCorrespondenceView extends React.Component {
       packageDocumentType: '',
       correspondenceType: '',
       notes: '',
-      selectedCheckboxes: []
+      selectedCheckboxes: [],
+      newLetterClicked: null
     };
   }
 
   onChange = (value) => {
     this.props.updateRadioValue({ radioValue: value });
-    this.props.onContinueStatusChange(value === RELATED_NO);
-    this.props.clearCheckboxState();
+    let valueToUpdate = (value === RELATED_NO);
+
+    if (this.state.newLetterClicked || Object.keys(this.props.currentLetters).length > 0) {
+      valueToUpdate = this.props.isContinueEnabled;
+    }
+
+    this.props.onContinueStatusChange(valueToUpdate);
+    this.props.clearCheckboxState(valueToUpdate);
+  }
+
+  updateLetterClicked = (value) => {
+    this.setState({ newLetterClicked: value });
   }
 
   onChangeCheckbox = (correspondence, isChecked) => {
@@ -157,7 +168,7 @@ class AddCorrespondenceView extends React.Component {
         <h2 style={{ margin: '0px', padding: '0px' }}>Response Letter</h2>
         {/* add letter here */}
         <AddLetter
-          onContinueStatusChange={this.props.onContinueStatusChange}
+          onContinueStatusChange={this.props.onContinueStatusChange} updateLetterClicked = {this.updateLetterClicked}
         />
         <hr style={{ borderTop: '1px solid #d6d7d9' }} />
         <h2 className="a-r-h2">Associate with prior Mail</h2>
@@ -204,7 +215,8 @@ AddCorrespondenceView.propTypes = {
   clearCheckboxState: PropTypes.func.isRequired,
   checkboxes: PropTypes.array,
   setResponseLetters: PropTypes.func,
-  currentLetters: PropTypes.number
+  currentLetters: PropTypes.number,
+  isContinueEnabled: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

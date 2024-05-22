@@ -275,6 +275,7 @@ export const NewLetter = (props) => {
   const removeLetter = () => {
     dispatch(removeResponseLetters(index));
     props.removeLetter(index);
+    props.updateLetterClicked(false);
   };
 
   const letterSelectorStyling = css({
@@ -389,7 +390,8 @@ NewLetter.propTypes = {
   setUnrelatedTasksCanContinue: PropTypes.func,
   currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,
-  onContinueStatusChange: PropTypes.func
+  onContinueStatusChange: PropTypes.func,
+  updateLetterClicked: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => (

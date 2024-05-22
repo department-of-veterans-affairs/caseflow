@@ -160,6 +160,7 @@ export const CorrespondenceIntake = (props) => {
         priorMail={props.priorMail}
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
+        isContinueEnabled = {isContinueEnabled}
         onCheckboxChange={handleCheckboxChange}
       />
     }

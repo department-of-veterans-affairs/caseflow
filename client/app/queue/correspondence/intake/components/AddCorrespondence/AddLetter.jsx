@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux';
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
+  const updateLetterClicked = props.updateLetterClicked;
+
   const responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters);
 
   const [letters, setLetters] = useState(Object.keys(responseLetters));
@@ -15,6 +17,7 @@ export const AddLetter = (props) => {
 
   const addLetter = (index) => {
     setLetters([...letters, index]);
+    updateLetterClicked(true);
   };
 
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
@@ -90,6 +93,7 @@ export const AddLetter = (props) => {
               taskUpdatedCallback={taskUpdatedCallback}
               setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
               currentLetter = {responseLetters && responseLetters[letter]}
+              updateLetterClicked = {props.updateLetterClicked}
             />
           </div>
         )) }
@@ -120,4 +124,5 @@ AddLetter.propTypes = {
   index: PropTypes.number,
   setUnrelatedTasksCanContinue: PropTypes.func,
   onContinueStatusChange: PropTypes.func,
+  updateLetterClicked: PropTypes.func
 };
