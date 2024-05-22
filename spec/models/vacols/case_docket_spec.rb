@@ -4,6 +4,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
 
   after do
@@ -29,7 +30,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
-           bfdloout: 1.day.ago,
+           bfdloout: 3.days.ago,
            bfbox: nonpriority_ready_case_bfbox,
            folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
@@ -55,7 +56,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "83",
-      bfdloout: 1.day.ago,
+      bfdloout: 2.days.ago,
       folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S")
     ).tap { |vacols_case| create(:mail, :blocking, :completed, mlfolder: vacols_case.bfkey) }
   end
@@ -63,7 +64,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:third_nonpriority_ready_case_docket_number) { "1801005" }
   let(:third_nonpriority_ready_case) do
     create(:case,
-           bfd19: 1.year.ago,
+           bfd19: 10.months.ago,
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "83",
@@ -327,8 +328,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:bust_backlog) { false }
 
     before do
-      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      third_nonpriority_ready_case
+      FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+      nonpriority_ready_case.reload
+      another_nonpriority_ready_case.reload
+      third_nonpriority_ready_case.reload
     end
 
     subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
@@ -350,6 +353,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:limit) { 1 }
       it "only distributes cases to the limit" do
         expect(subject.count).to eq(1)
+        expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -358,8 +362,13 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when range is specified" do
       let(:range) { 1 }
+
+      # We do not provide a range if this feature toggle is enabled
+      before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+
       it "only distributes cases within the range" do
         expect(subject.count).to eq(1)
+        expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -369,6 +378,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:another_nonpriority_ready_case_docket_number) { "9901002" }
         it "correctly orders the docket" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq another_nonpriority_ready_case.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -399,6 +409,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -418,6 +429,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "only_genpop" }
         it "does distribute the case only tied to inactive judge" do
           expect(subject.count).to eq(1)
+          expect(subject.first["bfkey"]).to eq third_nonpriority_ready_case.bfkey
           expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
@@ -445,6 +457,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:bust_backlog) { true }
         let(:another_hearing_judge) { judge.vacols_attorney_id }
 
+        # We don't use bust backlog if this feature toggle is enabled
+        before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+
         context "when the judge does not have 30 cases in their backlog" do
           it "does not distribute any appeals" do
             expect(subject.count).to eq(0)
@@ -463,6 +478,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "only distributes the one case to get back down to 30" do
             expect(subject.count).to eq(number_of_cases_over_backlog)
+            expect(subject.first["bfkey"]).to eq nonpriority_ready_case.bfkey
             expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           end
