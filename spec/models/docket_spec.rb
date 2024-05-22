@@ -318,6 +318,7 @@ describe Docket, :all_dbs do
 
       it "returns an empty list when the corresponding CaseDistributionLever record is not found" do
         allow(CaseDistributionLever).to receive(:find_by_item).and_return(nil)
+        allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
         result = docket.ready_priority_nonpriority_appeals(priority: false)
         expected_result = docket.appeals(priority: false, ready: true)
         expect(result.map(&:id)).to eq(expected_result.map(&:id))
@@ -336,7 +337,7 @@ describe Docket, :all_dbs do
       end
 
       it "correctly builds the lever item based on docket type" do
-        expect(docket).to receive(:docket_type).exactly(2).times.and_return("direct_review")
+        expect(docket).to receive(:docket_type).exactly(4).times.and_return("direct_review")
         expect(docket).to receive(:build_lever_item).with("direct_review", "non_priority").and_call_original
         docket.ready_priority_nonpriority_appeals(priority: false)
       end
@@ -747,6 +748,7 @@ describe Docket, :all_dbs do
         subject { EvidenceSubmissionDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
 
         it "creates distributed cases, judge tasks, and specialty case team tasks" do
+          allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(1)
           tasks = subject
 
           # We expect as many as the limit of appeals + the number of sct_appeals

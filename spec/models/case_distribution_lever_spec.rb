@@ -61,7 +61,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
       it "validates combination data_type" do
         lever = CaseDistributionLever.find_by_item(
-          Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals
+          Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals
         )
         valid = lever.update(options: nil)
 
