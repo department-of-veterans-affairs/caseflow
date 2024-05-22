@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// To be completed in APPEALS-39446
 export const CurrentIssue = ({ currentIssue }) => {
   return (
     <div style={{ marginBottom: '2.4rem' }}>
