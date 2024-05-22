@@ -104,8 +104,8 @@ describe('NonCompTabsVha', () => {
     renderNonCompTabs(basicVhaProps);
   });
 
-  it('renders a tab titled "In progress tasks"', () => {
-    expect(screen.getAllByText('In progress tasks (410)')).toBeTruthy();
+  it('renders a tab titled "In Progress Tasks"', () => {
+    expect(screen.getAllByText('In Progress Tasks (410)')).toBeTruthy();
 
     // Check for the correct in progress tasks header values
     const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
@@ -119,7 +119,7 @@ describe('NonCompTabsVha', () => {
   });
 
   it('renders a tab titled "Pending tasks"', async () => {
-    expect(screen.getAllByText('Pending tasks (0)')).toBeTruthy();
+    expect(screen.getAllByText('Pending Tasks (0)')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
@@ -147,7 +147,7 @@ describe('NonCompTabsVha', () => {
   });
 
   it('renders a tab titled "Incomplete tasks"', async () => {
-    expect(screen.getAllByText('Incomplete tasks (0)')).toBeTruthy();
+    expect(screen.getAllByText('Incomplete Tasks (0)')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
@@ -170,7 +170,7 @@ describe('NonCompTabsVha', () => {
 
   it('renders a tab titled "Completed tasks"', async () => {
 
-    expect(screen.getAllByText('Completed tasks')).toBeTruthy();
+    expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
@@ -198,7 +198,7 @@ describe('NonCompTabsGeneric', () => {
   });
 
   it('renders a tab titled "In progress tasks"', async () => {
-    expect(screen.getAllByText('In progress tasks (0)')).toBeTruthy();
+    expect(screen.getAllByText('In Progress Tasks (0)')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
@@ -220,16 +220,16 @@ describe('NonCompTabsGeneric', () => {
   });
 
   it('does not render a tab titled "Incomplete tasks"', () => {
-    expect(screen.queryByText('Incomplete tasks (0)')).toBeNull();
+    expect(screen.queryByText('Incomplete Tasks (0)')).toBeNull();
   });
 
   it('does not render a tab titled "Pending tasks"', () => {
-    expect(screen.queryByText('Pending tasks (0)')).toBeNull();
+    expect(screen.queryByText('Pending Tasks (0)')).toBeNull();
   });
 
   it('renders a tab titled "Completed tasks"', async () => {
 
-    expect(screen.getAllByText('Completed tasks')).toBeTruthy();
+    expect(screen.getAllByText('Completed Tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 

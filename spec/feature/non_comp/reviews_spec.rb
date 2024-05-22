@@ -264,7 +264,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Veterans Health Administration")
         expect(page).to have_content("Incomplete Tasks")
         expect(page).to have_content("Pending Tasks")
-        expect(page).to have_content("In progress Tasks")
+        expect(page).to have_content("In Progress Tasks")
         expect(page).to have_content("Completed Tasks")
 
         # default is the in progress page if no tab is specified in the url
@@ -987,7 +987,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Non-Comp Org")
       expect(page).to_not have_content("Incomplete Tasks")
       expect(page).to_not have_content("Pending Tasks")
-      expect(page).to have_content("In progress Tasks")
+      expect(page).to have_content("In Progress Tasks")
       expect(page).to have_content("Completed Tasks")
 
       # default is the in progress page if no tab is specified in the url
