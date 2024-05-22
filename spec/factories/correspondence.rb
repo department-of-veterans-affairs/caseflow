@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  before(:create) do
+    RequestStore[:current_user] = User.system_user
+  end
   factory :correspondence do
     uuid { SecureRandom.uuid }
     portal_entry_date { Time.zone.now }
@@ -10,7 +13,7 @@ FactoryBot.define do
     va_date_of_receipt { Time.zone.yesterday }
     notes { "This is a test note." }
     nod { false }
-    assigned_by factory: :user
+    assigned_by factory: :system_user
     correspondence_type
     veteran
     package_document_type
@@ -27,7 +30,7 @@ FactoryBot.define do
 
     trait :with_correspondence_intake_task do
       transient do
-        assigned_to { User.first }
+        assigned_to { InboundOpsTeam.singleton.users.first }
       end
 
       after(:create) do |correspondence, evaluator|
