@@ -567,6 +567,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     false
   end
 
+  def system_user?
+    self == User.system_user
+  end
+
   private
 
   def inactive_judge_team

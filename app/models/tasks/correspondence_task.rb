@@ -116,9 +116,7 @@ class CorrespondenceTask < Task
   # block users from creating correspondence tasks if they are not members of Inbound Ops Team
   # ignore check if there is no current user on correspondence creation
   def verify_correspondence_access
-    return true if current_user.blank?
-
     fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
-    InboundOpsTeam.singleton.user_has_access?(current_user)
+    InboundOpsTeam.singleton.user_has_access?(current_user) || current_user.system_user?
   end
 end
