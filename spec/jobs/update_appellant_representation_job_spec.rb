@@ -72,7 +72,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
         end
       end
     end
-
   end
 
   context "when individual appeals throw errors" do
