@@ -305,7 +305,7 @@ export const unknownDataTypeStaticLevers = [
 
 export const mockDocketDistributionPriorLevers = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -671,7 +671,7 @@ export const mockHistoryPayload = [
 
 export const mockDocketDistributionPriorLeversReturn = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -720,7 +720,7 @@ export const mockDocketDistributionPriorLeversReturn = [
   }
 ];
 export const mockCombinationReturn = {
-  item: 'ama_hearings_start_distribution_prior_to_goals',
+  item: 'ama_hearing_start_distribution_prior_to_goals',
   title: 'AMA Hearings Start Distribution Prior to Goals',
   description: '',
   data_type: 'combination',

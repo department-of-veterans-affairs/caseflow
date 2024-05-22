@@ -650,7 +650,7 @@ export const updatedLevers = [
   },
   {
     id: 17,
-    item: DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
+    item: DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals,
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: ACD_LEVERS.data_types.combination,
