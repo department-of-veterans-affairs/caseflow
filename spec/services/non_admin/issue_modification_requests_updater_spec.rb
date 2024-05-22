@@ -43,7 +43,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       edited: [],
       new: [
         {
-          request_type: "Addition",
+          request_type: "addition",
           nonrating_issue_category: "Caregiver | Eligibility",
           decision_review_id: review.id,
           decision_review_type: "HigherLevelReview",

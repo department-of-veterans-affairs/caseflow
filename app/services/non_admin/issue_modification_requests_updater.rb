@@ -2,6 +2,7 @@
 
 # has issue modification request business login.
 
+# :reek:TooManyInstanceVariables
 class NonAdmin::IssueModificationRequestsUpdater
   def initialize(current_user:, review:, issue_modifications_data:)
     @current_user = current_user
@@ -40,14 +41,14 @@ class NonAdmin::IssueModificationRequestsUpdater
       end
       IssueModificationRequest.create!(
         decision_review: review,
-        request_type: new_issue[:request_type],
+        request_type: new_issue[:request_type].downcase,
         request_reason: new_issue[:request_reason],
         benefit_type: new_issue[:benefit_type],
         decision_date: new_issue[:decision_date],
         decision_reason: new_issue[:decision_reason],
         nonrating_issue_category: new_issue[:nonrating_issue_category],
         nonrating_issue_description: new_issue[:nonrating_issue_description],
-        status: new_issue[:status],
+        status: new_issue[:status].downcase,
         requestor_id: new_issue[:requestor_id]
       )
     end
