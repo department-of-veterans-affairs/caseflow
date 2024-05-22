@@ -556,34 +556,34 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.generate_priority_case_distribution_lever_aod_query(_judge)
-    query = if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-              <<-SQL
+    if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+      <<-SQL
               #{VACOLS::Case::JOIN_AOD}
       where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
-              SQL
-            elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-              <<-SQL
+      SQL
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      <<-SQL
               #{VACOLS::Case::JOIN_AOD}
       where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
-              SQL
+      SQL
             end
   end
 
   def self.generate_nonpriority_case_distribution_lever_aod_query(_judge)
-    query = if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-              <<-SQL
+    if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+      <<-SQL
               #{VACOLS::Case::JOIN_AOD}
       where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
-              SQL
-            elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-              <<-SQL
+      SQL
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      <<-SQL
               #{VACOLS::Case::JOIN_AOD}
       where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
-              SQL
+      SQL
             end
   end
 
