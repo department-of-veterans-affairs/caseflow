@@ -93,6 +93,18 @@ describe BulkTaskReassignment, :all_dbs do
             expect { subject }.to raise_error(BulkTaskReassignment::InvalidTaskParent).with_message(expected_output)
           end
         end
+        context "with no children" do
+          it "describes what changes will be made and makes them" do
+            subject
+            tasks.each do |task|
+              expect(task.reload.cancelled?).to eq true
+              expect(task.instructions).to include format(
+                COPY::BULK_REASSIGN_INSTRUCTIONS, Constants.TASK_STATUSES.cancelled, user.css_id
+              )
+            end
+            expect(DistributionTask.all.count).to eq task_count
+          end
+        end
       end
 
       context "the tasks are JudgeDecisionReviewTasks" do
