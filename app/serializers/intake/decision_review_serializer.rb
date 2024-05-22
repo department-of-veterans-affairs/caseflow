@@ -18,6 +18,7 @@ class Intake::DecisionReviewSerializer
   attribute :processed_at, &:establishment_processed_at
   attribute :veteran_invalid_fields
   attribute :request_issues, &:request_issues_ui_hash
+  attribute :task_in_progress, &:task_in_progress?
 
   attribute :decision_issues do |object|
     object.decision_issues.map(&:serialize)
