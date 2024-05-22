@@ -29,7 +29,9 @@ class DocketSwitchMailTask < MailTask
     end
 
     def parent_if_blocking_task(parent_task)
-      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+      return parent_task unless blocking?
+
+      if !parent_task.appeal.distributed_to_a_judge? || parent_task.appeal.specialty_case_team_assign_task?
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
 
