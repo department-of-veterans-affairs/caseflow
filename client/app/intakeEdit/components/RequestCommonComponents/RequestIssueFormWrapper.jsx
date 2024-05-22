@@ -39,7 +39,7 @@ export const RequestIssueFormWrapper = (props) => {
       ...currentIssueFields,
       ...(props.type === 'modification') && { requestIssue: props.currentIssue },
       ...(props.type === 'addition') && { benefitType },
-      requestor: { full_name: userFullName, css_id: userCssId },
+      requestor: { fullName: userFullName, cssId: userCssId },
       requestType: capitalize(props.type),
       ...issueModificationRequest };
 
