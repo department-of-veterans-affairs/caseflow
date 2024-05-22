@@ -454,13 +454,12 @@ class VACOLS::CaseDocket < VACOLS::Record
   # {UPDATE}
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
-    non_priority_cdl_aod_query = generate_non_priority_case_distribution_lever_aod_query(judge)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_aod_query})
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -558,33 +557,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.generate_priority_case_distribution_lever_aod_query(_judge)
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
       <<-SQL
-              #{VACOLS::Case::JOIN_AOD}
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
       and rownum <= ?
       SQL
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       <<-SQL
-              #{VACOLS::Case::JOIN_AOD}
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
       and rownum <= ?
       SQL
-            end
-  end
-
-  def self.generate_nonpriority_case_distribution_lever_aod_query(_judge)
-    if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-      <<-SQL
-              #{VACOLS::Case::JOIN_AOD}
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
-      and rownum <= ?
-      SQL
-    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-      <<-SQL
-              #{VACOLS::Case::JOIN_AOD}
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
-      and rownum <= ?
-      SQL
-            end
+    end
   end
 
   def self.use_by_docket_date?
