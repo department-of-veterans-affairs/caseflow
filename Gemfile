@@ -76,8 +76,6 @@ gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-# execjs runtime
-gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
 gem "tzinfo", "1.2.10"
@@ -107,7 +105,6 @@ group :test, :development, :demo do
   gem "guard-rspec"
   gem "immigrant"
   # Linters
-  gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
