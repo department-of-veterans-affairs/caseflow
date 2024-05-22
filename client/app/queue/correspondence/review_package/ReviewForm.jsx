@@ -10,7 +10,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import DateSelector from '../../../components/DateSelector';
-import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import { updateCmpInformation, setCreateRecordIsReadOnly } from '../correspondenceReducer/reviewPackageActions';
 import { validateDateNotInFuture } from '../../../intake/util/issues';
 import moment from 'moment';
 
@@ -18,6 +18,8 @@ export const ReviewForm = (props) => {
   // eslint-disable-next-line max-len
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
+  const [correspondenceTypeState, setCorrespondenceTypeState] = useState(props.editableData.default_select_label);
+  const [saveButtonReadOnly, setSaveButtonReadOnly] = useState(true);
   const stateCorrespondence = useSelector(
     (state) => state.reviewPackage.correspondence
   );
@@ -25,6 +27,8 @@ export const ReviewForm = (props) => {
   const handleFileNumber = (value) => {
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
+    setSaveButtonReadOnly(false);
+    // Some code on updating redux
     if (isNumeric) {
       const updatedReviewDetails = {
         ...props.editableData,
@@ -40,6 +44,9 @@ export const ReviewForm = (props) => {
       ...props.editableData,
       notes: value,
     };
+
+    setSaveButtonReadOnly(false);
+    // Some code on updating redux
 
     props.setEditableData(updatedNotes);
   };
@@ -61,13 +68,29 @@ export const ReviewForm = (props) => {
     return `${firstName} ${middleInitial} ${lastName}`;
   };
 
+  const createRecordIsReadOnlyState = (val) => {
+    if (saveButtonReadOnly && val.default_select_label !== correspondenceTypeState) {
+      return false;
+    }
+
+    return true;
+
+  };
+
   const handleSelectCorrespondenceType = (val) => {
+    setSaveButtonReadOnly(false);
+
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
+      default_select_label: val.label,
     };
 
+    createRecordIsReadOnlyState(props.editableData.default_select_label);
+    setCorrespondenceTypeState(props.editableData.default_select_label);
+
     props.setEditableData(updatedSelectedValue);
+    // Some code on updating redux
   };
 
   const errorOnVADORDate = (val) => {
@@ -91,15 +114,18 @@ export const ReviewForm = (props) => {
   const handleSelectVADOR = (val) => {
     setDateError(errorOnVADORDate(val));
     setVADORDate(val);
+    setSaveButtonReadOnly(false);
     const updatedSelectedDate = {
       ...props.editableData,
       va_date_of_receipt: val,
     };
 
     props.setEditableData(updatedSelectedDate);
+    // Some code on updating redux
   };
 
   const handleSubmit = async () => {
+    setSaveButtonReadOnly(true);
     const correspondence = props;
     const payloadData = {
       data: {
@@ -122,9 +148,9 @@ export const ReviewForm = (props) => {
 
       const { body } = response;
 
+      props.setDisableButton(false);
       if (body.status === 'ok') {
         props.fetchData();
-        props.setDisableButton((current) => !current);
         props.setErrorMessage('');
       }
     } catch (error) {
@@ -132,6 +158,10 @@ export const ReviewForm = (props) => {
 
       props.setErrorMessage(body.error);
     }
+    setCorrespondenceTypeState(correspondenceTypeState);
+    props.setCreateRecordIsReadOnly(createRecordIsReadOnlyState(props.editableData.default_select_label));
+
+    // Some code on updating redux
   };
 
   const veteranFileNumStyle = () => {
@@ -222,7 +252,8 @@ export const ReviewForm = (props) => {
               <TextField
                 name="correspondence-package-document-type"
                 label="Package document type"
-                value = {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
+                // value = {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
+                value = {[correspondenceTypeState, props.editableData.default_select_label]}
                 readOnly
               />
             </div>
@@ -293,6 +324,7 @@ ReviewForm.propTypes = {
     notes: PropTypes.string,
     veteran_file_number: PropTypes.string,
     default_select_value: PropTypes.number,
+    default_select_label: PropTypes.string,
   }),
   disableButton: PropTypes.bool,
   setEditableData: PropTypes.func,
@@ -318,7 +350,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateCmpInformation
+  updateCmpInformation,
+  setCreateRecordIsReadOnly
 }, dispatch);
 
 export default

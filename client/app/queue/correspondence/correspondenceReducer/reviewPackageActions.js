@@ -40,6 +40,16 @@ export const setVeteranInformation = (veteranInfo) =>
     });
   };
 
+export const setCreateRecordIsReadOnly = (createRecordIsReadOnly) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CREATE_RECORD_IS_READ_ONLY,
+      payload: {
+        createRecordIsReadOnly
+      }
+    });
+  };
+
 export const updateCmpInformation = (packageDocumentType, date) =>
   (dispatch) => {
     dispatch({
