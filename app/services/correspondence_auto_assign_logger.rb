@@ -87,7 +87,6 @@ class CorrespondenceAutoAssignLogger
     attempt.assign_attributes(
       correspondence: correspondence,
       errored_at: Time.current,
-      error_info: { message: unassignable_reason },
       nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       started_at: started_at
@@ -102,7 +101,7 @@ class CorrespondenceAutoAssignLogger
     save_attempt_statistics(
       attempt: attempt,
       task: task,
-      result: "No eligible assignees available"
+      result: "No eligible assignees: #{unassignable_reason}"
     )
   end
 
