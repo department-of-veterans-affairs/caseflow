@@ -5,7 +5,7 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
-    userIsCorrespondenceSupervisor: current_user.mail_supervisor?,
+    userIsInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,

@@ -41,9 +41,7 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false,
-      toggledAutoAssignmentCheckboxes: [],
-      toggledNodCheckboxes: []
+      isVhaOrg: false
     };
   }
 
@@ -263,7 +261,7 @@ getFilteredUsers = () => {
 
             }
           </div>
-          {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
+          {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
             <OrganizationPermissions
               organization={this.props.organization}
               permissions={this.props.organizationPermissions}
