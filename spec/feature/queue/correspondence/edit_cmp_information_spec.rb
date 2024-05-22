@@ -14,8 +14,6 @@ RSpec.feature("The Correspondence Review Package page") do
       :correspondence,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
-      assigned_by_id: inbound_ops_team_user.id,
-      updated_by_id: inbound_ops_team_user.id,
       package_document_type: package_document_type
     )
   end

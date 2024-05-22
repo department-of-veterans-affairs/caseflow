@@ -63,12 +63,10 @@ RSpec.feature("The Correspondence Cases page") do
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2024, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2024, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -377,12 +375,10 @@ RSpec.feature("The Correspondence Cases page") do
       end
       # Used to mock a single task to compare task sorting
       ReassignPackageTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       ReassignPackageTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -546,12 +542,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       ReassignPackageTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       ReassignPackageTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
     end
 
@@ -704,12 +698,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -871,12 +863,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -950,12 +940,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1081,12 +1069,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       PrivacyActRequestCorrespondenceTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       PrivacyActRequestCorrespondenceTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end

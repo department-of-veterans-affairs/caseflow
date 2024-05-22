@@ -13,7 +13,6 @@ FactoryBot.define do
     va_date_of_receipt { Time.zone.yesterday }
     notes { "This is a test note." }
     nod { false }
-    assigned_by factory: :system_user
     correspondence_type
     veteran
     package_document_type

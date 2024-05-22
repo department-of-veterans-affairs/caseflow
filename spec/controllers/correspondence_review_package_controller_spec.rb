@@ -10,6 +10,11 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
 
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
+  let!(:package_document_type) do
+    PackageDocumentType.find_or_create_by!(id: 1) do |pdt|
+      pdt.name = "Some Document Type"
+    end
+  end
 
   before do
     Fakes::Initializer.load!
@@ -40,7 +45,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       put :update_cmp, params: {
         correspondence_uuid: correspondence.uuid,
         VADORDate: Time.zone.now,
-        packageDocument: { value: "1" }
+        packageDocument: { value: package_document_type.id.to_s }
       }
     end
 
@@ -132,7 +137,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(veteran.reload.file_number).to eq(new_file_number)
       expect(correspondence.reload.notes).to eq("Updated notes")
       expect(correspondence.reload.correspondence_type_id).to eq(correspondence_type.id)
-      expect(correspondence.reload.updated_by_id).to eq(current_user.id)
     end
 
     it "returns an error message if something goes wrong" do
