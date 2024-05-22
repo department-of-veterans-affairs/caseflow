@@ -42,7 +42,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
 
   def filter_title(title)
     type = title.scan(/[A-Za-z]+?(?=-)/).first
-    type != ("Hearing" || "LegacyHearing")
+    type != "Hearing" ? (type != "LegacyHearing") : false
   end
 
   def fetch_rooms_list

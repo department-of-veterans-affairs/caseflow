@@ -279,6 +279,17 @@ class Fakes::WebexService
           "created": "2024-05-10T12:45:49.611Z",
           "isPublic": false,
           "isReadOnly": false
+        },
+        {
+          "id": "1234",
+          "title": "Virtual Visit - 221218-977_933_AMA-20240508 1426-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-11T12:45:49.611Z",
+          "creatorId": "56789",
+          "created": "2024-05-11T12:45:49.611Z",
+          "isPublic": false,
+          "isReadOnly": false
         }
       ]
     }
