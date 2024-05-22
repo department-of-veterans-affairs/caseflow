@@ -81,8 +81,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])
     veteran && correspondence.update(
       correspondence_params.merge(
-        veteran_id: veteran.id,
-        updated_by_id: RequestStore.store[:current_user].id
+        veteran_id: veteran.id
       )
     )
   end

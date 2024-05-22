@@ -36,8 +36,6 @@ module QueueHelpers
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: receipt_date,
       notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
-      assigned_by_id: user.id,
-      updated_by_id: user.id,
       veteran_id: vet.id,
       nod: [true, false].sample,
     ).tap { @cmp_packet_number += 1 }

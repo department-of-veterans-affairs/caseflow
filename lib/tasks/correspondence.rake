@@ -75,8 +75,6 @@ namespace :correspondence do
           cmp_packet_number: create_cmp_packet_number,
           va_date_of_receipt: receipt_date,
           notes: doc_type[:description],
-          assigned_by_id: user.id,
-          updated_by_id: user.id,
           veteran_id: veteran.id,
           nod: nod
         ).tap { cmp_packet_number += 1 }
