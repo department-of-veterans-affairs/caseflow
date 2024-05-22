@@ -9,7 +9,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
 
   before do
-    allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+    allow(SlackService).to receive(:new).and_return(slack_service)
     allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
   end
 

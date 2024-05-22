@@ -42,7 +42,7 @@ RSpec.feature "Reader", :all_dbs do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-      metric = Metric.where(metric_message: "pdf_page_render_time_in_ms")&.last
+      metric = Metric.where(metric_message: "PDF render time in Milliseconds")&.last
       expect(metric).to be_present # New metric is created
       expect(metric.start).not_to be_nil
       expect(metric.end).not_to be_nil
