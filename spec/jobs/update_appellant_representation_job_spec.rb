@@ -41,14 +41,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
         metric_name: "runtime",
         metric_value: anything
       )
-      expect(MetricsService).to receive(:emit_gauge).with(
-        app_name: "queue_job",
-        attrs: { endpoint: "AppellantNotification.appeal_mapper", service: "queue_job", uuid: anything },
-        metric_group: "service",
-        metric_name: "request_latency",
-        metric_value: anything
-      ).exactly(new_task_count).times
-
       UpdateAppellantRepresentationJob.perform_now
     end
 
@@ -79,13 +71,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
             .to eq(vso_for_legacy_appeal[appeal.id].first)
         end
       end
-    end
-
-    it "sends the correct number of messages to DataDog and not send a message to Slack" do
-      expect(MetricsService).to receive(:increment_counter).exactly(7).times
-      expect_any_instance_of(SlackService).to_not receive(:send_notification)
-
-      UpdateAppellantRepresentationJob.perform_now
     end
   end
 

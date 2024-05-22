@@ -956,6 +956,10 @@ class Appeal < DecisionReview
     false
   end
 
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
+  end
+
   private
 
   def business_lines_needing_assignment

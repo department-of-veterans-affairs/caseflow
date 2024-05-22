@@ -39,13 +39,7 @@ module PrivacyActPending
 
   def update_appeal_state_when_privacy_act_created
     if PRIVACY_ACT_TASKS.include?(type) && !PRIVACY_ACT_TASKS.include?(parent&.type)
-      MetricsService.record("Updating PRIVACY_ACT_PENDING column in Appeal States Table to TRUE and
-                             PRIVACY_ACT_COMPLETE to FALSE "\
-        "for #{appeal.class} ID #{appeal.id}",
-                            service: nil,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_pending")
-      end
+      appeal.appeal_state.privacy_act_pending_appeal_state_update_action!
     end
   end
 end

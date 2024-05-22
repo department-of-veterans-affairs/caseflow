@@ -13,6 +13,20 @@ class AppealState < CaseflowRecord
   include CreatedAndUpdatedByUserConcern
   include AppealStateBelongsToPolymorphicAppealConcern
 
+  # Purpose: Default state of a hash of attributes for an appeal_state, all set to false.
+  #          This will be used in the `update_appeal_state` method.
+  DEFAULT_STATE = ActiveSupport::HashWithIndifferentAccess.new(decision_mailed: false,
+                                                               appeal_docketed: false,
+                                                               hearing_postponed: false,
+                                                               hearing_withdrawn: false,
+                                                               hearing_scheduled: false,
+                                                               vso_ihp_pending: false,
+                                                               vso_ihp_complete: false,
+                                                               privacy_act_pending: false,
+                                                               privacy_act_complete: false,
+                                                               scheduled_in_error: false,
+                                                               appeal_cancelled: false).freeze
+
   # Locates appeal states that are related to appeals eligible to potentially receive quarterly notifications.
   #   These appeals must not have been cancelled and their decisions must not have already been mailed.
   #
@@ -163,4 +177,152 @@ class AppealState < CaseflowRecord
       SQL
     )
   }
+
+  # Purpose: Method to update appeal_state in the case of
+  # a mailed decision.
+  #
+  # Params: appeal_state
+  #
+  # Response: None
+  def decision_mailed_appeal_state_update_action!
+    update_appeal_state_action!(:decision_mailed)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a cancelled appeal.
+  #
+  # Params: appeal_state
+  #
+  # Response: None
+  def appeal_cancelled_appeal_state_update_action!
+    update_appeal_state_action!(:appeal_cancelled)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a completed informal hearing presentaiton(IHP).
+  #
+  # Params: appeal
+  # Params: None
+  #
+  # Response: None
+  def vso_ihp_complete_appeal_state_update_action!
+    if !appeal.active_vso_ihp_task?
+      update_appeal_state_action!(:vso_ihp_complete)
+    end
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a privacy related tasks marked as complete.
+  #
+  # Params: appeal
+  # Params: None
+  #
+  # Response: None
+  def privacy_act_complete_appeal_state_update_action!
+    if !appeal.active_foia_task?
+      update_appeal_state_action!(:privacy_act_complete)
+    end
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # privacy related tasks being cancelled.
+  #
+  # Params: appeal
+  # Params: None
+  #
+  # Response: None
+  def privacy_act_cancelled_appeal_state_update_action!
+    if !appeal.active_foia_task?
+      update!(privacy_act_pending: false)
+    end
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a docketed appeal.
+  #
+  # Params: None
+  #
+  # Response: None
+  def appeal_docketed_appeal_state_update_action!
+    update_appeal_state_action!(:appeal_docketed)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being postponed.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_postponed_appeal_state_update_action!
+    update_appeal_state_action!(:hearing_postponed)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being withdrawn.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_withdrawn_appeal_state_update_action!
+    update_appeal_state_action!(:hearing_withdrawn)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being scheduled.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_scheduled_appeal_state_update_action!
+    update_appeal_state_action!(:hearing_scheduled)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being scheduled in error.
+  #
+  # Params: None
+  #
+  # Response: None
+  def scheduled_in_error_appeal_state_update_action!
+    update_appeal_state_action!(:scheduled_in_error)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # the most recent VSO IHP Organizational task in the task
+  # tree being in an opened state.
+  #
+  # Params: None
+  #
+  # Response: None
+  def vso_ihp_pending_appeal_state_update_action!
+    update_appeal_state_action!(:vso_ihp_pending)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # the most recent VSO IHP Organizational task in the task
+  # tree being cancelled.
+  #
+  # Params: None
+  #
+  # Response: None
+  def vso_ihp_cancelled_appeal_state_update_action!
+    update!(vso_ihp_pending: false, vso_ihp_complete: false)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # there being at least one of the privacy act related
+  # tasks is still in an opened status.
+  #
+  # Params: None
+  #
+  # Response: None
+  def privacy_act_pending_appeal_state_update_action!
+    update_appeal_state_action!(:privacy_act_pending)
+  end
+
+  private
+
+  def update_appeal_state_action!(new_state)
+    update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
+  end
 end
