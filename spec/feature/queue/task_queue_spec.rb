@@ -299,7 +299,7 @@ feature "Task queue", :all_dbs do
 
   describe "Creating a mail task" do
     let(:mail_user) { create(:user) }
-    let(:mail_team) { InboundOpsTeam.singleton }
+    let(:mail_team) { MailTeam.singleton }
     let(:appeal) { root_task.appeal }
     let(:instructions) { "Some instructions for how to complete the task" }
 
@@ -339,7 +339,7 @@ feature "Task queue", :all_dbs do
 
       mail_task = root_task.reload.children[0]
       expect(mail_task.class).to eq(task_class)
-      expect(mail_task.assigned_to).to eq(InboundOpsTeam.singleton)
+      expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
       sleep 1
 
@@ -380,7 +380,7 @@ feature "Task queue", :all_dbs do
 
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(AodMotionMailTask)
-        expect(mail_task.assigned_to).to eq(InboundOpsTeam.singleton)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
@@ -439,7 +439,7 @@ feature "Task queue", :all_dbs do
 
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(AodMotionMailTask)
-        expect(mail_task.assigned_to).to eq(InboundOpsTeam.singleton)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
