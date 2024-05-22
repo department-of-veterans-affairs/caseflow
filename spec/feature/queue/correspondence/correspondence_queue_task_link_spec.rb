@@ -5,7 +5,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
 
   describe "When a user clicks a task link in veterans details column" do
     let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
-    let(:regular_user) { create(:user)}
+    let(:regular_user) { create(:user) }
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(user: supervisor_user)
