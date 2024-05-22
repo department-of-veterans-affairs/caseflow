@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_04_23_180432) do
+ActiveRecord::Schema.define(version: 2024_05_25_120005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1131,6 +1131,12 @@ ActiveRecord::Schema.define(version: 2024_04_23_180432) do
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
+  end
+
+  create_table "job_execution_times", id: :serial, force: :cascade do |t|
+    t.string "job_name", comment: "Name of the Job whose Last Execution Time is being tracked"
+    t.datetime "last_executed_at", comment: "DateTime value when the Job was Last Executed"
+    t.index ["job_name"], name: "index_job_execution_times_on_job_name", unique: true
   end
 
   create_table "job_notes", force: :cascade do |t|
