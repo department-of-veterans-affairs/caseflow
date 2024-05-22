@@ -187,6 +187,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
+    // const selectValueChanged = editableData.default_select_label !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;

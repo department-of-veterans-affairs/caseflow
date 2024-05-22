@@ -9,7 +9,6 @@ export const initialState = {
   lastAction: {},
   taskInstructions: [],
   reasonForRemovePackage: {},
-  createRecordIsReadOnly: true,
   autoAssign: {
     isButtonDisabled: false,
     batchId: null,
@@ -45,13 +44,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
     return update(state, {
       veteranInformation: {
         $set: action.payload.veteranInfo
-      }
-    });
-
-  case ACTIONS.CREATE_RECORD_IS_READ_ONLY:
-    return update(state, {
-      createRecordIsReadOnlyState: {
-        $set: action.payload.createRecordIsReadOnly
       }
     });
 
