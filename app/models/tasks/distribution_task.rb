@@ -14,7 +14,7 @@
 class DistributionTask < Task
   before_validation :set_assignee
 
-  after_update :update_affinity_start_date, if: :affinity_task_assigned?
+  after_update :update_affinity_start_date, if: :assigned_affinity_start_date?
 
   def actions_available?(user)
     SpecialCaseMovementTeam.singleton.user_has_access?(user)
@@ -64,10 +64,12 @@ class DistributionTask < Task
 
   def update_affinity_start_date
     # update affinity start date with instructions
-    update_with_instructions(affinity_start_date: nil, instructions: ) 
+    self.affinity_start_date = nil
+    self.instructions.push("Appeal affinity start date value was removed.")
+    self.save!
   end
 
-  def affinity_task_assigned?
-    saved_change_to_attribute?("status") && self.affinity_start_date
+  def assigned_affinity_start_date?
+    self.ready_for_distribution_at && self.affinity_start_date
   end
 end
