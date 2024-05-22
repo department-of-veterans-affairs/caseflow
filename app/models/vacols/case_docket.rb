@@ -460,14 +460,24 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
+    non_priority_cdl_query = generate_non_priority_case_distribution_lever_query(judge)
 
     if use_by_docket_date?
-      query = <<-SQL
-        #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
-        and (DOCKET_INDEX <= ? or 1 = ?)
-        and rownum <= ?
-      SQL
+      query = if non_priority_cdl_query
+          <<-SQL
+            #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+            where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_query})
+            and (DOCKET_INDEX <= ? or 1 = ?)
+            and rownum <= ?
+          SQL
+      else
+        <<-SQL
+          #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+          where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+          and (DOCKET_INDEX <= ? or 1 = ?)
+          and rownum <= ?
+        SQL
+      end
     else
       # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
       # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
@@ -482,12 +492,21 @@ class VACOLS::CaseDocket < VACOLS::Record
         limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
       end
 
-      query = <<-SQL
-        #{SELECT_NONPRIORITY_APPEALS}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
-        and (DOCKET_INDEX <= ? or 1 = ?)
-        and rownum <= ?
-      SQL
+      query = if non_priority_cdl_query
+        <<-SQL
+          #{SELECT_NONPRIORITY_APPEALS}
+          where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_query})
+          and (DOCKET_INDEX <= ? or 1 = ?)
+          and rownum <= ?
+        SQL
+      else
+        <<-SQL
+          #{SELECT_NONPRIORITY_APPEALS}
+          where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+          and (DOCKET_INDEX <= ? or 1 = ?)
+          and rownum <= ?
+        SQL
+      end
     end
 
     fmtd_query = sanitize_sql_array([
@@ -506,19 +525,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # {UPDATE}
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    query = if use_by_docket_date?
-              <<-SQL
-                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
-                and (rownum <= ? or 1 = ?)
-              SQL
-            else
-              <<-SQL
-                #{SELECT_PRIORITY_APPEALS}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
-                and (rownum <= ? or 1 = ?)
-              SQL
-            end
+    priority_cdl_query =  generate_priority_case_distribution_lever_query(judge)    
+
+    query = priority_cdl_query ? distribute_priority_appeals_with_lever(priority_cdl_query) : default_distribute_priority_appeals
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -533,6 +542,52 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :nocov:
+
+  def self.generate_priority_case_distribution_lever_query(judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+    elsif CaseDistributionLever.cavc_affinity_days == "infinite"
+      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')})"
+    end
+  end
+
+  def self.generate_non_priority_case_distribution_lever_query(judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+    elsif CaseDistributionLever.cavc_affinity_days == "infinite"
+      "PREV_DECIDING_JUDGE = #{judge.id}"
+    end
+  end
+
+  def self.default_distribute_priority_appeals
+    if use_by_docket_date?
+      <<-SQL
+        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    else
+      <<-SQL
+        #{SELECT_PRIORITY_APPEALS}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    end
+  end
+
+  def self.distribute_priority_appeals_with_lever(cdl_query)
+    if use_by_docket_date?
+      <<-SQL
+        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{cdl_query})
+        and (rownum <= ? or 1 = ?)
+      SQL
+    else
+      <<-SQL
+        #{SELECT_PRIORITY_APPEALS}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{cdl_query})
+        and (rownum <= ? or 1 = ?)
+      SQL
+    end
+  end
 
   def self.distribute_appeals(query, judge, dry_run)
     conn = connection
@@ -590,5 +645,11 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def self.case_affinity_days_lever_value_is_selected?(lever_value)
+    return false if lever_value == "omit" || lever_value == "infinite"
+
+    true
+  end
 end
 # rubocop:enable Metrics/ClassLength
