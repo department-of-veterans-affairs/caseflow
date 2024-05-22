@@ -27,7 +27,8 @@ class AddCorrespondenceView extends React.Component {
       correspondenceType: '',
       notes: '',
       selectedCheckboxes: [],
-      newLetterClicked: null
+      newLetterClicked: null,
+      selectedPriorMail: null
     };
   }
 
@@ -38,13 +39,16 @@ class AddCorrespondenceView extends React.Component {
     if (this.state.newLetterClicked || Object.keys(this.props.currentLetters).length > 0) {
       valueToUpdate = this.props.isContinueEnabled;
     }
-
+    this.setState({ selectedPriorMail: value });
     this.props.onContinueStatusChange(valueToUpdate);
     this.props.clearCheckboxState(valueToUpdate);
   }
 
   updateLetterClicked = (value) => {
     this.setState({ newLetterClicked: value });
+    if (Object.keys(this.props.currentLetters).length === 0) {
+      this.props.onContinueStatusChange(this.state.selectedPriorMail === RELATED_NO);
+    }
   }
 
   onChangeCheckbox = (correspondence, isChecked) => {
