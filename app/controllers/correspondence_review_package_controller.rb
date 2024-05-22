@@ -20,6 +20,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       general_information: general_information,
       user_can_edit_vador: current_user.mail_supervisor?,
       # user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
+      user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
