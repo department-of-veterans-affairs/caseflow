@@ -36,6 +36,8 @@ class Appeal < DecisionReview
   has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
+  has_one :appeal_affinity, as: :case, primary_key: "uuid"
+
   # Each appeal has one appeal_state that is used for tracking quarterly notifications
   has_one :appeal_state, as: :appeal
 
