@@ -70,6 +70,22 @@ class LegacyDocket < Docket
       (style == "request" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_request)
   end
 
+  def ready_priority_nonpriority_legacy_appeals(priority: false, style: "push", genpop: "any", limit: 1, range: nil)
+    priority_status = priority ? PRIORITY : NON_PRIORITY
+    lever_item = "disable_legacy_#{priority_status}"
+    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
+    lever_value = lever&.value
+    if priority && lever_value == "true"
+      return false
+    end
+
+    if !priority && lever_value == "true"
+      false
+    end
+
+    true
+  end
+
   # rubocop:disable Metrics/ParameterLists
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1, range: nil)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
@@ -84,6 +100,7 @@ class LegacyDocket < Docket
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
 
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed?(record["bfkey"], distribution)
@@ -102,6 +119,7 @@ class LegacyDocket < Docket
                                      limit: 1,
                                      bust_backlog: false)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
 
     return [] if !range.nil? && range <= 0
 

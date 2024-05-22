@@ -226,6 +226,31 @@ describe LegacyDocket do
       end
     end
 
+    context "when this is a priority distribution" do
+      CaseDistributionLever.where(item: "disable_legacy_priority").update(value: true)
+      CaseDistributionLever.where(item: "disable_legacy_non_priority").update(value: true)
+
+      it "calls distribute_priority_appeals" do
+        expect(docket).to receive(:distribute_priority_appeals)
+          .with(distribution, style: style, genpop: genpop, limit: limit)
+
+        expect(subject).to eq []
+      end
+    end
+
+    it "returns docket when the corresponding CaseDistributionLever value is false" do
+      CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+      result = docket.ready_priority_nonpriority_appeals(priority: false, ready: true, genpop: true, judge: judge)
+      expected_attributes = docket.appeals(
+        priority: false,
+        ready: true,
+        genpop: true,
+        judge: judge
+      ).map(&:attributes)
+      result_attributes = result.map(&:attributes)
+      expect(result_attributes).to eq(expected_attributes)
+    end
+
     context "when this is a non-priority distribution" do
       let(:priority) { false }
 
