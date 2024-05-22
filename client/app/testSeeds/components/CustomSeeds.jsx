@@ -42,7 +42,7 @@ const CustomSeeds = () => {
 
   // const [seedRunningStatus, setSeedRunningStatus] = useState(false);
   // const [seedRunningMsg, setSeedRunningMsg] = useState('Seeds running');
-  // const [seedByType, setSeedByType] = useState({});
+  const [seedByType, setSeedByType] = useState({});
 
   const theState = useSelector((state) => state);
   console.log(theState.testSeeds.seeds);
@@ -152,33 +152,34 @@ const CustomSeeds = () => {
         </table>
         <hr />
       </>
-      <>
+      <div className="custom-seeds-preview">
         <h2 id="show_seeds_preview">Preview</h2>
-        <table className="seed-table-style">
-          <thead>
-            <tr>
-              <th className={cx('table-header-styling')}>Case(s) Type</th>
-              <th className={cx('table-header-styling')}>Amount</th>
-              <th className={cx('table-header-styling')}>Days Ago</th>
-              <th className={cx('table-header-styling')}>Associated Judge</th>
-            </tr>
-          </thead>
-          <tbody>
-            {theState.testSeeds.seeds.map((obj, index) => (
-              <tr key={index}>
-                <td>{obj.seed_type}</td>
-                <td>{obj.seed_count} Cases</td>
-                <td>{obj.days_ago} Days Ago</td>
-                <td>{obj.judge_css_id}</td>
+        <div className="preview-table-scroll">
+          <table className="seed-table-style preview-table">
+            <thead>
+              <tr>
+                <th className={cx('table-header-styling')}>Case(s) Type</th>
+                <th className={cx('table-header-styling')}>Amount</th>
+                <th className={cx('table-header-styling')}>Days Ago</th>
+                <th className={cx('table-header-styling')}>Associated Judge</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {theState.testSeeds.seeds.map((obj, index) => (
+                <tr key={index}>
+                  <td>{obj.seed_type}</td>
+                  <td>{obj.seed_count} Cases</td>
+                  <td>{obj.days_ago} Days Ago</td>
+                  <td>{obj.judge_css_id}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
           <Button onClick={() => saveSeeds()} name={`Create ${theState.testSeeds.seeds.length} test cases`} />
         </div>
-        <hr />
-      </>
+      </div>
     </div>
   );
 };
