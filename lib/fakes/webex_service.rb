@@ -290,6 +290,17 @@ class Fakes::WebexService
           "created": "2024-05-11T12:45:49.611Z",
           "isPublic": false,
           "isReadOnly": false
+        },
+        {
+          "id": "5678",
+          "title": "Virtual Visit - PatientLast Problem Hearing-20240213 3123-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-11T12:45:49.611Z",
+          "creatorId": "56789",
+          "created": "2024-05-11T12:45:49.611Z",
+          "isPublic": false,
+          "isReadOnly": false
         }
       ]
     }

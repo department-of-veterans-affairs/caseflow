@@ -25,25 +25,25 @@ class Hearings::FetchWebexRoomMeetingDetailsJob < CaseflowJob
 
   def perform(room_id:, meeting_title:)
     ensure_current_user_is_set
-    fetch_room_details
-    # params will be room_id, meeting_title later
-    Hearings::FetchWebexRecordingsListJob.perform_now
+    room_meeting_details = fetch_room_details(room_id)
+    Hearings::FetchWebexRecordingsListJob.perform_later
+    # Hearings::FetchWebexRecordingsListJob.perform_later(meeting_id: room_meeting_details.meeting_id, meeting_title: meeting_title)
   end
 
   private
 
-  # This constructs the headers and calls on the webex endpoint for getting details of a room
-  # Params: room_id - The unique ID of the webex room
+  # This constructs the headers and calls on the webex endpoint to retreive the meeting details from the specified room using ID
+  # Params: id - The unique ID of the webex room
   # Return: The response object created from the response from the API
-  def fetch_room_details
+  def fetch_room_details(id)
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_MASTER_BOT_TOKEN"],
+      apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: nil
-    ).fetch_room_details(room_id)
+    ).fetch_room_details(id)
   end
 end

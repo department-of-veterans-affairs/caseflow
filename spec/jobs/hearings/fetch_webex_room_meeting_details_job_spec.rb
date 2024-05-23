@@ -30,7 +30,7 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
     end
 
     it "returns correct response" do
-      expect(subject.new.send(:fetch_room_details).resp.raw_body).to eq(room_details)
+      expect(subject.new.send(:fetch_room_details, room_id).resp.raw_body).to eq(room_details)
     end
 
     it "retries and logs errors" do

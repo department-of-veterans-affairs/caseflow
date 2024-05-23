@@ -159,8 +159,6 @@ Rails.application.configure do
   ENV["WEBEX_DOMAIN_MAIN"] ||= "webex.com"
   ENV["WEBEX_API_IC"] ||= "/api/v2/joseencrypt"
   ENV["WEBEX_API_MAIN"] ||= "/v1/"
-  # PLACEHOLDER
-  ENV["WEBEX_MASTER_BOT_TOKEN"] ||= "placeholder"
 
   # Pexip environment variables
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"

@@ -27,10 +27,10 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
-    fetch_rooms_list.rooms.each do |n|
-      next if filter_title(n.title)
+    fetch_rooms_list.rooms.each do |room|
+      next if filter_title(room.title)
 
-      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: n.id, meeting_title: n.title)
+      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: room.id, meeting_title: room.title)
     end
   end
 
@@ -41,8 +41,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   private
 
   def filter_title(title)
-    type = title.scan(/[A-Za-z]+?(?=-)/).first
-    type != "Hearing" ? (type != "LegacyHearing") : false
+    title.scan(/\d*-*\d+_\d+_[A-Za-z]*Hearing+(?=-)/).blank?
   end
 
   def fetch_rooms_list
@@ -54,8 +53,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      # PLACEHOLDER
-      apikey: ENV["WEBEX_MASTER_BOT_TOKEN"],
+      apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query
