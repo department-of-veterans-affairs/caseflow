@@ -16,9 +16,8 @@ class QuarterlyNotificationsJob < CaseflowJob
   def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
     ensure_current_user_is_set
 
-    AppealState.where.not(
-      decision_mailed: true, appeal_cancelled: true
-    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
+    AppealState.where.not(decision_mailed: true).where.not(appeal_cancelled: true)
+      .find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
       batched_appeal_states.each do |appeal_state|
         # add_record_to_appeal_states_table(appeal_state.appeal)
         if appeal_state.appeal_type == "Appeal"
