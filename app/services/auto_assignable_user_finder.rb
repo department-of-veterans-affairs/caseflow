@@ -40,7 +40,7 @@ class AutoAssignableUserFinder
   def run_auto_assign_algorithm(correspondence, users)
     users.each do |user|
       if correspondence.nod && !user.nod?
-        self.unassignable_reason = "Case not assigned because of NOD permission settings."
+        self.unassignable_reason = "NOD permission is currently disabled for this user."
         next
       end
 
