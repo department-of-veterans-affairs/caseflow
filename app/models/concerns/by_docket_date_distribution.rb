@@ -99,26 +99,28 @@ module ByDocketDateDistribution
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end
 
-    docket_counts.merge({
-      ineligible_judge_stats: {
-        distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges
-      },
-      judge_stats: {
-        team_size: team_size,
-        ama_judge_assigned_tasks: judge_tasks.length,
-        legacy_assigned_tasks: judge_legacy_tasks.length,
-        settings: settings
-      },
-      statistics: {
-        batch_size: @appeals.count,
-        total_batch_size: total_batch_size,
-        priority_target: @push_priority_target || @request_priority_count,
-        priority_count: priority_count,
-        nonpriority_count: nonpriority_count,
-        nonpriority_iterations: @nonpriority_iterations,
-        sct_appeals: sct_appeals_counts
+    docket_counts.merge(
+      {
+        ineligible_judge_stats: {
+          distributed_cases_tied_to_ineligible_judges: cases_tied_to_ineligible_judges
+        },
+        judge_stats: {
+          team_size: team_size,
+          ama_judge_assigned_tasks: judge_tasks.length,
+          legacy_assigned_tasks: judge_legacy_tasks.length,
+          settings: settings
+        },
+        statistics: {
+          batch_size: @appeals.count,
+          total_batch_size: total_batch_size,
+          priority_target: @push_priority_target || @request_priority_count,
+          priority_count: priority_count,
+          nonpriority_count: nonpriority_count,
+          nonpriority_iterations: @nonpriority_iterations,
+          sct_appeals: sct_appeals_counts
+        }
       }
-    })
+    )
   rescue StandardError => error
     # There always needs to be a batch_size value for a completed distribution, else the priority push job will error
     {

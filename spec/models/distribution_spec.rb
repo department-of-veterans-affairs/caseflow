@@ -140,10 +140,17 @@ describe Distribution, :all_dbs do
     let(:statistics) do
       {
         statistics: {
-            batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
-            evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
-            legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
-            algorithm: "proportions", sct_appeals: 0
+          batch_size: 0,
+          direct_review_due_count: 0,
+          direct_review_proportion: 0,
+          evidence_submission_proportion: 0,
+          hearing_proportion: 0,
+          legacy_hearing_backlog_count: 0,
+          legacy_proportion: 0.0,
+          nonpriority_iterations: 0,
+          priority_count: 0,
+          total_batch_size: 0,
+          sct_appeals: 0
         }
       }
     end
