@@ -49,7 +49,6 @@ namespace :correspondence do
     catch(:error) do
       num_cor = args.number_of_correspondence.to_i
       veteran = Veteran.find_by_file_number_or_ssn(args.vet_file_number.to_s)
-      cmp_packet_number = create_cmp_packet_number
       user = RequestStore[:current_user]
 
       throw :error, STDOUT.puts("Correspondences created must be greater than 0") if num_cor <= 0
@@ -70,12 +69,11 @@ namespace :correspondence do
           package_document_type_id: package_doc_type&.id,
           correspondence_type_id: corr_type&.id,
           cmp_queue_id: cmp_queue_id,
-          cmp_packet_number: create_cmp_packet_number,
           va_date_of_receipt: receipt_date,
           notes: doc_type[:description],
           veteran_id: veteran.id,
           nod: nod
-        ).tap { cmp_packet_number += 1 }
+        ).tap
 
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
@@ -190,12 +188,6 @@ def create_package_document_types
   end
 end
 
-# default packet number to 1_000_000 or increment the list of current correspondences
-def create_cmp_packet_number
-  packet_number = Correspondence.last.blank? ? 1_000_000_000 : (Correspondence.last.cmp_packet_number + 1)
-
-  packet_number
-end
 
 # generate the doctype and description from VBMS doc type list
 def generate_vbms_doc_type(nod)
