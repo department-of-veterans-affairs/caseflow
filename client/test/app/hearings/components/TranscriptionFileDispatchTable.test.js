@@ -64,6 +64,12 @@ describe('TranscriptionFileDispatchTable', () => {
 
       fireEvent.click(option);
       expect(getByText('AOD')).toBeInTheDocument();
+
+      fireEvent.click(filter);
+      const clear = screen.getByText('Clear Type filter');
+
+      fireEvent.click(clear);
+      expect(getByText('Original')).toBeInTheDocument();
     });
 
     it('Hearing Date column is rendered', () => {
@@ -106,6 +112,12 @@ describe('TranscriptionFileDispatchTable', () => {
 
       fireEvent.click(option);
       expect(getByText('Legacy')).toBeInTheDocument();
+
+      fireEvent.click(filter);
+      const clear = screen.getByText('Clear Hearing Type filter');
+
+      fireEvent.click(clear);
+      expect(getByText('AMA')).toBeInTheDocument();
     });
 
     it('Status column is rendered', () => {
@@ -114,6 +126,7 @@ describe('TranscriptionFileDispatchTable', () => {
       expect(screen.getByText('Status')).toBeInTheDocument();
     });
 
+    // This test will get changed once other tabs using this table get made
     it('Status column is filterable', () => {
       setupUnassignedTable();
       const typeHeader = document.querySelector('[aria-labelledby="header-status"]');
@@ -123,9 +136,15 @@ describe('TranscriptionFileDispatchTable', () => {
       const { getByText } = within(firstRow);
 
       fireEvent.click(filter);
-      const option = screen.getByText('Completed (4)');
+      const option = screen.getByText('Unassigned (8)');
 
       fireEvent.click(option);
+      expect(getByText('Unassigned')).toBeInTheDocument();
+
+      fireEvent.click(filter);
+      const clear = screen.getByText('Clear Status filter');
+
+      fireEvent.click(clear);
       expect(getByText('Completed')).toBeInTheDocument();
     });
 

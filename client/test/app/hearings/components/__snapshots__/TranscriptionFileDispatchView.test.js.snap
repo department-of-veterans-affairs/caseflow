@@ -471,6 +471,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                     </th>
                     <th
                       aria-labelledby="header-hearingDate"
+                      aria-sort="ascending"
                       class=""
                       role="columnheader"
                       scope="col"
@@ -523,7 +524,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                                   </g>
                                 </g>
                                 <g
-                                  fill="#d6d7d9"
+                                  fill="#0071bc"
                                   transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                                 >
                                   <g
@@ -724,7 +725,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      240325-1197
+                      132281-4503
                     </td>
                     <td
                       class=""
@@ -732,7 +733,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      John Smith (1000001)
+                      Tim Brooks (6014084)
                     </td>
                     <td
                       class=""
@@ -748,7 +749,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/10/2024
+                      5/08/2024
                     </td>
                     <td
                       class=""
@@ -764,7 +765,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Unassigned
+                      Completed
                     </td>
                   </tr>
                   <tr
@@ -807,7 +808,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      240325-1197
+                      026241-4518
                     </td>
                     <td
                       class=""
@@ -815,7 +816,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      John Smith (1000001)
+                      Betty Bins (1710594)
                     </td>
                     <td
                       class=""
@@ -823,7 +824,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Original
+                      CAVC
                     </td>
                     <td
                       class=""
@@ -831,7 +832,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/16/2024
+                      5/08/2024
                     </td>
                     <td
                       class=""
@@ -847,7 +848,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Unassigned
+                      Assigned
                     </td>
                   </tr>
                   <tr
@@ -890,7 +891,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      180000310
+                      240325-1197
                     </td>
                     <td
                       class=""
@@ -898,7 +899,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Jane Smith (2000001)
+                      John Smith (1000001)
                     </td>
                     <td
                       class=""
@@ -906,7 +907,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      AOD
+                      Original
                     </td>
                     <td
                       class=""
@@ -914,7 +915,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/12/2024
+                      5/10/2024
                     </td>
                     <td
                       class=""
@@ -922,7 +923,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Legacy
+                      AMA
                     </td>
                     <td
                       class=""
@@ -973,6 +974,172 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
+                      014042324
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Walter Bells (2614022)
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Original
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      5/10/2024
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Legacy
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Completed
+                    </td>
+                  </tr>
+                  <tr
+                    class=""
+                    id="table-row-4"
+                    role="row"
+                  >
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      <div
+                        data-css-too3cg=""
+                      >
+                        <div
+                          class="checkbox-wrapper-undefined cf-form-checkboxes"
+                        >
+                          <div
+                            class="cf-form-checkbox"
+                          >
+                            <input
+                              aria-label="select file checkbox"
+                              type="checkbox"
+                            />
+                            <label>
+                              <span
+                                class=""
+                              />
+                               
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      014042324
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Walter Bells (2614022)
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Original
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      5/11/2024
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Legacy
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Completed
+                    </td>
+                  </tr>
+                  <tr
+                    class=""
+                    id="table-row-5"
+                    role="row"
+                  >
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      <div
+                        data-css-too3cg=""
+                      >
+                        <div
+                          class="checkbox-wrapper-undefined cf-form-checkboxes"
+                        >
+                          <div
+                            class="cf-form-checkbox"
+                          >
+                            <input
+                              aria-label="select file checkbox"
+                              type="checkbox"
+                            />
+                            <label>
+                              <span
+                                class=""
+                              />
+                               
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
                       180000310
                     </td>
                     <td
@@ -997,7 +1164,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/15/2024
+                      5/12/2024
                     </td>
                     <td
                       class=""
@@ -1018,7 +1185,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                   </tr>
                   <tr
                     class=""
-                    id="table-row-4"
+                    id="table-row-6"
                     role="row"
                   >
                     <td
@@ -1097,172 +1264,6 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       tabindex="-1"
                     >
                       Unassigned
-                    </td>
-                  </tr>
-                  <tr
-                    class=""
-                    id="table-row-5"
-                    role="row"
-                  >
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      <div
-                        data-css-too3cg=""
-                      >
-                        <div
-                          class="checkbox-wrapper-undefined cf-form-checkboxes"
-                        >
-                          <div
-                            class="cf-form-checkbox"
-                          >
-                            <input
-                              aria-label="select file checkbox"
-                              type="checkbox"
-                            />
-                            <label>
-                              <span
-                                class=""
-                              />
-                               
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      212091-4735
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Tom Brody (4035601)
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      AOD
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      5/17/2024
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      AMA
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Unassigned
-                    </td>
-                  </tr>
-                  <tr
-                    class=""
-                    id="table-row-6"
-                    role="row"
-                  >
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      <div
-                        data-css-too3cg=""
-                      >
-                        <div
-                          class="checkbox-wrapper-undefined cf-form-checkboxes"
-                        >
-                          <div
-                            class="cf-form-checkbox"
-                          >
-                            <input
-                              aria-label="select file checkbox"
-                              type="checkbox"
-                            />
-                            <label>
-                              <span
-                                class=""
-                              />
-                               
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      132281-4503
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Tim Brooks (6014084)
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Original
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      5/08/2024
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      AMA
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Completed
                     </td>
                   </tr>
                   <tr
@@ -1471,7 +1472,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      733045379
+                      814054302
                     </td>
                     <td
                       class=""
@@ -1479,7 +1480,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Ted Ernest  (2010508)
+                      Sarah Waters (2614022)
                     </td>
                     <td
                       class=""
@@ -1487,7 +1488,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Original
+                      CAVC
                     </td>
                     <td
                       class=""
@@ -1495,7 +1496,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/17/2024
+                      5/14/2024
                     </td>
                     <td
                       class=""
@@ -1511,12 +1512,95 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Assigned
+                      Unassigned
                     </td>
                   </tr>
                   <tr
                     class=""
                     id="table-row-10"
+                    role="row"
+                  >
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      <div
+                        data-css-too3cg=""
+                      >
+                        <div
+                          class="checkbox-wrapper-undefined cf-form-checkboxes"
+                        >
+                          <div
+                            class="cf-form-checkbox"
+                          >
+                            <input
+                              aria-label="select file checkbox"
+                              type="checkbox"
+                            />
+                            <label>
+                              <span
+                                class=""
+                              />
+                               
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      180000310
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Jane Smith (2000001)
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      AOD
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      5/15/2024
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Legacy
+                    </td>
+                    <td
+                      class=""
+                      colspan="1"
+                      role="gridcell"
+                      tabindex="-1"
+                    >
+                      Unassigned
+                    </td>
+                  </tr>
+                  <tr
+                    class=""
+                    id="table-row-11"
                     role="row"
                   >
                     <td
@@ -1599,89 +1683,6 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                   </tr>
                   <tr
                     class=""
-                    id="table-row-11"
-                    role="row"
-                  >
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      <div
-                        data-css-too3cg=""
-                      >
-                        <div
-                          class="checkbox-wrapper-undefined cf-form-checkboxes"
-                        >
-                          <div
-                            class="cf-form-checkbox"
-                          >
-                            <input
-                              aria-label="select file checkbox"
-                              type="checkbox"
-                            />
-                            <label>
-                              <span
-                                class=""
-                              />
-                               
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      026241-4518
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Betty Bins (1710594)
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      CAVC
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      5/08/2024
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      AMA
-                    </td>
-                    <td
-                      class=""
-                      colspan="1"
-                      role="gridcell"
-                      tabindex="-1"
-                    >
-                      Assigned
-                    </td>
-                  </tr>
-                  <tr
-                    class=""
                     id="table-row-12"
                     role="row"
                   >
@@ -1720,7 +1721,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      014042324
+                      240325-1197
                     </td>
                     <td
                       class=""
@@ -1728,7 +1729,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Walter Bells (2614022)
+                      John Smith (1000001)
                     </td>
                     <td
                       class=""
@@ -1744,7 +1745,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/10/2024
+                      5/16/2024
                     </td>
                     <td
                       class=""
@@ -1752,7 +1753,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Legacy
+                      AMA
                     </td>
                     <td
                       class=""
@@ -1760,7 +1761,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Completed
+                      Unassigned
                     </td>
                   </tr>
                   <tr
@@ -1803,7 +1804,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      014042324
+                      212091-4735
                     </td>
                     <td
                       class=""
@@ -1811,7 +1812,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Walter Bells (2614022)
+                      Tom Brody (4035601)
                     </td>
                     <td
                       class=""
@@ -1819,7 +1820,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Original
+                      AOD
                     </td>
                     <td
                       class=""
@@ -1827,7 +1828,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/11/2024
+                      5/17/2024
                     </td>
                     <td
                       class=""
@@ -1835,7 +1836,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Legacy
+                      AMA
                     </td>
                     <td
                       class=""
@@ -1843,7 +1844,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Completed
+                      Unassigned
                     </td>
                   </tr>
                   <tr
@@ -1886,7 +1887,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      814054302
+                      733045379
                     </td>
                     <td
                       class=""
@@ -1894,7 +1895,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Sarah Waters (2614022)
+                      Ted Ernest  (2010508)
                     </td>
                     <td
                       class=""
@@ -1902,7 +1903,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      CAVC
+                      Original
                     </td>
                     <td
                       class=""
@@ -1910,7 +1911,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      5/14/2024
+                      5/17/2024
                     </td>
                     <td
                       class=""
@@ -1926,7 +1927,7 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
                       role="gridcell"
                       tabindex="-1"
                     >
-                      Unassigned
+                      Assigned
                     </td>
                   </tr>
                 </tbody>

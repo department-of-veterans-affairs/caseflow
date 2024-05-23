@@ -111,7 +111,10 @@ export const tabConfig = [
             </div>
           </div>
           <div style={styles.tableStyles}>
-            <TranscriptionFileDispatchTable columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)} />
+            <TranscriptionFileDispatchTable
+              columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+              statusFilter={['Unassigned']}
+            />
           </div>
 
         </>

@@ -39,12 +39,22 @@ const styles = css({
   }
 });
 
-export const TranscriptionFileDispatchTable = ({ columns }) => {
+export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
   const [transcriptionFiles, setTranscriptionFiles] = useState([]);
 
+  /**
+   * This filters the transcription files by its status before it renders
+   * @param {array} This is an array of the original transcription files list
+   * @returns A filtered list
+   * Note: This function is commented out for testing purposes and will be put back in after other tabs are made
+   */
+  // const filterTranscriptionFiles = (files) => files.filter((file) => file.status.includes(statusFilter));
+
   useEffect(() => {
+    // const filteredFiles = filterTranscriptionFiles(testTranscriptionFiles);
+
     setTranscriptionFiles(testTranscriptionFiles);
-  });
+  }, []);
 
   /**
    * A map for the column to determine which function to use
@@ -81,6 +91,11 @@ export const TranscriptionFileDispatchTable = ({ columns }) => {
         rowObjects={transcriptionFiles}
         enablePagination
         casesPerPage={15}
+        defaultSort={{
+          sortColName: 'hearingDateColumn',
+          sortAscending: true
+        }}
+        anyFiltersAreSet
       />
     </div>
   );
@@ -91,5 +106,6 @@ TranscriptionFileDispatchTable.propTypes = {
     PropTypes.shape({
       name: PropTypes.string,
       filterable: PropTypes.bool || PropTypes.string
-    }))
+    })),
+  statusFilter: PropTypes.arrayOf(PropTypes.string)
 };

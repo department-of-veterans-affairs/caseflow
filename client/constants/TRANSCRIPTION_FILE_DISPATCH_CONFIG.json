@@ -2,37 +2,44 @@
   "COLUMNS": {
     "SELECT_ALL": {
       "name": "selectColumn",
-      "filterable": false
+      "filterable": false,
+      "anyFiltersAreSet": false
     },
     "DOCKET_NUMBER": {
       "name": "docketNumberColumn",
-      "filterable": false
+      "filterable": false,
+      "anyFiltersAreSet": false
     },
     "CASE_DETAILS": {
       "name": "caseDetailsColumn",
-      "filterable": false
+      "filterable": false,
+      "anyFiltersAreSet": false
     },
     "TYPES": {
       "name": "typesColumn",
       "filterable": true,
+      "anyFiltersAreSet": true,
       "sorting_table": "appeals",
-      "sorting_columns": ["stream_type"]
+      "sorting_columns": ["type"]
     },
     "HEARING_DATE": {
       "name": "hearingDateColumn",
       "filterable": "date",
+      "anyFiltersAreSet": true,
       "sorting_table": "hearings",
-      "sorting_columns": ["scheduled_time"]
+      "sorting_columns": ["hearing_date"]
     },
     "HEARING_TYPE": {
       "name": "hearingTypeColumn",
       "filterable": true,
+      "anyFiltersAreSet": true,
       "sorting_table": "hearings",
       "sorting_columns": ["hearing_type"]
     },
     "STATUS": {
       "name": "statusColumn",
-      "filterable": true
+      "filterable": true,
+      "anyFiltersAreSet": true
     }
   },
   "COLUMN_SORT_ORDER_ASC": "asc",
