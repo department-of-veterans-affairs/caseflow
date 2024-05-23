@@ -49,7 +49,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
@@ -69,7 +68,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: package_doc_id,
           correspondence_type_id: 8,
@@ -96,7 +94,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
@@ -123,7 +120,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
@@ -153,7 +149,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
@@ -174,7 +169,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
@@ -202,7 +196,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
