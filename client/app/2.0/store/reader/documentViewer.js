@@ -2,7 +2,7 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { random, range, difference } from 'lodash';
 import * as PDF from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import Mark from 'mark.js';
 
 // Local Dependencies
@@ -20,7 +20,7 @@ import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
 
 // Set the PDFJS service worker
-PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Create a place in-memory to store the downloaded PDF documents
 const pdfDocuments = {};
