@@ -441,6 +441,36 @@ class TaskRows extends React.PureComponent {
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
+    // Based on react-markdown defaultUrlTransform method
+    // https://github.com/remarkjs/react-markdown/blob/78160f5a0877675c1c18417a220f9948de143720/lib/index.js#L299-L319
+    const handleUrlTransform = (value) => {
+      // Same as:
+      // <https://github.com/micromark/micromark/blob/929275e/packages/micromark-util-sanitize-uri/dev/index.js#L34>
+      // But without the `encode` part.
+      const colon = value.indexOf(':')
+      const questionMark = value.indexOf('?')
+      const numberSign = value.indexOf('#')
+      const slash = value.indexOf('/')
+      // Adding ms-word protocol to the list of safe protocols
+      const safeProtocol = /^(https?|ircs?|mailto|xmpp|ms-word)$/i
+
+      if (
+        // If there is no protocol, it’s relative.
+        colon < 0 ||
+        // If the first colon is after a `?`, `#`, or `/`, it’s not a protocol.
+        (slash > -1 && colon > slash) ||
+        (questionMark > -1 && colon > questionMark) ||
+        (numberSign > -1 && colon > numberSign) ||
+        // It is a protocol, it should be allowed.
+        safeProtocol.test(value.slice(0, colon))
+      ) {
+        return value
+      }
+
+      return ''
+    };
+
+
     // eslint-disable-next-line no-shadow
     const formatInstructions = (task, text) => {
       if (issueUpdateTask(task)) {
@@ -453,8 +483,10 @@ class TaskRows extends React.PureComponent {
         );
       }
 
+      // Using transformLinkUri to set custom URL Transform method
+      // More recent versions of react-markdown use the urlTransform prop here
       return (
-        <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+        <ReactMarkdown transformLinkUri={(src) => handleUrlTransform(src)}>{formatBreaks(text)}</ReactMarkdown>
       );
     };
 
