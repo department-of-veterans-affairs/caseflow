@@ -49,7 +49,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
           cmp_queue_id: 1,
@@ -68,7 +67,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: package_doc_id,
           correspondence_type_id: 8,
           cmp_queue_id: 1,
@@ -94,7 +92,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
           cmp_queue_id: 1,
@@ -120,7 +117,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
           cmp_queue_id: cmp_queue_id,
@@ -149,7 +145,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
           cmp_queue_id: 1,
@@ -169,7 +164,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
           cmp_queue_id: 1,
@@ -196,7 +190,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          source_type: "Mail",
           package_document_type_id: 15,
           correspondence_type_id: 8,
           cmp_queue_id: cmp_queue_id,
