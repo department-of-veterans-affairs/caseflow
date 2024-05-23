@@ -313,8 +313,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                        receipt_date: 1.month.ago
-                      )
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
@@ -325,8 +324,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                         :with_post_intake_tasks,
                         :advanced_on_docket_due_to_age,
                         docket_type: Constants.AMA_DOCKETS.direct_review,
-                        receipt_date: 1.month.ago
-                       )
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
@@ -453,8 +451,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                       :with_post_intake_tasks,
                       :advanced_on_docket_due_to_age,
                       docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                      receipt_date: 1.month.ago
-                    )
+                      receipt_date: 1.month.ago)
       appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 3.months.ago)
       appeal
