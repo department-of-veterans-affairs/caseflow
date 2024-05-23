@@ -31,12 +31,12 @@ class DocketSwitchMailTask < MailTask
     # SCT - Distributed
     # F - F -> RootTask
     # F - T -> RootTask
-    # T - F -> RootTask
-    # T - T -> DistributionTask
+    # T - F -> DistributionTask
+    # T - T -> RootTask
     def parent_if_blocking_task(parent_task)
       return parent_task unless blocking?
 
-      if parent_task.appeal.distributed_to_a_judge? && parent_task.appeal.specialty_case_team_assign_task?
+      if !parent_task.appeal.distributed_to_a_judge? && parent_task.appeal.specialty_case_team_assign_task?
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
 
