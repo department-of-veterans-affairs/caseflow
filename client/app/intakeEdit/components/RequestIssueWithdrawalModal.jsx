@@ -9,12 +9,13 @@ import * as yup from 'yup';
 
 const withdrawalSchema = yup.object({
   requestReason: yup.string().required(),
-  withdrawalDate: yup.string().required()
+  withdrawalDate: yup.date().required().
+    max(new Date(), 'We cannot process your request. Please select a date prior to today\'s date.'),
 });
 
 const RequestIssueWithdrawalContent = ({ currentIssue }) => {
 
-  const { register } = useFormContext();
+  const { register, errors } = useFormContext();
 
   return (
     <div>
@@ -24,6 +25,7 @@ const RequestIssueWithdrawalContent = ({ currentIssue }) => {
         label="Request date for withdrawal"
         name="withdrawalDate"
         inputRef={register}
+        errorMessage={errors.withdrawalDate?.message}
         type="date" />
       <RequestReason
         label="withdrawal" />

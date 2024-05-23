@@ -3,12 +3,13 @@ import DateSelector from 'app/components/DateSelector';
 import { useFormContext } from 'react-hook-form';
 
 const PriorDecisionDateSelector = () => {
-  const { register } = useFormContext();
+  const { register, errors } = useFormContext();
 
   return <DateSelector
     label="Prior decision date"
     name="decisionDate"
     inputRef={register}
+    errorMessage={errors.decisionDate?.message}
     type="date" />;
 };
 

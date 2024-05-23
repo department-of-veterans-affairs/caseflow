@@ -10,7 +10,8 @@ import * as yup from 'yup';
 
 const additionSchema = yup.object({
   nonRatingIssueCategory: yup.string().required(),
-  decisionDate: yup.string().required(),
+  decisionDate: yup.date().required().
+    max(new Date(), 'Decision date cannot be in the future.'),
   nonRatingIssueDescription: yup.string().required(),
   requestReason: yup.string().required()
 });
