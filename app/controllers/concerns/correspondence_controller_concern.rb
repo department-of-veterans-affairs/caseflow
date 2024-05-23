@@ -7,10 +7,11 @@ module CorrespondenceControllerConcern
   private
 
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
+    # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
 
     # Instantiate AutoAssignableUserFinder with current_user
-    permission_checker = AutoAssignableUserFinder.new(current_user)
+    permission_checker = AutoAssignableUserFinder.new(mail_team_user)
     errors = []
 
     task_ids.each do |id|
