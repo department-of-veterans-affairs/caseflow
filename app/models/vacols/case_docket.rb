@@ -136,9 +136,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFD19, BFDLOOUT,
+        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -167,9 +167,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
-      select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
+      select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, rownum DOCKET_INDEX,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -505,12 +505,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     query = if use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and (#{priority_cdl_aod_query} or #{priority_cdl_query}))
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query} or #{priority_cdl_query})
               SQL
             end
 
@@ -556,13 +556,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
       # {Need to check for affinity_start_date on AMA DB is less than CaseDistributionLever.cavc_aod_affinity_days.days.ago}
       <<-SQL
-      where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
+      where (PREV_DECIDING_JUDGE = ? and AOD = '1' and BFAC = '7' )
       and rownum <= ?
       SQL
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       <<-SQL
-      where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
+      where (PREV_DECIDING_JUDGE = ? and AOD = '1' and BFAC = '7')
       and rownum <= ?
       SQL
     end
