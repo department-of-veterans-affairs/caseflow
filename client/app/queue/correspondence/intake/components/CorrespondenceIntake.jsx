@@ -91,7 +91,7 @@ export const CorrespondenceIntake = (props) => {
 
     // Construct the new URL with encoded query parameters
     newUrl.search = searchParams.toString();
-    newUrl.pathname = props.isMailSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
+    newUrl.pathname = props.isInboundOpsSupervisor ? '/queue/correspondence/team' : '/queue/correspondence';
     window.location.href = newUrl.href;
   };
 
@@ -153,8 +153,7 @@ export const CorrespondenceIntake = (props) => {
     }
     <ProgressBar
       sections={sections}
-      classNames={['cf-progress-bar', 'cf-']}
-      styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
+      classNames={['cf-progress-bar', 'cf-', 'progress-bar-styling']} />
     {currentStep === 1 &&
       <AddCorrespondenceView
         priorMail={props.priorMail}
@@ -187,7 +186,7 @@ export const CorrespondenceIntake = (props) => {
         />
       </div>
     }
-    <div>
+    <div className="margin-top-for-add-task-view">
       {returnToQueueModal &&
         <ReturnToQueueModal
           onCancel={() => setReturnToQueueModal(false)}
@@ -246,7 +245,7 @@ CorrespondenceIntake.propTypes = {
   mailTasks: PropTypes.arrayOf(PropTypes.string),
   autoTexts: PropTypes.arrayOf(PropTypes.string),
   reduxStore: PropTypes.object,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   loadSavedIntake: PropTypes.func,
   saveCurrentIntake: PropTypes.func
 };

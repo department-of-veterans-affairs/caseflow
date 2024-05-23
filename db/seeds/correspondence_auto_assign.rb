@@ -8,8 +8,8 @@ module Seeds
       create_inbound_ops_team_auto_assign_user
       create_inbound_ops_team_user_with_no_permissions
       create_inbound_ops_team_supervisor
+      create_inbound_ops_team_superuser
       create_mail_team_user
-      create_mail_team_superuser
     end
 
     private
@@ -26,7 +26,7 @@ module Seeds
       end
       OrganizationPermission.find_by(permission: "superuser").update!(
         description: "Superuser: Split, Merge, and Reassign",
-        default_for_admin: true
+        default_for_admin: true,
       )
       OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
       OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
@@ -115,11 +115,11 @@ module Seeds
       end
     end
 
-    def create_mail_team_superuser
+    def create_inbound_ops_team_superuser
       users_info = [
-        { css_id: "MAIL_TEAM_ADMIN1", full_name: "Willow Green" },
-        { css_id: "MAIL_TEAM_ADMIN2", full_name: "Jasper Bloom" },
-        { css_id: "MAIL_TEAM_ADMIN3", full_name: "Luna Meadows" }
+        { css_id: "INBOUND_OPS_TEAM_SUPERUSER1", full_name: "Willow Green" },
+        { css_id: "INBOUND_OPS_TEAM_SUPERUSER2", full_name: "Jasper Bloom" },
+        { css_id: "INBOUND_OPS_TEAM_SUPERUSER3", full_name: "Luna Meadows" }
       ]
       users_info.map do |user_info|
         new_user = User.find_or_create_by!(
@@ -128,8 +128,13 @@ module Seeds
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        MailTeam.singleton.add_user(new_user)
-        OrganizationsUser.make_user_admin(new_user, MailTeam.singleton)
+        InboundOpsTeam.singleton.add_user(new_user)
+        superuser_permission = OrganizationPermission.find_by(permission: 'superuser', organization_id: InboundOpsTeam.singleton.id)
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: superuser_permission,
+          organizations_user: OrganizationsUser.find_by(user_id: new_user.id),
+          permitted: true
+        )
       end
     end
 

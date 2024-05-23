@@ -106,7 +106,7 @@ const CorrespondenceCases = (props) => {
   };
 
   const approveElement = (
-    <div style={{ width: '250%' }}>
+    <div className="styling-for-approve-element-assign-to-person">
       <ReactSelectDropdown
         // className="cf-margin-left-2rem img"
         className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
@@ -117,7 +117,7 @@ const CorrespondenceCases = (props) => {
     </div>);
 
   const textAreaElement = (
-    <div style={{ width: '280%' }}>
+    <div className="styling-for-text-area-reason-for-rejection">
       <TextareaField label="Provide a reason for rejection"
         onChange={handleDecisionReasonInput}
         value={decisionReason} />
@@ -256,7 +256,7 @@ const CorrespondenceCases = (props) => {
           mailTeamUsers={props.mailTeamUsers}
           isMailTeamUser={props.isMailTeamUser}
           isInboundOpsSuperuser={props.isInboundOpsSuperuser}
-          isMailSupervisor={props.isMailSupervisor} />}
+          isInboundOpsSupervisor={props.isInboundOpsSupervisor} />}
         {showReassignPackageModal &&
         <Modal
           closeHandler={handleReassignClose}
@@ -268,12 +268,12 @@ const CorrespondenceCases = (props) => {
           <div>
             <RadioFieldWithChildren
               name="actionRequiredRadioField"
+              className={['radio-field-styling-for-reassignment']}
               id="vertical-radio"
               label="Choose whether to approve the request for removal or reject it."
               options={reassignOptions}
               onChange={(val) => setSelectedRequestChoice(val)}
               value={selectedRequestChoice}
-              optionsStyling={{ width: '180px' }}
             />
           </div>
         </Modal>}
@@ -287,11 +287,11 @@ const CorrespondenceCases = (props) => {
           <RadioFieldWithChildren
             name="actionRequiredRadioField"
             id="vertical-radio"
+            className={['radio-field-styling-for-removal']}
             label="Choose whether to approve the request for removal or reject it."
             options={removeOptions}
             onChange={(val) => setSelectedRequestChoice(val)}
             value={selectedRequestChoice}
-            optionsStyling={{ width: '180px' }}
           />
         </Modal>}
       </AppSegment>
@@ -313,7 +313,7 @@ CorrespondenceCases.propTypes = {
   taskIds: PropTypes.array,
   isMailTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 

@@ -88,14 +88,14 @@ class CorrespondenceIntakeController < CorrespondenceController
   # always allow supervisors and superusers to acccess intakes not assigned to them.
   def user_can_work_intake(task)
     (task.assigned_to == current_user) ||
-      (current_user.mail_supervisor? || current_user.inbound_ops_team_superuser?)
+      (current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?)
   end
 
   # redirect if no access
   def route_user
     if current_user.mail_team_user?
       redirect_to "/queue/correspondence"
-    elsif current_user.inbound_ops_team_superuser? || current_user.mail_supervisor?
+    elsif current_user.inbound_ops_team_superuser? || current_user.inbound_ops_team_supervisor?
       redirect_to "/queue/correspondence/team"
     else
       redirect_to "/unauthorized"

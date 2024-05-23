@@ -28,21 +28,8 @@ const AddEvidenceSubmissionTaskView = (props) => {
 
   return (
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
-      <div
-        className="gray-border"
-        style={{
-          display: 'block',
-          padding: '2rem 2rem',
-          marginLeft: '3rem',
-          marginBottom: '3rem',
-          width: '50rem'
-        }}
-      >
-        <div
-          style={{
-            width: '45rem',
-          }}
-        >
+      <div className="gray-border evidence-window-submission-box ">
+        <div className="evidence-window-submission-task-dropdown">
           <div id="reactSelectContainer">
             <ReactSelectDropdown
               options={dropdownOptions}
@@ -51,7 +38,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
               disabled
             />
           </div>
-          <div style={{ padding: '1.5rem' }} />
+          <div className="area-below-evidence-window-submission-task-dropdown" />
           <TextareaField
             name="content"
             label="Provide context and instruction on this task"

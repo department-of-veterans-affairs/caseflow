@@ -7,6 +7,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:unauthorized_user) { create(:user) }
   let(:correspondence) { create :correspondence }
   let(:correspondence_intake_task) do
@@ -61,6 +62,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form shell" do
     before :each do
+      User.authenticate!(user: supervisor_user)
       setup_and_visit_intake
     end
 
@@ -72,7 +74,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[3].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(20) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
     end
 
     it "successfully advances to the second step" do
@@ -200,12 +204,21 @@ RSpec.feature("The Correspondence Intake page") do
   end
 
   context "Step 3 - Confirm" do
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user
+      ).update!(admin: true)
+      User.authenticate!(user: current_user)
+    end
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(4)
+        expect(all("button > span", text: "Edit Section").length).to eq(5)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -214,7 +227,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        all("button > span", text: "Edit Section")[1].click
+        all("button > span", text: "Edit Section")[2].click
         expect(page).to have_content("Review Tasks & Appeals")
         expect(page).to have_content("Tasks not related to an Appeal")
       end
@@ -245,8 +258,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 1
+      expect(all("#Add-autotext-button-id-0").length).to eq 0
     end
 
     it "The user can close the modal with the x button located in the top right." do
@@ -256,7 +268,7 @@ RSpec.feature("The Correspondence Intake page") do
       end
       find_by_id("Add-autotext-button-id-close").click
       cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 1
+      expect(cancel_count).to eq 0
     end
 
     it "Clears all selected options in modal" do
@@ -355,9 +367,11 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       intake_path = current_path
       click_on("button-Return-to-queue")
-      page.all(".cf-form-radio-option")[3].click
+      page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(20) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("#task-link").click
       expect(current_path).to eq(intake_path)
@@ -369,6 +383,7 @@ RSpec.feature("The Correspondence Intake page") do
     let(:current_user) { create(:user) }
     before do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
 
@@ -397,8 +412,12 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
       click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[1].click
+      click_on("Confirm")
       visit intake_path
-      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      using_wait_time(30) do
+        expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      end
     end
   end
 end

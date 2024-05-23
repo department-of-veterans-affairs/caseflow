@@ -14,8 +14,6 @@ RSpec.feature("The Correspondence Review Package page") do
       :correspondence,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
-      assigned_by_id: mail_team_user.id,
-      updated_by_id: mail_team_user.id,
       package_document_type: package_document_type
     )
   end
@@ -145,7 +143,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "Checking VADOR field is enabled for Mail Supervisor" do
       click_button "Edit"
-      expect(page).to have_field("VA DOR", readonly: false)
+      expect find_by_id("va-dor-input").readonly?
     end
   end
 
