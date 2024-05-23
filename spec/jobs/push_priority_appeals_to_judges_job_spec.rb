@@ -333,6 +333,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
+    before do
+      ready_priority_evidence_cases.each { |appeal| appeal.update(receipt_date: 1.month.ago) }
+    end
+
     context "using Automatic Case Distribution module" do
       it "should distribute ready priority appeals to the judges" do
         expect(subject.count).to eq judges.count
@@ -450,8 +454,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       appeal = create(:appeal,
                       :with_post_intake_tasks,
                       :advanced_on_docket_due_to_age,
-                      docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                      receipt_date: 1.month.ago)
+                      docket_type: Constants.AMA_DOCKETS.evidence_submission)
       appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 3.months.ago)
       appeal
@@ -499,6 +502,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
+      allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
