@@ -46,7 +46,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: 8,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
@@ -55,11 +54,10 @@ module Seeds
         create_multiple_docs(corres, veteran)
       end
 
-      (1..77).each do |package_doc_id|
+      (1..77).each do
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: package_doc_id,
           correspondence_type_id: 8,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
@@ -79,7 +77,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
@@ -99,7 +96,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: 8,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
@@ -122,7 +118,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: 8,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
@@ -136,7 +131,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
@@ -157,7 +151,6 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: 15,
           correspondence_type_id: 8,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),

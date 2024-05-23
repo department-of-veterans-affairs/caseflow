@@ -66,7 +66,6 @@ namespace :correspondence do
 
         cor = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
-          package_document_type_id: package_doc_type&.id,
           correspondence_type_id: corr_type&.id,
           va_date_of_receipt: receipt_date,
           notes: doc_type[:description],

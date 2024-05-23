@@ -161,8 +161,7 @@ describe ExplainController, :all_dbs, type: :controller do
       create(
         :correspondence,
         :with_single_doc,
-        veteran_id: veteran.id,
-        package_document_type_id: package_document_type.id
+        veteran_id: veteran.id
       )
     end
 

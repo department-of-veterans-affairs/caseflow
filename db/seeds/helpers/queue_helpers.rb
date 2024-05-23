@@ -21,13 +21,11 @@ module QueueHelpers
   def create_correspondence(user = {}, veteran = {})
     vet = veteran.blank? ? create_veteran : veteran
     user = user.blank? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
-    package_doc_type = PackageDocumentType.all.sample
     corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
 
     ::Correspondence.create!(
       uuid: SecureRandom.uuid,
-      package_document_type_id: package_doc_type&.id,
       correspondence_type_id: corr_type&.id,
       va_date_of_receipt: receipt_date,
       notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
@@ -43,8 +41,7 @@ module QueueHelpers
     note = ""
     # generate note from value pulled
     case note_type
-    when PackageDocumentType
-      note = "Package Document Type is #{note_type&.name}"
+
     when CorrespondenceType
       note = "Correspondence Type is #{note_type&.name}"
     when ActiveSupport::TimeWithZone
