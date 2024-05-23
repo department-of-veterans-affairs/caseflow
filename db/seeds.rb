@@ -55,8 +55,8 @@ class SeedDB
     call_and_log_seed_step Seeds::DecisionIssues
     call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
-    call_and_log_seed_step Seeds::VeteransHealthAdministration
-    call_and_log_seed_step Seeds::MTV
+    # call_and_log_seed_step Seeds::VeteransHealthAdministration
+    # call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
     # Case Distribution Seed Data
     # Creates 300+ priority cases ready for distribution
