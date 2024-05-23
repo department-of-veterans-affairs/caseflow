@@ -544,21 +544,38 @@ describe MailTask, :postgres do
     end
   end
 
-  describe ".parent_if_blocking_task_with_hearingrelatedmailtask" do
+  describe ".parent_if_blocking_task_with_hearing_related_mailtask" do
+    let(:appeal) { create(:appeal, :distributed_hearing_related_mail_task) }
     let(:root_task) { appeal.root_task }
     let(:distribution_task) { appeal.tasks.find_by(type: DistributionTask.name) }
-    let(:appeal) { create(:appeal, :distributed_hearing_related_mail_task) }
 
-    before { allow(appeal).to receive(:distributed_to_a_judge?).and_return false }
+    it "returns the correct task when assigned to SCT" do
+      allow(appeal).to receive(:specialty_case_team_assign_task?).and_return true
+      allow(appeal).to receive(:distributed_to_a_judge?).and_return false
 
-    it "returns the correct task when not distributed to judge" do
       result = HearingRelatedMailTask.parent_if_blocking_task(distribution_task)
       expect(result).to eq(distribution_task)
     end
+    it "returns the correct task when assigned to SCT and distributed" do
+      allow(appeal).to receive(:specialty_case_team_assign_task?).and_return true
+      allow(appeal).to receive(:distributed_to_a_judge?).and_return true
 
-    before { allow(appeal).to receive(:specialty_case_team_assign_task?).and_return true }
+      result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
+      expect(result).to eq(root_task)
+    end
 
-    it "returns the correct task when assigned to SCT" do
+    it "returns the correct task when not assigned to SCT" do
+      allow(appeal).to receive(:specialty_case_team_assign_task?).and_return false
+      allow(appeal).to receive(:distributed_to_a_judge?).and_return true
+
+      result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
+      expect(result).to eq(root_task)
+    end
+
+    it "returns the correct task when not assigned to SCT and not distributed" do
+      allow(appeal).to receive(:specialty_case_team_assign_task?).and_return false
+      allow(appeal).to receive(:distributed_to_a_judge?).and_return false
+
       result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
       expect(result).to eq(distribution_task)
     end

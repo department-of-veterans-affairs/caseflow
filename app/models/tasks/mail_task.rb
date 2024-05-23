@@ -46,8 +46,11 @@ class MailTask < Task
 
     def parent_if_blocking_task(parent_task)
       return parent_task unless blocking?
+      return parent_task if parent_task.appeal.specialty_case_team_assign_task? &&
+                            parent_task.appeal.distributed_to_a_judge?
 
-      if !parent_task.appeal.distributed_to_a_judge? || parent_task.appeal.specialty_case_team_assign_task?
+      if (!parent_task.appeal.distributed_to_a_judge? && !parent_task.appeal.specialty_case_team_assign_task?) ||
+         (parent_task.appeal.specialty_case_team_assign_task? && !parent_task.appeal.distributed_to_a_judge?)
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
 
