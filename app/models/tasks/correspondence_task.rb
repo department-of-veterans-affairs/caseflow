@@ -4,7 +4,7 @@ class CorrespondenceTask < Task
   belongs_to :correspondence, foreign_type: "Correspondence", foreign_key: "appeal_id"
   self.abstract_class = true
 
-  before_create :verify_org_task_unique, :verify_correspondence_access
+  before_create :verify_org_task_unique
   belongs_to :appeal, class_name: "Correspondence"
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
@@ -66,6 +66,21 @@ class CorrespondenceTask < Task
     )
   end
 
+  def create_from_params(params, user)
+    # verify the user can create correspondence tasks
+    verify_correspondence_access
+
+    parent_task = Task.find(params[:parent_id])
+    fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
+
+    verify_user_can_create!(user, parent_task)
+
+    params = modify_params_for_create(params)
+    child = create_child_task(parent_task, user, params)
+    parent_task.update!(status: params[:status]) if params[:status]
+    child
+  end
+
   def correspondence
     Correspondence.find(appeal_id)
   end
@@ -117,6 +132,6 @@ class CorrespondenceTask < Task
   # ignore check if there is no current user on correspondence creation
   def verify_correspondence_access
     fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
-    InboundOpsTeam.singleton.user_has_access?(RequestStore[:current_user]) || RequestStore[:current_user]&.system_user?
+    InboundOpsTeam.singleton.user_has_access?(current_user) || current_user&.system_user?
   end
 end

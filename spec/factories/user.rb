@@ -25,12 +25,6 @@ FactoryBot.define do
       roles { ["Assign Hearings"] }
     end
 
-    factory :system_user do
-      css_id { "SYSTEM_USER1" }
-      full_name { "System User" }
-      station_id { "317" }
-    end
-
     factory :intake_user do
       css_id { "BVATWARNER" }
       full_name { "Sandra Warner" }

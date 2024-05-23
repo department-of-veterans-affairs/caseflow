@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  # to simulate correspondences coming from the CMP API, set
-  # the system user before and remove after creating a correspondence
-  before(:create) do
-    RequestStore[:current_user] = User.system_user
-  end
-  after(:create) do
-    RequestStore[:current_user] = nil
-  end
   factory :correspondence do
     uuid { SecureRandom.uuid }
     portal_entry_date { Time.zone.now }
