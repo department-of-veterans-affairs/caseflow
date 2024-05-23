@@ -46,8 +46,8 @@ class SeedDB
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies
-    call_and_log_seed_step Seeds::Tasks
-    call_and_log_seed_step Seeds::Hearings
+    # call_and_log_seed_step Seeds::Tasks
+    # call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
     call_and_log_seed_step Seeds::Dispatch
     call_and_log_seed_step Seeds::Jobs

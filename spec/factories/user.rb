@@ -65,6 +65,12 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, user: user)
+      end
+    end
+
     trait :with_vacols_judge_record do
       after(:create) do |user|
         create(:staff, :judge_role, slogid: user.css_id, user: user)
@@ -77,7 +83,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacols_record do
+    trait :with_vacols_record_satty_id do
       after(:create) do |user|
         create(:staff, :has_sattyid, slogid: user.css_id, user: user)
       end
