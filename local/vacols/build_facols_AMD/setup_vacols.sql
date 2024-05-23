@@ -61,5 +61,6 @@ alter database datafile '/opt/oracle/oradata/BVAP/vcl_othdocs_ndx.dbf' resize 33
 
 exec DBMS_XDB_CONFIG.sethttpsport(0);
 alter system set dispatchers='';
+alter system disable restricted session;
 
 exit
