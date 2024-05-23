@@ -84,6 +84,13 @@ module Seeds
       add_mail_intake_to_all_bva_intake_users
       create_and_add_cda_control_group_users
       add_users_to_bva_dispatch
+
+      # Below originated in the VeteransHealthAdministration seed file
+      setup_camo_org
+      setup_caregiver_org
+      setup_program_offices
+      setup_specialty_case_team
+      create_visn_org_teams
     end
 
     def create_bva_dispatch_admin
@@ -448,6 +455,58 @@ module Seeds
       # These users are created earlier in this file
       BvaDispatch.singleton.add_user(User.find_by(css_id: "BVAGWHITE"))
       BvaDispatch.singleton.add_user(User.find_by(css_id: "BVAGBLACK"))
+    end
+
+    def setup_camo_org
+      regular_user = create(:user, full_name: "Greg CAMOUser Camo", css_id: "CAMOUSER")
+      admin_user = create(:user, full_name: "Alex CAMOAdmin Camo", css_id: "CAMOADMIN")
+      VhaCamo.singleton.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, VhaCamo.singleton)
+    end
+
+    def setup_caregiver_org
+      regular_user = create(:user, full_name: "Edward CSPUser Caregiver", css_id: "CAREGIVERUSER")
+      admin_user = create(:user, full_name: "Alvin CSPAdmin Caregiver", css_id: "CAREGIVERADMIN")
+      VhaCaregiverSupport.singleton.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, VhaCaregiverSupport.singleton)
+    end
+
+    def setup_program_offices
+      PROGRAM_OFFICES = [
+        "Community Care - Payment Operations Management",
+        "Community Care - Veteran and Family Members Program",
+        "Member Services - Health Eligibility Center",
+        "Member Services - Beneficiary Travel",
+        "Prosthetics"
+      ].freeze
+
+      PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
+
+      regular_user = create(:user, full_name: "Stevie VhaProgramOffice Amana", css_id: "VHAPOUSER")
+      admin_user = create(:user, full_name: "Channing VhaProgramOfficeAdmin Katz", css_id: "VHAPOADMIN")
+
+      VhaProgramOffice.all.each do |org|
+        org.add_user(regular_user)
+        OrganizationsUser.make_user_admin(admin_user, org)
+      end
+    end
+
+    def setup_specialty_case_team!
+      regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
+      admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
+      SpecialtyCaseTeam.singleton.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, SpecialtyCaseTeam.singleton)
+    end
+
+    def create_visn_org_teams
+      regular_user = create(:user, full_name: "Stacy VISNUser Smith", css_id: "VISNUSER")
+      admin_user = create(:user, full_name: "Betty VISNAdmin Rose", css_id: "VISNADMIN")
+
+      Constants.VISN_ORG_NAMES.visn_orgs.name.each do |name|
+        visn = VhaRegionalOffice.create!(name: name, url: name)
+        visn.add_user(regular_user)
+        OrganizationsUser.make_user_admin(admin_user, visn)
+      end
     end
 
     def create_singleton_organizations
