@@ -48,7 +48,6 @@ module Seeds
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: 8,
-          cmp_queue_id: 1,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
           assigned_by_id: 81,
@@ -64,7 +63,6 @@ module Seeds
           uuid: SecureRandom.uuid,
           package_document_type_id: package_doc_id,
           correspondence_type_id: 8,
-          cmp_queue_id: 1,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
           assigned_by_id: 81,
@@ -87,7 +85,6 @@ module Seeds
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
-          cmp_queue_id: 1,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
           assigned_by_id: 81,
@@ -104,13 +101,12 @@ module Seeds
         )
       end
 
-      (1..17).each do |cmp_queue_id|
+      (1..17).each do
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: 8,
-          cmp_queue_id: cmp_queue_id,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
           assigned_by_id: 81,
@@ -136,7 +132,6 @@ module Seeds
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: 8,
-          cmp_queue_id: 1,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
@@ -153,7 +148,6 @@ module Seeds
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
-          cmp_queue_id: 1,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
@@ -171,13 +165,12 @@ module Seeds
         )
       end
 
-      (1..17).each do |cmp_queue_id|
+      (1..17).each do
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           package_document_type_id: 15,
           correspondence_type_id: 8,
-          cmp_queue_id: cmp_queue_id,
           nod: true,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "",
