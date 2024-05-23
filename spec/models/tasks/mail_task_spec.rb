@@ -529,21 +529,6 @@ describe MailTask, :postgres do
     end
   end
 
-  describe ".parent_if_blocking_task" do
-    let(:root_task) { appeal.root_task }
-    let(:distribution_task) { appeal.tasks.find_by(type: DistributionTask.name) }
-    let(:appeal) { create(:appeal, :ready_for_distribution) }
-
-    before { allow(appeal).to receive(:distributed_to_a_judge?).and_return false }
-
-    it "returns the distribution task if it is a blocking task, root task otherwise" do
-      MailTask.subclasses.each do |task_class|
-        expected_parent = task_class.blocking? ? distribution_task : root_task
-        expect(task_class.parent_if_blocking_task(root_task)).to eq expected_parent
-      end
-    end
-  end
-
   describe ".parent_if_blocking_task_with_hearing_related_mailtask" do
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
@@ -554,12 +539,13 @@ describe MailTask, :postgres do
       allow(appeal).to receive(:distributed_to_a_judge?).and_return false
 
       result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
-      expect(result).to eq(distribution_task)
+      expect(result).to eq(root_task)
     end
 
     it "returns the correct task when assigned to SCT and distributed" do
       allow(appeal).to receive(:specialty_case_team_assign_task?).and_return true
       allow(appeal).to receive(:distributed_to_a_judge?).and_return true
+
       result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
       expect(result).to eq(root_task)
     end
@@ -577,7 +563,7 @@ describe MailTask, :postgres do
       allow(appeal).to receive(:distributed_to_a_judge?).and_return false
 
       result = HearingRelatedMailTask.parent_if_blocking_task(root_task)
-      expect(result).to eq(root_task)
+      expect(result).to eq(distribution_task)
     end
   end
 end

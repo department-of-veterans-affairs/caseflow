@@ -28,21 +28,6 @@ class DocketSwitchMailTask < MailTask
       true
     end
 
-    # SCT - Distributed
-    # F - F -> RootTask
-    # F - T -> RootTask
-    # T - F -> DistributionTask
-    # T - T -> RootTask
-    def parent_if_blocking_task(parent_task)
-      return parent_task unless blocking?
-
-      if !parent_task.appeal.distributed_to_a_judge? && parent_task.appeal.specialty_case_team_assign_task?
-        return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
-      end
-
-      parent_task
-    end
-
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
 
