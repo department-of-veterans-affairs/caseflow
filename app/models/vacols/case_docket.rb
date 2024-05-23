@@ -479,7 +479,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{non_priority_cdl_aod_query})
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -500,29 +500,27 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
   # {UPDATE}
-  def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+  def self.distribute_priority_appeals(judge, genpop, _limit, dry_run = false)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query(judge)
     query = if use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
                 where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
-                and (rownum <= ? or 1 = ?)
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
                 where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and #{priority_cdl_aod_query})
-                and (rownum <= ? or 1 = ?)
               SQL
             end
+
+    # {Once we have the query we can run it through an affinity days filter
 
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                      limit,
-                                      limit.nil? ? 1 : 0
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)
@@ -554,7 +552,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
-  def self.generate_priority_case_distribution_lever_aod_query(_judge)
+  def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
       <<-SQL
       where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
