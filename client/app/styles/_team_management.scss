@@ -68,16 +68,17 @@
 }
 
 .search-bar-styling-for-filter {
-  padding-left: 80rem;
-  margin-top: 20px;
   margin-bottom: 15px;
   justify-self: right;
-  display: block;
+  display: flex;
+  height: fit-content;
+  flex-wrap: wrap;
+  width: calc(100% + 3vw);
 }
 
 .text-styling-for-filter-search-bar {
-  padding-left: 80px;
   justify-self: flex-end;
+  text-align: start;
   display: flex;
   margin-bottom: 5px;
 }
