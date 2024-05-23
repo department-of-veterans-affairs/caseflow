@@ -9,10 +9,10 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
-  attr_reader :id
+  attr_reader :recording_id, :host_email, :meeting_title
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    recording_id = job.arguments&.first&.[](:id)
+    recording_id = job.arguments&.first&.[](:recording_id)
     error_details = {
       error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
       provider: "webex",
@@ -25,19 +25,19 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
     job.send_transcription_issues_email(error_details)
   end
 
-  def perform(id:)
+  def perform(recording_id:, host_email:, meeting_title:)
     ensure_current_user_is_set
-    data = fetch_recording_details(id)
+    data = fetch_recording_details(recording_id, host_email)
     topic = data.topic
 
     mp4_link = data.mp4_link
-    send_file(topic, "mp4", mp4_link)
+    send_file(topic, "mp4", mp4_link, meeting_title)
 
     vtt_link = data.vtt_link
-    send_file(topic, "vtt", vtt_link)
+    send_file(topic, "vtt", vtt_link, meeting_title)
 
     mp3_link = data.mp3_link
-    send_file(topic, "mp3", mp3_link)
+    send_file(topic, "mp3", mp3_link, meeting_title)
   end
 
   def log_error(error)
@@ -50,7 +50,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   private
 
-  def fetch_recording_details(id)
+  def fetch_recording_details(id, email)
+    query = { "host_email": email }
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
@@ -58,23 +59,17 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       apikey: CredStash.get("webex_#{Rails.deploy_env}_access_token"),
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: nil
+      query: query
     ).fetch_recording_details(id)
   end
 
-  def create_file_name(topic, extension)
-    type = topic.scan(/[A-Za-z]+?(?=-)/).first
-    subject = if type == "Hearing"
-                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
-              else
-                topic.split("-").second.lstrip
-              end
+  def create_file_name(topic, extension, meeting_title)
     counter = topic.split("-").last
-    "#{subject}-#{counter}.#{extension}"
+    "#{meeting_title}-#{counter}.#{extension}"
   end
 
-  def send_file(topic, extension, link)
-    file_name = create_file_name(topic, extension)
+  def send_file(topic, extension, link, meeting_title)
+    file_name = create_file_name(topic, extension, meeting_title)
     Hearings::DownloadTranscriptionFileJob.perform_later(download_link: link, file_name: file_name)
   end
 end
