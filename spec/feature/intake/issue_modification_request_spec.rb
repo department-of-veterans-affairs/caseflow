@@ -48,7 +48,6 @@ feature "Issue Modification Request", :postgres do
           first("select").select("Request modification")
         end
 
-        # binding.irb
         expect(page).to have_button("Submit request", disabled: true)
 
         fill_in "Issue type", with: "Beneficiary Travel"
@@ -211,8 +210,8 @@ feature "Issue Modification Request", :postgres do
       expect(page).to have_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE)
       expect(page).to have_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE)
     else
-      expect(page).to_not have_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE)
-      expect(page).to_not have_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE)
+      expect(page).to have_no_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE)
+      expect(page).to have_no_content(COPY::PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE)
     end
   end
 
