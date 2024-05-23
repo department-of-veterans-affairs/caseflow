@@ -91,7 +91,7 @@ group :production, :staging, :ssh_forwarding, :development, :test do
   gem "ruby-oci8", "~> 2.2"
 end
 
-group :test, :development, :demo do
+group :test, :development, :demo, :make_docs do
   # Security scanners
   gem "brakeman"
   gem "bullet", "~> 6.1.0"
