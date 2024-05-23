@@ -192,8 +192,8 @@ jobs:
 
       - name: Database setup
         run: |
-          ./ci-bin/capture-log "bundle exec rake db:create:etl db:schema:load:etl db:migrate:etl"
-          ./ci-bin/capture-log "bundle exec rake db:create:primary db:schema:load:primary db:migrate:primary"
+          ./ci-bin/capture-log "bundle exec rake db:create:etl db:schema:load:etl"
+          ./ci-bin/capture-log "bundle exec rake db:create:primary db:schema:load:primary"
           ./ci-bin/capture-log "make -f Makefile.example external-db-create"
         # added line to create external table(s) that are needed for tests
 
