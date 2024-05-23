@@ -32,7 +32,7 @@ module CorrespondenceControllerConcern
   end
 
   def check_auto_assign_permission(target_user)
-    org_user_permission_checker.can?(
+    OrganizationUserPermissionChecker.new.can?(
       permission_name: OrganizationPermission.find_by(
         permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign,
         organization_id: InboundOpsTeam.singleton.id
