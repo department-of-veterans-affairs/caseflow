@@ -4,6 +4,7 @@ import Modal from '../../../components/Modal';
 import TextField from '../../../components/TextField';
 import COPY from '../../../../COPY';
 import ApiUtil from '../../../util/ApiUtil';
+import Alert from '../../../components/Alert';
 
 export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
 
@@ -15,6 +16,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
     phone: '',
     email: ''
   });
+  const [serverError, setServerError] = useState(false);
 
   const addContractor = (contractor) => {
     const data = {
@@ -33,31 +35,21 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
             type: 'success'
           });
         }
-        // }, (error) => {
-        // handle error ???
+      }, () => {
+        setServerError(true);
       });
   };
 
   const handleConfirm = () => {
     let error = false;
 
-    if (!formData.name.length) {
-      error = true;
-    }
-
-    if (!formData.directory.length) {
-      error = true;
-    }
-
-    if (!formData.poc.length) {
-      error = true;
-    }
-
-    if (!formData.phone.length) {
-      error = true;
-    }
-
-    if (!formData.email.length) {
+    if (
+      !formData.name.length ||
+      !formData.directory.length ||
+      !formData.poc.length ||
+      !formData.phone.length ||
+      !formData.email.length
+    ) {
       error = true;
     }
 
@@ -89,6 +81,8 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
       closeHandler={onCancel}
       id="custom-contractor-modal"
     >
+      {serverError && <Alert title="Unkown error" message="Please try again later" type="error" /> }
+
       <p>{COPY.TRANSCRIPTION_SETTINGS_FORM_DESCRIPTION}</p>
 
       <TextField
