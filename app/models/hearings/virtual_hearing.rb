@@ -165,9 +165,11 @@ class VirtualHearing < CaseflowRecord
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{guest_pin}&role=guest"
+    if conference_provider == "pexip"
+      "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{formatted_alias_or_alias_with_host}&" \
+      "pin=#{guest_pin}&role=guest"
+    end
   end
 
   def co_host_hearing_link
@@ -177,9 +179,11 @@ class VirtualHearing < CaseflowRecord
   def host_link
     return host_hearing_link if host_hearing_link.present?
 
-    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{host_pin}&role=host"
+    if conference_provider == "pexip"
+      "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{formatted_alias_or_alias_with_host}&" \
+      "pin=#{host_pin}&role=host"
+    end
   end
 
   def test_link(title)

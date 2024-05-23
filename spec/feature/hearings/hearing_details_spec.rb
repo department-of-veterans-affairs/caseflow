@@ -116,17 +116,17 @@ RSpec.feature "Hearing Details", :all_dbs do
   def check_webex_hearings_links(link, disable_link = false)
     # Confirm that the host hearing link details exist
     within "#vlj-hearings-link" do
-      find("div", text: link.host_link)
+      find("div").should have_content(link.host_link)
       ensure_link_present(link.host_link, disable_link)
     end
     # Confirm that the co-host hearing link details exist
     within "#hc-hearings-link" do
-      find("div", text: link.co_host_link)
+      find("div").should have_content(link.co_host_link)
       ensure_link_present(link.co_host_link, disable_link)
     end
     # Confirm that the guest hearing link details exist
     within "#guest-hearings-link" do
-      find("div", text: link.guest_link)
+      find("div").should have_content(link.guest_link)
       ensure_link_present(link.guest_link, disable_link)
     end
   end
@@ -370,7 +370,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         )
       end
 
-      # include_examples "always updatable fields"
+      include_examples "always updatable fields"
 
       context "User switches hearing type from Virtual back to original type" do
         let!(:virtual_hearing) do
@@ -474,14 +474,9 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         context "when hearing conference type is webex" do
-          let!(:hearing) { create(:hearing, :with_webex_non_virtual_conference_link) }
-
           before { hearing.meeting_type.update(service_name: "webex") }
 
           scenario "links display correctly" do
-            FeatureToggle.enable!(:pexip_conference_service)
-            hearing.update(hearing_day_id: hearing_day.id)
-
             visit "hearings/" + hearing.external_id.to_s + "/details"
 
             click_dropdown(name: "hearingType", index: 0)

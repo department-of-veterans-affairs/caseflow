@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe VirtualHearings::RefreshWebexAccessTokenJob, type: :job do
+RSpec.describe Hearings::RefreshWebexAccessTokenJob, type: :job do
   let(:new_access_token) { "token1" }
   let(:new_refresh_token) { "token2" }
 

@@ -195,6 +195,7 @@ describe HearingMailer do
     end
 
     it "Webex test link appears" do
+      allow(virtual_hearing).to receive(:guest_link).and_return("linK")
       expect(subject.html_part.body).to include("https://instant-usgov.webex.com/mediatest")
     end
   end
@@ -660,7 +661,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
@@ -741,7 +744,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
@@ -1223,7 +1228,9 @@ describe HearingMailer do
             )
           end
 
-          include_context "test link for a webex conference"
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do

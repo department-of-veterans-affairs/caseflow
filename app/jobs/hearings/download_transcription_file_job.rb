@@ -8,6 +8,7 @@ require "open-uri"
 
 class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include Hearings::SendTranscriptionIssuesEmail
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -25,25 +26,24 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       provider: "webex"
     }
     error_details = job.build_error_details(exception, details_hash)
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception)
+    job.log_download_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   retry_on(TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer) do |job, exception|
     details_hash = { error: { type: "upload" }, provider: "S3" }
     error_details = job.build_error_details(exception, details_hash)
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.transcription_file.clean_up_tmp_location
-    job.log_error(exception)
+    job.log_download_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
     details_hash = { error: { type: "conversion" }, conversion_type: "rtf" }
     error_details = job.build_error_details(exception, details_hash)
-
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
-    job.log_error(exception)
+    job.log_download_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   discard_on(FileNameError) do |job, exception|
@@ -54,8 +54,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       expected_file_name_format: "[docket_number]_[internal_id]_[hearing_type].[file_type]"
     }
     error_details = job.build_error_details(exception, details_hash)
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{exception}")
+    job.log_download_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
@@ -96,14 +96,14 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Note: Public method to provide access during job retry
   #
   # Params: error - Error object
-  def log_error(error)
+  def log_download_error(error)
     extra = {
       application: self.class.name,
-      hearing_id: hearing.id,
+      hearing_id: !error.is_a?(FileNameError) ? hearing.id : nil,
       file_name: file_name,
       job_id: job_id
     }
-    super(error, extra: extra)
+    log_error(error, extra: extra)
   end
 
   private

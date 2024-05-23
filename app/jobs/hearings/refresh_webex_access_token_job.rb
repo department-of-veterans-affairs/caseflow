@@ -14,17 +14,17 @@
 # This job is queued with low priority, indicating that it does not need to be run immediately
 # and can wait until the system is less busy.
 
-class VirtualHearings::RefreshWebexAccessTokenJob < CaseflowJob
+class Hearings::RefreshWebexAccessTokenJob < CaseflowJob
   queue_with_priority :low_priority
 
   def perform
     webex_service = WebexService.new(
-      host: nil,
+      host: ENV["WEBEX_HOST_MAIN"],
       port: nil,
       aud: nil,
       apikey: nil,
-      domain: nil,
-      api_endpoint: nil,
+      domain: ENV["WEBEX_DOMAIN_MAIN"],
+      api_endpoint: ENV["WEBEX_API_MAIN"],
       query: nil
     )
     response = webex_service.refresh_access_token

@@ -3,8 +3,8 @@
 describe TranscriptionPackages do
   describe "#call" do
     context "start to execute all jobs" do
-      let(:hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
-      let(:legacy_hearings) {(1..5).map{ create(:hearing, :with_transcription_files)}}
+      let(:hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
+      let(:legacy_hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
 
       def hearings_in_work_order(all_hearings)
         all_hearings.map { |hearing| { hearing_id: hearing.id, hearing_type: hearing.class.to_s } }
@@ -25,13 +25,14 @@ describe TranscriptionPackages do
         expect(subject.instance_variable_get(:@work_order_params)[:work_order_name]).to eq("#1234567")
         expect(subject.instance_variable_get(:@work_order_params)[:return_date]).to eq("05/07/2024")
         expect(subject.instance_variable_get(:@work_order_params)[:contractor]).to eq("Contractor A")
-        expect(subject.instance_variable_get(:@work_order_params)[:hearings]).to eq(hearings_in_work_order(hearings + legacy_hearings))
+        expect(subject.instance_variable_get(:@work_order_params)[:hearings]).to eq(
+          hearings_in_work_order(hearings + legacy_hearings)
+        )
       end
 
       it "Call to Call method " do
-        allow_any_instance_of(TranscriptionPackages).to receive(:create_work_order).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_zip_file).and_return(true)
-        allow_any_instance_of(TranscriptionPackages).to receive(:create_BoM_file).and_return(true)
+        allow_any_instance_of(TranscriptionPackages).to receive(:create_bom_file).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:create_transcription_package).and_return(true)
         allow_any_instance_of(TranscriptionPackages).to receive(:upload_transcription_package).and_return(true)
         expect { subject.call }.not_to raise_error

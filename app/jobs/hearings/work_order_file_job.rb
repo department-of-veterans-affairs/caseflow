@@ -4,10 +4,19 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   queue_with_priority :low_priority
 
   S3_BUCKET = "vaec-appeals-caseflow"
-  TMP_FOLDER = Rails.root.join("tmp")
+  TMP_FOLDER = Rails.root.join("tmp", "transcription_files", "xls")
 
-  def initialize(work_order)
-    super(work_order)
+  attr_reader :file_name, :file_path
+
+  class WorkOrderFileUploadError < StandardError; end
+
+  retry_on WorkOrderFileUploadError, wait: :exponentially_longer do |job, _exception|
+    job.send_failure_notification
+    false
+  end
+
+  def initialize(*args)
+    super(*args)
     @file_name = nil
     @file_path = nil
   end
@@ -16,7 +25,11 @@ class Hearings::WorkOrderFileJob < CaseflowJob
     work_book = create_spreadsheet(work_order)
     write_to_workbook(work_book, work_order[:work_order_name])
     upload_to_s3(work_order[:work_order_name])
-    cleanup_tmp_file
+    true
+  end
+
+  def send_failure_notification
+    WorkOrderFileIssuesMailer.send_notification
   end
 
   private
@@ -34,7 +47,7 @@ class Hearings::WorkOrderFileJob < CaseflowJob
   end
 
   def write_to_workbook(workbook, work_order_name)
-    @file_name = "BVA-#{work_order_name}.xls"
+    @file_name = "#{work_order_name}.xls"
     @file_path = TMP_FOLDER.join(@file_name)
     workbook.write(@file_path)
   end
@@ -109,7 +122,8 @@ class Hearings::WorkOrderFileJob < CaseflowJob
       S3Service.store_file(s3_location, @file_path, :filepath)
     rescue StandardError => error
       Rails.logger.error "Work Order File Job failed to upload Work Order #{work_order_name} to S3: #{error.message}"
-      send_failure_notification
+      cleanup_tmp_file
+      raise WorkOrderFileUploadError
     end
   end
 
@@ -120,9 +134,5 @@ class Hearings::WorkOrderFileJob < CaseflowJob
 
   def cleanup_tmp_file
     File.delete(@file_path) if File.exist?(@file_path)
-  end
-
-  def send_failure_notification
-    WorkOrderFileIssuesMailer.send_notification
   end
 end
