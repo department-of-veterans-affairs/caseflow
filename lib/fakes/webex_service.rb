@@ -85,6 +85,38 @@ class Fakes::WebexService
     )
   end
 
+  def fetch_rooms_list
+    if error?
+      return ExternalApi::WebexService::RoomsListResponse.new(
+        HTTPI::Response.new(@status_code, {}, error_response)
+      )
+    end
+
+    ExternalApi::WebexService::RoomsListResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_rooms_list_data.to_json
+      )
+    )
+  end
+
+  def fetch_room_details(room_id)
+    if error?
+      return ExternalApi::WebexService::RoomDetailsResponse.new(
+        HTTPI::Response.new(@status_code, {}, error_response)
+      )
+    end
+
+    ExternalApi::WebexService::RoomDetailsResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_room_details_data.to_json
+      )
+    )
+  end
+
   def refresh_access_token
     ExternalApi::WebexService::AccessTokenRefreshResponse.new(
       HTTPI::Response.new(
@@ -221,7 +253,71 @@ class Fakes::WebexService
       "status": "available"
     }
   end
+
+  def fake_rooms_list_data
+    {
+      "items": [
+        {
+          "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS85YTZjZTRjMC0xNmM5LTExZWYtYjIxOC1iMWE5YTQ2",
+          "title": "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-20T16:58:49.551Z",
+          "creatorId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iOGU0ZTYyNy02MjUwLTQwY2ItYWNhZS05ZjkxZjlmY2NiYWI",
+          "created": "2024-05-20T16:54:20.684Z",
+          "ownerId": "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi81NDlkYWFjYi1iZmVlLTQ5MTktYTRlNC1jMDk0NGE2NGRlMjU",
+          "isPublic": false,
+          "isReadOnly": false
+        },
+        {
+          "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS8zYTlhMzdiMC0wZWNiLTExZWYtYTNhZS02MTJkMjlj",
+          "title": "Virtual Visit - 180000304_1_LegacyHearing-20240213 1712-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-10T12:45:49.611Z",
+          "creatorId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iOGU0ZTYyNy02MjUwLTQwY2ItYWNhZS05ZjkxZjlmY2NiYWI",
+          "created": "2024-05-10T12:45:49.611Z",
+          "isPublic": false,
+          "isReadOnly": false
+        },
+        {
+          "id": "1234",
+          "title": "Virtual Visit - 221218-977_933_AMA-20240508 1426-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-11T12:45:49.611Z",
+          "creatorId": "56789",
+          "created": "2024-05-11T12:45:49.611Z",
+          "isPublic": false,
+          "isReadOnly": false
+        },
+        {
+          "id": "5678",
+          "title": "Virtual Visit - PatientLast Problem Hearing-20240213 3123-1",
+          "type": "group",
+          "isLocked": false,
+          "lastActivity": "2024-05-11T12:45:49.611Z",
+          "creatorId": "56789",
+          "created": "2024-05-11T12:45:49.611Z",
+          "isPublic": false,
+          "isReadOnly": false
+        }
+      ]
+    }
+  end
   # rubocop:enable Metrics/MethodLength
+
+  def fake_room_details_data
+    {
+      "roomId": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS85YTZjZTRjMC0xNmM5LTExZWYtYjIxOC1iMWE5YTQ2",
+      "meetingLink": "https://vadevops.webex.com/m/f3387f62-aded-46b9-8954-0b1f2c94dfd3",
+      "sipAddress": "28236309135@vadevops.webex.com",
+      "meetingNumber": "28236309135",
+      "meetingId": "a52e152a05114cfcb5c7b5e6c088fcc0",
+      "callInTollFreeNumber": "",
+      "callInTollNumber": "+1-415-527-5035"
+    }
+  end
 
   private
 
