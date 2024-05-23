@@ -5,6 +5,7 @@
 
 class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include Hearings::SendTranscriptionIssuesEmail
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -20,13 +21,12 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       response: { status: exception.code, message: exception.message }.to_json,
       docket_number: nil
     }
-    TranscriptionFileIssuesMailer.issue_notification(error_details)
     job.log_error(exception)
+    job.send_transcription_issues_email(error_details)
   end
 
-  def perform(id:, file_name:)
+  def perform(id:)
     ensure_current_user_is_set
-    @file_name ||= file_name
     data = fetch_recording_details(id)
     topic = data.topic
 
@@ -51,21 +51,24 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   private
 
   def fetch_recording_details(id)
-    config = {
+    WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_BOTTOKEN"],
+      apikey: CredStash.get("webex_#{Rails.deploy_env}_access_token"),
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: { "id": id }
-    }
-
-    WebexService.new(config: config).fetch_recording_details
+      query: nil
+    ).fetch_recording_details(id)
   end
 
   def create_file_name(topic, extension)
-    subject = topic.split("-").second.lstrip
+    type = topic.scan(/[A-Za-z]+?(?=-)/).first
+    subject = if type == "Hearing"
+                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+              else
+                topic.split("-").second.lstrip
+              end
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
   end

@@ -77,8 +77,6 @@ gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-# execjs runtime
-gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
 gem "tzinfo", "1.2.10"
@@ -103,13 +101,12 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record", "2.0.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
   # Linters
-  gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -118,8 +115,8 @@ group :test, :development, :demo do
   gem "rb-readline"
   gem "rspec"
   # For CircleCI test metadata analysis
-  gem "rspec_junit_formatter"
   gem "rspec-rails"
+  gem "rspec_junit_formatter"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"

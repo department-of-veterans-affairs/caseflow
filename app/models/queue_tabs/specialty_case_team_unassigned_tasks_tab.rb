@@ -33,4 +33,12 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   def hide_from_queue_table_view
     true
   end
+
+  def no_task_limit
+    false
+  end
+
+  def custom_task_limit
+    60
+  end
 end

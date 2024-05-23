@@ -19,9 +19,17 @@ require "json"
 #
 # All requests to the Webex API are recorded using the MetricsService.
 class ExternalApi::WebexService
-  def initialize(config:)
-    @config = config
+  # rubocop:disable Metrics/ParameterLists
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query: nil)
+    @host = host
+    @port = port
+    @aud = aud
+    @apikey = apikey
+    @domain = domain
+    @api_endpoint = api_endpoint
+    @query = query
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def create_conference(conferenced_item)
     body = {
@@ -30,14 +38,13 @@ class ExternalApi::WebexService
         "nbf": conferenced_item.nbf,
         "exp": conferenced_item.exp
       },
-      "aud": @config[:aud],
+      "aud": @aud,
       "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::CreateResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::CreateResponse.new(send_webex_request(body, method))
   end
 
   def delete_conference(conferenced_item)
@@ -47,20 +54,19 @@ class ExternalApi::WebexService
         "nbf": 0,
         "exp": 0
       },
-      "aud": @config[:aud],
+      "aud": @aud,
       "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
     method = "POST"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::DeleteResponse.new(resp) if !resp.nil?
+    ExternalApi::WebexService::DeleteResponse.new(send_webex_request(body, method))
   end
 
   # Purpose: Refreshing the access token to access the API
   # Return: The response body
   def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape("#{BASE_URL}/v1/access_token")
+    url = URI::DEFAULT_PARSER.escape("https://#{@host}#{@domain}#{@api_endpoint}access_token")
 
     body = {
       grant_type: "refresh_token",
@@ -88,41 +94,51 @@ class ExternalApi::WebexService
   def fetch_recordings_list
     body = nil
     method = "GET"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingsListResponse.new(resp) if !resp.nil?
+    @api_endpoint += "admin/recordings"
+    ExternalApi::WebexService::RecordingsListResponse.new(send_webex_request(body, method))
   end
 
-  def fetch_recording_details
+  def fetch_recording_details(recording_id)
     body = nil
     method = "GET"
-    resp = send_webex_request(body, method)
-    ExternalApi::WebexService::RecordingDetailsResponse.new(resp) if !resp.nil?
+    @api_endpoint += "recordings/#{recording_id}"
+    ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
   end
 
   private
 
   # :nocov:
+  # rubocop:disable Metrics/MethodLength
   def send_webex_request(body, method)
-    url = "https://#{@config[:host]}#{@config[:domain]}#{@config[:api_endpoint]}"
+    url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
-    request.query = @config[:query]
-    request.headers = { "Authorization": "Bearer #{@config[:apikey]}", "Content-Type": "application/json" }
+    request.query = @query
+    request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
-      "#{@config[:host]} #{method} request to #{url}",
+      "#{@host} #{method} request to #{url}",
       service: :webex,
-      name: @config[:api_endpoint]
+      name: @api_endpoint
     ) do
       case method
       when "POST"
-        HTTPI.post(request)
+        response = HTTPI.post(request)
+        fail ExternalApi::WebexService::Response.new(response).error if response.error?
+
+        response
       when "GET"
-        HTTPI.get(request)
+        response = HTTPI.get(request)
+        fail ExternalApi::WebexService::Response.new(response).error if response.error?
+
+        response
+      else
+        fail NotImplementedError
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # :nocov:
 end
