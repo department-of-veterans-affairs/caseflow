@@ -1,8 +1,6 @@
 class RemoveColumnsFromCorrespondences < ActiveRecord::Migration[6.0]
   def change
     safety_assured do
-      remove_index :correspondences, column: "cmp_queue_id", name: "index_correspondences_on_cmp_queue_id"
-
       remove_column :correspondences, :portal_entry_date, :datetime
       remove_column :correspondences, :source_type, :string
       remove_column :correspondences, :cmp_packet_number, :bigint
