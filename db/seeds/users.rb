@@ -281,7 +281,7 @@ module Seeds
     end
 
     def create_org_queue_users
-      nca = create(:business_line, name: "National Cemetery Administration", url: "nca")
+      nca = BusinessLine.find_or_create_by(name: "National Cemetery Administration", url: "nca")
       %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
         u = create(:user, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
         nca.add_user(u)

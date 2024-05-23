@@ -23,7 +23,7 @@ module Seeds
 
     def import_json_seed_data
       # appeal_ready_for_substitution_3.json requires this to exist
-      FactoryBot.create(:higher_level_review, id: 2_000_050_893)
+      create(:higher_level_review, id: 2_000_050_893)
       import_json("db/seeds/sanitized_json/*.json")
     end
 

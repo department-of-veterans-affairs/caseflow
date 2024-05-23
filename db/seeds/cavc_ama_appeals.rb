@@ -40,24 +40,23 @@ module Seeds
     end
 
     def create_cavc_appeals_at_send_letter
-      10.times do
+      5.times do
         create(:appeal, :type_cavc_remand, veteran: create_veteran)
       end
     end
 
     def create_cavc_appeals_at_response_window
-      10.times do
+      5.times do
         create(:appeal, :cavc_response_window_open, veteran: create_veteran)
       end
     end
 
     def create_cavc_appeals_at_response_window_complete
-      now = Time.zone.now
-      10.times do
-        Timecop.travel(now - 91.days)
+      5.times do
+        Timecop.travel(91.days.ago)
         appeal = create(:appeal, :cavc_response_window_open, veteran: create_veteran)
         timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
-        Timecop.travel(now)
+        Timecop.return
         TaskTimerJob.new.send(:process, timed_hold_task.task_timers.first)
       end
     end
