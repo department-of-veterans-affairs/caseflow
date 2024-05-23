@@ -1,6 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import moment from 'moment';
+import thunk from 'redux-thunk';
+
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/queue/reducers';
 
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
@@ -9,30 +13,37 @@ import AddCavcDatesModal from 'app/queue/cavc/AddCavcDatesModal';
 import COPY from 'COPY';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
+import { Provider } from 'react-redux';
 
 describe('AddCavcDatesModal', () => {
   const appealId = amaAppeal.externalId;
+  // Pass in the rootReducer and thunk middleware to createStore
+  const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
-  const setup = ({ appealId: id }) => {
+  const setup = ({ appealId: id, store }) => {
     return mount(
-      <AddCavcDatesModal appealId={id} />,
+      <Provider store={store}>
+        <AddCavcDatesModal appealId={id} />,
+      </Provider>,
       {
         wrappingComponent: queueWrapper,
-      });
+      }
+    );
   };
-
   const clickSubmit = (cavcModal) => cavcModal.find('button#Add-Court-dates-button-id-1').simulate('click');
 
   it('renders correctly', async () => {
-    const cavcModal = setup({ appealId });
+    const store = getStore();
+    const cavcModal = setup({ appealId, store });
 
     expect(cavcModal).toMatchSnapshot();
   });
 
   it('submits succesfully', async () => {
-    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
-
-    const cavcModal = setup({ appealId });
+    // Mock the requestPatch function to return a promise that resolves, which is what redux-thunk expects
+    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => () => new Promise((resolve) => resolve()));
+    const store = getStore();
+    const cavcModal = setup({ appealId, store });
 
     const judgementDate = '03/27/2020';
     const mandateDate = '03/31/2019';
