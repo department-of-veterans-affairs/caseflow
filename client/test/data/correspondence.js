@@ -16,7 +16,6 @@ export const correspondenceData = {
   correspondence_type_id: 8,
   created_at: '2023-11-16 01:44:47.094786',
   notes: 'Some CMP notes here',
-  package_document_type_id: 15,
   updated_at: '2023-11-16 01:44:47.094786',
   updated_by_id: null,
   uuid: 'f67702ec-65fb-4b1e-b7c7-d493f7add9e9',

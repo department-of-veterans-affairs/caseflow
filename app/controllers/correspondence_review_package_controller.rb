@@ -42,7 +42,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   def update_cmp
     correspondence.update(
       va_date_of_receipt: params["VADORDate"].in_time_zone,
-      package_document_type_id: params["packageDocument"]["value"].to_i
     )
     correspondence.tasks.map do |task|
       if task.type == "ReviewPackageTask"

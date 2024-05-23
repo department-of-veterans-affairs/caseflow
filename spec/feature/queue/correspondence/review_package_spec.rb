@@ -4,7 +4,7 @@
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
-  let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
+  let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
   let(:mail_team_supervisor_user) { create(:user, roles: ["Mail Intake"]) }
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:mail_team_user) { create(:user) }
@@ -124,7 +124,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
   context "Review package - intake appeal" do
     let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
-    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
@@ -145,7 +145,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
   context "Review package - Create record" do
     let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
-    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
@@ -168,7 +168,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
   context "Review package - check on ReviewPackageTask status" do
     let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
-    let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+    let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
