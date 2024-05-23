@@ -80,6 +80,29 @@ test:
       (CONNECT_DATA=(SID=BVAP))
     )"
 
+# For use by GH workflow `Make-docs-to-webpage` (See `.github/workflows/make-docs.yml`)
+make_docs:
+  primary:
+    <<: *default
+    username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+    database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
+    <% if ENV['POSTGRES_HOST'] %>
+    host: <%= ENV['POSTGRES_HOST'] %>
+    <% end %>
+    <% if ENV['POSTGRES_PASSWORD'] %>
+    password: <%= ENV['POSTGRES_PASSWORD'] %>
+    <% end %>
+  etl:
+    <<: *etl_default
+    database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+  # Even though it won't be used, Rails expects a 'vacols' DB configuration due to
+  #   VACOLS::Record `establish_connection :vacols`
+  vacols:
+    adapter: postgresql
+    pool: 1
+    timeout: 5000
+    database: test-vacols
+
 demo:
   primary:
     <<: *default
