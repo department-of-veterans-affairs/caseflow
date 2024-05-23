@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_14_183749) do
+ActiveRecord::Schema.define(version: 2024_05_23_204158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -710,20 +710,16 @@ ActiveRecord::Schema.define(version: 2024_05_14_183749) do
   end
 
   create_table "correspondences", force: :cascade do |t|
-    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
-    t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
+    t.bigint "assigned_by_id", comment: "Foreign key to users table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.boolean "nod", default: false, null: false, comment: "NOD (Notice of Disagreement)"
     t.text "notes", comment: "Comes from CMP; can be updated by user"
-    t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
-    t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
-    t.string "source_type", comment: "An information identifier we get from CMP"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.uuid "uuid", comment: "Unique identifier"
     t.datetime "va_date_of_receipt", comment: "Date package delivered"
     t.bigint "veteran_id", comment: "Foreign key to veterans table"
-    t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
+    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
   end
@@ -1573,13 +1569,6 @@ ActiveRecord::Schema.define(version: 2024_05_14_183749) do
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
-  create_table "package_document_types", force: :cascade do |t|
-    t.boolean "active", default: true
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
-  end
-
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
@@ -2414,7 +2403,8 @@ ActiveRecord::Schema.define(version: 2024_05_14_183749) do
   add_foreign_key "correspondence_relations", "correspondences"
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences", "correspondence_types"
-  add_foreign_key "correspondences", "package_document_types"
+  add_foreign_key "correspondences", "users", column: "assigned_by_id"
+  add_foreign_key "correspondences", "users", column: "updated_by_id"
   add_foreign_key "correspondences", "veterans"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
