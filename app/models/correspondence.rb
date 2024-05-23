@@ -59,11 +59,6 @@ class Correspondence < CaseflowRecord
 
   # Methods below are included to allow Correspondences to render in explain page
 
-  # Alias for cmp_packet_number
-  def docket_number
-    cmp_packet_number
-  end
-
   # Alias for package_document_type.name
   def docket_name
     package_document_type.name
