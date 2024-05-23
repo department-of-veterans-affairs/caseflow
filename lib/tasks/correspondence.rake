@@ -55,7 +55,7 @@ namespace :correspondence do
       throw :error, STDOUT.puts("Veteran not found") if veteran.blank?
       throw :error, STDOUT.puts("No user in the request store") if user.blank?
 
-      (1..num_cor).each do |cmp_queue_id|
+      (1..num_cor).each do
         package_doc_type = PackageDocumentType.all.sample
         corr_type = CorrespondenceType.all.sample
         receipt_date = rand(1.month.ago..1.day.ago)
@@ -68,7 +68,6 @@ namespace :correspondence do
           uuid: SecureRandom.uuid,
           package_document_type_id: package_doc_type&.id,
           correspondence_type_id: corr_type&.id,
-          cmp_queue_id: cmp_queue_id,
           va_date_of_receipt: receipt_date,
           notes: doc_type[:description],
           veteran_id: veteran.id,

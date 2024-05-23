@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :correspondence do
     uuid { SecureRandom.uuid }
-    cmp_queue_id { 1 }
     va_date_of_receipt { Time.zone.yesterday }
     notes { "" }
     nod { false }

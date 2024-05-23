@@ -29,7 +29,6 @@ module QueueHelpers
       uuid: SecureRandom.uuid,
       package_document_type_id: package_doc_type&.id,
       correspondence_type_id: corr_type&.id,
-      cmp_queue_id: 1,
       va_date_of_receipt: receipt_date,
       notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
       veteran_id: vet.id,
