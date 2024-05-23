@@ -5,7 +5,6 @@
 module Seeds
   class Intake < Base
     def seed!
-      create_intake_users
       create_higher_level_review_tasks
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
@@ -16,15 +15,6 @@ module Seeds
     end
 
     private
-
-    def create_intake_users
-      ["Mail Intake", "Admin Intake"].each do |role|
-        # do not try to recreate when running seed file after inital seed
-        next if User.find_by_css_id("#{role.tr(' ', '')}_LOCAL".upcase)
-
-        create(:user, css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], full_name: "Jame Local #{role} Smith")
-      end
-    end
 
     def create_deceased_veteran
       params = { first_name: "Ed", last_name: "Deceased", date_of_death: Time.zone.yesterday }

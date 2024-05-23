@@ -57,6 +57,7 @@ module Seeds
       # Any users created above Functions.grant! are intended to have "System Admin" access
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+      create_intake_users
       create_vha_admins
       create_colocated_users
       create_transcription_team
@@ -147,6 +148,15 @@ module Seeds
     def create_team_admin
       team_admin = create(:user, css_id: "TEAM_ADMIN", full_name: "Jim TeamAdminSystemAdmin Jones")
       Bva.singleton.add_user(team_admin)
+    end
+
+    def create_intake_users
+      ["Mail Intake", "Admin Intake"].each do |role|
+        # do not try to recreate when running seed file after inital seed
+        next if User.find_by_css_id("#{role.tr(' ', '')}_LOCAL".upcase)
+
+        create(:user, css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], full_name: "Jame Local #{role} Smith")
+      end
     end
 
     def create_vha_admins
