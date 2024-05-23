@@ -44,10 +44,10 @@ class MailTask < Task
       true
     end
 
-    # SCT - Distributed
+    # Distributed - SCT
     # F - F -> RootTask
-    # F - T -> RootTask
-    # T - F -> DistributionTask
+    # F - T -> DistributionTask
+    # T - F -> RootTask
     # T - T -> RootTask
     def parent_if_blocking_task(parent_task)
       return parent_task unless blocking?
