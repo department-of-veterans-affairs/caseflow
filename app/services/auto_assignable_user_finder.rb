@@ -49,7 +49,7 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        self.unassignable_reason = "Case not assigned because of sensitivity level mismatch."
+        self.unassignable_reason = "User does not meet the sensitivity level required."
       end
     end
 
