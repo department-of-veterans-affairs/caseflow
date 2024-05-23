@@ -28,7 +28,6 @@ module QueueHelpers
 
     ::Correspondence.create!(
       uuid: SecureRandom.uuid,
-      portal_entry_date: Time.zone.now,
       source_type: "Mail",
       package_document_type_id: package_doc_type&.id,
       correspondence_type_id: corr_type&.id,
