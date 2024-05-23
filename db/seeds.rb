@@ -43,12 +43,13 @@ class SeedDB
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
+    call_and_log_seed_step Seeds::Veterans
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies
     # call_and_log_seed_step Seeds::Tasks
     # call_and_log_seed_step Seeds::Hearings
-    call_and_log_seed_step Seeds::Intake
+    # call_and_log_seed_step Seeds::Intake
     call_and_log_seed_step Seeds::Dispatch
     call_and_log_seed_step Seeds::Jobs
     call_and_log_seed_step Seeds::Substitutions
@@ -83,9 +84,6 @@ class SeedDB
     # call_and_log_seed_step Seeds::RemandedAmaAppeals
     # call_and_log_seed_step Seeds::RemandedLegacyAppeals
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
-
-    Judge.list_all
-    Attorney.list_all
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
