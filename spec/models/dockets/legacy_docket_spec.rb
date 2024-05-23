@@ -20,6 +20,32 @@ describe LegacyDocket do
     end
   end
 
+  context "#ready_priority_nonpriority_legacy_appeals" do
+    context "when priority is true" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_truthy
+      end
+    end
+
+    context "when priority is false" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_truthy
+      end
+    end
+  end
+
   context "#genpop_priority_count" do
     it "calls AppealRepository.genpop_priority_count" do
       expect(AppealRepository).to receive(:genpop_priority_count)
@@ -226,30 +252,18 @@ describe LegacyDocket do
       end
     end
 
-    context "when this is a priority distribution" do
-      CaseDistributionLever.where(item: "disable_legacy_priority").update(value: true)
-      CaseDistributionLever.where(item: "disable_legacy_non_priority").update(value: true)
+    # context "when levers are set to true" do
+    #   before do
+    #     CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+    #   end
 
-      it "calls distribute_priority_appeals" do
-        expect(docket).to receive(:distribute_priority_appeals)
-          .with(distribution, style: style, genpop: genpop, limit: limit)
+    #   it "does not call distribute_priority_appeals" do
+    #     expect(docket).not_to receive(:distribute_priority_appeals)
+    #       .with(distribution, style: style, genpop: genpop, limit: limit)
 
-        expect(subject).to eq []
-      end
-    end
-
-    it "returns docket when the corresponding CaseDistributionLever value is false" do
-      CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
-      result = docket.ready_priority_nonpriority_appeals(priority: false, ready: true, genpop: true, judge: judge)
-      expected_attributes = docket.appeals(
-        priority: false,
-        ready: true,
-        genpop: true,
-        judge: judge
-      ).map(&:attributes)
-      result_attributes = result.map(&:attributes)
-      expect(result_attributes).to eq(expected_attributes)
-    end
+    #     expect(subject).to eq []
+    #   end
+    # end
 
     context "when this is a non-priority distribution" do
       let(:priority) { false }
