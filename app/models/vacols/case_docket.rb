@@ -514,7 +514,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               SQL
             end
 
-    # {Once we have the query we can run it through an affinity days filter
+    # {Once we have the query we can run it through an affinity days filter, reorder then add limit}
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -554,11 +554,13 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+      # {Need to check for affinity_start_date on AMA DB is less than CaseDistributionLever.cavc_aod_affinity_days.days.ago}
       <<-SQL
       where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
       and rownum <= ?
       SQL
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       <<-SQL
       where (PREV_TYPE_ACTION = '7' and PREV_DECIDING_JUDGE = ?)
       and rownum <= ?
