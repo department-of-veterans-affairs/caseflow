@@ -153,7 +153,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "closed_status": nil,
             "contested_rating_issue_diagnostic_code": nil,
             "ramp_claim_id": nil,
-            "rating_issue_associated_at": 1716398010000,
+            "rating_issue_associated_at": 1_716_398_010_000,
             "nonrating_issue_bgs_id": nil
           }
         ]
