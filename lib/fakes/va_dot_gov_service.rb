@@ -38,7 +38,12 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         }
       end
     else
-      []
+      query[:facilityIds].split(",").map do |id|
+        {
+          id: id,
+          distance: 0
+        }
+      end
     end
   end
 

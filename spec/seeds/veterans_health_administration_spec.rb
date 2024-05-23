@@ -23,5 +23,9 @@ describe Seeds::VeteransHealthAdministration do
       expect { subject }.to_not raise_error
       expect(VhaRegionalOffice.count).to eq(18)
     end
+
+    it "creates the Specialty Case Team org" do
+      expect { subject }.to_not raise_error
+    end
   end
 end

@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_06_021307) do
+ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -362,7 +362,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
     t.boolean "is_disabled_in_ui", null: false, comment: "Determines behavior in the controls page"
-    t.boolean "is_toggle_active", null: false, comment: "used for the docket time goals, otherwise it is true and unused"
+    t.boolean "is_toggle_active", comment: "used for the docket time goals, otherwise it is true and unused"
     t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
     t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
     t.integer "lever_group_order", null: false, comment: "determines the order that the lever appears in each section of inputs, and the order in the history table"
@@ -699,11 +699,21 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.boolean "sct_appeal"
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
     t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
+  end
+
+  create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "distribution_id", comment: "ID of the associated Distribution"
+    t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
+    t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
+    t.datetime "updated_at", null: false
+    t.index ["distribution_id"], name: "index_distribution_stats_on_distribution_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -1056,6 +1066,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness", comment: "Witness/Observer present during hearing"
+    t.index ["appeal_id"], name: "index_hearings_on_appeal_id"
     t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
     t.index ["disposition"], name: "index_hearings_on_disposition"
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
@@ -1289,6 +1300,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.datetime "created_at", null: false
     t.float "duration", comment: "Time in milliseconds from start to end"
     t.datetime "end", comment: "When metric recording stopped"
+    t.uuid "event_id", comment: "Track metrics for retrieving loading and viewing a single pdf document."
     t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
     t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
     t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
@@ -1342,6 +1354,11 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.index ["updated_at"], name: "index_non_availabilities_on_updated_at"
   end
 
+  create_table "not_listed_power_of_attorneys", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "notification_events", primary_key: "event_type", id: :string, comment: "Type of Event", force: :cascade do |t|
     t.uuid "email_template_id", null: false, comment: "Staging Email Template UUID"
     t.uuid "sms_template_id", null: false, comment: "Staging SMS Template UUID"
@@ -1380,6 +1397,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
     t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
+    t.boolean "exclude_appeals_from_affinity", default: false, null: false, comment: "Used to track whether a judge (team) should have their affinity appeals distributed to any available judge team even if the set amount of time has not elapsed."
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
@@ -1579,6 +1597,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
     t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
+    t.string "nonrating_issue_bgs_id", comment: "If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -1864,6 +1883,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "The user that created this version of the unrecognized appellant"
     t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
+    t.bigint "not_listed_power_of_attorney_id"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider."
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
@@ -2188,6 +2208,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
   add_foreign_key "distributed_cases", "tasks"
+  add_foreign_key "distribution_stats", "distributions"
   add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
@@ -2267,6 +2288,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"

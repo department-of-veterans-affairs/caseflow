@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -66,10 +68,20 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
+      namespace :issues do
+        namespace :ama do
+          get "find_by_veteran/:participant_id", to: "veterans#show"
+        end
+        namespace :vacols do
+          get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
+        end
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
+        get "ama_issues", to: "docs#ama_issues"
+        get "vacols_issues", to: "docs#vacols_issues"
       end
     end
     get "metadata", to: 'metadata#index'
@@ -273,6 +285,7 @@ Rails.application.routes.draw do
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
+        get :history
         get :power_of_attorney
         patch :update_power_of_attorney
       end
@@ -359,6 +372,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 

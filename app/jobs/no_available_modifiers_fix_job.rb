@@ -50,7 +50,6 @@ class NoAvailableModifiersFixJob < CaseflowJob
     supp_claims.each do |sc|
       next if available_space <= 0
 
-      # binding.pry
       @stuck_job_report_service.append_single_record(sc.class.name, sc.id)
       ActiveRecord::Base.transaction do
         DecisionReviewProcessJob.perform_now(sc)

@@ -45,4 +45,25 @@ describe Api::Docs::V3::DocsController, type: :request do
       end
     end
   end
+
+  describe "#ama_issues" do
+    it "should successfully return openapi spec" do
+      get "/api/docs/v3/ama_issues"
+      expect(response).to have_http_status(200)
+      json = JSON.parse(response.body)
+      expect(json["openapi"]).to eq("3.0.3")
+    end
+    describe "/issues/ama/find_by_veteran/{veteran_participant_id} documentation" do
+      before(:each) do
+        get "/api/docs/v3/ama_issues"
+      end
+      let(:ama_issues_find_by_veteran_doc) do
+        json = JSON.parse(response.body)
+        json["paths"]["/api/v3/issues/ama/find_by_veteran/{veteran_participant_id}"]
+      end
+      it "should have GET" do
+        expect(ama_issues_find_by_veteran_doc).to include("get")
+      end
+    end
+  end
 end

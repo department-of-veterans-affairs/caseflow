@@ -58,7 +58,7 @@ Run each line is a separate command, run them one at a time
 11. Enter your git token where <yourtoken> is below:
     * ```git clone https://<yourtoken>@github.com/department-of-veterans-affairs/caseflow```
     * ```cd caseflow```
-    * ```git checkout kevin/setup-ubuntu```
+    * ```git checkout dev-supporting/setup-ubuntu```
     * ```cp -r ~/caseflow-setup/caseflow-facols/build_facols local/vacols/build_facols```
     * ```cp ~/caseflow-setup/*.zip local/vacols/build_facols/```
     * ```rm -rf ~/__MACOSX && rm -rf ~/caseflow-setup && rm -f ~/caseflow-setup.zip```
@@ -78,7 +78,7 @@ Run each line is a separate command, run them one at a time
 
 16. Open new terminal in VS Code. Trash old terminal.
 
-17. In new terminal run: ```git checkout kevin/setup-ubuntu```
+17. In new terminal run: ```git checkout dev-supporting/setup-ubuntu```
 
 18. ```cd ~/appeals/caseflow```
 

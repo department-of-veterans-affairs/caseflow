@@ -126,6 +126,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
 
   const showPoaDetails = poa.representative_type && poa.representative_name;
   const isRecognizedPoa = poa.representative_type !== 'Unrecognized representative';
+  const isPoaNotListed = poa.representative_type === 'not_listed';
 
   const renderPoaLogic = () => {
     const isRecognizedAppellant = ![
@@ -140,11 +141,21 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   };
   const renderBottomMessage = () => {
     const poaExplainerText = vha ? COPY.CASE_DETAILS_POA_EXPLAINER_VHA : COPY.CASE_DETAILS_POA_EXPLAINER;
-    const noPoaText = vha ? COPY.CASE_DETAILS_NO_POA_VHA : COPY.CASE_DETAILS_NO_POA;
     const unrecognizedPoaText = vha ? COPY.CASE_DETAILS_UNRECOGNIZED_POA_VHA : COPY.CASE_DETAILS_UNRECOGNIZED_POA;
 
+    const noPoaText = () => {
+      if (!vha) {
+        return COPY.CASE_DETAILS_NO_POA;
+      }
+      if (isPoaNotListed) {
+        return COPY.CASE_DETAILS_NO_RECOGNIZED_POA_VHA;
+      }
+
+      return COPY.CASE_DETAILS_NO_POA_VHA;
+    };
+
     if (!showPoaDetails && _.isEmpty(poaAlert.powerOfAttorney)) {
-      return noPoaText;
+      return noPoaText();
     }
     if (isRecognizedPoa) {
       return poaExplainerText;

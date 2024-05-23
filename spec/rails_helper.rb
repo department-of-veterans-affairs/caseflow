@@ -72,6 +72,11 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:all) do
+    # This needs to be run in order for tests involving external tables to pass.
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   config.before(:each) do
     @spec_time_zone = Time.zone
     Seeds::CaseDistributionLevers.new.seed!
@@ -110,6 +115,14 @@ end
 RSpec::Matchers.define :excluding do |expected|
   match do |actual|
     !actual.include?(expected)
+  end
+end
+
+# configuration for "shoulda-matchers" gem
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end
 

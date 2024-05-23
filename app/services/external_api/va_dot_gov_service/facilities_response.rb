@@ -29,7 +29,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
     if body[:meta].key?(:distances)
       Hash[body[:meta][:distances].pluck(:id, :distance)]
     else
-      []
+      Hash[body[:data].collect { |facility| [facility[:id], 0] }]
     end
   end
 

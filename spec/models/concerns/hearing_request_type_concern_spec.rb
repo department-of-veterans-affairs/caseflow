@@ -292,7 +292,6 @@ describe HearingRequestTypeConcern do
         before do
           # this will create the first event
           schedule_hearing_task.update_from_params(requested_change1, current_user)
-
           # this will create the second event
           schedule_hearing_task.update_from_params(requested_change2, current_user)
         end
@@ -313,7 +312,6 @@ describe HearingRequestTypeConcern do
 
         it "returns the original request type if version is `prev`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(2)
-
           change_request_type_tasks = appeal.tasks.of_type(:ChangeHearingRequestTypeTask)
 
           # Set the changed request types

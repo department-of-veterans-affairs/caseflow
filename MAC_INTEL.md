@@ -77,7 +77,7 @@
 
 19. Run `scripts/dev_env_setup_step2.sh` script (may take a while to run)
 
-20. Run `gem install bundler`
+20. Run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
 
 21. Navigate to `~/appeals/caseflow/local/vacols` in terminal (type: `cd ~/appeals/caseflow/local/vacols`)
 
