@@ -40,7 +40,7 @@ class AutoAssignableUserFinder
   def run_auto_assign_algorithm(correspondence, users)
     users.each do |user|
       if correspondence.nod && !user.nod?
-        self.unassignable_reason = "User cannot work NOD correspondences"
+        self.unassignable_reason = "Case not assigned because of NOD permission settings."
         next
       end
 
@@ -49,7 +49,7 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        self.unassignable_reason = "User's sensitivity level is not compatible with veteran's sensitivity level"
+        self.unassignable_reason = "Case not assigned because of sensitivity level mismatch."
       end
     end
 
@@ -58,7 +58,7 @@ class AutoAssignableUserFinder
 
   def user_is_at_max_capacity?(user)
     if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
-      self.unassignable_reason = "User is at max capacity"
+      self.unassignable_reason = "Queue volume has reached maximum capacity for this user."
       true
     else
       false

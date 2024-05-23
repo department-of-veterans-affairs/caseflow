@@ -72,7 +72,7 @@ module CorrespondenceControllerConcern
       "assigned Correspondence to #{user.css_id}."
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_message = "Queue volume has reached maximum capacity for this user."
+    failure_message = errors.join(', ')
     {
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
       message: errors.empty? ? success_message : failure_message
