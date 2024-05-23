@@ -6,7 +6,7 @@ const PriorDecisionDateSelector = () => {
   const { register, errors } = useFormContext();
 
   return <DateSelector
-    label="Prior decision date"
+    label="Decision date"
     name="decisionDate"
     inputRef={register}
     errorMessage={errors.decisionDate?.message}

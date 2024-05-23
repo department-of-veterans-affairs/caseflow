@@ -7,7 +7,7 @@ export const CurrentIssue = ({ currentIssue }) => {
     <div style={{ marginBottom: '2.4rem' }}>
       <h2 style={{ marginBottom: '0px' }}>Current issue</h2>
       <strong>Issue type: </strong>{currentIssue.category}<br />
-      <strong>Prior decision date: </strong>{formatDateStr(currentIssue.decisionDate)}<br />
+      <strong>Decision date: </strong>{formatDateStr(currentIssue.decisionDate)}<br />
       <strong>Issue description: </strong>{currentIssue.nonRatingIssueDescription}<br />
     </div>
   );
