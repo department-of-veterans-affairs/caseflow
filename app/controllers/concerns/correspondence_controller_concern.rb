@@ -21,7 +21,7 @@ module CorrespondenceControllerConcern
         correspondence: correspondence_task
       )
 
-      if check_result
+      if check_result && check_auto_assign_permission(mail_team_user)
         update_task(mail_team_user, id)
       else
         errors << permission_checker.unassignable_reason
@@ -29,6 +29,17 @@ module CorrespondenceControllerConcern
     end
 
     set_banner_params(mail_team_user, errors, tab)
+  end
+
+  def check_auto_assign_permission(target_user)
+    org_user_permission_checker.can?(
+      permission_name: OrganizationPermission.find_by(
+        permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign,
+        organization_id: InboundOpsTeam.singleton.id
+      ).permission,
+      organization: InboundOpsTeam.singleton,
+      user: OrganizationsUser.find_by(organization_id: target_user.id)
+    )
   end
 
   def update_task(mail_team_user, task_id)
@@ -39,6 +50,7 @@ module CorrespondenceControllerConcern
       status: Constants.TASK_STATUSES.assigned
     )
   end
+
   def set_banner_params(user, errors, tab)
     template = message_template(user, errors, tab)
     @response_type = errors.empty? ? "success" : "warning"
