@@ -26,7 +26,7 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
 
         expect do
           described_class.process!(event: event, parser: parser)
-        end.to change { EventRecord.count }.by(1).and change { SupplementalClaim.count }.by(1)
+        end.to change { EventRecord.count }.by(0).and change { SupplementalClaim.count }.by(1)
 
         expect(described_class.process!(event: event, parser: parser)).to eq(SupplementalClaim.last)
 
@@ -47,7 +47,7 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
       it "creates a new supplemental claim" do
         expect do
           described_class.process!(event: event, parser: parser)
-        end.to change { EventRecord.count }.by(1).and change { HigherLevelReview.count }.by(1)
+        end.to change { EventRecord.count }.by(0).and change { HigherLevelReview.count }.by(1)
 
         expect(described_class.process!(event: event, parser: parser)).to eq(HigherLevelReview.last)
 

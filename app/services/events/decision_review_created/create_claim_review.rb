@@ -5,11 +5,9 @@ class Events::DecisionReviewCreated::CreateClaimReview
     def process!(event:, parser:)
       if parser.detail_type == "HigherLevelReview"
         high_level_review = create_high_level_review(parser)
-        create_event_record(event, high_level_review)
         high_level_review
       else
         supplemental_claim = create_supplemental_claim(parser)
-        create_event_record(event, supplemental_claim)
         supplemental_claim
       end
     rescue StandardError => error
@@ -48,10 +46,6 @@ class Events::DecisionReviewCreated::CreateClaimReview
         establishment_submitted_at: parser.claim_review_establishment_submitted_at,
         veteran_file_number: parser.veteran_file_number
       )
-    end
-
-    def create_event_record(event, claim)
-      EventRecord.create!(event: event, evented_record: claim)
     end
   end
 end
