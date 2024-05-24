@@ -58,10 +58,11 @@ class ClaimReviewController < ApplicationController
   private
 
   def process_modification?
-    params[:issue_modification_requests].present? ||
-      params[:issue_modification_requests].try(:cancelled).present? ||
-      params[:issue_modification_requests].try(:edited).present? ||
-      params[:issue_modification_requests].try(:new).present?
+    params[:issue_modification_requests].present? && (
+      params[:issue_modification_requests][:cancelled].present? ||
+      params[:issue_modification_requests][:edited].present? ||
+      params[:issue_modification_requests][:new].present?
+    )
   end
 
   def source_type

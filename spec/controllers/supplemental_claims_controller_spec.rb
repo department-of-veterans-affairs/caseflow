@@ -36,17 +36,15 @@ describe SupplementalClaimsController, :postgres, type: :controller do
         post :update, params: {
           claim_id: supplemental_claim.uuid,
           request_issues: [{ request_issue_id: supplemental_claim.request_issues.first.id }],
-          issue_modification_requests: [
-            {
-              new: [],
-              edited: [],
-              cancelled: [
-                {
-                  id: 1, status: "assigned"
-                }
-              ]
-            }
-          ]
+          issue_modification_requests: {
+            new: [],
+            edited: [],
+            cancelled: [
+              {
+                id: 1, status: "assigned"
+              }
+            ]
+          }
         }
 
         expect(response.status).to eq 200

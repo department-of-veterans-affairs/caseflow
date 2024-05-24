@@ -33,6 +33,7 @@ class NonAdmin::IssueModificationRequestsUpdater
 
   private
 
+  # :reek:TooManyInstanceVariables
   def new_modifications_process!(new_issues)
     new_issues.each do |new_issue|
       unless validate_new_issues?(status: new_issue[:status])
@@ -41,6 +42,7 @@ class NonAdmin::IssueModificationRequestsUpdater
       end
       IssueModificationRequest.create!(
         decision_review: review,
+        request_issue_id: new_issue[:request_issue_id],
         request_type: new_issue[:request_type].downcase,
         request_reason: new_issue[:request_reason],
         benefit_type: new_issue[:benefit_type],
@@ -56,6 +58,7 @@ class NonAdmin::IssueModificationRequestsUpdater
     true
   end
 
+  # :reek:TooManyInstanceVariables
   def edited_modifications_process!(edited_issues)
     edited_issues.each do |edited_issue|
       find_issue_modification_request(edited_issue[:id])

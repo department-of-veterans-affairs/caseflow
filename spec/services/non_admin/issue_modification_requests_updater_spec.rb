@@ -46,6 +46,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
           request_type: "addition",
           nonrating_issue_category: "Caregiver | Eligibility",
           decision_review_id: review.id,
+          request_issue_id: nil,
           decision_review_type: "HigherLevelReview",
           benefit_type: "VHA",
           decider_reason: "New Decision text",

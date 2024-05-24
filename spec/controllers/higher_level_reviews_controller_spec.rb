@@ -85,17 +85,15 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
         post :update, params: {
           claim_id: higher_level_review.uuid,
           request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }],
-          issue_modification_requests: [
-            {
-              new: [],
-              edited: [],
-              cancelled: [
-                {
-                  id: 1, status: "assigned"
-                }
-              ]
-            }
-          ]
+          issue_modification_requests: {
+            new: [],
+            edited: [],
+            cancelled: [
+              {
+                id: 1, status: "assigned"
+              }
+            ]
+          }
         }
 
         expect(response.status).to eq 200
