@@ -25,8 +25,8 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
     it "can run the job" do
       allow_any_instance_of(Hearings::FetchWebexRecordingsListJob).to receive(:perform).and_return([])
       expect_any_instance_of(described_class)
-        .to receive(:fetch_room_details).and_return([])
-      subject.perform_now(room_id: room_id, meeting_title: meeting_title)
+        .to receive(:fetch_room_details).with(room_id).and_return([])
+      subject.perform_now(meeting_id: room_id, meeting_title: meeting_title)
     end
 
     it "returns correct response" do

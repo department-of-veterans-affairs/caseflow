@@ -153,15 +153,15 @@ class Fakes::WebexService
           "topic": "200103-61110_2000061110_Hearing",
           "createTime": "2020-07-13T17:11:35Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
+          "hostDisplayName": "John Andersen",
+          "hostEmail": "john.andersen@example.com",
           "siteUrl": "site4-example.webex.com",
           "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=b91990e37417bda24986e46cf43345ab",
           "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=69201a61d1d94a84aca18817261d1a73",
-          "password": "BgJep@43",
           "format": "ARF",
           "serviceType": "MeetingCenter",
           "durationSeconds": 18_416,
           "sizeBytes": 168_103,
-          "shareToMe": false,
           "integrationTags": %w[
             dbaeceebea5c4a63ac9d5ef1edfe36b9
             85e1d6319aa94c0583a6891280e3437d
@@ -177,15 +177,15 @@ class Fakes::WebexService
           "topic": "150000248290336_302_LegacyHearing",
           "createTime": "2020-07-13T17:11:34Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
+          "hostDisplayName": "John Andersen",
+          "hostEmail": "john.andersen@example.com",
           "siteUrl": "site4-example.webex.com",
           "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=8a763939dec1fa26c565700d628fcb98",
           "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=b05e9c4f773745e7b88725cc97bc3161",
-          "password": "BgJep@43",
           "format": "ARF",
           "serviceType": "MeetingCenter",
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
-          "shareToMe": false,
           "integrationTags": %w[
             dbaeceebea5c4a63ac9d5ef1edfe36b9
             85e1d6319aa94c0583a6891280e3437d
@@ -201,15 +201,15 @@ class Fakes::WebexService
           "topic": "231207-1177_1177_Hearing",
           "createTime": "2020-07-13T17:11:33Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
+          "hostDisplayName": "John Andersen",
+          "hostEmail": "john.andersen@example.com",
           "siteUrl": "site4-example.webex.com",
           "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=0edd48adbb183e7da97884a0a984e877",
           "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=b64b28ebf70e4645954420c295a9fcad",
-          "password": "BgJep@4",
           "format": "ARF",
           "serviceType": "MeetingCenter",
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
-          "shareToMe": true,
           "integrationTags": %w[
             dbaeceebea5c4a63ac9d5ef1edfe36b9
             85e1d6319aa94c0583a6891280e3437d
@@ -313,7 +313,7 @@ class Fakes::WebexService
       "meetingLink": "https://vadevops.webex.com/m/f3387f62-aded-46b9-8954-0b1f2c94dfd3",
       "sipAddress": "28236309135@vadevops.webex.com",
       "meetingNumber": "28236309135",
-      "meetingId": "a52e152a05114cfcb5c7b5e6c088fcc0",
+      "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
       "callInTollFreeNumber": "",
       "callInTollNumber": "+1-415-527-5035"
     }

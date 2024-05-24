@@ -4,15 +4,17 @@ class ExternalApi::WebexService::RecordingsListResponse < ExternalApi::WebexServ
   def recordings
     return [] if data["items"].blank?
 
-    data["items"].map { |item| Recording.new(item["id"], item["host_email"]) }
+    data["items"].map { |item| Recording.new(item["id"], item["hostEmail"]) }
   end
 
   class Recording
     attr_reader :id, :host_email
 
-    def initialize(id, host_email)
+    # rubocop:disable Naming/MethodParameterName, Naming/VariableName
+    def initialize(id, hostEmail)
       @id = id
-      @host_email = host_email
+      @host_email = hostEmail
     end
+    # rubocop:enable Naming/MethodParameterName, Naming/VariableName
   end
 end
