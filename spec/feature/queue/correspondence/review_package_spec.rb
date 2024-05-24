@@ -128,10 +128,10 @@ RSpec.feature("The Correspondence Review Package page") do
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_supervisor_org.add_user(mail_team_user)
-      MailTeam.singleton.add_user(mail_team_user)
-      mail_team_user.update!(roles: ["Mail Intake"])
-      User.authenticate!(user: mail_team_user)
+      mail_team_supervisor_org.add_user(inbound_ops_team_user)
+      MailTeam.singleton.add_user(inbound_ops_team_user)
+      inbound_ops_team_user.update!(roles: ["Mail Intake"])
+      User.authenticate!(user: inbound_ops_team_user)
     end
 
     it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
