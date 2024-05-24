@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_dependency "events/event_record"
+
 # This module starts the intial Intake creation and backfills the EventRecord
 # when a Decision Review Created Event is triggered
 module Events::DecisionReviewCreated::CreateIntake
