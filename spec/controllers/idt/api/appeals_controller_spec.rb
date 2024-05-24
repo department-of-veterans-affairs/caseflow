@@ -730,7 +730,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let(:user) { create(:user, roles: ["Mail Intake"]) }
     let(:params) do
       {
-        "requestAddress": {
+        "request_address": {
           "addressLine1": "string",
           "addressLine2": "string",
           "addressLine3": "string",
