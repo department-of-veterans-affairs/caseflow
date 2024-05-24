@@ -216,7 +216,7 @@ $color-cream: #d6d7d9;
 }
 
 .correspondence-intake-appeal-button {
-  margin-right: 2rem !important;
+  margin-right: 2rem;
 }
 
 .main-div-review-form {
@@ -254,6 +254,7 @@ $color-cream: #d6d7d9;
 
 .veternal-file-styling-review-form {
   width: 40%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -262,6 +263,7 @@ $color-cream: #d6d7d9;
 .error-veternal-file-styling-review-form {
   width: 48%;
   margin-top: -6.4rem;
+
   @media (max-width: 1599px) {
     width: 58%;
   }
@@ -269,6 +271,7 @@ $color-cream: #d6d7d9;
 
 .veternal-name-styling-review-form {
   width: 60%;
+
   @media (max-width: 1081px) {
     width: 100%;
   }
@@ -277,6 +280,7 @@ $color-cream: #d6d7d9;
 .input-styling-review-form {
   display: flex;
   gap: 5%;
+
   @media (max-width: 1081px) {
     flex-direction: column;
   }
@@ -284,12 +288,12 @@ $color-cream: #d6d7d9;
 
 .tag-styling-review-form {
   & .cf-select__control {
-    max-width: 63rem !important;
+    max-width: 63rem;
   }
 }
 
 #textarea-styling-review-form {
-  width: 50rem !important;
+  width: 50rem ;
   height: 15rem;
   resize: none;
 }
@@ -297,7 +301,7 @@ $color-cream: #d6d7d9;
 .review-form-title-style {
   display: flex;
   gap: 20px;
-  margin-top: 20px
+  margin-top: 20px;
 }
 
 .correspondence-case-title-header-containing-div-styling {
@@ -317,12 +321,12 @@ $color-cream: #d6d7d9;
 }
 
 .correspondence-review-package-case-title-remove-button {
-  float: right !important;
-  margin-right: 2rem !important;
+  float: right ;
+  margin-right: 2rem ;
 }
 
 .correspondence-review-package-case-title-button-styling {
-  margin-right: 2rem !important;
+  margin-right: 2rem ;
   padding: 15px;
   font-size: larger;
 }
@@ -370,6 +374,7 @@ $color-cream: #d6d7d9;
   }
   &.toolbar-right{
     text-align: right;
+
     @media(max-width: 1165px) {
       width: 44%;
         & .cf-pdf-button-text { display: none } }
@@ -514,11 +519,11 @@ $color-cream: #d6d7d9;
 }
 
 .correspondence-table-builder-searchable-button-position {
-  margin-left: 2rem
+  margin-left: 2rem;
 }
 
 .correspondence-table-builder-searchable-auto-assign-button-position {
-  margin-left: auto
+  margin-left: auto;
 }
 
 .correspondence-table-builder-searchable-dropdown-style .cf-select .cf-select__value-container {
@@ -531,7 +536,7 @@ $color-cream: #d6d7d9;
 
 .correspondence-table-builder-filter-bar-position {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
 .checkbox-modal-style .cf-modal-body {
@@ -569,7 +574,7 @@ $color-cream: #d6d7d9;
   .td1 {
     background-color: $color-gray-inverse-base;
     border-top: 1px solid $color-bg-gray;
-    width: 20%
+    width: 20%;
   }
 
   .td2 {
@@ -594,7 +599,7 @@ $color-cream: #d6d7d9;
     position: relative;
     display: flex;
     justify-content: space-between;
-    align-items: flex-right
+    align-items: flex-right;
   }
 
   .style-for-appeals-number-tasks {
@@ -616,14 +621,14 @@ $color-cream: #d6d7d9;
   }
 
   .style-for-appeals-number-title {
-    line-height: 10%
+    line-height: 10%;
   }
 
   .style-for-appeals-first-row {
     border-top: none;
     border-bottom: none;
     background-color: $color-gray-inverse-base;
-    padding-bottom: 10px
+    padding-bottom: 10px;
   }
 
   .style-for-appeals-first-row-title {
@@ -651,9 +656,9 @@ $color-cream: #d6d7d9;
   .linked-appeal-link-button {
     width: fit-content;
     padding: 3px;
-    background-color: white;
+    background-color: #ffffff;
     border: 1px solid #8ba6ca;
-    white-space: nowrap
+    white-space: nowrap;
   }
 
   .currently-active-task-answer {
@@ -677,19 +682,19 @@ $color-cream: #d6d7d9;
   .additional-tasks-row {
     background-color: $color-gray-inverse-base;
     border-top: none;
-    border-spacing: 0px
+    border-spacing: 0px;
   }
 
   .tasks-instructions-or-context {
     background-color: $color-gray-inverse-base;
     border-top: none;
-    border-spacing: 0px
+    border-spacing: 0;
   }
 
   .additional-tasks-row-content {
     background-color: $color-gray-inverse-base;
     border-top: 1px solid $color-bg-gray;
-    width: 20%
+    width: 20%;
   }
 
   .tasks-instructions-or-context {
@@ -700,32 +705,32 @@ $color-cream: #d6d7d9;
   .correspondence-not-related-to-appeal {
     padding-top: 20px;
     margin-bottom: 150px;
-    font-weight: bold
+    font-weight: bold;
   }
 
   .linked-appeal-and-new-tasks-box {
     background: $color-gray-inverse-base;
     padding: 2rem;
     padding-top: 0.5rem;
-    margin-bottom: 2rem
+    margin-bottom: 2rem;
   }
 
   .linked-appeals-and-new-tasks-margin {
-    margin-left: auto
+    margin-left: auto;
   }
 
   .existing-appeals-box {
     width: 100%;
     height: auto;
-    background-color: white;
-    padding-bottom: 3rem
+    background-color: #ffffff;
+    padding-bottom: 3rem;
   }
 
   .bottom-of-existing-appeals-title {
     background-color: $color-gray-inverse-base;
     width: 100%;
     height: 50px;
-    padding-top: 1.5rem
+    padding-top: 1.5rem;
   }
 
   .existing-appeals-title {
@@ -734,26 +739,26 @@ $color-cream: #d6d7d9;
     padding-top: 1.5rem;
     border: 0;
     padding-bottom: 1.5rem;
-    padding-right: 50rem
+    padding-right: 50rem;
   }
 
   .selection-for-prior-appeals-linked-to-corr {
-    padding-left: 2.5rem
+    padding-left: 2.5rem;
   }
 
   .left-side-of-docket {
-    padding-left: 2.5rem
+    padding-left: 2.5rem;
   }
 
   .right-side-of-assigned-to {
-    padding-right: 1rem
+    padding-right: 1rem;
   }
 
   .entire-tasks-related-to-existing-appeals {
     padding: 0rem 0rem;
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column
+    flex-direction: column;
   }
 
   .tasks-appeal-title {
@@ -763,17 +768,17 @@ $color-cream: #d6d7d9;
 
   .evidence-window-submission-task{
     display: flex;
-    flex-wrap: wrap
+    flex-wrap: wrap;
   }
 
   .area-around-add-tasks-button {
     padding: 2.5rem 2.5rem;
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
   }
 
   .cursor-style-for-unlink-appeal-button {
-    cursor: pointer
+    cursor: pointer;
   }
 
   .evidence-window-submission-box {
@@ -782,109 +787,109 @@ $color-cream: #d6d7d9;
     padding-bottom: 11%;
     margin-left: 3rem;
     margin-bottom: 3rem;
-    width: 50rem
+    width: 50rem;
   }
 
   .evidence-window-submission-task-dropdown {
-    width: 45rem
+    width: 45rem;
   }
 
   .area-below-evidence-window-submission-task-dropdown {
-    padding: 1.5rem
+    padding: 1.5rem;
   }
 
   .review-tasks-and-appeals-box {
     margin-bottom: 2rem;
-    padding: 3rem 4rem
+    padding: 3rem 4rem;
   }
 
   .task-selection-title {
     margin-top: 5px;
     margin-bottom: 5px;
-    margin-left: 1px
+    margin-left: 1px;
   }
 
   .provide-context-text-styling {
-    padding: 1.5rem
+    padding: 1.5rem;
   }
 }
 
 .add-autotext-button {
   padding-left: 0rem;
-  padding-right: 0rem
+  padding-right: 0rem;
 }
 
 .remove-task-button {
   padding-left: 0rem;
-  padding-right: 0rem
+  padding-right: 0rem;
 }
 
 .review-tasks-and-appeals-title {
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .review-tasks-and-appeal-box {
   margin-bottom: 2rem;
-  padding: 3rem 4rem
+  padding: 3rem 4rem;
 }
 
 .mail-tasks-title {
-  margin: 30px auto 20px auto
+  margin: 30px auto 20px auto;
 }
 
 .area-above-select-completed-tasks {
-  padding: 0rem 2rem
+  padding: 0rem 2rem;
 }
 
 .select-completed-mail-tasks-for-correspondence {
-  margin-bottom: 0.5rem
+  margin-bottom: 0.5rem;
 }
 
 .mail-tasks-option-left-styling {
   display: inline-block;
-  margin-right: 14rem
+  margin-right: 14rem;
 }
 
 .mail-tasks-option-right-styling {
-  display: inline-block
+  display: inline-block;
 }
 
 .tasks-related-to-an-appeal-title {
-  margin: 30px auto 20px auto
+  margin: 30px auto 20px auto;
 }
 
 .is-correspondence-related-to-existing-appeals {
-  margin-bottom: -7px
+  margin-bottom: -7px;
 }
 
 .tasks-not-related-to-an-appeal-title {
-  margin: 30px auto 20px auto
+  margin: 30px auto 20px auto;
 }
 
 .add-new-tasks-related-to-correspondence {
   margin-top: 0rem;
-  margin-bottom: 2rem
+  margin-bottom: 2rem;
 }
 
 .progress-bar-styling {
   margin-bottom: 5rem;
-  float: right
+  float: right;
 }
 
 .styling-for-approve-element-assign-to-person {
-  width: 250%
+  width: 250%;
 }
 
 .styling-for-text-area-reason-for-rejection {
-  width: 280%
+  width: 280%;
 }
 
 .radio-field-styling-for-removal {
-  width: 180px
+  width: 180px;
 }
 
 .radio-field-styling-for-reassignment {
-  width: 180px
+  width: 180px;
 }
 
 .task-selection-box-for-new-tasks {
@@ -896,34 +901,34 @@ $color-cream: #d6d7d9;
   }
 
 .task-selection-dropdown-box {
-    width: 45rem
+    width: 45rem;
   }
 
 .new-tasks-gray-border-styling {
     display: block;
     margin-right: 2rem;
-    margin-bottom: 2rem
+    margin-bottom: 2rem;
   }
 
 .area-above-add-tasks-button-not-related{
   padding: 0rem 0rem;
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column
+  flex-direction: column;
   }
 
 .area-under-add-tasks-button-not-related-to-appeal {
   width: 100%;
   height: auto;
-  background-color: white;
-  padding-bottom: 3rem
+  background-color: #ffffff;
+  padding-bottom: 3rem;
   }
 
 .new-tasks-not-related-to-an-appeal-title{
     background-color: $color-gray-inverse-base;
     width: 100%;
     height: 50px;
-    padding-top: 1.5rem
+    padding-top: 1.5rem;
   }
 
 .new-tasks-title-not-related-to-appeal {
@@ -932,18 +937,18 @@ $color-cream: #d6d7d9;
     padding-top: 1.5rem;
     border: 0;
     padding-bottom: 1.5rem;
-    padding-right: 5.5rem
+    padding-right: 5.5rem;
   }
 
 .area-under-new-tasks-title {
-    width: 100%;
-    height: 3rem
+  width: 100%;
+  height: 3rem;
   }
 
-  .area-above-add-task-view {
-    display: flex;
-    flex-wrap: wrap
-  }
+.area-above-add-task-view {
+  display: flex;
+  flex-wrap: wrap;
+}
 
 .add-task-container {
   margin-left: 5%;
@@ -951,23 +956,23 @@ $color-cream: #d6d7d9;
 }
 
 .add-tasks-button-for-unrelated-appeals {
-    padding: 2.5rem 2.5rem
+  padding: 2.5rem;
   }
 
 
 .margin-top-for-add-task-view {
-  padding-top: 20px
+  padding-top: 20px;
 }
 
 .width-of-add-tasks-button-text {
-  width: 110px
+  width: 110px;
 }
 
 .add-existing-appeal-button {
   width: 120px;
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .width-of-add-tasks-button {
-    width: 50%
+  width: 50%;
   }
