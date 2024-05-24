@@ -163,13 +163,13 @@ describe "affinity_start_date" do
     let!(:old_distributed_appeal_hrd_priority) do
       appeal = create(:appeal, :hearing_docket, :advanced_on_docket_due_to_age, :assigned_to_judge,
                       receipt_date: 10.days.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
+      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 9.days.ago)
       appeal
     end
     let!(:old_distributed_appeal_hrd_nonpriority) do
       appeal = create(:appeal, :hearing_docket, :assigned_to_judge,
                       receipt_date: 11.days.ago, associated_judge: judge)
-      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 2.days.ago)
+      create(:distributed_case, appeal: appeal, distribution: old_distribution, created_at: 9.days.ago)
       appeal
     end
 
