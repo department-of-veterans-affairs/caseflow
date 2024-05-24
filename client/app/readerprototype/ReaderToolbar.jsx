@@ -67,6 +67,9 @@ const ReaderToolbar = ({
         </Link>
       )}
     </span>
+
+    <span style={{ color: '#cc0000', fontWeight: 600 }}> PROTOTYPE!!!!! </span>
+
     <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
       <span className="category-icons-and-doc-type">
         <span className="cf-pdf-doc-category-icons">
