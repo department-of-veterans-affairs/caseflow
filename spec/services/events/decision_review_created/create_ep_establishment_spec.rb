@@ -6,7 +6,6 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
   context "Events::DecisionReviewCreated::CreateEpEstablishment.process!" do
     # set up variables station_id, end_product_establishment, claim_review, user, event
     let!(:user_double) { double("User", id: 1) }
-    let!(:event_double) { double("Event") }
     let!(:claim_review) { create(:higher_level_review) }
     # conversions to mimic parser logic
     let!(:converted_long) { Time.zone.at(171_046_496_764_2) }
@@ -29,10 +28,8 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
              epe_development_item_reference_id: nil,
              claimant_participant_id: "1826209")
     end
-    let(:event_record_double) { double("EventRecord") }
     it "creates an a End Product Establishment and Event Record" do
       allow(EndProductEstablishment).to receive(:create!).and_return(parser_double)
-      allow(EventRecord).to receive(:create!).and_return(event_record_double)
       expect(EndProductEstablishment).to receive(:create!).with(
         payee_code: "00",
         source: claim_review,
@@ -53,7 +50,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         development_item_reference_id: nil,
         claimant_participant_id: "1826209"
       ).and_return(parser_double)
-      described_class.process!(parser: parser_double, claim_review: claim_review, user: user_double, event: event_double)
+      described_class.process!(parser: parser_double, claim_review: claim_review, user: user_double)
     end
 
     # needed to convert the logical date int for the expect block
@@ -71,7 +68,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         allow(EndProductEstablishment).to receive(:create!).and_raise(Caseflow::Error::DecisionReviewCreatedEpEstablishmentError)
         expect do
           described_class.process!(parser: parser_double,
-                                   claim_review: claim_review, user: user_double, event: event_double)
+                                   claim_review: claim_review, user: user_double)
         end.to raise_error(Caseflow::Error::DecisionReviewCreatedEpEstablishmentError)
       end
     end
