@@ -71,8 +71,7 @@ describe MetricsService do
               app_name: "other",
               attrs: {
                 service: service,
-                endpoint: name,
-                uuid: anything
+                endpoint: name
               }
             },
             start: anything,
