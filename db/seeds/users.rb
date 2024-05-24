@@ -228,6 +228,8 @@ module Seeds
     def create_judge_teams
       DEVELOPMENT_JUDGE_TEAMS.each_pair do |judge_css_id, h|
         judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
+        judge.roles = judge.roles << "Hearing Prep" unless judge.roles.include?("Hearing Prep")
+        judge.save!
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         h[:attorneys].each do |css_id|
           judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
