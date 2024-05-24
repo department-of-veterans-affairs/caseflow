@@ -43,7 +43,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
           correspondence = create(:correspondence)
           assign_review_package_task(correspondence, inbound_ops_team_user)
           parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-          create_efolderupload_failed_task(correspondence, parent_task, user: inbound_ops_team_user)
+          create_efolderupload_failed_task(correspondence, parent_task)
           visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
           find_all("#task-link").last.click
           using_wait_time(10) do
@@ -57,7 +57,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
           User.authenticate!(user: inbound_ops_team_user)
           correspondence = create(:correspondence)
           parent_task = create_correspondence_intake(correspondence, inbound_ops_team_user)
-          create_efolderupload_failed_task(correspondence, parent_task, user: inbound_ops_team_user)
+          create_efolderupload_failed_task(correspondence, parent_task)
           visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
           find_all("#task-link").last.click
           using_wait_time(10) do

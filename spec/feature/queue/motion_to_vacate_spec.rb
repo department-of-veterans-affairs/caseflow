@@ -35,7 +35,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   describe "Motion to vacate mail task" do
     let!(:mail_user) { create(:user, full_name: "Mail user") }
-    let!(:mail_team) { InboundOpsTeam.singleton }
+    let!(:mail_team) { MailTeam.singleton }
     let!(:lit_support_user) { create(:user, full_name: "Lit support user") }
 
     let!(:judge2) { create(:user, full_name: "Judge the Second", css_id: "JUDGE_2") }

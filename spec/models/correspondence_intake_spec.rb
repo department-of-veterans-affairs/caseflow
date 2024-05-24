@@ -20,7 +20,6 @@ RSpec.describe CorrespondenceIntake, type: :model do
 
     it "can be created" do
       correspondence = create(:correspondence)
-      binding.pry
       task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, create(:user))
       subject = CorrespondenceIntake.create!(
         task_id: task.id,
