@@ -188,10 +188,10 @@ feature "NonComp Reviews Queue", :postgres do
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
-      expect(page).to have_content("Incomplete tasks")
-      expect(page).to have_content("Pending tasks")
-      expect(page).to have_content("In progress tasks")
-      expect(page).to have_content("Completed tasks")
+      expect(page).to have_content("Incomplete Tasks")
+      expect(page).to have_content("Pending Tasks")
+      expect(page).to have_content("In Progress Tasks")
+      expect(page).to have_content("Completed Tasks")
 
       # default is the in progress page if no tab is specified in the url
       expect(page).to have_content("Days Waiting")
@@ -215,7 +215,7 @@ feature "NonComp Reviews Queue", :postgres do
         /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
-      click_on "Incomplete tasks"
+      click_on "Incomplete Tasks"
       expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Days Waiting")
@@ -225,7 +225,7 @@ feature "NonComp Reviews Queue", :postgres do
         /#{veteran_a_on_hold.name}.+\s#{veteran_b_on_hold.name}/
       )
 
-      click_on "Pending tasks"
+      click_on "Pending Tasks"
       expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_DESCRIPTION)
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content("Days Waiting")
@@ -237,7 +237,7 @@ feature "NonComp Reviews Queue", :postgres do
         )
       )
 
-      click_on "Completed tasks"
+      click_on "Completed Tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 
@@ -262,10 +262,10 @@ feature "NonComp Reviews Queue", :postgres do
       scenario "displays tasks page" do
         visit BASE_URL
         expect(page).to have_content("Veterans Health Administration")
-        expect(page).to have_content("Incomplete tasks")
-        expect(page).to have_content("Pending tasks")
-        expect(page).to have_content("In progress tasks")
-        expect(page).to have_content("Completed tasks")
+        expect(page).to have_content("Incomplete Tasks")
+        expect(page).to have_content("Pending Tasks")
+        expect(page).to have_content("In Progress Tasks")
+        expect(page).to have_content("Completed Tasks")
 
         # default is the in progress page if no tab is specified in the url
         expect(page).to have_content("Days Waiting")
@@ -284,7 +284,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(vet_c_id_column_value)
         expect(page).to have_no_content(search_box_label)
 
-        click_on "Pending tasks"
+        click_on "Pending Tasks"
         expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION)
 
         click_on veteran_a_pending.name
@@ -546,17 +546,17 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Camp Lejune Family Member")
 
       # Verify the filter counts for the incomplete tab
-      click_on "Incomplete tasks"
+      click_on "Incomplete Tasks"
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Clothing Allowance (1)")
       expect(page).to have_content("Other (1)")
 
-      click_on "Pending tasks"
+      click_on "Pending Tasks"
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Other (1)")
 
       # Verify the filter counts for the completed tab
-      click_on "Completed tasks"
+      click_on "Completed Tasks"
       find("[aria-label='Filter by issue type']").click
       expect(page).to have_content("Apportionment (1)")
       expect(page).to have_content("Camp Lejune Family Member (1)")
@@ -968,7 +968,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Viewing 16-30 of 33 total")
 
       # Navigate to another tab
-      click_button("Incomplete tasks")
+      click_button("Incomplete Tasks")
       expect(page).to have_content("Viewing 1-2 of 2 total")
     end
   end
@@ -985,10 +985,10 @@ feature "NonComp Reviews Queue", :postgres do
     scenario "displays tasks page for non VHA" do
       visit "/decision_reviews/nco"
       expect(page).to have_content("Non-Comp Org")
-      expect(page).to_not have_content("Incomplete tasks")
-      expect(page).to_not have_content("Pending tasks")
-      expect(page).to have_content("In progress tasks")
-      expect(page).to have_content("Completed tasks")
+      expect(page).to_not have_content("Incomplete Tasks")
+      expect(page).to_not have_content("Pending Tasks")
+      expect(page).to have_content("In Progress Tasks")
+      expect(page).to have_content("Completed Tasks")
 
       # default is the in progress page if no tab is specified in the url
       # in progress for non vha should still include on hold tasks
@@ -1013,7 +1013,7 @@ feature "NonComp Reviews Queue", :postgres do
         /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
-      click_on "Completed tasks"
+      click_on "Completed Tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 

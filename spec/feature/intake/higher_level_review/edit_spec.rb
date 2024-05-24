@@ -60,6 +60,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
     )
   end
 
+  let!(:in_progress_higher_level_review) do
+    create(:higher_level_review,
+           :with_vha_issue,
+           :with_end_product_establishment,
+           :processed,
+           :update_assigned_at,
+           benefit_type: "vha",
+           veteran: veteran,
+           claimant_type: :veteran_claimant)
+  end
+
   # create associated intake
   let!(:intake) do
     create(
@@ -1638,6 +1649,54 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
+    end
+  end
+
+  context "For VHA Admin" do
+    before do
+      vha_org.add_user(current_user)
+      OrganizationsUser.make_user_admin(current_user, vha_org)
+    end
+    let(:edit_issue_url) { in_progress_higher_level_review.caseflow_only_edit_issues_url }
+    let(:vha_org) { VhaBusinessLine.singleton }
+
+    it "should require decision date if task is in progress or assigned status" do
+      visit edit_issue_url
+
+      step "should display Decision date required banner for Vha Admin" do
+        expect(in_progress_higher_level_review.task_in_progress?).to be true
+        expect(page).to have_content("Add issue")
+        click_on "Add issue"
+        expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+        expect(page).to have_current_path(in_progress_higher_level_review.caseflow_only_edit_issues_url)
+        expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+      end
+
+      step "should require decision date" do
+        expect(page).to have_content("Decision date")
+        fill_in "Issue category", with: "Beneficiary Travel"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "I am a VHA issue"
+        expect(page).to have_button("Add this issue", disabled: true)
+        find("#decision-date").set(1.month.ago.strftime("%m/%d/%Y"))
+        safe_click "#decision-date"
+        expect(page).to have_button("Add this issue", disabled: false)
+      end
+    end
+
+    it "should required decision date if unidentified issue is being added" do
+      visit edit_issue_url
+      expect(in_progress_higher_level_review.task_in_progress?).to be true
+      click_on "Add issue"
+      # click on "None of these match, see more options"
+      safe_click "#Add-issue-2-button-id-2"
+      expect(page).to have_text("Describe the issue to mark it as needing further review.")
+      fill_in "Transcribe the issue as it's written on the form", with: "unindentified test"
+      expect(page).to have_text(COPY::VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER)
+      expect(page).to have_button("Add this issue", disabled: true)
+      find("#decision-date").set(1.month.ago.strftime("%m/%d/%Y"))
+      safe_click "#decision-date"
+      expect(page).to have_button("Add this issue", disabled: false)
     end
   end
 end

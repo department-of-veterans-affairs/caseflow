@@ -11,16 +11,6 @@ feature "Issue Modification Request", :postgres do
 
   let!(:vha_org) { VhaBusinessLine.singleton }
 
-  let(:current_user) do
-    User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
-  end
-
-  before do
-    vha_org.add_user(current_user)
-    in_progress_hlr.create_business_line_tasks!
-    in_progress_hlr.reload
-  end
-
   let!(:in_progress_hlr) do
     create(:higher_level_review,
            :with_vha_issue,
@@ -31,7 +21,19 @@ feature "Issue Modification Request", :postgres do
            claimant_type: :veteran_claimant)
   end
 
+  let(:current_user) do
+    User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
+  end
+
+  before do
+    vha_org.add_user(current_user)
+  end
+
   context "non-admin user" do
+    let!(:current_user) do
+      User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
+    end
+
     it "should open the edit issues page and show non-admin content" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
@@ -40,8 +42,6 @@ feature "Issue Modification Request", :postgres do
 
     it "does not enable the submit button until all fields are touched" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
-
-      check_for_pending_requests_banner(false)
 
       step "for modification" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
@@ -59,7 +59,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for addition" do
@@ -76,7 +78,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for withdrawal" do
@@ -91,7 +95,9 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
 
       step "for removal" do
@@ -105,8 +111,42 @@ feature "Issue Modification Request", :postgres do
 
         expect(page).to have_button("Submit request", disabled: false)
 
-        click_on "Cancel"
+        within ".cf-modal-body" do
+          click_on "Cancel"
+        end
       end
+    end
+
+    it "moves issues to the pending admin review section when the issue modification modal is submitted" do
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
+
+      expect(page).not_to have_text("Pending admin review")
+
+      within "#issue-#{in_progress_hlr.request_issues.first.id}" do
+        first("select").select("Request modification")
+      end
+
+      fill_in "Issue type", with: "Beneficiary Travel"
+      find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+      fill_in "Prior decision date", with: "05/15/2024"
+      fill_in "Issue description", with: "An issue description"
+      fill_in "Please provide a reason for the issue modification request", with: "I wanted to"
+
+      click_on "Submit request"
+
+      pending_section = find("tr", text: "Pending admin review")
+
+      expect(pending_section).to have_text("An issue description")
+      expect(pending_section).to have_text("I wanted to")
+      expect(pending_section).to have_text("05/15/2024")
+      expect(pending_section).to have_text("Beneficiary Travel")
+
+      ri = in_progress_hlr.request_issues.first
+      expect(pending_section).to have_text("Original Issue")
+      expect(pending_section).to have_text("#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}".strip)
+      expect(pending_section).to have_text(Constants::BENEFIT_TYPES["vha"])
+      expect(pending_section).to have_text(ri.decision_date.strftime("%m/%d/%Y").to_s)
     end
   end
 
@@ -118,9 +158,7 @@ feature "Issue Modification Request", :postgres do
     it "should open the edit issues page and not see the new non-admin content" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
-      check_for_pending_requests_banner(false)
-
-      expect(page).not_to have_content("Request additional issue")
+      expect(page.has_no_content?("Request additional issue")).to eq(true)
     end
   end
 
