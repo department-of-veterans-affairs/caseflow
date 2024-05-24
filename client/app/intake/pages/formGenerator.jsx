@@ -7,7 +7,8 @@ import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
-import { setDocketType, setOriginalHearingRequestType, setHomelessnessType
+import {
+  setDocketType, setOriginalHearingRequestType, setHomelessnessType
 } from '../actions/appeal';
 import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
@@ -117,14 +118,14 @@ const formFieldMapping = (props) => {
       </div>
     ),
     'original-hearing-request-type':
-     props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <></>,
+      props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <></>,
     'legacy-opt-in': (
       <LegacyOptInApproved
         value={props.legacyOptInApproved}
         onChange={props.setLegacyOptInApproved}
         errorMessage={
           props.legacyOptInApprovedError ||
-          props.errors?.['legacy-opt-in']?.message
+            props.errors?.['legacy-opt-in']?.message
         }
         register={props.register}
       />
@@ -142,7 +143,7 @@ const formFieldMapping = (props) => {
         onChange={props.setBenefitType}
         errorMessage={
           props.benefitTypeError ||
-          props.errors?.['benefit-type-options']?.message
+            props.errors?.['benefit-type-options']?.message
         }
         register={props.register}
         formName={props.formName}
@@ -162,7 +163,7 @@ const formFieldMapping = (props) => {
         }}
         errorMessage={
           props.informalConferenceError ||
-          props.errors?.['informal-conference']?.message
+            props.errors?.['informal-conference']?.message
         }
         value={renderBooleanValue('informalConference')}
         inputRef={props.register}
@@ -221,7 +222,7 @@ const formFieldMapping = (props) => {
           onChange={props.setOptionSelected}
           errorMessage={
             props.optionSelectedError ||
-            props.errors?.['opt-in-election']?.message
+              props.errors?.['opt-in-election']?.message
           }
           value={props.optionSelected}
           inputRef={props.register}
@@ -235,7 +236,7 @@ const formFieldMapping = (props) => {
             onChange={props.setAppealDocket}
             errorMessage={
               props.appealDocketError ||
-              props.errors?.['appeal-docket']?.message
+                props.errors?.['appeal-docket']?.message
             }
             value={props.appealDocket}
             inputRef={props.register}
@@ -286,6 +287,7 @@ const FormGenerator = (props) => {
           </Button>
         </Alert>
       )}
+
       {props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} />}
       {showInvalidVeteranError && (
         <ErrorAlert
@@ -293,13 +295,36 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
-      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && (
+
+      {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && !props.featureToggles.removeCompAndPenIntake && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
           </Alert>
         </div>
       )}
+
+      {isHlrOrScForm && !props.userIsVhaEmployee && props.featureToggles.vhaClaimReviewEstablishment && props.featureToggles.removeCompAndPenIntake && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <ul>
+              <li dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
+              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
+            </ul>
+          </Alert>
+        </div>
+      )}
+
+      {isHlrOrScForm && props.featureToggles.removeCompAndPenIntake && ((props.featureToggles.vhaClaimReviewEstablishment && props.userIsVhaEmployee) || (!props.featureToggles.vhaClaimReviewEstablishment && !props.userIsVhaEmployee)) && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <ul>
+              <li>{COPY.INTAKE_REMOVE_COMP_AND_PEN}</li>
+            </ul>
+          </Alert>
+        </div>
+      )}
+
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );

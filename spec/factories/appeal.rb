@@ -21,6 +21,9 @@ FactoryBot.define do
 
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+
+      # There is a callback to create an AppealState record for appeal_docketed that will raise an error without this
+      RequestStore[:current_user] ||= User.system_user unless RequestStore[:current_user]
     end
 
     # Appeal's after_save interferes with explicit updated_at values
@@ -369,6 +372,14 @@ FactoryBot.define do
       end
     end
 
+    trait :with_distribution_task_and_schedule_hearing_child_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distribution_task)
+      end
+    end
+
     trait :with_evidence_submission_window_task do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
@@ -445,8 +456,29 @@ FactoryBot.define do
       completed_distribution_task
     end
 
+    trait :ready_for_distribution_with_appeal_affinity do
+      ready_for_distribution
+      with_appeal_affinity
+    end
+
     trait :cavc_ready_for_distribution do
       completed_distribution_task
+    end
+
+    trait :with_appeal_affinity do
+      transient do
+        affinity_start_date { Time.zone.now }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
+      end
+    end
+
+    trait :with_appeal_affinity_no_start_date do
+      after(:create) do |appeal, _evaluator|
+        create(:appeal_affinity, appeal: appeal, affinity_start_date: nil)
+      end
     end
 
     trait :completed_distribution_task do

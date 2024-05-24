@@ -7,6 +7,7 @@
 class PushPriorityAppealsToJudgesJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
+  include RunAsyncable
 
   queue_with_priority :low_priority
   application_attr :queue
@@ -17,6 +18,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
 
     @genpop_distributions = distribute_genpop_priority_appeals
+
+    perform_later_or_now(UpdateAppealAffinityDatesJob)
 
     send_job_report
   rescue StandardError => error

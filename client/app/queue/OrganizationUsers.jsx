@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -16,32 +18,54 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+import Checkbox from '../components/Checkbox';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
+const addDropdownStyle = css({
+  padding: '3rem 0 4rem'
 });
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
+
+const instructionListStyle = css({
+  listStyle: 'none',
+  margin: '0 0 0 3rem',
+  padding: '1.5rem 0 2rem 0',
+  fontSize: '19px',
+  borderBottom: '.1rem solid black',
 });
+
+const userListStyle = css({
+  margin: '0'
+});
+
+const userListItemStyle = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  borderTop: '.1rem solid black',
+  padding: '4rem 0 2rem',
+  margin: '0',
+  ':first-child': {
+    borderTop: 'none',
+  }
+});
+
 const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
+  borderBottom: '.1rem solid gray'
 });
+
+const titleButtonsStyle = css({
+  width: '60rem'
+});
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
+});
+
 const buttonStyle = css({
-  paddingRight: '1rem',
+  padding: '1rem 2.5rem 2rem 0',
   display: 'inline-block'
-});
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
-});
-const listStyle = css({
-  listStyle: 'none'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -61,8 +85,172 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false
+      isVhaOrg: false,
+      toggledAutoAssignmentCheckboxes: [],
+      toggledNodCheckboxes: [],
+      toggledCheckboxes: []
     };
+  }
+
+  updateToggledCheckBoxes = (userId, permissionName, checked) => {
+    const newData = { userId, permissionName, checked };
+    const stateCopy = this.state.toggledCheckboxes;
+
+    // check if the id and permission already exist in the state. Returns undefined if it didn't find a match.
+    const existsInState = this.state.toggledCheckboxes.findIndex((checkboxData) =>
+      checkboxData.userId === newData.userId && checkboxData.permissionName === newData.permissionName);
+
+    // add the item to state if it didn't exist, update it otherwise.
+    if (existsInState > -1) {
+      stateCopy[existsInState].checked = !stateCopy[existsInState].checked;
+      this.setState({
+        toggledCheckboxes: [...stateCopy]
+      });
+    } else {
+      this.setState({
+        toggledCheckboxes: [...[newData], ...stateCopy]
+      });
+    }
+  }
+
+  modifyUserPermission = (userId, permissionName) => () => {
+    const payload = { data: { userId, permissionName } };
+
+    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).
+      then((response) => {
+        this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
+      }, (error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      });
+  }
+
+  generatePermissionsCheckboxes = (user) => {
+
+    const userPermissions = (permission) => {
+      if (user.attributes.user_permission === null ||
+          typeof user.attributes.user_permission === 'undefined' ||
+        user.attributes.user_permission.length === 0) {
+        return false;
+      }
+
+      if (user.attributes.user_permission.flat().find((userPer) => userPer.permission === permission)) {
+        return true;
+      }
+    };
+
+    // this function determines if a checkbox is already checked by looking at state and then props as a fallback.
+    const getCheckboxEnabled = (permission) => {
+      const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) =>
+        storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
+
+      // prioritize state values
+      const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id === user.id).attributes;
+
+      if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+        return true;
+      }
+
+      if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
+        return true;
+      }
+
+      if (typeof stateValue !== 'undefined') {
+        return stateValue.checked;
+      }
+
+      // fallback to props if no state
+      const userData = (this.props.orgnizationUserPermissions.find((oup) => oup.user_id === Number(user.id)));
+
+      if (userData.organization_user_permissions.find((oup) =>
+        oup.organization_permission.permission === permission.permission && oup.permitted)) {
+        return true;
+      }
+
+      // check if user is marked as admin to auto check the checkbox.
+      if (permission.default_for_admin && user.attributes.admin) {
+        return true;
+      }
+
+      return false;
+
+    };
+    const checkAdminPermission = (permission) => {
+      if (user.attributes.user_admin_permission === null ||
+        typeof user.attributes.user_admin_permission === 'undefined') {
+        return false;
+      }
+
+      if (user.attributes.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
+        return true;
+      }
+    };
+
+    // used to display checkboxes for the org.
+    // if an admin, only display the pre-checked admin checkboxes
+    const renderedPermissions = () => {
+      if (user.attributes?.admin) {
+        return this.props.organizationPermissions.filter((per) => per.default_for_admin);
+      }
+
+      return this.props.organizationPermissions;
+    };
+
+    // grabs the values off of state as a priority, and falls back to the props. if there is any state, props gets ignored.
+    const parentPermissionChecked = (userId, parentId) => {
+      if (typeof parentId !== 'number') {
+        return true;
+      }
+
+      let result = false;
+      const parentPermission = this.props.organizationPermissions.find((permission) => permission.id === parentId);
+      const orgUserPermissions = this.props.orgnizationUserPermissions.find((x) =>
+        x.user_id === Number(user.id)).organization_user_permissions;
+
+      const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
+        permission.userId === userId &&
+      permission.permissionName === parentPermission.permission);
+
+      if (typeof checkboxInState !== 'undefined' && checkboxInState.checked) {
+        return true;
+      }
+
+      orgUserPermissions.forEach((permission) => {
+        if (permission.organization_permission.permission === parentPermission.permission &&
+          permission.permitted &&
+          typeof checkboxInState === 'undefined') {
+          result = true;
+        }
+      });
+
+      return result;
+    };
+
+    return (
+      renderedPermissions().map((permission) => {
+        const marginL = permission.parent_permission_id ? '25px' : '0px';
+
+        const checkboxStyle = {
+          style: {
+            marginTop: '0',
+            marginLeft: marginL,
+            marginBottom: '10px'
+          }
+        };
+
+        return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
+          name={`${user.id}-${permission.permission}`}
+          label={permission.description}
+          key={`${user.id}-${permission.permission}`}
+          styling={checkboxStyle}
+          onChange={this.modifyUserPermission(user.id, permission.permission)}
+          defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
+          disabled={checkAdminPermission(permission.permission)}
+          value={getCheckboxEnabled(permission)}
+
+        />);
+      })
+    );
   }
 
   loadingPromise = () => {
@@ -195,6 +383,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -207,7 +396,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -258,24 +446,55 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
+      const { conferenceSelectionVisibility } = this.props;
 
-      return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
-      </React.Fragment>;
+      return (
+        <React.Fragment key={user.id}>
+
+          <li key={user.id} {...userListItemStyle}>
+            <div {...titleButtonsStyle}>
+              { this.formatName(user) }
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+
+              {
+                (judgeTeam || dvcTeam) && admin ?
+                  <div {...topUserBorder}></div> :
+                  <div>
+                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                    { this.removeUserButton(user) }
+                  </div>
+              }
+
+            </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
+                    conferenceSelectionVisibility && (
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
+                </div>
+              )}
+              {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
+                <p className={['user-permissions-text']}>User permissions:</p>
+                {this.generatePermissionsCheckboxes(user)}
+              </div>}
+            </div>
+          </li>
+
+        </React.Fragment>
+      );
     });
 
     const handleSearchChange = (value) => {
@@ -292,26 +511,27 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
+      <div {...addDropdownStyle}>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
+          <ul {...instructionListStyle}>
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
@@ -334,7 +554,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul>{listOfUsers}</ul>
+          <ul {...userListStyle}>{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
@@ -342,7 +562,6 @@ getFilteredUsers = () => {
           </>
         )
         }
-
       </div>
     </React.Fragment>;
   }
@@ -414,5 +633,8 @@ getFilteredUsers = () => {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  conferenceSelectionVisibility: PropTypes.bool,
+  organizationPermissions: PropTypes.array,
+  orgnizationUserPermissions: PropTypes.array
 };
