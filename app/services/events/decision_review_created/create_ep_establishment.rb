@@ -31,7 +31,6 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         user_id: user.id,
         claimant_participant_id: parser.claimant_participant_id
       )
-      EventRecord.create!(event: event, evented_record: end_product_establishment)
       end_product_establishment
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedEpEstablishmentError, error.message

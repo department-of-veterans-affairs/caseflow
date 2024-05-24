@@ -53,8 +53,6 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         development_item_reference_id: nil,
         claimant_participant_id: "1826209"
       ).and_return(parser_double)
-      expect(EventRecord).to receive(:create!)
-        .with(event: event_double, evented_record: parser_double).and_return(event_record_double)
       described_class.process!(parser: parser_double, claim_review: claim_review, user: user_double, event: event_double)
     end
 
