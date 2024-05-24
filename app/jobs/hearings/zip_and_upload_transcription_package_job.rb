@@ -3,8 +3,6 @@
 class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   queue_as :low_priority
   S3_BUCKET = "vaec-appeals-caseflow"
-  # attr_reader :tmp_files_to_cleanup
-
   class ZipTranscriptionPackageUploadError < StandardError; end
 
   retry_on TranscriptionFileUpload::FileUploadError, wait: :exponentially_longer do |job, _exception|
@@ -26,7 +24,7 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
     @bom_file_tmp_path = fetch_bom_file_tmp(work_order)
     transcription_package_tmp = create_master_file_zip
     upload_transcription_package_to_s3(transcription_package_tmp)
-    # save_transcription_package_table(transcription_package_tmp, work_order)
+    # save_transcription_package_in_database(transcription_package_tmp, work_order)
     true
   end
 
@@ -94,9 +92,9 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
 
   def upload_transcription_package_to_s3(transcription_package_tmp)
     transcription_package_name = File.basename(transcription_package_tmp)
-    # work_order_s3_path = s3_location_work_order
     begin
       S3Service.store_file(s3_location_master_file(transcription_package_tmp), transcription_package_tmp, :filepath)
+      Rails.logger.info("File successfully uploaded to S3 location")
     rescue StandardError => error
       Rails.logger.error "Transcription Package Job failed to upload Transcription Package
       #{transcription_package_name} to S3: #{error.message}"
@@ -104,15 +102,27 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
     end
   end
 
-  # def s3_location_work_order
-  #   file_name = File.basename(@work_order_tmp_path)
-  #   folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
-  #   "#{folder_name}/transcript_text/#{file_name}"
-  # end
+  def s3_location_work_order
+    file_name = File.basename(@work_order_tmp_path)
+    folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
+    "#{folder_name}/transcript_text/#{file_name}"
+  end
 
   def s3_location_master_file(transcription_package_tmp)
     file_name = File.basename(transcription_package_tmp)
     folder_name = (Rails.deploy_env == :prod) ? S3_BUCKET : "#{S3_BUCKET}-#{Rails.deploy_env}"
     "#{folder_name}/transcript_text/#{file_name}"
+  end
+
+  def save_transcription_package_in_database(transcription_package_tmp, work_order)
+    TranscriptionPackage.create!(
+      aws_link_zip: s3_location_master_file(transcription_package_tmp),
+      aws_link_work_order: s3_location_work_order,
+      created_by_id: RequestStore[:current_user].id,
+      returned_at: work_order[:return_date],
+      task_number: work_order[:work_order_name]
+    )
+  rescue ActiveRecord::RecordInvalid => error
+    Rails.logger.error "Failed to create transcription file: #{error.message}"
   end
 end
