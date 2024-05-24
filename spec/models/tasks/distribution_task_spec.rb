@@ -110,6 +110,10 @@ describe DistributionTask, :postgres do
 
       before { distribution_task_without_affinity.ready_for_distribution! }
 
+      it "should be assigned" do
+        expect(distribution_task_without_affinity.status).to eq "assigned"
+      end
+
       it "returns no affinity appeal record" do
         expect(distribution_task_without_affinity.appeal.appeal_affinity).to eq nil
       end
