@@ -28,7 +28,7 @@ module CorrespondenceControllerConcern
       end
     end
 
-    set_banner_params(mail_team_user, errors, tab)
+    set_banner_params(mail_team_user, errors, task_ids.count, tab)
   end
 
   def update_task(mail_team_user, task_id)
@@ -40,25 +40,25 @@ module CorrespondenceControllerConcern
     )
   end
 
-  def set_banner_params(user, errors, tab)
-    template = message_template(user, errors, tab)
+  def set_banner_params(user, errors, task_count, tab)
+    template = message_template(user, errors, task_count, tab)
     @response_type = errors.empty? ? "success" : "warning"
     @response_header = template[:header]
     @response_message = template[:message]
   end
 
-  def message_template(user, errors, tab)
+  def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      bulk_assignment_banner_text(user, errors)
+      bulk_assignment_banner_text(user, errors, task_count)
     when "correspondence_team_assigned"
-      bulk_assignment_banner_text(user, errors, action_prefix: "re")
+      bulk_assignment_banner_text(user, errors, task_count, action_prefix: "re")
     end
   end
 
-  def bulk_assignment_banner_text(user, errors, action_prefix: "")
+  def bulk_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
-      "assigned Correspondence to #{user.css_id}."
+      "assigned #{task_count} Correspondence to #{user.css_id}."
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = errors.uniq.join(", ")

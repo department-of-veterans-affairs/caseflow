@@ -6,9 +6,10 @@ RSpec.feature("The Correspondence Cases page") do
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
   context "correspondence batch assignment cases for assigned and unassigned tabs" do
     let(:current_user) { create(:user) }
+    let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
     before :each do
       InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      User.authenticate!(user: supervisor_user)
     end
     let(:organization) { MailTeam.singleton }
     let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
@@ -61,6 +62,7 @@ RSpec.feature("The Correspondence Cases page") do
         parent_task = create_correspondence_intake(correspondence, target_user)
         create_efolderupload_task(correspondence, parent_task, user: target_user)
       end
+      InboundOpsTeam.singleton.add_user(supervisor_user)
     end
 
     it "successfully loads the unassigned tab" do
