@@ -6,7 +6,6 @@ class UpdateTranscriptionPackagesColumns < Caseflow::Migration
 
     change_column_null :transcription_packages, :returned_at, true
     change_column_null :transcription_packages, :updated_at, true
-
     add_reference :transcription_packages, :contractor, index: false, foreign_key: { to_table: :transcription_contractors }, comment: "FK to transcription_contractors table"
 
   end
