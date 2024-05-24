@@ -88,7 +88,8 @@ export default class TranscriptionSettings extends React.PureComponent {
     super(props);
 
     this.state = {
-      loading: true
+      loading: true,
+      contractors: props.contractors
     };
   }
 
@@ -109,19 +110,20 @@ export default class TranscriptionSettings extends React.PureComponent {
     /></div>
 
   mainContent = () => {
-    const listOfContractors = () => {
-      // pass in and iterate over contractors
+    const listOfContractors = this.props.contractors.map((contractor) => {
 
       return (
         <React.Fragment>
           <div {...userListItemStyle}>
             <div>
               <ul {...instructionListStyle}>
-                <h2>{COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}<EditContractorLink /></h2>
-                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>`https://box.com/`</li>
-                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>`Address here`</li>
+                <h2>{contractor.name}<EditContractorLink /></h2>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
+                <li>{contractor.phone}</li>
+                <li>{contractor.email}</li>
                 <span>
-                  <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>`50 of 160`<EditHearingsSentLink /></li>
+                  <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>{`0 of `}{contractor.current_goal}<EditHearingsSentLink /></li>
                 </span>
               </ul>
             </div>
@@ -132,7 +134,7 @@ export default class TranscriptionSettings extends React.PureComponent {
           </div>
         </React.Fragment>
       );
-    };
+    });
 
     return (
       <React.Fragment>
@@ -151,8 +153,15 @@ export default class TranscriptionSettings extends React.PureComponent {
           </div>
         </div>
         <div>
-          {listOfContractors()}
-        </div>
+        { listOfContractors.length > 0 ? (
+          <ul>{listOfContractors}</ul>
+        ) : (
+          <>
+            <p className="no-results-found-styling">No contractors found</p>
+          </>
+        )
+        }
+      </div>
       </React.Fragment>
     );
   }

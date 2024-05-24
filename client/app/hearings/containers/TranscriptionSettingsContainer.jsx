@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import TranscriptionSettings from '../components/transcriptionProcessing/TranscriptionSettings';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import ApiUtil from '../../util/ApiUtil';
 
 export const TranscriptionSettingsContainer = () => {
-  const [setContractors] = useState(null);
-
-  const getContractors = () => (
-    setContractors([{ test: 'test' }])
-  );
+  const [contractors, setContractors] = useState(null);
+  const getContractors = () =>
+    ApiUtil.get("/hearings/find_by_contractor").then((response) => {
+      setContractors(response.body.transcription_contractors);
+      return response.body.transcription_contractors;
+    });
 
   return (
     <LoadingDataDisplay
@@ -23,7 +24,7 @@ export const TranscriptionSettingsContainer = () => {
         title: 'Unable to load the transcription settings.'
       }}
     >
-      <TranscriptionSettings />
+      <TranscriptionSettings contractors={contractors} />
     </LoadingDataDisplay>
   );
 };
