@@ -44,7 +44,7 @@ const DocumentViewer = (props) => {
           doc={doc}
         />
         <div className="cf-pdf-container">
-          <div className="cf-pdf-header cf-pdf-toolbar">
+          <div className="cf-pdf-header cf-pdf-toolbar headerPrototype">
             <ReaderToolbar
               documentPathBase={props.documentPathBase}
               doc={doc}
