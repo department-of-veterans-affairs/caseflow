@@ -147,7 +147,6 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def person_middle_name
-    byebug
     @headers["X-VA-Claimant-Middle-Name"].presence
   end
 
