@@ -98,5 +98,23 @@ describe DistributionTask, :postgres do
         expect(distribution_task.instructions.size).to eq 1
       end
     end
+
+    context "when no affinity appeal is linked" do
+      let(:root_task_without_affinity) { create(:root_task) }
+      let(:distribution_task_without_affinity) do
+        DistributionTask.create!(
+          appeal: root_task_without_affinity.appeal,
+          assigned_to: Bva.singleton
+        )
+      end
+
+      it "returns no affinity appeal record" do
+        expect(distribution_task_without_affinity.appeal.appeal_affinity).to eq nil
+      end
+
+      it "does not update instructions" do
+        expect(distribution_task_without_affinity.instructions.size).to eq 0
+      end
+    end
   end
 end
