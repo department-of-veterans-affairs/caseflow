@@ -17,7 +17,7 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
     withdrawalDate
   } = issueModificationRequest;
 
-  const formattedRequestorName = `${requestor.fullName} (${requestor.cssID})`;
+  const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 

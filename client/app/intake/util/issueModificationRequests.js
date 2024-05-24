@@ -20,7 +20,7 @@ const formatUserForPendingRequest = (user) => {
   return {
     id: user.id,
     fullName: user.full_name,
-    cssID: user.css_id,
+    cssId: user.css_id,
     stationID: user.station_id
   };
 };

@@ -305,9 +305,6 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issues);
 
-    // const modificationIssueRequestsBySection = editPage &&
-    //   formatIssueModificationRequestsBySection(this.props.issueModificationRequests);
-
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -347,9 +344,9 @@ class AddIssuesPage extends React.Component {
     };
 
     const showRequestIssueUpdateOptions = editPage &&
-    userCanRequestIssueUpdates &&
-    !originalIssuesHaveNoDecisionDate() &&
-    intakeData.benefitType === 'vha';
+      userCanRequestIssueUpdates &&
+      !originalIssuesHaveNoDecisionDate() &&
+      intakeData.benefitType === 'vha';
 
     const renderButtons = () => {
       if (showRequestIssueUpdateOptions) {
@@ -553,6 +550,7 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
+    // TODO: See if this should be scoped to edit page as well? I don't think it matters, but maybe
     // Pending modifications table section
     if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({

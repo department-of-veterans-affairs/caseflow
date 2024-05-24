@@ -144,7 +144,7 @@ export default class IssuesList extends React.Component {
                 issue={issue}
                 issueIdx={issue.index}
                 requestIssues={intakeData.requestIssues}
-                legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
                 legacyAppeals={intakeData.legacyAppeals}
                 featureToggles={featureToggles}
                 formType={formType} />

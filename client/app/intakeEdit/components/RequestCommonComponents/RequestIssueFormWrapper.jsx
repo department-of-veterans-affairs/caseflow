@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
-import { capitalize } from 'lodash';
 import { useSelector } from 'react-redux';
+import { formatDateStr } from '../../../util/DateUtil';
 
 export const RequestIssueFormWrapper = (props) => {
 
@@ -15,9 +15,9 @@ export const RequestIssueFormWrapper = (props) => {
   const methods = useForm({
     defaultValues: {
       requestReason: '',
-      nonRatingIssueCategory: '',
+      nonratingIssueCategory: '',
       decisionDate: '',
-      nonRatingIssueDescription: ''
+      nonratingIssueDescription: ''
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -32,7 +32,7 @@ export const RequestIssueFormWrapper = (props) => {
         nonRatingIssueCategory: props.currentIssue.category,
         nonRatingIssueDescription: props.currentIssue.nonRatingIssueDescription,
         benefitType: props.currentIssue.benefitType,
-        decisionDate: props.currentIssue.decisionDate
+        decisionDate: formatDateStr(props.currentIssue.decisionDate)
       } : {};
 
     const enhancedData = {
@@ -40,8 +40,12 @@ export const RequestIssueFormWrapper = (props) => {
       ...(props.type === 'modification') && { requestIssue: props.currentIssue },
       ...(props.type === 'addition') && { benefitType },
       requestor: { fullName: userFullName, cssId: userCssId },
-      requestType: capitalize(props.type),
-      ...issueModificationRequest };
+      requestType: props.type,
+      ...issueModificationRequest,
+      // Ensure date is in a serializable format
+      // TODO: Make sure this does not override the currentIssueFields decision date?
+      decisionDate: formatDateStr(issueModificationRequest.decisionDate)
+    };
 
     // close modal and move the issue
     props.onCancel();
