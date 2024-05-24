@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Transcription Package Factory" do
+describe "TranscriptionPackage" do
   let(:transcription_package) { create(:transcription_package) }
 
   it "creates transcription_packages record" do
