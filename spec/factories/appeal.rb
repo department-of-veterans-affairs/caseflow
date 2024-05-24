@@ -482,8 +482,12 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         distribution_task = DistributionTask.create!(appeal: appeal, parent: root_task)
-        sct_task = SpecialtyCaseTeamAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: SpecialtyCaseTeam.singleton)
-        hearing_related_mail_task = HearingRelatedMailTask.create!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
+        sct_task = SpecialtyCaseTeamAssignTask.create!(appeal: appeal,
+                                                       parent: root_task,
+                                                       assigned_to: SpecialtyCaseTeam.singleton)
+        HearingRelatedMailTask.create!(appeal: appeal,
+                                       parent: root_task,
+                                       assigned_to: Bva.singleton)
         distribution_task.update(status: "completed")
         sct_task.update(status: "completed")
       end
