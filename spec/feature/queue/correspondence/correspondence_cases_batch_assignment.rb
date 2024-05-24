@@ -94,6 +94,12 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "Verify the mail team user batch assignment with assign button with queue limit" do
+      60.times do
+        corr = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+        rpt.update!(status: Constants.TASK_STATUSES.in_progress, assigned_to: target_user)
+      end
+
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Assign to mail team user")
       expect(page).to have_button("Assign", disabled: true)
@@ -109,7 +115,7 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
-      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} could not be completed")
+      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
 
@@ -141,6 +147,13 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "Verify the mail team user batch reassignment with reassign button with queue limit" do
+
+      60.times do
+        corr = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+        rpt.update!(status: Constants.TASK_STATUSES.in_progress, assigned_to: target_user)
+      end
+
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Assign to mail team user")
       expect(page).to have_button("Reassign", disabled: true)
@@ -156,7 +169,7 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
-      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} could not be completed")
+      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} has failed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
   end
