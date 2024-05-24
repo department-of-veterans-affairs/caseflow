@@ -1,23 +1,18 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import TranscriptionSettings from '../components/transcriptionProcessing/TranscriptionSettings';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 
 export const TranscriptionSettingsContainer = () => {
-  const [contractors, setContractors] = useState(null);
+  const [contractors, setContractors] = useState([]);
 
-  useEffect(() => {
-    ApiUtil.get('/hearings/find_by_contractor').then(response => {
-
+  const getContractors = () =>
+    ApiUtil.get("/hearings/find_by_contractor").then((response) => {
       setContractors(response.body.transcription_contractors);
+      return response.body.transcription_contractors;
     });
-  }, []);
-
-  const getContractors = () => (
-    Promise.resolve(contractors)
-  );
 
   return (
     <LoadingDataDisplay
