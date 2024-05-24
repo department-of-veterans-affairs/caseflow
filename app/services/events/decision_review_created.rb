@@ -56,7 +56,7 @@ class Events::DecisionReviewCreated
           # claim_review can either be a higher_level_revew or supplemental_claim
           epe = Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser: parser,
                                                                               claim_review: decision_review,
-                                                                              user: user, event: event)
+                                                                              user: user)
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,

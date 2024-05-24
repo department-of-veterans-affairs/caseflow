@@ -10,7 +10,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
     # are referring to the backfill objects being created from other sub service
     # class. claim_review can be either a supplemental claim or higher level review
     # rubocop:disable Metrics/MethodLength
-    def process!(parser:, claim_review:, user:, event:)
+    def process!(parser:, claim_review:, user:)
       end_product_establishment = EndProductEstablishment.create!(
         payee_code: parser.epe_payee_code,
         source: claim_review,
