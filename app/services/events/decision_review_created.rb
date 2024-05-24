@@ -15,6 +15,8 @@ class Events::DecisionReviewCreated
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
+      process_nonrating(payload)
+
       return if event_exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -90,6 +92,18 @@ class Events::DecisionReviewCreated
     # was successfully completed
     def event_exists_and_is_completed?(consumer_event_id)
       Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
+    end
+
+    def process_nonrating(payload)
+      # note: from consumer comes drc_params with "Unpermitted parameter: :type" message that we can see in rails console. Probably it is a bug.
+      category = payload[:request_issues].first[:nonrating_issue_category]
+      contested_id = payload[:request_issues].first[:contested_decision_issue_id]
+      ri = RequestIssue.where(contested_decision_issue_id: contested_id)
+      if contested_id.present? && ri.length == 1 && category == "Disposition"
+        payload[:request_issues].first[:nonrating_issue_category] = ri.nonrating_issue_category
+      else
+        payload[:request_issues].each { |el| el[:nonrating_issue_category] = "Unknown Issue Category" }
+      end
     end
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID

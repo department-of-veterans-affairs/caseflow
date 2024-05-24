@@ -2,11 +2,9 @@
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
   def decision_review_created
-    # byebug
     consumer_event_id = drc_params[:event_id]
     claim_id = drc_params[:claim_id]
     headers = request.headers
-    # check_drc(drc_params)
     ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, drc_params)
     render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
@@ -36,20 +34,6 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
 
   def drc_error_params
     params.permit(:event_id, :errored_claim_id, :error)
-  end
-
-  def check_drc
-    # note: from consumer comes drc_params with "Unpermitted parameter: :type" message that we can see in rails console. Probably it is a bug.
-    category = drc_params[:request_issues].first[:nonrating_issue_category]
-    contested_id = drc_params[:request_issues].first[:contested_decision_issue_id]
-    ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-    if contested_id.present? && ri.length == 1 && category == "Disposition"
-      drc_params[:request_issues].first[:nonrating_issue_category] = ri.nonrating_issue_category
-    else
-      # here is the problem - we can have several "request_issues" here and I need to change
-      # code below to go throght all of the and assign  "Unknown Issue Category" to each
-      drc_params[:request_issues].first[:nonrating_issue_category] = "Unknown Issue Category"
-    end
   end
 
   # rubocop:disable Metrics/MethodLength
