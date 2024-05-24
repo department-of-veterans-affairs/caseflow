@@ -520,7 +520,8 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       query,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
-                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                      judge.vacols_attorney_id
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)
