@@ -67,22 +67,33 @@
   }
 }
 
-.search-bar-styling-for-filter{
-  padding-left: 80rem;
-  margin-top: 20px;
-  margin-bottom: 3rem;
-  margin-right: auto;
+.search-bar-styling-for-filter {
+  margin-bottom: 15px;
+  width: calc(100% + 45px);
 }
 
 .text-styling-for-filter-search-bar {
-  padding-left: 80rem;
+  margin-bottom: 5px;
 }
 
 .no-results-found-styling {
-  padding-left: 70rem;
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .reenter-valid-username-styling {
   padding-left: 60rem;
-  padding-bottom: 60rem
+  padding-bottom: 60rem;
+  text-align: center;
+}
+
+
+.make-content-centered {
+  justify-content: end;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 55vw;
+  margin-right: 15vw;
 }

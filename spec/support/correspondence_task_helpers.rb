@@ -15,8 +15,7 @@ module CorrespondenceTaskHelpers
   def create_efolderupload_failed_task(correspondence, parent, user:)
     correspondence.update!(
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
-      notes: "ABCDEFG".split("").shuffle.join,
-      updated_by_id: user.id
+      notes: "ABCDEFG".split("").shuffle.join
     )
 
     parent.update!(status: Constants.TASK_STATUSES.on_hold)

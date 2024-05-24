@@ -18,7 +18,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
-import Checkbox from '../components/Checkbox';
+import OrganizationPermissions from './OrganizationPermissions';
 
 const listStyle = css({
   listStyle: 'none'
@@ -41,172 +41,8 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false,
-      toggledAutoAssignmentCheckboxes: [],
-      toggledNodCheckboxes: [],
-      toggledCheckboxes: []
+      isVhaOrg: false
     };
-  }
-
-  updateToggledCheckBoxes = (userId, permissionName, checked) => {
-    const newData = { userId, permissionName, checked };
-    const stateCopy = this.state.toggledCheckboxes;
-
-    // check if the id and permission already exist in the state. Returns undefined if it didn't find a match.
-    const existsInState = this.state.toggledCheckboxes.findIndex((checkboxData) =>
-      checkboxData.userId === newData.userId && checkboxData.permissionName === newData.permissionName);
-
-    // add the item to state if it didn't exist, update it otherwise.
-    if (existsInState > -1) {
-      stateCopy[existsInState].checked = !stateCopy[existsInState].checked;
-      this.setState({
-        toggledCheckboxes: [...stateCopy]
-      });
-    } else {
-      this.setState({
-        toggledCheckboxes: [...[newData], ...stateCopy]
-      });
-    }
-  }
-
-  modifyUserPermission = (userId, permissionName) => () => {
-    const payload = { data: { userId, permissionName } };
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/update_permissions`, payload).
-      then((response) => {
-        this.updateToggledCheckBoxes(userId, permissionName, response.body.checked);
-      }, (error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
-      });
-  }
-
-  generatePermissionsCheckboxes = (user) => {
-
-    const userPermissions = (permission) => {
-      if (user.attributes.user_permission === null ||
-          typeof user.attributes.user_permission === 'undefined' ||
-        user.attributes.user_permission.length === 0) {
-        return false;
-      }
-
-      if (user.attributes.user_permission.flat().find((userPer) => userPer.permission === permission)) {
-        return true;
-      }
-    };
-
-    // this function determines if a checkbox is already checked by looking at state and then props as a fallback.
-    const getCheckboxEnabled = (permission) => {
-      const stateValue = (this.state.toggledCheckboxes.find((storedCheckbox) =>
-        storedCheckbox.userId === user.id && storedCheckbox.permissionName === permission.permission));
-
-      // prioritize state values
-      const orgUserPermissions = this.state.organizationUsers.find((orgUser) => orgUser.id === user.id).attributes;
-
-      if (orgUserPermissions.user_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
-        return true;
-      }
-
-      if (orgUserPermissions.user_admin_permission.find((oup) => (Object.values(oup).includes(permission.permission)))) {
-        return true;
-      }
-
-      if (typeof stateValue !== 'undefined') {
-        return stateValue.checked;
-      }
-
-      // fallback to props if no state
-      const userData = (this.props.orgnizationUserPermissions.find((oup) => oup.user_id === Number(user.id)));
-
-      if (userData.organization_user_permissions.find((oup) =>
-        oup.organization_permission.permission === permission.permission && oup.permitted)) {
-        return true;
-      }
-
-      // check if user is marked as admin to auto check the checkbox.
-      if (permission.default_for_admin && user.attributes.admin) {
-        return true;
-      }
-
-      return false;
-
-    };
-    const checkAdminPermission = (permission) => {
-      if (user.attributes.user_admin_permission === null ||
-        typeof user.attributes.user_admin_permission === 'undefined') {
-        return false;
-      }
-
-      if (user.attributes.user_admin_permission.find((adminPer) => adminPer.permission === permission)) {
-        return true;
-      }
-    };
-
-    // used to display checkboxes for the org.
-    // if an admin, only display the pre-checked admin checkboxes
-    const renderedPermissions = () => {
-      if (user.attributes?.admin) {
-        return this.props.organizationPermissions.filter((per) => per.default_for_admin);
-      }
-
-      return this.props.organizationPermissions;
-    };
-
-    // grabs the values off of state as a priority, and falls back to the props. if there is any state, props gets ignored.
-    const parentPermissionChecked = (userId, parentId) => {
-      if (typeof parentId !== 'number') {
-        return true;
-      }
-
-      let result = false;
-      const parentPermission = this.props.organizationPermissions.find((permission) => permission.id === parentId);
-      const orgUserPermissions = this.props.orgnizationUserPermissions.find((x) =>
-        x.user_id === Number(user.id)).organization_user_permissions;
-
-      const checkboxInState = this.state.toggledCheckboxes.find((permission) =>
-        permission.userId === userId &&
-      permission.permissionName === parentPermission.permission);
-
-      if (typeof checkboxInState !== 'undefined' && checkboxInState.checked) {
-        return true;
-      }
-
-      orgUserPermissions.forEach((permission) => {
-        if (permission.organization_permission.permission === parentPermission.permission &&
-          permission.permitted &&
-          typeof checkboxInState === 'undefined') {
-          result = true;
-        }
-      });
-
-      return result;
-    };
-
-    return (
-      renderedPermissions().map((permission) => {
-        const marginL = permission.parent_permission_id ? '25px' : '0px';
-
-        const checkboxStyle = {
-          style: {
-            marginTop: '0',
-            marginLeft: marginL,
-            marginBottom: '10px'
-          }
-        };
-
-        return (parentPermissionChecked(user.id, permission.parent_permission_id) && <Checkbox
-          name={`${user.id}-${permission.permission}`}
-          label={permission.description}
-          key={`${user.id}-${permission.permission}`}
-          styling={checkboxStyle}
-          onChange={this.modifyUserPermission(user.id, permission.permission)}
-          defaultValue={(userPermissions(permission.permission) || checkAdminPermission(permission.permission))}
-          disabled={checkAdminPermission(permission.permission)}
-          value={getCheckboxEnabled(permission)}
-
-        />);
-      })
-    );
   }
 
   loadingPromise = () => {
@@ -425,9 +261,13 @@ getFilteredUsers = () => {
 
             }
           </div>
-          {this.props.organizationPermissions && <div className={['team-member-permission-toggles-container']}>
-            <p className={['user-permissions-text']}>User permissions:</p>
-            {this.generatePermissionsCheckboxes(user)}
+          {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
+            <OrganizationPermissions
+              organization={this.props.organization}
+              permissions={this.props.organizationPermissions}
+              user={user}
+              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+              orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
           </div>}
         </div>
       </React.Fragment>;
@@ -472,25 +312,27 @@ getFilteredUsers = () => {
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
               COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
           </ul>
-          <p className="text-styling-for-filter-search-bar">
+          <div className="make-content-centered">
+            <p className="text-styling-for-filter-search-bar">
           Filter by username or CSS ID</p>
-          <div className="search-bar-styling-for-filter">
-            <SearchBar
-              id="searchBar"
-              placeholder="Type to filter..."
-              isSearchAhead
-              size="small"
-              onChange={(value) => handleSearchChange(value)}
-              onClearSearch={handleClearSearch}
-              value= {this.state.searchValue}
-            />
+            <div className="search-bar-styling-for-filter">
+              <SearchBar
+                id="searchBar"
+                placeholder="Type to filter..."
+                isSearchAhead
+                size="small"
+                onChange={(value) => handleSearchChange(value)}
+                onClearSearch={handleClearSearch}
+                value= {this.state.searchValue}
+              />
+            </div>
           </div>
         </div>
         { listOfUsers.length > 0 ? (
           <ul>{listOfUsers}</ul>
         ) : (
           <>
-            <b className="no-results-found-styling">No results found</b>
+            <p className="no-results-found-styling">No results found</p>
             <p className="reenter-valid-username-styling" >Please enter a valid username or CSS ID and try again.</p>
           </>
         )
