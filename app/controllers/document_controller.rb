@@ -31,8 +31,15 @@ class DocumentController < ApplicationController
     expires_in 30.days, public: true
     send_file(
       document.serve,
+
+############################ OCR ############################
       # "/Users/laurenjin/dev/appeals/caseflow/tmp/pdfs/non-PII.pdf",
       # x_sendfile: true,
+############################ OCR ############################
+      # "/Users/laurenjin/dev/appeals/caseflow/tmp/pdfs/OCR-non-PII.pdf",
+      # x_sendfile: true,
+#############################################################
+
       type: "application/pdf",
       disposition: document_disposition
     )
