@@ -108,7 +108,10 @@ describe DistributionTask, :postgres do
         )
       end
 
-      before { distribution_task_without_affinity.ready_for_distribution! }
+      before do
+        distribution_task_without_affinity.update!(status: "on_hold")
+        distribution_task_without_affinity.ready_for_distribution!
+      end
 
       it "should be assigned" do
         expect(distribution_task_without_affinity.status).to eq "assigned"
