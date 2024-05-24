@@ -64,12 +64,12 @@ class DistributionTask < Task
 
   def update_affinity_start_date
     # update affinity start date with instructions
-    self.appeal.appeal_affinity.affinity_start_date = nil
-    self.instructions.push("Appeal affinity start date value was removed.")
-    self.save!
+    appeal.appeal_affinity.affinity_start_date = nil
+    instructions.push("Appeal affinity start date value was removed.")
+    save!
   end
 
   def assigned_affinity_start_date?
-    saved_change_to_attribute?("status") && self.status == "assigned" && self.appeal.appeal_affinity.affinity_start_date
+    saved_change_to_attribute?("status") && status == "assigned" && appeal.appeal_affinity.affinity_start_date
   end
 end
