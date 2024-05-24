@@ -1,7 +1,12 @@
 import React from 'react';
-import { mount } from 'enzyme';
+// import { mount } from 'enzyme';
 import moment from 'moment';
 import thunk from 'redux-thunk';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+
 
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/queue/reducers';
@@ -21,16 +26,29 @@ describe('AddCavcDatesModal', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const setup = ({ appealId: id, store }) => {
-    return mount(
+    return render(
       <Provider store={store}>
-        <AddCavcDatesModal appealId={id} />,
+        <MemoryRouter>
+          <AddCavcDatesModal appealId={id} />
+        </MemoryRouter>
       </Provider>,
       {
         wrappingComponent: queueWrapper,
       }
     );
   };
-  const clickSubmit = (cavcModal) => cavcModal.find('button#Add-Court-dates-button-id-1').simulate('click');
+  // const clickSubmit = (cavcModal) => cavcModal.find('button#Add-Court-dates-button-id-1').simulate('click');
+  // const clickSubmit = (cavcModal) => {
+  //   const submitButton = cavcModal.getByRole('button', { name: 'Submit' });
+  //   // console.log('Submit button:', submitButton);
+  //   fireEvent.click(submitButton);
+  //   // console.log('Button clicked!');
+  // };
+  const clickSubmit = (cavcModal) => {
+    const submitButton = cavcModal.container.querySelector('button#Add-Court-dates-button-id-1');
+    // console.log(submitButton)
+    fireEvent.click(submitButton);
+};
 
   it('renders correctly', async () => {
     const store = getStore();
@@ -39,40 +57,52 @@ describe('AddCavcDatesModal', () => {
     expect(cavcModal).toMatchSnapshot();
   });
 
-  it('submits succesfully', async () => {
-    // Mock the requestPatch function to return a promise that resolves, which is what redux-thunk expects
-    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => () => new Promise((resolve) => resolve()));
+  it.only('submits successfully', async () => {
     const store = getStore();
     const cavcModal = setup({ appealId, store });
+    const { getByLabelText, getByRole } = cavcModal;
+    // jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
+    jest.spyOn(uiActions, 'requestPatch').mockResolvedValue();
+    console.log('requestPatch mocked');
 
     const judgementDate = '03/27/2020';
     const mandateDate = '03/31/2019';
     const instructions = 'test instructions';
 
-    cavcModal.find({ name: 'judgement-date' }).find('input').
-      simulate('change', { target: { value: judgementDate } });
+    // fireEvent.change(getByLabelText(/judgement date/i), { target: { value: judgementDate } });
+    // console.log("HELLLLLLLLOOOOO",getByLabelText(/judgement date/i).value);
+    const input = screen.getByLabelText("What is the Court's judgement date?");
+    console.log(input)
+    userEvent.click(input);
+    userEvent.keyboard(judgementDate);
+    // fireEvent.change(input, { target: { value: judgementDate } });
+    expect(input.value).toBe(judgementDate);
 
-    cavcModal.find({ name: 'mandate-date' }).find('input').
-      simulate('change', { target: { value: mandateDate } });
+    // const input = cavcModal.getByLabelText(/What is the Court's judgement date?/i);
 
-    cavcModal.find({ name: 'context-and-instructions-textBox' }).
-      find('textarea').
-      simulate('change', { target: { value: instructions } });
+    fireEvent.change(getByLabelText(/mandate date/i), { target: { value: mandateDate } });
+    fireEvent.change(getByLabelText(/Provide instructions and context for this action/i), { target: { value: instructions } });
 
-    clickSubmit(cavcModal);
+    clickSubmit(cavcModal)
+    console.log(uiActions.requestPatch.mock.calls);
 
-    expect(uiActions.requestPatch).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
-      data: {
-        judgement_date: judgementDate,
-        mandate_date: mandateDate,
-        remand_appeal_id: appealId,
-        instructions,
-        source_form: 'add_cavc_dates_modal',
-      }
-    }, {
-      title: COPY.CAVC_REMAND_CREATED_TITLE,
-      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+    // Wait for async actions to complete
+    await waitFor(() => {
+      // console.log('Waiting for requestPatch to be called');
+      expect(uiActions.requestPatch).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
+        data: {
+          judgement_date: judgementDate,
+          mandate_date: mandateDate,
+          remand_appeal_id: appealId,
+          instructions,
+          source_form: 'add_cavc_dates_modal',
+        }
+      }, {
+        title: COPY.CAVC_REMAND_CREATED_TITLE,
+        detail: COPY.CAVC_REMAND_CREATED_DETAIL
+      });
     });
+    // console.log('requestPatch was called with the expected arguments');
     expect(cavcModal).toMatchSnapshot();
   });
 
