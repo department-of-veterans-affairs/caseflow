@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require "database_cleaner-active_record"
+
+# because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
+Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+
 module Seeds
   class Optional < Base
     # In development environments this log goes to

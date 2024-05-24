@@ -5,7 +5,6 @@ module Seeds
     def seed!
       populate_judges
       populate_attorneys
-      populate_user_names
     end
 
     private
@@ -18,11 +17,6 @@ module Seeds
     # this will populate the redis cache and Caseflow DB with attorneys added to VACOLS using the .csv importer
     def populate_attorneys
       Attorney.list_all
-    end
-
-    # calls User#full_name which was called for all users the first time one visits /test/users in local/demo
-    def populate_user_names
-      User.all
     end
   end
 end
