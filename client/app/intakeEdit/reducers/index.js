@@ -16,6 +16,8 @@ export const mapDataToInitialState = function(props = {}) {
     userIsVhaAdmin,
     userCanSplitAppeal,
     userCanRequestIssueUpdates,
+    userFullName,
+    userCssId,
     isLegacy,
     hasDistributionTask,
     hasSpecialtyCaseTeamAssignTask
@@ -44,6 +46,8 @@ export const mapDataToInitialState = function(props = {}) {
     userIsVhaAdmin,
     userCanSplitAppeal,
     userCanRequestIssueUpdates,
+    userCssId,
+    userFullName,
     isLegacy,
     addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
@@ -55,6 +59,7 @@ export const mapDataToInitialState = function(props = {}) {
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
+    issueModificationRequests: [], // todo: retrieve from backend
     requestIssuesUpdateErrorCode: null,
     afterIssues: null,
     beforeIssues: null,

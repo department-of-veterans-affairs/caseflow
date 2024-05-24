@@ -1,27 +1,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Modal from 'app/components/Modal';
+import CurrentIssue from './RequestCommonComponents/CurrentIssue';
+import RequestReason from './RequestCommonComponents/RequestReason';
+import { useFormContext } from 'react-hook-form';
+import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
+import DateSelector from 'app/components/DateSelector';
+import * as yup from 'yup';
 
-// To be completed in APPEALS-39446
-export const RequestIssueWithdrawalModal = (props) => {
+const withdrawalSchema = yup.object({
+  requestReason: yup.string().required(),
+  withdrawalDate: yup.date().required().
+    max(new Date(), 'We cannot process your request. Please select a date prior to today\'s date.'),
+});
+
+const RequestIssueWithdrawalContent = ({ currentIssue }) => {
+
+  const { register, errors } = useFormContext();
+
   return (
-    <Modal
-      title="Request issue withdrawal"
-      buttons={[
-        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-          name: 'Cancel',
-          onClick: props.onCancel
-        },
-      ]}
-      closeHandler={props.onCancel}
-    >
-      <div></div>
-    </Modal>
+    <div>
+      <CurrentIssue currentIssue={currentIssue} />
+
+      <DateSelector
+        label="Request date for withdrawal"
+        name="withdrawalDate"
+        inputRef={register}
+        errorMessage={errors.withdrawalDate?.message}
+        type="date" />
+      <RequestReason
+        label="withdrawal" />
+    </div>
+  );
+};
+
+RequestIssueWithdrawalContent.propTypes = {
+  currentIssue: PropTypes.object
+};
+
+export const RequestIssueWithdrawalModal = (props) => {
+
+  const combinedProps = {
+    schema: withdrawalSchema,
+    type: 'withdrawal',
+    ...props
+  };
+
+  return (
+    <RequestIssueFormWrapper {...combinedProps}>
+      <RequestIssueWithdrawalContent {...props} />
+    </RequestIssueFormWrapper>
   );
 };
 
 RequestIssueWithdrawalModal.propTypes = {
   onCancel: PropTypes.func,
+  currentIssue: PropTypes.object
 };
 
 export default RequestIssueWithdrawalModal;

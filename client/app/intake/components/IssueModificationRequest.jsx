@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
+import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 
 const IssueModificationRequest = ({ issue }) => {
   const formatDecisionDate = (decisionDate) => {
@@ -11,7 +12,7 @@ const IssueModificationRequest = ({ issue }) => {
   const modificationIssueInfo = (
     <div>
       <p>{issue.nonRatingIssueCategory} - {issue.nonRatingIssueDescription}</p>
-      <p>Benefit type: {issue.benefitType}</p>
+      <p>Benefit type: {BENEFIT_TYPES[issue.benefitType]}</p>
       <p>Decision date: {formatDecisionDate(issue.decisionDate)}</p>
       <br />
     </div>
@@ -21,7 +22,7 @@ const IssueModificationRequest = ({ issue }) => {
     <div>
       <br />
       <h4>Requested by:</h4>
-      <p>{issue.requestor}</p>
+      <p>{issue.requestor.fullName} ({issue.requestor.cssId})</p>
       <br />
     </div>
   );
@@ -51,8 +52,8 @@ const IssueModificationRequest = ({ issue }) => {
           <div className="issue-modification-request-original">
             <ol>
               <li>
-                <p>{issue.requestIssue.nonRatingIssueCategory} - {issue.requestIssue.nonRatingIssueDescription}</p>
-                <p>Benefit type: {issue.requestIssue.benefitType}</p>
+                <p>{issue.requestIssue.description}</p>
+                <p>Benefit type: {BENEFIT_TYPES[issue.requestIssue.benefitType]}</p>
                 <p>Decision date: {formatDecisionDate(issue.requestIssue.decisionDate)}</p>
               </li>
             </ol>

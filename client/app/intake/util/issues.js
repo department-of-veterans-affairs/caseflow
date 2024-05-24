@@ -449,10 +449,10 @@ export const formatIssuesBySection = (issues) => {
 export const formatIssueModificationRequestsBySection = (issueModificationRequests) => {
   return issueModificationRequests.reduce(
     (result, pendingIssue) => {
-      (result.pendingAdminReview || (result.pendingAdminReview = [])).push(pendingIssue);
+      result.pendingAdminReview.push(pendingIssue);
 
       return result;
-    }, {}
+    }, { pendingAdminReview: [] }
   );
 };
 
