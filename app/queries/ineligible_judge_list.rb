@@ -48,13 +48,14 @@ class IneligibleJudgeList
   end
 
   def self.get_reason_for_ineligibility(css_id_value, sdomainid_value)
-    @reason = if INACTIVE_CASEFLOW.find { |o| o[:css_id] == css_id_value }
-                if INACTIVE_VACOLS.find { |o| o[:sdomainid] == sdomainid_value }
+    inactive_caseflow_user = INACTIVE_CASEFLOW.find { |caseflow_user| caseflow_user[:css_id] == css_id_value }
+    inactive_vacols_user = INACTIVE_VACOLS.find { |vacols_user| vacols_user[:sdomainid] == sdomainid_value }
+
+    @reason = if inactive_caseflow_user && inactive_vacols_user
                   "BOTH"
-                else
+              elsif inactive_caseflow_user
                   "CASEFLOW"
-                end
-              elsif INACTIVE_VACOLS.find { |o| o[:sdomainid] == sdomainid_value }
+              elsif inactive_vacols_user
                 "VACOLS"
               end
   end
