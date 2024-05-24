@@ -33,13 +33,13 @@ module Seeds
       call_and_log_seed_step Seeds::Intake
       call_and_log_seed_step Seeds::VeteransHealthAdministration
       call_and_log_seed_step Seeds::MTV
-      call_and_log_seed_step Seeds::Education
       call_and_log_seed_step Seeds::TestCaseData
       call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
       call_and_log_seed_step Seeds::Notifications
       call_and_log_seed_step Seeds::CavcDashboardData
       call_and_log_seed_step Seeds::Substitutions
       call_and_log_seed_step Seeds::VbmsExtClaim
+      call_and_log_seed_step Seeds::PriorityDistributions
       call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
       call_and_log_seed_step Seeds::VhaChangeHistory
       call_and_log_seed_step Seeds::CavcAmaAppeals

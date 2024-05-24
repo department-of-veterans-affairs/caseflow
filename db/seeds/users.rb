@@ -547,13 +547,7 @@ module Seeds
     end
 
     def create_singleton_organizations
-      Organization.subclasses.map do |subclass|
-        begin
-          subclass.singleton
-        rescue NoMethodError
-          nil
-        end
-      end
+      Organization.subclasses.map { |subclass| subclass.singleton if subclass.respond_to?(:singleton) }
     end
   end
   # rubocop:enable Metrics/AbcSize
