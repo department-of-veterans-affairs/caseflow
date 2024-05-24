@@ -509,6 +509,23 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
+    # The appeal would be distributed already but have a hearing related mail task
+    trait :distributed_hearing_related_mail_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = DistributionTask.create!(appeal: appeal, parent: root_task)
+        sct_task = SpecialtyCaseTeamAssignTask.create!(appeal: appeal,
+                                                       parent: root_task,
+                                                       assigned_to: SpecialtyCaseTeam.singleton)
+        HearingRelatedMailTask.create!(appeal: appeal,
+                                       parent: root_task,
+                                       assigned_to: Bva.singleton)
+        distribution_task.update(status: "completed")
+        sct_task.update(status: "completed")
+      end
+    end
+
+    ## Appeal with a realistic task tree
     ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
     trait :mail_blocking_distribution do
       ready_for_distribution
