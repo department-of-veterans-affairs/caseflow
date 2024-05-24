@@ -50,24 +50,21 @@
           list-style-position: inside;
           padding-left: 0;
           margin: 0;
-
-          // li {
-          //   min-height: 60px;
-          // }
         }
       }
     }
   }
-}
 
-.lever-history-styling .entry-user-id {
-  width: 10%;
-}
+  .entry-user-id {
+    width: 10%;
+  }
 
-.lever-history-styling .entry-previous-values, .lever-history-styling .entry-updated-values {
-  width: 15%;
-}
+  .entry-previous-values,
+  .entry-updated-values {
+    width: 15%;
+  }
 
-.lever-history-styling .entry-titles {
-  width: 40%;
+  .entry-titles {
+    width: 40%;
+  }
 }
