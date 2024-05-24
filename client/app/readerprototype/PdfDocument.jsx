@@ -1,0 +1,94 @@
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+import * as PDFJS from 'pdfjs-dist';
+// PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+import ApiUtil from '../util/ApiUtil';
+
+const renderPage = async (pdfPage) => {
+  console.log(`READER_LOG rendering... PAGE ${pdfPage.pageNumber}....`);
+  let pdfContainer = document.getElementById('pdfContainer');
+  let canvasWrapper = document.createElement('div');
+
+  canvasWrapper.setAttribute('id', `canvasContainer-${pdfPage.pageNumber}`);
+  canvasWrapper.className = 'canvasWrapperPrototype';
+  pdfContainer.appendChild(canvasWrapper);
+
+  let canvas = document.createElement('canvas');
+
+  canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
+  canvas.className = 'canvasContainerPrototype';
+  canvasWrapper.appendChild(canvas);
+
+  const viewport = pdfPage.getViewport({ scale: 1 });
+  const canvasContext = canvas.getContext('2d');
+
+  canvas.height = viewport.height;
+  canvas.width = viewport.width;
+  await pdfPage.render({ canvasContext, viewport });
+};
+
+const renderPageBatch = (pdfPages, startIndex, endIndex) => {
+  for (let i = startIndex; i < endIndex; i++) {
+    renderPage(pdfPages[i]);
+  }
+};
+
+const requestOptions = {
+  cache: true,
+  withCredentials: true,
+  timeout: true,
+  responseType: 'arraybuffer'
+};
+
+const PdfDocument = (doc) => {
+  const [pdfDoc, setPdfDoc] = useState(null);
+  const [pdfPages, setPdfPages] = useState([]);
+
+  useEffect(() => {
+    const getDocData = async () => {
+      const byteArr = await ApiUtil.get(doc.file, requestOptions).
+        then((response) => {
+          return response.body;
+        });
+      const docProxy = await PDFJS.getDocument({ data: byteArr }).promise;
+
+      if (docProxy) {
+        setPdfDoc(docProxy);
+      }
+    };
+
+    getDocData();
+  }, [doc]);
+
+  useEffect(() => {
+    const pageArray = [];
+    const getPdfData = async () => {
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+
+        pageArray.push(page);
+      }
+      setPdfPages(pageArray);
+    };
+
+    getPdfData();
+  }, [pdfDoc]);
+
+  useEffect(() => {
+    renderPageBatch(pdfPages, 0, pdfPages.length);
+  }, [pdfPages]);
+
+  return (
+    <div
+      style={{ height: '100%', overflow: 'auto' }}
+      id = "pdfContainer">
+    </div>
+  );
+};
+
+PdfDocument.propTypes = {
+  doc: PropTypes.object,
+};
+
+export default PdfDocument;
