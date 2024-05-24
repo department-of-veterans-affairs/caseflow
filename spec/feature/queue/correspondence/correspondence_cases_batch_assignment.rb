@@ -46,12 +46,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       ReassignPackageTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       ReassignPackageTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end

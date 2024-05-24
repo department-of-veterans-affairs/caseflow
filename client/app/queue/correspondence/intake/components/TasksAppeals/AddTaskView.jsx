@@ -111,8 +111,9 @@ const AddTaskView = (props) => {
   };
 
   return (
-    <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
-      {modalVisible &&
+    <div className="margin-bottom-for-add-task-view">
+      <div className="new-tasks-gray-border-styling" key={task.id}>
+        {modalVisible &&
         <CheckboxModal
           checkboxData={props.autoTexts}
           toggleModal={handleModalToggle}
@@ -120,57 +121,50 @@ const AddTaskView = (props) => {
           handleAccept={handleAutotext}
           handleClear={props.handleClear}
         />
-      }
-      <div className="gray-border"
-        style={
-          { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
-        }>
-        <div
-          style={
-            { width: '45rem' }
-          }
-        >
+        }
 
-          <div id="reactSelectContainer"
-            {...selectContainerStyless}>
-
-            <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
-            <Select
-              placeholder="Select..."
-              options={props.availableTaskTypeOptions}
-              defaultValue={objectForSelectedTaskType()}
-              onChange={(selectedOption) => updateTaskType(selectedOption)}
-              styles={customSelectStyless}
-              className="add-task-dropdown-style"
-              aria-label="dropdown"
-            />
-          </div>
-          <div style={{ padding: '1.5rem' }} />
-          <TextareaField
-            name="content"
-            label="Provide context and instruction on this task"
-            value={task.content}
-            onChange={updateTaskContent}
-          />
-          <Button
-            id="addAutotext"
-            name="Add"
-            styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            classNames={['cf-btn-link', 'cf-left-side']}
-            onClick={handleModalToggle}
-          >
+        <div className="gray-border add-task-container">
+          <div className=" task-selection-box-for-new-tasks">
+            <div className="task-selection-dropdown-box">
+              <div id="reactSelectContainer"
+                {...selectContainerStyless}>
+                <label className="task-selection-title">Task</label>
+                <Select
+                  placeholder="Select..."
+                  options={props.availableTaskTypeOptions}
+                  defaultValue={objectForSelectedTaskType()}
+                  onChange={(selectedOption) => updateTaskType(selectedOption)}
+                  styles={customSelectStyless}
+                  className="add-task-dropdown-style"
+                  aria-label="dropdown"
+                />
+              </div>
+              <div className="provide-context-text-styling" />
+              <TextareaField
+                name="content"
+                label="Provide context and instruction on this task"
+                value={task.content}
+                onChange={updateTaskContent}
+              />
+              <Button
+                id="addAutotext"
+                name="Add"
+                classNames={['cf-btn-link', 'cf-left-side', 'add-autotext-button']}
+                onClick={handleModalToggle}
+              >
             Add autotext
-          </Button>
-          {props.displayRemoveCheck &&
+              </Button>
+              {props.displayRemoveCheck &&
             <Button
               name="Remove"
-              styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
               onClick={() => props.removeTask(task.id)}
-              classNames={['cf-btn-link', 'cf-right-side']}
+              classNames={['cf-btn-link', 'cf-right-side', 'remove-task-button']}
             >
               <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
             </Button>
-          }
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -80,7 +80,7 @@ class CorrespondenceAutoAssignLogger
     )
   end
 
-  def no_eligible_assignees(task:, started_at:)
+  def no_eligible_assignees(task:, started_at:, unassignable_reason:)
     correspondence = task.correspondence
 
     attempt = individual_auto_assignment_attempt
@@ -101,7 +101,7 @@ class CorrespondenceAutoAssignLogger
     save_attempt_statistics(
       attempt: attempt,
       task: task,
-      result: "No eligible assignees available"
+      result: "No eligible assignees: #{unassignable_reason}"
     )
   end
 

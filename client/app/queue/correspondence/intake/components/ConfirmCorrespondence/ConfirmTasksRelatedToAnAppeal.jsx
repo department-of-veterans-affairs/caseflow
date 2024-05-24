@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { COLORS } from 'app/constants/AppConstants';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 const borderlessTd = {
@@ -57,37 +56,32 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     };
 
     // Gives less space to the first appeal, and more to all after.
-    const paddingAmount = index === 0 ? '5px' : '35px';
+    const paddingAmount = index === 0 ? 'first-style-for-appeals-number-tasks' : 'style-for-appeals-number-tasks';
 
     return (
       <>
         <tr>
-          <td style={{ ...borderlessTd, ...{ paddingBottom: '0px', paddingTop: paddingAmount } }}>
-            <h3 style={{ lineHeight: '10%' }}>Appeal {index + 1} Tasks</h3>
+          <td className={paddingAmount} >
+            <h3 className="style-for-appeals-number-title">Appeal {index + 1} Tasks</h3>
           </td>
         </tr>
         <tr rowSpan="4">
-          <td style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
-            <b style={{ marginTop: '40px' }}>Linked Appeal</b>
+          <td className="style-for-appeals-first-row">
+            <b className="style-for-appeals-first-row-title">Linked Appeal</b>
           </td>
-          <td style={borderlessTd}>
+          <td className="style-for-appeals-second-row">
             <b>{evidenceSubmission && 'Currently Active Task'}</b>
           </td>
-          <td style={borderlessTd}>
+          <td className="style-for-appeals-third-row">
             <b>{evidenceSubmission && 'Evidence Window Waived?'}</b>
           </td>
-          <td style={borderlessTd}>
+          <td className="style-for-appeals-fourth-row">
             <b>{evidenceSubmission && 'Assigned To'}</b>
           </td>
         </tr>
         <tr>
           <td style={borderlessTd}>
-            <div style={{ width: 'fit-content',
-              padding: '3px',
-              backgroundColor: 'white',
-              border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}`,
-              whiteSpace: 'nowrap'
-            }}>
+            <div className="linked-appeal-link-button">
               <a
                 href={`/queue/appeals/${fetchedAppeals.find((appeal) => appeal.id === task).externalId}`}
                 target="_blank"
@@ -98,32 +92,24 @@ const ConfirmTasksRelatedToAnAppeal = () => {
               </a>
             </div>
           </td>
-          <td style={borderlessTd}>{formatDocketName()}</td>
-          <td style={borderlessTd}>{getYesOrNo()}</td>
-          <td style={borderlessTd}>{evidenceSubmission ? evidenceSubmission.assigned_to_type : ''}</td>
+          <td className="currently-active-task-answer">{formatDocketName()}</td>
+          <td className="evidence-window-waived-answer">{getYesOrNo()}</td>
+          <td className="assigned-to-answer">{evidenceSubmission ? evidenceSubmission.assigned_to_type : ''}</td>
         </tr>
         <tr>
-          <td
-            style={{ backgroundColor: COLORS.GREY_BACKGROUND,
-              borderTop: 'none',
-              borderSpacing: '0px' }}>
+          <td className="additional-tasks-row">
             <b>Additional Tasks</b>
           </td>
-          <td
-            colSpan="3"
-            style={{ backgroundColor: COLORS.GREY_BACKGROUND,
-              borderTop: 'none',
-              borderSpacing: '0px' }}>
+          <td className="tasks-instructions-or-context" colSpan="3">
             <b>Task Instructions or Context</b>
           </td>
         </tr>
         {tasks.filter((taskById) => taskById.appealId === task).map((taskById) =>
           <tr>
-            <td
-              style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
+            <td className="additional-tasks-row-content">
               {taskById.label}
             </td>
-            <td colSpan={3} style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
+            <td className="tasks-instructions-or-context" colSpan={3}>
               {taskById.content}
             </td>
           </tr>)}
@@ -135,11 +121,8 @@ const ConfirmTasksRelatedToAnAppeal = () => {
   const renderingTask = () => {
 
     if (taskIds.length === 0) {
-      const taskRenderer = <div {...css({
-        paddingTop: '20px',
-        marginBottom: '150px',
-        fontWeight: 'bold'
-      })}> Correspondence is not related to an existing appeal</div>;
+      const taskRenderer = <div
+        className="correspondence-not-related-to-appeal"> Correspondence is not related to an existing appeal</div>;
 
       return taskRenderer;
     }
@@ -155,11 +138,9 @@ const ConfirmTasksRelatedToAnAppeal = () => {
 
   return (
     <>
-      <div style={{ marginLeft: 'auto' }}>
-        <div
-          style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
+      <div className="linked-appeals-and-new-tasks-margin">
+        <div className="linked-appeal-and-new-tasks-box">
           {renderingTask()}
-
         </div>
       </div></>
   );

@@ -253,7 +253,7 @@ const CorrespondenceTableBuilder = (props) => {
         <>
           {/* this setup should prevent a double render of the bulk assign area if a
           user is a superuser and also a supervisor */}
-          {(props.isMailSupervisor || (props.isMailSupervisor && props.isInboundOpsSuperuser)) &&
+          {(props.isInboundOpsSupervisor || (props.isInboundOpsSupervisor && props.isInboundOpsSuperuser)) &&
             (tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME ||
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
             <>
@@ -261,7 +261,7 @@ const CorrespondenceTableBuilder = (props) => {
             </>
           }
           {
-            (props.isInboundOpsSuperuser && !props.isMailSupervisor &&
+            (props.isInboundOpsSuperuser && !props.isInboundOpsSupervisor &&
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
           <>
             {getBulkAssignArea()}
@@ -327,7 +327,7 @@ const CorrespondenceTableBuilder = (props) => {
     <h1 className="correspondence-table-builder-title">{config.table_title}</h1>
     <QueueOrganizationDropdown
       isMailTeamUser={props.isMailTeamUser}
-      isMailSupervisor={props.isMailSupervisor}
+      isInboundOpsSupervisor={props.isInboundOpsSupervisor}
       isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
       featureToggles={props.featureToggles}
@@ -363,7 +363,7 @@ CorrespondenceTableBuilder.propTypes = {
   selectedTasks: PropTypes.array,
   isMailTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool
+  isInboundOpsSupervisor: PropTypes.bool
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);

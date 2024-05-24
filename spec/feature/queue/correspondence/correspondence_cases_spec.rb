@@ -27,13 +27,11 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases form shell" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:veteran) { create(:veteran) }
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
       10.times do
         create(
@@ -65,12 +63,10 @@ RSpec.feature("The Correspondence Cases page") do
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2024, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2024, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -212,11 +208,7 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence tasks completed tab" do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:correspondence_auto_assignable_user, :super_user) }
 
     before do
       20.times do
@@ -228,6 +220,8 @@ RSpec.feature("The Correspondence Cases page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
     end
 
     it "displays all completed correspondence tasks" do
@@ -358,9 +352,10 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases action required tab" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     before do
@@ -382,12 +377,10 @@ RSpec.feature("The Correspondence Cases page") do
       end
       # Used to mock a single task to compare task sorting
       ReassignPackageTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       ReassignPackageTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -458,7 +451,9 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == first_day_amount)
       # return to Z-A, compare details again
       find("[aria-label='Sort by Days Waiting']").click
-      expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == second_day_amount)
+      using_wait_time(10) do
+        expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == second_day_amount)
+      end
     end
 
     it "uses notes sort correctly" do
@@ -522,10 +517,12 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases unassigned tab" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     before do
@@ -548,14 +545,11 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       ReassignPackageTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       ReassignPackageTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
-      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "successfully loads the unassigned tab" do
@@ -675,10 +669,12 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases assigned tab" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     before do
@@ -706,12 +702,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -841,10 +835,12 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Your Correspondence assigned tab" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     before do
@@ -872,12 +868,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -951,12 +945,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       EfolderUploadFailedTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1055,10 +1047,12 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "correspondence cases pending tab" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     before do
@@ -1081,12 +1075,10 @@ RSpec.feature("The Correspondence Cases page") do
 
       # Used to mock a single task to compare task sorting
       PrivacyActRequestCorrespondenceTask.first.correspondence.update!(
-        va_date_of_receipt: Date.new(2000, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2000, 10, 10)
       )
       PrivacyActRequestCorrespondenceTask.last.correspondence.update!(
-        va_date_of_receipt: Date.new(2050, 10, 10),
-        updated_by_id: current_user.id
+        va_date_of_receipt: Date.new(2050, 10, 10)
       )
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1229,11 +1221,9 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Banner alert for approval and reject request" do
-    let(:current_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     before :each do
       MailTeam.singleton.add_user(current_user)
-      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1264,7 +1254,9 @@ RSpec.feature("The Correspondence Cases page") do
       find("#react-select-2-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
       find("#react-select-2-option-0").click
       find("#Review-request-button-id-1").click
-      expect(page).to have_content("You have successfully reassigned a mail record for")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully reassigned a mail record for")
+      end
     end
 
     it "deny request to reassign" do
@@ -1273,7 +1265,9 @@ RSpec.feature("The Correspondence Cases page") do
       find('[for="vertical-radio_reject"]').click
       all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
-      expect(page).to have_content("You have successfully rejected a package request for")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully rejected a package request for")
+      end
     end
 
     it "approve request to reassign in review_package view" do
@@ -1285,7 +1279,9 @@ RSpec.feature("The Correspondence Cases page") do
       find("#react-select-4-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
       find("#react-select-4-option-0").click
       click_button("Confirm")
-      expect(page).to have_content("You have successfully reassigned a mail record for")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully reassigned a mail record for")
+      end
     end
 
     it "deny request to reassign in review_package view" do
@@ -1296,7 +1292,9 @@ RSpec.feature("The Correspondence Cases page") do
       find('[for="reassign-package_reject"]').click
       find(".cf-form-textarea", match: :first).fill_in with: "this is a rejection reason"
       click_button("Confirm")
-      expect(page).to have_content("You have successfully rejected a package request")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully rejected a package request")
+      end
     end
 
     it "approve request to remove" do
@@ -1304,7 +1302,9 @@ RSpec.feature("The Correspondence Cases page") do
       all("[aria-label='Remove Package Task Link']")[0].click
       find('[for="vertical-radio_approve"]').click
       find("#Review-request-button-id-1").click
-      expect(page).to have_content("You have successfully removed a mail package for")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully removed a mail package for")
+      end
     end
 
     it "deny request to remove" do
@@ -1313,7 +1313,9 @@ RSpec.feature("The Correspondence Cases page") do
       find('[for="vertical-radio_reject"]').click
       all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
-      expect(page).to have_content("You have successfully rejected a package request")
+      using_wait_time(30) do
+        expect(page).to have_content("You have successfully rejected a package request")
+      end
     end
 
     it "goes to Task Package" do
@@ -1323,12 +1325,9 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Review the mail package details below.")
     end
   end
+
   context "correspondence tasks completed tab testing filters date " do
-    let(:current_user) { create(:user) }
-    before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-    end
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before do
       20.times do
@@ -1339,6 +1338,8 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     before :each do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
       FeatureToggle.enable!(:user_queue_pagination)
     end
@@ -1352,10 +1353,11 @@ RSpec.feature("The Correspondence Cases page") do
 
       find("#reactSelectContainer").click
       find("#react-select-2-option-0").click
-      current_date = Time.zone.today
-      start_date = (current_date + 1).strftime("%m/%d/%Y")
+      current_date = Time.zone.today.strftime("%m/%d/%Y")
+      start_date = (Time.zone.today + 1.day).strftime("%m/%d/%Y")
 
-      all("div.input-container > input")[0].fill_in(with: start_date)
+      all("div.input-container > input")[0].fill_in(with: current_date)
+      all("div.input-container > input")[1].fill_in(with: start_date)
 
       expect(page).to have_button("Apply filter", disabled: true)
       expect(page).to have_content("Date completed cannot occur in the future.")
@@ -1449,13 +1451,10 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   context "Package document type column" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:alt_user) { create(:user) }
-    let(:mail_team_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
       MailTeam.singleton.add_user(alt_user)
-      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end

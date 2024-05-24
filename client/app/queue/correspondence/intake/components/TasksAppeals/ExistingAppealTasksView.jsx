@@ -72,7 +72,7 @@ export const ExistingAppealTasksView = (props) => {
 
   return (
     <div>
-      <div style={{ marginLeft: '2%', marginBottom: '2%' }}>
+      <div className="tasks-appeal-title">
         <strong>Tasks: Appeal </strong>
         <CaseDetailsLink appeal={props.appeal}
           getLinkText={() => {
@@ -82,7 +82,7 @@ export const ExistingAppealTasksView = (props) => {
         />
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      <div className="evidence-window-submission-task">
         {props.appeal.hasEvidenceSubmissionTask &&
           <AddEvidenceSubmissionTaskView
             key={props.appeal.evidenceSubmissionTask.id}
@@ -106,19 +106,19 @@ export const ExistingAppealTasksView = (props) => {
         })}
       </div>
 
-      <div style={{ padding: '2.5rem 2.5rem', display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ width: '80%' }}>
+      <div className="area-around-add-tasks-button">
+        <div className="width-of-add-tasks-button">
           <Button
             type="button"
             onClick={addTask}
             disabled={getTasksForAppeal().length === MAX_NUM_TASKS}
             name="addTasks"
-            className={['cf-left-side']}>
+            classNames={['cf-left-side', 'add-existing-appeal-button']}>
           + Add tasks
           </Button>
         </div>
 
-        <div style={{ cursor: 'pointer' }}>
+        <div className="cursor-style-for-unlink-appeal-button" >
           <Link
             name={`unlink-${props.appeal.id}`}
             onClick={() => props.unlinkAppeal(props.appeal.id, false)}

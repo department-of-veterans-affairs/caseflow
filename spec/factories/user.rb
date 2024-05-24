@@ -39,6 +39,15 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :inbound_ops_team_supervisor do
+      after(:create) do |user|
+        InboundOpsTeam.singleton.add_user(user)
+        MailTeam.singleton.add_user(user)
+        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: user).update!(admin: true)
+        User.authenticate!(user: current_user)
+      end
+    end
+
     factory :correspondence_auto_assignable_user do
       after(:create) do |u|
         # Member of InboundOpsTeam
@@ -49,7 +58,7 @@ FactoryBot.define do
           permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
         ) do |op|
           op.enabled = true
-          op.description = Faker::Fantasy::Tolkien.poem
+          op.description = "Auto-Assignment"
         end
 
         # Has auto-assign permission
@@ -64,8 +73,18 @@ FactoryBot.define do
       trait :super_user do
         after(:create) do |u|
           OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
-          OrganizationsUser.find_or_create_by!(organization: BvaIntake.singleton, user: u).update!(admin: true)
-          OrganizationsUser.find_or_create_by!(organization: MailTeam.singleton, user: u).update!(admin: true)
+          permission = OrganizationPermission.find_or_create_by!(
+            permission: Constants.ORGANIZATION_PERMISSIONS.superuser,
+            organization: InboundOpsTeam.singleton,
+            enabled: true,
+            description: "Superuser: Split, Merge, Reassign"
+          )
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: permission,
+            permitted: true,
+            organizations_user: OrganizationsUser.find_or_create_by(user_id: u.id)
+          )
         end
       end
 
@@ -78,7 +97,7 @@ FactoryBot.define do
             permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
           ) do |op|
             op.enabled = true
-            op.description = Faker::Fantasy::Tolkien.poem
+            op.description = "Receive \"NOD Mail\""
           end
 
           OrganizationUserPermission.find_or_create_by!(
