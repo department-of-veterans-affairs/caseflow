@@ -14,9 +14,14 @@ import { placeAnnotation, startPlacingAnnotation,
 
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 
+import PdfDocument from '../readerprototype/PdfDocument';
+
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
 // they become visible.
+
+const IS_PROTOTYPE = false;
+
 export class Pdf extends React.PureComponent {
   handleAltEnter = () => {
     if (this.props.placingAnnotationIconPageCoords) {
@@ -73,6 +78,15 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  loadDocsPrototype = (arr) => {
+    return arr.map((file) => {
+      return <PdfDocument
+        key={`${file}`}
+        fileUrl={file}
+      />;
+    });
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.keyListener);
     window.addEventListener('resize', this.updateScrollWindowCenter);
@@ -96,7 +110,7 @@ export class Pdf extends React.PureComponent {
           width: '100%',
           height: '100%'
         }}>
-        {this.loadDocs(files)}
+        {IS_PROTOTYPE ? this.loadDocsPrototype(files) : this.loadDocs(files)}
       </div>
     </div>;
   }
