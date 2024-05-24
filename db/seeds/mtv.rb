@@ -4,6 +4,10 @@
 
 module Seeds
   class MTV < Base
+    MOTION_DISPOSITIONS = %w[denied dismissed granted].freeze
+    NOT_GRANTED_MOTION_DISPOSITIONS = %w[denied dismissed].freeze
+    VACATE_TYPES = %w[straight_vacate vacate_and_de_novo vacate_and_readjudication].freeze
+
     def initialize
       file_number_initial_value
     end
@@ -117,7 +121,6 @@ module Seeds
     end
 
     def original_at_judge_to_address_motion(mtv_judge, drafting_attorney, lit_support_user)
-      MOTION_DISPOSITIONS = %w[denied dismissed granted]
       MOTION_DISPOSITIONS.each do |disposition|
         # These are ready to be addressed by the Judge
         3.times do
@@ -132,8 +135,6 @@ module Seeds
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def vacate_at_attorney_review(mtv_judge, drafting_attorney, lit_support_user)
-      NOT_GRANTED_MOTION_DISPOSITIONS = %w[denied dismissed]
-
       NOT_GRANTED_MOTION_DISPOSITIONS.each do |disposition|
         # These are ready to be reviewed by the decision drafting attorney on the vacate stream
         3.times do
@@ -144,8 +145,6 @@ module Seeds
           judge_addresses_mtv(jam_task, disposition, nil, lit_support_user)
         end
       end
-
-      VACATE_TYPES = %w[straight_vacate vacate_and_de_novo vacate_and_readjudication]
 
       VACATE_TYPES.each do |vacate_type|
         3.times do

@@ -25,6 +25,16 @@ module Seeds
       "BVATCOLLIER" => %w[BVAAABSHIRE BVAGSPORER BVAEBECKER]
     }.freeze
 
+    PROGRAM_OFFICES = [
+      "Community Care - Payment Operations Management",
+      "Community Care - Veteran and Family Members Program",
+      "Member Services - Health Eligibility Center",
+      "Member Services - Beneficiary Travel",
+      "Prosthetics"
+    ].freeze
+
+    RPOS = [ "Buffalo RPO", "Central Office RPO", "Muskogee RPO"].freeze
+
     def seed!
       create_users
       create_singleton_organizations
@@ -241,7 +251,7 @@ module Seeds
     end
 
     def create_hearings_user
-      hearings_member = create(:user, css_id: "BVATWARNER")
+      hearings_member = User.find_by(css_id: "BVATWARNER")
       HearingsManagement.singleton.add_user(hearings_member)
       HearingAdmin.singleton.add_user(hearings_member)
     end
@@ -486,14 +496,6 @@ module Seeds
     end
 
     def setup_program_offices
-      PROGRAM_OFFICES = [
-        "Community Care - Payment Operations Management",
-        "Community Care - Veteran and Family Members Program",
-        "Member Services - Health Eligibility Center",
-        "Member Services - Beneficiary Travel",
-        "Prosthetics"
-      ].freeze
-
       PROGRAM_OFFICES.each { |name| VhaProgramOffice.create!(name: name, url: name) }
 
       regular_user = create(:user, full_name: "Stevie VhaProgramOffice Amana", css_id: "VHAPOUSER")
@@ -505,7 +507,7 @@ module Seeds
       end
     end
 
-    def setup_specialty_case_team!
+    def setup_specialty_case_team
       regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
       admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
       SpecialtyCaseTeam.singleton.add_user(regular_user)
@@ -531,7 +533,6 @@ module Seeds
     end
 
     def setup_rpo_orgs
-      RPOS = [ "Buffalo RPO", "Central Office RPO", "Muskogee RPO"].freeze
       RPOS.each { |name| EducationRpo.create!(name: name, url: name) }
 
       regular_user = create(:user, full_name: "Peter EDURPOUSER Campbell", css_id: "EDURPOUSER")
