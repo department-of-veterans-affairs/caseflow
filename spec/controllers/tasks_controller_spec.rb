@@ -611,6 +611,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       before do
         inbound_ops_team_user = create(:user)
         InboundOpsTeam.singleton.add_user(inbound_ops_team_user)
+        MailTeam.singleton.add_user(inbound_ops_team_user)
         User.authenticate!(user: inbound_ops_team_user)
       end
 

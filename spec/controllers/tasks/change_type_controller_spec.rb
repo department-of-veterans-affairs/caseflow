@@ -116,7 +116,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
             appeal: root_task.appeal,
             parent_id: root_task.id,
             assigned_by: assigner,
-            assigned_to: InboundOpsTeam.singleton
+            assigned_to: MailTeam.singleton
           )
         end
 
