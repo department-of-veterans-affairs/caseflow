@@ -135,7 +135,7 @@ class QueueApp extends React.PureComponent {
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
     this.props.setMailTeamUser(this.props.isMailTeamUser);
-    this.props.setMailSupervisor(this.props.isMailSupervisor);
+    this.props.setMailSupervisor(this.props.isInboundOpsSupervisor);
     this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
@@ -650,7 +650,7 @@ class QueueApp extends React.PureComponent {
       <CorrespondenceReviewPackage
         mailTeamUsers={this.props.mailTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
-        userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
+        userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
         {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );
@@ -712,7 +712,7 @@ class QueueApp extends React.PureComponent {
       correspondence={this.props.correspondence}
       priorMail={this.props.priorMail}
       veteranInformation={this.props.veteranInformation}
-      isMailSupervisor={this.props.isMailSupervisor}
+      isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
     />
   );
 
@@ -1544,7 +1544,7 @@ QueueApp.propTypes = {
   setMailSupervisor: PropTypes.func,
   setInboundOpsSuperUser: PropTypes.func,
   isMailTeamUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   mailTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
@@ -1565,7 +1565,7 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
-  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,

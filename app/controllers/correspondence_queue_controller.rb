@@ -2,7 +2,7 @@
 
 class CorrespondenceQueueController < CorrespondenceController
   def correspondence_cases
-    if current_user.mail_supervisor?
+    if current_user.inbound_ops_team_supervisor?
       redirect_to "/queue/correspondence/team"
     elsif current_user.inbound_ops_team_superuser? || current_user.mail_team_user?
       intake_cancel_message(action_type) if %w[continue_later cancel_intake].include?(action_type)
@@ -18,7 +18,7 @@ class CorrespondenceQueueController < CorrespondenceController
   end
 
   def correspondence_team
-    if current_user.inbound_ops_team_superuser? || current_user.mail_supervisor?
+    if current_user.inbound_ops_team_superuser? || current_user.inbound_ops_team_supervisor?
       correspondence_team_response
     elsif current_user.mail_team_user?
       redirect_to "/queue/correspondence"

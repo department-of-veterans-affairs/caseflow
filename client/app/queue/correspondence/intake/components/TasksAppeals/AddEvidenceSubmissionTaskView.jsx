@@ -38,7 +38,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
               disabled
             />
           </div>
-          <div className="area-below-evidence-window-submission-task-dropdown"/>
+          <div className="area-below-evidence-window-submission-task-dropdown" />
           <TextareaField
             name="content"
             label="Provide context and instruction on this task"
