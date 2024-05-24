@@ -76,4 +76,27 @@ describe DistributionTask, :postgres do
       end
     end
   end
+
+  describe "after_update hooks" do
+    before do
+      distribution_task.update!(status: "on_hold")
+      affinity_appeal = create(:appeal_affinity, appeal: distribution_task.appeal)
+    end
+
+    context "when affinity appeal is not set to assigned" do
+      it "returns an affinity appeal start date with no instructions" do
+        expect(distribution_task.appeal.appeal_affinity.affinity_start_date).to_not eq nil
+        expect(distribution_task.instructions.size).to eq 0
+      end
+    end
+
+    context "when affinity appeal is set to assigned" do
+      before { distribution_task.ready_for_distribution! }
+
+      it "returns no affinity appeal start date with instructions" do
+        expect(distribution_task.appeal.appeal_affinity.affinity_start_date).to eq nil
+        expect(distribution_task.instructions.size).to eq 1
+      end
+    end
+  end
 end

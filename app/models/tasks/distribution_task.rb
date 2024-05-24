@@ -70,6 +70,6 @@ class DistributionTask < Task
   end
 
   def assigned_affinity_start_date?
-    saved_change_to_attribute?("status") && self.status == "assigned"
+    saved_change_to_attribute?("status") && self.status == "assigned" && self.appeal.appeal_affinity.affinity_start_date
   end
 end
