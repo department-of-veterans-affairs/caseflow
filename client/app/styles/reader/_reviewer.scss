@@ -585,3 +585,22 @@ input[type="search"].cf-search-input-with-close {
 .editable-field-btn-link {
   padding: 0 0.5rem 0.5rem 0.75rem;
 }
+
+//this stops the window moving with scroll
+.cf-app-reader {
+  overflow: hidden;
+}
+
+.canvasWrapperPrototype {
+  margin: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+.canvasContainerPrototype {
+  background-color: white;
+}
+
+.pageNumberInputPrototype {
+  display: inline-block;
+}
