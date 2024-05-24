@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+
 import * as PDFJS from 'pdfjs-dist';
 // PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+// need this if using PdfDocument.jsx in /reader/Pdf.jsx
+
 import ApiUtil from '../util/ApiUtil';
 
 const renderPage = async (pdfPage) => {
-  console.log(`READER_LOG rendering... PAGE ${pdfPage.pageNumber}....`);
   let pdfContainer = document.getElementById('pdfContainer');
   let canvasWrapper = document.createElement('div');
 
@@ -41,13 +43,14 @@ const requestOptions = {
   responseType: 'arraybuffer'
 };
 
-const PdfDocument = (doc) => {
+const PdfDocument = ({ fileUrl, zoomLevel }) => {
+
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
   useEffect(() => {
     const getDocData = async () => {
-      const byteArr = await ApiUtil.get(doc.file, requestOptions).
+      const byteArr = await ApiUtil.get(fileUrl, requestOptions).
         then((response) => {
           return response.body;
         });
@@ -59,10 +62,14 @@ const PdfDocument = (doc) => {
     };
 
     getDocData();
-  }, [doc]);
+  }, [fileUrl]);
 
   useEffect(() => {
     const pageArray = [];
+
+    if (!pdfDoc) {
+      return;
+    }
     const getPdfData = async () => {
       for (let i = 1; i <= pdfDoc.numPages; i++) {
         const page = await pdfDoc.getPage(i);
@@ -81,14 +88,15 @@ const PdfDocument = (doc) => {
 
   return (
     <div
-      style={{ height: '100%', overflow: 'auto' }}
+      style={{ height: '100%', overflow: 'auto', zoom: `${zoomLevel}` }}
       id = "pdfContainer">
     </div>
   );
 };
 
 PdfDocument.propTypes = {
-  doc: PropTypes.object,
+  fileUrl: PropTypes.string,
+  zoomLevel: PropTypes.string
 };
 
 export default PdfDocument;

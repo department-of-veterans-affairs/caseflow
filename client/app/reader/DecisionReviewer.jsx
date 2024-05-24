@@ -22,9 +22,13 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { formatNameShort } from '../util/FormatUtil';
 
+import DocumentViewer from '../readerprototype/DocumentViewer';
+
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
+
+const IS_PROTOTYPE = true;
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
@@ -36,6 +40,10 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
+
+    if (IS_PROTOTYPE) {
+      this.routedPdfViewerPrototype.displayName = 'RoutedPdfViewer';
+    }
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
@@ -118,10 +126,29 @@ export class DecisionReviewer extends React.PureComponent {
       <PdfViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}
+        history={props.history}k
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
         featureToggles={this.props.featureToggles}
+        {...props}
+      />
+    </ReaderLoadingScreen>
+    ;
+  }
+
+  routedPdfViewerPrototype = (props) => {
+    const { vacolsId } = props.match.params;
+
+    return <ReaderLoadingScreen
+      appealDocuments={this.props.appealDocuments}
+      annotations={this.props.annotations}
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
+      <DocumentViewer
+        allDocuments={_.values(this.props.storeDocuments)}
+        showPdf={this.showPdf(props.history, vacolsId)}
+        history={props.history}
+        documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -151,7 +178,7 @@ export class DecisionReviewer extends React.PureComponent {
         title="Document Viewer | Caseflow Reader"
         breadcrumb="Document Viewer"
         path="/:vacolsId/documents/:docId"
-        render={this.routedPdfViewer} />
+        render={IS_PROTOTYPE ? this.routedPdfViewerPrototype : this.routedPdfViewer} />
       <AppFrame wideApp>
         <PageRoute
           exact
