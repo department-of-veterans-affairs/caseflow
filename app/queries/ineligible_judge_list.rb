@@ -52,9 +52,9 @@ class IneligibleJudgeList
     inactive_vacols_user = INACTIVE_VACOLS.find { |vacols_user| vacols_user[:sdomainid] == sdomainid_value }
 
     @reason = if inactive_caseflow_user && inactive_vacols_user
-                  "BOTH"
+                "BOTH"
               elsif inactive_caseflow_user
-                  "CASEFLOW"
+                "CASEFLOW"
               elsif inactive_vacols_user
                 "VACOLS"
               end
