@@ -80,7 +80,7 @@ describe DistributionTask, :postgres do
   describe "after_update hooks" do
     before do
       distribution_task.update!(status: "on_hold")
-      affinity_appeal = create(:appeal_affinity, appeal: distribution_task.appeal)
+      create(:appeal_affinity, appeal: distribution_task.appeal)
     end
 
     context "when affinity appeal is not set to assigned" do
