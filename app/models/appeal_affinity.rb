@@ -24,7 +24,7 @@ class AppealAffinity < CaseflowRecord
     distribution_task = DistributionTask.find_by(appeal: self.case, status: Constants.TASK_STATUSES.assigned)
     return unless distribution_task
 
-    distribution_task.instructions << "Affinity start date: #{affinity_start_date.to_date}"
+    distribution_task.instructions << "Affinity start date: #{affinity_start_date.to_date.strftime('%m/%d/%Y')}"
     distribution_task.save!
   end
 
