@@ -39,7 +39,6 @@ module Seeds
       call_and_log_seed_step Seeds::CavcDashboardData
       call_and_log_seed_step Seeds::Substitutions
       call_and_log_seed_step Seeds::VbmsExtClaim
-      call_and_log_seed_step Seeds::PriorityDistributions
       call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
       call_and_log_seed_step Seeds::VhaChangeHistory
       call_and_log_seed_step Seeds::CavcAmaAppeals
