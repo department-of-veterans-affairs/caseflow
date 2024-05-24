@@ -22,6 +22,8 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearing_docket_time_goals}
+    #{Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals}
+    #{Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals}
   ).freeze
 
   FLOAT_LEVERS = %W(

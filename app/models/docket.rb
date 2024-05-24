@@ -169,13 +169,13 @@ class Docket
   end
 
   def docket_time_goal
-    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals").to_i
+    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals")
   end
 
   def start_distribution_prior_to_goal
     @start_distribution_prior_to_goal ||= CaseDistributionLever.public_send(
       "ama_#{docket_type}_start_distribution_prior_to_goals"
-    ).to_i
+    )
   end
 
   private
