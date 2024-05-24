@@ -883,6 +883,7 @@ class Task < CaseflowRecord
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
         return all_children_cancelled_or_completed
       end
+
       update_task_if_children_tasks_are_completed
     end
   end

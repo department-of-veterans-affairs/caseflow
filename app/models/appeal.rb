@@ -509,7 +509,6 @@ class Appeal < DecisionReview
     while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
       # cycle each task in the parent
       parent_ordered_tasks.each do |task|
-
         # skip this task if the task has been copied (already in the hash)
         next if task_parent_to_child_hash.key?(task.id)
 

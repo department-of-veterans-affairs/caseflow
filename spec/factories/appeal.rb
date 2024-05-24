@@ -371,7 +371,7 @@ FactoryBot.define do
 
     trait :with_distribution_task_and_schedule_hearing_child_task do
       after(:create) do |appeal, _evaluator|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         distribution_task = create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: distribution_task)
       end

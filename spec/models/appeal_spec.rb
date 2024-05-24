@@ -1932,7 +1932,7 @@ describe Appeal, :all_dbs do
           :appeal,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
-        root_task = create(:root_task, appeal: original_appeal)
+        create(:root_task, appeal: original_appeal)
         distribution_task = create(:distribution_task, appeal: original_appeal, assigned_to: Bva.singleton)
         final_letter_task = SendFinalNotificationLetterTask.create!(
           appeal: original_appeal,
@@ -1978,12 +1978,12 @@ describe Appeal, :all_dbs do
       end
 
       it "should clone the task tree successfully" do
-        user = create(:intake_admin_user)
+        create(:intake_admin_user)
         original_appeal = create(
           :appeal,
           :with_distribution_task_and_schedule_hearing_child_task,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
-          )
+        )
 
         distribution_task = original_appeal.tasks.where(type: "DistributionTask").first
         hearing_task = original_appeal.tasks.where(type: "HearingTask").first
