@@ -185,13 +185,9 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.MOVE_TO_PENDING_REVIEW] = () => {
-    // issues are removed by position, because not all issues have referenceIds
-    listOfIssues.splice(action.payload.index, 1);
-
     return {
       ...state,
       addedIssues: listOfIssues,
-      // issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
       pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
     };
   };
@@ -199,7 +195,6 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.ADD_TO_PENDING_REVIEW] = () => {
     return {
       ...state,
-      // issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
       pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
     };
   };
