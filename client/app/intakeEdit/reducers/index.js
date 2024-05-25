@@ -38,6 +38,10 @@ export const mapDataToInitialState = function(props = {}) {
     };
   }
 
+  const formattedPendingModificationRequests =
+    formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests);
+  const formattedAddedIssues = formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues);
+
   return {
     ...serverIntake,
     claimId,
@@ -55,13 +59,13 @@ export const mapDataToInitialState = function(props = {}) {
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
-    addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
-    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
-    originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    addedIssues: formattedAddedIssues,
+    originalIssues: formattedAddedIssues,
+    pendingIssueModificationRequests: formattedPendingModificationRequests,
+    originalPendingIssueModificationRequests: formattedPendingModificationRequests,
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    issueModificationRequests: [], // todo: retrieve from backend
     requestIssuesUpdateErrorCode: null,
     afterIssues: null,
     beforeIssues: null,

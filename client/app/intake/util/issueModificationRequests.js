@@ -4,7 +4,7 @@ const formatRequestIssueForPendingRequest = (requestIssue) => {
   }
 
   return {
-    id: requestIssue.id,
+    id: String(requestIssue.id),
     benefitType: requestIssue.benefit_type,
     decisionDate: requestIssue.decision_date,
     nonratingIssueCategory: requestIssue.nonrating_issue_category,
@@ -18,10 +18,10 @@ const formatUserForPendingRequest = (user) => {
   }
 
   return {
-    id: user.id,
+    id: String(user.id),
     fullName: user.full_name,
     cssId: user.css_id,
-    stationID: user.station_id
+    stationID: String(user.station_id)
   };
 };
 

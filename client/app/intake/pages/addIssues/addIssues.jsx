@@ -297,13 +297,21 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    // eslint-disable-next-line max-len
-    const issues = intakeData.docketType === 'Legacy' ? formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
+    const issues = intakeData.docketType === 'Legacy' ?
+      formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
+
+    // Filter the issues to remove those that have a pending modification request
+    const issuesWithoutPendingModificationRequests = issues.filter((issue) => {
+      return !pendingIssueModificationRequests.some((request) => {
+        return request.requestIssue && request.requestIssue.id === issue.id;
+      });
+    });
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
-    const issuesBySection = formatIssuesBySection(issues);
+    // const issuesBySection = formatIssuesBySection(issues);
+    const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);

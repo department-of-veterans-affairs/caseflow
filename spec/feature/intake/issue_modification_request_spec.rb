@@ -53,7 +53,7 @@ feature "Issue Modification Request", :postgres do
         fill_in "Issue type", with: "Beneficiary Travel"
         find(".cf-select__option", exact_text: "Beneficiary Travel").click
 
-        fill_in "Prior decision date", with: "05/15/2024"
+        fill_in "Decision date", with: "05/15/2024"
         fill_in "Issue description", with: "An issue description"
         fill_in "Please provide a reason for the issue modification request", with: "I wanted to"
 
@@ -72,7 +72,7 @@ feature "Issue Modification Request", :postgres do
         fill_in "Issue type", with: "Beneficiary Travel"
         find(".cf-select__option", exact_text: "Beneficiary Travel").click
 
-        fill_in "Prior decision date", with: "05/15/2024"
+        fill_in "Decision date", with: "05/15/2024"
         fill_in "Issue description", with: "An issue description"
         fill_in "Please provide a reason for the issue addition request", with: "I wanted to"
 
@@ -129,7 +129,7 @@ feature "Issue Modification Request", :postgres do
       fill_in "Issue type", with: "Beneficiary Travel"
       find(".cf-select__option", exact_text: "Beneficiary Travel").click
 
-      fill_in "Prior decision date", with: "05/15/2024"
+      fill_in "Decision date", with: "05/15/2024"
       fill_in "Issue description", with: "An issue description"
       fill_in "Please provide a reason for the issue modification request", with: "I wanted to"
 
