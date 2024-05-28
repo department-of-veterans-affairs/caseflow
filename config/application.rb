@@ -100,6 +100,10 @@ module CaseflowCertification
     # Default as of 6.1: true
     config.active_record.has_many_inversing = false
 
+    # Apply random variation to the delay when retrying failed jobs.
+    # Default as of 6.1: 0.15
+    config.active_job.retry_jitter = 0
+
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
