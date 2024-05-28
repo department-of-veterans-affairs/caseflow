@@ -7,7 +7,11 @@ $translate: 11%;
 $color-gray-inverse-base: #f9f9f9;
 $color-bg-gray: #dee2e6;
 $color-blue: #0071bc;
+$color-light-blue: #8ba6ca;
 $color-cream: #d6d7d9;
+$color-white: #ffffff;
+$color-black: #323a45;
+
 
 .cf-pdf-preview-header {
   opacity: 1;
@@ -188,7 +192,7 @@ $color-cream: #d6d7d9;
 }
 
 .a-r-h2 {
-  margin: 30px auto 20px auto;
+  margin: 30px auto 20px;
 }
 
 .a-r-p2 {
@@ -211,11 +215,11 @@ $color-cream: #d6d7d9;
 
 .correspondence-document-table-data-filled {
   background: $color-blue;
-  color: #ffffff;
+  color: $color-white;
 }
 
 .correspondence-document-table-data-empty {
-  background: #ffffff;
+  background: $color-white;
   color: $color-blue;
 }
 
@@ -291,7 +295,7 @@ $color-cream: #d6d7d9;
 }
 
 .tag-styling-review-form {
-  & .cf-select__control {
+  .cf-select__control {
     max-width: 63rem;
   }
 }
@@ -398,7 +402,7 @@ $color-cream: #d6d7d9;
     font-size: 17px;
     margin-bottom: 12px;
     margin-top: 0;
-    color: #323a45;
+    color: $color-black;
     line-height: 1.3;
   }
 
@@ -656,8 +660,8 @@ $color-cream: #d6d7d9;
   .linked-appeal-link-button {
     width: fit-content;
     padding: 3px;
-    background-color: #ffffff;
-    border: 1px solid #8ba6ca;
+    background-color: $color-white;
+    border: 1px solid $color-light-blue;
     white-space: nowrap;
   }
 
@@ -722,7 +726,7 @@ $color-cream: #d6d7d9;
   .existing-appeals-box {
     width: 100%;
     height: auto;
-    background-color: #ffffff;
+    background-color: $color-white;
     padding-bottom: 3rem;
   }
 
@@ -920,7 +924,7 @@ $color-cream: #d6d7d9;
 .area-under-add-tasks-button-not-related-to-appeal {
   width: 100%;
   height: auto;
-  background-color: #ffffff;
+  background-color: $color-white;
   padding-bottom: 3rem;
   }
 
