@@ -21,14 +21,14 @@ module Seeds
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_request_issue,
                   :with_higher_level_review,
-                  request_type: "Removal",
+                  request_type: "removal",
                   decision_date: rand(17.days.ago..1.day.ago))
 
       create_list(:issue_modification_request,
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_request_issue,
                   :with_higher_level_review,
-                  request_type: "Withdrawal",
+                  request_type: "withdrawal",
                   decision_date: rand(17.days.ago..1.day.ago),
                   withdrawal_date: rand(10.days.ago..1.day.ago))
 
@@ -36,7 +36,7 @@ module Seeds
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_request_issue,
                   :with_higher_level_review,
-                  request_type: "Modification",
+                  request_type: "modification",
                   decision_date: rand(17.days.ago..1.day.ago),
                   nonrating_issue_category: "Caregiver | Eligibility")
     end
@@ -50,7 +50,7 @@ module Seeds
                   NUMBER_OF_RECORDS_TO_CREATE,
                   :with_supplemental_claim,
                   :with_request_issue,
-                  request_type: "Removal",
+                  request_type: "removal",
                   decision_date: rand(17.days.ago..1.day.ago))
 
       create_list(:issue_modification_request,
@@ -58,7 +58,7 @@ module Seeds
                   :with_supplemental_claim,
                   :with_request_issue,
                   :update_decider,
-                  request_type: "Withdrawal",
+                  request_type: "withdrawal",
                   decision_date: rand(17.days.ago..1.day.ago),
                   withdrawal_date: rand(10.days.ago..1.day.ago))
 
@@ -67,7 +67,7 @@ module Seeds
                   :with_supplemental_claim,
                   :with_request_issue,
                   :update_decider,
-                  request_type: "Modification",
+                  request_type: "modification",
                   decision_date: rand(17.days.ago..1.day.ago),
                   nonrating_issue_category: "Caregiver | Eligibility")
     end

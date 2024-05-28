@@ -28,11 +28,11 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
     [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS,
   };
 
-  const details = requestDetailsMapping[requestType];
+  const requestDetails = requestDetailsMapping[requestType];
 
   const requestReasonSection = (
     <>
-      <h4>{details}:</h4>
+      <h4>{requestDetails}:</h4>
       <p>{requestReason}</p>
     </>
   );
