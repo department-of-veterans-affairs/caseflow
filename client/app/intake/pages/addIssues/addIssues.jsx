@@ -26,8 +26,7 @@ import { formatAddedIssues,
   getAddIssuesFields,
   formatIssuesBySection,
   formatLegacyAddedIssues,
-  formatIssueModificationRequestsBySection,
-  fakeIssueModificationRequestsData } from '../../util/issues';
+  formatIssueModificationRequestsBySection } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import issueModificationRow from 'app/intake/components/issueModificationRow';
@@ -53,6 +52,8 @@ import {
   toggleRequestIssueRemovalModal,
   toggleRequestIssueWithdrawalModal,
   toggleRequestIssueAdditionModal,
+  moveToPendingReviewSection,
+  addToPendingReviewSection
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -125,12 +126,21 @@ class AddIssuesPage extends React.Component {
       this.props.toggleEditIntakeIssueModal({ index });
       break;
     case 'requestModification':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueModificationModal(index);
       break;
     case 'requestRemoval':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueRemovalModal(index);
       break;
     case 'requestWithdrawal':
+      this.setState({
+        issueIndex: index
+      });
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     default:
@@ -295,8 +305,8 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issues);
 
-    const modificationIssueRequestsBySection =
-      formatIssueModificationRequestsBySection(fakeIssueModificationRequestsData);
+    const modificationIssueRequestsBySection = editPage &&
+      formatIssueModificationRequestsBySection(this.props.issueModificationRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -336,10 +346,13 @@ class AddIssuesPage extends React.Component {
       return intakeData.originalIssues.some((issue) => issue.decisionDate === null);
     };
 
-    const showRequestIssueUpdateOptions = userCanRequestIssueUpdates && !originalIssuesHaveNoDecisionDate();
+    const showRequestIssueUpdateOptions = editPage &&
+    userCanRequestIssueUpdates &&
+    !originalIssuesHaveNoDecisionDate() &&
+    intakeData.benefitType === 'vha';
 
     const renderButtons = () => {
-      if (showRequestIssueUpdateOptions && intakeData.benefitType === 'vha') {
+      if (showRequestIssueUpdateOptions) {
         return (
           <div className="cf-actions">
             <Button
@@ -540,15 +553,15 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
-    const modificationIssueRequestsObj =
+    const modificationIssueRequestsObj = editPage &&
       Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
 
-    const pendingSection = modificationIssueRequestsObj ?
+    const pendingSection = _.isEmpty(modificationIssueRequestsObj) ?
+      null :
       issueModificationRow({
         modificationIssueRequestsObj,
         fieldTitle: 'Pending admin review'
-      }) :
-      null;
+      });
 
     if (pendingSection !== null) {
       rowObjects.push(pendingSection);
@@ -653,23 +666,35 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.requestIssueModificationModalVisible && (
           <RequestIssueModificationModal
-            onCancel={() => this.props.toggleRequestIssueModificationModal()} />
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueModificationModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+          />
         )}
 
         {intakeData.requestIssueRemovalModalVisible && (
           <RequestIssueRemovalModal
-            onCancel={() => this.props.toggleRequestIssueRemovalModal()} />
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueRemovalModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
           <RequestIssueWithdrawalModal
-            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()} />
+            currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
+            issueIndex={this.state.issueIndex}
+            onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
-            onCancel={() => this.props.toggleRequestIssueAdditionModal()} />
+            onCancel={() => this.props.toggleRequestIssueAdditionModal()}
+            addToPendingReviewSection={this.props.addToPendingReviewSection} />
         )}
+
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -784,7 +809,8 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    isLegacy: state.isLegacy
+    isLegacy: state.isLegacy,
+    issueModificationRequests: state.issueModificationRequests
   }),
   (dispatch) =>
     bindActionCreators(
@@ -800,6 +826,8 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueAdditionModal,
         removeIssue,
         withdrawIssue,
+        moveToPendingReviewSection,
+        addToPendingReviewSection,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,
