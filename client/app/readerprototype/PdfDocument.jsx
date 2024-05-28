@@ -88,7 +88,7 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 
   return (
     <div
-      style={{ height: '100%', overflow: 'auto', zoom: `${zoomLevel}` }}
+      style={{ height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }}
       id = "pdfContainer">
     </div>
   );
@@ -96,7 +96,7 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 
 PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
-  zoomLevel: PropTypes.string
+  zoomLevel: PropTypes.number
 };
 
 export default PdfDocument;
