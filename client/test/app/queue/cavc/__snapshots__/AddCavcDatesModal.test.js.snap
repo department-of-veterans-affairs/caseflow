@@ -440,7 +440,7 @@ Object {
                   Complete the details below to intake this Court remand for further processing
                 </p>
                 <div
-                  class="cf-form-textinput  usa-input-error "
+                  class="cf-form-textinput   "
                 >
                   <label
                     for="judgement-date"
@@ -451,12 +451,6 @@ Object {
                       </span>
                     </strong>
                   </label>
-                  <span
-                    class="usa-input-error-message"
-                    tabindex="0"
-                  >
-                    Please select a valid date of judgement
-                  </span>
                   <div
                     class="input-container"
                   >
@@ -467,12 +461,12 @@ Object {
                       name="judgement-date"
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
+                      value="2020-03-27"
                     />
                   </div>
                 </div>
                 <div
-                  class="cf-form-textinput  usa-input-error "
+                  class="cf-form-textinput   "
                 >
                   <label
                     for="mandate-date"
@@ -483,12 +477,6 @@ Object {
                       </span>
                     </strong>
                   </label>
-                  <span
-                    class="usa-input-error-message"
-                    tabindex="0"
-                  >
-                    Please select a valid mandate date.
-                  </span>
                   <div
                     class="input-container"
                   >
@@ -499,7 +487,7 @@ Object {
                       name="mandate-date"
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
+                      value="2019-03-31"
                     />
                   </div>
                 </div>
@@ -543,12 +531,34 @@ Object {
             </span>
             <span>
               <button
-                class="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
+                class="cf-push-right usa-button-disabled hidden-field usa-button"
                 id="Add-Court-dates-button-id-1"
                 type="button"
               >
                 Submit
               </button>
+              <span>
+                <button
+                  class="cf-push-right usa-button-disabled cf-default cf-loading"
+                  disabled=""
+                  id="Add-Court-dates-button-id-1-loading"
+                  type="button"
+                >
+                  <span
+                    class="cf-loading-icon-container"
+                  >
+                    <span
+                      class="cf-loading-icon-front"
+                    >
+                      <span
+                        class="cf-loading-icon-back"
+                      >
+                        Loading...
+                      </span>
+                    </span>
+                  </span>
+                </button>
+              </span>
             </span>
           </div>
         </div>
@@ -614,7 +624,7 @@ Object {
                 Complete the details below to intake this Court remand for further processing
               </p>
               <div
-                class="cf-form-textinput  usa-input-error "
+                class="cf-form-textinput   "
               >
                 <label
                   for="judgement-date"
@@ -625,12 +635,6 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <span
-                  class="usa-input-error-message"
-                  tabindex="0"
-                >
-                  Please select a valid date of judgement
-                </span>
                 <div
                   class="input-container"
                 >
@@ -641,12 +645,12 @@ Object {
                     name="judgement-date"
                     placeholder="mm/dd/yyyy"
                     type="date"
-                    value=""
+                    value="2020-03-27"
                   />
                 </div>
               </div>
               <div
-                class="cf-form-textinput  usa-input-error "
+                class="cf-form-textinput   "
               >
                 <label
                   for="mandate-date"
@@ -657,12 +661,6 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <span
-                  class="usa-input-error-message"
-                  tabindex="0"
-                >
-                  Please select a valid mandate date.
-                </span>
                 <div
                   class="input-container"
                 >
@@ -673,7 +671,7 @@ Object {
                     name="mandate-date"
                     placeholder="mm/dd/yyyy"
                     type="date"
-                    value=""
+                    value="2019-03-31"
                   />
                 </div>
               </div>
@@ -717,12 +715,34 @@ Object {
           </span>
           <span>
             <button
-              class="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
+              class="cf-push-right usa-button-disabled hidden-field usa-button"
               id="Add-Court-dates-button-id-1"
               type="button"
             >
               Submit
             </button>
+            <span>
+              <button
+                class="cf-push-right usa-button-disabled cf-default cf-loading"
+                disabled=""
+                id="Add-Court-dates-button-id-1-loading"
+                type="button"
+              >
+                <span
+                  class="cf-loading-icon-container"
+                >
+                  <span
+                    class="cf-loading-icon-front"
+                  >
+                    <span
+                      class="cf-loading-icon-back"
+                    >
+                      Loading...
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </span>
           </span>
         </div>
       </div>

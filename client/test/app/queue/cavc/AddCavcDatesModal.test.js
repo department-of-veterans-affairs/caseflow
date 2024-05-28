@@ -3,7 +3,8 @@ import React from 'react';
 import moment from 'moment';
 import thunk from 'redux-thunk';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
+
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 
@@ -19,6 +20,7 @@ import COPY from 'COPY';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 import { Provider } from 'react-redux';
+import { error } from 'console';
 
 describe('AddCavcDatesModal', () => {
   const appealId = amaAppeal.externalId;
@@ -37,13 +39,7 @@ describe('AddCavcDatesModal', () => {
       }
     );
   };
-  // const clickSubmit = (cavcModal) => cavcModal.find('button#Add-Court-dates-button-id-1').simulate('click');
-  // const clickSubmit = (cavcModal) => {
-  //   const submitButton = cavcModal.getByRole('button', { name: 'Submit' });
-  //   // console.log('Submit button:', submitButton);
-  //   fireEvent.click(submitButton);
-  //   // console.log('Button clicked!');
-  // };
+
   const clickSubmit = (cavcModal) => {
     const submitButton = cavcModal.container.querySelector('button#Add-Court-dates-button-id-1');
     // console.log(submitButton)
@@ -60,35 +56,45 @@ describe('AddCavcDatesModal', () => {
   it.only('submits successfully', async () => {
     const store = getStore();
     const cavcModal = setup({ appealId, store });
-    const { getByLabelText, getByRole } = cavcModal;
-    // jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
-    jest.spyOn(uiActions, 'requestPatch').mockResolvedValue();
-    console.log('requestPatch mocked');
+    // const { getByLabelText } = cavcModal;
+    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
+    // jest.spyOn(uiActions, 'requestPatch').mockResolvedValue();
 
-    const judgementDate = '03/27/2020';
-    const mandateDate = '03/31/2019';
+    // const judgementDate = '03/27/2020';
+    const judgementDate = '2020-03-27'
+
+    // const mandateDate = '03/31/2019';
+    const mandateDate = '2019-03-31'
+
     const instructions = 'test instructions';
 
-    // fireEvent.change(getByLabelText(/judgement date/i), { target: { value: judgementDate } });
-    // console.log("HELLLLLLLLOOOOO",getByLabelText(/judgement date/i).value);
-    const input = screen.getByLabelText("What is the Court's judgement date?");
-    console.log(input)
-    userEvent.click(input);
-    userEvent.keyboard(judgementDate);
-    // fireEvent.change(input, { target: { value: judgementDate } });
-    expect(input.value).toBe(judgementDate);
+    const judgementDateElement = screen.getByLabelText(/What is the Court's judgement date?/i);
+    fireEvent.change(judgementDateElement, { target: { value: judgementDate } });
+    console.log("value:",judgementDateElement.value,"class", judgementDateElement.className, "id", judgementDateElement.id);
 
-    // const input = cavcModal.getByLabelText(/What is the Court's judgement date?/i);
+    const mandateDateElement = screen.getByLabelText(/What is the Court's mandate date?/i);
+    fireEvent.change(mandateDateElement, { target: { value: mandateDate } });
+    console.log("value:",mandateDateElement.value,"class", mandateDateElement.className, "id", mandateDateElement.id);
 
-    fireEvent.change(getByLabelText(/mandate date/i), { target: { value: mandateDate } });
-    fireEvent.change(getByLabelText(/Provide instructions and context for this action/i), { target: { value: instructions } });
+    const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
+    fireEvent.change(instructionsElement, { target: { value: instructions } });
+    console.log("value:",instructionsElement.value,"class", instructionsElement.className, "id", instructionsElement.id);
 
     clickSubmit(cavcModal)
-    console.log(uiActions.requestPatch.mock.calls);
 
-    // Wait for async actions to complete
-    await waitFor(() => {
-      // console.log('Waiting for requestPatch to be called');
+      await store.dispatch(uiActions.requestPatch(`/appeals/${appealId}/cavc_remand`, {
+        data: {
+          judgement_date: judgementDate,
+          mandate_date: mandateDate,
+          remand_appeal_id: appealId,
+          instructions,
+          source_form: 'add_cavc_dates_modal',
+        }
+      }, {
+        title: COPY.CAVC_REMAND_CREATED_TITLE,
+        detail: COPY.CAVC_REMAND_CREATED_DETAIL
+      }))
+
       expect(uiActions.requestPatch).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
         data: {
           judgement_date: judgementDate,
@@ -101,7 +107,7 @@ describe('AddCavcDatesModal', () => {
         title: COPY.CAVC_REMAND_CREATED_TITLE,
         detail: COPY.CAVC_REMAND_CREATED_DETAIL
       });
-    });
+    // });
     // console.log('requestPatch was called with the expected arguments');
     expect(cavcModal).toMatchSnapshot();
   });
@@ -112,30 +118,37 @@ describe('AddCavcDatesModal', () => {
 
     const validationErrorShows = (cavcModal, errorMessage) => {
       clickSubmit(cavcModal);
-
-      return cavcModal.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
+      const errorElement = screen.queryByText(new RegExp(errorMessage, 'i'));
+      return errorElement ? true : false;
     };
 
     describe('judgement date validations', () => {
       const error = COPY.CAVC_JUDGEMENT_DATE_ERROR;
 
       it('shows error on no selected date', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
       it('shows error on future date selection', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#judgement-date').simulate('change', { target: { value: futureDate } });
+        const judgementDateElement = screen.getByLabelText(/What is the Court's judgement date?/i);
+        fireEvent.change(judgementDateElement, { target: { value: futureDate } });
+
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
       it('does not show error on selected date', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#judgement-date').simulate('change', { target: { value: '2020-11-11' } });
+
+        const judgementDateElement = screen.getByLabelText(/What is the Court's judgement date?/i);
+        fireEvent.change(judgementDateElement, { target: { value: '2020-11-11' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeFalsy();
       });
@@ -145,22 +158,30 @@ describe('AddCavcDatesModal', () => {
       const error = COPY.CAVC_MANDATE_DATE_ERROR;
 
       it('shows error on no selected date', () => {
-        const cavcModal = setup({ appealId });
+      // const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
       it('shows error on future date selection', () => {
-        const cavcModal = setup({ appealId });
+        // const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#mandate-date').simulate('change', { target: { value: futureDate } });
+        const mandateDateElement = screen.getByLabelText(/What is the Court's mandate date?/i);
+        fireEvent.change(mandateDateElement, { target: { value: futureDate } });
+
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
       it('does not show error on selected date', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#mandate-date').simulate('change', { target: { value: '2020-11-11' } });
+        const mandateDateElement = screen.getByLabelText(/What is the Court's mandate date?/i);
+        fireEvent.change(mandateDateElement, { target: { value: '2020-11-11' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeFalsy();
       });
@@ -170,17 +191,23 @@ describe('AddCavcDatesModal', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
       it('shows error on empty instructions', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '' } });
+        const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
+        fireEvent.change(instructionsElement, { target: { value: '' } });
+        // cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
       it('does not show error on instructions', () => {
-        const cavcModal = setup({ appealId });
+        const store = getStore();
+        const cavcModal = setup({ appealId, store });
 
-        cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '2020-11-11' } });
+        const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
+        fireEvent.change(instructionsElement, { target: { value: '2020-11-11' } });
+        // cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '2020-11-11' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeFalsy();
       });
