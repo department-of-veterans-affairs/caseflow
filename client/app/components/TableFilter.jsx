@@ -8,6 +8,7 @@ import COPY from '../../COPY';
 import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
+import DateSelector from './DateSelector';
 
 const iconStyle = css(
   {
@@ -185,7 +186,8 @@ class TableFilter extends React.PureComponent {
       columnName,
       anyFiltersAreSet,
       valueName,
-      getFilterValues
+      getFilterValues,
+      dateFilter
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -197,28 +199,46 @@ class TableFilter extends React.PureComponent {
       // not display correctly when they are checked.
       getFilterValues;
 
-    return (
-      <span {...iconStyle}>
-        <FilterIcon
-          aria-label={this.filterIconAriaLabel()}
-          label={this.filterIconAriaLabel()}
-          getRef={this.props.getFilterIconRef}
-          selected={this.isFilterOpen()}
-          handleActivate={this.toggleDropdown} />
+    const renderFilterIcon = () => {
+      return (
+        <span {...iconStyle}>
+          <FilterIcon
+            aria-label={this.filterIconAriaLabel()}
+            label={this.filterIconAriaLabel()}
+            getRef={this.props.getFilterIconRef}
+            selected={this.isFilterOpen()}
+            handleActivate={this.toggleDropdown} />
 
-        {this.state.open &&
-          <QueueDropdownFilter
-            clearFilters={this.clearFilteredByList}
-            name={valueName || columnName}
-            isClearEnabled={anyFiltersAreSet}
-            handleClose={this.toggleDropdown}
-            addClearFiltersRow>
-            <FilterOption
-              options={filterOptions}
-              setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
-          </QueueDropdownFilter>
-        }
-      </span>
+          {this.state.open &&
+            <QueueDropdownFilter
+              clearFilters={this.clearFilteredByList}
+              name={valueName || columnName}
+              isClearEnabled={anyFiltersAreSet}
+              handleClose={this.toggleDropdown}
+              addClearFiltersRow>
+              <FilterOption
+                options={filterOptions}
+                setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
+            </QueueDropdownFilter>
+          }
+        </span>
+      );
+    };
+
+    const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
+
+    return (
+      <>
+        {dateFilter ?
+          <span>
+            <DateSelector
+              type="date"
+              value=""
+              ariaLabelText="date-selector"
+              onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
+          </span> :
+          renderFilterIcon()}
+      </>
     );
   }
 }
@@ -243,6 +263,7 @@ TableFilter.propTypes = {
   updateFilters: PropTypes.func,
   filterOptionsFromApi: PropTypes.array,
   multiValueDelimiter: PropTypes.string,
+  dateFilter: PropTypes.bool
 };
 
 export default TableFilter;
