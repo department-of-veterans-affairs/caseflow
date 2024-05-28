@@ -3,6 +3,7 @@
 describe AppealIntake, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
   end
 
   let(:veteran_file_number) { "64205555" }
