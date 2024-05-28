@@ -58,7 +58,7 @@ const ReaderFooter = ({
   nextDocId,
   showPreviousDocument,
   showNextDocument,
-  selectedDocNumber,
+  selectedDocIndex,
   docCount
 }) => {
   return (
@@ -97,7 +97,7 @@ const ReaderFooter = ({
           </span>|
         </span>
         <span className="doc-list-progress-indicator">
-          Document {selectedDocNumber} of {docCount}
+          Document {selectedDocIndex + 1} of {docCount}
         </span>
       </div>
 
@@ -117,7 +117,7 @@ const ReaderFooter = ({
 };
 
 ReaderFooter.propTypes = {
-  selectedDocNumber: PropTypes.number,
+  selectedDocIndex: PropTypes.number,
   docCount: PropTypes.number,
   prevDocId: PropTypes.number,
   nextDocId: PropTypes.number,
