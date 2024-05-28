@@ -28,8 +28,6 @@ const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
 
-const IS_PROTOTYPE = true;
-
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -40,10 +38,6 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-
-    if (IS_PROTOTYPE) {
-      this.routedPdfViewerPrototype.displayName = 'RoutedPdfViewer';
-    }
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
@@ -126,7 +120,7 @@ export class DecisionReviewer extends React.PureComponent {
       <PdfViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}k
+        history={props.history}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
         featureToggles={this.props.featureToggles}
@@ -178,7 +172,13 @@ export class DecisionReviewer extends React.PureComponent {
         title="Document Viewer | Caseflow Reader"
         breadcrumb="Document Viewer"
         path="/:vacolsId/documents/:docId"
-        render={IS_PROTOTYPE ? this.routedPdfViewerPrototype : this.routedPdfViewer} />
+        render={this.routedPdfViewer} />
+      <PageRoute
+        exact
+        title="Document Viewer | Caseflow Reader"
+        breadcrumb="Document Viewer"
+        path="/:vacolsId/documents/:docId/prototype"
+        render={this.routedPdfViewerPrototype} />
       <AppFrame wideApp>
         <PageRoute
           exact
