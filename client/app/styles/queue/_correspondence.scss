@@ -1117,6 +1117,86 @@ $color-cream: #d6d7d9;
       font-weight: 900;
       margin-bottom: 0px;
     }
-
   }
 }
+
+.task-completed-date-picker-container {
+  .data-css-1co2jut {
+    margin: 0 5% 0 5%;
+  }
+
+  .cf-form-textinput.usa-input-error {
+    border-left: 4px solid #cd2026;
+    margin-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0.5rem;
+    padding-top: 0px;
+    position: relative;
+    right: 2px;
+  }
+
+  .usa-input-error input {
+    width: inherit;
+  }
+
+  .cf-form-textinput {
+    padding-top: 10px !important;
+    margin-bottom: 0;
+
+    .input-container {
+      input {
+        height: 37.5px;
+      }
+    }
+  }
+
+  .react-select-dropdown-div {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 2.9%;
+  }
+
+  .opt-select {
+    .receipt-date {
+      /* Add styles if needed */
+    }
+
+    .css-yk16xz-control {
+      border-radius: 0px;
+    }
+
+    .css-1pahdxg-control {
+      border-color: hsl(0, 0%, 100%);
+      box-shadow: 0 0 0 1px #5b616b !important;
+      border-radius: 0px !important;
+
+      &:hover {
+        border-color: hsl(0, 0%, 80%);
+      }
+    }
+  }
+  .date-picker-margin {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 12.7%;
+  }
+  .apply-filter-div {
+    display: flex;
+    padding: 16px 10px 24px 0;
+    justify-content: right;
+    width: 190px;
+    border-top: 1px solid #d6d7d9;
+  }
+  .date-selectors-margin {
+    margin: 0 5%;
+    .error-msg {
+      color: red;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 0px;
+    }
+  }
+}
+
+
+
