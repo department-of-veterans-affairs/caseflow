@@ -5,7 +5,7 @@ import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
 import Alert from 'app/components/Alert';
 import Button from '../../components/Button';
-import Dropdown from '../../components/Dropdown';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
@@ -31,38 +31,38 @@ export default class IssuesList extends React.Component {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
-      options.push({ displayText: 'Undo correction',
+      options.push({ label: 'Undo correction',
         value: 'undo_correction' });
     } else if (issue.correctionType && !issue.examRequested && docketType !== 'Legacy') {
       options.push(
-        { displayText: 'Remove issue',
+        { label: 'Remove issue',
           value: 'remove' }
       );
       if (userCanEditIntakeIssues) {
         options.push(
-          { displayText: 'Edit issue',
+          { label: 'Edit issue',
             value: 'edit' }
         );
       }
     } else if (issue.endProductCleared) {
-      options.push({ displayText: 'Correct issue',
+      options.push({ label: 'Correct issue',
         value: 'correct' });
     } else if (!issue.examRequested && !issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
       if (userCanWithdrawIssues && issue.id) {
         options.push(
-          { displayText: 'Withdraw issue',
+          { label: 'Withdraw issue',
             value: 'withdraw' }
         );
       }
       if (docketType !== 'Legacy') {
         options.push(
-          { displayText: 'Remove issue',
+          { label: 'Remove issue',
             value: 'remove' }
         );
       }
       if (userCanEditIntakeIssues) {
         options.push(
-          { displayText: 'Edit issue',
+          { label: 'Edit issue',
             value: 'edit' }
         );
       }
@@ -70,17 +70,17 @@ export default class IssuesList extends React.Component {
     if (this.props.showRequestIssueUpdateOptions && this.props.intakeData.benefitType === 'vha') {
       options = [];
       options.push(
-        { displayText: 'Request modification',
+        { label: 'Request modification',
           value: 'requestModification' }
       );
 
       options.push(
-        { displayText: 'Request removal',
+        { label: 'Request removal',
           value: 'requestRemoval' }
       );
 
       options.push(
-        { displayText: 'Request withdrawal',
+        { label: 'Request withdrawal',
           value: 'requestWithdrawal' }
       );
     }
@@ -91,7 +91,7 @@ export default class IssuesList extends React.Component {
     if ((!issue.date || issue.editedDecisionDate) && !isIssueWithdrawn && !issue.isUnidentified) {
       options.push(
         {
-          displayText: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
+          label: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
           value: 'add_decision_date'
         }
       );
@@ -154,13 +154,15 @@ export default class IssuesList extends React.Component {
               </div> }
 
               <div className="issue-action">
-                {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
+                {editPage && !_.isEmpty(issueActionOptions) && <SearchableDropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel
                   options={issueActionOptions}
-                  defaultText="Select action"
-                  onChange={(option) => onClickIssueAction(issue.index, option)}
+                  placeholder="Select action"
+                  onChange={(option) => onClickIssueAction(issue.index, option.value)}
+                  searchable={false}
+                  doubleArrow
                 /> }
                 {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
