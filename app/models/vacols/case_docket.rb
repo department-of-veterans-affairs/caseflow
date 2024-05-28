@@ -356,7 +356,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       appeals.select { |appeal| appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days }
     end
 
-    appeals.sort_by { |a, b| a.bfd19 < b.bfd19 }
+    appeals.sort_by { appeal[:bfd19] }
 
     appeals.first(num) # {Reestablishes the limit}
 
@@ -546,7 +546,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           appeals.select { |appeal| appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days }
         end
 
-        appeals.sort_by { |a, b| a.bfd19 < b.bfd19 } # {Sorts by bfd19 date}
+        appeals.sort_by { appeal[:bfd19] } # {Sorts by bfd19 date}
 
         appeals.first(limit) # {Reestablishes the limit}
 
