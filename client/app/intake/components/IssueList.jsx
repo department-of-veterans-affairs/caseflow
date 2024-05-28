@@ -156,6 +156,7 @@ export default class IssuesList extends React.Component {
               <div className="issue-action">
                 {editPage && !_.isEmpty(issueActionOptions) && <SearchableDropdown
                   name={`issue-action-${issue.index}`}
+                  key={issue.id}
                   label="Actions"
                   hideLabel
                   options={issueActionOptions}
