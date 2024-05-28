@@ -45,6 +45,24 @@ class DocumentController < ApplicationController
     )
   end
 
+  def ocr
+    document = Document.find(params[:id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      "/Users/laurenjin/dev/appeals/caseflow/tmp/pdfs/OCR-non-PII.pdf",
+      x_sendfile: true,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
+  end
+
   def mark_as_read
     begin
       DocumentView.find_or_create_by(

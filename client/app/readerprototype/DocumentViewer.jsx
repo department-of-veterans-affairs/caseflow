@@ -30,8 +30,9 @@ const getNextDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props)
 const getPrevDocId = (props) => _.get(getPrevDoc(props), 'id');
 const getNextDocId = (props) => _.get(getNextDoc(props), 'id');
 
+
 const DocumentViewer = (props) => {
-  const [pageNumber, setPageNumber] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(100);
 
   const doc = selectedDoc(props);
