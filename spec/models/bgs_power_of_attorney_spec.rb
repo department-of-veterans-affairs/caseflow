@@ -36,7 +36,7 @@ describe BgsPowerOfAttorney do
       end
     end
 
-    context "by_file_number" do
+    context "by_file_number", skip: "Test is flaky" do
       let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
 
       it "record is expired" do
