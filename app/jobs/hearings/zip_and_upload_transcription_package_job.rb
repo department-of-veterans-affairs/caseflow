@@ -119,14 +119,14 @@ class Hearings::ZipAndUploadTranscriptionPackageJob < CaseflowJob
   end
 
   def save_transcription_package_in_database(transcription_package_tmp, work_order)
-    TranscriptionPackage.create!(
+    ::TranscriptionPackage.create!(
       aws_link_zip: s3_location_master_file(transcription_package_tmp),
       aws_link_work_order: s3_location_work_order,
       created_by_id: RequestStore[:current_user].id,
       status: "Successful upload (AWS)",
-      returned_at: Time.parse.utc(work_order[:return_date]),
+      returned_at: nil,
       task_number: work_order[:work_order_name],
-      contractor_id: TranscriptionContractor.find_by(name: work_order[:contractor_name])&.id
+      contractor_id: ::TranscriptionContractor.find_by(name: work_order[:contractor_name])&.id
     )
   rescue ActiveRecord::RecordInvalid => error
     Rails.logger.error "Failed to create transcription file: #{error.message}"

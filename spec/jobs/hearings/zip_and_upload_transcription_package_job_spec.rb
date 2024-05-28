@@ -25,7 +25,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
   let(:work_order) do
     {
       work_order_name: "BVA-2030-0001",
-      return_date: "xx-xx-xxxx",
+      return_date: "05-01-2023",
       contractor_name: "Bob's contract house",
       hearings: hearings_in_work_order(hearings + legacy_hearings)
     }
@@ -68,8 +68,4 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
 
     subject
   end
-
-  # it "Create new entry in TranscriptionPackage table" do
-  # end
-
 end
