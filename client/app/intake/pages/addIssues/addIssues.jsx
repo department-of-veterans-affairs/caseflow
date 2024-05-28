@@ -302,15 +302,15 @@ class AddIssuesPage extends React.Component {
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = issues.filter((issue) => {
-      return !pendingIssueModificationRequests.some((request) => {
-        return request.requestIssue && request.requestIssue.id === issue.id;
+    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+      issues : issues.filter((issue) => {
+        return !pendingIssueModificationRequests.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id;
+        });
       });
-    });
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
-    // const issuesBySection = formatIssuesBySection(issues);
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
     const withdrawReview =
@@ -560,7 +560,7 @@ class AddIssuesPage extends React.Component {
 
     // TODO: See if this should be scoped to edit page as well? I don't think it matters, but maybe
     // Pending modifications table section
-    if (!_.isEmpty(pendingIssueModificationRequests)) {
+    if (editPage && !_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review'

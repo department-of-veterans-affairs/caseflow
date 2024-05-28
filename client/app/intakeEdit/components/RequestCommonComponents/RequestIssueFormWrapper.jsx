@@ -43,7 +43,6 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       // Ensure date is in a serializable format
-      // TODO: Make sure this does not override the currentIssueFields decision date?
       decisionDate: formatDateStr(issueModificationRequest.decisionDate)
     };
 
