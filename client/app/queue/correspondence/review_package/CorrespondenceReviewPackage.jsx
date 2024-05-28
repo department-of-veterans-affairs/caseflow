@@ -46,10 +46,28 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
+  const [corrTypeSelected, setCorrTypeSelected] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
   });
+
+  // Traking the Correspondence type value changing for the Create record button
+
+  const isCorrTypeSelected = () => {
+    if (props.createRecordIsReadOnly === 'Select...') {
+      setCorrTypeSelected(true);
+    // eslint-disable-next-line no-negated-condition
+    } else if (props.createRecordIsReadOnly !== '') {
+      setCorrTypeSelected(true);
+    } else {
+      setCorrTypeSelected(false);
+    }
+  };
+
+  useEffect(() => {
+    isCorrTypeSelected();
+  }, [props.createRecordIsReadOnly]);
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
@@ -187,10 +205,9 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
-    // const selectValueChanged = editableData.default_select_label !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || corrTypeSelected;
   };
 
   const intakeAppeal = async () => {
@@ -332,7 +349,8 @@ CorrespondenceReviewPackage.propTypes = {
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
   userIsCorrespondenceSuperuser: PropTypes.bool,
-  isInboundOpsSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool,
+  createRecordIsReadOnly: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -340,6 +358,7 @@ const mapStateToProps = (state) => ({
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
+  createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
