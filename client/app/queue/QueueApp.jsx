@@ -39,7 +39,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
-import ReviewPackageLoadingScreen from './correspondence/review_package/ReviewPackageLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/ReviewPackage/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -90,7 +90,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
-import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
+import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
