@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_07_203310) do
+ActiveRecord::Schema.define(version: 2024_05_23_021417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1916,6 +1916,23 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
   end
 
+  create_table "transcription_packages", force: :cascade do |t|
+    t.string "aws_link_work_order", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.string "aws_link_zip", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.bigint "contractor_id", comment: "FK to transcription_contractors table"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_upload_aws", comment: "Date of successful upload of master transcription zip file to AWS"
+    t.datetime "date_upload_box", comment: "Date of successful delivery to box.com contractor endpoint"
+    t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
+    t.datetime "returned_at", comment: "When the Contractor returns their completed Work Order excel file"
+    t.string "status", comment: "Status of the package, could be one of nil, 'Successful Upload (AWS), Successful Upload (BOX), Failed Upload (BOX), Successful Retrieval (BOX), Failed Retrieval (BOX)'"
+    t.string "task_number", comment: "Number associated with transcription, use as FK to transcriptions"
+    t.datetime "updated_at"
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["task_number"], name: "index_transcription_packages_on_task_number"
+  end
+
   create_table "transcriptions", force: :cascade do |t|
     t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
     t.bigint "created_by_id"
@@ -2388,6 +2405,7 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
+  add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "transcriptions", "transcription_contractors"
   add_foreign_key "transcriptions", "users", column: "created_by_id"
