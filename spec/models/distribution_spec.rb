@@ -163,8 +163,9 @@ describe Distribution, :all_dbs do
       new_distribution.distribute!
     end
 
-    it "updates status to error if an error is thrown" do
+    it "updates status to error if an error is thrown and sends slack notification" do
       allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
+      expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
 
