@@ -558,9 +558,8 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
-    // TODO: See if this should be scoped to edit page as well? I don't think it matters, but maybe
     // Pending modifications table section
-    if (editPage && !_.isEmpty(pendingIssueModificationRequests)) {
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review'
