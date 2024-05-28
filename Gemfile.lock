@@ -57,10 +57,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: ebb9d8add944ce2125d1fb226494edabbc8adf1c
-  branch: caseflow/add-new-security-endpoint
+  revision: 0eec1272373ac15d0fb5547d8a46a86f692d3048
+  ref: 0eec1272373ac15d0fb5547d8a46a86f692d3048
   specs:
-    bgs (0.3.1)
+    bgs (0.4)
       httpclient
       nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
