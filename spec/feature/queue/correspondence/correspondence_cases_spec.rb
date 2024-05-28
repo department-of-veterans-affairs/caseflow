@@ -1446,6 +1446,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:alt_user) { create(:user) }
     before :each do
+      InboundOpsTeam.singleton.add_user(alt_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
