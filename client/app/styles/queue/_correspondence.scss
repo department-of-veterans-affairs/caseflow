@@ -1198,5 +1198,22 @@ $color-cream: #d6d7d9;
   }
 }
 
+.myletters {
+  width: 100%;
+  display: inline-block;
+}
+
+.letter {
+  width: 50%;
+  float: left;
+  height: 840px;
+}
+
+.add-letter-container {
+  width: 80%;
+  margin-bottom: 30px;
+}
+
+
 
 
