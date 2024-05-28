@@ -64,8 +64,7 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   private
 
   def find_veteran
-    # may need to create Veteran if one doesn't exist in Caseflow but exists in BGS
-    Veteran.find_or_create_by_file_number_or_ssn(@file_number)
+    Veteran.find_by_file_number_or_ssn(@file_number)
   end
 
   def render_veteran_not_found
