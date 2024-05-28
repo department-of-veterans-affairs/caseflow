@@ -27,6 +27,7 @@ describe('AddCavcDatesModal', () => {
   // Pass in the rootReducer and thunk middleware to createStore
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
+
   const setup = ({ appealId: id, store }) => {
     return render(
       <Provider store={store}>
@@ -53,32 +54,25 @@ describe('AddCavcDatesModal', () => {
     expect(cavcModal).toMatchSnapshot();
   });
 
-  it.only('submits successfully', async () => {
+  it('submits successfully', async () => {
     const store = getStore();
     const cavcModal = setup({ appealId, store });
-    // const { getByLabelText } = cavcModal;
-    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
-    // jest.spyOn(uiActions, 'requestPatch').mockResolvedValue();
 
-    // const judgementDate = '03/27/2020';
+    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => async (dispatch) => {
+      return Promise.resolve();
+    });
     const judgementDate = '2020-03-27'
-
-    // const mandateDate = '03/31/2019';
     const mandateDate = '2019-03-31'
-
     const instructions = 'test instructions';
 
     const judgementDateElement = screen.getByLabelText(/What is the Court's judgement date?/i);
     fireEvent.change(judgementDateElement, { target: { value: judgementDate } });
-    console.log("value:",judgementDateElement.value,"class", judgementDateElement.className, "id", judgementDateElement.id);
 
     const mandateDateElement = screen.getByLabelText(/What is the Court's mandate date?/i);
     fireEvent.change(mandateDateElement, { target: { value: mandateDate } });
-    console.log("value:",mandateDateElement.value,"class", mandateDateElement.className, "id", mandateDateElement.id);
 
     const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
     fireEvent.change(instructionsElement, { target: { value: instructions } });
-    console.log("value:",instructionsElement.value,"class", instructionsElement.className, "id", instructionsElement.id);
 
     clickSubmit(cavcModal)
 
@@ -106,9 +100,7 @@ describe('AddCavcDatesModal', () => {
       }, {
         title: COPY.CAVC_REMAND_CREATED_TITLE,
         detail: COPY.CAVC_REMAND_CREATED_DETAIL
-      });
-    // });
-    // console.log('requestPatch was called with the expected arguments');
+    });
     expect(cavcModal).toMatchSnapshot();
   });
 
