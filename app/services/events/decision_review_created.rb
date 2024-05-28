@@ -110,20 +110,6 @@ class Events::DecisionReviewCreated
       end
     end
 
-    # def process_nonrating(payload)
-    #   # note: from consumer comes drc_params with "Unpermitted parameter: :type" message that we can see in rails console. Probably it is a bug.
-    #   if payload[:request_issues].present?
-    #     category = payload[:request_issues].first[:nonrating_issue_category]
-    #     contested_id = payload[:request_issues].first[:contested_decision_issue_id]
-    #     ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-    #     if contested_id.present? && ri.length == 1 && category == "Disposition"
-    #       payload[:request_issues].first[:nonrating_issue_category] = ri.nonrating_issue_category
-    #     else
-    #       payload[:request_issues].each { |el| el[:nonrating_issue_category] = "Unknown Issue Category" }
-    #     end
-    #   end
-    # end
-
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one
     def find_or_create_event(consumer_event_id)
