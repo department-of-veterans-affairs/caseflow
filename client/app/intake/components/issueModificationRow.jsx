@@ -6,7 +6,9 @@ import IssueModificationList from 'app/intake/components/IssueModificationList';
 const issueModificationRow = (
   {
     fieldTitle,
-    modificationIssueRequestsObj
+    modificationIssueRequestsObj,
+    issueModificationRequests,
+    onClickPendingIssueAction
   }) => {
   const sections = [];
   const modificationIssueRequestsLength = Object.keys(modificationIssueRequestsObj).length - 1;
@@ -18,7 +20,9 @@ const issueModificationRow = (
 
     const commonProps = {
       issuesArr: value,
-      lastSection
+      lastSection,
+      issueModificationRequests,
+      onClickPendingIssueAction
     };
 
     switch (key) {

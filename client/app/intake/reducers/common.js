@@ -89,6 +89,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['cancelPendingRequestIssueModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;
@@ -199,6 +205,15 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
+    };
+  };
+
+  actionsMap[ACTIONS.REMOVE_FROM_PENDING_REVIEW] = () => {
+    issueModificationRequests.splice(action.payload.index, 1);
+
+    return {
+      ...state,
+      issueModificationRequests
     };
   };
 

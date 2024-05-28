@@ -52,8 +52,11 @@ import {
   toggleRequestIssueRemovalModal,
   toggleRequestIssueWithdrawalModal,
   toggleRequestIssueAdditionModal,
+  toggleCancelPendingRequestIssueModal,
   moveToPendingReviewSection,
-  addToPendingReviewSection
+  addToPendingReviewSection,
+  removeFromPendingReviewSection,
+  addIssue
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -64,6 +67,7 @@ import { RequestIssueModificationModal } from 'app/intakeEdit/components/Request
 import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssueRemovalModal';
 import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
+import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -91,6 +95,12 @@ class AddIssuesPage extends React.Component {
 
   onClickRequestAdditionalIssue = () => {
     this.props.toggleRequestIssueAdditionModal();
+  }
+
+  /* This is just temporarily used so that I can display the modal during BA/UX review. */
+  onClickPendingIssueAction = (option) => {
+    this.setState({ issueRemoveIndex: option.index });
+    this.props.toggleCancelPendingRequestIssueModal();
   }
 
   onClickIssueAction = (index, option = 'remove') => {
@@ -268,8 +278,9 @@ class AddIssuesPage extends React.Component {
       userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
-      isLegacy
+      isLegacy,
     } = this.props;
+
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
     const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
@@ -347,9 +358,9 @@ class AddIssuesPage extends React.Component {
     };
 
     const showRequestIssueUpdateOptions = editPage &&
-    userCanRequestIssueUpdates &&
-    !originalIssuesHaveNoDecisionDate() &&
-    intakeData.benefitType === 'vha';
+      userCanRequestIssueUpdates &&
+      !originalIssuesHaveNoDecisionDate() &&
+      intakeData.benefitType === 'vha';
 
     const renderButtons = () => {
       if (showRequestIssueUpdateOptions) {
@@ -560,7 +571,9 @@ class AddIssuesPage extends React.Component {
       null :
       issueModificationRow({
         modificationIssueRequestsObj,
-        fieldTitle: 'Pending admin review'
+        fieldTitle: 'Pending admin review',
+        onClickPendingIssueAction: this.onClickPendingIssueAction,
+        issueModificationRequests: this.props.issueModificationRequests
       });
 
     if (pendingSection !== null) {
@@ -695,6 +708,16 @@ class AddIssuesPage extends React.Component {
             addToPendingReviewSection={this.props.addToPendingReviewSection} />
         )}
 
+        {intakeData.cancelPendingRequestIssueModalVisible && (
+          <CancelPendingRequestIssueModal
+            pendingIssue={this.props.issueModificationRequests[this.state.issueRemoveIndex]}
+            removeIndex={this.state.issueRemoveIndex}
+            onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
+            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
+            addIssue={this.props.addIssue}
+          />
+        )}
+
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -824,10 +847,13 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueRemovalModal,
         toggleRequestIssueWithdrawalModal,
         toggleRequestIssueAdditionModal,
+        toggleCancelPendingRequestIssueModal,
+        addIssue,
         removeIssue,
         withdrawIssue,
         moveToPendingReviewSection,
         addToPendingReviewSection,
+        removeFromPendingReviewSection,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,
