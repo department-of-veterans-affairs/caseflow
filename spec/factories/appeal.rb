@@ -463,6 +463,7 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
+        appeal.reload
         create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
       end
     end
