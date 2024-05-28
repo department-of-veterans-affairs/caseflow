@@ -13,6 +13,7 @@ class Events::DecisionReviewCreated
   #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
       return if event_exists_and_is_completed?(consumer_event_id)
 
@@ -20,7 +21,8 @@ class Events::DecisionReviewCreated
 
       # exit out if Key is already in Redis Cache
       if redis.exists("RedisMutex:EndProductEstablishment:#{reference_id}")
-        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
+        fail Caseflow::Error::RedisLockFailed,
+             message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
@@ -48,7 +50,7 @@ class Events::DecisionReviewCreated
 
           # Note: event, user, and veteran need to be before this call.
           Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
-           decision_review: decision_review)
+                                                               decision_review: decision_review)
 
           # Note: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
@@ -58,7 +60,7 @@ class Events::DecisionReviewCreated
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
-            decision_review: decision_review)
+                                                                      decision_review: decision_review)
 
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
@@ -82,6 +84,7 @@ class Events::DecisionReviewCreated
       event&.update!(error: "#{error.class} : #{error.message}", info: { "failed_claim_id" => reference_id })
       raise error
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID and
     # was successfully completed
