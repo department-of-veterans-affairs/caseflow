@@ -16,6 +16,15 @@ describe "ApplicationJob" do
       expect(RequestStore[:application]).to eq("fake_job")
     end
 
+    it "adds record to JobExecutionTime table" do
+      before_count = JobExecutionTime.count
+      JobThatIsGood.perform_now
+      after_first_run_count = JobExecutionTime.count
+      expect(after_first_run_count).not_to eq(before_count)
+      JobThatIsGood.perform_now
+      expect(JobExecutionTime.count).to eq(after_first_run_count)
+    end
+
     it "sets extra context in middleware" do
       allow(Raven).to receive(:extra_context)
 

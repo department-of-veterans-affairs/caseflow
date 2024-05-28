@@ -56,6 +56,11 @@ class ApplicationJob < ActiveJob::Base
   before_perform do
     if self.class.app_name.present?
       RequestStore.store[:application] = "#{self.class.app_name}_job"
+
+      # Add Record to JobExecutionTimes to track the current job execution time
+      job_execution_time = JobExecutionTime.find_or_create_by(job_name: self.class.to_s)
+      job_execution_time.last_executed_at = Time.now.utc
+      job_execution_time.save!
     end
   end
 end
