@@ -2,7 +2,7 @@
 
 class Events::DecisionReviewCreated::CreateClaimReview
   class << self
-    def process!(event:, parser:)
+    def process!(parser:)
       if parser.detail_type == "HigherLevelReview"
         high_level_review = create_high_level_review(parser)
         high_level_review
