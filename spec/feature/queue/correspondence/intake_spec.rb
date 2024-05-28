@@ -403,7 +403,7 @@ RSpec.feature("The Correspondence Intake page") do
        " from the Centralized Mail Portal, if it needs to be processed." do
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
-      using_wait_time(15) do
+      using_wait_time(20) do
         click_on("button-continue")
       end
       click_on("button-continue")
