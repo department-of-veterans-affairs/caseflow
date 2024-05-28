@@ -390,7 +390,7 @@ RSpec.feature("The Correspondence Intake page") do
       5.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        create_efolderupload_task(correspondence, parent_task)
       end
     end
 
