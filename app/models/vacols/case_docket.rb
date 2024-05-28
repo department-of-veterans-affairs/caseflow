@@ -137,9 +137,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFD19, BFDLOOUT,
+        select BFKEY, BFD19, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -171,9 +171,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
-      select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
+      select BFKEY, BFD19, BFDLOOUT, BFAC, rownum DOCKET_INDEX,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -540,14 +540,14 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.generate_priority_case_distribution_lever_query(judge)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')})"
+      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and and BFAC = '7'"
     end
   end
 
   def self.generate_non_priority_case_distribution_lever_query(judge)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE = #{judge.id}"
+      "PREV_DECIDING_JUDGE = #{judge.id} and BFAC = '7'"
     end
   end
 
