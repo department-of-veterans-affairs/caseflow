@@ -13,7 +13,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     max = 100
-    id = meeting_id
+    id = job.arguments&.first&.[](:meeting_id)
     query = "?max=#{max}?meeting_id=#{id}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
