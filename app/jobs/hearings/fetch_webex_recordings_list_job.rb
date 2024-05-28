@@ -30,7 +30,9 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   def perform(meeting_id:, meeting_title:)
     ensure_current_user_is_set
     fetch_recordings_list(meeting_id).recordings.each do |recording|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(recording_id: recording.id, host_email: recording.host_email, meeting_title: meeting_title)
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(
+        recording_id: recording.id, host_email: recording.host_email, meeting_title: meeting_title
+      )
     end
   end
 
