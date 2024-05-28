@@ -8,10 +8,10 @@ class Hearings::TranscriptionPackagesSerializer
   # finalize these when we know the actual attribute names
   has_many :hearings
   has_many :legacy_hearings
+  has_one :contractor
 
   attribute :task_number
-  attribute :date_sent
-  attribute :return_date
+  attribute :date_sent, &:created_at
+  attribute :return_date, &:returned_at
   attribute :status
-  attribute :contractor
 end
