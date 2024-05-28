@@ -35,7 +35,7 @@ class CorrespondenceTask < Task
     # ignore check if there is no current user on correspondence creation
     def verify_correspondence_access
       fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
-      InboundOpsTeam.singleton.user_has_access?(current_user) || current_user&.system_user?
+      InboundOpsTeam.singleton.user_has_access?(RequestStore[:current_user]) || RequestStore[:current_user]&.system_user?
     end
   end
 
