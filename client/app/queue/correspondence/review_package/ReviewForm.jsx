@@ -126,8 +126,6 @@ export const ReviewForm = (props) => {
   };
 
   const handleSubmit = async () => {
-    setSaveChanges(true);
-    props.setIsReturnToQueue(false);
     props.setCreateRecordIsReadOnly('');
     const correspondence = props;
     const payloadData = {
@@ -152,6 +150,7 @@ export const ReviewForm = (props) => {
       const { body } = response;
 
       props.setDisableButton((current) => !current);
+      props.setIsReturnToQueue(false);
       if (body.status === 'ok') {
         props.fetchData();
         props.setErrorMessage('');
@@ -162,6 +161,16 @@ export const ReviewForm = (props) => {
       props.setErrorMessage(body.error);
     }
   };
+
+  // Prevents save action in case of errorMessage
+  useEffect(() => {
+
+    if (props.errorMessage) {
+      return;
+    }
+    setSaveChanges(true);
+
+  }, []);
 
   const veteranFileNumStyle = () => {
     if (props.errorMessage) {
