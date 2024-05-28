@@ -100,8 +100,8 @@ class Hearings::CalendarService
     end
 
     def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
-      lookup_context = ActionView::Base.build_lookup_context(ActionController::Base.view_paths)
-      context = CalendarEventView.new(lookup_context)
+      lookup_context = ActionView::LookupContext.new(ActionController::Base.view_paths)
+      context = CalendarEventView.with_empty_template_cache.new(lookup_context, {}, nil)
 
       # Some *~ magic ~* here. The recipient title is used to determine which template to load:
       #
