@@ -41,6 +41,7 @@ export const ReviewForm = (props) => {
 
   const handleFileNumber = (value) => {
     setSaveChanges(false);
+    props.setIsReturnToQueue(true);
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
     if (isNumeric) {
@@ -55,6 +56,7 @@ export const ReviewForm = (props) => {
 
   const handleChangeNotes = (value) => {
     setSaveChanges(false);
+    props.setIsReturnToQueue(true);
     const updatedNotes = {
       ...props.editableData,
       notes: value,
@@ -82,6 +84,7 @@ export const ReviewForm = (props) => {
 
   const handleSelectCorrespondenceType = (val) => {
     setSaveChanges(false);
+    props.setIsReturnToQueue(true);
     setCorrespondenceTypeID(val.id - 1);
 
     const updatedSelectedValue = {
@@ -124,6 +127,7 @@ export const ReviewForm = (props) => {
 
   const handleSubmit = async () => {
     setSaveChanges(true);
+    props.setIsReturnToQueue(false);
     props.setCreateRecordIsReadOnly('');
     const correspondence = props;
     const payloadData = {
@@ -323,6 +327,7 @@ ReviewForm.propTypes = {
     correspondence_types: PropTypes.array,
   }),
   disableButton: PropTypes.bool,
+  setIsReturnToQueue: PropTypes.bool,
   setEditableData: PropTypes.func,
   setCreateRecordIsReadOnly: PropTypes.func,
   setDisableButton: PropTypes.func,

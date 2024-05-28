@@ -39,6 +39,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -186,7 +187,7 @@ export const CorrespondenceReviewPackage = (props) => {
   }, []);
 
   const handleModalClose = () => {
-    if (disableButton) {
+    if (isReturnToQueue) {
       setShowModal(!showModal);
     } else {
       history.goBack();
@@ -286,6 +287,7 @@ export const CorrespondenceReviewPackage = (props) => {
               setEditableData,
               disableButton,
               setDisableButton,
+              setIsReturnToQueue,
               fetchData,
               showModal,
               handleModalClose,
