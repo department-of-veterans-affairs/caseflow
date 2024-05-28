@@ -10,11 +10,13 @@ module Seeds
 
     def initialize
       initial_id_values
-      RequestStore[:current_user] = User.find_by_css_id("JOLLY_POSTMAN") if RequestStore[:current_user].blank?
+      if RequestStore[:current_user].blank?
+        RequestStore[:current_user] = User.find_by_css_id("INBOUND_OPS_TEAM_MAIL_INTAKE_USER")
+      end
     end
 
     def inbound_ops_team_user
-      @inbound_ops_team_user ||= User.find_by_css_id("JOLLY_POSTMAN")
+      @inbound_ops_team_user ||= User.find_by_css_id("INBOUND_OPS_TEAM_MAIL_INTAKE_USER")
     end
 
     def mail_team_superuser
