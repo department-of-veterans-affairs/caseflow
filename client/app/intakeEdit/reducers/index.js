@@ -38,10 +38,6 @@ export const mapDataToInitialState = function(props = {}) {
     };
   }
 
-  const formattedPendingModificationRequests =
-    formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests);
-  const formattedAddedIssues = formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues);
-
   return {
     ...serverIntake,
     claimId,
@@ -59,10 +55,11 @@ export const mapDataToInitialState = function(props = {}) {
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
-    addedIssues: formattedAddedIssues,
-    originalIssues: formattedAddedIssues,
-    pendingIssueModificationRequests: formattedPendingModificationRequests,
-    originalPendingIssueModificationRequests: formattedPendingModificationRequests,
+    addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
+    originalPendingIssueModificationRequests:
+      formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
