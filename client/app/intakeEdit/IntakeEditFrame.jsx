@@ -136,7 +136,12 @@ export const IntakeEditFrame = (props) => {
             <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
             <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
             <Provider>
-              <PendingIssueModificationBanner />
+              <PageRoute
+                exact
+                path={PAGE_PATHS.BEGIN}
+                title="Edit Claim Issues | Caseflow Intake"
+                component={PendingIssueModificationBanner}
+              />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
