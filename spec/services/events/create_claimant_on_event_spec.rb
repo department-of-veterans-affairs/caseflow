@@ -84,6 +84,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
         expect(described_class.process!(event: event, parser: veteran_is_not_claimant_and_person_does_not_exist_parser, decision_review: decision_review)).to eq(Claimant.last)
       end
 
+      # rubocop:disable Style/BlockDelimiters
       it "a new record of the new person that was created is added to the event_record table" do
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to eq(nil)
         expect {
@@ -93,6 +94,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
         expect(EventRecord.last.evented_record_id).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).id)
         expect(EventRecord.last.evented_record_type).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).class.to_s)
       end
+      # rubocop:enable Style/BlockDelimiters
     end
 
     context "when the veteran is not the claimant and the person DOES exist in Caseflow" do
