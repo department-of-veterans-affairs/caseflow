@@ -20,18 +20,22 @@ describe('IssuesList', () => {
       />
     );
 
-  it('renders the "Add Decision Date" list action if an issue has no decision date', () => {
+  it('renders the "Add Decision Date" list action if an issue has no decision date', async () => {
     setup(mockedIssueListProps);
+    const dropdown = screen.getAllByText('Select action')[0];
 
+    await userEvent.click(dropdown);
     expect(screen.getByText('Add decision date')).toBeInTheDocument();
 
   });
 
   it('clicking "Add Decision Date" list action will open the Add Decision Date Modal', async () => {
     setup(mockedIssueListProps);
-    const select = screen.getAllByText('Select action')[0].parentElement;
+    const dropdown = screen.getAllByText('Select action')[0];
 
-    await userEvent.selectOptions(select, ['Add decision date']);
+    await userEvent.click(dropdown);
+    await userEvent.click(screen.getByText('Add decision date'));
+
     expect(mockOnClickIssueAction).toHaveBeenCalledWith(0, 'add_decision_date');
 
   });
@@ -58,7 +62,7 @@ describe('IssuesList', () => {
 
   });
 
-  it('renders the "Edit decision date" list action if an issue originally has an editedDecisionDate', () => {
+  it('renders the "Edit decision date" list action if an issue originally has an editedDecisionDate', async () => {
     const propsWithEditedDecisionDate = {
       ...mockedIssueListProps,
     };
@@ -67,10 +71,14 @@ describe('IssuesList', () => {
 
     setup(propsWithEditedDecisionDate);
 
+    const dropdown = screen.getAllByText('Select action')[0];
+
+    await userEvent.click(dropdown);
+
     expect(screen.getByText('Edit decision date')).toBeInTheDocument();
   });
 
-  it('renders the request for issue updates dropdown actions', () => {
+  it('renders the request for issue updates dropdown actions', async () => {
     const propsWithRequestForIssueUpdates = {
       ...mockedIssueListProps,
       userCanRequestForIssueUpdates: true,
@@ -83,7 +91,9 @@ describe('IssuesList', () => {
     setup(propsWithRequestForIssueUpdates);
     const dropdown = screen.getByText('Select action');
 
-    fireEvent.click(dropdown);
+    // fireEvent.click(dropdown);
+
+    await userEvent.click(dropdown);
 
     expect(screen.getByText('Request modification')).toBeInTheDocument();
     expect(screen.getByText('Request removal')).toBeInTheDocument();
