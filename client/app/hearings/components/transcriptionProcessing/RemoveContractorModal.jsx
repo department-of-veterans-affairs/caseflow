@@ -22,11 +22,11 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       buttons={[
         {
           classNames: ['cf-modal-link", "cf-btn-link'],
-          name: COPY.MODAL_CANCEL_BUTTON,
+          name: 'Cancel',
           onClick: onCancel,
         },
         {
-          classNames: ['usa-button", "usa-button-primary'],
+          classNames: ['usa-button', 'usa-button-primary'],
           name: COPY.MODAL_CONFIRM_BUTTON,
           onClick: () => {
             onConfirm(selectedContractorId).then(onCancel);
@@ -39,7 +39,7 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
     >
       <p>{COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TEXT}</p>
       <SearchableDropdown
-        name="Contractors"
+        name="Contractor"
         label="Contractor"
         value={
           dropdownOptions.find(
