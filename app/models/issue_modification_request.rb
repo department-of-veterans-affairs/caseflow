@@ -30,13 +30,13 @@ class IssueModificationRequest < CaseflowRecord
 
   class ErrorCreatingNewRequest < StandardError
     def initialize
-      super("Issue status must be in an assigned state")
+      super(COPY::ERROR_CREATING_NEW_REQUEST)
     end
   end
 
-  class ErrorModifingExistingRequest < StandardError
+  class ErrorModifyingExistingRequest < StandardError
     def initialize
-      super("Must be the same requestor or request must be on an assigned state")
+      super(COPY::ERROR_MODIFYING_EXISTING_REQUEST)
     end
   end
 
@@ -64,7 +64,7 @@ class IssueModificationRequest < CaseflowRecord
 
   def update_from_params!(attributes, current_user)
     unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
-      fail ErrorModifingExistingRequest
+      fail ErrorModifyingExistingRequest
     end
 
     update!(
@@ -77,7 +77,7 @@ class IssueModificationRequest < CaseflowRecord
 
   def cancel_from_params!(attributes, current_user)
     unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
-      fail ErrorModifingExistingRequest
+      fail ErrorModifyingExistingRequest
     end
 
     update!(status: "cancelled")

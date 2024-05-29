@@ -59,6 +59,14 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     }
   end
 
+  shared_examples "validated requestor and state" do
+    it "should return false and set error message" do
+      expect { subject.process! }.to raise_error(
+        StandardError, COPY::ERROR_MODIFYING_EXISTING_REQUEST
+      )
+    end
+  end
+
   describe "when new request modifications issues is made" do
     subject do
       described_class.new(
@@ -81,13 +89,13 @@ describe NonAdmin::IssueModificationRequestsUpdater do
 
       it "should return false and set error message" do
         expect { subject.process! }.to raise_error(
-          StandardError, "Issue status must be in an assigned state"
+          StandardError, COPY::ERROR_CREATING_NEW_REQUEST
         )
       end
     end
   end
 
-  describe "when editing an existng issue modifications request" do
+  describe "when editing an exisitng issue modifications request" do
     subject do
       described_class.new(
         current_user: non_admin_requestor,
@@ -108,21 +116,13 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     context "and request is under a different status other than assigned" do
       let(:status) { "cancelled" }
 
-      it "should return false and set error message" do
-        expect { subject.process! }.to raise_error(
-          StandardError, "Must be the same requestor or request must be on an assigned state"
-        )
-      end
+      include_examples "validated requestor and state"
     end
 
     context "and editing is attempted by a different user than original requestor" do
       before { subject.instance_variable_set(:@current_user, create(:user)) }
 
-      it "should return false and set error message" do
-        expect { subject.process! }.to raise_error(
-          StandardError, "Must be the same requestor or request must be on an assigned state"
-        )
-      end
+      include_examples "validated requestor and state"
     end
   end
 
@@ -147,21 +147,13 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     context "and request is under a different status other than assigned" do
       let(:status) { "approved" }
 
-      it "should return false and set error message" do
-        expect { subject.process! }.to raise_error(
-          StandardError, "Must be the same requestor or request must be on an assigned state"
-        )
-      end
+      include_examples "validated requestor and state"
     end
 
     context "and cancelling is attempted by a different user than original requestor" do
       before { subject.instance_variable_set(:@current_user, create(:user)) }
 
-      it "should return false and set error message" do
-        expect { subject.process! }.to raise_error(
-          StandardError, "Must be the same requestor or request must be on an assigned state"
-        )
-      end
+      include_examples "validated requestor and state"
     end
   end
 end

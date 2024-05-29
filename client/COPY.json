@@ -61,6 +61,8 @@
   },
   "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
   "EIN_INVALID_ERR": "Please enter a valid employer identification number that follows the format: 12-3456789 or 123456789",
+  "ERROR_CREATING_NEW_REQUEST": "Issue status must be in an assigned state",
+  "ERROR_MODIFYING_EXISTING_REQUEST": "Must be the same requestor or request must be in assigned state",
   "NULL_FILTER_LABEL": "<<blank>>",
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",
