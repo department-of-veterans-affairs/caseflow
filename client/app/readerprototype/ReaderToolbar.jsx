@@ -48,9 +48,15 @@ const pdfToolbarStyles = {
 };
 
 const ReaderToolbar = ({
+  resetZoomLevel,
   documentPathBase,
   doc,
-  showClaimsFolderNavigation
+  showClaimsFolderNavigation,
+  setZoomOutLevel,
+  disableZoomOut,
+  setZoomInLevel,
+  disableZoomIn,
+  zoomLevel
 }) => {
   return <>
     <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
@@ -68,6 +74,9 @@ const ReaderToolbar = ({
     <span style={{ color: '#cc0000', fontWeight: 600 }}> PROTOTYPE!!!!! </span>
 
     <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
+      <span className="zoomContainer">
+
+      </span>
       <span className="category-icons-and-doc-type">
         <span className="cf-pdf-doc-category-icons">
         </span>
@@ -77,7 +86,10 @@ const ReaderToolbar = ({
             ariaLabel="open document in new tab"
             target="_blank"
             button="matte"
-            href={`/reader/appeal${documentPathBase}/${doc.id}`}>
+            href={window.location.pathname.includes('prototype') ?
+            `/reader/appeal${documentPathBase}/${doc.id}/prototype` :
+            `/reader/appeal${documentPathBase}/${doc.id}`}
+          >
             <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
               <span title="Open in new tab">{doc.docType}</span>
               <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
@@ -87,13 +99,34 @@ const ReaderToolbar = ({
       </span>
     </span>
     <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
-      <span className="cf-pdf-button-text"></span>
-      {/* <Button name="zoomOut" />
-      <Button name="zoomIn" />
-      <Button name="zoomReset" />
-      <Button name="rotation" />
-      <Button name="download" />
-      <Button name="search" /> */}
+      <span className="toolbarPrototype-text">Zoom:</span>
+      <span className="cf-pdf-button-text">&nbsp;&nbsp;{ `${zoomLevel}%` }</span>
+      <Button
+        name="zoomOut"
+        classNames={['cf-pdf-button toolbarPrototype-items']}
+        onClick={() => setZoomOutLevel()}
+        disabled={disableZoomOut}
+        ariaLabel="zoom out">
+        <i className="fa fa-minus" aria-hidden="true" />
+      </Button>
+      <Button
+        name="zoomIn"
+        classNames={['cf-pdf-button toolbarPrototype-items']}
+        onClick={() => setZoomInLevel()}
+        disabled={disableZoomIn}
+        ariaLabel="zoom in">
+        <i className="fa fa-plus" aria-hidden="true" />
+      </Button>
+      <Button
+        name="zoomReset"
+        classNames={['cf-pdf-button toolbarPrototype-items']}
+        onClick={() => resetZoomLevel()}
+        ariaLabel="fit to screen">
+        <FitToScreenIcon />
+      </Button>
+      {/* <Button name="rotation" /> */}
+      {/* <Button name="download" /> */}
+      {/* <Button name="search" /> */}
     </span>
   </>;
 };
@@ -101,7 +134,13 @@ const ReaderToolbar = ({
 ReaderToolbar.propTypes = {
   documentPathBase: PropTypes.string,
   doc: PropTypes.object,
-  showClaimsFolderNavigation: PropTypes.bool
+  showClaimsFolderNavigation: PropTypes.bool,
+  resetZoomLevel: PropTypes.func,
+  setZoomOutLevel: PropTypes.func,
+  disableZoomOut: PropTypes.bool,
+  setZoomInLevel: PropTypes.func,
+  disableZoomIn: PropTypes.bool,
+  zoomLevel: PropTypes.number
 };
 
 export default ReaderToolbar;
