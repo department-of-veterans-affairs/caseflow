@@ -40,6 +40,7 @@ const validatePageNum = (pageNumber) => {
   return pageNum;
 };
 
+
 const handleKeyPress = (event) => {
   // if (event.key === ENTER_KEY) {
   //   const pageNumber = event.target.value;
@@ -54,15 +55,17 @@ const handleKeyPress = (event) => {
 };
 
 const ReaderFooter = ({
+  pageCount,
   prevDocId,
   nextDocId,
   showPreviousDocument,
   showNextDocument,
   selectedDocIndex,
-  docCount
+  docCount,
 }) => {
   return (
     <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
+
       <div className="cf-pdf-footer-buttons-left">
         {prevDocId && (
           <Button
@@ -92,7 +95,7 @@ const ReaderFooter = ({
                   className={['page-progress-indicator-input']}
                 />
               </div>
-              of 1
+              of {pageCount}
             </span>
           </span>|
         </span>
@@ -117,6 +120,7 @@ const ReaderFooter = ({
 };
 
 ReaderFooter.propTypes = {
+  pageCount: PropTypes.number,
   selectedDocIndex: PropTypes.number,
   docCount: PropTypes.number,
   prevDocId: PropTypes.number,

@@ -7,8 +7,6 @@ import PdfDocument from './PdfDocument';
 import ReaderToolbar from './ReaderToolbar';
 import ReaderSidebar from './ReaderSidebar';
 import ReaderFooter from './ReaderFooter';
-import Button from '../components/Button';
-import { FitToScreenIcon } from '../components/icons/FitToScreenIcon';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
@@ -30,12 +28,18 @@ const getNextDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props)
 const getPrevDocId = (props) => _.get(getPrevDoc(props), 'id');
 const getNextDocId = (props) => _.get(getNextDoc(props), 'id');
 
-
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(100);
 
   const doc = selectedDoc(props);
+
+  const getPageCount = () => {
+    //while !document.getElementById('pdfContainer') show loading
+    if (document.getElementById('pdfContainer')) {
+      return document.getElementById('pdfContainer').childElementCount;
+    }
+  };
 
   const pdfDocumentStyle = css({
     position: 'relative',
@@ -55,32 +59,13 @@ const DocumentViewer = (props) => {
               documentPathBase={props.documentPathBase}
               doc={doc}
               showClaimsFolderNavigation={props.allDocuments.length > 1}
+              resetZoomLevel={() => setZoomLevel(100)}
+              setZoomInLevel={() => setZoomLevel(zoomLevel + ZOOM_INCREMENT)}
+              disableZoomIn={zoomLevel === ZOOM_LEVEL_MAX}
+              setZoomOutLevel={() => setZoomLevel(zoomLevel - ZOOM_INCREMENT)}
+              disableZoomOut={zoomLevel === ZOOM_LEVEL_MIN}
+              zoomLevel={zoomLevel}
             />
-            <span className="toolbarPrototype-text">Zoom:</span>
-            <span className="cf-pdf-button-text">&nbsp;&nbsp;{ `${zoomLevel}%` }</span>
-            <Button
-              name="zoomOut"
-              classNames={['cf-pdf-button toolbarPrototype-items']}
-              onClick={() => setZoomLevel(zoomLevel - ZOOM_INCREMENT)}
-              disabled={zoomLevel === ZOOM_LEVEL_MIN}
-              ariaLabel="zoom out">
-              <i className="fa fa-minus" aria-hidden="true" />
-            </Button>
-            <Button
-              name="zoomIn"
-              classNames={['cf-pdf-button toolbarPrototype-items']}
-              onClick={() => setZoomLevel(zoomLevel + ZOOM_INCREMENT)}
-              disabled={zoomLevel === ZOOM_LEVEL_MAX}
-              ariaLabel="zoom in">
-              <i className="fa fa-plus" aria-hidden="true" />
-            </Button>
-            <Button
-              name="fit"
-              classNames={['cf-pdf-button toolbarPrototype-items']}
-              onClick={() => setZoomLevel(100)}
-              ariaLabel="fit to screen">
-              <FitToScreenIcon />
-            </Button>
           </div>
           <div>
             <div className="cf-search-bar hidden"></div>
@@ -103,6 +88,7 @@ const DocumentViewer = (props) => {
             nextDocId={getNextDocId(props)}
             showPreviousDocument={props.showPdf(getPrevDocId(props))}
             showNextDocument={props.showPdf(getNextDocId(props))}
+            pageCount={getPageCount()}
           />
         </div>
         <div className="cf-sidebar-wrapper">
