@@ -20,13 +20,13 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       title={title}
       buttons={[
         {
-          classNames: ["cf-modal-link", "cf-btn-link"],
-          name: "Cancel",
+          classNames: ['cf-modal-link', 'cf-btn-link'],
+          name: 'Cancel',
           onClick: onCancel,
         },
         {
-          classNames: ["usa-button", "usa-button-primary"],
-          name: "Confirm",
+          classNames: ['usa-button', 'usa-button-primary'],
+          name: 'Confirm',
           onClick: () => {
             onConfirm(selectedContractorId).then(onCancel);
           },
@@ -58,8 +58,6 @@ RemoveContractorModal.propTypes = {
   contractors: PropTypes.array,
 };
 
-// Provide default props
 RemoveContractorModal.defaultProps = {
-  onCancel: () => {},
   contractors: [],
 };
