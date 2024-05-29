@@ -1,7 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
@@ -9,10 +8,11 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
+import moment from 'moment';
 import {
   CORRESPONDENCE_READONLY_BANNER_HEADER,
   CORRESPONDENCE_READONLY_BANNER_MESSAGE,
@@ -30,8 +30,13 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: null
+    default_select_value: null,
+    va_date_of_receipt: '',
   });
+  const stateCorrespondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+  const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -40,6 +45,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
+  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -81,13 +87,32 @@ export const CorrespondenceReviewPackage = (props) => {
       );
     };
 
+    const hasEfolderUploadTask = (tasks) => {
+      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
+      task.type === 'EfolderUploadFailedTask');
+
+      if (existEfolderUploadTask) {
+        setIsEfolderUploadFailedTask(false);
+      }
+    };
+
     try {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
       );
+      // API Response Without VA DOR
+      const apiResWithVADOR = response.body.general_information;
 
-      setApiResponse(response.body.general_information);
-      const data = response.body.general_information;
+      // Appended API Response VA DOR to
+      // eslint-disable-next-line max-len
+      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+
+      setApiResponse(apiResWithVADOR);
+      const data = apiResWithVADOR;
+
+      hasEfolderUploadTask(data.correspondence_tasks);
+
+      setDisplayIntakeAppeal(response.body.display_intake_appeal);
 
       if (response.body.efolder_upload_failed_before.length > 0) {
         setBannerInformation({
@@ -96,9 +121,11 @@ export const CorrespondenceReviewPackage = (props) => {
           bannerType: 'error'
         });
       }
+
       setReviewDetails({
         veteran_name: data.veteran_name || {},
         dropdown_values: data.correspondence_types || [],
+        correspondence_type_id: data.correspondence_type_id
       });
 
       setReviewPackageDetails((prev) => {
@@ -110,6 +137,7 @@ export const CorrespondenceReviewPackage = (props) => {
         notes: data.notes,
         veteran_file_number: data.file_number,
         default_select_value: data.correspondence_type_id,
+        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
       });
 
       if (isPageReadOnly(data.correspondence_tasks)) {
@@ -120,6 +148,7 @@ export const CorrespondenceReviewPackage = (props) => {
         });
         setIsReadOnly(true);
       }
+
       if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
         setBannerInformation({
           title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -158,8 +187,9 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
 
   const intakeAppeal = async () => {
@@ -213,6 +243,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             reviewDetails={reviewPackageDetails}
+            efolder={isEfolderUploadFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
@@ -220,13 +251,9 @@ export const CorrespondenceReviewPackage = (props) => {
             isReassignPackage={isReassignPackage}
             mailTeamUsers={props.mailTeamUsers}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
-            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
-          <ReviewPackageData
-            correspondence={props.correspondence}
-            packageDocumentType={props.packageDocumentType}
-            isReadOnly={isReadOnly}
-          />
+
           {packageActionModal &&
             <PackageActionModal
               packageActionModal={packageActionModal}
@@ -250,6 +277,8 @@ export const CorrespondenceReviewPackage = (props) => {
               isReadOnly
             }}
             {...props}
+            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
           />
           <CmpDocuments
             documents={props.correspondenceDocuments}
@@ -268,11 +297,10 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (props.packageDocumentType.name === '10182') && (
+            { (displayIntakeAppeal || stateCorrespondence.nod) && (
               <Button
                 name="Intake appeal"
-                styling={{ style: { marginRight: '2rem' } }}
-                classNames={['usa-button-secondary']}
+                classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
                 disabled={disableButton || isReadOnly}
               />
@@ -302,7 +330,8 @@ CorrespondenceReviewPackage.propTypes = {
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool
+  userIsCorrespondenceSuperuser: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

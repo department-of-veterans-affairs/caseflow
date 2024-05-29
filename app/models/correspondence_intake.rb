@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class CorrespondenceIntake < ApplicationRecord
-  belongs_to :correspondence
-  belongs_to :user
+  belongs_to :task
 
-  validates :correspondence_id, presence: true
-  validates :user_id, presence: true
+  validates :task_id, presence: true
+  validate :task_type_is_correct, on: :create
+
+  def task_type_is_correct
+    errors.add(:task, "Must be CorrespondenceIntakeTask") unless task&.type == CorrespondenceIntakeTask.name
+  end
 end

@@ -28,6 +28,7 @@ class CorrespondenceIntakeProcessor
 
       create_correspondence_relations(intake_params, correspondence.id)
       link_appeals_to_correspondence(intake_params, correspondence.id)
+      create_response_letter(intake_params, correspondence.id)
       add_tasks_to_related_appeals(intake_params, current_user)
       complete_waived_evidence_submission_tasks(intake_params)
       create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
@@ -46,6 +47,32 @@ class CorrespondenceIntakeProcessor
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+    end
+  end
+
+  def create_response_letter(intake_params, correspondence_id)
+    current_user = RequestStore.store[:current_user] ||= User.system_user
+
+    intake_params[:response_letters]&.map do |data|
+      current_value = nil
+      if data[:responseWindows] == "Custom"
+        current_value = data[:customValue]
+      end
+
+      if data[:responseWindows] == "65 days"
+        current_value = 65
+      end
+
+      CorrespondenceResponseLetter.create!(
+        correspondence_id: correspondence_id,
+        date_sent: data[:date],
+        title: data[:title],
+        subcategory: data[:subType],
+        reason: data[:reason],
+        response_window: current_value,
+        letter_type: data[:type],
+        user_id: current_user.id
       )
     end
   end
@@ -127,8 +154,6 @@ class CorrespondenceIntakeProcessor
       "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
       "Change of address": AddressChangeMailTask.name,
       "Evidence or argument": EvidenceOrArgumentMailTask.name,
-      "Returned or undeliverable mail": ReturnedUndeliverableCorrespondenceMailTask.name,
-      "Sent to ROJ": SentToRojMailTask.name,
       "VACOLS updated": VacolsUpdatedMailTask.name
     }.with_indifferent_access
 

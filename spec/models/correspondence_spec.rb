@@ -46,4 +46,30 @@ RSpec.describe Correspondence, type: :model do
       expect(rpt.assigned_to).to eq(InboundOpsTeam.singleton)
     end
   end
+
+  describe "Test CorrespondenceRootTask methods" do
+    it "correctly returns the date using the completed_by_date method" do
+      create(:correspondence)
+
+      correspondence_root_task = CorrespondenceRootTask.first
+      closed_date = 1.day.ago
+      correspondence_root_task.update!(closed_at: closed_date)
+      expect correspondence_root_task.completed_by_date == closed_date
+
+      correspondence_root_task.update!(closed_at: nil)
+      review_package_task = ReviewPackageTask.first
+      review_package_task.update!(closed_at: closed_date)
+      expect correspondence_root_task.completed_by_date == closed_date
+    end
+  end
+
+  describe "Test self.prior_mail" do
+    it "returns other mail that is not identical to current one" do
+      veteran = create(:veteran)
+      3.times { create(:correspondence, veteran: veteran) }
+      correspondence_first = Correspondence.first
+      prior_mail = Correspondence.prior_mail(correspondence_first, correspondence_first.uuid)
+      expect(prior_mail).not_to include(correspondence_first)
+    end
+  end
 end

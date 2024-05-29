@@ -10,14 +10,13 @@ export const CorrespondenceDetailsTable = (props) => {
       <table className="corr-table-borderless">
         <tbody>
           <tr>
-            <th><strong>Portal Entry Date</strong></th>
-            <th><strong>Source Type</strong></th>
-            <th><strong>Package Document Type</strong></th>
-            <th><strong>CM Packet Number</strong></th>
-            <th><strong>CMP Queue Name</strong></th>
+            <th className="corr-table-borderless-first-item"><strong>Package Document Type</strong></th>
             <th><strong>VA DOR</strong></th>
+            <th><strong>Veteran</strong></th>
+            <th className="corr-table-borderless-last-item"><strong>Correspondence Type</strong></th>
           </tr>
           <tr>
+<<<<<<< HEAD
             <td>{moment(props.correspondence.portalEntryDate).format('MM/DD/YYYY')}</td>
             <td>{props.correspondence.sourceType}</td>
             <td>{props.correspondence.packageDocumentType}</td>
@@ -34,12 +33,26 @@ export const CorrespondenceDetailsTable = (props) => {
               {props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})
             </td>
             <td>{props.correspondence.correspondenceType}</td>
+=======
+            <td className="corr-table-borderless-first-item">
+              {props.correspondence.nod ? 'NOD' : 'Non-NOD'}
+            </td>
+            <td>{moment(props.correspondence.vaDateOfReceipt).format('MM/DD/YYYY')}</td>
+            <td>{props.correspondence.veteranFullName} ({props.correspondence.veteranFileNumber})</td>
+            <td className="corr-table-borderless-last-item">{props.correspondence.correspondenceType}</td>
+>>>>>>> feature/APPEALS-41477
           </tr>
           <tr>
-            <th colSpan={6}><strong>Notes</strong></th>
+            <th colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
+              <strong>Notes</strong></th>
           </tr>
           <tr>
+<<<<<<< HEAD
             <td colSpan={6}>{props.correspondence.notes}</td>
+=======
+            <td colSpan={6} className="corr-table-borderless-first-item corr-table-borderless-last-item">
+              {props.correspondence.notes}</td>
+>>>>>>> feature/APPEALS-41477
           </tr>
         </tbody>
       </table>
@@ -52,3 +65,4 @@ CorrespondenceDetailsTable.propTypes = {
 };
 
 export default CorrespondenceDetailsTable;
+

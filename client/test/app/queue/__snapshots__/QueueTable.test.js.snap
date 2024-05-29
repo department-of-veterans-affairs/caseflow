@@ -851,7 +851,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 3,
+              "total_task_count": undefined,
             },
           }
         }
@@ -1081,7 +1081,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 3,
+              "total_task_count": undefined,
             },
           }
         }
@@ -1526,7 +1526,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 3,
+              "total_task_count": undefined,
             },
           }
         }
@@ -1711,7 +1711,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 3,
+              "total_task_count": undefined,
             },
           }
         }
@@ -2054,7 +2054,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
               },
             ],
             "tasks_per_page": undefined,
-            "total_task_count": 3,
+            "total_task_count": undefined,
           },
         }
       }
@@ -2204,7 +2204,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
               },
             ],
             "tasks_per_page": undefined,
-            "total_task_count": 3,
+            "total_task_count": undefined,
           },
         }
       }
@@ -7328,7 +7328,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 20,
+              "total_task_count": undefined,
             },
           }
         }
@@ -9082,7 +9082,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 },
               ],
               "tasks_per_page": undefined,
-              "total_task_count": 20,
+              "total_task_count": undefined,
             },
           }
         }

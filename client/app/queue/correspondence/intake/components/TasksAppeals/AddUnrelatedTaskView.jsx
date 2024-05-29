@@ -4,7 +4,6 @@ import Button from '../../../../../components/Button';
 import AddTaskView from './AddTaskView';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
-import { COLORS } from '../../../../../constants/AppConstants';
 
 const MAX_NUM_TASKS = 4;
 
@@ -90,44 +89,37 @@ export const AddUnrelatedTaskView = (props) => {
           + Add tasks
       </Button>}
       {addTasksVisible && <div
-        className="gray-border"
-        style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}
-      >
-        <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
-          <div style={{ backgroundColor: COLORS.GREY_BACKGROUND, width: '100%', height: '50px', paddingTop: '1.5rem' }}>
-            <b style={{
-              verticalAlign: 'center',
-              paddingLeft: '2.5rem',
-              paddingTop: '1.5rem',
-              border: '0',
-              paddingBottom: '1.5rem',
-              paddingRigfht: '5.5rem'
-            }}>New Tasks</b>
-          </div>
-          <div style={{ width: '100%', height: '3rem' }} />
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {getTasks().map((task) => (
-              <AddTaskView
-                key={task.id}
-                task={task}
-                removeTask={removeTask}
-                taskUpdatedCallback={taskUpdatedCallback}
-                displayRemoveCheck
-                allTaskTypeOptions={props.allTaskTypeOptions}
-                availableTaskTypeOptions={availableTaskTypeOptions}
-                autoTexts={props.autoTexts}
-              />
-            ))}
-          </div>
-          <div style={{ padding: '2.5rem 2.5rem' }} >
-            <Button
-              type="button"
-              onClick={clickAddTask}
-              disabled={newTasks.length === MAX_NUM_TASKS}
-              name="addTasks"
-              classNames={['cf-left-side']}>
+        className="gray-border">
+        <div className="area-above-add-tasks-button-not-related">
+          <div className="area-under-add-tasks-button-not-related-to-appeal">
+            <div className="new-tasks-not-related-to-an-appeal-title">
+              <b className="new-tasks-title-not-related-to-appeal">New Tasks</b>
+            </div>
+            <div className="area-under-new-tasks-title" />
+            <div className="area-above-add-task-view">
+              {getTasks().map((task) => (
+                <AddTaskView
+                  key={task.id}
+                  task={task}
+                  removeTask={removeTask}
+                  taskUpdatedCallback={taskUpdatedCallback}
+                  displayRemoveCheck
+                  allTaskTypeOptions={props.allTaskTypeOptions}
+                  availableTaskTypeOptions={availableTaskTypeOptions}
+                  autoTexts={props.autoTexts}
+                />
+              ))}
+            </div>
+            <div className="add-tasks-button-for-unrelated-appeals">
+              <Button
+                type="button"
+                onClick={clickAddTask}
+                disabled={newTasks.length === MAX_NUM_TASKS}
+                name="addTasks"
+                classNames={['cf-left-side']}>
                 + Add tasks
-            </Button>
+              </Button>
+            </div>
           </div>
         </div>
       </div>}

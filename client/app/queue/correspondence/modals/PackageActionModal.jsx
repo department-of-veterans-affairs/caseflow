@@ -155,7 +155,7 @@ const PackageActionModal = (props) => {
       ]}
       closeHandler={() => props.closeHandler(null)}
     >
-      <span className="usa-input" style={{ marginBottom: '5px' }}>
+      <span>
         {modalInfo.description}
       </span>
       <Table

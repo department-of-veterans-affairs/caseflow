@@ -22,7 +22,7 @@ export const initialState = {
   organizations: [],
   isMailTeamUser: false,
   isMailSupervisor: false,
-  isMailSuperUser: false,
+  isInboundOpsSuperuser: false,
   activeOrganization: {
     id: null,
     name: null,
@@ -269,10 +269,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload.isMailSupervisor
       }
     });
-  case ACTIONS.SET_MAIL_SUPER_USER:
+  case ACTIONS.SET_INBOUND_OPS_SUPERUSER:
     return update(state, {
-      isMailSuperUser: {
-        $set: action.payload.isMailSuperUser
+      isInboundOpsSuperuser: {
+        $set: action.payload.isInboundOpsSuperuser
       }
     });
   case ACTIONS.SET_ORGANIZATIONS:

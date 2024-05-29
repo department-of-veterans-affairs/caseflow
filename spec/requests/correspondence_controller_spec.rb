@@ -20,48 +20,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
-  describe "#current_step" do
-    let(:redux_store) do
-      {
-        taskRelatedAppealIds: [],
-        newAppealRelatedTasks: [],
-        fetchedAppeals: [],
-        correspondences: [],
-        radioValue: "0",
-        relatedCorrespondences: [],
-        mailTasks: {},
-        unrelatedTasks: [],
-        currentCorrespondence: {
-          id: 181,
-          veteran_id: 3909
-        },
-        veteranInformation: {
-          id: 3909
-        },
-        waivedEvidenceTasks: []
-      }.to_json
-    end
-
-    it "saves the user's current step in the intake form" do
-      current_step = 1
-      correspondence = create(
-        :correspondence
-      )
-
-      post queue_correspondence_intake_current_step_path(correspondence_uuid: correspondence.uuid), params: {
-        correspondence_uuid: correspondence.uuid,
-        current_step: current_step,
-        redux_store: redux_store
-      }
-
-      expect(response).to have_http_status(:success)
-
-      intake_correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
-      expect(intake_correspondence.current_step).to eq(current_step)
-      expect(intake_correspondence.redux_store).to eq(redux_store)
-    end
-  end
-
   describe "correspondence_cases" do
     before do
       get correspondence_path, as: :json
@@ -101,6 +59,33 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
           expect(task[:attributes][:assigned_by]).to be_a(Hash)
         end
       end
+    end
+
+    it "redirects to unauthorized without valid correspondence access" do
+      current_user = create(:user)
+      User.authenticate!(user: current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/unauthorized")).to be true
+    end
+
+    it "redirects while feature flag disabled" do
+      # redirects to unauthorized without valid correspondence access
+      FeatureToggle.disable!(:correspondence_queue)
+      current_user = create(:user)
+      User.authenticate!(user: current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/unauthorized")).to be true
+
+      # redirects to under_construction with valid correspondence access
+      MailTeam.singleton.add_user(current_user)
+      get correspondence_path
+
+      expect(response.status).to eq 302
+      expect(response.body.include?("/under_construction")).to be true
     end
   end
 
@@ -220,8 +205,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
         "Change of address": AddressChangeMailTask.name,
         "Evidence or argument": EvidenceOrArgumentMailTask.name,
-        "Returned or undeliverable mail": ReturnedUndeliverableCorrespondenceMailTask.name,
-        "Sent to ROJ": SentToRojMailTask.name,
         "VACOLS updated": VacolsUpdatedMailTask.name
       }
 

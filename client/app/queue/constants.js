@@ -12,6 +12,7 @@ import COPY from '../../COPY';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID';
 import QUEUE_INTAKE_FORM_TASK_TYPES from '../../constants/QUEUE_INTAKE_FORM_TASK_TYPES';
+import CORRESPONDENCE_LETTER_SELECTIONS from '../../constants/CORRESPONDENCE_LETTER_SELECTIONS';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -143,6 +144,8 @@ const formatRemandReasons = (reasons) => Object.assign({},
     }))
   }))
 );
+
+export const ADD_CORRESPONDENCE_LETTER_SELECTIONS = CORRESPONDENCE_LETTER_SELECTIONS;
 
 export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
 export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);

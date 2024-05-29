@@ -72,7 +72,11 @@ ReviewPackageLoadingScreen.propTypes = {
   setCorrespondenceDocuments: PropTypes.func,
   setPackageDocumentType: PropTypes.func,
   setVeteranInformation: PropTypes.func,
+<<<<<<< HEAD
   settaskInstructions: PropTypes.func
+=======
+  setTaskInstructions: PropTypes.func
+>>>>>>> feature/APPEALS-41477
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -38,6 +38,7 @@ class ReassignPackageTask < CorrespondenceTask
     )
     parent.update!(
       assigned_to_type: "User",
+      assigned_to: assigned_by,
       status: Constants.TASK_STATUSES.in_progress
     )
   end

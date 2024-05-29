@@ -255,7 +255,7 @@ const QueueTableBuilder = (props) => {
     <QueueOrganizationDropdown
       isMailTeamUser={props.isMailTeamUser}
       isMailSupervisor={props.isMailSupervisor}
-      isMailSuperUser={props.isMailSuperUser}
+      isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
       featureToggles = {props.featureToggles}
     />
@@ -273,16 +273,17 @@ const mapStateToProps = (state) => {
     organizations: state.ui.organizations,
     isMailTeamUser: state.ui.isMailTeamUser,
     isMailSupervisor: state.ui.isMailSupervisor,
-    isMailSuperUser: state.ui.isMailSuperUser,
+    isInboundOpsSuperuser: state.ui.isInboundOpsSuperuser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
 QueueTableBuilder.propTypes = {
   isMailTeamUser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
@@ -292,7 +293,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);

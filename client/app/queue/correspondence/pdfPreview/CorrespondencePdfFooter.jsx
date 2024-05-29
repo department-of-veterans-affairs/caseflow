@@ -20,7 +20,7 @@ export const CorrespondencePdfFooter = ({
         <span className="page-progress-indicator">
           {pdfDocProxy.numPages ? (
             <>
-              <div id="pdf-preview-footer-input-field" style={{ display: 'inline-block' }}>
+              <div id="pdf-preview-footer-input-field">
                 <NumberField
                   maxLength={4}
                   name="page-progress-indicator-input"

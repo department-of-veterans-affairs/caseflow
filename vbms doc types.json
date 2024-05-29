@@ -94,5 +94,21 @@
       "description": "Correspondence",
       "subDescription": "Miscellaneous "
     }
+  },
+  {
+    "id": 1250,
+    "createDateTime": "2011-12-09",
+    "modifiedDateTime": "2023-07-30T21:04:14",
+    "name": "L551",
+    "description": "VA Form 10182 Notice of Disagreement",
+    "isUserUploadable": true,
+    "is526": false,
+    "documentCategory": {
+      "id": 70,
+      "createDateTime": "2011-12-09",
+      "modifiedDateTime": "2014-04-21T11:49:07",
+      "description": "Correspondence",
+      "subDescription": "Miscellaneous "
+    }
   }
 ]

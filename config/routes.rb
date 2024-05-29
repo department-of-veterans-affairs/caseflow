@@ -326,6 +326,8 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence_queue#correspondence_cases'
+    get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
     post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence_intake#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
@@ -335,7 +337,10 @@ Rails.application.routes.draw do
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence_review_package#review_package'
     get '/correspondence/edit_document_type_correspondence', to: 'correspondence_review_package#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
+<<<<<<< HEAD
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
+=======
+>>>>>>> feature/APPEALS-41477
     get '/correspondence/team', to: 'correspondence_queue#correspondence_team'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence_review_package#update_cmp'
     get '/correspondence/packages', to: 'correspondence_review_package#package_documents'
@@ -344,7 +349,9 @@ Rails.application.routes.draw do
     patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
     patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
+    post '/correspondence/:correspondence_uuid/cancel_intake', to: 'correspondence_intake#cancel_intake', as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post '/correspondence_response_letters', to: 'correspondence_response_letters#create'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'

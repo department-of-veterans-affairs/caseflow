@@ -137,7 +137,11 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
       using_wait_time(10) do
+<<<<<<< HEAD
         expect(page).to have_text "#{veteran.file_number}"
+=======
+        expect(page).to have_text veteran.file_number.to_s
+>>>>>>> feature/APPEALS-41477
         expect(page).to have_text "Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182"
       end
     end

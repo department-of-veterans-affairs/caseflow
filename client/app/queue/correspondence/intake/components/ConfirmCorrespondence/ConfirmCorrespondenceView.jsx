@@ -1,4 +1,8 @@
 import React from 'react';
+<<<<<<< HEAD
+=======
+import { css } from 'glamor';
+>>>>>>> feature/APPEALS-41477
 import PropTypes from 'prop-types';
 import { PencilIcon } from '../../../../../components/icons/PencilIcon';
 import Button from '../../../../../components/Button';
@@ -7,11 +11,19 @@ import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
+<<<<<<< HEAD
+=======
+import { COLORS } from '../../../../../constants/AppConstants';
+import { formatDateStr } from 'app/util/DateUtil';
+>>>>>>> feature/APPEALS-41477
 
 export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = props.mailTasks;
-  const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
+  const relatedCorrespondences = intakeCorrespondence.relatedCorrespondences;
+  const responseLetters = intakeCorrespondence.responseLetters;
+
   let correspondenceTable = null;
   let mailTaskTable = null;
 
@@ -138,6 +150,59 @@ export const ConfirmCorrespondenceView = (props) => {
         If you need to make changes, please go back to the associated section.
       </p>
       <CorrespondenceDetailsTable correspondence={props.correspondence} />
+<<<<<<< HEAD
+=======
+      <div>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Response Letters</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(1)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
+            </Button>
+          </div>
+        </div>
+        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
+          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '20px', paddingBottom: '20px' })}>
+            <table className="correspondence-response-letters-table">
+              <tbody>
+                <tr>
+                  <th className="cf-txt-c"> Date Sent </th>
+                  <th className="cf-txt-c"> Letter Type </th>
+                  <th className="cf-txt-c"> Letter Title </th>
+                  <th className="cf-txt-c"> Letter Subcategory </th>
+                  <th className="cf-txt-c"> Letter Subcategory Reasons</th>
+                  <th className="cf-txt-c"> Response Window </th>
+                </tr>
+              </tbody>
+              { Object.keys(responseLetters)?.map((indexValue) => {
+                const responseLetter = responseLetters[indexValue];
+                const responseDate = new Date(responseLetter?.date).toISOString();
+
+                return (
+                  <tbody key={indexValue}>
+                    <tr>
+                      <td> {formatDateStr(responseDate)} </td>
+                      <td> {responseLetter?.type} </td>
+                      <td> {responseLetter?.title} </td>
+                      <td> {responseLetter?.subType} </td>
+                      <td> {responseLetter?.reason} </td>
+                      <td>
+                        {
+                          (responseLetter?.customValue === '' || responseLetter?.customValue === null) ?
+                           responseLetter?.responseWindows :
+                            `${responseLetter?.customValue } days`
+                        }
+                      </td>
+                    </tr>
+                  </tbody>
+                );
+              })}
+            </table>
+          </div>
+        </div>
+      </div>
+>>>>>>> feature/APPEALS-41477
       <div>
         <div className="corr-flex">
           <h2 className="corr-h2">Associated Prior Mail</h2>

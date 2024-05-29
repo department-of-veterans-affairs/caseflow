@@ -33,11 +33,11 @@ class CorrespondenceTasksController < TasksController
   end
 
   def create_correspondence_intake_task
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id], type: ReviewPackageTask.name)
+    review_package_task = ReviewPackageTask.open.find_by(appeal_id: params[:id])
     return render json: { message: "Correspondence Root Task not found" }, status: :not_found unless review_package_task
 
     current_parent = review_package_task.parent
-    current_cit = CorrespondenceIntakeTask.find_by(parent_id: current_parent.id, type: CorrespondenceIntakeTask.name)
+    current_cit = CorrespondenceIntakeTask.open.find_by(parent_id: current_parent.id)
 
     if current_cit.present?
       review_package_task.update!(assigned_to: current_user)
@@ -99,7 +99,7 @@ class CorrespondenceTasksController < TasksController
         task.reject(current_user, params[:decision_reason])
       end
       package_action_flash(decision.upcase, requesting_user_name)
-    rescue
+    rescue StandardError
       flash_error_banner(requesting_user_name)
     end
   end
@@ -116,7 +116,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def flash_error_banner(user_name)
-    operation_verb = params[:action_type] == "approve" ? "approved" : "rejected"
+    operation_verb = (params[:action_type] == "approve") ? "approved" : "rejected"
     flash[:custom_error] = {
       title: "Package request for #{user_name} could not be #{operation_verb}",
       message: "Please try again at a later time or contact the Help Desk."

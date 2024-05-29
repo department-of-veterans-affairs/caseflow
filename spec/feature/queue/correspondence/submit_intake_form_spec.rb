@@ -9,7 +9,7 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays a success banner and links the correspondence" do
         visit_intake_form_with_correspondence_load
         associate_with_prior_mail_radio_options[:yes].click
-        page.all(".cf-form-checkbox")[1].click
+        page.all(".cf-form-checkbox").first.click
         click_button("Continue")
         click_button("Continue")
         click_button("Submit")
@@ -73,7 +73,7 @@ RSpec.feature("Correspondence Intake submission") do
         allow(CorrespondenceIntakeProcessor).to receive(:new).and_return(mock_correspondence_intake_processor)
         require Rails.root.join("db/seeds/base.rb").to_s
         Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-        Seeds::AutoTexts.new.seed!
+        Seeds::CorrespondenceAutoTexts.new.seed!
       end
       it "displays a failed submission error banner" do
         visit_intake_form_step_2_with_appeals

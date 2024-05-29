@@ -3,7 +3,7 @@
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   include CorrespondenceHelpers
 
-  let(:organization) { MailTeam.singleton }
+  let(:organization) { InboundOpsTeam.singleton }
   let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   before(:each) do
@@ -14,10 +14,12 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
   context "No related correspondence" do
     it "Displays the expected content" do
-      visit_intake_form
+      visit_intake_form_with_correspondence_load
 
       expect(page).to have_content("Add Related Correspondence")
       expect(page).to have_content("Add any related correspondence to the mail package that is in progress.")
+      expect(page).to have_content("Response Letter")
+      expect(page).to have_button("+ Add letter")
       expect(page).to have_content("Is this correspondence related to prior mail?")
       expect(page).to have_content("Associate with prior Mail")
       expect(associate_with_prior_mail_radio_options[:yes]).to have_text("Yes")
@@ -25,7 +27,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
     end
 
     it "Continue button is active" do
-      visit_intake_form
+      visit_intake_form_with_correspondence_load
 
       expect(page.has_button?("Continue")).to be(true)
     end
@@ -74,7 +76,6 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         associate_with_prior_mail_radio_options[:yes].click
 
         expect(page).to have_content("VA DOR")
-        expect(page).to have_content("Source Type")
         expect(page).to have_content("Package Document Type")
         expect(page).to have_content("Correspondence Type")
         expect(page).to have_content("Notes")
@@ -89,7 +90,10 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         expect(page).to have_content("Mail")
         expect(page).to have_content("15")
         expect(page).to have_content("0304")
+<<<<<<< HEAD
         expect(page).to have_content("This is a test note")
+=======
+>>>>>>> feature/APPEALS-41477
       end
 
       it "table displays 15 items per page" do

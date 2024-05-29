@@ -3,13 +3,48 @@
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
   include CorrespondenceControllerConcern
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
 
-  def veteran
-    render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
+  def auto_assign_correspondences
+    batch = BatchAutoAssignmentAttempt.create!(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
+
+    job_args = {
+      current_user_id: current_user.id,
+      batch_auto_assignment_attempt_id: batch.id
+    }
+
+    begin
+      perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+    ensure
+      render json: { batch_auto_assignment_attempt_id: batch&.id }, status: :ok
+    end
+  end
+
+  def auto_assign_status
+    batch = BatchAutoAssignmentAttempt.includes(:individual_auto_assignment_attempts)
+      .find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+
+    num_assigned = batch.individual_auto_assignment_attempts
+      .where(status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed).count
+
+    status_details = {
+      error_message: batch.error_info,
+      status: batch.status,
+      number_assigned: num_assigned,
+      number_attempted: batch.individual_auto_assignment_attempts.count
+    }
+
+    render json: status_details, status: :ok
   end
 
   private

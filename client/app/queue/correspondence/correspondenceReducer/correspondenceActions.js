@@ -11,7 +11,7 @@ export const loadSavedIntake = (savedStore) =>
     });
   };
 
-export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
+export const saveCurrentIntake = (currentIntake, data, onSave) => (dispatch) => {
   ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
     then((response) => {
       if (!response.ok) {
@@ -24,6 +24,9 @@ export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
           currentIntake
         }
       });
+      if (onSave) {
+        onSave();
+      }
     }).
     catch((err) => {
       console.error(new Error(`Problem with GET ${currentIntake} ${err}`));
@@ -164,6 +167,26 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
   });
 };
 
+export const setResponseLetters = (responseLetters) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RESPONSE_LETTERS,
+      payload: {
+        responseLetters
+      }
+    });
+  };
+
+export const removeResponseLetters = (index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_RESPONSE_LETTERS,
+      payload: {
+        index
+      }
+    });
+  };
+
 export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
@@ -190,6 +213,7 @@ export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) 
     }
   });
 };
+
 export const setErrorBanner = (isVisible) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SHOW_CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER,

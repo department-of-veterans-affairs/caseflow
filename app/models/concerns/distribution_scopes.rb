@@ -78,6 +78,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
       .joins(
         "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
+        AND original_judge_task.appeal_type = 'Appeal'
         AND original_judge_task.type = 'JudgeDecisionReviewTask'
         AND original_judge_task.status = 'completed'"
       )

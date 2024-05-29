@@ -103,6 +103,26 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(case_rows.length).to eq(1)
       end
     end
+
+    context "The judge should still see the assign cases component if they are a member of the SCT organization" do
+      before do
+        SpecialtyCaseTeam.singleton.add_user(judge_one)
+        create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one, appeal: appeal_one)
+        create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one, appeal: appeal_two)
+      end
+
+      scenario "Checking for the assign to attorney widget" do
+        visit "/queue"
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id)
+
+        expect(page).to have_content("Cases to Assign (2)")
+        expect(page).to have_content("Moe Syzlak")
+        expect(page).to have_content("Alice Macgyvertwo")
+      end
+    end
   end
 
   context "Cannot view assigned cases queue of attorneys in other teams" do

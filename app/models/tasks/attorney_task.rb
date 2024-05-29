@@ -28,7 +28,7 @@ class AttorneyTask < Task
 
     movement_actions = [
       Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+      attorney_cancel_action
     ]
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
@@ -105,7 +105,7 @@ class AttorneyTask < Task
   end
 
   def update_params_will_move_appeal_back_to_sct_queue?(params)
-    update_params_will_cancel_attorney_task?(params) && appeal.sct_appeal?
+    update_params_will_cancel_attorney_task?(params) && assigned_to_sct_appeal?
   end
 
   def can_be_moved_by_user?(user)
@@ -144,6 +144,12 @@ class AttorneyTask < Task
     sct_task = SpecialtyCaseTeamAssignTask.find_by(appeal: appeal)
     sct_task.update!(status: Constants.TASK_STATUSES.in_progress)
     sct_task
+  end
+
+  def assigned_to_sct_appeal?
+    ama? &&
+      appeal.specialty_case_team_assign_task? &&
+      appeal.sct_appeal?
   end
 
   def attorney_cancel_action

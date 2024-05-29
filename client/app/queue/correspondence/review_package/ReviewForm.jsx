@@ -1,6 +1,7 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import React from 'react';
-import { css } from 'glamor';
+import React, { useState } from 'react';
+import { connect, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TextareaField from '../../../components/TextareaField';
@@ -8,84 +9,19 @@ import Button from '../../../components/Button';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
-
-const flexDivStyling = css({
-  display: 'flex',
-});
-
-const mainDiv = css(flexDivStyling, {
-  justifyContent: 'space-between',
-  width: '100%',
-  gap: '3%',
-  '@media (max-width: 600px)': {
-    flexDirection: 'column'
-  }
-});
-
-const divideStyling = css(flexDivStyling, {
-  width: '50%',
-  flexDirection: 'column',
-  gap: '12%',
-  '@media (max-width: 600px)': {
-    width: '100%'
-  }
-});
-
-const divideTextareaStyling = css(flexDivStyling, {
-  width: '50%',
-  flexDirection: 'column',
-  '@media (max-width: 600px)': {
-    width: '100%'
-  }
-});
-
-const veternalFileStyling = css({
-  width: '40%',
-  '@media (max-width: 1081px)': {
-    width: '100%',
-  }
-});
-
-const errorVeternalFileStyling = css({
-  width: '48%',
-  marginTop: '-6.4rem',
-  '@media (max-width: 1599px)': {
-    width: '58%'
-  }
-});
-
-const veternalNameStyling = css({
-  width: '60%',
-  '@media (max-width: 1081px)': {
-    width: '100%'
-  }
-});
-
-const inputStyling = css(flexDivStyling, {
-  gap: '5%',
-  '@media (max-width: 1081px)': {
-    flexDirection: 'column'
-  },
-});
-
-const tagStyling = css({
-  '& .cf-select__control': {
-    maxWidth: '63rem !important',
-  },
-});
-
-const textareaStyling = css({
-  maxWidth: '60rem'
-
-});
-
-const textareaWidth = css({
-  height: '15rem',
-  resize: 'none'
-
-});
+import DateSelector from '../../../components/DateSelector';
+import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import { validateDateNotInFuture } from '../../../intake/util/issues';
+import moment from 'moment';
 
 export const ReviewForm = (props) => {
+  // eslint-disable-next-line max-len
+  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
+  const [dateError, setDateError] = useState(false);
+  const stateCorrespondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+
   const handleFileNumber = (value) => {
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
@@ -110,7 +46,7 @@ export const ReviewForm = (props) => {
 
   const generateOptions = (options) =>
     options.map((option) => ({
-      value: option.name,
+      value: option.id,
       label: option.name,
       id: option.id,
     }));
@@ -125,13 +61,42 @@ export const ReviewForm = (props) => {
     return `${firstName} ${middleInitial} ${lastName}`;
   };
 
-  const handleSelect = (val) => {
+  const handleSelectCorrespondenceType = (val) => {
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
     };
 
     props.setEditableData(updatedSelectedValue);
+  };
+
+  const errorOnVADORDate = (val) => {
+
+    if (val.length === 10) {
+      const error = validateDateNotInFuture(val) ? null : 'Receipt date cannot be in the future';
+
+      return error;
+    }
+  };
+
+  const vaDORReadOnly = () => {
+    if (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor) {
+      return true;
+    }
+
+    return true;
+
+  };
+
+  const handleSelectVADOR = (val) => {
+    setDateError(errorOnVADORDate(val));
+    setVADORDate(val);
+    const updatedSelectedDate = {
+      ...props.editableData,
+      va_date_of_receipt: val,
+    };
+
+    props.setEditableData(updatedSelectedDate);
   };
 
   const handleSubmit = async () => {
@@ -141,10 +106,11 @@ export const ReviewForm = (props) => {
         correspondence: {
           notes: props.editableData.notes,
           correspondence_type_id: props.editableData.default_select_value,
+          va_date_of_receipt: vaDORDate
         },
         veteran: {
           file_number: props.editableData.veteran_file_number,
-        },
+        }
       },
     };
 
@@ -168,35 +134,81 @@ export const ReviewForm = (props) => {
     }
   };
 
+  const veteranFileNumStyle = () => {
+    if (props.errorMessage) {
+      return <div className="error-veternal-file-styling-review-form">
+        <TextField
+          label="Veteran file number"
+          value={props.editableData.veteran_file_number}
+          onChange={handleFileNumber}
+          name="veteran-file-number-input"
+          useAriaLabel
+          errorMessage={props.errorMessage}
+          readOnly={props.isReadOnly}
+        />
+      </div>;
+    }
+
+    return <div className="veternal-file-styling-review-form">
+      <TextField
+        label="Veteran file number"
+        value={props.editableData.veteran_file_number}
+        onChange={handleFileNumber}
+        name="veteran-file-number-input"
+        useAriaLabel
+        errorMessage={props.errorMessage}
+        readOnly={props.isReadOnly}
+      />
+    </div>;
+
+  };
+
+  const vaDORReadOnlyStyling = () => {
+    if (vaDORReadOnly() || props.isReadOnly) {
+      return <DateSelector
+        className={['review-package-text-input-read-only']}
+        class= "field-style-rp"
+        label="VA DOR"
+        name="date"
+        type="date"
+        onChange={handleSelectVADOR}
+        value={vaDORDate}
+        errorMessage={dateError}
+        readOnly = {vaDORReadOnly() || props.isReadOnly}
+      />;
+    }
+
+    return <DateSelector
+      className={['review-package-date-input']}
+      class= "field-style-rp"
+      label="VA DOR"
+      name="date"
+      type="date"
+      onChange={handleSelectVADOR}
+      value={vaDORDate}
+      errorMessage={dateError}
+      readOnly = {vaDORReadOnly() || props.isReadOnly}
+    />;
+  };
+
   return (
     <React.Fragment>
-      <div {...flexDivStyling} style={{ gap: '20px', marginTop: '20px' }}>
+      <div className="review-form-title-style">
         <h2>General Information</h2>
         <Button
           name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
-          disabled={!props.disableButton || props.isReadOnly}
+          disabled={!props.disableButton || props.isReadOnly || dateError}
           onClick={handleSubmit}
         />
       </div>
       <AppSegment filledBackground noMarginTop>
-        <main {...mainDiv}>
-          <div {...divideStyling}>
-            <div {...inputStyling}>
-              <div {...props.errorMessage ? { ...errorVeternalFileStyling } : { ...veternalFileStyling }}>
-                <TextField
-                  label="Veteran file number"
-                  value={props.editableData.veteran_file_number}
-                  onChange={handleFileNumber}
-                  name="veteran-file-number-input"
-                  useAriaLabel
-                  errorMessage={props.errorMessage}
-                  readOnly={props.isReadOnly}
-                />
-              </div>
-
-              <div {...veternalNameStyling}>
+        <main className="main-div-review-form">
+          <div className="divide-styling-review-form">
+            <div className="input-styling-review-form" >
+              {veteranFileNumStyle()}
+              <div className="veternal-name-styling-review-form ">
                 <TextField
                   label="Veteran name"
                   value={fullName(props.reviewDetails.veteran_name)}
@@ -205,31 +217,39 @@ export const ReviewForm = (props) => {
                   useAriaLabel
                 />
               </div>
-
             </div>
-            <div >
-
-              <SearchableDropdown
-                name="correspondence-dropdown"
-                label="Correspondence type"
-                styling={tagStyling}
-                options={generateOptions(props.reviewDetails.dropdown_values)}
-                onChange={handleSelect}
-                readOnly={props.isReadOnly}
-                placeholder="Select..."
+            <div className= "nod-styling-review-form">
+              <TextField
+                name="correspondence-package-document-type"
+                label="Package document type"
+                value = {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
+                readOnly
               />
             </div>
 
+            <div className="review-package-field-styling">
+
+              {vaDORReadOnlyStyling()}
+            </div>
           </div>
-          <div {...divideTextareaStyling}>
-            <div>
+          <div className="divide-textarea-styling-review-form">
+            <div >
               <TextareaField
+                id= "textarea-styling-review-form"
                 name="Notes"
-                styling={textareaStyling}
-                textAreaStyling={textareaWidth}
                 value={props.editableData.notes}
                 onChange={handleChangeNotes}
                 disabled={props.isReadOnly}
+              />
+            </div>
+            <div className="review-package-searchable-dropdown-div">
+              <SearchableDropdown
+                name="correspondence-dropdown"
+                label="Correspondence type"
+                options={generateOptions(props.reviewDetails.dropdown_values)}
+                onChange={handleSelectCorrespondenceType}
+                readOnly={props.isReadOnly}
+                placeholder="Select..."
               />
             </div>
           </div>
@@ -248,7 +268,7 @@ export const ReviewForm = (props) => {
               ]}
               title="Return to queue"
               closeHandler={props.handleModalClose}>
-              <span className="usa-input" style={{ marginBottom: '5px' }} tabIndex={0}>
+              <span tabIndex={0}>
                 All unsaved changes made to this mail package will be lost<br />upon returning to your queue.
               </span>
             </Modal>
@@ -267,6 +287,7 @@ ReviewForm.propTypes = {
       last_name: PropTypes.string,
     }),
     dropdown_values: PropTypes.array,
+    correspondence_type_id: PropTypes.number
   }),
   editableData: PropTypes.shape({
     notes: PropTypes.string,
@@ -280,9 +301,28 @@ ReviewForm.propTypes = {
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
+  correspondenceDocuments: PropTypes.array,
   handleReview: PropTypes.func,
-  errorMessage: PropTypes.string,
-  isReadOnly: PropTypes.bool
+  errorMessage: PropTypes.any,
+  isReadOnly: PropTypes.bool,
+  userIsCorrespondenceSuperuser: PropTypes.bool,
+  userIsCorrespondenceSupervisor: PropTypes.bool,
+  correspondence: PropTypes.object,
 };
 
-export default ReviewForm;
+const mapStateToProps = (state) => ({
+  correspondence: state.reviewPackage.correspondence,
+  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation,
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  updateCmpInformation
+}, dispatch);
+
+export default
+connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ReviewForm);

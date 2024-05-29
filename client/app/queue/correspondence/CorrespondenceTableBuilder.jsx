@@ -12,6 +12,7 @@ import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import SearchBar from '../../components/SearchBar';
+import BatchAutoAssignButton from './component/BatchAutoAssignButton';
 import {
   actionType,
   assignedToColumn,
@@ -214,6 +215,7 @@ const CorrespondenceTableBuilder = (props) => {
           {tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME &&
               <>
                 <span className="correspondence-table-builder-searchable-button-position">
+<<<<<<< HEAD
                   <Button
                     name="Assign"
                     onClick={handleAssignButtonClick}
@@ -221,9 +223,16 @@ const CorrespondenceTableBuilder = (props) => {
                   />
                 </span>
                 <span className="correspondence-table-builder-searchable-auto-assign-button-position">
+=======
+>>>>>>> feature/APPEALS-41477
                   <Button
-                    name="Auto assign correspondence"
+                    name="Assign"
+                    onClick={handleAssignButtonClick}
+                    disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
                   />
+                </span>
+                <span className="correspondence-table-builder-searchable-auto-assign-button-position">
+                  <BatchAutoAssignButton />
                 </span>
               </>
           }
@@ -254,7 +263,7 @@ const CorrespondenceTableBuilder = (props) => {
         <>
           {/* this setup should prevent a double render of the bulk assign area if a
           user is a superuser and also a supervisor */}
-          {(props.isMailSupervisor || (props.isMailSupervisor && props.isMailSuperUser)) &&
+          {(props.isMailSupervisor || (props.isMailSupervisor && props.isInboundOpsSuperuser)) &&
             (tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME ||
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
             <>
@@ -262,7 +271,7 @@ const CorrespondenceTableBuilder = (props) => {
             </>
           }
           {
-            (props.isMailSuperUser && !props.isMailSupervisor &&
+            (props.isInboundOpsSuperuser && !props.isMailSupervisor &&
               tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
           <>
             {getBulkAssignArea()}
@@ -329,7 +338,7 @@ const CorrespondenceTableBuilder = (props) => {
     <QueueOrganizationDropdown
       isMailTeamUser={props.isMailTeamUser}
       isMailSupervisor={props.isMailSupervisor}
-      isMailSuperUser={props.isMailSuperUser}
+      isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
       featureToggles={props.featureToggles}
     />
@@ -363,7 +372,7 @@ CorrespondenceTableBuilder.propTypes = {
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
   isMailTeamUser: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
   isMailSupervisor: PropTypes.bool
 };
 

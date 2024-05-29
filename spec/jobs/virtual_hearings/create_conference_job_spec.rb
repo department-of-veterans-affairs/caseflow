@@ -85,16 +85,32 @@ describe VirtualHearings::CreateConferenceJob do
       end
     end
 
-    it "creates a conference", :aggregate_failures do
-      subject.perform_now
+    shared_examples "conference created" do
+      it "creates a conference", :aggregate_failures do
+        subject.perform_now
 
-      virtual_hearing.reload
-      expect(virtual_hearing.conference_id).to eq(9001)
-      expect(virtual_hearing.status).to eq(:active)
-      expect(virtual_hearing.alias).to eq("0000001")
-      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
-      expect(virtual_hearing.host_pin.to_s.length).to eq(8)
-      expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
+        virtual_hearing.reload
+        expect(virtual_hearing.conference_id).to eq(9001)
+        expect(virtual_hearing.status).to eq(:active)
+        expect(virtual_hearing.alias).to eq("0000001")
+        expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
+        expect(virtual_hearing.host_pin.to_s.length).to eq(8)
+        expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
+      end
+    end
+
+    context "conference creation" do
+      context "when all emails present" do
+        include_examples "conference created"
+      end
+
+      context "when appealant email is missing" do
+        before do
+          virtual_hearing.update!(appellant_email: nil)
+        end
+
+        include_examples "conference created"
+      end
     end
 
     include_examples "confirmation emails are sent"

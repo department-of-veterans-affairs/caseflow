@@ -2,8 +2,7 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
-    @mail_team_users ||= User.mail_team_users.select(:css_id).pluck(:css_id)
-    render "correspondence/review_package"
+    @mail_team_users = User.mail_team_users.select(:css_id).pluck(:css_id)
   end
 
   def package_documents
@@ -26,7 +25,8 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       efolder_upload_failed_before: EfolderUploadFailedTask.where(
         appeal_id: correspondence.id, type: "EfolderUploadFailedTask"
       ),
-      taskInstructions: task_instructions
+      taskInstructions: task_instructions,
+      display_intake_appeal: display_intake_appeal
     }
     render({ json: response_json }, status: :ok)
   end
@@ -78,9 +78,13 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   private
 
+  def display_intake_appeal
+    !(current_user.mail_supervisor? || current_user.inbound_ops_team_superuser?)
+  end
+
   def update_veteran_on_correspondence
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])
-    veteran && correspondence.update(
+    veteran && correspondence.update!(
       correspondence_params.merge(
         veteran_id: veteran.id,
         updated_by_id: RequestStore.store[:current_user].id
@@ -89,7 +93,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_open_review_package_tasks
-    correspondence.tasks.open.where(type: ReviewPackageTask.name).each do |task|
+    correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
       task.update(status: Constants.TASK_STATUSES.in_progress)
     end
   end
@@ -103,5 +107,10 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       data ||= demo_data
     end
     data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+  end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
   end
 end

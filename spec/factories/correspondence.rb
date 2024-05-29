@@ -8,11 +8,16 @@ FactoryBot.define do
     cmp_queue_id { 1 }
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
     va_date_of_receipt { Time.zone.yesterday }
-    notes { "This is a test note." }
+    notes { "" }
+    nod { false }
     assigned_by factory: :user
     correspondence_type
     veteran
     package_document_type
+
+    trait :nod do
+      nod { true }
+    end
 
     trait :with_single_doc do
       after(:create) do |correspondence|

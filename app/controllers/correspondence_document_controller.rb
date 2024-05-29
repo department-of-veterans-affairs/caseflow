@@ -6,7 +6,7 @@ class CorrespondenceDocumentController < ApplicationController
   def update_document
     document = CorrespondenceDocument.find(params[:id])
     document.update!(update_params)
-    render json: {}
+    render json: { correspondence: document.correspondence }
   end
 
   def update_params
