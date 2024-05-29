@@ -151,7 +151,7 @@ module Seeds
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        InboundOpsTeam.singleton.add_user(u)
+        InboundOpsTeam.singleton.add_user(new_user)
       end
     end
 
