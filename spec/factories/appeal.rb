@@ -468,7 +468,7 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
-        if evaluator.appeal_reload?
+        if evaluator.appeal_reload
           appeal.reload
         end
 
