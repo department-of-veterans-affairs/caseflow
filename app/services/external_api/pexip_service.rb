@@ -41,8 +41,6 @@ class ExternalApi::PexipService
   end
 
   def delete_conference(virtual_hearing)
-    return if virtual_hearing.conference_id.nil?
-
     delete_endpoint = "#{CONFERENCES_ENDPOINT}#{virtual_hearing.conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
     return lack_of_connectivity_response if resp.nil?
