@@ -10,7 +10,7 @@ class IssueModificationRequest < CaseflowRecord
 
   validates :status, :requestor, presence: true
 
-  before_create :open_issue_modification_request, if: :not_addition?
+  validate :open_issue_modification_request, if: proc { |imr| !imr.addition? }
 
   before_save :set_decided_at
 
@@ -28,8 +28,59 @@ class IssueModificationRequest < CaseflowRecord
     withdrawal: "withdrawal"
   }
 
+  class ErrorCreatingNewRequest < StandardError
+    def initialize
+      super("Issue status must be in an assigned state")
+    end
+  end
+
+  class ErrorModifingExistingRequest < StandardError
+    def initialize
+      super("Must be the same requestor or request must be on an assigned state")
+    end
+  end
+
   def serialize
     Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
+  def self.create_from_params!(attributes, review)
+    fail ErrorCreatingNewRequest if !attributes[:status].casecmp("assigned").zero?
+
+    create!(
+      decision_review: review,
+      request_issue_id: attributes[:request_issue_id],
+      request_type: attributes[:request_type].downcase,
+      request_reason: attributes[:request_reason],
+      benefit_type: attributes[:benefit_type],
+      decision_date: attributes[:decision_date],
+      decision_reason: attributes[:decision_reason],
+      nonrating_issue_category: attributes[:nonrating_issue_category],
+      nonrating_issue_description: attributes[:nonrating_issue_description],
+      status: attributes[:status].downcase,
+      requestor_id: attributes[:requestor_id]
+    )
+  end
+
+  def update_from_params!(attributes, current_user)
+    unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
+      fail ErrorModifingExistingRequest
+    end
+
+    update!(
+      nonrating_issue_category: attributes[:nonrating_issue_category],
+      decision_date: attributes[:decision_date],
+      nonrating_issue_description: attributes[:nonrating_issue_description],
+      request_reason: attributes[:request_reason]
+    )
+  end
+
+  def cancel_from_params!(attributes, current_user)
+    unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
+      fail ErrorModifingExistingRequest
+    end
+
+    update!(status: "cancelled")
   end
 
   private
@@ -44,9 +95,5 @@ class IssueModificationRequest < CaseflowRecord
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
-  end
-
-  def not_addition?
-    request_type != "addition"
   end
 end

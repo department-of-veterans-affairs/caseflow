@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe NonAdmin::IssueModificationRequestsUpdater do
-  let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_intake_admin) }
+  let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_admin_user) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
   let(:issue_modification_request) { create(:issue_modification_request, requestor: non_admin_requestor) }
   let(:status) { "assigned" }
@@ -71,8 +71,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     context "and in assigned status" do
       it "should create new issue modifications request record" do
         subject.process!
+
         expect(IssueModificationRequest.count).to eq(1)
-        expect(subject.success?).to be_truthy
       end
     end
 
@@ -80,17 +80,14 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       let(:status) { "cancelled" }
 
       it "should return false and set error message" do
-        subject.process!
-        expect(subject.success?).to be_falsy
-
-        expect(subject.error_code).to eq(
-          NonAdmin::IssueModificationRequestsUpdater::NEW_REQUEST_ERROR
+        expect { subject.process! }.to raise_error(
+          StandardError, "Issue status must be in an assigned state"
         )
       end
     end
   end
 
-  describe "when editing an exisitng issue modifications request" do
+  describe "when editing an existng issue modifications request" do
     subject do
       described_class.new(
         current_user: non_admin_requestor,
@@ -104,7 +101,6 @@ describe NonAdmin::IssueModificationRequestsUpdater do
         subject.process!
         issue_modification_request.reload
 
-        expect(subject.success?).to be_truthy
         expect(issue_modification_request.request_reason).to eq(edited_request_reason)
       end
     end
@@ -113,12 +109,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       let(:status) { "cancelled" }
 
       it "should return false and set error message" do
-        subject.process!
-        issue_modification_request.reload
-
-        expect(subject.success?).to be_falsy
-        expect(subject.error_code).to eq(
-          NonAdmin::IssueModificationRequestsUpdater::MODIFICATION_ERROR
+        expect { subject.process! }.to raise_error(
+          StandardError, "Must be the same requestor or request must be on an assigned state"
         )
       end
     end
@@ -127,12 +119,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       before { subject.instance_variable_set(:@current_user, create(:user)) }
 
       it "should return false and set error message" do
-        subject.process!
-        issue_modification_request.reload
-
-        expect(subject.success?).to be_falsy
-        expect(subject.error_code).to eq(
-          NonAdmin::IssueModificationRequestsUpdater::MODIFICATION_ERROR
+        expect { subject.process! }.to raise_error(
+          StandardError, "Must be the same requestor or request must be on an assigned state"
         )
       end
     end
@@ -152,7 +140,6 @@ describe NonAdmin::IssueModificationRequestsUpdater do
         subject.process!
         issue_modification_request.reload
 
-        expect(subject.success?).to be_truthy
         expect(issue_modification_request.status).to eq("cancelled")
       end
     end
@@ -161,12 +148,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       let(:status) { "approved" }
 
       it "should return false and set error message" do
-        subject.process!
-        issue_modification_request.reload
-
-        expect(subject.success?).to be_falsy
-        expect(subject.error_code).to eq(
-          NonAdmin::IssueModificationRequestsUpdater::MODIFICATION_ERROR
+        expect { subject.process! }.to raise_error(
+          StandardError, "Must be the same requestor or request must be on an assigned state"
         )
       end
     end
@@ -175,12 +158,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
       before { subject.instance_variable_set(:@current_user, create(:user)) }
 
       it "should return false and set error message" do
-        subject.process!
-        issue_modification_request.reload
-
-        expect(subject.success?).to be_falsy
-        expect(subject.error_code).to eq(
-          NonAdmin::IssueModificationRequestsUpdater::MODIFICATION_ERROR
+        expect { subject.process! }.to raise_error(
+          StandardError, "Must be the same requestor or request must be on an assigned state"
         )
       end
     end

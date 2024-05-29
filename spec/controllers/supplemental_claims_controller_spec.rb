@@ -10,28 +10,32 @@ describe SupplementalClaimsController, :postgres, type: :controller do
     end
 
     context "When non admin user is requesting an issue modification " do
-      let(:user) { create(:intake_user, :vha_intake) }
+      let(:user) { create(:intake_user, :vha_default_user) }
+      let(:issue_modification_request) do
+        create(:issue_modification_request, :with_higher_level_review)
+      end
 
       it "should call #issues_modification_request_update.process! and return 200" do
         updater = instance_double(
           NonAdmin::IssueModificationRequestsUpdater, {
             current_user: user,
             review: supplemental_claim,
-            issue_modifications_data: { issue_modification_requests:
-              {
+            issue_modifications_data: {
+              issue_modification_requests: {
                 new: [], edited: [], cancelled: [
                   {
-                    id: 1, status: "assigned"
+                    id: issue_modification_request.id, status: "assigned"
                   }
                 ]
-              } }
+              }
+            }
           }
         )
 
         allow(NonAdmin::IssueModificationRequestsUpdater).to receive(:new).and_return(updater)
-        allow(updater).to receive(:success?).and_return(true)
+        # allow(updater).to receive(:success?).and_return(true)
 
-        expect(updater).to receive(:process!)
+        expect(updater).to receive(:process!).and_return(true)
 
         post :update, params: {
           claim_id: supplemental_claim.uuid,
@@ -41,7 +45,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
             edited: [],
             cancelled: [
               {
-                id: 1, status: "assigned"
+                id: issue_modification_request.id, status: "assigned"
               }
             ]
           }

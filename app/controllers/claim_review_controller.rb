@@ -28,11 +28,8 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if process_modification?
-      issues_modification_request_updater.process!
-      return render_success if issues_modification_request_updater.success?
-
-      render json: { error_code: issues_modification_request_updater.error_code }, status: :unprocessable_entity
+    if issues_modification_request_updater.process!
+      render_success
     elsif request_issues_update.perform!
       render_success
     else
@@ -56,14 +53,6 @@ class ClaimReviewController < ApplicationController
   end
 
   private
-
-  def process_modification?
-    params[:issue_modification_requests].present? && (
-      params[:issue_modification_requests][:cancelled].present? ||
-      params[:issue_modification_requests][:edited].present? ||
-      params[:issue_modification_requests][:new].present?
-    )
-  end
 
   def source_type
     fail "Must override source_type"
