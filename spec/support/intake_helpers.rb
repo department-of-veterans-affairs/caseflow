@@ -404,9 +404,10 @@ module IntakeHelpers
 
   def click_remove_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_remove").click
+
+    within issue_el do
+      click_dropdown(prompt: "Select action", text: "Remove")
+    end
     click_remove_issue_confirmation
   end
 
