@@ -45,7 +45,11 @@ export class DecisionReviewer extends React.PureComponent {
       return;
     }
 
-    history.push(`/${vacolsId}/documents/${docId}`);
+    if (window.location.pathname.includes('prototype')) {
+      history.push(`/${vacolsId}/documents/${docId}/prototype`);
+    } else {
+      history.push(`/${vacolsId}/documents/${docId}`);
+    }
   }
 
   clearPlacingAnnotationState = () => {
@@ -167,18 +171,20 @@ export class DecisionReviewer extends React.PureComponent {
       rightNavElement={<CaseSearchLink />}
       defaultUrl="/queue"
       outsideCurrentRouter>
-      <PageRoute
-        exact
-        title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer"
-        path="/:vacolsId/documents/:docId"
-        render={this.routedPdfViewer} />
-      <PageRoute
-        exact
-        title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer"
-        path="/:vacolsId/documents/:docId/prototype"
-        render={this.routedPdfViewerPrototype} />
+      { window.location.pathname.includes('prototype') ?
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer Prototype"
+          path="/:vacolsId/documents/:docId/prototype"
+          render={this.routedPdfViewerPrototype} /> :
+        <PageRoute
+          exact
+          title="Document Viewer | Caseflow Reader"
+          breadcrumb="Document Viewer"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer} />
+      }
       <AppFrame wideApp>
         <PageRoute
           exact
