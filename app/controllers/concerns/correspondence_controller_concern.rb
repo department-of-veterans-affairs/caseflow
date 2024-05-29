@@ -32,7 +32,7 @@ module CorrespondenceControllerConcern
   end
 
   def update_task(mail_team_user, task_id)
-    task = Task.where(id: task_id)
+    task = Task.find_by(id: task_id)
     task.update(
       assigned_to_id: mail_team_user.id,
       assigned_to_type: "User",
