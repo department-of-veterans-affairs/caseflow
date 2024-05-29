@@ -217,7 +217,7 @@ RSpec.feature "Explain JSON" do
     end
     let!(:ama_appeal_with_affinity) do
       create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
-        tied_judge: create(:user, :judge, :with_vacols_judge_record))
+             tied_judge: create(:user, :judge, :with_vacols_judge_record))
     end
     let!(:ama_appeal_without_affinity) do
       create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
