@@ -12,17 +12,31 @@ const IssueModificationList = (
     lastSection
   }
 ) => {
+  const generateModificationOptions = (optionsLabel) => {
+    return [{
+      label: `Edit issue ${optionsLabel} request`,
+      value: optionsLabel
+    },
+    {
+      label: `Cancel ${optionsLabel} request`,
+      value: 'cancel'
+    }];
+  };
+
   let details;
   let originalIssue;
   let withDrawal;
+  let optionsLabel;
 
   const issues = issuesArr.map((issue, id) => {
     switch (issue.requestType) {
     case COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE:
       details = COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS;
+      optionsLabel = 'addition';
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE:
       details = COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS;
+      optionsLabel = 'modification';
       originalIssue = (
         <>
           <div>
@@ -43,9 +57,11 @@ const IssueModificationList = (
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE:
       details = COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS;
+      optionsLabel = 'removal';
       break;
     case COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE:
       details = COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS;
+      optionsLabel = 'withdrawal';
       withDrawal = (
         <>
           <br />
@@ -70,6 +86,7 @@ const IssueModificationList = (
           details={details}
           originalIssue={originalIssue}
           withDrawal={withDrawal}
+          modificationActionOptions={generateModificationOptions(optionsLabel)}
         />
         {issuesArr.length > 1 && id !== issuesArr.length - 1 ?
           <>
