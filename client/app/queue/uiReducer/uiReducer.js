@@ -27,6 +27,7 @@ export const initialState = {
   },
   userIsVsoEmployee: false,
   userIsCamoEmployee: false,
+  userIsSCTCoordinator: false,
   feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
@@ -224,6 +225,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userIsCamoEmployee: { $set: action.payload.userIsCamoEmployee }
     });
+  case ACTIONS.SET_USER_IS_SCT_COORDINATOR:
+    return update(state, {
+      userIsSCTCoordinator: { $set: action.payload.userIsSCTCoordinator }
+    });
   case ACTIONS.SET_FEEDBACK_URL:
     return update(state, {
       feedbackUrl: { $set: action.payload.feedbackUrl }
@@ -259,6 +264,7 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       activeOrganization: {
         id: { $set: action.payload.id },
+        type: { $set: action.payload.type },
         name: { $set: action.payload.name },
         isVso: { $set: action.payload.isVso },
         userCanBulkAssign: { $set: action.payload.userCanBulkAssign }

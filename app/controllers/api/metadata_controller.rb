@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationController
 class Api::MetadataController < ActionController::Base
   protect_from_forgery with: :null_session
 
@@ -26,3 +27,4 @@ class Api::MetadataController < ActionController::Base
     }
   end
 end
+# rubocop:enable Rails/ApplicationController

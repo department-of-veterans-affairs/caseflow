@@ -7,10 +7,6 @@ class ReviewsWithDuplicateEpErrorChecker < DataIntegrityChecker
     build_report(higher_level_review_ids, supplemental_claim_ids)
   end
 
-  def slack_channel
-    "#appeals-foxtrot"
-  end
-
   private
 
   ERROR_SELECTOR = "establishment_error ILIKE '%duplicateep%'"

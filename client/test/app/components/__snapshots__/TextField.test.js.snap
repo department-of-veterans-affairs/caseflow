@@ -12,13 +12,17 @@ exports[`TextField renders correctly 1`] = `
         field1
       </span>
     </label>
-    <input
-      class="cf-form-textinput"
-      id="field1"
-      name="field1"
-      type="text"
-      value=""
-    />
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="field1"
+        name="field1"
+        type="text"
+        value=""
+      />
+    </div>
   </div>
 </div>
 `;

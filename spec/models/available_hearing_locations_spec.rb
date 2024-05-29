@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe AvailableHearingLocations, :all_dbs do
+  it_behaves_like "AvailableHearingLocations belongs_to polymorphic appeal" do
+    before { AvailableHearingLocations.delete_all }
+  end
+
   let!(:appeal) { create(:appeal) }
 
   let!(:location1) do

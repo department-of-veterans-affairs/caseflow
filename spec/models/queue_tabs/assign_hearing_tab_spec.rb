@@ -196,7 +196,9 @@ describe AssignHearingTab do
       it "returns correct options" do
         cache_ama_appeals
 
-        expect(subject.first[:value]).to eq(URI.escape(URI.escape(appeal.representative_name)))
+        expect(subject.first[:value]).to eq(
+          URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(appeal.representative_name))
+        )
         expect(subject.first[:displayText]).to eq("#{appeal.representative_name} (2)")
       end
     end
@@ -207,7 +209,9 @@ describe AssignHearingTab do
       it "returns correct options" do
         cache_ama_appeals
 
-        expect(subject.first[:value]).to eq(URI.escape(URI.escape(hearing_location1.formatted_location)))
+        expect(subject.first[:value]).to eq(
+          URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(hearing_location1.formatted_location))
+        )
         expect(subject.first[:displayText]).to eq("#{hearing_location1.formatted_location} (2)")
       end
     end

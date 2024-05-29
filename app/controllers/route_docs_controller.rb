@@ -5,6 +5,7 @@ class RouteDocsController < ApplicationController
     SOURCE_URL_PREFIX = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/"
 
     attr_reader :rails_route
+
     delegate :defaults, :verb, to: :rails_route
 
     def initialize(rails_route)

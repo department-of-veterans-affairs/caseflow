@@ -456,5 +456,30 @@ describe Issue, :all_dbs do
 
       it { is_expected.to be_truthy }
     end
+
+    context "#vbms_attributes" do
+      subject { issue.vbms_attributes }
+      it "shows all the vbms attributes attached to the issue" do
+        is_expected.to eq(
+          id: issue.id,
+          notice_of_disagreement_date: appeal.nod_date,
+          legacy_appeal_status: appeal.status,
+          legacy_appeal_soc_date: appeal.soc_date,
+          legacy_appeal_ssoc_dates: appeal.ssoc_dates,
+          legacy_appeal_eligible_for_opt_in: appeal.eligible_for_opt_in?(receipt_date: Time.zone.today),
+          legacy_appeal_eligible_for_soc_opt_in_with_exemption: appeal.eligible_for_opt_in?(
+            receipt_date: Time.zone.today, covid_flag: true
+          ),
+          vacols_id: issue.id,
+          vacols_sequence_id: issue.vacols_sequence_id,
+          eligible_for_soc_opt_in: issue.eligible_for_opt_in?,
+          eligible_for_soc_opt_in_with_exemption: issue.eligible_for_opt_in?(covid_flag: true),
+          description: issue.friendly_description,
+          disposition: issue.disposition,
+          close_date: issue.close_date,
+          note: issue.note
+        )
+      end
+    end
   end
 end

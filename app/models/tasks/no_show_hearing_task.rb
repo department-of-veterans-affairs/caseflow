@@ -18,6 +18,8 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
+  delegate :hearing, to: :parent, allow_nil: true
+
   DAYS_ON_HOLD = 15
 
   def self.create_with_hold(parent_task)
@@ -35,7 +37,7 @@ class NoShowHearingTask < Task
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)
 
-    if (assigned_to &.== user) || task_is_assigned_to_users_organization?(user)
+    if (assigned_to&.== user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.to_h,
         Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.to_h,
@@ -61,6 +63,8 @@ class NoShowHearingTask < Task
       ScheduleHearingTask.create!(appeal: appeal, parent: ancestor_task_of_type(HearingTask)&.parent)
 
       update!(status: Constants.TASK_STATUSES.completed)
+
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingPostponementRequestMailTask)
     end
   end
 

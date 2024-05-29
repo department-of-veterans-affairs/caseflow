@@ -23,6 +23,9 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+  "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "sct_action_required",
+  "SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME": "sct_completed",
+  "SPECIALTY_CASE_TEAM_UNASSIGNED_TASKS_TAB_NAME": "sct_unassigned",
 
   "EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME": "education_rpo_assigned",
   "EDUCATION_RPO_IN_PROGRESS_TASKS_TAB_NAME": "education_rpo_in_progress",
@@ -97,6 +100,14 @@
       "name": "issueCountColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
+    },
+    "ISSUE_TYPES": {
+      "filterable": true,
+      "name": "issueTypesColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": [
+        "issue_types"
+      ]
     },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
@@ -175,6 +186,7 @@
 
   "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
   "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
+  "BLANK_FILTER_KEY_VALUE": "None",
 
   "FILTER_OPTIONS": {
     "IS_AOD": {

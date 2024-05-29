@@ -274,7 +274,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     let!(:params) { { organization_url: org.url, id: user.id } }
 
     let(:org) { create(:judge_team, :has_judge_team_lead_as_admin) }
-    let!(:user) do
+    let(:user) do
       create(:user).tap do |user|
         org.add_user(user)
       end
@@ -300,7 +300,9 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
 
-    context "when user is the judge in the organization", skip: "Flake" do
+    context "when user is the judge in the organization" do
+      let(:user) { org.admin }
+
       it "returns an error" do
         subject
 

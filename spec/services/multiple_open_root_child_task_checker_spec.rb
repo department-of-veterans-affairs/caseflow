@@ -5,11 +5,6 @@ describe MultipleOpenRootChildTaskChecker do
   let!(:appeal2) { create(:appeal, :with_schedule_hearing_tasks) }
   let!(:appeal3) { create(:appeal, :at_attorney_drafting) }
 
-  it "reports to correct slack channel" do
-    subject.call
-    expect(subject.slack_channel).to eq("#appeals-echo")
-  end
-
   context "there are no appeals with more than one open root-child task" do
     it "does not generate a report" do
       subject.call

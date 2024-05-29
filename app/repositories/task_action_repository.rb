@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository
+class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -18,24 +18,35 @@ class TaskActionRepository
     end
 
     def mail_assign_to_organization_data(task, user = nil)
-      options = MailTask.subclass_routing_options(user: user, appeal: task.appeal)
-      valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      if task.appeal.is_a? Appeal
+        options = MailTask.descendant_routing_options(user: user, appeal: task.appeal)
+          .reject { |opt| opt[:value] == task.type }
+        valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      elsif task.appeal.is_a? LegacyAppeal
+        valid_options = MailTask::LEGACY_MAIL_TASKS
+      end
       { options: valid_options }
     end
 
     def mark_task_as_complete_cc(_task, _user = nil)
-      { modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL }
+      {
+        modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM
+      }
     end
 
     def mark_final_notification_letter(_task, _user = nil)
-      { modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM }
+      {
+        modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM
+      }
     end
 
     def cancel_task_data(task, _user = nil)
       return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
@@ -99,6 +110,14 @@ class TaskActionRepository
           task.appeal.veteran_full_name
         )
       }
+    end
+
+    def format_cancel_body(task, text, name)
+      if task.is_a?(MailTask)
+        ""
+      else
+        format(text, name)
+      end
     end
 
     def assign_to_hearings_user_data(task, user = nil)
@@ -345,7 +364,8 @@ class TaskActionRepository
 
     def complete_data(task, _user = nil)
       params = {
-        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym],
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
@@ -358,14 +378,16 @@ class TaskActionRepository
 
     def proceed_final_notification_letter_data(task, _user = nil)
       params = {
-        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym],
+        modal_button_text: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
       }
 
-      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-      else
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+      params[:modal_body] =
+        if task.type == "PostSendInitialNotificationLetterHoldingTask"
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        else
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -377,7 +399,8 @@ class TaskActionRepository
     def resend_initial_notification_letter_post_holding(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY,
+        modal_button_text: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
       }
 
       params
@@ -386,7 +409,8 @@ class TaskActionRepository
     def resend_initial_notification_letter_final(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY,
+        modal_button_text: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
       }
 
       params
@@ -395,19 +419,23 @@ class TaskActionRepository
     def resend_final_notification_letter_task_data(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY
+        modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY,
+        modal_button_text: COPY::RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
       }
       params
     end
 
     def vha_complete_data(task, _user)
       org = Organization.find(task.assigned_to_id)
+      org_to_receive = org.is_a?(VhaProgramOffice) ? "VHA CAMO" : "VHA Program Office"
       queue_url = org.url
       {
-        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
+        radio_field_label: format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, org_to_receive),
         instructions: [],
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{completed_tab_url(org)}"
       }
     end
 
@@ -438,6 +466,7 @@ class TaskActionRepository
     def complete_transcription_data(_task, _user)
       {
         modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON,
         modal_hide_instructions: true
       }
     end
@@ -532,7 +561,18 @@ class TaskActionRepository
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
 
-      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+      task_helper = TaskActionHelper.build_hash(action, task, user).merge(
+        returns_complete_hash: true
+      )
+
+      return task_helper if task.assigned_to.is_a?(User)
+
+      task_helper.merge(
+        data: {
+          redirect_after:
+            "/organizations/#{task.assigned_to.url}?tab=#{po_user(task.assigned_to)}on_hold&page=1"
+        }
+      )
     end
 
     def review_decision_draft(task, user)
@@ -557,8 +597,9 @@ class TaskActionRepository
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
+        modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
@@ -566,6 +607,7 @@ class TaskActionRepository
     def vha_return_to_board_intake(*)
       dropdown_options = downcase_keys(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS)
       {
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         modal_title: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}?tab=#{VhaCamoCompletedTasksTab.tab_name}",
@@ -575,6 +617,7 @@ class TaskActionRepository
 
     def vha_documents_ready_for_bva_intake_for_review(*)
       {
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
         body_optional: true,
@@ -585,6 +628,7 @@ class TaskActionRepository
     def emo_send_to_board_intake_for_review(*)
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -596,6 +640,7 @@ class TaskActionRepository
       queue_url = org.url
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationAssessDocumentationTask.name,
         body_optional: true,
         redirect_after: "/organizations/#{queue_url}"
@@ -606,8 +651,10 @@ class TaskActionRepository
       {
         options: organizations_to_options(VhaProgramOffice.all),
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
-        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        drop_down_label: COPY::VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
@@ -617,11 +664,20 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        options: organizations_to_options(VhaRegionalOffice.all),
+        options: {
+          vamc: vamcs_to_options,
+          visn: visns_to_options
+        },
         modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
-        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        body_optional: true,
         instructions: [],
+        instructions_label: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL,
+        drop_down_label: {
+          vamc: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+          visn: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN
+        },
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -634,8 +690,10 @@ class TaskActionRepository
         modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
         message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -646,8 +704,10 @@ class TaskActionRepository
         modal_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         message_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -660,6 +720,8 @@ class TaskActionRepository
         options: [{ label: camo.name, value: camo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -675,6 +737,8 @@ class TaskActionRepository
         options: [{ label: caregiver.name, value: caregiver.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -690,6 +754,8 @@ class TaskActionRepository
         options: [{ label: emo.name, value: emo.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -697,21 +763,23 @@ class TaskActionRepository
     end
 
     def vha_mark_task_in_progress(task, _user)
-      org = Organization.find(task.assigned_to_id)
-      queue_url = org.url
+      task_url = task.assigned_to.url
       {
         modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{task_url}?tab=po_inProgressTab&page=1"
       }
     end
 
     def emo_return_to_board_intake(*)
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -721,8 +789,10 @@ class TaskActionRepository
       {
         options: organizations_to_options(EducationRpo.all),
         modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
-        modal_body: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        drop_down_label: COPY::EMO_ASSIGN_TO_RPO_MODAL_BODY,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -738,6 +808,7 @@ class TaskActionRepository
           COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}",
         modal_button_text: COPY::MODAL_RETURN_BUTTON
@@ -752,6 +823,7 @@ class TaskActionRepository
         modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
+        modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -779,6 +851,7 @@ class TaskActionRepository
       {
         modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: VhaDocumentSearchTask.name,
         options: dropdown_options,
         redirect_after: queue_url
@@ -800,10 +873,38 @@ class TaskActionRepository
       }
     end
 
+    def send_colocated_task(*)
+      {
+        modal_button_text: COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+      }
+    end
+
+    def mark_task_complete_data(*)
+      {
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
+      }
+    end
+
+    def cancel_task_and_return_to_sct_action(task, _)
+      {
+        modal_title: COPY::RETURN_TO_SCT_MODAL_TITLE,
+        modal_body: COPY::RETURN_TO_SCT_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+        show_instructions: true,
+        message_title: format(COPY::RETURN_TO_SCT_SUCCESS_BANNER_TITLE, task.appeal.claimant.name),
+        message_detail: COPY::RETURN_TO_SCT_SUCCESS_BANNER_DETAIL
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      # bypass special issues page if MST is enabled
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if
+        FeatureToggle.enabled?(:mst_identification)
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
@@ -826,6 +927,30 @@ class TaskActionRepository
 
     def task_assigner_name(task)
       task.assigned_by&.full_name || "the assigner"
+    end
+
+    def prepend_visn_id(visn)
+      "VISN #{Constants::VISNS_NUMBERED[visn]} - #{visn}"
+    end
+
+    def visns_to_options
+      VhaRegionalOffice.all.map do |org|
+        {
+          label: prepend_visn_id(org.name),
+          value: org.id
+        }
+      end
+    end
+
+    def vamcs_to_options
+      value = -1
+      Constants::VHA_VAMCS.map do |office|
+        value += 1
+        {
+          label: office["name"],
+          value: value
+        }
+      end
     end
 
     def organizations_to_options(organizations)
@@ -861,6 +986,16 @@ class TaskActionRepository
       options.map do |_, value|
         value.transform_keys(&:downcase)
       end
+    end
+
+    def completed_tab_url(organization)
+      organization.completed_tasks_tab.name
+    end
+
+    def po_user(organization)
+      return unless organization.is_a?(VhaProgramOffice) || organization.is_a?(VhaRegionalOffice)
+
+      "po_"
     end
   end
 end

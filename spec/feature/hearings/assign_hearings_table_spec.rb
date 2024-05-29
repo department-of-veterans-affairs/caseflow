@@ -19,6 +19,7 @@ RSpec.feature "Assign Hearings Table" do
   context "No upcoming hearing days" do
     scenario "Show status message for empty upcoming hearing days" do
       visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
       click_dropdown(text: "Winston-Salem, NC")
       expect(page).to have_content("No upcoming hearing days")
     end
@@ -449,6 +450,8 @@ RSpec.feature "Assign Hearings Table" do
         it "filters are correct, and filter as expected" do
           step "navigate to St. Petersburg legacy veterans tab" do
             visit "hearings/schedule/assign"
+            expect(page).to have_content("Regional Office")
+
             click_dropdown(text: "St. Petersburg")
             click_button("Legacy Veterans Waiting", exact: true)
           end

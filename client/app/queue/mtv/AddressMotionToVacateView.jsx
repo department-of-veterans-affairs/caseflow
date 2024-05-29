@@ -18,6 +18,9 @@ export const AddressMotionToVacateView = () => {
 
   const task = useSelector((state) => taskById(state, { taskId }));
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const vacateTypeFeatureToggle = useSelector(
+    (state) => state.ui.featureToggles.cc_vacatur_visibility
+  );
 
   const { selected, options } = taskActionData({ task,
     match });
@@ -42,6 +45,7 @@ export const AddressMotionToVacateView = () => {
       task={task}
       attorneys={attyOptions}
       selectedAttorney={selected}
+      vacateTypeFeatureToggle = {vacateTypeFeatureToggle}
       appeal={appeal}
       onSubmit={handleSubmit}
       returnToLitSupportLink={`${match.url}/${JUDGE_RETURN_TO_LIT_SUPPORT.value}`}

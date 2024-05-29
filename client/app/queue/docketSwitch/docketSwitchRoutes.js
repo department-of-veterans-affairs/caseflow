@@ -7,32 +7,43 @@ import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/Recommen
 import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingContainer';
 import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
 import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
+import { replaceSpecialCharacters } from '../utils';
 
+const basePath = '/queue/appeals/:appealId/tasks/:taskId';
 const PageRoutes = [
   <PageRoute
-    path={`/queue/appeals/:appealId/tasks/:taskId/${
+    path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
+    key={replaceSpecialCharacters(`${basePath}/${
+      TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
+    }`)}
   >
     <RecommendDocketSwitchContainer />
   </PageRoute>,
 
   <PageRoute
-    path={`/queue/appeals/:appealId/tasks/:taskId/${
+    path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
+    key={replaceSpecialCharacters(`${basePath}/${
+      TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
+    }`)}
   >
     <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
-  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout">
+  <Route
+    path={`${basePath}/docket_switch/checkout`}
+    key={replaceSpecialCharacters(`${basePath}/docket_switch/checkout`)}
+  >
     {/* The component here will add additional `Switch` and child routes */}
     <Switch>
       <PageRoute
-        path={`/queue/appeals/:appealId/tasks/:taskId/${
+        path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
@@ -40,7 +51,7 @@ const PageRoutes = [
         <DocketSwitchDenialContainer />
       </PageRoute>
       <PageRoute
-        path={`/queue/appeals/:appealId/tasks/:taskId/${
+        path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}

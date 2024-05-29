@@ -1,7 +1,6 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
-  convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,

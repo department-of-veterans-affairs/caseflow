@@ -66,21 +66,28 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(ApiView.count).to eq(0)
     end
 
-    it "returns 404 if veteran with that SSN isn't found", skip: "I believe this just returns an empty array" do
-      headers = {
-        "ssn": "444444444",
-        "Authorization": "Token token=#{api_key.key_string}"
-      }
+    context "ssn not found" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, _ssn|
+          nil
+        end
+      end
 
-      get "/api/v2/appeals", headers: headers
+      it "returns 404 if veteran with that SSN isn't found" do
+        headers = {
+          "ssn": "444444444",
+          "Authorization": "Token token=#{api_key.key_string}"
+        }
 
-      expect(response.code).to eq("404")
+        get "/api/v2/appeals", headers: headers
 
-      json = JSON.parse(response.body)
-      expect(json["errors"].length).to eq(1)
-      expect(json["errors"].first["title"]).to eq("Veteran not found")
+        expect(response.code).to eq("404")
 
-      expect(ApiView.count).to eq(1)
+        json = JSON.parse(response.body)
+        expect(json["errors"].length).to eq(1)
+        expect(json["errors"].first["title"]).to eq("Veteran not found")
+        expect(ApiView.count).to eq(0)
+      end
     end
 
     it "records source if sent" do
@@ -239,26 +246,30 @@ describe "Appeals API v2", :all_dbs, type: :request do
       status = json["data"].last["attributes"]["status"]
       expect(status["type"]).to eq("pending_form9")
 
+      issues_array = [
+        {
+          "description" =>
+          "New and material evidence to reopen claim for service"\
+          " connection, shoulder or arm muscle injury",
+          "diagnosticCode" => "5301",
+          "active" => true,
+          "lastAction" => nil,
+          "date" => nil
+        },
+        {
+          "description" =>
+          "New and material evidence to reopen claim for service connection,"\
+          " shoulder or arm muscle injury",
+          "diagnosticCode" => "5302",
+          "active" => false,
+          "lastAction" => "field_grant",
+          "date" => (Time.zone.today - 5.days).to_s
+        }
+      ]
+
       # check the last appeal's issues
       expect(json["data"].last["attributes"]["issues"])
-        .to eq([
-                 {
-                   "description" =>
-                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
-                   "diagnosticCode" => "5301",
-                   "active" => true,
-                   "lastAction" => nil,
-                   "date" => nil
-                 },
-                 {
-                   "description" =>
-                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
-                   "diagnosticCode" => "5302",
-                   "active" => false,
-                   "lastAction" => "field_grant",
-                   "date" => (Time.zone.today - 5.days).to_s
-                 }
-               ])
+        .to match_array(issues_array)
 
       # check that the date for the last event was formatted correctly
       json_notification_date = json["data"].last["attributes"]["events"].first["date"]
@@ -298,7 +309,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:hlr) do
       create(:higher_level_review,
-             veteran_file_number: veteran_file_number,
+             veteran: veteran,
              receipt_date: receipt_date,
              informal_conference: informal_conference,
              same_office: same_office,
@@ -320,7 +331,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:supplemental_claim_review) do
       create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
+             veteran: veteran,
              receipt_date: receipt_date,
              benefit_type: "pension",
              legacy_opt_in_approved: legacy_opt_in_approved,
@@ -552,11 +563,12 @@ describe "Appeals API v2", :all_dbs, type: :request do
     let(:veteran_file_number) { "111223333" }
     let(:receipt_date) { Time.zone.today - 20.days }
     let(:benefit_type) { "compensation" }
+    let(:veteran) { create(:veteran, file_number: veteran_file_number) }
 
     let(:hlr_ep_clr_date) { receipt_date + 30 }
     let!(:hlr_with_dta_error) do
       create(:higher_level_review,
-             veteran_file_number: veteran_file_number,
+             veteran: veteran,
              receipt_date: receipt_date)
     end
 
@@ -582,7 +594,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:dta_sc) do
       create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
+             veteran: veteran,
              decision_review_remanded: hlr_with_dta_error)
     end
 

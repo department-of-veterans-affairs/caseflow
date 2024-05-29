@@ -6,9 +6,13 @@
 class CannotDeleteContentionRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  # Sub folder name
+  S3_FOLDER_NAME = "data-remediation-output"
+
   def initialize
     @logs = ["\nVBMS::CannotDeleteContention Remediation Log"]
     @remediated_request_issues_update_ids = []
+    @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
     super
   end
 
@@ -166,28 +170,10 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
       "  Resetting EPE synced_status to null.  Syncing Epe with EP.")
   end
 
-  # Save Logs to S3 Bucket
   def store_logs_in_s3_bucket
-    # Set Client Resources for AWS
-    Aws.config.update(region: "us-gov-west-1")
-    s3client = Aws::S3::Client.new
-    s3resource = Aws::S3::Resource.new(client: s3client)
-    s3bucket = s3resource.bucket("data-remediation-output")
-
     # Folder and File name
-    file_name = "cannot-delete-contention-remediation-logs/cdc-remediation-log-#{Time.zone.now}"
-
-    # Store contents of logs array in a temporary file
     content = @logs.join("\n")
-    temporary_file = Tempfile.new("cdc-log.txt")
-    filepath = temporary_file.path
-    temporary_file.write(content)
-    temporary_file.flush
-
-    # Store File in S3 bucket
-    s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
-
-    # Delete Temporary File
-    temporary_file.close!
+    file_name = "cannot-delete-contention-remediation-logs/cdc-remediation-log-#{Time.zone.now}"
+    S3Service.store_file("#{@folder_name}/#{file_name}", content)
   end
 end

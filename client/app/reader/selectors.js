@@ -58,7 +58,8 @@ export const docListIsFiltered = createSelector(
       size(documents) !== filteredDocIds.length ||
         docFilterCriteria.searchQuery ||
         some(values(docFilterCriteria.category)) ||
-        some(values(docFilterCriteria.tag))
+        some(values(docFilterCriteria.tag)) ||
+        some(values(docFilterCriteria.document))
     )
 );
 

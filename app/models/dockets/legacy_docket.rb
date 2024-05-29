@@ -5,6 +5,11 @@ class LegacyDocket < Docket
     "legacy"
   end
 
+  # currently this is used for reporting needs
+  def ready_to_distribute_appeals
+    LegacyAppeal.repository.ready_to_distribute_appeals
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|
@@ -25,7 +30,7 @@ class LegacyDocket < Docket
   end
 
   def weight
-    count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
+    count(priority: false) + nod_count * CaseDistributionLever.nod_adjustment
   end
 
   def ready_priority_appeal_ids
@@ -39,11 +44,12 @@ class LegacyDocket < Docket
   end
 
   def age_of_oldest_priority_appeal
-    if use_by_docket_date?
-      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
-    else
-      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
-    end
+    @age_of_oldest_priority_appeal ||=
+      if use_by_docket_date?
+        LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
+      else
+        LegacyAppeal.repository.age_of_oldest_priority_appeal
+      end
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)

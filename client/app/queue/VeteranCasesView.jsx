@@ -12,7 +12,7 @@ import { setFetchedAllCasesFor } from './CaseList/CaseListActions';
 import { hideVeteranCaseList } from './uiReducer/uiActions';
 import { onReceiveAppealDetails } from './QueueActions';
 import { appealsByCaseflowVeteranId } from './selectors';
-import { prepareAppealForStore } from './utils';
+import { prepareAppealForSearchStore } from './utils';
 
 import COPY from '../../COPY';
 import WindowUtil from '../util/WindowUtil';
@@ -50,7 +50,7 @@ class VeteranCasesView extends React.PureComponent {
           return Promise.reject(response);
         }
 
-        this.props.onReceiveAppealDetails(prepareAppealForStore(returnedObject.appeals));
+        this.props.onReceiveAppealDetails(prepareAppealForSearchStore(returnedObject.appeals));
         this.props.setFetchedAllCasesFor(caseflowVeteranId);
 
         return Promise.resolve();

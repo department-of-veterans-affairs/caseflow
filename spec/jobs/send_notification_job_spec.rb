@@ -26,16 +26,18 @@ describe SendNotificationJob, type: :job do
            homelessness: false,
            veteran_file_number: "123456789")
   end
-  let(:no_name_appeal) do
+  let!(:no_name_appeal) do
     create(:appeal,
            docket_type: "Appeal",
            homelessness: false,
-           veteran_file_number: "246813579")
+           veteran: no_name_veteran)
   end
   let(:no_name_veteran) do
     create(:veteran,
            file_number: "246813579",
-           first_name: nil)
+           first_name: nil,
+           middle_name: nil,
+           last_name: nil)
   end
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
@@ -144,6 +146,7 @@ describe SendNotificationJob, type: :job do
 
   context ".perform" do
     subject(:job) { SendNotificationJob.perform_later(good_message.to_json) }
+
     describe "send message to queue" do
       it "has one message in queue" do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
@@ -158,23 +161,36 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when message is nil" do
-        expect(Rails.logger).to receive(:error).with(/There was no message passed/)
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "There was no message passed into the " \
+               "SendNotificationJob.perform_later function. Exiting job."
+          end
+
           SendNotificationJob.perform_later(nil)
         end
       end
 
       it "logs error when appeals_id, appeals_type, or event_type is nil" do
-        expect(Rails.logger).to receive(:error).with(/appeals_id or appeal_type or event_type/)
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "appeals_id or appeal_type or event_type was nil " \
+              "in the SendNotificationJob. Exiting job."
+          end
+
           SendNotificationJob.perform_later(fail_create_message.to_json)
         end
       end
 
       it "logs error when audit record is nil" do
         allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
-        expect(Rails.logger).to receive(:error).with(/Audit record was unable to be found or created/)
+
         perform_enqueued_jobs do
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+            expect(error_received.message).to eq "Audit record was unable to be found or created " \
+              "in SendNotificationJob. Exiting Job."
+          end
+
           SendNotificationJob.perform_later(good_message.to_json)
         end
       end
@@ -317,28 +333,41 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  before do
-    no_name_veteran
-    no_name_appeal
-  end
-
   context "appeal first name not found" do
+    let(:notification_event) { NotificationEvent.find_by(event_type: "Appeal docketed") }
+
     describe "email" do
+      before { FeatureToggle.enable!(:va_notify_email) }
+      after { FeatureToggle.disable!(:va_notify_email) }
+
       it "is expected to send a generic saluation instead of a name" do
-        FeatureToggle.enable!(:va_notify_email)
         expect(VANotifyService).to receive(:send_email_notifications).with(
-          no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "Appellant", no_name_appeal.docket_number, ""
+          no_name_participant_id,
+          "",
+          notification_event.email_template_id,
+          "Appellant",
+          no_name_appeal.docket_number,
+          ""
         )
+
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
 
     describe "sms" do
+      before { FeatureToggle.enable!(:va_notify_sms) }
+      after { FeatureToggle.disable!(:va_notify_sms) }
+
       it "is expected to send a generic saluation instead of a name" do
-        FeatureToggle.enable!(:va_notify_sms)
         expect(VANotifyService).to receive(:send_sms_notifications).with(
-          no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "Appellant", no_name_appeal.docket_number, ""
+          no_name_participant_id,
+          "",
+          notification_event.sms_template_id,
+          "Appellant",
+          no_name_appeal.docket_number,
+          ""
         )
+
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end

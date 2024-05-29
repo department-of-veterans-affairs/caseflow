@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationMailer
 class HearingEmailStatusMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "hearing_email_status_mailer"
@@ -31,3 +32,4 @@ class HearingEmailStatusMailer < ActionMailer::Base
     "#{@hearing_type} #{@email_type} email failed to send to #{@email_address}"
   end
 end
+# rubocop:enable Rails/ApplicationMailer

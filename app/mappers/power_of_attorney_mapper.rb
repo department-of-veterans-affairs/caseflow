@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module PowerOfAttorneyMapper
   include AddressMapper
 
@@ -201,3 +202,4 @@ module PowerOfAttorneyMapper
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
 end
+# rubocop:enable Metrics/ModuleLength

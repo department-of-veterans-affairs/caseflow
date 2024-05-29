@@ -16,7 +16,7 @@ TMP_RSPEC_XML_REPORT = "tmp/rspec_#{CI_NODE}.xml"
 FINAL_RSPEC_XML_REPORT = "rspec_final_results_#{CI_NODE}.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-#Was for GHA XML Report that is no longer being generated Lines 13-24
+# Was for GHA XML Report that is no longer being generated Lines 13-24
 KnapsackPro::Hooks::Queue.after_subset_queue do |_queue_id, _subset_queue_id|
   if File.exist?(TMP_RSPEC_XML_REPORT)
     FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
@@ -41,6 +41,8 @@ end
 Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
 Dir[Rails.root.join("db/seeds/**/*.rb")].sort.each { |f| require f }
 
 # The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
@@ -70,8 +72,14 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:all) do
+    # This needs to be run in order for tests involving external tables to pass.
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   config.before(:each) do
     @spec_time_zone = Time.zone
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   config.after(:each) do
@@ -80,6 +88,7 @@ RSpec.configure do |config|
     Time.zone = @spec_time_zone
     User.unauthenticate!
     RequestStore[:application] = nil
+    Fakes::AuthenticationService.user_session = nil
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
@@ -106,6 +115,14 @@ end
 RSpec::Matchers.define :excluding do |expected|
   match do |actual|
     !actual.include?(expected)
+  end
+end
+
+# configuration for "shoulda-matchers" gem
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end
 

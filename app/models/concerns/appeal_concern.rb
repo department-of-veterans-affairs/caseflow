@@ -155,6 +155,7 @@ module AppealConcern
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def timezone_identifier_for_address(addr)
     return if addr.blank?
 
@@ -182,7 +183,7 @@ module AppealConcern
       # only look up time zones by country for foreign addresses. We do not act on these errors (they
       # are valid addresses, we just cannot determine the time zone) so we do not send the error to
       # Sentry, only to Datadog for trend tracking.
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         metric_group: "appeal_timezone_service",
         metric_name: "ambiguous_timezone_error",
         app_name: RequestStore[:application],
@@ -196,5 +197,6 @@ module AppealConcern
       nil
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 end
 # rubocop:enable Metrics/ModuleLength

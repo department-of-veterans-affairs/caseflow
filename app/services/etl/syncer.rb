@@ -24,13 +24,8 @@ class ETL::Syncer
     @id_offset = id_offset
   end
 
-  # :reek:UtilityFunction
-  def slack_url
-    ENV["SLACK_DISPATCH_ALERT_URL"]
-  end
-
   def slack_service
-    @slack_service ||= SlackService.new(url: slack_url)
+    @slack_service ||= SlackService.new
   end
 
   # :reek:FeatureEnvy
@@ -38,7 +33,7 @@ class ETL::Syncer
     return unless target_class.messages
 
     slack_msg = target_class.messages.join("\n")
-    slack_service.send_notification(slack_msg, target_class.name, "#appeals-data-workgroup")
+    slack_service.send_notification(slack_msg, target_class.name)
     target_class.clear_messages
   end
 

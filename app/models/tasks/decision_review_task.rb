@@ -25,12 +25,15 @@ class DecisionReviewTask < Task
     serialize_task[:attributes]
   end
 
-  def complete_with_payload!(decision_issue_params, decision_date)
+  def complete_with_payload!(decision_issue_params, decision_date, user)
     return false unless validate_task(decision_issue_params)
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
-      update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now, completed_by: user)
+      decision_issue_params.each do |param|
+        RequestIssue.find(param[:request_issue_id]).close_decided_issue!
+      end
     end
 
     appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)

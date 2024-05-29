@@ -16,7 +16,7 @@ describe VhaCamoInProgressTasksTab, :postgres do
       let(:params) { { assignee: VhaCamo.singleton } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq(8)
       end
     end
   end

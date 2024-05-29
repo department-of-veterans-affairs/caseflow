@@ -26,7 +26,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let!(:ratings_with_legacy_issues) do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
-  let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+  let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran) }
   let(:request_issue_decision_mdY) { request_issue.decision_or_promulgation_date.mdY }
   let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 

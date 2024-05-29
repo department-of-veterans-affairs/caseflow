@@ -4,10 +4,11 @@ class VhaCamoCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
   attr_accessor :show_reader_link_column, :allow_bulk_assign
+
   delegate :column_names, to: :vha_camo
 
   def label
-    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
+    COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
   end
 
   def self.tab_name
@@ -19,7 +20,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    recently_completed_tasks
   end
 
   def column_names

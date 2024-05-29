@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class CavcDashboardController < ApplicationController
-  before_action :react_routed, :verify_access, except: [:cavc_decision_reasons, :cavc_selection_bases, :update_data, :save]
+  before_action :react_routed, :verify_access,
+                except: [:cavc_decision_reasons, :cavc_selection_bases, :update_data, :save]
 
   def set_application
     RequestStore.store[:application] = "queue"

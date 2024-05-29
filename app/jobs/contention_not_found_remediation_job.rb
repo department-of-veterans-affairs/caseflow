@@ -6,9 +6,12 @@
 class ContentionNotFoundRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  S3_FOLDER_NAME = "data-remediation-output"
+
   def initialize
     @logs = ["\nVBMS::ContentionNotFound Remediation Log"]
     @remediated_request_issues_update_ids = []
+    @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
     super
   end
 
@@ -141,26 +144,8 @@ class ContentionNotFoundRemediationJob < CaseflowJob
 
   # Save Logs to S3 Bucket
   def store_logs_in_s3_bucket
-    # Set Client Resources for AWS
-    Aws.config.update(region: "us-gov-west-1")
-    s3client = Aws::S3::Client.new
-    s3resource = Aws::S3::Resource.new(client: s3client)
-    s3bucket = s3resource.bucket("data-remediation-output")
-
-    # Folder and File name
-    file_name = "contention-not-found-remediation-logs/cnf-remediation-log-#{Time.zone.now}"
-
-    # Store contents of logs array in a temporary file
     content = @logs.join("\n")
-    temporary_file = Tempfile.new("cnf-log.txt")
-    filepath = temporary_file.path
-    temporary_file.write(content)
-    temporary_file.flush
-
-    # Store File in S3 bucket
-    s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
-
-    # Delete Temporary File
-    temporary_file.close!
+    file_name = "contention-not-found-remediation-logs/cnf-remediation-log-#{Time.zone.now}"
+    S3Service.store_file("#{@folder_name}/#{file_name}", content)
   end
 end

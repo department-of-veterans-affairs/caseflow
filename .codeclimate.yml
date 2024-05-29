@@ -49,7 +49,7 @@ plugins:
       languages:
         ruby:
         javascript:
-          mass_threshold: 50
+          mass_threshold: 81
     exclude_patterns:
     - 'db/migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
@@ -83,11 +83,11 @@ plugins:
     - 'app/mailers/dispatch_mailer.rb'
   rubocop:
     enabled: true
-    channel: rubocop-0-79
-  scss-lint:
+    channel: rubocop-0-83
+  stylelint:
     enabled: true
   grep:
-    enabled: true  
+    enabled: true
     config:
       patterns:
         tests-sleep:
@@ -116,7 +116,12 @@ plugins:
 exclude_patterns:
   - 'db/schema.rb'
   - 'db/seeds.rb'
+  - 'db/scripts/*'
   - 'node_modules/**/*'
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   - 'tmp/**/*'
   - 'app/assets/**/*'
+  - 'client/test/data/camoQueueConfigData.js'
+  - 'client/app/intake/components/mockData/issueListProps.js'
+  - 'db/seeds/*'
+

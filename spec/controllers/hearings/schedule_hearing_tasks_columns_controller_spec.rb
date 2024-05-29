@@ -64,12 +64,12 @@ RSpec.describe Hearings::ScheduleHearingTasksColumnsController, :all_dbs, type: 
 
       expect(JSON.parse(response.body)["columns"].first["name"]).to eq("powerOfAttorneyName")
       expect(JSON.parse(response.body)["columns"].first["filter_options"]).to match_array(
-        [{ "value" => URI.escape(URI.escape(appeal.representative_name)),
+        [{ "value" => URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(appeal.representative_name)),
            "displayText" => "#{appeal.representative_name} (1)" }]
       )
       expect(JSON.parse(response.body)["columns"].second["name"]).to eq("suggestedLocation")
       expect(JSON.parse(response.body)["columns"].second["filter_options"]).to match_array(
-        [{ "value" => URI.escape(URI.escape(hearing_location.formatted_location)),
+        [{ "value" => URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(hearing_location.formatted_location)),
            "displayText" => "#{hearing_location.formatted_location} (1)" }]
       )
     end

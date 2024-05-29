@@ -10,6 +10,7 @@ class Distribution < CaseflowRecord
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
+  has_one :distribution_stats
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
@@ -42,25 +43,24 @@ class Distribution < CaseflowRecord
 
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
-      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
+      ama_stats = ama_statistics
+
+      # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
+      update!(status: "completed", completed_at: Time.zone.now, statistics: completed_statistics(ama_stats))
+
+      record_distribution_stats(ama_stats)
     end
   rescue StandardError => error
-    # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    # Prevent prod database from getting Stacktraces as this is debugging information
-    if Rails.deploy_env?(:prod)
-      update_columns(status: "error", errored_at: Time.zone.now)
-    else
-      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
-    end
+    process_error(error)
+    title = "Distribution Failed"
+    msg = "Distribution #{id} failed: #{error.message}}"
+    SlackService.new.send_notification(msg, title)
+
     raise error
   end
 
   def distributed_cases_count
-    (status == "completed") ? distributed_cases.count : 0
-  end
-
-  def distributed_batch_size
-    statistics&.fetch("batch_size", 0) || 0
+    (status == "completed") ? distributed_cases.count { |distributed_case| !distributed_case.sct_appeal } : 0
   end
 
   private
@@ -100,9 +100,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > Constants.DISTRIBUTION.request_more_cases_minimum
+    return false if judge_tasks.length > CaseDistributionLever.request_more_cases_minimum
 
-    judge_tasks.length + judge_legacy_tasks.length <= Constants.DISTRIBUTION.request_more_cases_minimum
+    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.request_more_cases_minimum
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -126,14 +126,41 @@ class Distribution < CaseflowRecord
   def batch_size
     team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
 
-    return Constants.DISTRIBUTION.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
+    return CaseDistributionLever.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
 
-    team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
+    team_batch_size * CaseDistributionLever.batch_size_per_attorney
   end
 
   def error_statistics(error)
     {
       error: error&.full_message
     }
+  end
+
+  def process_error(error)
+    # DO NOT use update! because we want to avoid validations and saving any cached associations.
+    # Prevent prod database from getting Stacktraces as this is debugging information
+    if Rails.deploy_env?(:prod)
+      update_columns(status: "error", errored_at: Time.zone.now)
+      record_distribution_stats({})
+    else
+      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+      record_distribution_stats(error_statistics(error))
+    end
+  end
+
+  # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
+  def completed_statistics(stats)
+    {
+      batch_size: stats[:batch_size],
+      info: "See related row in distribution_stats for additional stats"
+    }
+  end
+
+  def record_distribution_stats(stats)
+    create_distribution_stats!(
+      statistics: stats,
+      levers: CaseDistributionLever.snapshot
+    )
   end
 end

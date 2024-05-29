@@ -41,6 +41,7 @@ RSpec.feature "Convert hearing request type" do
     ]
   end
 
+  # rubocop:disable Metrics/AbcSize
   def change_request_type(appeal, request_type, ro_message)
     step "select change hearing request type action" do
       click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
@@ -87,7 +88,7 @@ RSpec.feature "Convert hearing request type" do
       expect(page).not_to have_content(ChangeHearingRequestTypeTask.label)
     end
   end
-
+  # rubocop:enable Metrics/AbcSize
   context "for 'Edit HearSched' (Hearing Coordinator)" do
     let!(:current_user) { User.authenticate!(roles: ["Edit HearSched"]) }
 
@@ -218,6 +219,7 @@ RSpec.feature "Convert hearing request type" do
 
           step "go to schedule veterans page" do
             visit "hearings/schedule/assign"
+            expect(page).to have_content("Regional Office")
 
             click_dropdown(text: "Virtual Hearings")
           end
@@ -272,6 +274,7 @@ RSpec.feature "Convert hearing request type" do
 
         # Check the schedule veterans tab to ensure the hearing is present
         visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
 
         click_dropdown(text: "Central")
         click_button("AMA Veterans Waiting")
@@ -320,6 +323,7 @@ RSpec.feature "Convert hearing request type" do
 
         # Check the schedule veterans tab to ensure the hearing is present
         visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
 
         click_dropdown(text: "St. Petersburg, FL")
         click_button("AMA Veterans Waiting")

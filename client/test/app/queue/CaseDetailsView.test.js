@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CaseDetailsView from "../../../app/queue/CaseDetailsView";
+import CaseDetailsView from '../../../app/queue/CaseDetailsView';
 import { queueWrapper as Wrapper } from 'test/data/stores/queueStore';
 import { amaAppeal, legacyAppeal, powerOfAttorney } from '../../data/appeals';
 import COPY from '../../../COPY';
@@ -13,6 +13,16 @@ const defaultProps = {
 };
 
 const renderCaseDetailsView = (hasNotifications, appealData) => {
+  const decisionIssues = [
+    { request_issue_ids: [1, 2, 3] }
+  ];
+
+  const requestIssue = { mst_status: true, pact_status: true, id: 1 };
+
+  const issues = [
+    requestIssue
+  ];
+
   const stagedAppealData = {
     [appealData.id]: {
       ...appealData,
@@ -20,7 +30,9 @@ const renderCaseDetailsView = (hasNotifications, appealData) => {
       hasNotifications,
       isPaperCase: true,
       powerOfAttorney,
-      appellantType: 'VeteranClaimant'
+      appellantType: 'VeteranClaimant',
+      decisionIssues,
+      issues
     }
   };
 
@@ -86,15 +98,15 @@ describe('NotificationsLink', () => {
   describe('When there are\'not notifications', () => {
     // ama without notifications
     it('link does not appears with ama appeal', () => {
-      const {container} = renderCaseDetailsView(false, amaAppeal);
+      const { container } = renderCaseDetailsView(false, amaAppeal);
       const link = container.querySelector('#notification-link');
 
-      expect(link).toBeNull()
+      expect(link).toBeNull();
     // legacy without notifications
     });
 
     it('link does not appears with legacy appeal', () => {
-      const {container} = renderCaseDetailsView(false, legacyAppeal);
+      const { container } = renderCaseDetailsView(false, legacyAppeal);
       const link = container.querySelector('#notification-link');
 
       expect(link).toBeNull();

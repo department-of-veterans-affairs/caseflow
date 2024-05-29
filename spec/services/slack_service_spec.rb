@@ -6,6 +6,8 @@ describe SlackService do
   let(:ssl_config) { double("ssl") }
 
   before do
+    stub_const("ENV", "DEPLOY_ENV" => "uat")
+
     @http_params = nil
     allow(HTTPClient).to receive(:new) { http_agent }
     allow(http_agent).to receive(:ssl_config) { ssl_config }
@@ -22,9 +24,9 @@ describe SlackService do
     expect(response).to eq("response")
   end
 
-  context "when it is run in the uat environment" do
+  context "when it is not run in the uat or prod environment" do
     it "does not make post request" do
-      stub_const("ENV", "DEPLOY_ENV" => "uat")
+      stub_const("ENV", "DEPLOY_ENV" => "dev")
       slack_service.send_notification("filler message contents")
       expect(@http_params).to be_nil
     end

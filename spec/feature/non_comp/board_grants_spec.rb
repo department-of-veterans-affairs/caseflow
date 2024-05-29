@@ -107,7 +107,7 @@ feature "NonComp Board Grant Task Page", :postgres do
       vha_org.add_user(user)
     end
 
-    let!(:vha_org) { create(:business_line, name: "veterans health admin", url: "vha") }
+    let!(:vha_org) { VhaBusinessLine.singleton }
 
     let!(:vha_request_issues) do
       3.times do |index|
@@ -136,7 +136,7 @@ feature "NonComp Board Grant Task Page", :postgres do
       # when this test executes, the nca business line with request issues already exists
 
       visit vha_dispositions_url
-      expect(page).to have_content("veterans health admin")
+      expect(page).to have_content("Veterans Health Administration")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)

@@ -359,12 +359,14 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
     end
 
     scenario "select a vlj from the dropdown works" do
-      click_dropdown(name: "vlj", text: judge.full_name, wait: 30)
+      expect(page).to have_content("VLJ")
+      click_dropdown(name: "vlj", text: judge.full_name)
       expect(page).to have_content(judge.full_name)
     end
 
     scenario "select a coordinator from the dropdown works" do
-      click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 30)
+      expect(page).to have_content("Hearing Coordinator")
+      click_dropdown(name: "coordinator", text: coordinator.full_name)
       expect(page).to have_content(coordinator.full_name)
     end
   end

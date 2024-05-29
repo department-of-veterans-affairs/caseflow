@@ -1,0 +1,24 @@
+.docket-time-lever-num-sec {
+  .cf-form-int-input {
+    width: auto;
+    display: inline-block;
+    position: relative;
+
+    .input-container {
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    label {
+      position: absolute;
+      bottom: 8px;
+      left: 75px;
+    }
+  }
+
+  .usa-input-error label {
+    bottom: 15px;
+    left: 89px;
+  }
+}

@@ -194,10 +194,13 @@ const appealAttributesFromRawTask = (task) => ({
   contestedClaim: task.attributes.contested_claim,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
+  issueTypes: task.attributes.issue_types,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
   isPaperCase: task.attributes.paper_case,
+  mst: task.attributes.mst,
+  pact: task.attributes.pact
 });
 
 const extractAppealsFromTasks = (tasks) => {
@@ -275,6 +278,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
           task.attributes.latest_informal_hearing_presentation_task
             ?.received_at,
       },
+      mst: task.attributes.mst,
+      pact: task.attributes.pact
     };
   });
 
@@ -397,6 +402,7 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
+
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -437,6 +443,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -511,6 +519,86 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      hasCompletedSctAssignTask: appeal.attributes.has_completed_sct_assign_task,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    appeals: appealHash,
+    appealDetails: appealDetailsHash,
+  };
+};
+
+export const prepareAppealForSearchStore = (appeals) => {
+  const appealHash = appeals.reduce((accumulator, appeal) => {
+    const {
+      attributes: { issues },
+    } = appeal;
+
+    accumulator[appeal.attributes.external_id] = {
+      id: appeal.id,
+      externalId: appeal.attributes.external_id,
+      docketName: appeal.attributes.docket_name,
+      withdrawn: appeal.attributes.withdrawn,
+      overtime: appeal.attributes.overtime,
+      contestedClaim: appeal.attributes.contested_claim,
+      veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
+      withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
+      isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
+      caseType: appeal.attributes.type,
+      isAdvancedOnDocket: appeal.attributes.aod,
+      issueCount: (appeal.attributes.docket_name === 'legacy' ?
+        getUndecidedIssues(issues) :
+        issues
+      ).length,
+      docketNumber: appeal.attributes.docket_number,
+      distributedToJudge: appeal.attributes.distributed_to_a_judge,
+      veteranFullName: appeal.attributes.veteran_full_name,
+      veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
+      readableHearingRequestType:
+        appeal.attributes.readable_hearing_request_type,
+      readableOriginalHearingRequestType:
+        appeal.attributes.readable_original_hearing_request_type,
+      vacateType: appeal.attributes.vacate_type,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
+    };
+
+    return accumulator;
+  }, {});
+
+
+  const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+    accumulator[appeal.attributes.external_id] = {
+      hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
+      appellantFullName: appeal.attributes.appellant_full_name,
+      appellantFirstName: appeal.attributes.appellant_first_name,
+      appellantMiddleName: appeal.attributes.appellant_middle_name,
+      appellantLastName: appeal.attributes.appellant_last_name,
+      appellantSuffix: appeal.attributes.appellant_suffix,
+      contestedClaim: appeal.attributes.contested_claim,
+      assignedToLocation: appeal.attributes.assigned_to_location,
+      veteranGender: appeal.attributes.veteran_gender,
+      veteranAddress: appeal.attributes.veteran_address,
+      veteranParticipantId: appeal.attributes.veteran_participant_id,
+      closestRegionalOffice: appeal.attributes.closest_regional_office,
+      closestRegionalOfficeLabel:
+        appeal.attributes.closest_regional_office_label,
+      externalId: appeal.attributes.external_id,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      regionalOffice: appeal.attributes.regional_office,
+      caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -609,6 +697,36 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   }
 
   return `${code} - ${readableLabel.staff_description}`;
+};
+
+export const getMstPactStatus = (issue) => {
+  const mstStatus = issue.mst_status;
+  const pactStatus = issue.pact_status;
+
+  if (!mstStatus && !pactStatus) {
+    return 'None';
+  } else if (mstStatus && pactStatus) {
+    return 'MST and PACT';
+  } else if (mstStatus) {
+    return 'MST';
+  } else if (pactStatus) {
+    return 'PACT';
+  }
+};
+
+export const getLegacyMstPactStatus = (issue) => {
+  const mstStatusLegacy = issue.mst_status;
+  const pactStatusLegacy = issue.pact_status;
+
+  if (!mstStatusLegacy && !pactStatusLegacy) {
+    return 'None';
+  } else if (mstStatusLegacy && pactStatusLegacy) {
+    return 'MST and PACT';
+  } else if (mstStatusLegacy) {
+    return 'MST';
+  } else if (pactStatusLegacy) {
+    return 'PACT';
+  }
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
@@ -812,7 +930,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   // Possibly add appellant substitution
   if (appeal.appellantSubstitution) {
     if (appeal.appellantSubstitution.histories) {
-      appeal.appellantSubstitution.histories.map( appellantSubstitutionHistory => {
+      appeal.appellantSubstitution.histories.map((appellantSubstitutionHistory) => {
         if (appellantSubstitutionHistory.substitution_date) {
           timelineEvents.push({
             type: 'substitutionDate',
@@ -830,8 +948,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
           currentAppellantFullName: appellantSubstitutionHistory.current_appellant_full_name
         });
       });
-    }
-    else {
+    } else {
       timelineEvents.push({
         type: 'substitutionDate',
         createdAt: appeal.appellantSubstitution.substitution_date,
@@ -970,4 +1087,52 @@ export const statusLabel = (appeal) => {
       StringUtil.snakeCaseToCapitalized(appeal.status) :
       '';
   }
+};
+
+const getMostRecentChildTask = (parentTask, tasks) => {
+  // Ignores LegacyTasks as they're only ever the children of RootTasks.
+  const amaTasks = tasks.filter((task) => !task.is_legacy);
+
+  // Sorts tasks by ID in descending order
+  const sortedTasks = amaTasks.sort((task_a, task_b) => {
+    return (parseInt(task_a.taskId, 10) > parseInt(task_b.taskId, 10)) ? -1 : 1;
+  });
+
+  return sortedTasks.find((task) => {
+    // The taskId value is a string while parentId is an integer..
+    return task.parentId === parseInt(parentTask.taskId, 10);
+  });
+};
+
+export const getPreviousTaskInstructions = (parentTask, tasks) => {
+  let reviewNotes = null;
+
+  const childTask = getMostRecentChildTask(parentTask, tasks);
+
+  if (childTask && childTask.instructions.length > 1) {
+    switch (childTask.assignedTo.type) {
+    case 'VhaProgramOffice':
+      reviewNotes = 'Program Office';
+      break;
+    case 'VhaRegionalOffice':
+      reviewNotes = 'VISN';
+      break;
+    case 'VhaCamo':
+      reviewNotes = 'CAMO';
+      break;
+    case 'EducationRpo':
+      reviewNotes = 'Regional Processing Office';
+      break;
+    default:
+      break;
+    }
+  }
+
+  const previousInstructions = reviewNotes ? childTask.instructions.slice(-1)[0] : null;
+
+  return { reviewNotes, previousInstructions };
+};
+
+export const replaceSpecialCharacters = (string_replace) => {
+  return string_replace.replace(/[^\w\s]/gi, '_')
 };

@@ -191,18 +191,35 @@ FactoryBot.define do
     trait :held_hearing_and_ready_to_distribute do
       transient do
         adding_user { nil }
+        tied_judge { nil }
       end
 
       after(:create) do |appeal, evaluator|
         create(:hearing,
                :held,
-               judge: nil,
+               judge: evaluator.tied_judge,
                appeal: appeal,
                created_at: appeal.created_at,
                adding_user: evaluator.adding_user)
         appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
         appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
         appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
+      end
+    end
+
+    trait :cancelled_hearing_and_ready_to_distribute do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing,
+               :cancelled,
+               appeal: appeal,
+               created_at: appeal.created_at,
+               adding_user: evaluator.adding_user)
+        appeal.tasks.find_by(type: :ScheduleHearingTask)&.update!(status: :cancelled)
+        appeal.tasks.find_by(type: :DistributionTask)&.update!(status: :assigned)
       end
     end
 
@@ -284,6 +301,35 @@ FactoryBot.define do
         create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
 
         appeal.claimants = [another_claimant, claimant]
+      end
+    end
+
+    trait :advanced_on_docket_attorney_claimant do
+      # the appeal has to be established before the motion is created to apply to it.
+      established_at { Time.zone.now - 1 }
+      after(:create) do |appeal|
+        # Create an appeal with two claimants, one with a denied AOD motion
+        # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
+        # so set the aod claimant as the last claimant on the appeal (and create it last)
+        another_claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: another_claimant.person, granted: false, appeal: appeal)
+
+        claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
+
+        appeal.claimants = [another_claimant, claimant]
+      end
+    end
+
+    trait :advanced_on_docket_granted_attorney_claimant do
+      # the appeal has to be established before the motion is created to apply to it.
+      established_at { Time.zone.now - 1 }
+      after(:create) do |appeal|
+        # Create an appeal with a granted AOD motion
+        claimant = create(:claimant, :attorney, decision_review: appeal)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
+
+        appeal.claimants = [claimant]
       end
     end
 
@@ -590,6 +636,18 @@ FactoryBot.define do
                benefit_type: "vha",
                nonrating_issue_category: "Caregiver | Other",
                nonrating_issue_description: "VHA - Caregiver ",
+               decision_review: appeal,
+               decision_date: 1.month.ago)
+        appeal.reload
+      end
+    end
+
+    trait :with_randomized_vha_issue do
+      after(:create) do |appeal|
+        create(:request_issue,
+               benefit_type: "vha",
+               nonrating_issue_category: Constants::ISSUE_CATEGORIES["vha"].sample,
+               nonrating_issue_description: "VHA - Issue ",
                decision_review: appeal,
                decision_date: 1.month.ago)
       end
