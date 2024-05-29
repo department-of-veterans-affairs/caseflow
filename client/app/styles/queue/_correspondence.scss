@@ -1214,6 +1214,23 @@ $color-cream: #d6d7d9;
   margin-bottom: 30px;
 }
 
+.new-letter-container {
+  display: inline-block;
+  padding: 2rem 2rem;
+  margin-bottom: 3rem;
+  width: 95%;
+  .cf-select__control {
+    max-width: 60rem !important;
+  }
+  .cf-form-textinput {
+    max-width: 60rem !important;
+  }
+  .remove-button {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+}
+
 
 
 
