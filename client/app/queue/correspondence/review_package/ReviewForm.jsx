@@ -42,14 +42,11 @@ export const ReviewForm = (props) => {
   const isCorrTypeSelected = () => {
     if (props.createRecordIsReadOnly === 'Select...') {
       props.setCorrTypeSelected(true);
-      // props.setIsReadOnly(false);
     // eslint-disable-next-line no-negated-condition
     } else if (props.createRecordIsReadOnly === '' && props.corrTypeSaved !== -1) {
       props.setCorrTypeSelected(false);
-      // props.setIsReadOnly(false);
     } else {
       props.setCorrTypeSelected(true);
-      // props.setIsReadOnly(true);
     }
   };
 
@@ -364,7 +361,7 @@ ReviewForm.propTypes = {
   createRecordIsReadOnly: PropTypes.string,
   setCorrTypeSaved: PropTypes.func,
   setDisableButton: PropTypes.func,
-  setCorrTypeSelected: PropTypes.func,
+  setCorrTypeSelected: PropTypes.any,
   setErrorMessage: PropTypes.func,
   corrTypeSaved: PropTypes.number,
   fetchData: PropTypes.func,
