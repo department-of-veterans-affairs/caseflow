@@ -367,7 +367,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
     end
 
-    appeals.sort_by { appeal[:bfd19] }
+    appeals.sort_by { appeal[:bfd19] } if use_by_docket_date?
 
     appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
@@ -472,7 +472,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
         where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
-        and rownum <= ?
       SQL
     else
       # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
@@ -492,7 +491,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         #{SELECT_NONPRIORITY_APPEALS}
         where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
-        and rownum <= ?
       SQL
     end
 
@@ -502,11 +500,10 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       range,
-                                      range.nil? ? 1 : 0,
-                                      limit
+                                      range.nil? ? 1 : 0
                                     ])
 
-    distribute_appeals(fmtd_query, judge, dry_run)
+    distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
   # {UPDATE}
@@ -560,7 +557,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           end
         end
 
-        appeals.sort_by { appeal[:bfd19] } # {Sorts by bfd19 date}
+        appeals.sort_by { appeal[:bfd19] } if use_by_docket_date?
 
         appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
 
