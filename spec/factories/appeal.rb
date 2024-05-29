@@ -464,7 +464,7 @@ FactoryBot.define do
     trait :with_appeal_affinity do
       transient do
         affinity_start_date { Time.zone.now }
-        appeal_reload { false }
+        appeal_reload { true }
       end
 
       after(:create) do |appeal, evaluator|
