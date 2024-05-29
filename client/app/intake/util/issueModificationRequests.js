@@ -1,4 +1,10 @@
 import { formatRequestIssues } from './issues';
+import {
+  toggleRequestIssueAdditionModal,
+  toggleRequestIssueModificationModal,
+  toggleRequestIssueRemovalModal,
+  toggleRequestIssueWithdrawalModal
+} from 'app/intake/actions/addIssues';
 
 // formatIssueModificationRequests takes an array of issueModificationRequests in the server ui_hash format
 // and returns objects useful for displaying in UI
@@ -45,6 +51,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       isUnidentified: modificationRequest.is_unidentified,
       notes: modificationRequest.notes,
       category: modificationRequest.category,
+      // index:
       isRating: !modificationRequest.category,
       ratingIssueReferenceId: modificationRequest.rating_issue_reference_id,
       ratingDecisionReferenceId: modificationRequest.rating_decision_reference_id,
@@ -59,4 +66,30 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       pact_status_update_reason_notes: modificationRequest?.pactJustification
     };
   });
+};
+
+export const onClickModifcationAction = (option) => {
+  switch (option) {
+  case 'addition':
+    console.log('Edit Addition Action');
+    toggleRequestIssueAdditionModal();
+    break;
+  case 'modification':
+    console.log('Edit Modification Action');
+    toggleRequestIssueModificationModal();
+    break;
+  case 'removal':
+    console.log('Edit Removal Action');
+    toggleRequestIssueRemovalModal();
+    break;
+  case 'withdrawal':
+    console.log('Edit Withdrawal Action');
+    toggleRequestIssueWithdrawalModal();
+    break;
+  case 'cancel':
+    console.log('Cancel Action');
+    break;
+  default:
+    break;
+  }
 };
