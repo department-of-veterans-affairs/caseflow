@@ -43,8 +43,8 @@ RSpec.describe "the Hearings::TranscriptionPackagesController", type: :request d
       attrs = data[:attributes]
 
       expect(attrs[:taskNumber]).to eq("BVA-1111-0001")
-      expect(attrs[:dateSent]).to eq("1/1/2050")
-      expect(attrs[:returnDate]).to eq("1/1/2050")
+      expect(attrs[:dateSent]).to eq("12/2/2050")
+      expect(attrs[:returnDate]).to eq("12/1/2050")
       expect(attrs[:status]).to eq("Successfully uploaded to Box.com")
       expect(attrs[:contractorName]).to eq("Genesis Government Solutions, Inc.")
       expect(attrs[:orderContentsCount]).to eq(10)
