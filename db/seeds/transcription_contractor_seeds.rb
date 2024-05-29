@@ -35,3 +35,21 @@ module Seeds
     end
   end
 end
+
+# TranscriptionContractor.create(name: "Genesis Government Solutions, Inc.",
+#           directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc.",
+#           poc: "John Doe",
+#           email: "genesisgovernmentsolutions@test.com",
+#           phone: "888-888-8888")
+
+# TranscriptionContractor.create(name: "Jamison Professional Services",
+#           directory: "BVA Hearing Transcripts/Jamison Professional Services",
+#           poc: "Jane Doe",
+#           email: "jamisonprofessionalservices@test.com",
+#           phone: "888-888-8888")
+
+# TranscriptionContractor.create(name: "The Ravens Group, Inc.",
+#           directory: "BVA Hearing Transcripts/The Ravens Group, Inc.",
+#           poc: "Johnny Bravo",
+#           email: "theravensgroup@test.com",
+#           phone: "888-888-8888")

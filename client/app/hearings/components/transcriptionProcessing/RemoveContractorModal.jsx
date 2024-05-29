@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
-import Dropdown from '../../../components/Dropdown';
+import SearchableDropdown from "../../../components/SearchableDropdown";
 
 export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors }) => {
   const [selectedContractorId, setSelectedContractorId] = useState(null);
 
-  const handleDropdownChange = (contractorId) => {
-    setSelectedContractorId(contractorId);
+  const handleDropdownChange = (selectedOption) => {
+    setSelectedContractorId(selectedOption ? selectedOption.value : null);
   };
 
   const dropdownOptions = contractors.map((contractor) => ({
     value: contractor.id,
-    displayText: contractor.name,
+    label: contractor.name,
   }));
 
   return (
@@ -20,17 +20,17 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       title={title}
       buttons={[
         {
-          classNames: ['cf-modal-link', 'cf-btn-link'],
-          name: 'Cancel',
+          classNames: ["cf-modal-link", "cf-btn-link"],
+          name: "Cancel",
           onClick: onCancel,
         },
         {
-          classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Confirm',
+          classNames: ["usa-button", "usa-button-primary"],
+          name: "Confirm",
           onClick: () => {
             onConfirm(selectedContractorId).then(onCancel);
           },
-        }
+        },
       ]}
       closeHandler={onCancel}
       id="custom-contractor-modal"
@@ -39,13 +39,18 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
         This will permanently remove this contractor from the list of assignable
         contractors.
       </p>
-      <Dropdown
-        key={contractors.length}
+      <SearchableDropdown
         name="Contractor"
-        options={dropdownOptions}
-        onChange={handleDropdownChange}
+        label="Contractors"
         defaultText="Select a contractor"
-        value={selectedContractorId}
+        strongLabel
+        value={
+          dropdownOptions.find(
+            (option) => option.value === selectedContractorId
+          ) || null
+        }
+        onChange={handleDropdownChange}
+        options={dropdownOptions}
       />
     </Modal>
   );

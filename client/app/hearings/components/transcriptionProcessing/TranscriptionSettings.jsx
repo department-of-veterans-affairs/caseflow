@@ -269,6 +269,7 @@ handleRemoveContractor = (contractorId) => {
             contractors={this.state.contractors}
             title="Remove Contractor"
           />
+          
         )}
       </AppSegment>
     </>
