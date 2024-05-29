@@ -3,6 +3,13 @@
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
+  before do
+    %w[hearing direct_review evidence_submission].each do |lever|
+      CaseDistributionLever.find_by(item: "ama_#{lever}_start_distribution_prior_to_goals")
+        .update!(is_toggle_active: true)
+    end
+  end
+
   context "docket" do
     # nonpriority
     let!(:appeal) do

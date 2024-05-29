@@ -11,6 +11,8 @@ describe HearingRequestDocket, :postgres do
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
     CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_docket_time_goals).update!(value: 60)
+    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals)
+      .update!(is_toggle_active: true)
   end
 
   context "#ready_priority_appeals" do

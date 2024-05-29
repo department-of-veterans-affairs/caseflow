@@ -12,7 +12,9 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        ama_hearing_case_affinity_days
        cavc_affinity_days
        ama_evidence_submission_docket_time_goals
-       ama_hearing_docket_time_goals]
+       ama_hearing_docket_time_goals
+       ama_hearing_start_distribution_prior_to_goals
+       ama_evidence_submission_start_distribution_prior_to_goals]
   end
   let!(:float_levers) do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]

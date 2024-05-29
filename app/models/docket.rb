@@ -173,9 +173,13 @@ class Docket
   end
 
   def start_distribution_prior_to_goal
-    @start_distribution_prior_to_goal ||= CaseDistributionLever.public_send(
-      "ama_#{docket_type}_start_distribution_prior_to_goals"
-    )
+    @start_distribution_prior_to_goal ||= begin
+      lever = CaseDistributionLever.find_by(
+        item: "ama_#{docket_type}_start_distribution_prior_to_goals",
+        is_toggle_active: true
+      )
+      lever.nil? ? 0 : Integer(lever.value)
+    end
   end
 
   private
