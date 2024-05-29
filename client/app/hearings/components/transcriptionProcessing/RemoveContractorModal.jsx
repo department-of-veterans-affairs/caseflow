@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
-import SearchableDropdown from "../../../components/SearchableDropdown";
-import COPY from "../../../../COPY";
+import SearchableDropdown from '../../../components/SearchableDropdown';
+import COPY from '../../../../COPY';
 
 export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors }) => {
   const [selectedContractorId, setSelectedContractorId] = useState(null);
@@ -21,12 +21,12 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       title={title}
       buttons={[
         {
-          classNames: ["cf-modal-link", "cf-btn-link"],
+          classNames: ['cf-modal-link", "cf-btn-link'],
           name: COPY.MODAL_CANCEL_BUTTON,
           onClick: onCancel,
         },
         {
-          classNames: ["usa-button", "usa-button-primary"],
+          classNames: ['usa-button", "usa-button-primary'],
           name: COPY.MODAL_CONFIRM_BUTTON,
           onClick: () => {
             onConfirm(selectedContractorId).then(onCancel);
@@ -42,9 +42,8 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
         contractors.
       </p>
       <SearchableDropdown
-        name="Contractor"
+        name="Contractors"
         label="Contractor"
-        defaultText="Select a contractor"
         value={
           dropdownOptions.find(
             (option) => option.value === selectedContractorId
