@@ -19,8 +19,10 @@ RSpec.describe CorrespondenceIntake, type: :model do
     end
 
     it "can be created" do
+      user = create(:user)
+      InboundOpsTeam.singleton.add_user(user)
       correspondence = create(:correspondence)
-      task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, create(:user))
+      task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
       subject = CorrespondenceIntake.create!(
         task_id: task.id,
         current_step: 1,
