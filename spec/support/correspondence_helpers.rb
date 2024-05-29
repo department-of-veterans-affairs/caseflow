@@ -14,6 +14,7 @@ module CorrespondenceHelpers
 
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
+    InboundOpsTeam.singleton.add_user(current_user)
     MailTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
 

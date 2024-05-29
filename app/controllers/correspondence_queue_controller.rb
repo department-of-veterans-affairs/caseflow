@@ -4,7 +4,7 @@ class CorrespondenceQueueController < CorrespondenceController
   def correspondence_cases
     if current_user.inbound_ops_team_supervisor?
       redirect_to "/queue/correspondence/team"
-    elsif current_user.inbound_ops_team_superuser? || current_user.mail_team_user?
+    elsif current_user.inbound_ops_team_superuser? || current_user.inbound_ops_team_user?
       intake_cancel_message(action_type) if %w[continue_later cancel_intake].include?(action_type)
       respond_to do |format|
         format.html {}
@@ -20,7 +20,7 @@ class CorrespondenceQueueController < CorrespondenceController
   def correspondence_team
     if current_user.inbound_ops_team_superuser? || current_user.inbound_ops_team_supervisor?
       correspondence_team_response
-    elsif current_user.mail_team_user?
+    elsif current_user.inbound_ops_team_user?
       redirect_to "/queue/correspondence"
     else
       redirect_to "/unauthorized"
@@ -30,14 +30,14 @@ class CorrespondenceQueueController < CorrespondenceController
   private
 
   def correspondence_team_response
-    mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
+    inbound_ops_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:task_ids]&.split(",") if params[:task_ids].present?
     tab = params[:tab] if params[:tab].present?
 
     respond_to do |format|
       format.html do
-        @mail_team_users = User.mail_team_users.pluck(:css_id)
-        correspondence_team_html_response(mail_team_user, task_ids, tab)
+        @inbound_ops_team_users = User.inbound_ops_team_users.pluck(:css_id)
+        correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
       end
       format.json { correspondence_team_json_response }
     end
@@ -47,10 +47,10 @@ class CorrespondenceQueueController < CorrespondenceController
     render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
   end
 
-  def correspondence_team_html_response(mail_team_user, task_ids, tab)
-    if mail_team_user && task_ids.present?
+  def correspondence_team_html_response(inbound_ops_team_user, task_ids, tab)
+    if inbound_ops_team_user && task_ids.present?
       # candidate for refactor using PATCH request
-      process_tasks_if_applicable(mail_team_user, task_ids, tab)
+      process_tasks_if_applicable(inbound_ops_team_user, task_ids, tab)
     elsif %w[continue_later cancel_intake].include?(action_type)
       intake_cancel_message(action_type)
     end

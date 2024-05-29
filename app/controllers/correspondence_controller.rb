@@ -50,10 +50,7 @@ class CorrespondenceController < ApplicationController
   private
 
   def verify_correspondence_access
-    return true if InboundOpsTeam.singleton.user_has_access?(current_user) ||
-                   MailTeam.singleton.user_has_access?(current_user) ||
-                   BvaIntake.singleton.user_is_admin?(current_user) ||
-                   MailTeam.singleton.user_is_admin?(current_user)
+    return true if InboundOpsTeam.singleton.user_has_access?(current_user)
 
     redirect_to "/unauthorized"
   end

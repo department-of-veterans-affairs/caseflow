@@ -132,7 +132,7 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
-    this.props.setMailTeamUser(this.props.isMailTeamUser);
+    this.props.setMailTeamUser(this.props.isInboundOpsTeamUser);
     this.props.setMailSupervisor(this.props.isInboundOpsSupervisor);
     this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
@@ -645,7 +645,7 @@ class QueueApp extends React.PureComponent {
     <ReviewPackageLoadingScreen
       {...props.match.params}>
       <CorrespondenceReviewPackage
-        mailTeamUsers={this.props.mailTeamUsers}
+        inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
         {...props.match.params} />
@@ -1538,10 +1538,10 @@ QueueApp.propTypes = {
   setMailTeamUser: PropTypes.func,
   setMailSupervisor: PropTypes.func,
   setInboundOpsSuperUser: PropTypes.func,
-  isMailTeamUser: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,

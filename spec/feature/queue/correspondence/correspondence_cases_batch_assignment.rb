@@ -11,7 +11,7 @@ RSpec.feature("The Correspondence Cases page") do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: supervisor_user)
     end
-    let(:organization) { MailTeam.singleton }
+    let(:organization) { InboundOpsTeam.singleton }
     let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
     let(:target_user) { create(:user, css_id: "TARGET_USER") }
     let(:nod_user) { create(:user, css_id: "NOD_USER") }

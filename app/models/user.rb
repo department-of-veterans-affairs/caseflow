@@ -22,7 +22,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
-  scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
+  scope :inbound_ops_team_users, -> { joins(:organizations).where(organizations: { type: InboundOpsTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -106,8 +106,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       )
   end
 
-  def mail_team_user?
-    organizations.include?(MailTeam.singleton)
+  # check for user that is not an admin of the inbound ops team
+  def inbound_ops_team_user?
+    organizations.include?(InboundOpsTeam.singleton) &&
+      !inbound_ops_team_supervisor?
   end
 
   def inbound_ops_team_supervisor?
@@ -563,6 +565,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def show_reader_link_column?
     false
+  end
+
+  def system_user?
+    self == User.system_user
   end
 
   private

@@ -208,7 +208,7 @@ const CorrespondenceTableBuilder = (props) => {
             <SearchableDropdown
               name="Assign to mail team user"
               hideLabel
-              options={buildMailUserData(props.mailTeamUsers)}
+              options={buildMailUserData(props.inboundOpsTeamUsers)}
               onChange={handleMailTeamUserChange}
             />
           </div>
@@ -326,7 +326,7 @@ const CorrespondenceTableBuilder = (props) => {
   return <div>
     <h1 className="correspondence-table-builder-title">{config.table_title}</h1>
     <QueueOrganizationDropdown
-      isMailTeamUser={props.isMailTeamUser}
+      isInboundOpsTeamUser={props.isInboundOpsTeamUser}
       isInboundOpsSupervisor={props.isInboundOpsSupervisor}
       isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
@@ -359,9 +359,9 @@ CorrespondenceTableBuilder.propTypes = {
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
-  isMailTeamUser: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   isInboundOpsSupervisor: PropTypes.bool
 };

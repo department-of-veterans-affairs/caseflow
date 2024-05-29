@@ -11,7 +11,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
 
   describe "GET #correspondence_cases" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :correspondence_cases
     end
@@ -25,7 +25,8 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
       MailTeam.singleton.add_user(current_user)
       OrganizationsUser.find_or_create_by!(
         organization: InboundOpsTeam.singleton,
-        user: current_user).update!(admin: true)
+        user: current_user
+      ).update!(admin: true)
       User.authenticate!(user: current_user)
 
       get :correspondence_cases
@@ -49,7 +50,8 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
       MailTeam.singleton.add_user(current_user)
       OrganizationsUser.find_or_create_by!(
         organization: InboundOpsTeam.singleton,
-        user: current_user).update!(admin: true)
+        user: current_user
+      ).update!(admin: true)
       User.authenticate!(user: current_user)
       get :correspondence_team
     end
@@ -73,9 +75,9 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
       MailTeam.singleton.add_user(current_user)
       OrganizationsUser.find_or_create_by!(
         organization: InboundOpsTeam.singleton,
-        user: current_user).update!(admin: true)
+        user: current_user
+      ).update!(admin: true)
       User.authenticate!(user: current_user)
-
     end
 
     it "returns cancel intake response" do

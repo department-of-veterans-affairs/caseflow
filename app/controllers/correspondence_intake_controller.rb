@@ -93,7 +93,7 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   # redirect if no access
   def route_user
-    if current_user.mail_team_user?
+    if current_user.inbound_ops_team_user?
       redirect_to "/queue/correspondence"
     elsif current_user.inbound_ops_team_superuser? || current_user.inbound_ops_team_supervisor?
       redirect_to "/queue/correspondence/team"

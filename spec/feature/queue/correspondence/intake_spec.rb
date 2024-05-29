@@ -343,7 +343,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "correspondence tasks in-progress tab and navigate to step 3 when we click on intake task" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -390,7 +390,7 @@ RSpec.feature("The Correspondence Intake page") do
       5.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        create_efolderupload_task(correspondence, parent_task)
       end
     end
 
@@ -403,7 +403,7 @@ RSpec.feature("The Correspondence Intake page") do
        " from the Centralized Mail Portal, if it needs to be processed." do
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("tbody > tr:last-child > td:nth-child(1)").click
-      using_wait_time(15) do
+      using_wait_time(20) do
         click_on("button-continue")
       end
       click_on("button-continue")

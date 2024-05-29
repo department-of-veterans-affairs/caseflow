@@ -253,7 +253,7 @@ const QueueTableBuilder = (props) => {
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
     <QueueOrganizationDropdown
-      isMailTeamUser={props.isMailTeamUser}
+      isInboundOpsTeamUser={props.isInboundOpsTeamUser}
       isInboundOpsSupervisor={props.isInboundOpsSupervisor}
       isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
@@ -271,7 +271,7 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
-    isMailTeamUser: state.ui.isMailTeamUser,
+    isInboundOpsTeamUser: state.ui.isInboundOpsTeamUser,
     isInboundOpsSupervisor: state.ui.isInboundOpsSupervisor,
     isInboundOpsSuperuser: state.ui.isInboundOpsSuperuser,
     isVhaOrg: isActiveOrganizationVHA(state),
@@ -281,9 +281,9 @@ const mapStateToProps = (state) => {
 };
 
 QueueTableBuilder.propTypes = {
-  isMailTeamUser: PropTypes.bool,
-  isInboundOpsSupervisor: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
