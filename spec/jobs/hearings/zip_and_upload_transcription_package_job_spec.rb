@@ -3,8 +3,8 @@
 RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
   include ActiveJob::TestHelper
 
-  let(:hearings) { (1..1).map { create(:hearing, :with_transcription_files) } }
-  let(:legacy_hearings) { (1..1).map { create(:legacy_hearing, :with_transcription_files) } }
+  let(:hearings) { (1..5).map { create(:hearing, :with_transcription_files) } }
+  let(:legacy_hearings) { (1..5).map { create(:legacy_hearing, :with_transcription_files) } }
 
   def hearings_in_work_order(hearings)
     hearings.map { |hearing| { hearing_id: hearing.id, hearing_type: hearing.class.to_s } }
@@ -67,5 +67,17 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
     expect(Rails.logger).to receive(:info).with(message)
 
     subject
+  end
+
+  it "creates a transcription package record for file" do
+    subject
+
+    TranscriptionPackage.where(task_number: work_order[:work_order_name]).each do |current_entry|
+      expect(current_entry.aws_link_zip).to be_a String
+      expect(current_entry.aws_link_work_order).to be_a String
+      expect(current_entry.created_by_id).to be_a Integer
+      expect(current_entry.status).to eql? "Successful upload (AWS)"
+      expect(current_entry.contractor_id).to be_a Integer
+    end
   end
 end
