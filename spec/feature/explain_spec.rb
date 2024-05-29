@@ -240,7 +240,7 @@ RSpec.feature "Explain JSON" do
       visit "explain/appeals/#{ama_appeal_with_affinity.uuid}"
       page.find("label", text: "Task Tree").click
       expect(page)
-        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.appeal_affinity.affinity_start_date}"
+        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.reload.appeal_affinity.affinity_start_date}"
 
       visit "explain/appeals/#{ama_appeal_without_affinity.uuid}"
       page.find("label", text: "Task Tree").click
