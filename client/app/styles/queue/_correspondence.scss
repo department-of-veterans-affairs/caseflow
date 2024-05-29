@@ -1231,6 +1231,19 @@ $color-cream: #d6d7d9;
   }
 }
 
+.pdf-wrapper {
+  @media (max-width: 920px) {
+    width: unset;
+    right: 250px;
+  }
+
+  @media (min-width: 1240px) {
+    width: unset;
+    right: 380px;
+  }
+}
+
+
 
 
 
