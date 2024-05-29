@@ -16,7 +16,7 @@ class CorrespondenceTask < Task
   class << self
     def create_from_params(params, user)
       # verify the user can create correspondence tasks
-      verify_correspondence_access
+      verify_correspondence_access(user)
 
       parent_task = Task.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
@@ -33,9 +33,9 @@ class CorrespondenceTask < Task
 
     # block users from creating correspondence tasks if they are not members of Inbound Ops Team
     # ignore check if there is no current user on correspondence creation
-    def verify_correspondence_access
+    def verify_correspondence_access(user)
       fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
-      InboundOpsTeam.singleton.user_has_access?(RequestStore[:current_user]) || RequestStore[:current_user]&.system_user?
+      InboundOpsTeam.singleton.user_has_access?(user) || user&.system_user?
     end
   end
 

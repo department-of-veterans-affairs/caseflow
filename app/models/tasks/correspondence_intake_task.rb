@@ -12,7 +12,7 @@ class CorrespondenceIntakeTask < CorrespondenceTask
         type: name
       }
       # verify the user can create correspondences
-      verify_correspondence_access
+      verify_correspondence_access(user)
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       current_params = modify_params_for_create(params)
