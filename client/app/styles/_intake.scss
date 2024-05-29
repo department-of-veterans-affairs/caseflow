@@ -354,6 +354,15 @@
         }
       }
     }
+
+    .modification-request {
+      display: flex;
+
+      .modification-request-text {
+        flex-grow: 2;
+      }
+    }
+
   }
 
   td:first-child {
