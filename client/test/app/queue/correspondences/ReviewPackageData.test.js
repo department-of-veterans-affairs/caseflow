@@ -1,7 +1,7 @@
 import React from 'react';
 import * as redux from 'react-redux';
 import { render, screen } from '@testing-library/react';
-import ReviewPackageData from '../../../../app/queue/correspondence/review_package/ReviewPackageData';
+import ReviewPackageData from '../../../../app/queue/correspondence/ReviewPackage/ReviewPackageData';
 import { correspondenceData, packageDocumentTypeData } from '../../../data/correspondence';
 jest.mock('../../../../app/queue/correspondence/modals/editModal');
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CmpDocuments from '../../../../app/queue/correspondence/review_package/CmpDocuments';
+import CmpDocuments from '../../../../app/queue/correspondence/ReviewPackage/CmpDocuments';
 import { correspondenceDocumentsData } from '../../../data/correspondence';
 
 const renderCmpDocuments = () => {

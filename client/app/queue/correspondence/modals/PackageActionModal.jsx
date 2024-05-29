@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { bindActionCreators } from 'redux';
 import { setTaskInstructions } from '../correspondenceReducer/reviewPackageActions';
-import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
+import { getPackageActionColumns, getModalInformation } from '../ReviewPackage/utils';
 import { useHistory } from 'react-router';
 
 const PackageActionModal = (props) => {
