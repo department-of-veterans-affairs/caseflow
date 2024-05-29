@@ -583,8 +583,6 @@ module Seeds
     end
 
     def create_qa_test_users
-      create_qa_active_judge3
-      create_qa_active_judge2
       create_qa_ineligible_judge
       create_qa_solo_active_judge
       create_qa_ssc_avlj_attorney
@@ -594,35 +592,8 @@ module Seeds
       create_qa_intake_admin
       create_qa_hearing_admin
       create_qa_case_movement_user
-      create_qa_attny_1
-      create_qa_attny_2
-      create_qa_attny_3
       create_qa_judge_team_3
       create_qa_judge_team_2
-    end
-
-    def create_qa_active_judge3
-      User.find_by_css_id("QACTIVEVLJ3") ||
-        create(
-          :user,
-          :with_vacols_judge_record,
-          :judge,
-          css_id: "QACTIVEVLJ3",
-          station_id: 101,
-          full_name: "QA_Active_Judge With Team_of_3"
-        )
-    end
-
-    def create_qa_active_judge2
-      User.find_by_css_id("QACTIVEVLJ2") ||
-        create(
-          :user,
-          :with_vacols_judge_record,
-          :judge,
-          css_id: "QACTIVEVLJ2",
-          station_id: 101,
-          full_name: "QA_Active_Judge With Team_of_2"
-        )
     end
 
     def create_qa_ineligible_judge
@@ -633,7 +604,7 @@ module Seeds
           :judge,
           css_id: "QINELIGVLJ",
           station_id: 101,
-          full_name: "QA_Active_Judge With Team_of_2"
+          full_name: "QA Ineligible Judge"
         )
     end
 
@@ -733,53 +704,63 @@ module Seeds
       OrganizationsUser.make_user_admin(qa_case_movement_user, SpecialCaseMovementTeam.singleton)
     end
 
-    def create_qa_attny_1
-      User.find_by_css_id("QATTY1") ||
-        create(
-          :user,
-          :with_vacols_attorney_record,
-          css_id: "QATTY1",
-          station_id: 101,
-          full_name: "QA Attorney_1"
-        )
-    end
-
-    def create_qa_attny_2
-      User.find_by_css_id("QATTY2") ||
-      create(
-        :user,
-        :with_vacols_attorney_record,
-        css_id: "QATTY2",
-        station_id: 101,
-        full_name: "QA Attorney_2"
-      )
-    end
-
-    def create_qa_attny_3
-      User.find_by_css_id("QATTY3") ||
-        create(
-          :user,
-          :with_vacols_attorney_record,
-          css_id: "QATTY3",
-          station_id: 101,
-          full_name: "QA Attorney_3"
-        )
+    def create_qa_judge_team(judge, team_array)
+      judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      team_array.each do |team_member|
+        judge_team.add_user(
+          User.find_by_css_id(team_member[:css_id]) ||
+              create(
+                :user,
+                :with_vacols_titled_attorney_record,
+                css_id: team_member[:css_id],
+                full_name: team_member[:full_name],
+                station_id: 101
+              )
+          )
+      end
     end
 
     def create_qa_judge_team_3
-      qa_judge_3 = User.find_by(css_id: "QACTIVEVLJ3")
-      qa_judge_team_3 = JudgeTeam.for_judge(qa_judge_3) || JudgeTeam.create_for_judge(qa_judge_3)
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY1"))
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY2"))
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY3"))
+      judge = User.find_by_css_id("QACTIVEVLJ3") ||
+        create(
+          :user,
+          :judge,
+          :with_vacols_judge_record,
+          css_id: "QACTIVEVLJ3",
+          full_name: "QA_ACTIVE_JUDGE WITH TEAM_OF_3",
+          station_id: 101,
+          roles: ["Hearing Prep", "Mail Intake"]
+        )
+      team_array = [
+        {"css_id": "QATTY1", "full_name": "QA Attorney_1"},
+        {"css_id": "QATTY2", "full_name": "QA Attorney_2"},
+        {"css_id": "QATTY3", "full_name": "QA Attorney_3"}
+      ]
+      CDAControlGroup.singleton.add_user(judge)
+      create_qa_judge_team(judge, team_array)
     end
 
     def create_qa_judge_team_2
-      qa_judge_2 = User.find_by(css_id: "QACTIVEVLJ2")
-      qa_judge_team_2 = JudgeTeam.for_judge(qa_judge_2) || JudgeTeam.create_for_judge(qa_judge_2)
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY1"))
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY2"))
+      judge = User.find_by_css_id("QACTIVEVLJ2") ||
+      create(
+        :user,
+        :judge,
+        :with_vacols_judge_record,
+        css_id: "QACTIVEVLJ2",
+        full_name: "QA_ACTIVE_JUDGE WITH TEAM_OF_2",
+        station_id: 101,
+        roles: ["Hearing Prep", "Mail Intake"]
+      )
+      team_array = [
+        {"css_id": "QATTY1", "full_name": "QA Attorney_1"},
+        {"css_id": "QATTY2", "full_name": "QA Attorney_2"}
+      ]
+      CDAControlGroup.singleton.add_user(judge)
+      OrganizationsUser.make_user_admin(judge, CDAControlGroup.singleton)
+      create_qa_judge_team(judge, team_array)
     end
+
+
 
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
