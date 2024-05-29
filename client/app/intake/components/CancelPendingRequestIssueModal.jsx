@@ -1,58 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
-import CurrentIssue from 'app/intakeEdit/components/RequestCommonComponents/CurrentIssue';
 import { formatDateStr } from 'app/util/DateUtil';
+import { capitalize } from 'lodash';
 
 export const CancelPendingRequestIssueModal = (props) => {
 
   const {
     pendingIssue,
     removeIndex,
-    addIssue,
     onCancel,
-    removeFromPendingReviewSection
+    removeFromPendingReviewSection,
+    toggleCancelPendingRequestIssueModal
   } = props;
 
   let displayIssueInformation = (issue) => {
-    const issueHeader = issue.requestType === 'Addition' ||
-      issue.requestType === 'Modification' ? 'Pending issue request' : 'Current issue';
+    const issueHeader = issue.requestType === 'addition' ||
+      issue.requestType === 'modification' ? 'Pending issue request' : 'Current issue';
 
     return (
       <div>
         <h2 style={{ marginBottom: '0px' }}>{issueHeader}</h2>
-        <strong>Issue type: </strong>{issue.nonRatingIssueCategory}<br />
+        <strong>Issue type: </strong>{issue.nonratingIssueCategory}<br />
         <strong>Decision date: </strong>{formatDateStr(issue.decisionDate)}<br />
-        <strong>Issue description: </strong>{issue.nonRatingIssueDescription}<br />
-        {issue.requestType === 'Withdrawal' &&
+        <strong>Issue description: </strong>{issue.nonratingIssueDescription}<br />
+        {issue.requestType === 'withdrawal' &&
           <><strong>Request date for withdrawal: </strong>{formatDateStr(issue.withdrawalDate)}<br /></>}
-        <strong>{issue.requestType} request reason: </strong>{issue.requestReason}<br />
+        <strong>{capitalize(issue.requestType)} request reason: </strong>{issue.requestReason}<br />
       </div>
     );
   };
 
   const modalInformation = () => {
     switch (pendingIssue.requestType) {
-    case 'Modification':
+    case 'modification':
       return (
         <>
-          <CurrentIssue currentIssue={pendingIssue.requestIssue} />
+          {displayIssueInformation(pendingIssue.requestIssue)}
           {displayIssueInformation(pendingIssue)}
         </>
       );
-    case 'Addition':
-      return (
-        <>
-          {displayIssueInformation(pendingIssue)}
-        </>
-      );
-    case 'Removal':
+    case 'addition':
       return (
         <>
           {displayIssueInformation(pendingIssue)}
         </>
       );
-    case 'Withdrawal':
+    case 'removal':
+      return (
+        <>
+          {displayIssueInformation(pendingIssue)}
+        </>
+      );
+    case 'withdrawal':
       return (
         <>
           {displayIssueInformation(pendingIssue)}
@@ -64,10 +64,7 @@ export const CancelPendingRequestIssueModal = (props) => {
 
   const handleSubmit = () => {
     removeFromPendingReviewSection(removeIndex);
-    if (pendingIssue.requestType !== 'Addition') {
-      addIssue(pendingIssue.requestIssue);
-    }
-    onCancel();
+    toggleCancelPendingRequestIssueModal();
   };
 
   return (
@@ -96,5 +93,5 @@ CancelPendingRequestIssueModal.propTypes = {
   removeIndex: PropTypes.number,
   onCancel: PropTypes.func,
   removeFromPendingReviewSection: PropTypes.func,
-  addIssue: PropTypes.func
+  toggleCancelPendingRequestIssueModal: PropTypes.func
 };

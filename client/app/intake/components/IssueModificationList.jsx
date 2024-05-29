@@ -6,20 +6,20 @@ import DropdownButton from '../../components/DropdownButton';
 const IssueModificationList = (
   {
     sectionTitle,
-    issuesArr,
-    lastSection,
     issueModificationRequests,
-    onClickPendingIssueAction,
+    allPendingIssues,
+    onClickPendingIssueAction
   }
 ) => {
-  const issues = issuesArr.map((issue, id) => {
+  console.log(issueModificationRequests)
+  const issues = issueModificationRequests.map((issueModificationRequest, id) => {
     // Get index of the entire issueModificationRequests array to prepare for removal
-    const index = issueModificationRequests.findIndex((request) => request === issue);
+    const index = allPendingIssues.findIndex((request) => request === issueModificationRequest);
 
     return (
       <li key={id}>
-        <IssueModificationRequest issue={issue} />
-        {issuesArr.length > 1 && id !== issuesArr.length - 1 ?
+        <IssueModificationRequest issueModificationRequest={issueModificationRequest} />
+        {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
             <hr />
             <br />
@@ -29,7 +29,7 @@ const IssueModificationList = (
         <DropdownButton
           lists={
             [{ value: {
-              type: 'remove', index,
+              type: 'remove', index
             },
             title: 'Remove'
             }]
@@ -50,7 +50,6 @@ const IssueModificationList = (
           {issues}
         </ol>
       </div>
-      {lastSection ? null : <hr />}
     </>
   );
 };
