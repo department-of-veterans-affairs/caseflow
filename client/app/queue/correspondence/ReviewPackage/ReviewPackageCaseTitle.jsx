@@ -85,7 +85,7 @@ const CaseTitleScaffolding = (props) => {
         onCancel={closeReassignModal}
         correspondence_id = {props.correspondence_id}
         reviewDetails={props.reviewDetails}
-        mailTeamUsers={props.mailTeamUsers} />
+        inboundOpsTeamUsers={props.inboundOpsTeamUsers} />
       }
     </div>
   );
@@ -120,7 +120,7 @@ const CaseSubTitleScaffolding = (props) => (
 ReviewPackageCaseTitle.propTypes = {
   reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
@@ -130,7 +130,7 @@ ReviewPackageCaseTitle.propTypes = {
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool,
   efolder: PropTypes.bool,
@@ -140,7 +140,7 @@ CaseSubTitleScaffolding.propTypes = {
 
 CaseTitleScaffolding.propTypes = {
   correspondence_id: PropTypes.number,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   reviewDetails: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,

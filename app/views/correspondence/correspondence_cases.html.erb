@@ -4,7 +4,7 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
-    isMailTeamUser: current_user.mail_team_user?,
+    isInboundOpsTeamUsers: current_user.inbound_ops_team_user?,
     isInboundOpsSupervisor: current_user.inbound_ops_team_supervisor?,
     isInboundOpsSuperuser: current_user.inbound_ops_team_superuser?,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},

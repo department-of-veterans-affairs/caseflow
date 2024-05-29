@@ -8,7 +8,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
     end
@@ -49,7 +49,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence tasks in-progress tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -58,7 +58,7 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        create_efolderupload_task(correspondence, parent_task)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
@@ -220,7 +220,6 @@ RSpec.feature("The Correspondence Cases page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -355,7 +354,6 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     before do
@@ -520,7 +518,6 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -672,7 +669,6 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -838,7 +834,6 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -916,7 +911,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "Your Correspondence completed tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -1050,7 +1045,6 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1223,7 +1217,6 @@ RSpec.feature("The Correspondence Cases page") do
   context "Banner alert for approval and reject request" do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -1338,7 +1331,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     before :each do
-      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
       FeatureToggle.enable!(:user_queue_pagination)
@@ -1454,7 +1446,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:inbound_ops_team_supervisor) }
     let(:alt_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(alt_user)
+      InboundOpsTeam.singleton.add_user(alt_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
     end

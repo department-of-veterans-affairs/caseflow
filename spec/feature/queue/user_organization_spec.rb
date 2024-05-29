@@ -110,8 +110,8 @@ RSpec.feature "User organization", :postgres do
         visit(organization.user_admin_path)
         fill_in("searchBar", with: "you killed my father, prepare to die")
         using_wait_time(20) do
-        expect(page).to have_content("No results found")
-        expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
+          expect(page).to have_content("No results found")
+          expect(page).to have_content("Please enter a valid username or CSS ID and try again.")
         end
       end
     end

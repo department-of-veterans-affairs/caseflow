@@ -234,7 +234,7 @@ export const CorrespondenceReviewPackage = (props) => {
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
-            mailTeamUsers={props.mailTeamUsers}
+            inboundOpsTeamUsers={props.inboundOpsTeamUsers}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
@@ -309,7 +309,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
 CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,

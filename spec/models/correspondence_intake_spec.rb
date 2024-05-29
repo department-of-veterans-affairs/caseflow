@@ -6,6 +6,7 @@ RSpec.describe CorrespondenceIntake, type: :model do
   end
 
   describe "Record entry" do
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     before do
       CorrespondenceType.create!(
         name: "a correspondence type"
@@ -13,11 +14,15 @@ RSpec.describe CorrespondenceIntake, type: :model do
       PackageDocumentType.create!
 
       FactoryBot.create(:veteran)
+
+      User.authenticate!(user: current_user)
     end
 
     it "can be created" do
+      user = create(:user)
+      InboundOpsTeam.singleton.add_user(user)
       correspondence = create(:correspondence)
-      task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, create(:user))
+      task = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
       subject = CorrespondenceIntake.create!(
         task_id: task.id,
         current_step: 1,

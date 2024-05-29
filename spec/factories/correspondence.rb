@@ -26,7 +26,7 @@ FactoryBot.define do
 
     trait :with_correspondence_intake_task do
       transient do
-        assigned_to { User.first }
+        assigned_to { InboundOpsTeam.singleton.users.first }
       end
 
       after(:create) do |correspondence, evaluator|

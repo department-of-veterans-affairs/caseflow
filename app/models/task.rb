@@ -183,7 +183,8 @@ class Task < CaseflowRecord
     end
 
     def verify_user_can_create!(user, parent)
-      return true if parent.appeal_type == Correspondence.name && MailTeam.singleton.user_has_access?(user)
+      # guard clause to allow InboundOpsTeam members to create mail/appeal tasks within Correspondence Intake
+      return true if parent.appeal_type == Correspondence.name && InboundOpsTeam.singleton.user_has_access?(user)
 
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)

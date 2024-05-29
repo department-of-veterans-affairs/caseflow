@@ -24,6 +24,10 @@ describe CorrespondenceAutoAssignLogger do
   end
 
   describe "#begin" do
+    before do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
     it "creates a BatchAutoAssignmentAttempt record" do
       expect do
         described.begin
@@ -86,13 +90,19 @@ describe CorrespondenceAutoAssignLogger do
 
     it "creates an IndividualAutoAssignmentAttempt record indicating no assignees" do
       expect do
-        described.no_eligible_assignees(task: task, started_at: Time.current, unassignable_reason: "No eligible assignees available")
+        described.no_eligible_assignees(
+          task: task,
+          started_at: Time.current,
+          unassignable_reason: "No eligible assignees available"
+        )
       end.to change(IndividualAutoAssignmentAttempt, :count).by(1)
 
       result = IndividualAutoAssignmentAttempt.last
       expect(result.status).to eq("error")
       expect(result.statistics["review_package_task_id"]).to eq(task.id)
-      expect(result.statistics["result"]).to eq("No eligible assignees: No eligible assignees available")
+      expect(result.statistics["result"]).to eq(
+        "No eligible assignees: No eligible assignees available"
+      )
     end
   end
 
@@ -132,7 +142,11 @@ describe CorrespondenceAutoAssignLogger do
 
     context "when there are NO eligible assignees" do
       it "increments num_packages_unassigned" do
-        described.no_eligible_assignees(task: task, started_at: Time.current, unassignable_reason: "No eligible assignees available")
+        described.no_eligible_assignees(
+          task: task,
+          started_at: Time.current,
+          unassignable_reason: "No eligible assignees available"
+        )
         described.end
 
         batch = BatchAutoAssignmentAttempt.last
@@ -144,7 +158,10 @@ describe CorrespondenceAutoAssignLogger do
 
       context "with NOD correspondence" do
         it "increments num_nod_packages_unassigned" do
-          described.no_eligible_assignees(task: nod_task, started_at: Time.current, unassignable_reason: "No eligible assignees available")
+          described.no_eligible_assignees(
+            task: nod_task, started_at: Time.current,
+            unassignable_reason: "No eligible assignees available"
+          )
           described.end
 
           batch = BatchAutoAssignmentAttempt.last
@@ -168,7 +185,10 @@ describe CorrespondenceAutoAssignLogger do
         end
 
         num_packages_unassigned.times do
-          described.no_eligible_assignees(task: task, started_at: Time.current, unassignable_reason: "No eligible assignees available")
+          described.no_eligible_assignees(
+            task: task, started_at: Time.current,
+            unassignable_reason: "No eligible assignees available"
+          )
         end
 
         num_nod_packages_assigned.times do
@@ -176,7 +196,10 @@ describe CorrespondenceAutoAssignLogger do
         end
 
         num_nod_packages_unassigned.times do
-          described.no_eligible_assignees(task: nod_task, started_at: Time.current, unassignable_reason: "No eligible assignees available")
+          described.no_eligible_assignees(
+            task: nod_task, started_at: Time.current,
+            unassignable_reason: "No eligible assignees available"
+          )
         end
 
         described.end
