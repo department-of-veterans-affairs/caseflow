@@ -28,7 +28,7 @@ export const ReviewForm = (props) => {
 
   useEffect(() => {
     setCorrespondenceTypeID(-1);
-    props.setCreateRecordIsReadOnly('Select...');
+    setCreateRecordIsReadOnly('Select...');
   }, []);
 
   const handleCorrespondenceTypeEmpty = () => {
@@ -93,6 +93,7 @@ export const ReviewForm = (props) => {
     };
 
     props.setCreateRecordIsReadOnly(handleCorrespondenceTypeEmpty());
+    props.setCorrTypeSaved(updatedSelectedValue.default_select_value);
     props.setEditableData(updatedSelectedValue);
   };
 

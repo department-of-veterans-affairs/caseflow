@@ -9,7 +9,7 @@ export const initialState = {
   lastAction: {},
   taskInstructions: [],
   reasonForRemovePackage: {},
-  createRecordIsReadOnly: '',
+  createRecordIsReadOnly: 'Select...',
   autoAssign: {
     isButtonDisabled: false,
     batchId: null,

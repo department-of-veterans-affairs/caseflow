@@ -48,6 +48,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
+  const [corrTypeSaved, setCorrTypeSaved] = useState(-1);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -56,19 +57,32 @@ export const CorrespondenceReviewPackage = (props) => {
   // Traking the Correspondence type value changing for the Create record button
 
   const isCorrTypeSelected = () => {
+    // debugger;
     if (props.createRecordIsReadOnly === 'Select...') {
       setCorrTypeSelected(true);
+      // console.log("Hitting 1st")
+      // console.log(corrTypeSelected);
     // eslint-disable-next-line no-negated-condition
-    } else if (props.createRecordIsReadOnly !== '') {
-      setCorrTypeSelected(true);
-    } else {
+    } else if (props.createRecordIsReadOnly === '' && corrTypeSaved !== -1) {
+      // debugger;
       setCorrTypeSelected(false);
+      // console.log("Hitting 2nd");
+      // console.log(corrTypeSelected);
+    } else {
+      setCorrTypeSelected(true);
+      // console.log("Hitting 3rd")
+      // console.log(corrTypeSelected);
     }
   };
 
   useEffect(() => {
-    isCorrTypeSelected();
-  }, [props.createRecordIsReadOnly]);
+    console.log("Hello Friend");
+    console.log(corrTypeSelected);
+  }, [corrTypeSelected]);
+
+  // useEffect(() => {
+  //   isCorrTypeSelected();
+  // }, [props.createRecordIsReadOnly]);
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
@@ -208,7 +222,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || corrTypeSelected;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || isCorrTypeSelected();
   };
 
   const intakeAppeal = async () => {
@@ -294,7 +308,9 @@ export const CorrespondenceReviewPackage = (props) => {
               handleReview,
               errorMessage,
               setErrorMessage,
-              isReadOnly
+              isReadOnly,
+              corrTypeSaved,
+              setCorrTypeSaved
             }}
             {...props}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
