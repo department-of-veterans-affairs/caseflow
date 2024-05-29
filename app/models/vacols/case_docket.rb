@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "brieff"
@@ -205,6 +206,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
     order by BFD19
   "
+  # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -235,6 +237,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(query).to_a
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.genpop_priority_count
     query = <<-SQL
@@ -280,6 +283,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(sanitize_sql_array([query, row_number])).first["bfd19"].to_date
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.docket_counts_by_month
     query = <<-SQL
       select YEAR, MONTH,
@@ -320,6 +324,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(query)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.age_of_n_oldest_genpop_priority_appeals(num)
     conn = connection
@@ -353,17 +358,18 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals = conn.exec_query(fmtd_query).to_a
 
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-      appeals.select { |appeal| appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days }
+      appeals.select do |appeal|
+        appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days
+      end
     end
 
     appeals.sort_by { appeal[:bfd19] }
 
-    appeals.first(num) # {Reestablishes the limit}
+    appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
-  # {UPDATE}
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
 
@@ -453,7 +459,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_a
   end
 
-  # {UPDATE}
+  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -498,7 +504,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-  # rubocop:enable
 
   # {UPDATE}
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
@@ -527,7 +532,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
-  # rubocop:enable
   # :nocov:
 
   def self.distribute_appeals(query, judge, limit, dry_run)
@@ -542,13 +546,16 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days) # {Filters out appeals with affinity days older than the lever}
-          appeals.select { |appeal| appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days }
+        # {Filters out appeals with affinity days older than the lever}
+        if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
+          appeals.select do |appeal|
+            appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days
+          end
         end
 
         appeals.sort_by { appeal[:bfd19] } # {Sorts by bfd19 date}
 
-        appeals.first(limit) # {Reestablishes the limit}
+        appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
@@ -562,9 +569,11 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+
   def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-      # {Need to check for affinity_start_date on AMA DB is less than CaseDistributionLever.cavc_aod_affinity_days.days.ago}
+      # {Need to check for affinity_start_date on AMA DB is <= CaseDistributionLever.cavc_aod_affinity_days.days.ago}
       <<-SQL
       where (PREV_DECIDING_JUDGE = ? and AOD = '1' and BFAC = '7' )
       SQL
@@ -579,6 +588,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
+
+  # rubocop:disable Metrics/MethodLength
 
   def self.ineligible_judges_sattyid_cache
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
@@ -607,9 +618,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
+  # rubocop:enable Metrics/MethodLength
+
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
   end
 end
+# rubocop:enable Metrics/ClassLength
