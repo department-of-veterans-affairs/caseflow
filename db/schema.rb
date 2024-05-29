@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_23_021417) do
+ActiveRecord::Schema.define(version: 2024_05_28_153139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1916,6 +1916,16 @@ ActiveRecord::Schema.define(version: 2024_05_23_021417) do
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
   end
 
+  create_table "transcription_package_hearings", force: :cascade do |t|
+    t.bigint "hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_package_legacy_hearings", force: :cascade do |t|
+    t.bigint "legacy_hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
   create_table "transcription_packages", force: :cascade do |t|
     t.string "aws_link_work_order", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
     t.string "aws_link_zip", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
@@ -2405,6 +2415,10 @@ ActiveRecord::Schema.define(version: 2024_05_23_021417) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
+  add_foreign_key "transcription_package_hearings", "hearings"
+  add_foreign_key "transcription_package_hearings", "transcription_packages"
+  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
+  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
   add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "transcriptions", "transcription_contractors"
