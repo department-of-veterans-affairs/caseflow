@@ -358,8 +358,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals = conn.exec_query(fmtd_query).to_a
 
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-      appeals.select do |appeal|
-        appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days
+      appeals.reject do |appeal|
+        next if appeal["bfac"] != "7"
+
+        (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+          .appeal_affinity
+          .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
       end
     end
 
@@ -546,10 +550,13 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        # {Filters out appeals with affinity days older than the lever}
         if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-          appeals.select do |appeal|
-            appeal.appeal_affinity.affinity_start_date <= CaseDistributionLever.cavc_aod_affinity_days
+          appeals.reject do |appeal|
+            next if appeal["bfac"] != "7"
+
+            (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+              .appeal_affinity
+              .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
           end
         end
 
