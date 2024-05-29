@@ -2,30 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import Dropdown from '../../../components/Dropdown';
-// import COPY from '../../../../COPY';
-import ApiUtil from '../../../util/ApiUtil';
 
-export const RemoveContractorModal = ({ onCancel, onConfirm, title, contractors }) => {
+export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors }) => {
   const [selectedContractorId, setSelectedContractorId] = useState(null);
-
-  const removeContractor = (contractorId) => {
-    console.log("removeContractor called", contractorId);
-    const data = { id: contractorId };
-
-    ApiUtil.delete(`/hearings/find_by_contractor/${data.id}`).then(() => {
-      onConfirm({
-        title: "Remove Success",
-        message: `Contractor with ID ${data.id} was removed successfully`,
-        type: "success",
-      });
-    });
-  };
-
-  const handleConfirm = () => {
-    if (selectedContractorId) {
-      removeContractor(selectedContractorId);
-    }
-  };
 
   const handleDropdownChange = (contractorId) => {
     setSelectedContractorId(contractorId);
@@ -47,19 +26,26 @@ export const RemoveContractorModal = ({ onCancel, onConfirm, title, contractors 
         },
         {
           classNames: ["usa-button", "usa-button-primary"],
-          name: "Remove",
-          onClick: handleConfirm,
-        },
+          name: "Confirm",
+          onClick: () => {
+            onConfirm(selectedContractorId).then(onCancel);
+          },
+        }
       ]}
       closeHandler={onCancel}
       id="custom-contractor-modal"
     >
-      <p>"Form Description"</p>
+      <p>
+        This will permanently remove this contractor from the list of assignable
+        contractors.
+      </p>
       <Dropdown
-        name="contractors"
+        key={contractors.length}
+        name="Contractor"
         options={dropdownOptions}
         onChange={handleDropdownChange}
         defaultText="Select a contractor"
+        value={selectedContractorId}
       />
     </Modal>
   );
@@ -67,7 +53,13 @@ export const RemoveContractorModal = ({ onCancel, onConfirm, title, contractors 
 
 RemoveContractorModal.propTypes = {
   onCancel: PropTypes.func,
-  onConfirm: PropTypes.func,
+  onConfirm: PropTypes.func.isRequired,
   title: PropTypes.string,
   contractors: PropTypes.array,
+};
+
+// Provide default props
+RemoveContractorModal.defaultProps = {
+  onCancel: () => {},
+  contractors: [],
 };

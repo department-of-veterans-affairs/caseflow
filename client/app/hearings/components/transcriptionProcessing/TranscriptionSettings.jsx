@@ -1,37 +1,37 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-import React from 'react';
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from 'app/components/Button';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
-import { PencilIcon } from '../../../components/icons/PencilIcon';
-import Alert from '../../../components/Alert';
-
-import COPY from '../../../../COPY';
-import { RemoveContractorModal } from './RemoveContractorModal';
+import React from "react";
+import { css } from "glamor";
+import PropTypes from "prop-types";
+import AppSegment from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment";
+import Button from "app/components/Button";
+import Link from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link";
+import ToggleSwitch from "../../../components/ToggleSwitch/ToggleSwitch";
+import { PencilIcon } from "../../../components/icons/PencilIcon";
+import Alert from "../../../components/Alert";
+import ApiUtil from "../../../util/ApiUtil";
+import COPY from "../../../../COPY";
+import { RemoveContractorModal } from "./RemoveContractorModal";
 
 const buttonStyle = css({
-  padding: '1rem 2.5rem 2rem 0',
-  display: 'inline-block'
+  padding: "1rem 2.5rem 2rem 0",
+  display: "inline-block",
 });
 
 const contractorButtonStyle = css({
-  paddingLeft: '41.55rem'
+  paddingLeft: "41.55rem",
 });
 
 const headerContainerStyling = css({
-  margin: '1.5rem 0 3rem 0',
-  padding: '0',
-  '& > *': {
-    display: 'inline-block',
-    paddingRight: '15px',
+  margin: "1.5rem 0 3rem 0",
+  padding: "0",
+  "& > *": {
+    display: "inline-block",
+    paddingRight: "15px",
     // paddingLeft: '15px',
-    verticalAlign: 'middle',
-    margin: 0
-  }
+    verticalAlign: "middle",
+    margin: 0,
+  },
 });
 
 const headerStyling = css({
@@ -39,26 +39,26 @@ const headerStyling = css({
 });
 
 const instructionListStyle = css({
-  listStyle: 'none',
-  margin: '0',
-  padding: '1.5rem 0 2rem 0',
-  fontSize: '19px',
+  listStyle: "none",
+  margin: "0",
+  padding: "1.5rem 0 2rem 0",
+  fontSize: "19px",
 });
 
 const returnLinkStyle = css({
-  padding: '1.5rem 0 2rem 0rem'
+  padding: "1.5rem 0 2rem 0rem",
 });
 
 const toggleStyle = css({
-  padding: '1.5rem 0 2rem 25rem'
+  padding: "1.5rem 0 2rem 25rem",
 });
 
 const userListItemStyle = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  borderTop: '.1rem solid #d6d7d9',
-  padding: '4rem 0 2rem',
-  margin: '0'
+  display: "flex",
+  flexWrap: "wrap",
+  borderTop: ".1rem solid #d6d7d9",
+  padding: "4rem 0 2rem",
+  margin: "0",
 });
 
 const EditContractorLink = () => (
@@ -66,10 +66,12 @@ const EditContractorLink = () => (
     linkStyling
     // open modal onClick
   >
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })} >
+    <span {...css({ marginRight: "1px", marginLeft: "5px" })}>
       Edit Information
     </span>
-    <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
+    <span {...css({ position: "absolute" })}>
+      <PencilIcon size={25} />
+    </span>
   </Button>
 );
 
@@ -78,10 +80,10 @@ const EditHearingsSentLink = () => (
     linkStyling
     // open modal onClick
   >
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })} >
-      Edit Total
+    <span {...css({ marginRight: "1px", marginLeft: "5px" })}>Edit Total</span>
+    <span {...css({ position: "absolute" })}>
+      <PencilIcon size={25} />
     </span>
-    <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
   </Button>
 );
 
@@ -90,16 +92,67 @@ export default class TranscriptionSettings extends React.PureComponent {
     super(props);
 
     this.state = {
+      isRemoveModalOpen: false,
       loading: true,
       alert: {
-        title: '',
-        message: '',
-        type: '',
+        title: "",
+        message: "",
+        type: "",
       },
       isAddEditOpen: false,
-      isRemoveModalOpen: false,
-      contractors: props.contractors,
+
+      contractors: [],
     };
+  }
+
+  toggleRemoveModal = () => {
+    this.setState((prevState) => ({
+      isRemoveModalOpen: !prevState.isRemoveModalOpen,
+    }));
+  };
+
+handleRemoveContractor = (contractorId) => {
+  return new Promise((resolve, reject) => {
+    ApiUtil.delete(`/hearings/find_by_contractor/${contractorId}`)
+      .then(() => {
+        this.setState(
+          {
+            isRemoveModalOpen: false, // Close the modal
+          },
+          () => {
+            this.getContractors(); // Refresh the contractors list
+            this.confirmRemoveModal({
+              title: "Success",
+              message: "Contractor removed successfully",
+              type: "success",
+            });
+            resolve();
+          }
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+        this.setState(
+          {
+            alert: {
+              title: "Error",
+              message: "Failed to remove contractor",
+              type: "error",
+            },
+            isRemoveModalOpen: false, // Close the modal even if there's an error
+          },
+          () => {
+            reject(error);
+          }
+        );
+      });
+  });
+};
+
+  componentDidUpdate(prevProps) {
+    if (this.props.contractors !== prevProps.contractors) {
+      // Do something when contractors prop changes
+    }
   }
 
   confirmRemoveModal = (alert) => {
@@ -107,15 +160,25 @@ export default class TranscriptionSettings extends React.PureComponent {
     this.toggleRemoveModal();
   };
 
-  toggleRemoveModal = () =>{
-    this.setState({ isRemoveModalOpen: !this.state.isRemoveModalOpen });}
+  getContractors = () => {
+    ApiUtil.get("/hearings/find_by_contractor").then((response) => {
+      this.setState({
+        contractors: response.body.transcription_contractors,
+        loading: false,
+      });
+    });
+  };
+
+  componentDidMount() {
+    this.getContractors();
+  }
 
   addContractorButton = () => (
     <div {...buttonStyle}>
       <Button
         name={COPY.TRANSCRIPTION_SETTINGS_ADD}
         id="Add-contractor"
-        classNames={['usa-button-primary']}
+        classNames={["usa-button-primary"]}
         // on click add contractor modal opens
       />
     </div>
@@ -126,7 +189,7 @@ export default class TranscriptionSettings extends React.PureComponent {
       <Button
         name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
         id="Remove-contractor"
-        classNames={['usa-button-secondary']}
+        classNames={["usa-button-secondary"]}
         onClick={() => this.toggleRemoveModal()}
         // on click contractor is removed
       />
@@ -172,16 +235,13 @@ export default class TranscriptionSettings extends React.PureComponent {
     };
 
     return (
-
       <React.Fragment>
         <div>
           <h1 className="cf-margin-bottom-0" {...headerStyling}>
             {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
           <div {...headerContainerStyling}>
-            <h2 {...headerStyling}>
-              {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
-            </h2>
+            <h2 {...headerStyling}>{COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}</h2>
             <span {...contractorButtonStyle}>
               {this.removeContractorButton()}
               {this.addContractorButton()}
@@ -205,9 +265,7 @@ export default class TranscriptionSettings extends React.PureComponent {
       <AppSegment filledBackground>
         <div {...returnLinkStyle}>
           <span>
-            <Link linkStyling>
-              &lt; {COPY.TRANSCRIPTION_QUEUE_LINK}
-            </Link>
+            <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
             &nbsp;
           </span>
         </div>
@@ -215,10 +273,9 @@ export default class TranscriptionSettings extends React.PureComponent {
         {this.state.isRemoveModalOpen && (
           <RemoveContractorModal
             onCancel={this.toggleRemoveModal}
-            onConfirm={this.confirmRemoveModal}
+            onConfirm={this.handleRemoveContractor}
             contractors={this.state.contractors}
             title="Remove Contractor"
-
           />
         )}
       </AppSegment>
@@ -228,4 +285,5 @@ export default class TranscriptionSettings extends React.PureComponent {
 
 TranscriptionSettings.propTypes = {
   contractors: PropTypes.array.isRequired,
+  onRemoveContractor: PropTypes.func.isRequired,
 };
