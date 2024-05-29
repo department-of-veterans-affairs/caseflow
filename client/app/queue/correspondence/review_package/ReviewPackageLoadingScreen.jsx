@@ -84,4 +84,3 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(ReviewPackageLoadingScreen));
-
