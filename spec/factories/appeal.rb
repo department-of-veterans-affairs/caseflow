@@ -447,7 +447,7 @@ FactoryBot.define do
       with_post_intake_tasks
       completed_distribution_task
 
-      after(:create) do |appeal, evaluator|
+      after(:create) do |appeal, _evaluator|
         appeal.reload
       end
     end
@@ -464,10 +464,14 @@ FactoryBot.define do
     trait :with_appeal_affinity do
       transient do
         affinity_start_date { Time.zone.now }
+        appeal_reload { false }
       end
 
       after(:create) do |appeal, evaluator|
-        appeal.reload
+        if evaluator.appeal_reload?
+          appeal.reload
+        end
+
         create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
       end
     end
