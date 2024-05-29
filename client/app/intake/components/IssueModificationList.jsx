@@ -11,7 +11,6 @@ const IssueModificationList = (
     onClickPendingIssueAction
   }
 ) => {
-  console.log(issueModificationRequests)
   const issues = issueModificationRequests.map((issueModificationRequest, id) => {
     // Get index of the entire issueModificationRequests array to prepare for removal
     const index = allPendingIssues.findIndex((request) => request === issueModificationRequest);
@@ -59,5 +58,6 @@ export default IssueModificationList;
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
   issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
+  allPendingIssues: PropTypes.arrayOf(PropTypes.object),
   onClickPendingIssueAction: PropTypes.func
 };

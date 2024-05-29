@@ -22,7 +22,7 @@ describe('CancelPendingRequestIssueModal', () => {
     removeIndex: 0,
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
-    addIssue: jest.fn()
+    toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelAddition = {
@@ -30,7 +30,7 @@ describe('CancelPendingRequestIssueModal', () => {
     removeIndex: 0,
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
-    addIssue: jest.fn()
+    toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelRemoval = {
@@ -38,7 +38,7 @@ describe('CancelPendingRequestIssueModal', () => {
     removeIndex: 0,
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
-    addIssue: jest.fn()
+    toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelWithdrawal = {
@@ -46,7 +46,7 @@ describe('CancelPendingRequestIssueModal', () => {
     removeIndex: 0,
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
-    addIssue: jest.fn()
+    toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   it('renders the cancel pending issue modal for modification', () => {
