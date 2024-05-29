@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import { onClickModifcationAction } from 'app/intake/util/issueModificationRequests';
 
 const IssueModificationRequest = ({
   benefitType,
@@ -10,26 +12,38 @@ const IssueModificationRequest = ({
   requestor,
   requestReason,
   originalIssue,
-  withDrawal
+  withDrawal,
+  modificationActionOptions
 }) => {
   return (
-    <div>
-      <div>
-        <p>{nonRatingIssueCategory} - {nonRatingIssueDescription}</p>
-        <p>Benefit type: {benefitType}</p>
-        <p>Decision date: {decisionDate}</p>
-        <br />
+    <div className="modification-request">
+      <div className="modification-request-text">
+        <div>
+          <p>{nonRatingIssueCategory} - {nonRatingIssueDescription}</p>
+          <p>Benefit type: {benefitType}</p>
+          <p>Decision date: {decisionDate}</p>
+          <br />
+        </div>
+        <h4>{details}:</h4>
+        <p>{requestReason}</p>
+        {withDrawal}
+        <div>
+          <br />
+          <h4>Requested by:</h4>
+          <p>{requestor.fullName} ({requestor.cssId})</p>
+          <br />
+        </div>
+        {originalIssue}
       </div>
-      <h4>{details}:</h4>
-      <p>{requestReason}</p>
-      {withDrawal}
-      <div>
-        <br />
-        <h4>Requested by:</h4>
-        <p>{requestor.fullName} ({requestor.cssId})</p>
-        <br />
-      </div>
-      {originalIssue}
+      <SearchableDropdown
+        name="modification-action"
+        label="Actions"
+        hideLabel
+        searchable={false}
+        options={modificationActionOptions}
+        placeholder="Select action"
+        onChange={(option) => onClickModifcationAction(option.value)}
+      />
     </div>
   );
 };
@@ -45,5 +59,6 @@ IssueModificationRequest.propTypes = {
   requestor: PropTypes.object.isRequired,
   requestReason: PropTypes.string.isRequired,
   originalIssue: PropTypes.object,
-  withDrawal: PropTypes.object
+  withDrawal: PropTypes.object,
+  modificationActionOptions: PropTypes.array
 };
