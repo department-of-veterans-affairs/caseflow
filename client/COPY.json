@@ -746,6 +746,7 @@
   "TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE": "Remove contractor",
   "TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS": "Contractor removed successfully",
   "TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_FAIL": "Failed to remove contractor",
+  "TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TEXT": "This will permanently remove this contractor from the list of assignable contractors.",
   "TRANSCRIPTION_SETTINGS_BOX_LINK": "Link to box.com: ",
   "TRANSCRIPTION_SETTINGS_POC_ADDRESS": "POC: ",
   "TRANSCRIPTION_SETTINGS_HEARINGS_SENT": "Hearings sent to Contractor A this week: ",

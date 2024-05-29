@@ -37,10 +37,7 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       closeHandler={onCancel}
       id="custom-contractor-modal"
     >
-      <p>
-        This will permanently remove this contractor from the list of assignable
-        contractors.
-      </p>
+      <p>{COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TEXT}</p>
       <SearchableDropdown
         name="Contractors"
         label="Contractor"
