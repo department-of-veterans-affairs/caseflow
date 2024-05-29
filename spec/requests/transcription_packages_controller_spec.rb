@@ -30,7 +30,15 @@ RSpec.describe "the Hearings::TranscriptionPackagesController", type: :request d
     it "returns ok status" do
       get hearings_transcription_package_path(transcription_package.task_number)
 
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status :ok
+    end
+
+    it "returns not found status" do
+      get hearings_transcription_package_path("invalid parameter here")
+      body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to have_http_status :not_found
+      expect(body[:error_code]).to eq("Package not found")
     end
 
     it "returns json" do
