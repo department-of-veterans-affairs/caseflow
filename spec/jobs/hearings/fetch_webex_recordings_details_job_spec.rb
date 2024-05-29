@@ -8,7 +8,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   let(:mp4_link) { "https://www.learningcontainer.com/mp4-sample-video-files-download/#" }
   let(:mp3_link) { "https://freetestdata.com/audio-files/mp3/" }
   let(:vtt_link) { "https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt" }
-  let(:topic) { "Webex Meeting - 180000304_1_LegacyHearing-20240213 1712-1" }
+  let(:topic) { "Webex meeting-20240520 2030-1" }
   let(:mp4_file_name) { "180000304_1_LegacyHearing-1.mp4" }
   let(:vtt_file_name) { "180000304_1_LegacyHearing-1.vtt" }
   let(:mp3_file_name) { "180000304_1_LegacyHearing-1.mp3" }

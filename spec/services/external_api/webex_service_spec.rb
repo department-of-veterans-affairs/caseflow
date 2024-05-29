@@ -179,7 +179,7 @@ describe ExternalApi::WebexService do
           expect(subject.mp4_link).to eq("https://www.learningcontainer.com/mp4-sample-video-files-download/#")
           expect(subject.vtt_link).to eq("https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt")
           expect(subject.mp3_link).to eq("https://freetestdata.com/audio-files/mp3/")
-          expect(subject.topic).to eq("Webex Meeting - 180000304_1_LegacyHearing-20240213 1712-1")
+          expect(subject.topic).to eq("Webex meeting-20240520 2030-1")
           subject
         end
       end
