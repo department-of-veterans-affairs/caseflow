@@ -33,6 +33,7 @@ const IssueModificationList = (
             title: 'Remove'
             }]
           }
+          label="Select action"
           onClick={(option) => onClickPendingIssueAction(option)}
         />
       </li>

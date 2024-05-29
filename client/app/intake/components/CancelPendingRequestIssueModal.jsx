@@ -14,19 +14,31 @@ export const CancelPendingRequestIssueModal = (props) => {
     toggleCancelPendingRequestIssueModal
   } = props;
 
-  let displayIssueInformation = (issue) => {
+  const displayWithdrawalDate = (issue) => {
+    return (
+      <><strong>Request date for withdrawal: </strong>{formatDateStr(issue.withdrawalDate)}<br /></>
+    );
+  };
+
+  const displayRequestReason = (issue) => {
+    return (
+      <><strong>{capitalize(issue.requestType)} request reason: </strong>{issue.requestReason}<br /></>
+    );
+  };
+
+  const displayIssueInformation = (issue) => {
     const issueHeader = issue.requestType === 'addition' ||
       issue.requestType === 'modification' ? 'Pending issue request' : 'Current issue';
 
     return (
       <div>
         <h2 style={{ marginBottom: '0px' }}>{issueHeader}</h2>
-        <strong>Issue type: </strong>{issue.nonratingIssueCategory}<br />
+        <strong>Issue type: </strong>
+        {issue?.nonratingIssueCategory ? issue.nonratingIssueCategory : issue.category}<br />
         <strong>Decision date: </strong>{formatDateStr(issue.decisionDate)}<br />
         <strong>Issue description: </strong>{issue.nonratingIssueDescription}<br />
-        {issue.requestType === 'withdrawal' &&
-          <><strong>Request date for withdrawal: </strong>{formatDateStr(issue.withdrawalDate)}<br /></>}
-        <strong>{capitalize(issue.requestType)} request reason: </strong>{issue.requestReason}<br />
+        {issue.requestType === 'withdrawal' ? displayWithdrawalDate(issue) : null}
+        {issue.requestType ? displayRequestReason(issue) : null}
       </div>
     );
   };
@@ -36,6 +48,7 @@ export const CancelPendingRequestIssueModal = (props) => {
     case 'modification':
       return (
         <>
+          {/* <CurrentIssue currentIssue={pendingIssue.requestIssue} /> */}
           {displayIssueInformation(pendingIssue.requestIssue)}
           {displayIssueInformation(pendingIssue)}
         </>
