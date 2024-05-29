@@ -40,21 +40,16 @@ export const ReviewForm = (props) => {
   };
 
   const isCorrTypeSelected = () => {
-    // debugger;
     if (props.createRecordIsReadOnly === 'Select...') {
       props.setCorrTypeSelected(true);
-      console.log("Hitting 1st");
-      console.log(props.corrTypeSelected);
+      // props.setIsReadOnly(false);
     // eslint-disable-next-line no-negated-condition
     } else if (props.createRecordIsReadOnly === '' && props.corrTypeSaved !== -1) {
-      // debugger;
       props.setCorrTypeSelected(false);
-      console.log("Hitting 2nd");
-      console.log(props.corrTypeSelected);
+      // props.setIsReadOnly(false);
     } else {
       props.setCorrTypeSelected(true);
-      console.log("Hitting 3rd");
-      console.log(props.corrTypeSelected);
+      // props.setIsReadOnly(true);
     }
   };
 
@@ -184,6 +179,11 @@ export const ReviewForm = (props) => {
       props.setErrorMessage(body.error);
     }
   };
+  // Tracking the Correspondence type value changing for the Create record button
+
+  useEffect(() => {
+    isCorrTypeSelected();
+  }, [handleSubmit]);
 
   // Prevents save action in case of errorMessage
   useEffect(() => {
@@ -192,8 +192,6 @@ export const ReviewForm = (props) => {
       return;
     }
     setSaveChanges(true);
-    isCorrTypeSelected();
-
   }, []);
 
   const veteranFileNumStyle = () => {
@@ -363,8 +361,12 @@ ReviewForm.propTypes = {
   setIsReturnToQueue: PropTypes.bool,
   setEditableData: PropTypes.func,
   setCreateRecordIsReadOnly: PropTypes.func,
+  createRecordIsReadOnly: PropTypes.string,
+  setCorrTypeSaved: PropTypes.func,
   setDisableButton: PropTypes.func,
+  setCorrTypeSelected: PropTypes.func,
   setErrorMessage: PropTypes.func,
+  corrTypeSaved: PropTypes.number,
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,

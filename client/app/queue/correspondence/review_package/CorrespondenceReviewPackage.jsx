@@ -54,36 +54,6 @@ export const CorrespondenceReviewPackage = (props) => {
     taskId: [],
   });
 
-  // Traking the Correspondence type value changing for the Create record button
-
-  const isCorrTypeSelected = () => {
-    // debugger;
-    if (props.createRecordIsReadOnly === 'Select...') {
-      setCorrTypeSelected(true);
-      // console.log("Hitting 1st")
-      // console.log(corrTypeSelected);
-    // eslint-disable-next-line no-negated-condition
-    } else if (props.createRecordIsReadOnly === '' && corrTypeSaved !== -1) {
-      // debugger;
-      setCorrTypeSelected(false);
-      // console.log("Hitting 2nd");
-      // console.log(corrTypeSelected);
-    } else {
-      setCorrTypeSelected(true);
-      // console.log("Hitting 3rd")
-      // console.log(corrTypeSelected);
-    }
-  };
-
-  useEffect(() => {
-    console.log("Hello Friend");
-    console.log(corrTypeSelected);
-  }, [corrTypeSelected]);
-
-  // useEffect(() => {
-  //   isCorrTypeSelected();
-  // }, [props.createRecordIsReadOnly]);
-
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
@@ -222,7 +192,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || isCorrTypeSelected();
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || corrTypeSelected;
   };
 
   const intakeAppeal = async () => {
@@ -348,7 +318,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={disableButton || isReadOnly}
+                disabled={corrTypeSelected}
               />
             </a>
           </div>
