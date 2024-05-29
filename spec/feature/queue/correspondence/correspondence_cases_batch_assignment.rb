@@ -6,13 +6,15 @@ RSpec.feature("The Correspondence Cases page") do
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
   context "correspondence batch assignment cases for assigned and unassigned tabs" do
     let(:current_user) { create(:user) }
+    let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
     before :each do
       InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      User.authenticate!(user: supervisor_user)
     end
     let(:organization) { MailTeam.singleton }
     let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
     let(:target_user) { create(:user, css_id: "TARGET_USER") }
+    let(:nod_user) { create(:user, css_id: "NOD_USER") }
 
     let(:wait_time) { 30 }
 
@@ -23,7 +25,9 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       organization.add_user(target_user)
+      organization.add_user(nod_user)
       target_user.reload
+      nod_user.reload
     end
 
     before do
@@ -61,6 +65,7 @@ RSpec.feature("The Correspondence Cases page") do
         parent_task = create_correspondence_intake(correspondence, target_user)
         create_efolderupload_task(correspondence, parent_task, user: target_user)
       end
+      InboundOpsTeam.singleton.add_user(supervisor_user)
     end
 
     it "successfully loads the unassigned tab" do
@@ -92,6 +97,12 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "Verify the mail team user batch assignment with assign button with queue limit" do
+      60.times do
+        corr = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+        rpt.update!(status: Constants.TASK_STATUSES.in_progress, assigned_to: target_user)
+      end
+
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Assign to mail team user")
       expect(page).to have_button("Assign", disabled: true)
@@ -107,7 +118,7 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
-      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} could not be completed")
+      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
 
@@ -139,6 +150,12 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "Verify the mail team user batch reassignment with reassign button with queue limit" do
+      60.times do
+        corr = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+        rpt.update!(status: Constants.TASK_STATUSES.in_progress, assigned_to: target_user)
+      end
+
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Assign to mail team user")
       expect(page).to have_button("Reassign", disabled: true)
@@ -154,8 +171,36 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
-      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} could not be completed")
+      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} has failed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
+    end
+
+    it "Verify the mail team user batch reassignment with NOD permissions" do
+      40.times do
+        correspondence = create(:correspondence, :nod)
+        auto = AutoAssignableUserFinder.new(nod_user)
+        parent_task = create_correspondence_intake(correspondence, nod_user)
+        create_efolderupload_task(correspondence, parent_task, user: nod_user)
+        auto.can_user_work_this_correspondence?(user: nod_user, correspondence: correspondence)
+      end
+
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_button("Reassign", disabled: true)
+      expect(page).to have_selector(".cf-select__input")
+      all(".cf-select__input").first.click
+      find_by_id("react-select-2-option-2").click
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 3) {
+            checkbox.click();
+          }
+        });
+      ')
+      expect(page).to have_button("Reassign", disabled: false)
+      find_by_id("button-Reassign").click
+      expect(page).to have_content("Correspondence reassignment to #{nod_user.css_id} has failed")
+      expect(page).to have_content("NOD permission is currently disabled for this user.")
     end
   end
 end
