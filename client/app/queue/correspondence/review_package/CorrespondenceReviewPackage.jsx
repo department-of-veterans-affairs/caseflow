@@ -310,7 +310,9 @@ export const CorrespondenceReviewPackage = (props) => {
               setErrorMessage,
               isReadOnly,
               corrTypeSaved,
-              setCorrTypeSaved
+              setCorrTypeSaved,
+              corrTypeSelected,
+              setCorrTypeSelected
             }}
             {...props}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}

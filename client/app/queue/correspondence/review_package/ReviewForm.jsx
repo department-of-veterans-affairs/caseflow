@@ -39,9 +39,29 @@ export const ReviewForm = (props) => {
     return correspondenceTypes[correspondenceTypeID].name;
   };
 
+  const isCorrTypeSelected = () => {
+    // debugger;
+    if (props.createRecordIsReadOnly === 'Select...') {
+      props.setCorrTypeSelected(true);
+      console.log("Hitting 1st");
+      console.log(props.corrTypeSelected);
+    // eslint-disable-next-line no-negated-condition
+    } else if (props.createRecordIsReadOnly === '' && props.corrTypeSaved !== -1) {
+      // debugger;
+      props.setCorrTypeSelected(false);
+      console.log("Hitting 2nd");
+      console.log(props.corrTypeSelected);
+    } else {
+      props.setCorrTypeSelected(true);
+      console.log("Hitting 3rd");
+      console.log(props.corrTypeSelected);
+    }
+  };
+
   const handleFileNumber = (value) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
+    isCorrTypeSelected();
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
     if (isNumeric) {
@@ -57,6 +77,7 @@ export const ReviewForm = (props) => {
   const handleChangeNotes = (value) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
+    isCorrTypeSelected();
     const updatedNotes = {
       ...props.editableData,
       notes: value,
@@ -86,13 +107,13 @@ export const ReviewForm = (props) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
     setCorrespondenceTypeID(val.id - 1);
-
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
     };
 
     props.setCreateRecordIsReadOnly(handleCorrespondenceTypeEmpty());
+    isCorrTypeSelected();
     props.setCorrTypeSaved(updatedSelectedValue.default_select_value);
     props.setEditableData(updatedSelectedValue);
   };
@@ -128,6 +149,7 @@ export const ReviewForm = (props) => {
 
   const handleSubmit = async () => {
     props.setCreateRecordIsReadOnly('');
+    isCorrTypeSelected();
     const correspondence = props;
     const payloadData = {
       data: {
@@ -170,6 +192,7 @@ export const ReviewForm = (props) => {
       return;
     }
     setSaveChanges(true);
+    isCorrTypeSelected();
 
   }, []);
 
