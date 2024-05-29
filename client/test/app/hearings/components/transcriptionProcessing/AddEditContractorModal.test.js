@@ -80,6 +80,7 @@ describe('Add contractor form', () => {
       '/hearings/find_by_contractor',
       { data: {
         transcription_contractor: {
+          id: '',
           directory: testContractor.directory,
           email: testContractor.email,
           name: testContractor.name,

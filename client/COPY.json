@@ -767,6 +767,7 @@
   "TRANSCRIPTION_SETTINGS_LABEL_EMAIL": "POC email",
   "TRANSCRIPTION_SETTINGS_ERROR_EMAIL": "POC email is required",
   "TRANSCRIPTION_SETTINGS_CREATE_SUCCESS": "You have successfully created contractor",
+  "TRANSCRIPTION_SETTINGS_UPDATE_SUCCESS": "You have successfully updated contractor",
   "TRANSCRIPTION_SETTINGS_ERROR_TITLE": "Unknown error",
   "TRANSCRIPTION_SETTINGS_ERROR_MESSAGE": "Please try again later",
 

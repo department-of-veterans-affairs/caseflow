@@ -6,35 +6,38 @@ import COPY from '../../../../COPY';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
 
-export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
-  const edit = false;
+const newContractor = {
+  id: '',
+  name: '',
+  directory: '',
+  poc: '',
+  phone: '',
+  email: ''
+};
+
+export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContractor = newContractor }) => {
+  const edit = transcriptionContractor.id !== '';
   const title = edit ? COPY.TRANSCRIPTION_SETTINGS_EDIT : COPY.TRANSCRIPTION_SETTINGS_ADD;
   const [formError, setFormError] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    directory: '',
-    poc: '',
-    phone: '',
-    email: ''
-  });
+  const [formData, setFormData] = useState(transcriptionContractor);
   const [serverError, setServerError] = useState(false);
 
-  const addContractor = (contractor) => {
+  const addContractor = (contractorFormData) => {
     const data = {
-      transcription_contractor: contractor
+      transcription_contractor: contractorFormData
     };
 
     ApiUtil.post('/hearings/find_by_contractor', { data }).
       then((response) => {
 
         if (response.body.transcription_contractor) {
-          const newContractor = response.body.transcription_contractor;
+          const contractor = response.body.transcription_contractor;
 
           onConfirm({
-            transcription_contractor: newContractor,
+            transcription_contractor: contractor,
             alert: {
-              title: `${COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS} #${newContractor.id}`,
-              message: newContractor.name,
+              title: `${COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS} #${contractor.id}`,
+              message: contractor.name,
               type: 'success'
             }
           });
@@ -42,6 +45,21 @@ export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
       }, () => {
         setServerError(true);
       });
+  };
+
+  const updateContractor = (contractorFormData) => {
+
+    // call patch instead of setting it directly
+    const contractor = contractorFormData;
+
+    onConfirm({
+      transcription_contractor: contractor,
+      alert: {
+        title: `${COPY.TRANSCRIPTION_SETTINGS_UPDATE_SUCCESS} #${contractor.id}`,
+        message: contractor.name,
+        type: 'success'
+      }
+    });
   };
 
   const handleConfirm = () => {
@@ -59,7 +77,11 @@ export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
 
     setFormError(error);
     if (!error) {
-      addContractor(formData);
+      if (edit) {
+        updateContractor(formData);
+      } else {
+        addContractor(formData);
+      }
     }
   };
 
@@ -78,7 +100,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
         },
         {
           classNames: ['usa-button', 'usa-button-primary'],
-          name: COPY.TRANSCRIPTION_SETTINGS_ADD,
+          name: edit ? COPY.TRANSCRIPTION_SETTINGS_EDIT : COPY.TRANSCRIPTION_SETTINGS_ADD,
           onClick: handleConfirm
         },
       ]}
@@ -131,6 +153,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
 
 AddEditContractorModal.propTypes = {
   onCancel: PropTypes.func,
-  onConfirm: PropTypes.func
+  onConfirm: PropTypes.func,
+  transcriptionContractor: PropTypes.object
 };
 

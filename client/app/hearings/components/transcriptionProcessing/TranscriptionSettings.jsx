@@ -248,6 +248,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         {this.state.isAddEditOpen && <AddEditContractorModal
           onCancel={this.toggleAddEditModal}
           onConfirm={this.confirmEditAddModal}
+          // transcriptionContractor={{ ... pass in actual contractor with ID to trigger edit mode }}
         />}
       </React.Fragment>
     );
