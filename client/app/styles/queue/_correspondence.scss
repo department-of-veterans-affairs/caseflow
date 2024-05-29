@@ -316,7 +316,7 @@ $color-black: #323a45;
   margin: -2rem -4rem 0;
   padding: 0 0 1.5rem 4rem;
 
-  & > * {
+  > * {
     display: inline-block;
     margin: 0;
   }
@@ -379,23 +379,26 @@ $color-black: #323a45;
     }
 
   }
+
   &.toolbar-right {
     text-align: right;
 
     @media(max-width: 1165px) {
       width: 44%;
-        & .cf-pdf-button-text { display: none } };
+
+      .cf-pdf-button-text { display: none; } }
   }
 }
 
 .correspondence-rp-list-item-styling {
   display: inline-block;
   padding: 0.5rem 1.5rem 0.5rem 0;
-  & > * {
+
+  > * {
     padding-right: 1.5rem
   }
 
-  & > p {
+  > p {
     font-weight: bold;
     font-size: 17px;
     margin-bottom: 12px;
@@ -404,7 +407,7 @@ $color-black: #323a45;
     line-height: 1.3;
   }
 
-  & > div { min-height: '22px' };
+  > div { min-height: '22px'; }
 }
 
 .correspondence-rp-h2-right-style {
@@ -439,21 +442,21 @@ $color-black: #323a45;
 
   thead {
     th {
-          padding-inline-end: 15px;
-          padding-top: 10px;
-      }
+      padding-inline-end: 15px;
+      padding-top: 10px;
+    }
   }
 
   tbody {
     tr {
-          td {
-              padding-left: 15px;
-              background-color: $color-gray-inverse-base;
-              border-bottom: none;
-              border-color: $color-cream;
-              padding-top: 0;
-              padding-bottom: 0;
-          }
+      td {
+          padding-left: 15px;
+          background-color: $color-gray-inverse-base;
+          border-bottom: none;
+          border-color: $color-cream;
+          padding-top: 0;
+          padding-bottom: 0;
+      }
       }
   }
 }
@@ -607,8 +610,7 @@ $color-black: #323a45;
     border-top: none;
     border-bottom: none;
     background-color: $color-gray-inverse-base;
-    padding-bottom: 0
-    ;
+    padding-bottom: 0;
     padding-top: 35px;
 
   }
@@ -689,6 +691,7 @@ $color-black: #323a45;
 
   .tasks-instructions-or-context {
     background-color: $color-gray-inverse-base;
+    border-top: 1px solid $color-bg-gray;
     border-top: none;
     border-spacing: 0;
   }
@@ -697,11 +700,6 @@ $color-black: #323a45;
     background-color: $color-gray-inverse-base;
     border-top: 1px solid $color-bg-gray;
     width: 20%;
-  }
-
-  .tasks-instructions-or-context {
-    background-color: $color-gray-inverse-base;
-    border-top: 1px solid $color-bg-gray;
   }
 
   .correspondence-not-related-to-appeal {
@@ -757,7 +755,7 @@ $color-black: #323a45;
   }
 
   .entire-tasks-related-to-existing-appeals {
-    padding: 0 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -896,14 +894,14 @@ $color-black: #323a45;
 
 .task-selection-box-for-new-tasks {
   display: block;
-  padding: 2rem 2rem;
+  padding: 2rem;
   margin-bottom: 3rem;
   width: 50rem;
 
   }
 
 .task-selection-dropdown-box {
-    width: 45rem;
+  width: 45rem;
   }
 
 .new-tasks-gray-border-styling {
@@ -913,7 +911,7 @@ $color-black: #323a45;
   }
 
 .area-above-add-tasks-button-not-related {
-  padding: 0 0;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -972,7 +970,7 @@ $color-black: #323a45;
 
 .add-existing-appeal-button {
   width: 120px;
-  padding-left: 0;
+  padding-left: 1rem;
 }
 
 .width-of-add-tasks-button {
