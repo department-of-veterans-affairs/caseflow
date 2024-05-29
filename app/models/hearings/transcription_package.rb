@@ -30,7 +30,7 @@ class TranscriptionPackage < CaseflowRecord
   private
 
   def format_date_for_table(date)
-    date.strftime("%-d/%-m/%Y")
+    date.utc.strftime("%-m/%-d/%Y")
   end
 
   def format_case_details(hearing)
