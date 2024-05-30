@@ -55,6 +55,7 @@ exports[`HearingEmails Does not show required when ReadOnly 1`] = `
         className="input-container"
       >
         <input
+          aria-readonly={true}
           className={
             Array [
               "cf-form-textinput cf-inline-field",

@@ -20,6 +20,18 @@ FactoryBot.define do
       remand_reasons { [] }
     end
 
+    trait :ama do
+      decision_review factory: :appeal
+    end
+
+    trait :higher_level_review do
+      decision_review { create(:higher_level_review, number_of_claimants: 0) }
+    end
+
+    trait :supplemental_claim do
+      decision_review { create(:supplemental_claim, number_of_claimants: 0) }
+    end
+
     trait :nonrating do
       request_issues { [create(:request_issue, :nonrating, decision_review: decision_review)] }
     end

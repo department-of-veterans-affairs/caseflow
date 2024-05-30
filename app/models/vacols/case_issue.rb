@@ -27,7 +27,9 @@ class VACOLS::CaseIssue < VACOLS::Record
       level_2: isslev2,
       level_3: isslev3,
       vacols_id: isskey,
-      note: issdesc
+      note: issdesc,
+      mst_status: issmst,
+      pact_status: isspact
     }
   end
 
@@ -55,6 +57,8 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSLEV1,
         ISSUES.ISSLEV2,
         ISSUES.ISSLEV3,
+        ISSUES.ISSMST,
+        ISSUES.ISSPACT,
         ISSREF.PROG_DESC ISSPROG_LABEL,
         ISSREF.ISS_DESC ISSCODE_LABEL,
         case when ISSUES.ISSLEV1 is not null then
@@ -103,7 +107,7 @@ class VACOLS::CaseIssue < VACOLS::Record
       conn.exec_query(sanitize_sql_array([query, vacols_ids]))
     end
 
-    issues_result.to_hash.reduce({}) do |memo, result|
+    issues_result.to_a.reduce({}) do |memo, result|
       issue_key = result["isskey"].to_s
       memo[issue_key] = (memo[issue_key] || []) << result
       memo

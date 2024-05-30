@@ -17,7 +17,7 @@ describe AppellantChange do
     end
 
     it "sets RequestStore current_user" do
-      expect { run_appellant_change }.to change { RequestStore[:current_user] } .from(nil).to(User.system_user)
+      expect { run_appellant_change }.to change { RequestStore[:current_user] }.from(nil).to(User.system_user)
     end
 
     context "when appeal does not exist" do

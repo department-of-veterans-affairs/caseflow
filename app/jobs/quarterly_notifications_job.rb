@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class QuarterlyNotificationsJob < CaseflowJob
+  include Hearings::EnsureCurrentUserIsSet
+
   queue_with_priority :low_priority
   application_attr :hearing_schedule
+
   QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
 
   # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
@@ -11,10 +14,10 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-    RequestStore.store[:current_user] = User.system_user
-    AppealState.where.not(
-      decision_mailed: true, appeal_cancelled: true
-    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
+    ensure_current_user_is_set
+
+    AppealState.where.not(decision_mailed: true).where.not(appeal_cancelled: true)
+      .find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
       batched_appeal_states.each do |appeal_state|
         # add_record_to_appeal_states_table(appeal_state.appeal)
         if appeal_state.appeal_type == "Appeal"
@@ -46,15 +49,6 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   private
-
-  # Purpose: Method to be called with an error need to be logged to the rails logger
-  #
-  # Params: error_message (Expecting a string) - Message to be logged to the logger
-  #
-  # Response: None
-  def log_error(error_message)
-    Rails.logger.error(error_message)
-  end
 
   # Purpose: Method to check appeal state for statuses and send out a notification based on
   # which statuses are turned on in the appeal state

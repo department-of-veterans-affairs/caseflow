@@ -41,13 +41,22 @@ const checkUuid = (uniqueId, data, message, type) => {
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
  *
  */
-export const storeMetrics = (uniqueId, data, { message, type = 'log', product, start, end, duration }) => {
+export const storeMetrics = (uniqueId, data, {
+  message,
+  type = 'log',
+  product,
+  start,
+  end,
+  duration,
+  additionalInfo
+}, eventId = null) => {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
   const postData = {
     metric: {
       uuid: uniqueId,
+      event_id: eventId,
       name: `caseflow.client.${productArea}.${metricType}`,
       message: metricMessage(uniqueId, data, message),
       type: metricType,
@@ -56,27 +65,31 @@ export const storeMetrics = (uniqueId, data, { message, type = 'log', product, s
       sent_to: 'javascript_console',
       start,
       end,
-      duration
+      duration,
+      additional_info: additionalInfo
     }
   };
+
+  // eslint-disable-next-line no-console
+  console.info(`EVENT_ID: ${eventId} ${message}`);
 
   postMetricLogs(postData);
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null, additionalInfo },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
-  const start = Date.now();
+  const start = new Date(performance.timeOrigin + t0);
   const name = targetFunction?.name || message;
 
   // eslint-disable-next-line no-console
   console.info(`STARTED: ${id} ${name}`);
   const result = () => targetFunction();
   const t1 = performance.now();
-  const end = Date.now();
+  const end = new Date(performance.timeOrigin + t1);
 
   const duration = t1 - t0;
 
@@ -89,7 +102,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
   }
 
   return result;
@@ -100,13 +113,13 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product },
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, eventId, additionalInfo },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
-  const start = Date.now();
+  const start = new Date(performance.timeOrigin + t0);
   const name = message || promise;
 
   // eslint-disable-next-line no-console
@@ -114,7 +127,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
   const prom = () => promise;
   const result = await prom();
   const t1 = performance.now();
-  const end = Date.now();
+  const end = new Date(performance.timeOrigin + t1);
 
   const duration = t1 - t0;
 
@@ -127,7 +140,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
   }
 
   return result;

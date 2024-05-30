@@ -11,10 +11,12 @@ module Seeds
     end
 
     def seed!
+      create_evidence_submission_contested_claim_cases_with_open_letter_task
       cases_for_timely_calculations_on_das
       case_with_bad_decass_for_timeline_range_checks
       create_veterans_for_mpi_sfnod_updates
       create_ama_case_open_dist_task_cannot_redistribute
+      create_case_with_open_evidence_argument_task
     end
 
     private
@@ -468,8 +470,50 @@ module Seeds
         task_id: appeal.tasks.where(type: JudgeAssignTask.name).first.id,
         genpop: true,
         genpop_query: "only_genpop",
-        created_at: first_judge_assign_task.assigned_at
+        created_at: first_judge_assign_task.assigned_at,
+        sct_appeal: false
       )
+    end
+
+    def create_case_with_open_evidence_argument_task
+      Timecop.travel(6.years.ago)
+      2.times do
+        appeal = create(
+          :appeal,
+          :direct_review_docket,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age,
+          veteran: create_veteran
+        )
+
+        create(
+          :evidence_or_argument_mail_task,
+          :assigned,
+          assigned_to: MailTeam.singleton,
+          parent: appeal.root_task
+        )
+      end
+      Timecop.return
+    end
+
+    def create_evidence_submission_contested_claim_cases_with_open_letter_task
+      Timecop.travel(91.days.ago)
+      6.times do
+        appeal = create(
+          :appeal,
+          :evidence_submission_docket,
+          :with_post_intake_tasks,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              nonrating_issue_category: "Contested Claims - Apportionment"
+            )
+          ],
+          veteran: create_veteran(first_name: "EvidenceTestAppeal", last_name: "OpenLetterTask")
+        )
+      end
+      Timecop.return
     end
   end
 end

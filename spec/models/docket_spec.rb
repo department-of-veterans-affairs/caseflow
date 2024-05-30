@@ -110,6 +110,21 @@ describe Docket, :all_dbs do
             expect(subject).to match_array([cavc_appeal])
           end
         end
+
+        context "when acd_exclude_from_affinity flag is enabled" do
+          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+          context "when called for ready is true and judge is passed" do
+            let(:judge) { judge_decision_review_task.assigned_to }
+            subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
+
+            it "returns non priority appeals" do
+              expect(subject).to include appeal
+              expect(subject).to include denied_aod_motion_appeal
+              expect(subject).to include inapplicable_aod_motion_appeal
+            end
+          end
+        end
       end
 
       context "when ready is false" do
@@ -402,8 +417,10 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
+        let(:cavc_affinity_days) { CaseDistributionLever.cavc_affinity_days }
+
         before do
-          cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
+          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
         end
 
         context "when genpop: not_genpop is set" do
@@ -517,7 +534,8 @@ describe Docket, :all_dbs do
         docket: distributed_appeal.docket_type,
         priority: false,
         case_id: distributed_appeal.uuid,
-        task: distributed_appeal.tasks.of_type("DistributionTask").first
+        task: distributed_appeal.tasks.of_type("DistributionTask").first,
+        sct_appeal: false
       )
     end
     let!(:second_distribution_task) do
@@ -573,6 +591,7 @@ describe Docket, :all_dbs do
     let(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
 
     context "nonpriority appeals" do
       subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
@@ -584,6 +603,106 @@ describe Docket, :all_dbs do
         expect(tasks.first.class).to eq(DistributedCase)
         expect(distribution.distributed_cases.length).to eq(10)
         expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+      end
+    end
+  end
+
+  context "distribute_appeals to Specialty Case Team" do
+    let!(:appeals) do
+      [
+        (1..num_appeals_before).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type,
+                 receipt_date: 5.days.ago)
+        end,
+        (1..num_vha_appeals).map do
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type, receipt_date: 3.days.ago)
+        end,
+        (1..num_appeals_after).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type,
+                 receipt_date: 2.days.ago)
+        end
+      ].flatten
+    end
+
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
+    let(:num_vha_appeals) { 5 }
+    let(:num_appeals_before) { 3 }
+    let(:num_appeals_after) { 10 }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+    let(:limit) { 5 }
+
+    context "with the SCT feature toggle enabled" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+      end
+
+      after do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      context "nonpriority appeals with SCT appeals" do
+        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+        it "creates distributed cases, judge tasks, and specialty case team tasks" do
+          tasks = subject
+
+          # We expect as many as the limit of appeals + the number of sct_appeals
+          expect(tasks.length).to eq(10)
+          expect(tasks.first.class).to eq(DistributedCase)
+          expect(distribution.distributed_cases.length).to eq(10)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+          expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
+
+      context "EvidenceSubmissionDocket with nonpriority appeals with SCT appeals " do
+        let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+
+        before do
+          # Complete the EvidenceSubmissionWindowTask to move the appeals to be ready to distribute
+          appeals.each do |appeal|
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
+          end
+        end
+
+        subject { EvidenceSubmissionDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+        it "creates distributed cases, judge tasks, and specialty case team tasks" do
+          tasks = subject
+
+          # We expect as many as the limit of appeals + the number of sct_appeals
+          expect(tasks.length).to eq(10)
+          expect(tasks.first.class).to eq(DistributedCase)
+          expect(distribution.distributed_cases.length).to eq(10)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+          expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
+    end
+
+    context "nonpriority appeals with SCT feature toggle disabled" do
+      before do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+      it "creates distributed cases and judge tasks" do
+        tasks = subject
+
+        # We expect as many as the limit of appeals with no additional sct appeals or tasks
+        expect(tasks.length).to eq(5)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(distribution.distributed_cases.length).to eq(5)
+        expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+        expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(0)
       end
     end
   end

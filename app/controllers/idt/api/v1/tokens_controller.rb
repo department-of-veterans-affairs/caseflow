@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationController
 class Idt::Api::V1::TokensController < ActionController::Base
   protect_from_forgery with: :exception
 
@@ -8,3 +9,4 @@ class Idt::Api::V1::TokensController < ActionController::Base
     render json: { one_time_key: key, token: token }
   end
 end
+# rubocop:enable Rails/ApplicationController

@@ -21,11 +21,7 @@ class DecisionDocument < CaseflowRecord
   delegate :veteran, to: :appeal
   delegate :file_number, to: :veteran, prefix: true
 
-  include BelongsToPolymorphicAppealConcern
-  # Sets up belongs_to association with :appeal and provides `ama_appeal` used by `has_many` call
-  belongs_to_polymorphic_appeal :appeal
-  has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
-           through: :ama_appeal, source: :decision_issues
+  include DecisionDocumentBelongsToPolymorphicAppealConcern
 
   has_many :vbms_communication_packages, as: :document_mailable_via_pacman
 
@@ -42,11 +38,6 @@ class DecisionDocument < CaseflowRecord
   end
 
   alias document_name pdf_name
-
-  def decision_issues
-    ama_decision_issues if appeal_type == "Appeal"
-    # LegacyAppeals do not have decision_issue records
-  end
 
   def document_type
     "BVA Decision"

@@ -28,7 +28,7 @@ describe('TimeSlotCard', () => {
     expect(document.getElementsByClassName('usa-width-three-fourths')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-card-time')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-card-label')).toHaveLength(2);
-    expect(card.getAllByText('·')).toHaveLength(5);
+    expect(card.getAllByText('·')).toHaveLength(6);
 
     // Row 1
     expect(document.getElementsByClassName('time-slot-card-label')[1]).toHaveTextContent(headerLabel);

@@ -10,6 +10,7 @@ class DistributedCase < CaseflowRecord
   validates :task_id, presence: true, if: :ama_docket
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
+  validates :sct_appeal, inclusion: [true, false, nil], if: :ama_docket
 
   def rename_for_redistribution!
     ymd = Time.zone.today.strftime("%F")
@@ -23,14 +24,14 @@ class DistributedCase < CaseflowRecord
         "\n already exists for appeal of uuid #{task.appeal.uuid}.")
   end
 
+  def ama_docket
+    %w[direct_review evidence_submission hearing].include?(docket)
+  end
+
   private
 
   def docket_has_hearing_option
     %w[legacy hearing].include?(docket)
-  end
-
-  def ama_docket
-    %w[direct_review evidence_submission hearing].include?(docket)
   end
 
   def legacy_nonpriority

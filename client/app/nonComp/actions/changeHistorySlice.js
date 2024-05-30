@@ -7,6 +7,10 @@ const initialState = {
   // We might not keep filters here and may only persist them in local state
   status: 'idle',
   error: null,
+  events: [],
+  fetchIndividualHistory: {
+    status: 'idle'
+  }
 };
 
 export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport',
@@ -50,12 +54,44 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
     }
   });
 
+export const fetchIndividualHistory = createAsyncThunk(
+  'changeHistory/individualReport',
+  async ({ organizationUrl, taskId }, thunkApi) => {
+    try {
+      const url = `/decision_reviews/${organizationUrl}/tasks/${taskId}/history`;
+
+      const response = await ApiUtil.get(url);
+
+      const events = response.body;
+
+      const flattenData = events.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
+
+      return thunkApi.fulfillWithValue(flattenData);
+
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Individual Report Failed: ${error.message}`, { analytics: true });
+    }
+  });
+
 const changeHistorySlice = createSlice({
   name: 'changeHistory',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder.
+      addCase(fetchIndividualHistory.pending, (state) => {
+        state.fetchIndividualHistory.status = 'loading';
+      }).
+      addCase(fetchIndividualHistory.fulfilled, (state, action) => {
+        state.fetchIndividualHistory.status = 'succeeded';
+        state.events = action.payload;
+      }).
+      addCase(fetchIndividualHistory.rejected, (state, action) => {
+        state.fetchIndividualHistory.status = 'failed';
+        state.error = action.error.message;
+      }).
       addCase(downloadReportCSV.pending, (state) => {
         state.status = 'loading';
       }).

@@ -25,7 +25,8 @@ begin
   ")
 rescue ActiveRecord::NoDatabaseError => error
   if error.message.include?('database "caseflow_certification_development" does not exist')
-    STDOUT.puts "Database caseflow_certification_development does not exist; Error during dropping table/triggers/function create_bulk_audit_script."
+    STDOUT.puts "Database caseflow_certification_development does not exist; \
+    Error during dropping table/triggers/function create_bulk_audit_script."
   else
     raise error
   end

@@ -12,7 +12,7 @@ gem "acts_as_tree"
 gem "amoeba"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5f47e7b2656ef347d314ef43c93d38a9f20816ec"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
@@ -56,7 +56,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "5.2.8.1"
+gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -71,11 +71,10 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-# execjs runtime
-gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
 gem "tzinfo", "1.2.10"
@@ -86,7 +85,7 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -99,13 +98,12 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record", "2.0.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
   # Linters
-  gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -148,6 +146,7 @@ group :test do
   gem "rspec-github", require: false
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
+  gem "shoulda-matchers"
   gem "webmock"
 end
 # rubocop:enable Layout/LineLength

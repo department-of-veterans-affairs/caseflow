@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module FakeDateHelper
+  # rubocop:disable Metrics/CyclomaticComplexity
   def get_unique_dates_between(start_date, end_date, num_of_dates,
                                exclude_weekends = true)
     dates = Set.new
@@ -32,6 +33,7 @@ module FakeDateHelper
 
     dates.to_a
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def get_unique_dates_for_ro_between(ro_name, schedule_period, num_of_dates)
     get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, num_of_dates).map do |date|

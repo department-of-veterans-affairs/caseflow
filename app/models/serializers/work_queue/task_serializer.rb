@@ -35,7 +35,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :completed_by do |object|
-    object.try(:completed_by).try(:css_id) unless object.appeal.is_a?(LegacyAppeal)
+    object.try(:completed_by).try(:css_id)
   end
 
   attribute :assigned_to do |object|
@@ -129,6 +129,14 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:contested_claim?)
   end
 
+  attribute :mst do |object|
+    object.appeal.try(:mst?)
+  end
+
+  attribute :pact do |object|
+    object.appeal.try(:pact?)
+  end
+
   attribute :veteran_appellant_deceased do |object|
     object.appeal.try(:veteran_appellant_deceased?)
   end
@@ -141,7 +149,7 @@ class WorkQueue::TaskSerializer
     if object.appeal.is_a?(LegacyAppeal)
       object.appeal.issue_categories
     else
-      object.appeal.request_issues.map(&:nonrating_issue_category)
+      object.appeal.request_issues.active.map(&:nonrating_issue_category)
     end.join(",")
   end
 

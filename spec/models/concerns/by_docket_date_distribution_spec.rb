@@ -112,7 +112,7 @@ describe ByDocketDateDistribution, :all_dbs do
 
       # @nonpriority_iterations is limited to 10 in the by_docket_date_distribution file
       expect(by_docket_date_distribution_module.instance_variable_get(:@nonpriority_iterations))
-        .to eq @new_acd.batch_size
+        .to eq 2
       expect(return_array.empty?).to be true
     end
   end
@@ -209,6 +209,28 @@ describe ByDocketDateDistribution, :all_dbs do
       @new_acd.dockets.each_key do |sym|
         expect(priority_stats).to include(sym)
         expect(nonpriority_stats).to include(sym)
+      end
+    end
+
+    context "handles errors without stopping a distribution" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        @new_acd.instance_variable_set(:@appeals, [appeal, nil])
+        Rails.cache.fetch("case_distribution_ineligible_judges") { [{ sattyid: "1", id: "1" }] }
+      end
+
+      it "#ama_distributed_cases_tied_to_ineligible_judges raises an error if passed nil in array" do
+        expect { @new_acd.send(:ama_distributed_cases_tied_to_ineligible_judges) }.to raise_error(NoMethodError)
+      end
+
+      it "#distributed_cases_tied_to_ineligible_judges raises an error if passed nil in array" do
+        expect { @new_acd.send(:distributed_cases_tied_to_ineligible_judges) }.to raise_error(NoMethodError)
+      end
+
+      it "ama_statistics handles the errors from #ama_distributed_cases_tied_to_ineligible_judges
+          and #distributed_cases_tied_to_ineligible_judges" do
+        expect { @new_acd.send(:ama_statistics) }.not_to raise_error
       end
     end
   end

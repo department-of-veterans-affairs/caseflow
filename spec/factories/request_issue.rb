@@ -66,6 +66,14 @@ FactoryBot.define do
       decision_sync_processed_at { nil }
     end
 
+    trait :with_associated_decision_issue do
+      decision_issues do
+        [create(:decision_issue,
+                decision_review: decision_review,
+                participant_id: veteran_participant_id)]
+      end
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id { nil }

@@ -33,38 +33,43 @@ module Seeds
 
     def create_users
       User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
-      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
+      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
-      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
-      User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
-      User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
+      create_bvaebecker
+      create_bvakkeeling
       User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
       User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
       User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
       User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
       User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
       User.create(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
+
       dispatch_admin = User.create(
         css_id: "BVAGBLACK",
         station_id: 101,
         full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
       )
       OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+
       case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
       OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
+
       special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                                station_id: 101,
                                                full_name: "Rosalie SpecialCaseMovement Dunkle")
       FactoryBot.create(:staff, user: special_case_movement_user)
       SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
+
       special_case_movement_admin = User.create(css_id: "BVAGBEEKMAN",
                                                 station_id: 101,
                                                 full_name: "Bryan SpecialCaseMovementAdmin Beekman")
       FactoryBot.create(:staff, user: special_case_movement_admin)
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
-      bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
-      OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+
+      create_bvadwise
+
       bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
       BvaIntake.singleton.add_user(bva_intake_user)
 
@@ -95,6 +100,23 @@ module Seeds
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
+      create_cda_control_group_users
+    end
+
+    def create_bvaebecker
+      bvaebecker = User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
+      CDAControlGroup.singleton.add_user(bvaebecker)
+    end
+
+    def create_bvakkeeling
+      bvakkeeling = User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      CDAControlGroup.singleton.add_user(bvakkeeling)
+    end
+
+    def create_bvadwise
+      bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
+      OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+      OrganizationsUser.make_user_admin(bva_intake_admin, CDAControlGroup.singleton)
     end
 
     def create_vha_admins
@@ -396,17 +418,22 @@ module Seeds
         station_id: 101,
         css_id: "COB_USER",
         full_name: "Clark ClerkOfTheBoardUser Bard",
-        roles: ["Hearing Prep"]
+        roles: ["Hearing Prep", "Mail Intake"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep", "Mail Intake"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep", "Mail Intake"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
+
+      # added to Bva Intake so they can intake
+      BvaIntake.singleton.add_user(atty)
+      BvaIntake.singleton.add_user(judge)
+      BvaIntake.singleton.add_user(admin)
     end
 
     def create_case_search_only_user
@@ -448,6 +475,54 @@ module Seeds
           user.update!(roles: new_roles)
         end
       end
+    end
+
+    def create_cda_control_group_users
+      bvaebeckser = User.create!(station_id: 101,
+                                  css_id: "BVAEBECKSER",
+                                  full_name: "Elizabeth Judge_VaseToAssign Becker",
+                                  roles: ["Mail Intake"])
+      CDAControlGroup.singleton.add_user(bvaebeckser)
+
+      leo = User.create!(station_id: 101,
+                          css_id: "CDAADMINLEO",
+                          full_name: "Leonardo CDAC_Admin Turtur",
+                          roles: ["Mail Intake"])
+      CDAControlGroup.singleton.add_user(leo)
+      OrganizationsUser.make_user_admin(leo, CDAControlGroup.singleton)
+
+      casey = User.create!(station_id: 101,
+                            css_id: "CDAUSERCASEY",
+                            full_name: "Casey CDAC_User Jones",
+                            roles: ["Mail Intake"])
+      CDAControlGroup.singleton.add_user(casey)
+
+      create_qa_admin_for_cda_control_group
+    end
+
+    def create_qa_admin_for_cda_control_group
+      qa_admin = User.create!(station_id: 101,
+                            css_id: "QAACDPlus",
+                            full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
+                            roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
+
+      #{CDA Control Group Admin}
+      CDAControlGroup.singleton.add_user(qa_admin)
+      OrganizationsUser.make_user_admin(qa_admin, CDAControlGroup.singleton)
+
+      #{BVA Intake Admin}
+      BvaIntake.singleton.add_user(qa_admin)
+      OrganizationsUser.make_user_admin(qa_admin, BvaIntake.singleton)
+
+      #{BVA Org Admin}
+      existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+      Functions.grant!("System Admin", users: existing_sysadmins + [qa_admin.css_id])
+      Bva.singleton.add_user(qa_admin)
+      OrganizationsUser.make_user_admin(qa_admin, Bva.singleton)
+
+      #{Adds attorney so judge team can be targeted by Ama_affinity_cases.rb seed script}
+      judge_team = JudgeTeam.for_judge(qa_admin) || JudgeTeam.create_for_judge(qa_admin)
+      judge_team.add_user(User.find_by_css_id("BVASCASPER1"))
     end
   end
   # rubocop:enable Metrics/AbcSize

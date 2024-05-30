@@ -522,6 +522,9 @@ FactoryBot.define do
         end
       end
 
+      factory :evidence_or_argument_mail_task, class: EvidenceOrArgumentMailTask do
+      end
+
       factory :pulac_cerullo_task, class: PulacCerulloTask do
       end
 
@@ -538,6 +541,87 @@ FactoryBot.define do
       end
 
       factory :ama_judge_assign_task, class: JudgeAssignTask do
+      end
+
+      factory :specialty_case_team_assign_task, class: SpecialtyCaseTeamAssignTask do
+        appeal do
+          create(:appeal,
+                 :with_vha_issue,
+                 :with_post_intake_tasks,
+                 :direct_review_docket)
+        end
+        assigned_to { SpecialtyCaseTeam.singleton }
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
+
+        after(:create) do |task, _evaluator|
+          task.appeal.tasks.of_type(:DistributionTask).first.completed!
+        end
+
+        transient do
+          associated_judge { nil }
+          associated_attorney { nil }
+        end
+
+        trait :action_required do
+          after(:create) do |task, evaluator|
+            task.update(status: Constants.TASK_STATUSES.in_progress)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["SCT judge decision cancelled."])
+            attorney_task = AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                                 assigned_by: judge,
+                                                 assigned_to: attorney,
+                                                 assigned_at: 6.hours.ago,
+                                                 started_at: Time.zone.now - 30.minutes,
+                                                 instructions: ["SCT attorney cancelled."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+
+            # Set the status of the two tasks to be cancelled to mimic the correct workflow
+            attorney_task.cancelled!
+            judge_review_task.cancelled!
+          end
+        end
+
+        trait :completed do
+          after(:create) do |task, evaluator|
+            task.update(status: Constants.TASK_STATUSES.completed)
+            task.update(closed_at: Time.zone.now)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["SCT judge on hold."])
+            AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                 assigned_by: judge,
+                                 assigned_to: attorney,
+                                 assigned_at: 6.hours.ago,
+                                 started_at: Time.zone.now - 30.minutes,
+                                 instructions: ["SCT attorney assigned."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+          end
+        end
+
+        trait :ready_for_split_appeal do
+          action_required
+
+          after(:create) do |task, _evaluator|
+            create(:request_issue,
+                   decision_review: task.appeal,
+                   nonrating_issue_category: "Military Retired Pay",
+                   decision_date: 5.days.ago)
+            task.save
+          end
+        end
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do

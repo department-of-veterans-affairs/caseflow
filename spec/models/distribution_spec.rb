@@ -102,7 +102,7 @@ describe Distribution, :all_dbs do
 
   context "#batch_size" do
     it "is set to alternative batch size if judge has no attorneys" do
-      expect(new_distribution.send(:batch_size)).to eq(Constants.DISTRIBUTION.alternative_batch_size)
+      expect(new_distribution.send(:batch_size)).to eq(CaseDistributionLever.alternative_batch_size)
     end
 
     it "is set based on number of attorneys on team" do
@@ -112,7 +112,7 @@ describe Distribution, :all_dbs do
         judge_team.add_user(team_member)
       end
 
-      expect(new_distribution.send(:batch_size)).to eq(3 * Constants.DISTRIBUTION.batch_size_per_attorney)
+      expect(new_distribution.send(:batch_size)).to eq(3 * CaseDistributionLever.batch_size_per_attorney)
     end
   end
 
@@ -142,7 +142,13 @@ describe Distribution, :all_dbs do
         batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
         evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
         legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
-        algorithm: "proportions"
+        algorithm: "proportions", sct_appeals: 0
+      }
+    end
+    let(:result_stats) do
+      {
+        batch_size: 0,
+        info: "See related row in distribution_stats for additional stats"
       }
     end
 
@@ -151,14 +157,15 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: statistics)
+        .with(status: "completed", completed_at: Time.zone.now, statistics: result_stats)
         .exactly(1).times
 
       new_distribution.distribute!
     end
 
-    it "updates status to error if an error is thrown" do
+    it "updates status to error if an error is thrown and sends slack notification" do
       allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
+      expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
 
@@ -258,7 +265,7 @@ describe Distribution, :all_dbs do
   context "requested distributions" do
     context "when priority_acd is enabled" do
       let(:limit) { 10 }
-      let(:batch_size) { Constants.DISTRIBUTION.alternative_batch_size }
+      let(:batch_size) { CaseDistributionLever.alternative_batch_size }
 
       before { FeatureToggle.enable!(:priority_acd) }
 
