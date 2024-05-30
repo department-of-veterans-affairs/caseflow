@@ -21,7 +21,7 @@ export const RemoveContractorModal = ({ onCancel, title, onConfirm, contractors 
       title={title}
       buttons={[
         {
-          classNames: ['cf-modal-link", "cf-btn-link'],
+          classNames: ['cf-modal-link cf-btn-link'],
           name: 'Cancel',
           onClick: onCancel,
         },
