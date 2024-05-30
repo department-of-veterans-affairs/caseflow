@@ -63,3 +63,4 @@ RemoveContractorModal.propTypes = {
 RemoveContractorModal.defaultProps = {
   contractors: [],
 };
+
