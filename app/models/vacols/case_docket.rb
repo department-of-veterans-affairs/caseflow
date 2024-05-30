@@ -363,6 +363,10 @@ class VACOLS::CaseDocket < VACOLS::Record
                                     ])
 
     appeals = conn.exec_query(fmtd_query).to_a
+    if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_affinity_days)
+      appeals = expired_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
+    end
+
     appeals.map { |appeal| appeal["bfd19"] }
   end
 
@@ -501,7 +505,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       limit
                                     ])
 
-    distribute_appeals(fmtd_query, judge, dry_run)
+    distribute_appeals(fmtd_query, judge, dry_run, false)
   end
   # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
@@ -539,19 +543,21 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.generate_priority_case_distribution_lever_query(judge)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and and BFAC = '7'"
+      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
     end
   end
 
   def self.generate_non_priority_case_distribution_lever_query(judge)
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE = #{judge.id} and BFAC = '7'"
+      "PREV_DECIDING_JUDGE = #{judge.vacols_attorney_id} and BFAC = '7'"
     end
   end
 
-  def self.distribute_appeals(query, judge, dry_run)
+  def self.distribute_appeals(query, judge, dry_run, priority = true)
     conn = connection
 
     conn.transaction do
@@ -563,6 +569,20 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
+        # Priority Cavc Appeals
+        if priority && case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_affinity_days)
+          app eals = expired_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
+        end
+
+        # Non Priority Cavc Appeals
+        if !priority && case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_affinity_days)
+          appeals = affinitized_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
+        end
+
+        appeals.sort_by { appeal[:bfd19] } if use_by_docket_date?
+
+        appeals.first(num) unless num.nil? # {Reestablishes the limit}
+
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
                      LegacyAppeal::LOCATION_CODES[:caseflow]
@@ -573,6 +593,24 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals
       end
     end
+  end
+
+  def self.expired_cavc_affinity_cases(appeals, lever_days)
+    appeals.reject do |appeal|
+      next if appeal["bfac"] != "7"
+
+      VACOLS::Case.find_by(bfkey: appeal["bfkey"]).appeal_affinity.affinity_start_date <= lever_days.days.ago
+    end
+    appeals
+  end
+
+  def self.affinitized_cavc_affinity_cases(appeals, lever_days)
+    appeals.reject do |appeal|
+      next if appeal["bfac"] != "7"
+
+      VACOLS::Case.find_by(bfkey: appeal["bfkey"]).appeal_affinity.affinity_start_date > lever_days.days.ago
+    end
+    appeals
   end
 
   def self.use_by_docket_date?
