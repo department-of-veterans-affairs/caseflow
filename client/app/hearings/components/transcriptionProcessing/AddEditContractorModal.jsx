@@ -5,6 +5,7 @@ import TextField from '../../../components/TextField';
 import COPY from '../../../../COPY';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
+import { sprintf } from 'sprintf-js';
 
 const newContractor = {
   id: '',
@@ -17,7 +18,8 @@ const newContractor = {
 
 export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContractor = newContractor }) => {
   const edit = transcriptionContractor.id !== '';
-  const title = edit ? COPY.TRANSCRIPTION_SETTINGS_EDIT : COPY.TRANSCRIPTION_SETTINGS_ADD;
+  const title = edit ?
+    sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT, transcriptionContractor.name) : COPY.TRANSCRIPTION_SETTINGS_ADD;
   const [formError, setFormError] = useState(false);
   const [formData, setFormData] = useState(transcriptionContractor);
   const [serverError, setServerError] = useState(false);
@@ -100,7 +102,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContr
         },
         {
           classNames: ['usa-button', 'usa-button-primary'],
-          name: edit ? COPY.TRANSCRIPTION_SETTINGS_EDIT : COPY.TRANSCRIPTION_SETTINGS_ADD,
+          name: edit ? COPY.TRANSCRIPTION_SETTINGS_CONFIRM : COPY.TRANSCRIPTION_SETTINGS_ADD,
           onClick: handleConfirm
         },
       ]}
