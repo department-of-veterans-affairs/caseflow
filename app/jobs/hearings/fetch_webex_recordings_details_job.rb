@@ -11,19 +11,24 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   application_attr :hearing_schedule
   attr_reader :recording_id, :host_email, :meeting_title
 
+  # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     recording_id = job.arguments&.first&.[](:recording_id)
+    host_email = job.arguments&.first&.[](:host_email)
+    query = "?hostEmail=#{host_email}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
       provider: "webex",
       recording_id: recording_id,
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{recording_id}",
+      host_email: host_email,
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{recording_id}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       docket_number: nil
     }
     job.log_error(exception)
     job.send_transcription_issues_email(error_details)
   end
+  # rubocop:enable Layout/LineLength
 
   def perform(recording_id:, host_email:, meeting_title:)
     ensure_current_user_is_set
@@ -51,7 +56,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   private
 
   def fetch_recording_details(id, email)
-    query = { "host_email": email }
+    query = { "hostEmail": email }
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],

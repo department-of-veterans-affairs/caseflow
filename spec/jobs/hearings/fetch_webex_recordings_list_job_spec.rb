@@ -29,24 +29,24 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
       subject
     end
 
-    it "Uses correctly formatted to and from query parameters" do
+    it "Uses correct query parameters" do
       allow(WebexService).to receive(:new).and_call_original
       expect(WebexService).to receive(:new)
-        .with(hash_including(query: { max: 100, meeting_id: id }))
+        .with(hash_including(query: { max: 100, meetingId: id }))
       subject
     end
   end
 
   context "job errors" do
     let(:exception) { Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error") }
-    let(:query) { "?max=100?meeting_id=#{id}" }
+    let(:query) { "?max=100?meetingId=#{id}" }
     let(:error_details) do
       {
         error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
         provider: "webex",
         api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
-        times: nil,
+        meeting_id: id,
         docket_number: nil
       }
     end

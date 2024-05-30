@@ -51,12 +51,14 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
 
   context "job errors" do
     let(:exception) { Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error") }
+    let(:query) { "?hostEmail=#{email}" }
     let(:error_details) do
       {
         error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
         provider: "webex",
         recording_id: id,
-        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{id}",
+        host_email: email,
+        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{id}#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
         docket_number: nil
       }

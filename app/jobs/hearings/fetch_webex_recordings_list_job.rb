@@ -14,13 +14,13 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     max = 100
     id = job.arguments&.first&.[](:meeting_id)
-    query = "?max=#{max}?meeting_id=#{id}"
+    query = "?max=#{max}?meetingId=#{id}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      times: nil,
+      meeting_id: id,
       docket_number: nil
     }
     job.log_error(exception)
@@ -45,7 +45,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   def fetch_recordings_list(id)
     max = 100
     meeting_id = id
-    query = { "max": max, "meeting_id": meeting_id }
+    query = { "max": max, "meetingId": meeting_id }
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
