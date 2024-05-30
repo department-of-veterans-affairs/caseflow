@@ -83,7 +83,7 @@ class AutoAssignableUserFinder
     nod_eligible = permission_checker.can?(
       permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
       organization: InboundOpsTeam.singleton,
-      user: user
+      user: OrganizationsUser.find_by(user_id: user.id)
     )
 
     AssignableUser.new(
