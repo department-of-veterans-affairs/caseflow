@@ -413,16 +413,18 @@ module IntakeHelpers
 
   def click_withdraw_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_withdraw").click
+
+    within issue_el do
+      click_dropdown(prompt: "Select action", text: "Withdraw")
+    end
   end
 
   def click_correct_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
-    find("#issue-action-#{issue_num}").click
-    find("#issue-action-#{issue_num}_correct").click
+
+    within issue_el do
+      click_dropdown(prompt: "Select action", text: "Correct")
+    end
   end
 
   def select_correction_type_from_modal(value)
