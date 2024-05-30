@@ -26,7 +26,8 @@ class TaskPager
   def paged_tasks
     @paged_tasks ||= begin
       tasks = sorted_tasks(filtered_tasks)
-      pagination_enabled ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
+      limit = queue_tab.custom_task_limit || TASKS_PER_PAGE
+      pagination_enabled ? tasks.page(page).per(limit) : tasks
     end
   end
 
@@ -56,7 +57,11 @@ class TaskPager
   end
 
   def pagination_enabled
-    @pagination_enabled ||= assignee.use_task_pages_api? && !queue_tab.contains_legacy_tasks?
+    @pagination_enabled ||= begin
+                              assignee.use_task_pages_api? &&
+                                !queue_tab.contains_legacy_tasks? &&
+                                !queue_tab.no_task_limit
+                            end
   end
 
   private

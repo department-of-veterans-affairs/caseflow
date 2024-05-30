@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "database_cleaner"
+require "database_cleaner-active_record"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
 # base.rb needs to be loaded first because the other seeds inherit from it
