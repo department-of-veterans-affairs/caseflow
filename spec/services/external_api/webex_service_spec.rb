@@ -125,9 +125,9 @@ describe ExternalApi::WebexService do
 
     describe "get recordings list" do
       let(:query) do
-        from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
-        to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
-        { "from": from, "to": to }
+        max = 100
+        id = "f91b6edce9864428af084977b7c68291_I_166641849979635652"
+        { "max": max, "id": id }
       end
       let(:body) { nil }
       let(:method) { "GET" }
@@ -142,13 +142,14 @@ describe ExternalApi::WebexService do
           Fakes::WebexService.new
         end
 
-        it "gets a list of ids" do
+        it "gets a list of recordings objects with associated id and host email" do
           expect(subject.code).to eq(200)
-          expect(subject.ids).to eq(%w[
-                                      4f914b1dfe3c4d11a61730f18c0f5387
-                                      3324fb76946249cfa07fc30b3ccbf580
-                                      42b80117a2a74dcf9863bf06264f8075
-                                    ])
+          expect(subject.recordings.first.id).to eq("4f914b1dfe3c4d11a61730f18c0f5387")
+          expect(subject.recordings.first.host_email).to eq("john.andersen@example.com")
+          expect(subject.recordings.second.id).to eq("3324fb76946249cfa07fc30b3ccbf580")
+          expect(subject.recordings.second.host_email).to eq("john.andersen@example.com")
+          expect(subject.recordings.third.id).to eq("42b80117a2a74dcf9863bf06264f8075")
+          expect(subject.recordings.third.host_email).to eq("john.andersen@example.com")
           subject
         end
       end
@@ -178,7 +179,7 @@ describe ExternalApi::WebexService do
           expect(subject.mp4_link).to eq("https://www.learningcontainer.com/mp4-sample-video-files-download/#")
           expect(subject.vtt_link).to eq("https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt")
           expect(subject.mp3_link).to eq("https://freetestdata.com/audio-files/mp3/")
-          expect(subject.topic).to eq("Virtual Visit - 180000304_1_LegacyHearing-20240213 1712-1")
+          expect(subject.topic).to eq("Webex meeting-20240520 2030-1")
           subject
         end
       end
@@ -227,7 +228,7 @@ describe ExternalApi::WebexService do
         let(:webex_service) do
           Fakes::WebexService.new
         end
-        let(:meeting_id) { "a52e152a05114cfcb5c7b5e6c088fcc0" }
+        let(:meeting_id) { "f91b6edce9864428af084977b7c68291_I_166641849979635652" }
 
         it "get meeting id from room details" do
           expect(subject.code).to eq(200)
