@@ -102,7 +102,7 @@ class Events::DecisionReviewCreated
           contested_id = issue[:contested_decision_issue_id]
           ri = RequestIssue.where(contested_decision_issue_id: contested_id)
           if category == "Disposition"
-            if contested_id.present? && ri.length == 1 && category == "Disposition"
+            if contested_id.present? && ri.length == 1 # && category == "Disposition"
               return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
             else
               return issue[:nonrating_issue_category] = "Unknown Issue Category"
