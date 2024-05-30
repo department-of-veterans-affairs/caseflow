@@ -173,6 +173,7 @@ class Appeal < DecisionReview
 
     if hearing_date.nil?
       nil
+
     else
       hearing_date.hearing_day.scheduled_for
     end
@@ -249,9 +250,7 @@ class Appeal < DecisionReview
     category_substrings = %w[Contested Apportionment]
 
     request_issues.active.any? do |request_issue|
-      category_substrings.any? do |substring|
-        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
-      end
+      category_substrings.any? { |substring| request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
     end
   end
 
@@ -698,6 +697,10 @@ class Appeal < DecisionReview
   # matches Legacy behavior
   def cavc
     court_remand?
+  end
+
+  def predocketed?
+    tasks.any? { |task| task.class.name == "PreDocketTask" && task.active? }
   end
 
   def vha_predocket_needed?
