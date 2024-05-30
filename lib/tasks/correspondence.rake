@@ -4,7 +4,6 @@ require_relative "../../db/seeds/base"
 require_relative "../../db/seeds/correspondence"
 require_relative "../../db/seeds/vbms_document_types"
 require_relative "../../db/seeds/correspondence_types"
-require_relative "../../db/seeds/package_document_types"
 require_relative "../../db/seeds/multi_correspondences"
 require_relative "../../db/seeds/queue_correspondences"
 
@@ -17,8 +16,6 @@ namespace :correspondence do
     create_document_types
     STDOUT.puts("Creating data for Correspondence Types Table")
     create_correspondence_types
-    STDOUT.puts("Creating data for Package Document Types Table")
-    create_package_document_types
   end
 
   desc "create correspondence test data in demo given a veteran file number (does not work in UAT due to FactoryBot)"
@@ -56,7 +53,6 @@ namespace :correspondence do
       throw :error, STDOUT.puts("No user in the request store") if user.blank?
 
       (1..num_cor).each do
-        package_doc_type = PackageDocumentType.all.sample
         corr_type = CorrespondenceType.all.sample
         receipt_date = rand(1.month.ago..1.day.ago)
 
@@ -172,22 +168,6 @@ def create_correspondence_types
     CorrespondenceType.find_or_create_by(name: type)
   end
 end
-# rubocop:enable Metrics/MethodLength
-
-def create_package_document_types
-  [
-    "0304", "0779", "0781", "0781a", "0820a", "0820b", "0820c", "0820e", "0820f", "082d", "0966", "0995", "0996",
-    "10007", "10182", "1330", "1330m", "1900", "1905", "1905c", "1905m", "1995", "1999", "1999b", "21-22",
-    "21-22a", "247", "2680", "296", "4138", "4142", "4706b", "4706c", "4718a", "516", "518", "526", "526b",
-    "526c", "526ez", "527", "527EZ", "530", "530a", "535", "537", "5490", "5495", "601", "674", "674c",
-    "8049", "820", "8416", "8940", "BENE TRVL", "CH 31 APP", "CH36 APP", "CONG INQ", "CONSNT",
-    "DBQ", "Debt Dispute", "GRADES/DEGREE", "IU", "NOD", "OMPF", "PMR", "RAMP", "REHAB PLAN", "RFA", "RM",
-    "RNI", "SF180", "STR", "VA 9", "VCAA", "VRE INV"
-  ].each do |package_document_type|
-    PackageDocumentType.find_or_create_by(name: package_document_type)
-  end
-end
-
 
 # generate the doctype and description from VBMS doc type list
 def generate_vbms_doc_type(nod)

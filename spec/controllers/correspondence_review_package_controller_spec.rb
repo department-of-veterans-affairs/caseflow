@@ -54,7 +54,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     before do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
-      Seeds::PackageDocumentTypes.new.seed!
       get :package_documents
     end
 

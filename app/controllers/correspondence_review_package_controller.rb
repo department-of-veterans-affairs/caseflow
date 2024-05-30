@@ -16,7 +16,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       .find_by(appeal_id: correspondence.id)&.instructions || ""
     response_json = {
       correspondence: correspondence,
-      package_document_type: correspondence&.package_document_type,
       general_information: general_information,
       user_can_edit_vador: current_user.mail_supervisor?,
       correspondence_documents: corres_docs.map do |doc|

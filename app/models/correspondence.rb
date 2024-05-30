@@ -18,7 +18,6 @@ class Correspondence < CaseflowRecord
   has_many :correspondence_relations, dependent: :destroy
   has_many :related_correspondences, through: :correspondence_relations, dependent: :destroy
   belongs_to :correspondence_type
-  belongs_to :package_document_type
   belongs_to :veteran
   belongs_to :assigned_by, class_name: "User", foreign_key: :assigned_by_id, optional: false
 
@@ -59,17 +58,12 @@ class Correspondence < CaseflowRecord
 
   # Methods below are included to allow Correspondences to render in explain page
 
-  # Alias for package_document_type.name
-  def docket_name
-    package_document_type.name
-  end
-
   def veteran_full_name
     veteran.name
   end
 
   def self.prior_mail(veteran_id, uuid)
-    includes([:veteran, :package_document_type, :correspondence_type])
+    includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
 end
