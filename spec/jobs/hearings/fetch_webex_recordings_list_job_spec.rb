@@ -2,15 +2,10 @@
 
 describe Hearings::FetchWebexRecordingsListJob, type: :job do
   include ActiveJob::TestHelper
-  let(:access_token) { "sample_#{Rails.deploy_env}_token" }
   let(:id) { "f91b6edce9864428af084977b7c68291_I_166641849979635652" }
   let(:title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1" }
 
   subject { described_class.perform_now(meeting_id: id, meeting_title: title) }
-
-  before do
-    allow(CredStash).to receive(:get).with("webex_#{Rails.deploy_env}_access_token").and_return(access_token)
-  end
 
   context "job success" do
     before do
@@ -30,7 +25,7 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
 
     it "Uses correct api key for correct environment" do
       allow(WebexService).to receive(:new).and_call_original
-      expect(WebexService).to receive(:new).with(hash_including(apikey: access_token))
+      expect(WebexService).to receive(:new).with(hash_including(apikey: WebexService.access_token))
       subject
     end
 

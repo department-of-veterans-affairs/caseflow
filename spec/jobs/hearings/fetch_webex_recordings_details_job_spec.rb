@@ -12,13 +12,8 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   let(:mp4_file_name) { "180000304_1_LegacyHearing-1.mp4" }
   let(:vtt_file_name) { "180000304_1_LegacyHearing-1.vtt" }
   let(:mp3_file_name) { "180000304_1_LegacyHearing-1.mp3" }
-  let(:access_token) { "sample_#{Rails.deploy_env}_token" }
 
   subject { described_class.perform_now(recording_id: id, host_email: email, meeting_title: meeting_title) }
-
-  before do
-    allow(CredStash).to receive(:get).with("webex_#{Rails.deploy_env}_access_token").and_return(access_token)
-  end
 
   context "method testing" do
     before do
@@ -29,7 +24,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
 
     it "Uses correct api key for correct environment" do
       allow(WebexService).to receive(:new).and_call_original
-      expect(WebexService).to receive(:new).with(hash_including(apikey: access_token))
+      expect(WebexService).to receive(:new).with(hash_including(apikey: WebexService.access_token))
       subject
     end
 
