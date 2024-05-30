@@ -29,7 +29,7 @@ class ApplicationJob < ActiveJob::Base
 
     # For jobs that run multiple times in a short time span, we do not want to continually update
     # the JobsExecutionTime table. This boolean will help us ignore those jobs
-    def ignore_job_execution_time
+    def ignore_job_execution_time?
       false
     end
 
@@ -65,7 +65,7 @@ class ApplicationJob < ActiveJob::Base
     end
 
     # Check whether Job execution time should be tracked
-    unless self.class.ignore_job_execution_time
+    unless self.class.ignore_job_execution_time?
       # Add Record to JobExecutionTimes to track the current job execution time
       JobExecutionTime.upsert(
         { job_name: self.class.to_s,
