@@ -4,75 +4,6 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-export const fakeIssueModificationRequestsData = [
-  {
-    requestIssueId: '3311',
-    requestType: 'Modification',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonRatingIssueCategory: 'Caregiver | Eligibility',
-    nonRatingIssueDescription: 'Money for Care',
-    decisionText: 'New Caregiver | Eligibility text',
-    decisionDate: '2024-01-30',
-    requestReason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    status: 'approved',
-    removeOriginalIssue: true,
-    benefitType: 'Veterans Health Administration',
-    requestIssue: {
-      id: '3311',
-      benefitType: 'Veterans Health Administration',
-      nonRatingIssueCategory: 'Beneficiary Travel',
-      nonRatingIssueDescription: 'Stuff',
-      decisionDate: '2023-09-23'
-    }
-  },
-  {
-    requestIssueId: '3311',
-    requestType: 'Withdrawal',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonRatingIssueCategory: 'Caregiver | Eligibility',
-    nonRatingIssueDescription: 'Money for Care',
-    decisionText: 'New Caregiver | Eligibility text',
-    decisionDate: '2024-01-30',
-    withdrawalDate: '2024-01-30',
-    requestReason: 'This is the reason that the user entered for the requested Withdrawal to this issue.',
-    status: 'approved',
-    benefitType: 'Veterans Health Administration'
-  },
-  {
-    requestType: 'Addition',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonRatingIssueCategory: 'Beneficiary Travel',
-    nonRatingIssueDescription: 'Money for Travel',
-    decisionText: 'New note for this type of issue',
-    decisionDate: '2024-01-30',
-    requestReason: 'This is the reason that the user entered for the requested Addition to this issue.',
-    status: 'approved',
-    benefitType: 'Veterans Health Administration'
-  },
-  {
-    requestIssueId: '3311',
-    requestType: 'Removal',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonRatingIssueCategory: 'Caregiver | Eligibility',
-    nonRatingIssueDescription: 'Money for Care',
-    decisionText: 'New Caregiver | Eligibility text',
-    decisionDate: '2024-01-30',
-    requestReason: 'This is the reason that the user entered for the requested Removal to this issue.',
-    status: 'approved',
-    benefitType: 'Veterans Health Administration'
-  },
-  {
-    requestType: 'Addition',
-    requestor: 'Monte Mann (ACBAUERVVHA)',
-    nonRatingIssueCategory: 'CHAMPVA',
-    nonRatingIssueDescription: 'Money for CHAMPVA',
-    decisionText: 'New CHAMPVA text',
-    decisionDate: '2024-01-30',
-    requestReason: 'This is the reason that the user entered for the requested Modification to this issue.',
-    benefitType: 'Veterans Health Administration'
-  }
-];
-
 const getClaimantField = (intakeData) => {
   const {
     claimantName,
@@ -221,8 +152,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       pactChecked: issue.pact_status,
       vbmsMstChecked: issue.vbms_mst_status,
       vbmsPactChecked: issue.vbms_pact_status,
-      mst_status_update_reason_notes: issue?.mstJustification,
-      pact_status_update_reason_notes: issue?.pactJustification
+      mst_status_update_reason_notes: issue.mstJustification,
+      pact_status_update_reason_notes: issue.pactJustification
     };
   }
   );
@@ -435,24 +366,12 @@ export const formatIssuesBySection = (issues) => {
         (result.withdrawnIssues || (result.withdrawnIssues = [])).push(issue);
       } else if (issue.endProductCode) {
         (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
-      // } else if (issue.) {
-      //   (result.pendingAdminReview || (result.pendingAdminReview = [])).push(issue)
       } else {
         (result.requestedIssues || (result.requestedIssues = [])).push(issue);
       }
 
       return result;
     }, {}
-  );
-};
-
-export const formatIssueModificationRequestsBySection = (issueModificationRequests) => {
-  return issueModificationRequests.reduce(
-    (result, pendingIssue) => {
-      result.pendingAdminReview.push(pendingIssue);
-
-      return result;
-    }, { pendingAdminReview: [] }
   );
 };
 

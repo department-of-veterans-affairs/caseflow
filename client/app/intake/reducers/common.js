@@ -9,7 +9,7 @@ import { update } from '../../util/ReducerUtil';
 export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
-  let issueModificationRequests = state.issueModificationRequests ? state.issueModificationRequests : [];
+  const pendingIssueModificationRequests = state.pendingIssueModificationRequests || [];
 
   actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
     return update(state, {
@@ -185,20 +185,17 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.MOVE_TO_PENDING_REVIEW] = () => {
-    // issues are removed by position, because not all issues have referenceIds
-    listOfIssues.splice(action.payload.index, 1);
-
     return {
       ...state,
       addedIssues: listOfIssues,
-      issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
+      pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
     };
   };
 
   actionsMap[ACTIONS.ADD_TO_PENDING_REVIEW] = () => {
     return {
       ...state,
-      issueModificationRequests: [...issueModificationRequests, action.payload.issueModificationRequest]
+      pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
     };
   };
 

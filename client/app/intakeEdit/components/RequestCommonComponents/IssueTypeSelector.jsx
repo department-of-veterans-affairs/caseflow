@@ -17,7 +17,7 @@ const IssueTypeSelector = () => {
 
   return <Controller
     control={control}
-    name="nonRatingIssueCategory"
+    name="nonratingIssueCategory"
     render={({ onChange, ref, ...rest }) => (
       <SearchableDropdown
         {...rest}
