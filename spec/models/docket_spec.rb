@@ -3,11 +3,6 @@
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
-  before do
-    create(:case_distribution_lever, :cavc_affinity_days)
-    create(:case_distribution_lever, :request_more_cases_minimum)
-  end
-
   context "docket" do
     # nonpriority
     let!(:appeal) do

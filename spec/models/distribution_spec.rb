@@ -9,14 +9,6 @@ describe Distribution, :all_dbs do
 
   before do
     Timecop.freeze(Time.zone.now)
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :batch_size_per_attorney)
-    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
-    create(:case_distribution_lever, :alternative_batch_size)
-    create(:case_distribution_lever, :nod_adjustment)
-    create(:case_distribution_lever, :cavc_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
   end
 
   context "validations" do

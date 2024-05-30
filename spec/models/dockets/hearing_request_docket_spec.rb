@@ -2,11 +2,8 @@
 
 describe HearingRequestDocket, :postgres do
   before do
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :cavc_affinity_days)
-
+    # Uncomment this line once the seed is removed from rails_helper.rb
+    # Seeds::CaseDistributionLevers.new.seed!
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
 
     # these were the defaut values at time of writing tests but can change over time, so ensure they are set

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature "Case Distribution Controls Page Buttons" do
-  before { Seeds::CaseDistributionLevers.new.seed! }
-
   let!(:current_user) do
     user = create(:user, css_id: "BVATTWAYNE")
     CDAControlGroup.singleton.add_user(user)

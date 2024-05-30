@@ -14,8 +14,7 @@ class Test::UsersController < ApplicationController
     {
       name: "Queue",
       links: {
-        your_queue: "/queue",
-        assignment_queue: "/queue/USER_CSS_ID/assign" # USER_CSS_ID is then updated in TestUsers file
+        your_queue: "/queue"
       }
     },
     {

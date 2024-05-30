@@ -130,13 +130,9 @@ export default function TestUsers(props) {
       <ul>
         {Object.keys(app.links).map((name) => {
           let readableName = StringUtil.snakeCaseToCapitalized(name);
-          let linkRoute = app.links[name];
-
-          // If it exists, Replaces any placeholder USER CSS ID values in the array with the proper css id
-          linkRoute = linkRoute.replace('USER_CSS_ID', `${props.currentUser.css_id}`);
 
           return <li key={name} aria-labelledby={name}>
-            <a href={linkRoute} id={name} role="link" aria-label={readableName}>{readableName}</a>
+            <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
           </li>;
         })}
       </ul>

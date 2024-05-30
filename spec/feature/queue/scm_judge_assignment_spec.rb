@@ -21,7 +21,6 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney, stitle: "DF")
       judge_one_team.add_user(attorney)
-      Seeds::CaseDistributionLevers.new.seed!
     end
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)

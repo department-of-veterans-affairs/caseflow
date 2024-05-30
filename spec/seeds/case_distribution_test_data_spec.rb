@@ -39,8 +39,6 @@ describe Seeds::CaseDistributionTestData do
   end
 
   context "#seed!" do
-    before { Seeds::CaseDistributionLevers.new.seed! }
-
     it "creates test data for case distribution" do
       seed.seed!
 
