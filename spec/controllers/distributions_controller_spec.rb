@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe DistributionsController, :all_dbs do
-  before { create(:case_distribution_lever, :request_more_cases_minimum) }
-
   describe "#new" do
     let(:user) { create(:user) }
 

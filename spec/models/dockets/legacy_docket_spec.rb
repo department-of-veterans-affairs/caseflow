@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 describe LegacyDocket do
-  before do
-    create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :nod_adjustment)
-  end
-
   let(:docket) do
     LegacyDocket.new
   end
