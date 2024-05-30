@@ -32,18 +32,21 @@ export const RequestIssueFormWrapper = (props) => {
         nonratingIssueCategory: props.currentIssue.category,
         nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
         benefitType: props.currentIssue.benefitType,
-        decisionDate: formatDateStr(props.currentIssue.decisionDate)
       } : {};
+
+    // The decision date will come from the current issue for removal and withdrawal requests.
+    // Ensure date is in a serializable format for redux
+    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
+       formatDateStr(props.currentIssue.decisionDate);
 
     const enhancedData = {
       ...currentIssueFields,
-      ...(props.type === 'modification') && { requestIssue: props.currentIssue },
+      requestIssue: props.currentIssue,
       ...(props.type === 'addition') && { benefitType },
       requestor: { fullName: userFullName, cssId: userCssId },
       requestType: props.type,
       ...issueModificationRequest,
-      // Ensure date is in a serializable format
-      decisionDate: formatDateStr(issueModificationRequest.decisionDate)
+      decisionDate
     };
 
     // close modal and move the issue
