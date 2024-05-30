@@ -167,7 +167,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         name={COPY.TRANSCRIPTION_SETTINGS_ADD}
         id="Add-contractor"
         classNames={['usa-button-primary']}
-        // on click add contractor modal opens
+        onClick={() => this.toggleAddEditModal()}
       />
     </div>
   );
@@ -179,34 +179,17 @@ export default class TranscriptionSettings extends React.PureComponent {
         id="Remove-contractor"
         classNames={['usa-button-secondary']}
         onClick={() => this.toggleRemoveModal()}
-        // on click contractor is removed
       />
     </div>
   );
 
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
-    // response also contains a transcription_contractor for updating this component
+    this.getContractors();
     this.toggleAddEditModal();
   };
 
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
-
-  addContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_ADD}
-      id="Add-contractor"
-      classNames={['usa-button-primary']}
-      onClick={() => this.toggleAddEditModal()}
-    /></div>
-
-  removeContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
-      id="Remove-contractor"
-      classNames={['usa-button-secondary']}
-      // on click contractor is removed
-    /></div>
 
   mainContent = () => {
     const listOfContractors = () => {
@@ -266,6 +249,14 @@ export default class TranscriptionSettings extends React.PureComponent {
           onConfirm={this.confirmEditAddModal}
           // transcriptionContractor={{ ... pass in actual contractor with ID to trigger edit mode }}
         />}
+        {this.state.isRemoveModalOpen && (
+          <RemoveContractorModal
+            onCancel={this.toggleRemoveModal}
+            onConfirm={this.handleRemoveContractor}
+            contractors={this.state.contractors}
+            title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
+          />
+        )}
       </React.Fragment>
     );
   };
@@ -287,14 +278,6 @@ export default class TranscriptionSettings extends React.PureComponent {
           </span>
         </div>
         <div>{this.mainContent()}</div>
-        {this.state.isRemoveModalOpen && (
-          <RemoveContractorModal
-            onCancel={this.toggleRemoveModal}
-            onConfirm={this.handleRemoveContractor}
-            contractors={this.state.contractors}
-            title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
-          />
-        )}
       </AppSegment>
     </>
   );

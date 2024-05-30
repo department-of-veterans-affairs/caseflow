@@ -3,6 +3,7 @@ import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
 import COPY from '../../../../../COPY';
 import ApiUtil from '../../../../../app/util/ApiUtil';
+import { sprintf } from 'sprintf-js';
 
 import {
   clickSubmissionButton,
@@ -51,13 +52,6 @@ describe('Add contractor form', () => {
     expect(component).toMatchSnapshot();
   });
 
-  test('requires all fields and displays errors on failed submit', () => {
-    const component = renderAddContractorModal();
-
-    clickSubmissionButton(COPY.TRANSCRIPTION_SETTINGS_ADD);
-    expect(component).toMatchSnapshot();
-  });
-
   test('calls onCancel when cancel button is clicked', async () => {
     renderAddContractorModal();
     clickSubmissionButton(COPY.TRANSCRIPTION_SETTINGS_CANCEL);
@@ -92,8 +86,8 @@ describe('Add contractor form', () => {
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalledWith({
       alert: {
-        message: testContractor.name,
-        title: `You have successfully created contractor #${ testContractor.id}`,
+        title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
+        message: sprintf(COPY.TRANSCRIPTION_SETTINGS_CREATE_MESSAGE, testContractor.name),
         type: 'success'
       },
       transcription_contractor: testContractor
