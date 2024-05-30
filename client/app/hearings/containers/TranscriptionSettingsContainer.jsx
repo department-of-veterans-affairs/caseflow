@@ -9,8 +9,9 @@ export const TranscriptionSettingsContainer = () => {
   const [contractors, setContractors] = useState([]);
 
   const getContractors = () =>
-    ApiUtil.get("/hearings/find_by_contractor").then((response) => {
+    ApiUtil.get('/hearings/find_by_contractor').then((response) => {
       setContractors(response.body.transcription_contractors);
+
       return response.body.transcription_contractors;
     });
 
