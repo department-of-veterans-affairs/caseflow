@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import TextField from '../../../components/TextField';
 import COPY from '../../../../COPY';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
 
@@ -14,6 +15,28 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
     phone: '',
     email: ''
   });
+
+  const addContractor = (contractor) => {
+    const data = {
+      transcription_contractor: contractor
+    };
+
+    ApiUtil.post('/hearings/find_by_contractor', { data }).
+      then((response) => {
+
+        if (response.body.transcription_contractor) {
+          const newContractor = response.body.transcription_contractor;
+
+          onConfirm({
+            title: `${COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS} #${newContractor.id}`,
+            message: newContractor.name,
+            type: 'success'
+          });
+        }
+        // }, (error) => {
+        // handle error ???
+      });
+  };
 
   const handleConfirm = () => {
     let error = false;
@@ -40,10 +63,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
 
     setFormError(error);
     if (!error) {
-
-      // backend call WIP
-
-      onConfirm();
+      addContractor(formData);
     }
   };
 

@@ -765,6 +765,7 @@
   "TRANSCRIPTION_SETTINGS_ERROR_PHONE": "POC phone number is required",
   "TRANSCRIPTION_SETTINGS_LABEL_EMAIL": "POC email",
   "TRANSCRIPTION_SETTINGS_ERROR_EMAIL": "POC email is required",
+  "TRANSCRIPTION_SETTINGS_CREATE_SUCCESS": "You have successfully created contractor",
   "TRANSCRIPTION_QUEUE_LINK": "Back to transcription queue",
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",

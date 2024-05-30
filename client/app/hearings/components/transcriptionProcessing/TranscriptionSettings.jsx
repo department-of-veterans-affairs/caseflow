@@ -184,6 +184,11 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
+  confirmEditAddModal = (alert) => {
+    this.setState({ alert });
+    this.toggleAddEditModal();
+  };
+
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
   mainContent = () => {
@@ -241,7 +246,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         <div>{listOfContractors()}</div>
         {this.state.isAddEditOpen && <AddEditContractorModal
           onCancel={this.toggleAddEditModal}
-          onConfirm={this.toggleAddEditModal}
+          onConfirm={this.confirmEditAddModal}
           title="Add Contractor"
         />}
       </React.Fragment>
@@ -276,6 +281,18 @@ export default class TranscriptionSettings extends React.PureComponent {
       </AppSegment>
     </>
   );
+  render = () =>
+    <div>
+      {this.state.alert.title && <Alert title={this.state.alert.title} message={this.state.alert.message} type={this.state.alert.type} /> }
+      <AppSegment filledBackground>
+        <div {...returnLinkStyle}>
+          <span><Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>&nbsp;</span>
+        </div>
+        <div>
+          {this.mainContent()}
+        </div>
+      </AppSegment>
+    </div>
 }
 
 TranscriptionSettings.propTypes = {
