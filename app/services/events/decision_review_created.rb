@@ -16,8 +16,6 @@ class Events::DecisionReviewCreated
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
 
-      process_nonrating(payload) if payload[:request_issues].present?
-
       return if event_exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -27,6 +25,8 @@ class Events::DecisionReviewCreated
         fail Caseflow::Error::RedisLockFailed,
              message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
+
+      process_nonrating(payload) if payload[:request_issues].present?
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
         # key => "EndProductEstablishment:reference_id" aka "claim ID"
