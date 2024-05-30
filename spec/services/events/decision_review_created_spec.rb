@@ -147,9 +147,9 @@ describe Events::DecisionReviewCreated do
       expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
     end
 
-    it "sets the nonrating_issue_category to 'Unknown Issue Category' when the issue is invalid" do
+    it "doesn't change anything if nonrating_issue_category is not Disposition" do
       described_class.process_nonrating(payload_with_invalid_issue)
-      expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
+      expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Other")
     end
 
     it "sets the nonrating_issue_category to 'Unknown Issue Category' when the contested_decision_issue_id is not found" do
