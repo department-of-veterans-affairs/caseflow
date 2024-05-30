@@ -44,6 +44,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601
     max = 100
     query = { "from": from, "to": to, "max": max }
+
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],

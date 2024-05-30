@@ -2,6 +2,6 @@
 
 class ExternalApi::WebexService::RecordingsListResponse < ExternalApi::WebexService::Response
   def ids
-    data["items"].blank? ? [] : data["items"].pluck("id")
+    data.nil? ? [] : data["items"].pluck("id")
   end
 end
