@@ -21,6 +21,10 @@ class Fakes::WebexService
     @num_guests = args[:num_guests] || 1
   end
 
+  def self.access_token
+    'access_token'
+  end
+
   def create_conference(virtual_hearing)
     if error?
       return ExternalApi::WebexService::CreateResponse.new(
