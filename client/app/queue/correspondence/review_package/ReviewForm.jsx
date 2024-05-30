@@ -69,7 +69,6 @@ export const ReviewForm = (props) => {
   const handleChangeNotes = (value) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
-    isCorrTypeSelected();
     const updatedNotes = {
       ...props.editableData,
       notes: value,
@@ -105,7 +104,6 @@ export const ReviewForm = (props) => {
     };
 
     props.setCreateRecordIsReadOnly(handleCorrespondenceTypeEmpty());
-    isCorrTypeSelected();
     props.setCorrTypeSaved(updatedSelectedValue.default_select_value);
     props.setEditableData(updatedSelectedValue);
   };
@@ -374,6 +372,7 @@ ReviewForm.propTypes = {
   userIsCorrespondenceSuperuser: PropTypes.bool,
   userIsCorrespondenceSupervisor: PropTypes.bool,
   correspondence: PropTypes.object,
+  setCorrTypeSelected: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
