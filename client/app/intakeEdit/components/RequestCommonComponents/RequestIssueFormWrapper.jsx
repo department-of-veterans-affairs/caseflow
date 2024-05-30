@@ -29,8 +29,8 @@ export const RequestIssueFormWrapper = (props) => {
     const currentIssueFields = props.currentIssue ?
       {
         requestIssueId: props.currentIssue.id,
-        nonRatingIssueCategory: props.currentIssue.category,
-        nonRatingIssueDescription: props.currentIssue.nonRatingIssueDescription,
+        nonratingIssueCategory: props.currentIssue.category,
+        nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
         benefitType: props.currentIssue.benefitType,
         decisionDate: formatDateStr(props.currentIssue.decisionDate)
       } : {};
@@ -43,7 +43,7 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       // Ensure date is in a serializable format
-      decisionDate: formatDateStr(issueModificationRequest.decisionDate)
+      decisionDate: formatDateStr(props.currentIssue.decisionDate)
     };
 
     // close modal and move the issue
