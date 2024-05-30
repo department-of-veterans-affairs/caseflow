@@ -36,7 +36,7 @@ export const CancelPendingRequestIssueModal = (props) => {
         <strong>Issue type: </strong>
         {issue?.nonratingIssueCategory ? issue.nonratingIssueCategory : issue.category}<br />
         <strong>Decision date: </strong>{formatDateStr(issue.decisionDate)}<br />
-        <strong>Issue description: </strong>{issue.nonratingIssueDescription ?? issue.nonRatingIssueDescription}<br />
+        <strong>Issue description: </strong>{issue.nonratingIssueDescription || issue.nonRatingIssueDescription}<br />
         {issue.requestType === 'withdrawal' ? displayWithdrawalDate(issue) : null}
         {issue.requestType ? displayRequestReason(issue) : null}
       </div>

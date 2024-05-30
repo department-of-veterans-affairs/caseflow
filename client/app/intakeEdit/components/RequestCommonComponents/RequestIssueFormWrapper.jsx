@@ -43,7 +43,7 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       // Ensure date is in a serializable format
-      decisionDate: formatDateStr(props.currentIssue.decisionDate)
+      decisionDate: formatDateStr(issueModificationRequest.decisionDate)
     };
 
     // close modal and move the issue
