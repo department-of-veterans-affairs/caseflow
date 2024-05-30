@@ -62,6 +62,12 @@ const userListItemStyle = css({
   margin: '0',
 });
 
+const alertStyle = css({
+  '& .usa-alert': {
+    paddingBottom: '2rem'
+  }
+});
+
 const EditContractorLink = () => (
   <Button linkStyling>
     <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
@@ -116,8 +122,8 @@ export default class TranscriptionSettings extends React.PureComponent {
             () => {
               this.getContractors();
               this.confirmRemoveModal({
-                title: 'Success',
-                message: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS,
+                title: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS,
+                message: '',
                 type: 'success',
               });
               resolve();
@@ -264,11 +270,13 @@ export default class TranscriptionSettings extends React.PureComponent {
   render = () => (
     <>
       {this.state.alert.title && (
-        <Alert
-          title={this.state.alert.title}
-          message={this.state.alert.message}
-          type={this.state.alert.type}
-        />
+        <div {...alertStyle}>
+          <Alert
+            title={this.state.alert.title}
+            message={this.state.alert.message}
+            type={this.state.alert.type}
+          />
+        </div>
       )}
       <AppSegment filledBackground>
         <div {...returnLinkStyle}>
@@ -281,18 +289,6 @@ export default class TranscriptionSettings extends React.PureComponent {
       </AppSegment>
     </>
   );
-  render = () =>
-    <div>
-      {this.state.alert.title && <Alert title={this.state.alert.title} message={this.state.alert.message} type={this.state.alert.type} /> }
-      <AppSegment filledBackground>
-        <div {...returnLinkStyle}>
-          <span><Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>&nbsp;</span>
-        </div>
-        <div>
-          {this.mainContent()}
-        </div>
-      </AppSegment>
-    </div>
 }
 
 TranscriptionSettings.propTypes = {

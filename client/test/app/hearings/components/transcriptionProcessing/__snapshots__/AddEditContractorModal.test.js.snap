@@ -60,7 +60,7 @@ Object {
                 data-css-o98ubo=""
               >
                 <p>
-                  This will add a contractor to list of assignable contractors.
+                  This will add a contractor to the list of assignable contractors.
                 </p>
                 <div
                   class="cf-form-textinput   "
@@ -261,7 +261,7 @@ Object {
               data-css-o98ubo=""
             >
               <p>
-                This will add a contractor to list of assignable contractors.
+                This will add a contractor to the list of assignable contractors.
               </p>
               <div
                 class="cf-form-textinput   "

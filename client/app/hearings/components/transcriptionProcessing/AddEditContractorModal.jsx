@@ -38,8 +38,8 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContr
           onConfirm({
             transcription_contractor: contractor,
             alert: {
-              title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
-              message: sprintf(COPY.TRANSCRIPTION_SETTINGS_CREATE_MESSAGE, contractor.name),
+              title: sprintf(COPY.TRANSCRIPTION_SETTINGS_CREATE_MESSAGE, contractor.name),
+              message: '',
               type: 'success'
             }
           });

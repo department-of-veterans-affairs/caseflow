@@ -86,8 +86,8 @@ describe('Add contractor form', () => {
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalledWith({
       alert: {
-        title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
-        message: sprintf(COPY.TRANSCRIPTION_SETTINGS_CREATE_MESSAGE, testContractor.name),
+        title: sprintf(COPY.TRANSCRIPTION_SETTINGS_CREATE_MESSAGE, testContractor.name),
+        message: '',
         type: 'success'
       },
       transcription_contractor: testContractor
