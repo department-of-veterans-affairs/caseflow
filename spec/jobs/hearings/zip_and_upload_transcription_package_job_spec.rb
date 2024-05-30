@@ -11,9 +11,22 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
   end
 
   def cleanup_tmp
-    %w(mp3 rtf zip xls json).each do |directory|
-      dir = Dir.new("tmp/transcription_files/#{directory}")
-      dir.each_child { |file_name| File.delete("#{dir.path}/#{file_name}") }
+    directories = %w(mp3 rtf zip xls json)
+    base_path = "tmp/transcription_files"
+
+    directories.each do |directory|
+      dir_path = File.join(base_path, directory)
+
+      if Dir.exist?(dir_path)
+        Dir.children(dir_path).each do |file_name|
+          file_path = File.join(dir_path, file_name)
+
+          begin
+            File.delete(file_path)
+          rescue => e
+          end
+        end
+      end
     end
   end
 
