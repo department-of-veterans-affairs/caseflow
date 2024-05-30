@@ -51,9 +51,6 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
     subject
 
     expect(dir.children.count).to eq total_file + 1
-
-    # last_file = Dir.glob("tmp/transcription_files/zip/*").max_by {|f| File.mtime(f)}
-    # file_name = File.basename(last_file)
     file_name = take_bom_file
     expect(file_name).to match(%r{BVA\w{1,2}-\d{4}-\d{4}.zip})
     full_path = "#{dir.path}/#{file_name}"
