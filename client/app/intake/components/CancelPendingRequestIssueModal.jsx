@@ -49,6 +49,7 @@ export const CancelPendingRequestIssueModal = (props) => {
       return (
         <>
           {displayIssueInformation(pendingIssue.requestIssue)}
+          <br />
           {displayIssueInformation(pendingIssue)}
         </>
       );
