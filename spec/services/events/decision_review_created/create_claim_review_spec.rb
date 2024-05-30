@@ -25,10 +25,10 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
         allow(parser).to receive(:detail_type).and_return("NotHighLevelReview")
 
         expect do
-          described_class.process!(event: event, parser: parser)
+          described_class.process!(parser: parser)
         end.to change { EventRecord.count }.by(0).and change { SupplementalClaim.count }.by(1)
 
-        expect(described_class.process!(event: event, parser: parser)).to eq(SupplementalClaim.last)
+        expect(described_class.process!(parser: parser)).to eq(SupplementalClaim.last)
 
         claim_review = SupplementalClaim.last
         expect(claim_review.benefit_type).to eq(parser.claim_review_benefit_type)
@@ -46,10 +46,10 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
     context "when intake is a HigherLevelReview" do
       it "creates a new supplemental claim" do
         expect do
-          described_class.process!(event: event, parser: parser)
+          described_class.process!(parser: parser)
         end.to change { EventRecord.count }.by(0).and change { HigherLevelReview.count }.by(1)
 
-        expect(described_class.process!(event: event, parser: parser)).to eq(HigherLevelReview.last)
+        expect(described_class.process!(parser: parser)).to eq(HigherLevelReview.last)
 
         claim_review = HigherLevelReview.last
         expect(claim_review.benefit_type).to eq(parser.claim_review_benefit_type)
@@ -70,7 +70,7 @@ RSpec.describe Events::DecisionReviewCreated::CreateClaimReview do
           .and_raise(Caseflow::Error::DecisionReviewCreatedCreateClaimReviewError, "Error message")
 
         expect do
-          described_class.process!(event: event, parser: parser)
+          described_class.process!(parser: parser)
         end.to raise_error(Caseflow::Error::DecisionReviewCreatedCreateClaimReviewError, "Error message")
       end
     end
