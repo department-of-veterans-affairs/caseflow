@@ -216,7 +216,7 @@ RSpec.feature "Explain JSON" do
       vacols_case
     end
     let!(:ama_appeal_with_affinity) do
-      create(:appeal, :hearing_docket, :with_appeal_affinity, :held_hearing_and_ready_to_distribute,
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
              tied_judge: create(:user, :judge, :with_vacols_judge_record))
     end
     let!(:ama_appeal_without_affinity) do
@@ -240,7 +240,7 @@ RSpec.feature "Explain JSON" do
       visit "explain/appeals/#{ama_appeal_with_affinity.uuid}"
       page.find("label", text: "Task Tree").click
       expect(page)
-        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.appeal_affinity.affinity_start_date}"
+        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.reload.appeal_affinity.affinity_start_date}"
 
       visit "explain/appeals/#{ama_appeal_without_affinity.uuid}"
       page.find("label", text: "Task Tree").click
