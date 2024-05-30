@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# has issue modification request business login.
+# has issue modification request business logic.
 
 # :reek:TooManyInstanceVariables
 class NonAdmin::IssueModificationRequestsUpdater
@@ -26,7 +26,7 @@ class NonAdmin::IssueModificationRequestsUpdater
 
   def new_modifications_process!(new_issues)
     new_issues.each do |new_issue|
-      IssueModificationRequest.create_from_params!(new_issue, review)
+      IssueModificationRequest.create_from_params!(new_issue, review, current_user)
     end
     true
   end
@@ -35,7 +35,7 @@ class NonAdmin::IssueModificationRequestsUpdater
     edited_issues.each do |edited_issue|
       issue_modification_request = IssueModificationRequest.find(edited_issue[:id])
 
-      issue_modification_request.update_from_params!(edited_issue, current_user)
+      issue_modification_request.edit_from_params!(edited_issue, current_user)
     end
 
     true

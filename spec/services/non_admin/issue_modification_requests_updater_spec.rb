@@ -49,8 +49,8 @@ describe NonAdmin::IssueModificationRequestsUpdater do
           request_issue_id: nil,
           decision_review_type: "HigherLevelReview",
           benefit_type: "VHA",
-          decider_reason: "New Decision text",
-          decision_date: "2024-01-30",
+          decision_reason: "New Decision text",
+          decision_date: Time.zone.now,
           request_reason: "This is my reason.",
           requestor_id: non_admin_requestor.id,
           status: status
@@ -79,8 +79,10 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     context "and in assigned status" do
       it "should create new issue modifications request record" do
         subject.process!
+        imr = IssueModificationRequest.first
 
         expect(IssueModificationRequest.count).to eq(1)
+        expect(imr.attributes.symbolize_keys).to include(new_modification_requests[:new].first)
       end
     end
 

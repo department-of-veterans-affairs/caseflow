@@ -44,8 +44,8 @@ class IssueModificationRequest < CaseflowRecord
     Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def self.create_from_params!(attributes, review)
-    fail ErrorCreatingNewRequest if !attributes[:status].casecmp("assigned").zero?
+  def self.create_from_params!(attributes, review, user)
+    fail ErrorCreatingNewRequest unless attributes[:status].casecmp("assigned").zero?
 
     create!(
       decision_review: review,
@@ -58,11 +58,11 @@ class IssueModificationRequest < CaseflowRecord
       nonrating_issue_category: attributes[:nonrating_issue_category],
       nonrating_issue_description: attributes[:nonrating_issue_description],
       status: attributes[:status].downcase,
-      requestor_id: attributes[:requestor_id]
+      requestor: user
     )
   end
 
-  def update_from_params!(attributes, current_user)
+  def edit_from_params!(attributes, current_user)
     unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
       fail ErrorModifyingExistingRequest
     end
@@ -71,7 +71,8 @@ class IssueModificationRequest < CaseflowRecord
       nonrating_issue_category: attributes[:nonrating_issue_category],
       decision_date: attributes[:decision_date],
       nonrating_issue_description: attributes[:nonrating_issue_description],
-      request_reason: attributes[:request_reason]
+      request_reason: attributes[:request_reason],
+      edited_at: Time.zone.now
     )
   end
 

@@ -33,7 +33,6 @@ describe SupplementalClaimsController, :postgres, type: :controller do
         )
 
         allow(NonAdmin::IssueModificationRequestsUpdater).to receive(:new).and_return(updater)
-        # allow(updater).to receive(:success?).and_return(true)
 
         expect(updater).to receive(:process!).and_return(true)
 
