@@ -15,7 +15,8 @@ class Events::DecisionReviewCreated
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
-      process_nonrating(payload)
+
+      process_nonrating(payload) if payload[:request_issues].present?
 
       return if event_exists_and_is_completed?(consumer_event_id)
 
@@ -96,17 +97,15 @@ class Events::DecisionReviewCreated
 
     def process_nonrating(payload)
       # note: from consumer comes drc_params with "Unpermitted parameter: :type" message that we can see in rails console. Probably it is a bug.
-      if payload[:request_issues].present?
-        payload[:request_issues].each do |issue|
-          category = issue[:nonrating_issue_category]
-          contested_id = issue[:contested_decision_issue_id]
-          ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-          if category == "Disposition"
-            if contested_id.present? && ri.length == 1 # && category == "Disposition"
-              return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
-            else
-              return issue[:nonrating_issue_category] = "Unknown Issue Category"
-            end
+      payload[:request_issues].each do |issue|
+        category = issue[:nonrating_issue_category]
+        contested_id = issue[:contested_decision_issue_id]
+        ri = RequestIssue.where(contested_decision_issue_id: contested_id)
+        if category == "Disposition"
+          if contested_id.present? && ri.length == 1 # && category == "Disposition"
+            return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
+          else
+            return issue[:nonrating_issue_category] = "Unknown Issue Category"
           end
         end
       end
