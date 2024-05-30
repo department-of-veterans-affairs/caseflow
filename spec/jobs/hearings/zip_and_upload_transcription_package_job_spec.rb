@@ -17,14 +17,15 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
     directories.each do |directory|
       dir_path = File.join(base_path, directory)
 
-      if Dir.exist?(dir_path)
-        Dir.children(dir_path).each do |file_name|
-          file_path = File.join(dir_path, file_name)
+      next if Dir.exist?(dir_path)
 
-          begin
-            File.delete(file_path)
-          rescue => e
-          end
+      Dir.children(dir_path).each do |file_name|
+        file_path = File.join(dir_path, file_name)
+
+        begin
+          File.delete(file_path)
+        rescue StandardError => error
+          { error: error.message }
         end
       end
     end
