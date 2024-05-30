@@ -6,8 +6,9 @@ import COPY from '../../../../COPY';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
 
-export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
-
+export const AddEditContractorModal = ({ onCancel, onConfirm }) => {
+  const edit = false;
+  const title = edit ? COPY.TRANSCRIPTION_SETTINGS_EDIT : COPY.TRANSCRIPTION_SETTINGS_ADD;
   const [formError, setFormError] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -30,9 +31,12 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
           const newContractor = response.body.transcription_contractor;
 
           onConfirm({
-            title: `${COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS} #${newContractor.id}`,
-            message: newContractor.name,
-            type: 'success'
+            transcription_contractor: newContractor,
+            alert: {
+              title: `${COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS} #${newContractor.id}`,
+              message: newContractor.name,
+              type: 'success'
+            }
           });
         }
       }, () => {
@@ -69,7 +73,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
-          name: 'Cancel',
+          name: COPY.TRANSCRIPTION_SETTINGS_CANCEL,
           onClick: onCancel
         },
         {
@@ -81,9 +85,11 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
       closeHandler={onCancel}
       id="custom-contractor-modal"
     >
-      {serverError && <Alert title="Unkown error" message="Please try again later" type="error" /> }
+      {serverError &&
+        <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
+          message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
 
-      <p>{COPY.TRANSCRIPTION_SETTINGS_FORM_DESCRIPTION}</p>
+      {!edit && <p>{COPY.TRANSCRIPTION_SETTINGS_FORM_DESCRIPTION}</p>}
 
       <TextField
         label={COPY.TRANSCRIPTION_SETTINGS_LABEL_NAME}
@@ -125,7 +131,6 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, title }) => {
 
 AddEditContractorModal.propTypes = {
   onCancel: PropTypes.func,
-  onConfirm: PropTypes.func,
-  title: PropTypes.string
+  onConfirm: PropTypes.func
 };
 

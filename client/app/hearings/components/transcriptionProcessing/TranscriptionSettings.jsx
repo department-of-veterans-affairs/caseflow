@@ -184,8 +184,9 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
-  confirmEditAddModal = (alert) => {
-    this.setState({ alert });
+  confirmEditAddModal = (response) => {
+    this.setState({ alert: response.alert });
+    // response also contains a transcription_contractor for updating this component
     this.toggleAddEditModal();
   };
 
@@ -247,7 +248,6 @@ export default class TranscriptionSettings extends React.PureComponent {
         {this.state.isAddEditOpen && <AddEditContractorModal
           onCancel={this.toggleAddEditModal}
           onConfirm={this.confirmEditAddModal}
-          title="Add Contractor"
         />}
       </React.Fragment>
     );
