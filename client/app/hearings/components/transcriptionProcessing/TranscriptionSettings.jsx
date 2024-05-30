@@ -192,6 +192,22 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
+  addContractorButton = () =>
+    <div {...buttonStyle}><Button
+      name={COPY.TRANSCRIPTION_SETTINGS_ADD}
+      id="Add-contractor"
+      classNames={['usa-button-primary']}
+      onClick={() => this.toggleAddEditModal()}
+    /></div>
+
+  removeContractorButton = () =>
+    <div {...buttonStyle}><Button
+      name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
+      id="Remove-contractor"
+      classNames={['usa-button-secondary']}
+      // on click contractor is removed
+    /></div>
+
   mainContent = () => {
     const listOfContractors = () => {
       // pass in and iterate over contractors
