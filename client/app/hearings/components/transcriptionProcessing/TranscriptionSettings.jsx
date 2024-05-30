@@ -12,6 +12,7 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
 import { RemoveContractorModal } from './RemoveContractorModal';
+import { AddEditContractorModal } from './AddEditContractorModal';
 
 const buttonStyle = css({
   padding: '1rem 2.5rem 2rem 0',
@@ -87,14 +88,13 @@ export default class TranscriptionSettings extends React.PureComponent {
 
     this.state = {
       isRemoveModalOpen: false,
+      isAddEditOpen: false,
       loading: true,
       alert: {
         title: '',
         message: '',
         type: '',
       },
-      isAddEditOpen: false,
-
       contractors: [],
     };
   }
@@ -184,6 +184,8 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
+  toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
+
   mainContent = () => {
     const listOfContractors = () => {
       // pass in and iterate over contractors
@@ -237,6 +239,11 @@ export default class TranscriptionSettings extends React.PureComponent {
           </div>
         </div>
         <div>{listOfContractors()}</div>
+        {this.state.isAddEditOpen && <AddEditContractorModal
+          onCancel={this.toggleAddEditModal}
+          onConfirm={this.toggleAddEditModal}
+          title="Add Contractor"
+        />}
       </React.Fragment>
     );
   };
