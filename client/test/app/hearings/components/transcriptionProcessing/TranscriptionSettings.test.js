@@ -5,9 +5,13 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
+import ApiUtil from '../../../../../app/util/ApiUtil';
 import thunk from 'redux-thunk';
 
-import TranscriptionSettings from '../../../../../app/hearings/components/transcriptionProcessing/TranscriptionSettings';
+import TranscriptionSettings from
+  '../../../../../app/hearings/components/transcriptionProcessing/TranscriptionSettings';
+
+jest.mock('../../../../../app/util/ApiUtil');
 
 const createStoreWithReducer = (initialState) => {
   const reducer = (state = initialState) => state;
@@ -28,6 +32,12 @@ const renderTranscriptionSettings = () => {
 };
 
 it('does render transcription settings information', async () => {
+  ApiUtil.get.mockResolvedValue({
+    body: {
+      transcription_contractors: [],
+    },
+  });
+
   renderTranscriptionSettings();
 
   expect(await screen.findByText(/Transcription Settings/)).toBeInTheDocument();
