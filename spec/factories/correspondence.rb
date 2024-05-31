@@ -9,7 +9,6 @@ FactoryBot.define do
     assigned_by factory: :user
     correspondence_type
     veteran
-    package_document_type
 
     trait :nod do
       nod { true }
