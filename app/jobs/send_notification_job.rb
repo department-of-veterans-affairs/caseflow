@@ -6,6 +6,7 @@
 # :reek:RepeatedConditional
 class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include IgnoreJobExecutionTime
 
   queue_as { self.class.queue_name_suffix }
   application_attr :va_notify

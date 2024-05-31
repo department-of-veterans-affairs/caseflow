@@ -10,10 +10,56 @@ class JobThatIsGood < ApplicationJob
 end
 
 describe "ApplicationJob" do
+  let(:freeze_time_first_run) { Time.local(2024, 8, 30, 19, 0, 20) }
+  let(:freeze_time_second_run) { Time.local(2024, 8, 30, 20, 0, 20) }
+
   context ".application_attr" do
     it "sets application request store" do
       JobThatIsGood.perform_now
       expect(RequestStore[:application]).to eq("fake_job")
+    end
+  end
+
+  context "JobExecutionTime" do
+    it "adds record to JobExecutionTime if the ignore_job_execution_time? flag is false" do
+      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
+      Timecop.freeze(freeze_time_first_run) do
+        expect(JobExecutionTime.count).to eq(0)
+        JobThatIsGood.perform_now
+        expect(JobExecutionTime.count).to eq(1)
+        execution_time_record = JobExecutionTime.first
+        expect(execution_time_record.job_name).to eq("JobThatIsGood")
+        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+      end
+    end
+
+    it "update existing record in JobExecutionTime table when job is run multiple times" do
+      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
+      Timecop.freeze(freeze_time_first_run) do
+        expect(JobExecutionTime.count).to eq(0)
+        JobThatIsGood.perform_now
+        expect(JobExecutionTime.count).to eq(1)
+        execution_time_record = JobExecutionTime.first
+        expect(execution_time_record.job_name).to eq("JobThatIsGood")
+        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+      end
+
+      Timecop.freeze(freeze_time_second_run) do
+        JobThatIsGood.perform_now
+        expect(JobExecutionTime.count).to eq(1)
+        execution_time_record = JobExecutionTime.first
+        expect(execution_time_record.job_name).to eq("JobThatIsGood")
+        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+      end
+    end
+
+    it "does not add record to JobExecutionTime if the ignore_job_execution_time? flag is true" do
+      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(true)
+      Timecop.freeze(freeze_time_first_run) do
+        expect(JobExecutionTime.count).to eq(0)
+        JobThatIsGood.perform_now
+        expect(JobExecutionTime.count).to eq(0)
+      end
     end
 
     it "sets extra context in middleware" do

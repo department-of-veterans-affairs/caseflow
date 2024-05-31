@@ -13,6 +13,7 @@
 #   large batch notification queueing jobs, like the QuarterlyNotificationsJob, can run much more quickly.
 class NotificationInitializationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
+  include IgnoreJobExecutionTime
 
   queue_as SendNotificationJob.queue_name_suffix
   application_attr :va_notify
