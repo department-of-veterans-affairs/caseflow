@@ -54,8 +54,7 @@ import {
   toggleCancelPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection,
-  addIssue
+  removeFromPendingReviewSection
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -98,8 +97,10 @@ class AddIssuesPage extends React.Component {
 
   /* This is just temporarily used so that I can display the modal during BA/UX review. */
   onClickPendingIssueAction = (option) => {
-    this.setState({ issueRemoveIndex: option.index });
-    this.props.toggleCancelPendingRequestIssueModal();
+    this.setState({ issueRemoveIndex: option.index }, () => {
+      this.props.toggleCancelPendingRequestIssueModal();
+    });
+
   }
 
   onClickIssueAction = (index, option = 'remove') => {
@@ -847,7 +848,6 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueWithdrawalModal,
         toggleRequestIssueAdditionModal,
         toggleCancelPendingRequestIssueModal,
-        addIssue,
         removeIssue,
         withdrawIssue,
         moveToPendingReviewSection,

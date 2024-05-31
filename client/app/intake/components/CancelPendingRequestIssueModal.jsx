@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import { formatDateStr } from 'app/util/DateUtil';
 import { capitalize } from 'lodash';
+import COPY from '../../../COPY';
 
 export const CancelPendingRequestIssueModal = (props) => {
 
@@ -14,65 +15,64 @@ export const CancelPendingRequestIssueModal = (props) => {
     toggleCancelPendingRequestIssueModal
   } = props;
 
-  const displayWithdrawalDate = (issue) => {
-    return (
-      <><strong>Request date for withdrawal: </strong>{formatDateStr(issue.withdrawalDate)}<br /></>
-    );
-  };
+  const requestIssue = pendingIssue.requestIssue;
 
-  const displayRequestReason = (issue) => {
-    return (
-      <><strong>{capitalize(issue.requestType)} request reason: </strong>{issue.requestReason}<br /></>
-    );
-  };
+  const withdrawalDate = (
+    <div><strong>Request date for withdrawal: </strong>{formatDateStr(pendingIssue?.withdrawalDate)}</div>
+  );
 
-  const displayIssueInformation = (issue) => {
-    const issueHeader = issue.requestType === 'addition' ||
-      issue.requestType === 'modification' ? 'Pending issue request' : 'Current issue';
+  const requestReason = (
+    <div><strong>{capitalize(pendingIssue.requestType)} request reason: </strong>{pendingIssue.requestReason}</div>
+  );
 
-    return (
+  const baseIssueInformation = (
+    <div>
+      <h2 style={{ marginBottom: '0px' }}>Pending issue request</h2>
+      <strong>Issue type: </strong>{pendingIssue.nonratingIssueCategory}<br />
+      <strong>Decision date: </strong>{formatDateStr(pendingIssue.decisionDate)}<br />
+      <strong>Issue description: </strong>{pendingIssue.nonratingIssueDescription ||
+        pendingIssue.nonRatingIssueDescription}<br />
+    </div>
+  );
+
+  const originalIssue = (
+    <div>
+      <h2 style={{ marginBottom: '0px' }}>Current issue</h2>
+      <strong>Issue type: </strong>{requestIssue?.nonratingIssueCategory || requestIssue?.category}<br />
+      <strong>Decision date: </strong>{formatDateStr(requestIssue?.decisionDate)}<br />
+      <strong>Issue description: </strong>{requestIssue?.nonratingIssueDescription ||
+      requestIssue?.nonRatingIssueDescription}<br />
+    </div>
+  );
+
+  const modalInfo = {
+    [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]: (
       <div>
-        <h2 style={{ marginBottom: '0px' }}>{issueHeader}</h2>
-        <strong>Issue type: </strong>
-        {issue?.nonratingIssueCategory ? issue.nonratingIssueCategory : issue.category}<br />
-        <strong>Decision date: </strong>{formatDateStr(issue.decisionDate)}<br />
-        <strong>Issue description: </strong>{issue.nonratingIssueDescription || issue.nonRatingIssueDescription}<br />
-        {issue.requestType === 'withdrawal' ? displayWithdrawalDate(issue) : null}
-        {issue.requestType ? displayRequestReason(issue) : null}
+        {baseIssueInformation}
+        {requestReason}
       </div>
-    );
-  };
-
-  const modalInformation = () => {
-    switch (pendingIssue.requestType) {
-    case 'modification':
-      return (
-        <>
-          {displayIssueInformation(pendingIssue.requestIssue)}
-          <br />
-          {displayIssueInformation(pendingIssue)}
-        </>
-      );
-    case 'addition':
-      return (
-        <>
-          {displayIssueInformation(pendingIssue)}
-        </>
-      );
-    case 'removal':
-      return (
-        <>
-          {displayIssueInformation(pendingIssue)}
-        </>
-      );
-    case 'withdrawal':
-      return (
-        <>
-          {displayIssueInformation(pendingIssue)}
-        </>
-      );
-    default:
-    }
+    ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: (
+      <div>
+        {originalIssue}
+        <br />
+        {baseIssueInformation}
+        {requestReason}
+      </div>
+    ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE]: (
+      <div>
+        {baseIssueInformation}
+        {requestReason}
+      </div>
+    ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: (
+      <div>
+        {baseIssueInformation}
+        {withdrawalDate}
+        {requestReason}
+      </div>
+    )
   };
 
   const handleSubmit = () => {
@@ -96,7 +96,7 @@ export const CancelPendingRequestIssueModal = (props) => {
       ]}
       closeHandler={onCancel}
     >
-      {modalInformation()}
+      {modalInfo[pendingIssue.requestType]}
     </Modal>
   );
 };

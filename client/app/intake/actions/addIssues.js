@@ -71,9 +71,8 @@ export const toggleRequestIssueAdditionModal = () => ({
   type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
 });
 
-export const toggleCancelPendingRequestIssueModal = (index) => ({
-  type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL,
-  payload: { index }
+export const toggleCancelPendingRequestIssueModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL
 });
 
 export const setMstPactDetails = (editIssuesDetails) => ({
