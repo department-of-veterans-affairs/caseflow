@@ -160,6 +160,7 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
         onCheckboxChange={handleCheckboxChange}
+        isContinueEnabled={isContinueEnabled}
       />
     }
     {currentStep === 2 &&

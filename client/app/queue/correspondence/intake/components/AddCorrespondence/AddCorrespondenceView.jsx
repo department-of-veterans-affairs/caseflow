@@ -23,17 +23,24 @@ class AddCorrespondenceView extends React.Component {
     this.state = {
       veteranId: '',
       vaDateOfReceipt: '',
-      sourceType: '',
       packageDocumentType: '',
       correspondenceType: '',
       notes: '',
-      selectedCheckboxes: []
+      selectedCheckboxes: [],
+      ifContinueDisabled: null
     };
   }
 
   onChange = (value) => {
     this.props.updateRadioValue({ radioValue: value });
-    this.props.onContinueStatusChange(value === RELATED_NO);
+
+    if (value === RELATED_YES) {
+      this.setState({ ifContinueDisabled: this.props.isContinueEnabled });
+    }
+
+    const valueToUpdate = this.state.ifContinueDisabled && value === RELATED_NO;
+
+    this.props.onContinueStatusChange(valueToUpdate);
     this.props.clearCheckboxState();
   }
 
@@ -91,22 +98,6 @@ class AddCorrespondenceView extends React.Component {
             </span>
           );
         }
-      },
-      {
-        cellClass: 'source-type-column',
-        ariaLabel: 'source-type-header-label',
-        header: (
-          <div id="source-type-header">
-            <span id="source-type-header-label" className="table-header-label">
-              Source Type
-            </span>
-          </div>
-        ),
-        valueFunction: () => (
-          <span className="va-source-type-item">
-            <p>{correspondence.sourceType}</p>
-          </span>
-        )
       },
       {
         cellClass: 'package-document-type-column',
@@ -221,7 +212,8 @@ AddCorrespondenceView.propTypes = {
   clearCheckboxState: PropTypes.func.isRequired,
   checkboxes: PropTypes.array,
   setResponseLetters: PropTypes.func,
-  currentLetters: PropTypes.number
+  currentLetters: PropTypes.number,
+  isContinueEnabled: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

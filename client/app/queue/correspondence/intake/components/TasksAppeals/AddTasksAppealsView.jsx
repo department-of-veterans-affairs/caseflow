@@ -10,13 +10,11 @@ import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 const mailTasksLeft = [
   'Change of address',
   'Evidence or argument',
-  'Returned or undeliverable mail'
 ];
 
 const mailTasksRight = [
-  'Sent to ROJ',
+  'Associated with Claims Folder',
   'VACOLS updated',
-  'Associated with Claims Folder'
 ];
 
 const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal;

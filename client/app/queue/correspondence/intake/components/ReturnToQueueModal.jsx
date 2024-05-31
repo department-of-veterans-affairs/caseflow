@@ -53,7 +53,8 @@ const ReturnToQueueModal = (props) => {
         vertical
       />
       {selectedRadio === 'continue_later' && <Alert
-        message="Saving the intake form to continue it at a later date will resume the intake form at step three of the process."
+        message="Saving the intake form to continue it at a later date will
+         resume the intake form at step three of the process."
         type="info"
       />}
     </Modal>

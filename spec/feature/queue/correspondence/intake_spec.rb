@@ -205,7 +205,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(4)
+        expect(all("button > span", text: "Edit Section").length).to eq(5)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -214,7 +214,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        all("button > span", text: "Edit Section")[1].click
+        all("button > span", text: "Edit Section")[2].click
         expect(page).to have_content("Review Tasks & Appeals")
         expect(page).to have_content("Tasks not related to an Appeal")
       end
@@ -245,7 +245,7 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      cancel_count = all("#button-Cancel").length
+      cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
     end
 
@@ -254,8 +254,8 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
-      find_by_id("Add-autotext-button-id-close").click
-      cancel_count = all("#button-Cancel").length
+      find(".cf-icon-close").click
+      cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
     end
 
@@ -355,7 +355,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-continue")
       intake_path = current_path
       click_on("button-Return-to-queue")
-      page.all(".cf-form-radio-option")[3].click
+      page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
       expect(page).to have_content("You have successfully saved the intake form")
       visit "/queue/correspondence?tab=correspondence_in_progress"
@@ -379,15 +379,15 @@ RSpec.feature("The Correspondence Intake page") do
       end
     end
 
-    it "successfully loads the in progress tab" do
-      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Correspondence in progress")
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Correspondence that is currently assigned to mail team users")
     end
 
     it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
        " from the Centralized Mail Portal, if it needs to be processed." do
-      visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      find("tbody > tr:last-child > td:nth-child(2)").click
       using_wait_time(15) do
         click_on("button-continue")
       end
@@ -397,6 +397,11 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
       intake_path = current_path
       click_on("button-Return-to-queue")
+      page.all(".cf-form-radio-option")[1].click
+      click_on("Return-To-Queue-button-id-1")
+      using_wait_time(15) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit intake_path
       expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
     end
