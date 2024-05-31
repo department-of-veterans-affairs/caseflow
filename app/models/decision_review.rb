@@ -265,7 +265,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def pending_issue_modification_requests
-    issue_modification_requests.select(&:assigned?)
+    issue_modification_requests.includes(:request_issue, :requestor, :decider).select(&:assigned?)
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.

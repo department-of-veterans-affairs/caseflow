@@ -20,10 +20,10 @@ class IssueModificationRequest < CaseflowRecord
   }
 
   enum request_type: {
-    addition: "Addition",
-    removal: "Removal",
-    modification: "Modification",
-    withdrawal: "Withdrawal"
+    addition: "addition",
+    removal: "removal",
+    modification: "modification",
+    withdrawal: "withdrawal"
   }
 
   def serialize

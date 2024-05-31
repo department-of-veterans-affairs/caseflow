@@ -250,7 +250,7 @@ export class SearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
-    const overridenComponents = {
+    const replacedComponents = {
       Input: CustomInput,
       MenuList: CustomMenuList,
       Option: CustomOption,
@@ -269,7 +269,7 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
-              components={overridenComponents}
+              components={replacedComponents}
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
