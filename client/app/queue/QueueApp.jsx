@@ -39,7 +39,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
-import ReviewPackageLoadingScreen from './correspondence/review_package/ReviewPackageLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/ReviewPackage/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -90,7 +90,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
-import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
+import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -132,8 +132,8 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
-    this.props.setMailTeamUser(this.props.isMailTeamUser);
-    this.props.setMailSupervisor(this.props.isMailSupervisor);
+    this.props.setMailTeamUser(this.props.isInboundOpsTeamUser);
+    this.props.setMailSupervisor(this.props.isInboundOpsSupervisor);
     this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
@@ -613,7 +613,10 @@ class QueueApp extends React.PureComponent {
   };
 
   routedOrganizationUsers = (props) => (
-    <OrganizationUsers {...props.match.params} />
+    <OrganizationUsers {...props.match.params}
+      organizationPermissions={this.props.organizationPermissions}
+      orgnizationUserPermissions={this.props.userPermissions}
+    />
   );
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} featureToggles={this.props.featureToggles} />;
@@ -642,9 +645,9 @@ class QueueApp extends React.PureComponent {
     <ReviewPackageLoadingScreen
       {...props.match.params}>
       <CorrespondenceReviewPackage
-        mailTeamUsers={this.props.mailTeamUsers}
+        inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
-        userIsCorrespondenceSupervisor={this.props.userIsCorrespondenceSupervisor}
+        userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
         {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );
@@ -706,7 +709,7 @@ class QueueApp extends React.PureComponent {
       correspondence={this.props.correspondence}
       priorMail={this.props.priorMail}
       veteranInformation={this.props.veteranInformation}
-      isMailSupervisor={this.props.isMailSupervisor}
+      isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
     />
   );
 
@@ -1535,10 +1538,10 @@ QueueApp.propTypes = {
   setMailTeamUser: PropTypes.func,
   setMailSupervisor: PropTypes.func,
   setInboundOpsSuperUser: PropTypes.func,
-  isMailTeamUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
@@ -1557,7 +1560,7 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
-  userIsCorrespondenceSupervisor: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
@@ -1566,7 +1569,9 @@ QueueApp.propTypes = {
   priorMail: PropTypes.array,
   veteranInformation: PropTypes.string,
   autoTexts: PropTypes.array,
-  reduxStore: PropTypes.object
+  reduxStore: PropTypes.object,
+  organizationPermissions: PropTypes.array,
+  userPermissions: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({

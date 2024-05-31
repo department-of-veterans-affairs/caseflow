@@ -57,8 +57,6 @@ module Seeds
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
-          assigned_by_id: 81,
-          updated_by_id: 81,
           veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
@@ -76,9 +74,7 @@ module Seeds
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -103,9 +99,7 @@ module Seeds
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -130,9 +124,7 @@ module Seeds
           cmp_queue_id: cmp_queue_id,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -161,9 +153,7 @@ module Seeds
           nod: true,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
@@ -182,9 +172,7 @@ module Seeds
           nod: true,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -210,9 +198,7 @@ module Seeds
           nod: true,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-          notes: "",
-          assigned_by_id: 81,
-          updated_by_id: 81,
+          notes: "This is a test note.",
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(

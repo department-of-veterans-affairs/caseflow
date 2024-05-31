@@ -220,14 +220,14 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
-export const setMailTeamUser = (isMailTeamUser) => ({
-  type: ACTIONS.SET_MAIL_TEAM_USER,
-  payload: { isMailTeamUser }
+export const setMailTeamUser = (isInboundOpsTeamUser) => ({
+  type: ACTIONS.SET_INBOUND_OPS_TEAM_USER,
+  payload: { isInboundOpsTeamUser }
 });
 
-export const setMailSupervisor = (isMailSupervisor) => ({
-  type: ACTIONS.SET_MAIL_SUPERVISOR,
-  payload: { isMailSupervisor }
+export const setMailSupervisor = (isInboundOpsSupervisor) => ({
+  type: ACTIONS.SET_INBOUND_OPS_SUPERVISOR,
+  payload: { isInboundOpsSupervisor }
 });
 
 export const setInboundOpsSuperUser = (isInboundOpsSuperuser) => ({

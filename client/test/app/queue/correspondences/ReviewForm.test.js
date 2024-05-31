@@ -26,7 +26,8 @@ describe('ReviewForm', () => {
   });
 
   it('renders the component', () => {
-     const mockFunction = jest.fn();
+    const mockFunction = jest.fn();
+
     props.setCorrTypeSelected = mockFunction;
     render(
       <Provider store={store}>

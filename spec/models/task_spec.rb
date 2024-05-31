@@ -2004,6 +2004,12 @@ describe Task, :all_dbs do
   end
 
   describe "Correspondence Tasks" do
+    let(:user) { create(:inbound_ops_team_supervisor) }
+
+    before do
+      User.authenticate!(user: user)
+    end
+
     context "Correspondence Intake Task" do
       it "has a task_url" do
         correspondence = create(:correspondence)
@@ -2052,7 +2058,6 @@ describe Task, :all_dbs do
 
       it "can have a parent correspondence intake task" do
         correspondence = create(:correspondence)
-        user = create(:user)
         cit = CorrespondenceIntakeTask.create_from_params(correspondence.root_task, user)
 
         uft = EfolderUploadFailedTask.create(
@@ -2069,8 +2074,11 @@ describe Task, :all_dbs do
 
     context "package action tasks" do
       let(:correspondence) { create(:correspondence) }
-      let(:user) { create(:user) }
       let(:user2) { create(:user) }
+
+      before do
+        InboundOpsTeam.singleton.add_user(user2)
+      end
 
       describe "reassign package tasks" do
         let(:reassign_pt) do

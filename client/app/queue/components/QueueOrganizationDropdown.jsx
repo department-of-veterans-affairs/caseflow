@@ -9,23 +9,23 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
-    const { isMailTeamUser } = this.props;
-    const { isMailSupervisor } = this.props;
+    const { isInboundOpsTeamUser } = this.props;
+    const { isInboundOpsSupervisor } = this.props;
     const { isInboundOpsSuperuser } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
     let correspondenceItems = {};
 
-    const isMailTeamAffiliated = () => {
-      if (isInboundOpsSuperuser || isMailSupervisor || isMailTeamUser) {
+    const isInboundOpsTeamAffiliated = () => {
+      if (isInboundOpsSuperuser || isInboundOpsSupervisor || isInboundOpsTeamUser) {
         return true;
       }
 
       return false;
     };
 
-    if (organizations.length < 1 && !isMailTeamAffiliated()) {
+    if (organizations.length < 1 && !isInboundOpsTeamAffiliated()) {
       return null;
     }
 
@@ -48,7 +48,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (isInboundOpsSuperuser === true || isMailSupervisor === true) {
+    if (isInboundOpsSuperuser === true || isInboundOpsSupervisor === true) {
       const orgHref = '/queue/correspondence/team';
 
       correspondenceItems = {
@@ -59,7 +59,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
       items = [...items, correspondenceItems];
     }
-    if (isMailTeamUser === true) {
+    if (isInboundOpsTeamUser === true) {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
@@ -79,8 +79,8 @@ export default class QueueOrganizationDropdown extends React.Component {
 }
 
 QueueOrganizationDropdown.propTypes = {
-  isMailTeamUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,

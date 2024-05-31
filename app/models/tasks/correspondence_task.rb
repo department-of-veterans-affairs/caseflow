@@ -13,6 +13,32 @@ class CorrespondenceTask < Task
 
   delegate :nod, to: :correspondence
 
+  class << self
+    def create_from_params(params, user)
+      # verify the user can create correspondence tasks
+      verify_correspondence_access(user)
+
+      parent_task = Task.find(params[:parent_id])
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
+
+      verify_user_can_create!(user, parent_task)
+
+      params = modify_params_for_create(params)
+      child = create_child_task(parent_task, user, params)
+      parent_task.update!(status: params[:status]) if params[:status]
+      child
+    end
+
+    private
+
+    # block users from creating correspondence tasks if they are not members of Inbound Ops Team
+    # ignore check if there is no current user on correspondence creation
+    def verify_correspondence_access(user)
+      fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to Inbound Ops Team" unless
+      InboundOpsTeam.singleton.user_has_access?(user) || user&.system_user?
+    end
+  end
+
   def self.package_action_task_names
     [
       ReassignPackageTask.name,

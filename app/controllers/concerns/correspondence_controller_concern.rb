@@ -6,59 +6,66 @@
 module CorrespondenceControllerConcern
   private
 
-  MAX_QUEUED_ITEMS = 60
-
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
 
-    set_banner_params(mail_team_user, task_ids.count, tab)
-    update_tasks(mail_team_user, task_ids)
+    # Instantiate AutoAssignableUserFinder with current_user
+    permission_checker = AutoAssignableUserFinder.new(mail_team_user)
+    errors = []
+
+    task_ids.each do |id|
+      correspondence_task = Task.find(id)&.correspondence
+      check_result = permission_checker.can_user_work_this_correspondence?(
+        user: mail_team_user,
+        correspondence: correspondence_task
+      )
+
+      if check_result
+        update_task(mail_team_user, id)
+      else
+        errors << permission_checker.unassignable_reason
+      end
+    end
+
+    set_banner_params(mail_team_user, errors, task_ids.count, tab)
   end
 
-  def update_tasks(mail_team_user, task_ids)
-    return unless @response_type == "success"
-
-    tasks = Task.where(id: task_ids)
-    tasks.update_all(
+  def update_task(mail_team_user, task_id)
+    task = Task.find_by(id: task_id)
+    task.update(
       assigned_to_id: mail_team_user.id,
       assigned_to_type: "User",
       status: Constants.TASK_STATUSES.assigned
     )
   end
 
-  def set_banner_params(user, task_count, tab)
-    template = message_template(user, task_count, tab)
-    response_type(user, task_count)
+  def set_banner_params(user, errors, task_count, tab)
+    template = message_template(user, errors, task_count, tab)
+    @response_type = errors.empty? ? "success" : "warning"
     @response_header = template[:header]
     @response_message = template[:message]
   end
 
-  def message_template(user, task_count, tab)
+  def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      bulk_assignment_banner_text(user, task_count)
+      bulk_assignment_banner_text(user, errors, task_count)
     when "correspondence_team_assigned"
-      bulk_assignment_banner_text(user, task_count, action_prefix: "re")
+      bulk_assignment_banner_text(user, errors, task_count, action_prefix: "re")
     end
   end
 
-  def bulk_assignment_banner_text(user, task_count, action_prefix: "")
+  def bulk_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
       "assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} could not be completed"
+    failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_message = "Queue volume has reached maximum capacity for this user."
-    user_tasks = user&.tasks&.length
+    failure_message = errors.uniq.join(", ")
     {
-      header: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-      message: (user_tasks + task_count <= MAX_QUEUED_ITEMS) ? success_message : failure_message
+      header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
+      message: errors.empty? ? success_message : failure_message
     }
-  end
-
-  def response_type(user, task_count)
-    current_user_tasks = user&.tasks&.length
-    @response_type = (current_user_tasks + task_count <= MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   def set_flash_intake_success_message

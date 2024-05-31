@@ -2,7 +2,7 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
-    @mail_team_users = User.mail_team_users.select(:css_id).pluck(:css_id)
+    @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
   end
 
   def package_documents
@@ -18,7 +18,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: current_user.mail_supervisor?,
+      user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
@@ -86,8 +86,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])
     veteran && correspondence.update!(
       correspondence_params.merge(
-        veteran_id: veteran.id,
-        updated_by_id: RequestStore.store[:current_user].id
+        veteran_id: veteran.id
       )
     )
   end

@@ -112,7 +112,7 @@ const CorrespondenceCases = (props) => {
         className = {`cf-margin-left-2rem img reassign ${styles.optSelect}`}
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-        options={buildMailUserData(props.mailTeamUsers)}
+        options={buildMailUserData(props.inboundOpsTeamUsers)}
       />
     </div>);
 
@@ -253,10 +253,10 @@ const CorrespondenceCases = (props) => {
         )}
         {config &&
         <CorrespondenceTableBuilder
-          mailTeamUsers={props.mailTeamUsers}
-          isMailTeamUser={props.isMailTeamUser}
+          inboundOpsTeamUsers={props.inboundOpsTeamUsers}
+          isInboundOpsTeamUser={props.isInboundOpsTeamUser}
           isInboundOpsSuperuser={props.isInboundOpsSuperuser}
-          isMailSupervisor={props.isMailSupervisor} />}
+          isInboundOpsSupervisor={props.isInboundOpsSupervisor} />}
         {showReassignPackageModal &&
         <Modal
           closeHandler={handleReassignClose}
@@ -306,14 +306,14 @@ CorrespondenceCases.propTypes = {
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string,
-  mailTeamUsers: PropTypes.arrayOf(string),
+  inboundOpsTeamUsers: PropTypes.arrayOf(string),
   responseType: PropTypes.string,
   responseHeader: PropTypes.string,
   responseMessage: PropTypes.string,
   taskIds: PropTypes.array,
-  isMailTeamUser: PropTypes.bool,
+  isInboundOpsTeamUser: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 

@@ -7,6 +7,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   let(:organization) { InboundOpsTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:unauthorized_user) { create(:user) }
   let(:correspondence) { create :correspondence }
   let(:correspondence_intake_task) do
@@ -61,6 +62,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form shell" do
     before :each do
+      User.authenticate!(user: supervisor_user)
       setup_and_visit_intake
     end
 
@@ -72,7 +74,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[3].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(20) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
     end
 
     it "successfully advances to the second step" do
@@ -200,6 +204,15 @@ RSpec.feature("The Correspondence Intake page") do
   end
 
   context "Step 3 - Confirm" do
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
+      OrganizationsUser.find_or_create_by!(
+        organization: InboundOpsTeam.singleton,
+        user: current_user
+      ).update!(admin: true)
+      User.authenticate!(user: current_user)
+    end
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated
@@ -247,6 +260,7 @@ RSpec.feature("The Correspondence Intake page") do
       find_by_id("Add-autotext-button-id-0").click
       cancel_count = all("#button-Return-to-queue").length
       expect(cancel_count).to eq 1
+      expect(all("#Add-autotext-button-id-0").length).to eq 0
     end
 
     it "The user can close the modal with the x button located in the top right." do
@@ -331,7 +345,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "correspondence tasks in-progress tab and navigate to step 3 when we click on intake task" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -357,7 +371,9 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[1].click
       click_on("Return-To-Queue-button-id-1")
-      expect(page).to have_content("You have successfully saved the intake form")
+      using_wait_time(20) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit "/queue/correspondence?tab=correspondence_in_progress"
       find("#task-link").click
       expect(current_path).to eq(intake_path)
@@ -369,13 +385,14 @@ RSpec.feature("The Correspondence Intake page") do
     let(:current_user) { create(:user) }
     before do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:correspondence_queue)
 
       5.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        create_efolderupload_task(correspondence, parent_task)
       end
     end
 
@@ -403,7 +420,9 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_content("You have successfully saved the intake form")
       end
       visit intake_path
-      expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      using_wait_time(30) do
+        expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+      end
     end
   end
 end

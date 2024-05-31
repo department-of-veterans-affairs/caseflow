@@ -8,7 +8,7 @@ RSpec.feature("Search Bar for Correspondence") do
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
     end
@@ -31,7 +31,7 @@ RSpec.feature("Search Bar for Correspondence") do
   context "correspondence assigned tab - locate the search bar" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -155,9 +155,10 @@ RSpec.feature("Search Bar for Correspondence") do
 
   # Tested on Correspondence Cases page
   context "correspondence paginationg search testing" do
-    let(:current_user) { create(:user) }
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
     before :each do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 

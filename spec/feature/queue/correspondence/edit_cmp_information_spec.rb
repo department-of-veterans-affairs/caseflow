@@ -5,17 +5,15 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create!(id: 15, active: true, created_at: Time.zone.now, name: "10_182", updated_at: Time.zone.now) }
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
-  let(:mail_team_user) { create(:user) }
-  let(:mail_team_org) { MailTeam.singleton }
-  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin") }
+  let(:inbound_ops_team_user) { create(:user) }
+  let(:mail_team_org) { InboundOpsTeam.singleton }
+  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon InboundOpsTeam Snow Admin") }
   let!(:correspondence_type) { CorrespondenceType.create!(name: "a correspondence type.") }
   let(:correspondence) do
     create(
       :correspondence,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
-      assigned_by_id: mail_team_user.id,
-      updated_by_id: mail_team_user.id,
       package_document_type: package_document_type
     )
   end
@@ -24,8 +22,8 @@ RSpec.feature("The Correspondence Review Package page") do
     before :each do
       # User.authenticate!(roles: ["Mail Intake"])
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_org.add_user(mail_team_user)
-      User.authenticate!(user: mail_team_user)
+      mail_team_org.add_user(inbound_ops_team_user)
+      User.authenticate!(user: inbound_ops_team_user)
     end
 
     it "routes user to /under_construction if the feature toggle is disabled" do
@@ -135,15 +133,16 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "Checking VADOR field is enabled for Mail Supervisor" do
-      expect(page).to have_field("VA DOR", readonly: false)
+      click_button "Edit"
+      expect find_by_id("va-dor-input").readonly?
     end
   end
 
   context "Checking VADOR field is disabled for General mail user" do
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_org.add_user(mail_team_user)
-      User.authenticate!(user: mail_team_user)
+      mail_team_org.add_user(inbound_ops_team_user)
+      User.authenticate!(user: inbound_ops_team_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 

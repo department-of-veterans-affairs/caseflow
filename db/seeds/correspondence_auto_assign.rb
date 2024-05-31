@@ -9,7 +9,7 @@ module Seeds
       create_inbound_ops_team_user_with_no_permissions
       create_inbound_ops_team_supervisor
       create_inbound_ops_team_superuser
-      create_mail_team_user
+      create_inbound_ops_team_user
     end
 
     private
@@ -25,7 +25,8 @@ module Seeds
         end
       end
       OrganizationPermission.find_by(permission: "superuser").update!(
-        description: "Superuser: Split, Merge, and Reassign"
+        description: "Superuser: Split, Merge, and Reassign",
+        default_for_admin: true,
       )
       OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
       OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
@@ -137,11 +138,11 @@ module Seeds
       end
     end
 
-    def create_mail_team_user
+    def create_inbound_ops_team_user
       users_info = [
-        { css_id: "MAIL_TEAM_USER_U1", full_name: "Cedar Rain" },
-        { css_id: "MAIL_TEAM_USER_U2", full_name: "Ivy Stone" },
-        { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
+        { css_id: "INBOUND_OPS_TEAM_USER_U1", full_name: "Cedar Rain" },
+        { css_id: "INBOUND_OPS_TEAM_USER_U2", full_name: "Ivy Stone" },
+        { css_id: "INBOUND_OPS_TEAM_USER_U3", full_name: "Ocean Breeze" }
       ]
       users_info.map do |user_info|
         new_user = User.find_or_create_by!(
@@ -150,7 +151,7 @@ module Seeds
           full_name: user_info[:full_name],
           roles: ["Mail Intake"]
         )
-        MailTeam.singleton.add_user(new_user)
+        InboundOpsTeam.singleton.add_user(new_user)
       end
     end
 

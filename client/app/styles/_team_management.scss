@@ -71,14 +71,10 @@
   padding-left: 80px;
   margin-top: 20px;
   margin-bottom: 15px;
-  justify-self: right;
-  display: block;
+  width: calc(100% + 45px);
 }
 
 .text-styling-for-filter-search-bar {
-  padding-left: 80px;
-  justify-self: flex-end;
-  display: flex;
   margin-bottom: 5px;
 }
 
@@ -89,9 +85,11 @@
 }
 
 .reenter-valid-username-styling {
+  padding-left: 60rem;
   padding-bottom: 60rem;
   text-align: center;
 }
+
 
 .make-content-centered {
   justify-content: end;

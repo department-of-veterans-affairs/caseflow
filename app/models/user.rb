@@ -22,7 +22,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
-  scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
+  scope :inbound_ops_team_users, -> { joins(:organizations).where(organizations: { type: InboundOpsTeam.name }) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -106,12 +106,45 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       )
   end
 
-  def mail_team_user?
-    organizations.include?(MailTeam.singleton)
+  # check for user that is not an admin of the inbound ops team
+  def inbound_ops_team_user?
+    organizations.include?(InboundOpsTeam.singleton) &&
+      !inbound_ops_team_supervisor?
   end
 
-  def mail_supervisor?
-    organizations.include?(InboundOpsTeam.singleton)
+  def inbound_ops_team_supervisor?
+    administered_teams.include?(InboundOpsTeam.singleton)
+  end
+
+  def organization_permissions(org)
+    # get organization user from the org relationship
+    org_user = OrganizationsUser.find_by(organization_id: org.id)
+    # get user permission using the org_user
+
+    # use org_user > org_user_permission > org_permission to get
+    # organization permissions assigned to the user.
+    OrganizationUserPermission.where(organizations_user: org_user)
+      .includes(:organization_permission, :organizations_user)
+      .where(organizations_user_id: org_user.id, permitted: true)
+      .pluck(:permission, :description).map do |permission, description|
+        {
+          permission: permission,
+          desciption: description
+        }
+      end
+  end
+
+  def organization_admin_permissions(org)
+    return [] unless org.user_is_admin?(self)
+
+    # if admin, directly grab admin permissions from the org_permission table
+    OrganizationPermission.where(organization: org, default_for_admin: true)
+      .pluck(:permission, :description).map do |permission, description|
+      {
+        permission: permission,
+        desciption: description
+      }
+    end
   end
 
   def can_assign_hearing_schedule?
@@ -532,6 +565,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def show_reader_link_column?
     false
+  end
+
+  def system_user?
+    self == User.system_user
   end
 
   private
