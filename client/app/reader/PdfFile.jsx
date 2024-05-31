@@ -52,7 +52,11 @@ export class PdfFile extends React.PureComponent {
       file: this.props.file,
       documentType: this.props.documentType,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-      overscan: this.props.windowingOverscan
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null,
+      readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText,
+      readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
     };
   }
 
@@ -130,6 +134,10 @@ export class PdfFile extends React.PureComponent {
         , (reason) => this.onRejected(reason, 'setPageDimensions')).
       then(() => {
         if (this.loadingTask.destroyed) {
+          if (this.props.featureToggles.readerPrototypeCleanMemory) {
+            this.pdfDocument.cleanup();
+          }
+
           return this.pdfDocument.destroy();
         }
         this.loadingTask = null;
@@ -206,7 +214,13 @@ export class PdfFile extends React.PureComponent {
 
   setPageDimensions = (pages) => {
     const viewports = pages.map((page) => {
-      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+      const pageViewPorts = _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+
+      if (this.props.featureToggles.readerPrototypeCleanMemory) {
+        page.cleanup();
+      }
+
+      return pageViewPorts;
     });
 
     this.props.setPageDimensions(this.props.file, viewports);
@@ -219,6 +233,9 @@ export class PdfFile extends React.PureComponent {
       this.loadingTask.destroy();
     }
     if (this.pdfDocument) {
+      if (this.props.featureToggles.readerPrototypeCleanMemory) {
+        this.pdfDocument.cleanup();
+      }
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
@@ -467,32 +484,24 @@ export class PdfFile extends React.PureComponent {
         clearTimeout(this.scrollTimer);
       }
 
+      const scrollStart = performance.now();
+
       this.scrollTimer = setTimeout(() => {
-        const scrollStart = performance.now();
+        const scrollEnd = performance.now();
+        const scrollMessage = `Scroll to page ${this.currentPage + 1} (${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)}, ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)})`;
 
-        const data = {
-          overscan: this.props.windowingOverscan,
-          documentType: this.props.documentType,
-          pageCount: this.props.pdfDocument.numPages,
-          pageIndex: this.pageIndex,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-          start: scrollStart,
-          end: performance.now()
-        };
-
-        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
-        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
+        this.metricsAttributes.name = scrollMessage;
 
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: `Scroll to position ${posx}, ${posy}`,
+            message: scrollMessage,
             type: 'performance',
             product: 'reader',
-            start: new Date(performance.timeOrigin + data.start),
-            end: new Date(performance.timeOrigin + data.end),
-            duration: data.start ? data.end - data.start : 0
+            start: new Date(performance.timeOrigin + scrollStart),
+            end: new Date(performance.timeOrigin + scrollEnd),
+            duration: scrollStart ? scrollEnd - scrollStart : 0
           },
           this.metricsIdentifier,
         );
@@ -603,11 +612,14 @@ export class PdfFile extends React.PureComponent {
         const renderEndTime = performance.now();
         const renderDuration = renderEndTime - this.props.renderStartTime;
 
+        const pdfRenderMessage = "PDF render time in Milliseconds";
+        this.metricsAttributes.name = pdfRenderMessage;
+
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: 'PDF render time in Milliseconds',
+            message: pdfRenderMessage,
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + this.props.renderStartTime),

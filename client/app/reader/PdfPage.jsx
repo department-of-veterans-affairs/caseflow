@@ -35,6 +35,20 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
+
+    this.metricsAttributes = {
+      documentId: this.props.documentId,
+      numPagesInDoc: null,
+      pageIndex: this.props.pageIndex,
+      file: this.props.file,
+      documentType: this.props.documentType,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      overscan: this.props.windowingOverscan,
+      isPageVisible: this.props.isVisible,
+      name: null,
+      readerPrototypeRemoveGetText: this.props.featureToggles.readerPrototypeRemoveGetText,
+      readerPrototypeCleanMemory: this.props.featureToggles.readerPrototypeCleanMemory
+    };
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -153,6 +167,15 @@ export class PdfPage extends React.PureComponent {
         this.markInstance.unmark();
       }
     }
+
+    if (this.props.featureToggles.readerPrototypeCleanMemory) {
+      if (this.page) {
+        this.page.cleanup();
+        if (this.markInstance) {
+          this.markInstance.unmark();
+        }
+      }
+    }
   };
 
   componentDidUpdate = (prevProps) => {
@@ -178,7 +201,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
-
     if (!this.textLayer) {
       return;
     }
@@ -213,7 +235,7 @@ export class PdfPage extends React.PureComponent {
         message: `Getting PDF page ${this.props.pageIndex + 1} from PDFJS document`,
         product: 'reader',
         type: 'performance',
-        data: this.props.metricsAttributes,
+        data: this.metricsAttributes,
         eventId: this.props.metricsIdentifier
       };
 
@@ -225,31 +247,34 @@ export class PdfPage extends React.PureComponent {
       pageResult.then((page) => {
         this.page = page;
 
-        const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
-          product: 'reader',
-          type: 'performance',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
+        if (!this.props.featureToggles.readerPrototypeRemoveGetText) {
+          const textMetricData = {
+            message: `Storing PDF page ${this.props.pageIndex + 1} text in Redux`,
+            product: 'reader',
+            type: 'performance',
+            data: this.metricsAttributes,
+            eventId: this.props.metricsIdentifier
+          };
 
-        const readerRenderText = {
-          uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
-          type: 'performance',
-          product: 'reader',
-          data: this.props.metricsAttributes,
-          eventId: this.props.metricsIdentifier
-        };
+          const readerRenderText = {
+            uuid: uuidv4(),
+            message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+            type: 'performance',
+            product: 'reader',
+            data: this.metricsAttributes,
+            eventId: this.props.metricsIdentifier
+          };
 
-        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+          const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
-        textResult.then((text) => {
-          recordMetrics(this.drawText(page, text), readerRenderText,
-            this.props.featureToggles.metricsReaderRenderText);
-        });
+          textResult.then((text) => {
+            recordMetrics(this.drawText(page, text), readerRenderText,
+              this.props.featureToggles.metricsReaderRenderText);
+          });
+        }
 
         this.drawPage(page).then();
+
       }).catch((error) => {
         const id = uuid.v4();
         const data = {

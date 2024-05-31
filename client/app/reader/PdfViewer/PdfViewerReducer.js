@@ -29,7 +29,8 @@ export const initialState = {
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
   scale: 1,
-  windowingOverscan: random(5, 10)
+  // windowingOverscan: random(5, 10)
+  windowingOverscan: 10
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
