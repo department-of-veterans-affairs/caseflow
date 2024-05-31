@@ -374,10 +374,8 @@ FactoryBot.define do
 
     trait :with_evidence_submission_window_task do
       after(:create) do |appeal, _evaluator|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        parent = root_task
+        parent = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         parent = appeal.tasks.open.find_by(type: "HearingTask") if appeal.docket_type == Constants.AMA_DOCKETS.hearing
-
         EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent)
       end
     end
@@ -501,6 +499,23 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
         timed_hold_task.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    # The appeal would be distributed already but have a hearing related mail task
+    trait :distributed_hearing_related_mail_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = DistributionTask.create!(appeal: appeal, parent: root_task)
+        sct_task = SpecialtyCaseTeamAssignTask.create!(appeal: appeal,
+                                                       parent: root_task,
+                                                       assigned_to: SpecialtyCaseTeam.singleton)
+        HearingRelatedMailTask.create!(appeal: appeal,
+                                       parent: root_task,
+                                       assigned_to: Bva.singleton)
+        distribution_task.update(status: "completed")
+        sct_task.update(status: "completed")
       end
     end
 

@@ -522,14 +522,12 @@ class Appeal < DecisionReview
 
           # otherwise reassign old parent task to new from hash
           cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
-
         else
           # else create the task that doesn't have a parent
           cloned_task_id = clone_task(task, user_css_id)
         end
         # add the parent/clone id to the hash set
         task_parent_to_child_hash[task.id] = cloned_task_id
-
         # break if the tree count is the same
         break if parent_appeal.tasks.count == tasks.count
       end
