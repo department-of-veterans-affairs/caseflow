@@ -208,24 +208,18 @@ FactoryBot.define do
       value { "14" }
       unit { "days" }
       options do
-        [{
-          item: Constants.ACD_LEVERS.value,
-          data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 14,
-          text: "Attempt distribution to current judge for max of:",
-          unit: Constants.ACD_LEVERS.days,
-          selected: true
-        },
-        {
-          item: Constants.ACD_LEVERS.infinite,
-          value: Constants.ACD_LEVERS.infinite,
-          text: "Always distribute to current judge"
-        },
-        {
-          item: Constants.ACD_LEVERS.omit,
-          value: Constants.ACD_LEVERS.omit,
-          text: "Omit variable from distribution rules"
-        }]
+        [{ item: Constants.ACD_LEVERS.value,
+           data_type: Constants.ACD_LEVERS.data_types.number,
+           value: 14,
+           text: "Attempt distribution to current judge for max of:",
+           unit: Constants.ACD_LEVERS.days,
+           selected: true },
+         { item: Constants.ACD_LEVERS.infinite,
+           value: Constants.ACD_LEVERS.infinite,
+           text: "Always distribute to current judge" },
+         { item: Constants.ACD_LEVERS.omit,
+           value: Constants.ACD_LEVERS.omit,
+           text: "Omit variable from distribution rules" }]
       end
       algorithms_used { [Constants.ACD_LEVERS.algorithms.proportion] }
       lever_group { Constants.ACD_LEVERS.lever_groups.affinity }
