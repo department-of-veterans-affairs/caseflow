@@ -120,9 +120,9 @@ class VACOLS::CaseDocket < VACOLS::Record
       and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN"
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFDLOOUT,
+        select BFKEY, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
@@ -363,7 +363,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                     ])
 
     appeals = conn.exec_query(fmtd_query).to_a
-    if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_affinity_days)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
       appeals = expired_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
     end
 
@@ -464,6 +464,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
+
     non_priority_cdl_query = generate_non_priority_case_distribution_lever_query(judge)
 
     if use_by_docket_date?
@@ -510,8 +511,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
   # {UPDATE}
+  # rubocop:disable Metrics/MethodLength
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    priority_cdl_query =  generate_priority_case_distribution_lever_query(judge)    
+    priority_cdl_query = generate_priority_case_distribution_lever_query(judge)
 
     query = if use_by_docket_date?
               <<-SQL
@@ -538,25 +540,31 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   # :nocov:
 
   def self.generate_priority_case_distribution_lever_query(judge)
+    judge_ids = ineligible_judges_id_cache.push(judge.id).join(", ")
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
-      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
+      "PREV_DECIDING_JUDGE IN (#{judge_ids}) AND
+        BFAC = '7'"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
+      "PREV_DECIDING_JUDGE IN (#{judge_ids}) AND
+        BFAC = '7'"
     end
   end
 
   def self.generate_non_priority_case_distribution_lever_query(judge)
+    judge_ids = ineligible_judges_id_cache.push(judge.id).join(", ")
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
-      "PREV_DECIDING_JUDGE IN (#{HearingRequestDistributionQuery.ineligible_judges_id_cache.push(judge.id).join(', ')}) and BFAC = '7'"
+      "PREV_DECIDING_JUDGE IN (#{judge_ids}) AND
+        BFAC = '7'"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
-      "PREV_DECIDING_JUDGE = #{judge.vacols_attorney_id} and BFAC = '7'"
+      "PREV_DECIDING_JUDGE = #{judge.vacols_attorney_id} AND BFAC = '7'"
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def self.distribute_appeals(query, judge, dry_run, priority = true)
     conn = connection
 
@@ -571,7 +579,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         # Priority Cavc Appeals
         if priority && case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_affinity_days)
-          app eals = expired_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
+          appeals = expired_cavc_affinity_cases(appeals, CaseDistributionLever.cavc_affinity_days)
         end
 
         # Non Priority Cavc Appeals
@@ -594,6 +602,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   def self.expired_cavc_affinity_cases(appeals, lever_days)
     appeals.reject do |appeal|
@@ -645,6 +654,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def self.ineligible_judges_id_cache
+    HearingRequestDistributionQuery.ineligible_judges_id_cache
+  end
 
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
