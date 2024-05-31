@@ -119,7 +119,7 @@ export const ReviewForm = (props) => {
 
   const vaDORReadOnly = () => {
     if (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor) {
-      return true;
+      return false;
     }
 
     return true;
