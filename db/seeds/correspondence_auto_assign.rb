@@ -3,33 +3,10 @@
 module Seeds
   class CorrespondenceAutoAssign < Base
     def seed!
-      create_auto_assign_permissions
       create_inbound_ops_team_nod_user
-      create_inbound_ops_team_user
     end
 
     private
-
-    def create_auto_assign_permissions
-      OrganizationPermission.valid_permission_names.each do |permission|
-        OrganizationPermission.find_or_create_by(
-          permission: permission,
-          organization: InboundOpsTeam.singleton
-        ) do |perm|
-          perm.enabled = true
-          perm.description = Faker::Hipster.sentence
-        end
-      end
-      OrganizationPermission.find_by(permission: "superuser").update!(
-        description: "Superuser: Split, Merge, and Reassign",
-        default_for_admin: true,
-      )
-      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
-      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
-        description: "Receieve \"NOD Mail\"",
-        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
-      )
-    end
 
     def create_inbound_ops_team_nod_user
       users_info = [
