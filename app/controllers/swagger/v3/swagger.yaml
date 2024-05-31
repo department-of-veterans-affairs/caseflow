@@ -1,17 +1,11 @@
 ---
 openapi: 3.0.2
 info:
-  title: API V2
-  version: v2
+  title: API V3
+  version: v3
 servers:
 - url: https://appeals.cf.uat.ds.va.gov
   description: UAT/Staging server
 - url: http://localhost:3000
   description: Local Development server
-paths:
-  "/api/v2/appeals":
-    get:
-      summary: list appeals
-      responses:
-        '200':
-          description: successful
+paths: {}

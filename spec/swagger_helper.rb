@@ -21,7 +21,6 @@ RSpec.configure do |config|
         title: 'API V1',
         version: 'v1'
       },
-      paths: {},
       servers: [
         {
           url: 'https://appeals.cf.uat.ds.va.gov',
@@ -31,7 +30,8 @@ RSpec.configure do |config|
           url: 'http://localhost:3000',
           description: 'Local Development server'
         }
-      ]
+      ],
+      paths: {}
     },
     'v2/swagger.yaml' => {
       openapi: '3.0.2',
@@ -39,7 +39,6 @@ RSpec.configure do |config|
         title: 'API V2',
         version: 'v2'
       },
-      paths: {},
       servers: [
         {
           url: 'https://appeals.cf.uat.ds.va.gov',
@@ -49,7 +48,8 @@ RSpec.configure do |config|
           url: 'http://localhost:3000',
           description: 'Local Development server'
         }
-      ]
+      ],
+      paths: {}
     },
     'v3/swagger.yaml' => {
       openapi: '3.0.2',
@@ -57,7 +57,6 @@ RSpec.configure do |config|
         title: 'API V3',
         version: 'v3'
       },
-      paths: {},
       servers: [
         {
           url: 'https://appeals.cf.uat.ds.va.gov',
@@ -67,7 +66,8 @@ RSpec.configure do |config|
           url: 'http://localhost:3000',
           description: 'Local Development server'
         }
-      ]
+      ],
+      paths: {}
     }
   }
 

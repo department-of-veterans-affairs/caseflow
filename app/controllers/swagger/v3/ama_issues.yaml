@@ -35,7 +35,10 @@ info:
 
   version: 3.0.0
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/ama_issues'
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
+- url: http://localhost:3000
+  description: Local Development server
 paths:
   /api/v3/issues/ama/find_by_veteran/{veteran_participant_id}:
     get:

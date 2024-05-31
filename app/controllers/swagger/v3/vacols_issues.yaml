@@ -34,7 +34,10 @@ info:
 
   version: 3.0.0
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/issues/vacols'
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
+- url: http://localhost:3000
+  description: Local Development server
 paths:
   /api/v3/issues/vacols/find_by_veteran:
     get:

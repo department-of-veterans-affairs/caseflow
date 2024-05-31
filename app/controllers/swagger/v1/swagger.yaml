@@ -3,6 +3,11 @@ openapi: 3.0.2
 info:
   title: API V1
   version: v1
+servers:
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
+- url: http://localhost:3000
+  description: Local Development server
 paths:
   "/api/v1/jobs":
     post:
@@ -16,46 +21,3 @@ paths:
       responses:
         '200':
           description: successful
-  "/idt/api/v1/appeals":
-    get:
-      summary: list appeal
-      responses:
-        '200':
-          description: successful
-  "/idt/api/v1/appeals/{appeal_id}":
-    parameters:
-    - name: appeal_id
-      in: path
-      description: appeal_id
-      required: true
-      schema:
-        type: string
-    get:
-      summary: details appeal
-      responses:
-        '200':
-          description: successful
-  "/idt/api/v1/appeals/{appeal_id}/outcode":
-    parameters:
-    - name: appeal_id
-      in: path
-      description: appeal_id
-      required: true
-      schema:
-        type: string
-    post:
-      summary: outcode appeal
-      responses:
-        '200':
-          description: successful
-  "/idt/api/v1/addresses/validate":
-    post:
-      summary: validate appeal
-      responses:
-        '200':
-          description: successful
-servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: www.example.com

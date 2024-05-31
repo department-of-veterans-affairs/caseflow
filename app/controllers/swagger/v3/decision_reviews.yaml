@@ -33,7 +33,10 @@ info:
 
   version: 3.0.0
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/decision_reviews'
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
+- url: http://localhost:3000
+  description: Local Development server
 paths:
   /higher_level_reviews:
     post:
@@ -45,7 +48,7 @@ paths:
 
         ### Asynchronous processing
 
-        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status. 
+        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status.
       requestBody:
         required: true
         content:
@@ -479,7 +482,7 @@ paths:
         After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system.
 
 
-        **A Decision Review is not immediately accessible after creation.** Intake involves communicating with several systems/databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. 
+        **A Decision Review is not immediately accessible after creation.** Intake involves communicating with several systems/databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation.
 
 
         _Check a Decision Review's intake status to know when it has become accessible, and also its location for further actions._
@@ -488,7 +491,7 @@ paths:
         * **Before a Decision Review is successfully processed:** This endpoint will return `200 OK` and a JSON payload describing the status in more detail.
 
 
-        * **Once processing is complete:** this endpoint will return a `303 see other` and a Location header containing the URL of the processed, and now accessible, Decision Review. You can use that URL to get the Decision Review and retrieve its full details. 
+        * **Once processing is complete:** this endpoint will return a `303 see other` and a Location header containing the URL of the processed, and now accessible, Decision Review. You can use that URL to get the Decision Review and retrieve its full details.
       responses:
         '200':
           description: Processing incomplete
