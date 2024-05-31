@@ -34,8 +34,17 @@ class TranscriptionPackage < CaseflowRecord
   end
 
   def format_case_details(hearing)
-    file_number = ["(", hearing.veteran_file_number, ")"].join
-    [hearing.veteran_first_name, hearing.veteran_last_name, file_number].join(" ")
+    file_number = format_file_number(hearing.veteran_file_number)
+    full_name = format_full_name(hearing.veteran_first_name, hearing.veteran_last_name)
+    [full_name, file_number].join(" ")
+  end
+
+  def format_file_number(file_number)
+    "(#{file_number})"
+  end
+
+  def format_full_name(first_name, last_name)
+    "#{first_name} #{last_name}"
   end
 
   def serialize_hearing(hearing)
