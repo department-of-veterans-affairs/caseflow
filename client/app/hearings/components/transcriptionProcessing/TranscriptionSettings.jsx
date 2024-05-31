@@ -109,8 +109,25 @@ export default class TranscriptionSettings extends React.PureComponent {
       // on click contractor is removed
     /></div>
 
+  sortedContractors = () => {
+    const group = this.props.contractors.sort((a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+
+      if (nameA < nameB) {
+        return -1;
+      } if (nameA > nameB) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    return group
+  }
+
   mainContent = () => {
-    const listOfContractors = this.props.contractors.map((contractor) => {
+    const listOfContractors = this.sortedContractors().map((contractor) => {
 
       return (
         <React.Fragment>
