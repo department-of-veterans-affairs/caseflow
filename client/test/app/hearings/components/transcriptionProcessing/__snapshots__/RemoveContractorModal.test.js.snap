@@ -169,7 +169,7 @@ Object {
           >
             <span>
               <button
-                class="cf-modal-link\\", \\"cf-btn-link cf-push-left usa-button"
+                class="cf-modal-link cf-btn-link cf-push-left usa-button"
                 id="Remove-contractor-button-id-0"
                 type="button"
               >
@@ -356,7 +356,7 @@ Object {
         >
           <span>
             <button
-              class="cf-modal-link\\", \\"cf-btn-link cf-push-left usa-button"
+              class="cf-modal-link cf-btn-link cf-push-left usa-button"
               id="Remove-contractor-button-id-0"
               type="button"
             >

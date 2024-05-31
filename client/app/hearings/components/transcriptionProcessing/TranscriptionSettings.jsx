@@ -12,6 +12,7 @@ import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
 import { RemoveContractorModal } from './RemoveContractorModal';
+import { AddEditContractorModal } from './AddEditContractorModal';
 
 const buttonStyle = css({
   padding: '1rem 2.5rem 2rem 0',
@@ -61,6 +62,12 @@ const userListItemStyle = css({
   margin: '0',
 });
 
+const alertStyle = css({
+  '& .usa-alert': {
+    paddingBottom: '2rem'
+  }
+});
+
 const EditContractorLink = () => (
   <Button linkStyling>
     <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
@@ -87,14 +94,13 @@ export default class TranscriptionSettings extends React.PureComponent {
 
     this.state = {
       isRemoveModalOpen: false,
+      isAddEditOpen: false,
       loading: true,
       alert: {
         title: '',
         message: '',
         type: '',
       },
-      isAddEditOpen: false,
-
       contractors: [],
     };
   }
@@ -116,8 +122,8 @@ export default class TranscriptionSettings extends React.PureComponent {
             () => {
               this.getContractors();
               this.confirmRemoveModal({
-                title: 'Success',
-                message: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS,
+                title: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS,
+                message: '',
                 type: 'success',
               });
               resolve();
@@ -167,7 +173,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         name={COPY.TRANSCRIPTION_SETTINGS_ADD}
         id="Add-contractor"
         classNames={['usa-button-primary']}
-        // on click add contractor modal opens
+        onClick={() => this.toggleAddEditModal()}
       />
     </div>
   );
@@ -179,10 +185,17 @@ export default class TranscriptionSettings extends React.PureComponent {
         id="Remove-contractor"
         classNames={['usa-button-secondary']}
         onClick={() => this.toggleRemoveModal()}
-        // on click contractor is removed
       />
     </div>
   );
+
+  confirmEditAddModal = (response) => {
+    this.setState({ alert: response.alert });
+    this.getContractors();
+    this.toggleAddEditModal();
+  };
+
+  toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
   mainContent = () => {
     const listOfContractors = () => {
@@ -237,6 +250,19 @@ export default class TranscriptionSettings extends React.PureComponent {
           </div>
         </div>
         <div>{listOfContractors()}</div>
+        {this.state.isAddEditOpen && <AddEditContractorModal
+          onCancel={this.toggleAddEditModal}
+          onConfirm={this.confirmEditAddModal}
+          // transcriptionContractor={{ ... pass in actual contractor with ID to trigger edit mode }}
+        />}
+        {this.state.isRemoveModalOpen && (
+          <RemoveContractorModal
+            onCancel={this.toggleRemoveModal}
+            onConfirm={this.handleRemoveContractor}
+            contractors={this.state.contractors}
+            title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
+          />
+        )}
       </React.Fragment>
     );
   };
@@ -244,11 +270,13 @@ export default class TranscriptionSettings extends React.PureComponent {
   render = () => (
     <>
       {this.state.alert.title && (
-        <Alert
-          title={this.state.alert.title}
-          message={this.state.alert.message}
-          type={this.state.alert.type}
-        />
+        <div {...alertStyle}>
+          <Alert
+            title={this.state.alert.title}
+            message={this.state.alert.message}
+            type={this.state.alert.type}
+          />
+        </div>
       )}
       <AppSegment filledBackground>
         <div {...returnLinkStyle}>
@@ -258,14 +286,6 @@ export default class TranscriptionSettings extends React.PureComponent {
           </span>
         </div>
         <div>{this.mainContent()}</div>
-        {this.state.isRemoveModalOpen && (
-          <RemoveContractorModal
-            onCancel={this.toggleRemoveModal}
-            onConfirm={this.handleRemoveContractor}
-            contractors={this.state.contractors}
-            title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
-          />
-        )}
       </AppSegment>
     </>
   );
