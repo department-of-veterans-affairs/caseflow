@@ -359,7 +359,6 @@ ReviewForm.propTypes = {
   createRecordIsReadOnly: PropTypes.string,
   setCorrTypeSaved: PropTypes.func,
   setDisableButton: PropTypes.func,
-  setCorrTypeSelected: PropTypes.any,
   setErrorMessage: PropTypes.func,
   corrTypeSaved: PropTypes.number,
   fetchData: PropTypes.func,
