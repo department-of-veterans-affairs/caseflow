@@ -14,7 +14,7 @@ import { placeAnnotation, startPlacingAnnotation,
 
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 
-import PdfDocument from '../readerprototype/PdfDocument';
+import PdfDocument from '../readerprototype/components/PdfDocument';
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -97,7 +97,7 @@ export class Pdf extends React.PureComponent {
         style={{
           position: 'relative',
           width: '100%',
-          height: '100%'
+          height: '100%',
         }}>
         {this.loadDocs(files)}
       </div>

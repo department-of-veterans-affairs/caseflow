@@ -1,32 +1,17 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
-import PdfDocument from './PdfDocument';
-import ReaderToolbar from './ReaderToolbar';
-import ReaderSidebar from './ReaderSidebar';
-import ReaderFooter from './ReaderFooter';
+import PdfDocument from './components/PdfDocument';
+import ReaderFooter from './components/ReaderFooter';
+import ReaderSidebar from './components/ReaderSidebar';
+import ReaderToolbar from './components/ReaderToolbar';
+
+import { getNextDocId, getPrevDocId, selectedDoc, selectedDocIndex } from './documentUtil';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
 const ZOOM_INCREMENT = 20;
-
-const selectedDocIndex = (props) => {
-  const selectedDocId = Number(props.match.params.docId);
-
-  return _.findIndex(props.allDocuments, { id: selectedDocId });
-};
-
-const selectedDoc = (props) => (
-  props.allDocuments[selectedDocIndex(props)]
-);
-
-const getPrevDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) - 1]);
-const getNextDoc = (props) => _.get(props.allDocuments, [selectedDocIndex(props) + 1]);
-
-const getPrevDocId = (props) => _.get(getPrevDoc(props), 'id');
-const getNextDocId = (props) => _.get(getNextDoc(props), 'id');
 
 const DocumentViewer = (props) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -35,6 +20,7 @@ const DocumentViewer = (props) => {
   const doc = selectedDoc(props);
 
   const getPageCount = () => {
+    //refactor - use redux
     //while !document.getElementById('pdfContainer') show loading
     if (document.getElementById('pdfContainer')) {
       return document.getElementById('pdfContainer').childElementCount;
