@@ -1155,6 +1155,8 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_target_decision_date!" do
+    before { create(:case_distribution_lever, :ama_direct_review_docket_time_goals) }
+
     let(:direct_review_appeal) do
       create(:appeal,
              docket_type: Constants.AMA_DOCKETS.direct_review)
@@ -1592,6 +1594,7 @@ describe Appeal, :all_dbs do
   end
 
   describe "can_redistribute_appeal?" do
+    let!(:lever) { create(:case_distribution_lever, :request_more_cases_minimum) }
     let!(:distributed_appeal_can_redistribute) do
       create(:appeal,
              :assigned_to_judge,
@@ -2020,6 +2023,10 @@ describe Appeal, :all_dbs do
     end
 
     context "when an appeal has with cavc remand" do
+      # The Appeal factory will set this to system_user if not already set and the checks after duplicating require the
+      # original appeal creator to be "regular_user" because it is being passed into the finalize_split_appeal method
+      before { RequestStore[:current_user] = regular_user }
+
       it "should duplicate the appeals and with cavc remand for the same veteran" do
         original_appeal = create(
           :appeal, :type_cavc_remand,

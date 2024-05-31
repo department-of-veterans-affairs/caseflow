@@ -2,8 +2,11 @@
 
 describe HearingRequestDocket, :postgres do
   before do
-    # Uncomment this line once the seed is removed from rails_helper.rb
-    # Seeds::CaseDistributionLevers.new.seed!
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :cavc_affinity_days)
+
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
 
     # these were the defaut values at time of writing tests but can change over time, so ensure they are set
@@ -679,6 +682,7 @@ describe HearingRequestDocket, :postgres do
       :advanced_on_docket_due_to_age,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return
@@ -715,6 +719,7 @@ describe HearingRequestDocket, :postgres do
     remand_appeal = cavc_remand.remand_appeal
     distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
     (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    create(:appeal_affinity, appeal: remand_appeal)
     Timecop.return
 
     create_aod_motion(remand_appeal, remand_appeal.claimant.person) if aod
@@ -740,6 +745,7 @@ describe HearingRequestDocket, :postgres do
       :hearing_docket,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return
