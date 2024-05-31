@@ -61,8 +61,11 @@ describe Docket, :all_dbs do
       create(:appeal,
              :type_cavc_remand,
              :cavc_ready_for_distribution,
-             docket_type: Constants.AMA_DOCKETS.direct_review)
+             :with_appeal_affinity,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             affinity_start_date: affinity_start_date)
     end
+    let(:affinity_start_date) { Time.zone.now }
 
     context "docket type" do
       # docket_type is implemented in the subclasses and should error if called here
@@ -421,11 +424,7 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
-        let(:cavc_affinity_days) { CaseDistributionLever.cavc_affinity_days }
-
-        before do
-          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
-        end
+        let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 1).days.ago }
 
         context "when genpop: not_genpop is set" do
           it "is not distributed because it is now genpop" do

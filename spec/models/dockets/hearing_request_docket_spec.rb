@@ -682,6 +682,7 @@ describe HearingRequestDocket, :postgres do
       :advanced_on_docket_due_to_age,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return
@@ -718,6 +719,7 @@ describe HearingRequestDocket, :postgres do
     remand_appeal = cavc_remand.remand_appeal
     distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
     (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    create(:appeal_affinity, appeal: remand_appeal)
     Timecop.return
 
     create_aod_motion(remand_appeal, remand_appeal.claimant.person) if aod
@@ -743,6 +745,7 @@ describe HearingRequestDocket, :postgres do
       :hearing_docket,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return
