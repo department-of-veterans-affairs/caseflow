@@ -10,8 +10,8 @@ class JobThatIsGood < ApplicationJob
 end
 
 describe "ApplicationJob" do
-  let(:freeze_time_first_run) { Time.local(2024, 8, 30, 19, 0, 20) }
-  let(:freeze_time_second_run) { Time.local(2024, 8, 30, 20, 0, 20) }
+  let(:freeze_time_first_run) { Time.zone.local(2024, 8, 30, 19, 0, 20) }
+  let(:freeze_time_second_run) { Time.zone.local(2024, 8, 30, 20, 0, 20) }
 
   context ".application_attr" do
     it "sets application request store" do
