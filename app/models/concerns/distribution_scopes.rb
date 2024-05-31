@@ -79,7 +79,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       genpop_base_query
         .ama_non_aod_appeals
         .where(
-          "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
+          "appeals.stream_type != ? OR appeal_affinities.affinity_start_date <= ?",
           Constants.AMA_STREAM_TYPES.court_remand,
           CaseDistributionLever.cavc_affinity_days.days.ago
         )
@@ -98,7 +98,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       genpop_base_query
         .ama_aod_appeals
         .where(
-          "appeals.stream_type != ? OR distribution_task.assigned_at < ?",
+          "appeals.stream_type != ? OR appeal_affinities.affinity_start_date < ?",
           Constants.AMA_STREAM_TYPES.court_remand,
           CaseDistributionLever.cavc_aod_affinity_days.days.ago
         )
@@ -187,7 +187,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge, lever_days = CaseDistributionLever.cavc_affinity_days)
     genpop_base_query
-      .where("appeal_affinities.affinity_start_date > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
+      .where("appeal_affinities.affinity_start_date > ?", lever_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
