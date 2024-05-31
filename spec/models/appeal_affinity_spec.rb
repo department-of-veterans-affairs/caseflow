@@ -107,7 +107,11 @@ describe AppealAffinity do
     end
 
     context "when passed a distribution" do
-      let(:appeal_affinity) { create(:appeal_affinity, distribution: distribution) }
+      let(:appeal_affinity) do
+        # Creating the lever wasn't working in a before block, so create it here before referencing the distribution
+        create(:case_distribution_lever, :request_more_cases_minimum)
+        create(:appeal_affinity, distribution: distribution)
+      end
       let(:distribution) { create(:distribution, judge: create(:user, :with_vacols_judge_record)) }
 
       it "correctly sets the distribution" do
@@ -122,6 +126,7 @@ describe AppealAffinity do
       let(:distribution) { create(:distribution, judge: create(:user, :with_vacols_judge_record)) }
 
       before do
+        create(:case_distribution_lever, :request_more_cases_minimum)
         DistributedCase.create!(distribution: distribution, task: create(:distribution_task, appeal: appeal),
                                 priority: false, sct_appeal: false, case_id: appeal.uuid, docket: appeal.docket_type,
                                 ready_at: Time.zone.now)

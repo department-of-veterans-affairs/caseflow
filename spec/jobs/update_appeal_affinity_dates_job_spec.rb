@@ -21,6 +21,8 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#latest_receipt_dates" do
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution_requested) { create(:distribution, :completed, judge: judge) }
     let(:distribution_requested_older) { create(:distribution, :completed, :this_month, judge: judge) }
@@ -181,6 +183,8 @@ describe UpdateAppealAffinityDatesJob do
   end
 
   context "#create_or_update_appeal_affinties" do
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
     let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let(:distribution) { create(:distribution, :completed, judge: judge) }
     let(:appeal_no_appeal_affinity) { create(:appeal) }
@@ -229,6 +233,8 @@ describe UpdateAppealAffinityDatesJob do
     end
 
     context "full run" do
+      before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
       let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
       let!(:previous_distribution) { create(:distribution, :completed, :this_month, judge: judge) }
 
