@@ -8,7 +8,6 @@ FactoryBot.define do
     nod { false }
     correspondence_type
     veteran
-    package_document_type
 
     trait :nod do
       nod { true }
