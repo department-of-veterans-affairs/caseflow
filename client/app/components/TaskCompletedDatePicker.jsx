@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
-import { css } from 'glamor';
 
 const dateDropdownMap = [
   { value: 0, label: 'Between these dates' },
