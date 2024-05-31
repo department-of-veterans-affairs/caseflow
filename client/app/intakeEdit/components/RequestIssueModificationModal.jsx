@@ -17,10 +17,12 @@ const modificationSchema = yup.object({
   requestReason: yup.string().required()
 });
 
-const RequestIssueModificationContent = ({ currentIssue }) => {
+const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificationRequest }) => {
+  const originalIssue = pendingIssueModificationRequest.requestIssue;
+
   return (
     <div>
-      <CurrentIssue currentIssue={currentIssue} />
+      <CurrentIssue currentIssue={originalIssue} />
       <IssueTypeSelector />
       <PriorDecisionDateAlert />
       <PriorDecisionDateSelector />
@@ -32,7 +34,8 @@ const RequestIssueModificationContent = ({ currentIssue }) => {
 
 RequestIssueModificationContent.propTypes = {
   onCancel: PropTypes.func,
-  currentIssue: PropTypes.object
+  currentIssue: PropTypes.object,
+  pendingIssueModificationRequest: PropTypes.object
 };
 export const RequestIssueModificationModal = (props) => {
 

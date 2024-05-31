@@ -15,7 +15,11 @@ feature "NonComp Reviews Queue", :postgres do
     create(:higher_level_review, veteran_file_number: veteran_a_on_hold.file_number, claimant_type: claimant_type)
   end
   let(:hlr_a_pending) do
-    create(:higher_level_review, veteran_file_number: veteran_a_pending.file_number, claimant_type: claimant_type)
+    create(:higher_level_review,
+           :processed,
+           :create_business_line,
+           veteran_file_number: veteran_a_pending.file_number,
+           claimant_type: claimant_type)
   end
   let(:hlr_b_on_hold) do
     create(:higher_level_review, veteran_file_number: veteran_b_on_hold.file_number, claimant_type: claimant_type)
@@ -178,7 +182,10 @@ feature "NonComp Reviews Queue", :postgres do
 
   before do
     User.stub = user
+    user.roles = ["Mail Intake", "Certify Appeal"]
+    user.save
     non_comp_org.add_user(user)
+    user.reload
     FeatureToggle.enable!(:board_grant_effectuation_task)
   end
 
@@ -236,6 +243,11 @@ feature "NonComp Reviews Queue", :postgres do
           /#{veteran_a_pending.name} #{veteran_a_pending.participant_id} 1 Other 1 6 days Higher-Level Review/
         )
       )
+      click_on veteran_a_pending.name
+
+      expect(current_url).to include("/edit")
+
+      visit BASE_URL
 
       click_on "Completed Tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -254,6 +266,8 @@ feature "NonComp Reviews Queue", :postgres do
     context "with user enabled for intake" do
       # Make user admin of non comp org to test for any UI differences
       before do
+        user.roles = ["Mail Intake", "Certify Appeal"]
+        user.save
         non_comp_org.add_user(user)
         OrganizationsUser.make_user_admin(user, non_comp_org)
         user.reload
@@ -288,7 +302,8 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION)
 
         click_on veteran_a_pending.name
-        expect(page).to have_content("Form created by")
+
+        expect(current_url).to include("/edit")
       end
     end
 

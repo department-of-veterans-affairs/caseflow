@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import { useSelector } from 'react-redux';
 import { formatDateStr } from '../../../util/DateUtil';
+import moment from 'moment';
 
 export const RequestIssueFormWrapper = (props) => {
 
@@ -14,10 +15,11 @@ export const RequestIssueFormWrapper = (props) => {
 
   const methods = useForm({
     defaultValues: {
-      requestReason: '',
-      nonratingIssueCategory: '',
-      decisionDate: '',
-      nonratingIssueDescription: ''
+      requestReason: props.pendingIssueModificationRequest?.requestReason || '',
+      nonratingIssueCategory: props.pendingIssueModificationRequest?.nonratingIssueCategory || '',
+      decisionDate: moment(props.pendingIssueModificationRequest?.decisionDate).format('YYYY-MM-DD') || '',
+      nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
+      withdrawalDate: moment(props.pendingIssueModificationRequest?.withdrawalDate).format('YYYY-MM-DD')
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -95,7 +97,8 @@ RequestIssueFormWrapper.propTypes = {
   schema: PropTypes.object,
   type: PropTypes.string,
   moveToPendingReviewSection: PropTypes.func,
-  addToPendingReviewSection: PropTypes.func
+  addToPendingReviewSection: PropTypes.func,
+  pendingIssueModificationRequest: PropTypes.object
 };
 
 export default RequestIssueFormWrapper;

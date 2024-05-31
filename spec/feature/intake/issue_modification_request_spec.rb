@@ -241,6 +241,19 @@ feature "Issue Modification Request", :postgres do
       verify_modify_existing_issue_request(modify_existing_modification_request)
       verify_withdrawal_request(withdrawal_modification_request)
     end
+
+    it "should display dropdown with respective option for each request type" do
+      OrganizationsUser.make_user_admin(current_user, vha_org)
+      current_user.reload
+
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
+
+      expect(page).to have_content("Pending admin review")
+
+      within "#issue-modification" do
+        first("select").select("Review issue modification request")
+      end
+    end
   end
 
   def check_for_pending_requests_banner(visible = true)

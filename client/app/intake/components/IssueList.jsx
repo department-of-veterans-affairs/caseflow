@@ -133,6 +133,8 @@ export default class IssuesList extends React.Component {
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
             !issue.isUnidentified;
 
+          const makeDropdownReadOnly = intakeData.userIsVhaAdmin && !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
               className="issue"
@@ -160,6 +162,7 @@ export default class IssuesList extends React.Component {
                   hideLabel
                   options={issueActionOptions}
                   defaultText="Select action"
+                  readOnly={makeDropdownReadOnly}
                   onChange={(option) => onClickIssueAction(issue.index, option)}
                 /> }
                 {!editPage && <Button

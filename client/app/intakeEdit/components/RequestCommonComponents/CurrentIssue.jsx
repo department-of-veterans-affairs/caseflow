@@ -6,9 +6,9 @@ export const CurrentIssue = ({ currentIssue }) => {
   return (
     <div style={{ marginBottom: '2.4rem' }}>
       <h2 style={{ marginBottom: '0px' }}>Current issue</h2>
-      <strong>Issue type: </strong>{currentIssue.category}<br />
+      <strong>Issue type: </strong>{currentIssue.category || currentIssue.nonratingIssueCategory }<br />
       <strong>Decision date: </strong>{formatDateStr(currentIssue.decisionDate)}<br />
-      <strong>Issue description: </strong>{currentIssue.nonRatingIssueDescription}<br />
+      <strong>Issue description: </strong>{currentIssue.nonRatingIssueDescription || currentIssue.nonratingIssueDescription}<br />
     </div>
   );
 };
