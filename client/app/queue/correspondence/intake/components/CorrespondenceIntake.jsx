@@ -153,14 +153,14 @@ export const CorrespondenceIntake = (props) => {
     }
     <ProgressBar
       sections={sections}
-      classNames={['cf-progress-bar', 'cf-']}
-      styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
+      classNames={['cf-progress-bar', 'cf-', 'progress-bar-styling']} />
     {currentStep === 1 &&
       <AddCorrespondenceView
         priorMail={props.priorMail}
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
         onCheckboxChange={handleCheckboxChange}
+        isContinueEnabled={isContinueEnabled}
       />
     }
     {currentStep === 2 &&
@@ -187,7 +187,7 @@ export const CorrespondenceIntake = (props) => {
         />
       </div>
     }
-    <div>
+    <div className="margin-top-for-add-task-view">
       {returnToQueueModal &&
         <ReturnToQueueModal
           onCancel={() => setReturnToQueueModal(false)}

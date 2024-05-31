@@ -1,21 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { COLORS } from '../../../../../constants/AppConstants';
 import { css } from 'glamor';
-
-const styling = { backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '0px' };
 
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
 
   const rowObjects = tasks.map((task) => {
     return (
-      <tr key={task.id}>
+      <tr key={task.id} className="corr">
         <td
-          style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
+          className="td1">
           {task.label}
         </td>
-        <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
+        <td className="td2">
           {task.content}
         </td>
       </tr>
@@ -40,19 +37,14 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
 
   return (
     <div>
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div className="unknown-div">
       </div>
-      <div
-        style={{ background: COLORS.GREY_BACKGROUND,
-          padding: '2rem',
-          paddingTop: '.1rem',
-          paddingLeft: '20px',
-          paddingRight: '20px' }}>
+      <div className="div1">
         <table className="usa-table-borderless">
           <thead>
             <tr>
-              <th style={styling}>Tasks</th>
-              <th style={styling}>Task Instructions or Context</th>
+              <th className="style-for-tasks-and-content">Tasks</th>
+              <th className="style-for-tasks-and-content">Task Instructions or Context</th>
             </tr>
           </thead>
           <tbody>

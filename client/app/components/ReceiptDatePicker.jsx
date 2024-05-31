@@ -19,60 +19,13 @@ const receiptDatePicker = (props) => {
       return (
         errors.map((error, index) =>
           (errType === error.key) &&
-            <p id={`${errType}Err${index}`} key={index}
-              style={{ color: 'red', fontSize: '13px', fontWeight: '900', marginBottom: '0px' }}>
+            <p id={`${errType}Err${index}`} key={index} className="error-msg">
               {error.message}
             </p>
         )
       );
     }
   };
-
-  const styles = {
-    optSelect: css({
-      '.receiptDate': {
-      },
-      '& .css-yk16xz-control': {
-        borderRadius: '0px'
-      },
-      '& .css-1pahdxg-control': {
-        borderColor: 'hsl(0, 0%, 100%)',
-        boxShadow: '0 0 0 1px #5B616B !important',
-        borderRadius: '0px !important',
-        ':hover': {
-          borderColor: 'hsl(0, 0%, 80%)',
-        }
-      }
-    })
-  };
-
-  const selectContainerStyles = css({
-    '& .data-css-1co2jut': {
-      margin: '0 5% 0 5%'
-    },
-    '& .cf-form-textinput.usa-input-error': {
-      borderLeft: '4px solid #cd2026',
-      marginTop: '0px',
-      paddingBottom: '0px',
-      paddingLeft: '0.5rem',
-      paddingTop: '0px',
-      position: 'relative',
-      right: '2px'
-    },
-    '& .usa-input-error input': {
-      width: 'inherit'
-    },
-    '& .cf-form-textinput': {
-      paddingTop: '6.2% !important',
-      marginBottom: 0,
-      '& .input-container': {
-        '& input': {
-          margin: 0,
-          height: '37.5px'
-        }
-      }
-    }
-  });
 
   const getDatePickerElements = () => {
     const receiptDateFilterStates = props.receiptDateFilterStates;
@@ -81,7 +34,7 @@ const receiptDatePicker = (props) => {
 
     switch (props.receiptDateState) {
     case receiptDateFilterStates.BETWEEN: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-pickers-margin">
         <DateSelector
           onChange={props.handleDateChange}
           label="From"
@@ -96,7 +49,7 @@ const receiptDatePicker = (props) => {
         />
       </div>);
     case receiptDateFilterStates.BEFORE: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-pickers-margin">
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
           label = "Receipt date"
@@ -106,7 +59,7 @@ const receiptDatePicker = (props) => {
       </div>
     );
     case receiptDateFilterStates.AFTER: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-pickers-margin">
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
           label = "Receipt date"
@@ -116,7 +69,7 @@ const receiptDatePicker = (props) => {
       </div>
     );
     case receiptDateFilterStates.ON: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-pickers-margin">
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
           label = "Receipt date"
@@ -130,24 +83,20 @@ const receiptDatePicker = (props) => {
     }
   };
 
-  return <div id="dropdown" {...selectContainerStyles}>
-    <div style={{ marginLeft: '5%', marginRight: '5%', marginTop: '2.7%' }}>
+  return <div id="dropdown" className="receipt-date-picker-container">
+    <div className="receipt-date-dropdown-div">
       <ReactSelectDropdown
-        className = {`receiptDate ${styles.optSelect}`}
+        className="receipt-date opt-select"
         label="Date filter parameters"
         options={dateDropdownMap}
         onChangeMethod={props.onChangeMethod}
       />
     </div>
-    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.7%' }}>
+    <div className="date-pickers-div">
       {getDatePickerElements()}
     </div>
 
-    <div style={{ display: 'flex',
-      padding: '16px 10px 24px 0',
-      justifyContent: 'right',
-      width: '190px',
-      borderTop: '1px solid #d6d7d9' }}>
+    <div className="apply-filter-div">
       <Button disabled={props.isApplyButtonEnabled} onClick={props.handleApplyFilter}>
         <span>Apply Filter</span>
       </Button>

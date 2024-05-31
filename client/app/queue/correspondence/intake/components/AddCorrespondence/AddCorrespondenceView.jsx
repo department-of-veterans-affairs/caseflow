@@ -26,13 +26,21 @@ class AddCorrespondenceView extends React.Component {
       packageDocumentType: '',
       correspondenceType: '',
       notes: '',
-      selectedCheckboxes: []
+      selectedCheckboxes: [],
+      ifContinueDisabled: null
     };
   }
 
   onChange = (value) => {
     this.props.updateRadioValue({ radioValue: value });
-    this.props.onContinueStatusChange(value === RELATED_NO);
+
+    if (value === RELATED_YES) {
+      this.setState({ ifContinueDisabled: this.props.isContinueEnabled });
+    }
+
+    const valueToUpdate = this.state.ifContinueDisabled && value === RELATED_NO;
+
+    this.props.onContinueStatusChange(valueToUpdate);
     this.props.clearCheckboxState();
   }
 
@@ -204,7 +212,8 @@ AddCorrespondenceView.propTypes = {
   clearCheckboxState: PropTypes.func.isRequired,
   checkboxes: PropTypes.array,
   setResponseLetters: PropTypes.func,
-  currentLetters: PropTypes.number
+  currentLetters: PropTypes.number,
+  isContinueEnabled: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
