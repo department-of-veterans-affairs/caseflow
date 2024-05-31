@@ -39,6 +39,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -46,6 +47,8 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
+  const [corrTypeSelected, setCorrTypeSelected] = useState(true);
+  const [corrTypeSaved, setCorrTypeSaved] = useState(-1);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -168,7 +171,7 @@ export const CorrespondenceReviewPackage = (props) => {
   }, []);
 
   const handleModalClose = () => {
-    if (disableButton) {
+    if (isReturnToQueue) {
       setShowModal(!showModal);
     } else {
       history.goBack();
@@ -189,7 +192,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || corrTypeSelected;
   };
 
   const intakeAppeal = async () => {
@@ -268,13 +271,18 @@ export const CorrespondenceReviewPackage = (props) => {
               setEditableData,
               disableButton,
               setDisableButton,
+              setIsReturnToQueue,
               fetchData,
               showModal,
               handleModalClose,
               handleReview,
               errorMessage,
               setErrorMessage,
-              isReadOnly
+              isReadOnly,
+              corrTypeSaved,
+              setCorrTypeSaved,
+              corrTypeSelected,
+              setCorrTypeSelected
             }}
             {...props}
             userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
@@ -310,7 +318,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={disableButton || isReadOnly}
+                disabled={corrTypeSelected}
               />
             </a>
           </div>
@@ -331,7 +339,8 @@ CorrespondenceReviewPackage.propTypes = {
   doFileNumberSearch: PropTypes.func,
   userIsCorrespondenceSupervisor: PropTypes.bool,
   userIsCorrespondenceSuperuser: PropTypes.bool,
-  isInboundOpsSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool,
+  createRecordIsReadOnly: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -339,6 +348,7 @@ const mapStateToProps = (state) => ({
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
+  createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
