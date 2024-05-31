@@ -3,7 +3,7 @@
 # has issue modification request business logic.
 
 # :reek:TooManyInstanceVariables
-class NonAdmin::IssueModificationRequestsUpdater
+class IssueModificationRequests::NonAdminUpdater
   attr_accessor :current_user,
                 :review,
                 :issue_modifications_data

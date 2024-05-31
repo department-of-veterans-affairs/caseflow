@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NonAdmin::IssueModificationRequestsUpdater do
+describe IssueModificationRequests::NonAdminUpdater do
   let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_admin_user) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
   let(:issue_modification_request) { create(:issue_modification_request, requestor: non_admin_requestor) }
@@ -97,7 +97,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     end
   end
 
-  describe "when editing an exisitng issue modifications request" do
+  describe "when editing an existing issue modifications request" do
     subject do
       described_class.new(
         current_user: non_admin_requestor,
@@ -128,7 +128,7 @@ describe NonAdmin::IssueModificationRequestsUpdater do
     end
   end
 
-  describe "when cancelling an exisitng issue modifications request" do
+  describe "when cancelling an existing issue modifications request" do
     subject do
       described_class.new(
         current_user: non_admin_requestor,
