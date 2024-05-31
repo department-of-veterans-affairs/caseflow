@@ -81,9 +81,9 @@ Rails.application.routes.draw do
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-        get "ama_issues", to: "docs#ama_issues"
-        get "vacols_issues", to: "docs#vacols_issues"
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
     get "metadata", to: 'metadata#index'
