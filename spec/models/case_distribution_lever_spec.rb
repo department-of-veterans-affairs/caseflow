@@ -20,6 +20,8 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
   end
 
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   describe "validations" do
     it "requires a title" do
       lever = described_class.new(title: nil)
