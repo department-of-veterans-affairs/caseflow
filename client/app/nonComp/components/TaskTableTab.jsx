@@ -62,7 +62,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
   claimantColumnHelper = () => {
     const { tabName } = this.state;
     const claimantColumnObject = claimantColumn();
-    const tabList = ['incomplete', 'pending']
+    const tabList = ['incomplete', 'pending'];
 
     if (tabList.includes(tabName)) {
       claimantColumnObject.valueFunction = (task) => {

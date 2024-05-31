@@ -133,7 +133,8 @@ export default class IssuesList extends React.Component {
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
             !issue.isUnidentified;
 
-          const makeDropdownReadOnly = intakeData.userIsVhaAdmin && !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+          const makeDropdownReadOnly = editPage && intakeData.userIsVhaAdmin &&
+            !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
