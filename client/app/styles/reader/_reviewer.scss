@@ -587,9 +587,9 @@ input[type="search"].cf-search-input-with-close {
   padding: 0 0.5rem 0.5rem 0.75rem;
 }
 
-//this stops the window moving with scroll
+//this stops the window moving with scroll on both document view and document view list
 .cf-app-reader {
-  overflow: hidden;
+  // overflow: hidden; //need to refactor
 }
 
 .docContainerPrototype {
@@ -630,4 +630,8 @@ input[type="search"].cf-search-input-with-close {
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+.headerPrototype {
+  background-color: goldenrod;
 }
