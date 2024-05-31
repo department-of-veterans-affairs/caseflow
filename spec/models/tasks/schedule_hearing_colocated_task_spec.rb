@@ -25,6 +25,7 @@ describe ScheduleHearingColocatedTask, :all_dbs do
 
     it "should send the appeal back to the hearings branch" do
       expect(HearingTask.where(appeal: appeal).count).to eq 0
+      expect(DistributionTask.where(appeal: appeal).count).to eq 1
       expect(ScheduleHearingTask.where(appeal: appeal).count).to eq 0
       expect(DistributionTask.where(appeal: appeal).count).to eq 1
       expect(JudgeDecisionReviewTask.find_by(appeal: appeal).status).to eq Task.statuses[:on_hold]
@@ -45,8 +46,8 @@ describe ScheduleHearingColocatedTask, :all_dbs do
   describe "Completing a ScheduleHearingColocatedTask" do
     context "When ScheduleHearingColocatedTask has a parent AttorneyQualityReviewTask" do
       let(:appeal) { create(:appeal, :at_attorney_drafting) }
-
       let(:root_task) { RootTask.find_by(appeal: appeal) }
+
       let(:judge) { create(:user) }
       let(:atty) { create(:user) }
       let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
@@ -63,8 +64,8 @@ describe ScheduleHearingColocatedTask, :all_dbs do
           assigned_by: qr_user
         }]
       end
-
       let!(:qr_person_task) { QualityReviewTask.create_many_from_params(qr_person_task_params, qr_user).first }
+
       let(:judge_task_params) do
         {
           assigned_to_id: judge.id,
@@ -74,6 +75,7 @@ describe ScheduleHearingColocatedTask, :all_dbs do
         }
       end
       let(:judge_qr_task) { JudgeQualityReviewTask.create_from_params(judge_task_params, qr_user) }
+
       let(:atty_task_params) do
         {
           assigned_to_id: atty.id,
@@ -90,7 +92,7 @@ describe ScheduleHearingColocatedTask, :all_dbs do
 
       subject { schedule_hearing_colocated_task.completed! }
 
-      it "should not cancel the JudgeQualityReviewTask and descendants" do
+      it "Should not cancel the JudgeQualityReviewTask and descendants" do
         expect(qr_org_task.reload.status).to eq Task.statuses[:on_hold]
         expect(qr_person_task.reload.status).to eq Task.statuses[:on_hold]
         expect(JudgeQualityReviewTask.find_by(appeal: appeal).status).to eq Task.statuses[:on_hold]
