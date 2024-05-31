@@ -89,6 +89,7 @@
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
 
+
   &.hidden-sidebar {
     width: 0;
     min-width: 0;
@@ -591,6 +592,12 @@ input[type="search"].cf-search-input-with-close {
   overflow: hidden;
 }
 
+.docContainerPrototype {
+  position: 'relative';
+  width: '100%';
+  height: '100%';
+}
+
 .canvasWrapperPrototype {
   margin: 10px;
   display: inline-block;
@@ -605,10 +612,6 @@ input[type="search"].cf-search-input-with-close {
   display: inline-block;
 }
 
-.headerPrototype {
-  background-color: #ffb732;
-}
-
 .toolbarPrototype-items {
   margin: 0 15px;
 }
@@ -616,4 +619,15 @@ input[type="search"].cf-search-input-with-close {
 
 .toolbarPrototype-text {
   margin-left: 15px;
+}
+
+.loadingTimerPrototype {
+  position: absolute;
+  color: lightgrey;
+  z-index: 15;
+  padding: 1rem;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }

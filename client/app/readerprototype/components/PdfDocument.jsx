@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 
 import * as PDFJS from 'pdfjs-dist';
-import ApiUtil from '../util/ApiUtil';
+import ApiUtil from '../../util/ApiUtil';
 
 const renderPage = async (pdfPage) => {
   let pdfContainer = document.getElementById('pdfContainer');
@@ -43,7 +43,6 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
-
 
   useEffect(() => {
     const getDocData = async () => {
@@ -94,7 +93,8 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 
 PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
-  zoomLevel: PropTypes.string
+  zoomLevel: PropTypes.string,
+  setDocumentPageCount: PropTypes.number
 };
 
 export default PdfDocument;
