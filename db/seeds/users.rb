@@ -93,6 +93,7 @@ module Seeds
       create_inbound_ops_team_user_with_no_permissions
       create_inbound_ops_team_supervisor
       create_inbound_ops_team_superuser
+      create_inbound_ops_team_nod_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -504,6 +505,37 @@ module Seeds
           permitted: true
         )
       end
+    end
+
+    def create_inbound_ops_team_nod_user
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD1", full_name: "Alexandr Johnson" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD2", full_name: "Sopia Williams" }
+      ]
+      users_info.map do |user_info|
+        new_user = create_user(user_info)
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
+        receive_nod_mail = OrganizationPermission.find_by(
+          organization: InboundOpsTeam.singleton,
+          permission: "receive_nod_mail"
+        )
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: receive_nod_mail,
+          organizations_user: org_user
+        ) do |op|
+          op.permitted = true
+        end
+      end
+    end
+
+    def create_user(user_info)
+      User.find_or_create_by!(
+        station_id: 101,
+        css_id: user_info[:css_id],
+        full_name: user_info[:full_name],
+        roles: ["Mail Intake"]
+      )
     end
 
     def create_cavc_lit_support_user
