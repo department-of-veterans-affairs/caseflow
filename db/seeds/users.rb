@@ -5,6 +5,7 @@
 module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/ClassLength
   class Users < Base
     DEVELOPMENT_JUDGE_TEAMS = {
       "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
@@ -33,7 +34,7 @@ module Seeds
       "Prosthetics"
     ].freeze
 
-    RPOS = [ "Buffalo RPO", "Central Office RPO", "Muskogee RPO"].freeze
+    RPOS = ["Buffalo RPO", "Central Office RPO", "Muskogee RPO"].freeze
 
     def seed!
       create_users
@@ -211,7 +212,7 @@ module Seeds
           a = create(:appeal)
           root_task = create(:root_task, appeal: a)
           create(:hearing, appeal: a)
-          ihp_task = create( :informal_hearing_presentation_task, parent: root_task, appeal: a, assigned_to: vso)
+          ihp_task = create(:informal_hearing_presentation_task, parent: root_task, appeal: a, assigned_to: vso)
           create(:track_veteran_task, parent: root_task, appeal: a, assigned_to: vso)
 
           next unless assign_to_user
@@ -297,7 +298,7 @@ module Seeds
     end
 
     def create_field_vso_and_users
-      vso = create(:field_vso, name: "Field VSO", url: "field-vso")
+      vso = FieldVso.find_or_create_by(name: "Field VSO", url: "field-vso")
 
       %w[MANDY NICHOLAS ELIJAH].each do |name|
         u = create(:user,
@@ -549,7 +550,92 @@ module Seeds
     def create_singleton_organizations
       Organization.subclasses.map { |subclass| subclass.singleton if subclass.respond_to?(:singleton) }
     end
+
+    def create_qa_test_users
+      create(:user, css_id: "QATTY1", full_name: "QA Attorney_1")
+      create(:user, css_id: "QATTY2", full_name: "QA Attorney_2")
+      create(:user, css_id: "QATTY3", full_name: "QA Attorney_3")
+      create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
+             css_id: "QINELIGVLJ", full_name: "QA Ineligible Judge")
+      create(:user, :judge, :with_vacols_judge_record,
+             css_id: "QACTVLJNOTM", full_name: "QA_Active_Judge With No_Team")
+
+      # below users are created and added to organizations
+      create_qa_ssc_avlj_attorney
+      create_qa_nonssc_avlj_attorney
+      create_qa_cob_intake_clerk
+      create_qa_intake_clerk
+      create_qa_intake_admin
+      create_qa_hearing_admin
+      create_qa_case_movement_user
+      create_qa_judge_team_3
+      create_qa_judge_team_2
+    end
+
+    def create_qa_ssc_avlj_attorney
+      atty = create(:user, css_id: "QSSCAVLJ", full_name: "QA SSC_AVLJ Attorney", roles: ["Hearing Prep"])
+      SupervisorySeniorCouncil.singleton.add_user(atty)
+      create(:staff, user: atty, sattyid: "9999", smemgrp: "9999")
+    end
+
+    def create_qa_nonssc_avlj_attorney
+      atty = create(:user, css_id: "QNONSSCAVLJ", full_name: "QA Non_SSC_AVLJ Attorney")
+      create(:staff, user: atty, sattyid: "9998", smemgrp: "9998")
+    end
+
+    def create_qa_cob_intake_clerk
+      clerk = create(
+        :user,
+        css_id: "QCOBINTAKE",
+        full_name: "QA Clerk_of_the_Board",
+        roles: ["Hearing Prep", "Mail Intake"]
+      )
+      OrganizationsUser.make_user_admin(clerk, ClerkOfTheBoard.singleton)
+      BvaIntake.singleton.add_user(clerk)
+    end
+
+    def create_qa_intake_clerk
+      clerk = create(:user, css_id: "QINTAKE", full_name: "QA Intake Clerk", roles: ["Mail Intake"])
+      BvaIntake.singleton.add_user(clerk)
+    end
+
+    def create_qa_intake_admin
+      admin = create(:user, css_id: "QINTAKEADMIN", full_name: "QA Intake Admin", roles: ["Mail Intake"])
+      OrganizationsUser.make_user_admin(admin, BvaIntake.singleton)
+      OrganizationsUser.make_user_admin(admin, CDAControlGroup.singleton)
+    end
+
+    def create_qa_hearing_admin
+      create(:user,
+             css_id: "QHEARADMIN",
+             station_id: 343,
+             full_name: "QA Hearings Admin",
+             roles: ["Edit HearSched", "Build HearSched"])
+    end
+
+    def create_qa_case_movement_user
+      user = create(:user, :with_vacols_record, css_id: "QCASEMVMT", full_name: "QA Case Movement")
+      OrganizationsUser.make_user_admin(user, SpecialCaseMovementTeam.singleton)
+    end
+
+    def create_qa_judge_team_3
+      qa_judge_3 = create(:user, :judge, :with_vacols_judge_record,
+                          css_id: "QACTIVEVLJ3", full_name: "QA_Active_Judge With Team_of_3")
+      qa_judge_team_3 = JudgeTeam.for_judge(qa_judge_3)
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY1"))
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY2"))
+      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY3"))
+    end
+
+    def create_qa_judge_team_2
+      qa_judge_2 = create(:user, :judge, :with_vacols_judge_record,
+                          css_id: "QACTIVEVLJ2", full_name: "QA_Active_Judge With Team_of_2")
+      qa_judge_team_2 = JudgeTeam.for_judge(qa_judge_2)
+      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY1"))
+      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY2"))
+    end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/ClassLength
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 end
