@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
-import Dropdown from 'app/components/Dropdown';
+import Dropdown from 'app/components/SearchableDropdown';
 import { capitalize } from 'lodash';
 
 const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, onClickIssueAction,  issueIndex }) => {
@@ -36,7 +36,7 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
 
   if (userIsVhaAdmin) {
     options.push({
-      displayText: `Review issue ${requestType} request`,
+      label: `Review issue ${requestType} request`,
       value: `reviewIssue${capitalize(requestType)}Request` }
     );
   }
@@ -74,7 +74,7 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
     const requestIsssueDescription = requestIssue.description ||
      `${requestIssue.nonratingIssueCategory} - ${requestIssue.nonratingIssueDescription}`;
 
-    return <>
+    return (
       <>
         <h3>Original Issue</h3>
         <div className="issue-modification-request-original">
@@ -86,8 +86,7 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
             </li>
           </ol>
         </div>
-      </>
-    </>;
+      </>);
   };
 
   const extraContentMapping = {
@@ -124,9 +123,11 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
             name={`select-action-${requestType}`}
             label="Actions"
             options={options}
-            defaultText="Select action"
+            placeholder="Select action"
             hideLabel
-            onChange={(option) => onClickIssueAction(issueIndex, option)}
+            onChange={(option) => onClickIssueAction(issueIndex, option.value)}
+            doubleArrow
+            searchable={false}
           />
         </div>
       </div>

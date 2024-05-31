@@ -322,6 +322,8 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
+    const makeButtonDisableForAdmin = intakeData.userIsVhaAdmin && !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+
     const issues = intakeData.docketType === 'Legacy' ?
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
@@ -428,8 +430,9 @@ class AddIssuesPage extends React.Component {
             <Button
               name="add-issue"
               legacyStyling={false}
-              classNames={['usa-button-secondary']}
+              dangerStyling
               onClick={() => this.onClickAddIssue()}
+              disabled={makeButtonDisableForAdmin}
             >
             + Add issue
             </Button>)}

@@ -30,10 +30,6 @@ feature "Issue Modification Request", :postgres do
   end
 
   context "non-admin user" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
-    end
-
     it "should open the edit issues page and show non-admin content" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
@@ -160,6 +156,18 @@ feature "Issue Modification Request", :postgres do
 
       expect(page.has_no_content?("Request additional issue")).to eq(true)
     end
+    it "Select action dropdown for Requested Issue Section should be enabled if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+
+      within "#issue-#{in_progress_hlr.request_issues.first.id}" do
+        select_action = find("select", text: "Select action")
+        expect(select_action[:disabled]).to eq "false"
+      end
+    end
+    it "+ Add Issues button for Admin edit should be enabled if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+      expect(page).to have_button("Add issue", disabled: false)
+    end
   end
 
   context "Claim with all 4 types of pending issue modification requests" do
@@ -240,19 +248,6 @@ feature "Issue Modification Request", :postgres do
       verify_removal_request(removal_modification_request)
       verify_modify_existing_issue_request(modify_existing_modification_request)
       verify_withdrawal_request(withdrawal_modification_request)
-    end
-
-    it "should display dropdown with respective option for each request type" do
-      OrganizationsUser.make_user_admin(current_user, vha_org)
-      current_user.reload
-
-      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
-
-      expect(page).to have_content("Pending admin review")
-
-      within "#issue-modification" do
-        first("select").select("Review issue modification request")
-      end
     end
   end
 
