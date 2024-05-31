@@ -40,7 +40,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
     {
       work_order_name: "BVA-2030-0001",
       return_date: "05-01-2023",
-      contractor_name: "Bob's contract house",
+      contractor_name: TranscriptionContractor.first&.name,
       hearings: hearings_in_work_order(hearings + legacy_hearings)
     }
   end
@@ -48,6 +48,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
   subject { described_class.perform_now(work_order) }
 
   before do
+    Seeds::TranscriptionContractor.new.seed!
     Hearings::WorkOrderFileJob.perform_now(work_order)
     Hearings::ZipAndUploadTranscriptionFilesJob.perform_now(work_order[:hearings])
     Hearings::CreateBillOfMaterialsJob.perform_now(work_order)
@@ -87,7 +88,7 @@ RSpec.describe Hearings::ZipAndUploadTranscriptionPackageJob do
       expect(current_entry.aws_link_zip).to be_a String
       expect(current_entry.aws_link_work_order).to be_a String
       expect(current_entry.created_by_id).to be_a Integer
-      expect(current_entry.status).to eql? "Successful upload (AWS)"
+      expect(current_entry.status).to eq "Successful upload (AWS)"
       expect(current_entry.contractor_id).to be_a Integer
     end
   end
