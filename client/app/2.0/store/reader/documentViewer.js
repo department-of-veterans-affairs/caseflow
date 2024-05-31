@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { random, range, difference } from 'lodash';
-import * as PDF from 'pdfjs-dist';
+// import * as PDF from 'pdfjs-dist';
 // import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import Mark from 'mark.js';
 
