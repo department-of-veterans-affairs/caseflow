@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe DirectReviewDocket, :postgres do
+  before do
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+  end
   context "#docket_type" do
     subject { DirectReviewDocket.new.docket_type }
     it "returns the correct docket type" do

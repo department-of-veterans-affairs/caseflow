@@ -85,7 +85,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this version of the query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_APPEALS_ADDITIONAL_COLS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORKEY, BFCORLID
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFMEMID, BFDPDCN,
+    BFCORKEY, BFCORLID
     #{FROM_READY_APPEALS}
   "
 
@@ -117,7 +118,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     ) PREV_APPEAL
       on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
       and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
-      and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN"
+      and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN
+  "
 
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
@@ -132,7 +134,6 @@ class VACOLS::CaseDocket < VACOLS::Record
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{JOIN_PREVIOUS_APPEALS}
       )
     "
 
@@ -146,7 +147,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
-          order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
         #{JOIN_PREVIOUS_APPEALS}
@@ -155,18 +155,16 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
-        PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION, PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-      #{JOIN_PREVIOUS_APPEALS}
     )
   "
 
@@ -180,7 +178,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
-        order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       #{JOIN_PREVIOUS_APPEALS}
