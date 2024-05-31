@@ -7,6 +7,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     create(:case_distribution_lever, :nod_adjustment)
     create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
@@ -39,6 +40,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
+
+      subject
+    end
+
+    it "queues the UpdateAppealAffinityDatesJob" do
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
 
       subject
     end
@@ -75,6 +82,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: ready_priority_uuid,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
@@ -107,6 +115,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
+          :with_appeal_affinity,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -173,7 +182,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          :with_appeal_affinity,
+          uuid: ready_priority_uuid2,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -303,8 +313,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.hearing)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
     end
@@ -313,8 +324,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
     end

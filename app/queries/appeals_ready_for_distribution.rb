@@ -11,7 +11,8 @@ class AppealsReadyForDistribution
     ready_for_distribution_at: "Ready for Distribution at",
     hearing_judge: "Hearing Judge",
     veteran_file_number: "Veteran File number",
-    veteran_name: "Veteran"
+    veteran_name: "Veteran",
+    affinity_start_date: "Affinity Start Date"
   }.freeze
 
   def self.generate_rows(record)
@@ -52,11 +53,9 @@ class AppealsReadyForDistribution
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = if vlj_name.empty?
-                        nil
-                      else
-                        vlj_name
-                      end
+      hearing_judge = vlj_name.empty? ? nil : vlj_name
+      appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
+
       {
         docket_number: appeal["tinum"],
         docket: docket.to_s,
@@ -66,7 +65,8 @@ class AppealsReadyForDistribution
         ready_for_distribution_at: appeal["bfdloout"],
         hearing_judge: hearing_judge,
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: veteran_name
+        veteran_name: veteran_name,
+        affinity_start_date: appeal_affinity&.affinity_start_date
       }
     end
   end
@@ -92,8 +92,8 @@ class AppealsReadyForDistribution
         ready_for_distribution_at: ready_for_distribution_at,
         hearing_judge: hearing_judge,
         veteran_file_number: appeal.veteran_file_number,
-        veteran_name: appeal.veteran&.name.to_s
-
+        veteran_name: appeal.veteran&.name.to_s,
+        affinity_start_date: appeal.appeal_affinity&.affinity_start_date
       }
     end
   end

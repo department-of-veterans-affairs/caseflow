@@ -196,6 +196,36 @@ FactoryBot.define do
       lever_group_order { 3002 }
     end
 
+    trait :cavc_aod_affinity_days do
+      item { Constants.DISTRIBUTION.cavc_aod_affinity_days }
+      title { Constants.DISTRIBUTION.cavc_aod_affinity_days_title }
+      description do
+        "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding "\
+        "judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent"\
+        "hearing."
+      end
+      data_type { Constants.ACD_LEVERS.data_types.radio }
+      value { "14" }
+      unit { "days" }
+      options do
+        [{ item: Constants.ACD_LEVERS.value,
+           data_type: Constants.ACD_LEVERS.data_types.number,
+           value: 14,
+           text: "Attempt distribution to current judge for max of:",
+           unit: Constants.ACD_LEVERS.days,
+           selected: true },
+         { item: Constants.ACD_LEVERS.infinite,
+           value: Constants.ACD_LEVERS.infinite,
+           text: "Always distribute to current judge" },
+         { item: Constants.ACD_LEVERS.omit,
+           value: Constants.ACD_LEVERS.omit,
+           text: "Omit variable from distribution rules" }]
+      end
+      algorithms_used { [Constants.ACD_LEVERS.algorithms.proportion] }
+      lever_group { Constants.ACD_LEVERS.lever_groups.affinity }
+      lever_group_order { 3003 }
+    end
+
     trait :ama_hearing_case_aod_affinity_days do
       item { "ama_hearing_case_aod_affinity_days" }
       title { "AMA Hearing Case AOD Affinity Days" }

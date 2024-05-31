@@ -76,4 +76,54 @@ describe DistributionTask, :postgres do
       end
     end
   end
+
+  describe "after_update hooks" do
+    before do
+      distribution_task.update!(status: "on_hold")
+      create(:appeal_affinity, appeal: distribution_task.appeal)
+    end
+
+    context "when affinity appeal is not set to assigned" do
+      it "returns an affinity appeal start date with no instructions" do
+        expect(distribution_task.appeal.appeal_affinity.affinity_start_date).to_not eq nil
+        expect(distribution_task.instructions.size).to eq 0
+      end
+    end
+
+    context "when affinity appeal is set to assigned" do
+      before { distribution_task.ready_for_distribution! }
+
+      it "returns no affinity appeal start date with instructions" do
+        expect(distribution_task.appeal.appeal_affinity.affinity_start_date).to eq nil
+        expect(distribution_task.instructions.size).to eq 1
+      end
+    end
+
+    context "when no affinity appeal is linked" do
+      let(:root_task_without_affinity) { create(:root_task) }
+      let(:distribution_task_without_affinity) do
+        DistributionTask.create!(
+          appeal: root_task_without_affinity.appeal,
+          assigned_to: Bva.singleton
+        )
+      end
+
+      before do
+        distribution_task_without_affinity.update!(status: "on_hold")
+        distribution_task_without_affinity.ready_for_distribution!
+      end
+
+      it "should be assigned" do
+        expect(distribution_task_without_affinity.status).to eq "assigned"
+      end
+
+      it "returns no affinity appeal record" do
+        expect(distribution_task_without_affinity.appeal.appeal_affinity).to eq nil
+      end
+
+      it "does not update instructions" do
+        expect(distribution_task_without_affinity.instructions.size).to eq 0
+      end
+    end
+  end
 end

@@ -160,27 +160,27 @@ module Seeds
     end
 
     # functions for creating appeals in batches
-    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, receipt_date, distribution_task_assigned_at_date)
+    def create_ama_hearing_held_aod_appeals(number_of_appeals_to_create, hearing_judge, receipt_date, appeal_affinity_start_date)
       number_of_appeals_to_create.times.each do
-        create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, distribution_task_assigned_at_date)
+        create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, appeal_affinity_start_date)
       end
     end
 
-    def create_create_legacy_appeals(number_of_appeals_to_create, receipt_date, distribution_task_assigned_at_date)
+    def create_create_legacy_appeals(number_of_appeals_to_create, receipt_date, appeal_affinity_start_date)
       number_of_appeals_to_create.times.each do
-        create_legacy_appeal(receipt_date, distribution_task_assigned_at_date)
+        create_legacy_appeal(receipt_date, appeal_affinity_start_date)
       end
     end
 
-    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, distribution_task_assigned_at_date)
+    def create_direct_review_appeals(number_of_appeals_to_create, receipt_date, assigned_at_date)
       number_of_appeals_to_create.times.each do
-        create_direct_review_appeal(receipt_date, distribution_task_assigned_at_date)
+        create_direct_review_appeal(receipt_date, assigned_at_date)
       end
     end
 
     # AMA HH AOD appeal creation functions
-    def create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, distribution_task_assigned_at_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_ama_hearing_held_aod_appeal(hearing_judge, receipt_date, appeal_affinity_start_date)
+      Timecop.travel(appeal_affinity_start_date)
         create(
           :appeal,
           :hearing_docket,
@@ -188,6 +188,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          :with_appeal_affinity,
           veteran: create_veteran_for_ama_hearing_held_judge,
           receipt_date: receipt_date,
           tied_judge: hearing_judge,
@@ -206,8 +207,8 @@ module Seeds
     end
 
     # Legacy appeal creation functions
-    def create_legacy_appeal(receipt_date, distribution_task_assigned_at_date)
-      Timecop.travel(distribution_task_assigned_at_date)
+    def create_legacy_appeal(receipt_date, appeal_affinity_start_date)
+      Timecop.travel(appeal_affinity_start_date)
       veteran = create_veteran_for_legacy_inactive_admin_judge_team
 
       correspondent = create(:correspondent,
@@ -266,8 +267,8 @@ module Seeds
     end
 
     # Direct review appeal creation functions
-    def create_direct_review_appeal(receipt_date, distributions_task_assigned_at_date)
-      Timecop.travel(distributions_task_assigned_at_date)
+    def create_direct_review_appeal(receipt_date, assigned_at_date)
+      Timecop.travel(assigned_at_date)
       create(
         :appeal,
         :direct_review_docket,

@@ -5,6 +5,7 @@ require_relative "../../app/models/tasks/mail_task"
 describe Docket, :all_dbs do
   before do
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
   end
 
@@ -61,8 +62,11 @@ describe Docket, :all_dbs do
       create(:appeal,
              :type_cavc_remand,
              :cavc_ready_for_distribution,
-             docket_type: Constants.AMA_DOCKETS.direct_review)
+             :with_appeal_affinity,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             affinity_start_date: affinity_start_date)
     end
+    let(:affinity_start_date) { Time.zone.now }
 
     context "docket type" do
       # docket_type is implemented in the subclasses and should error if called here
@@ -121,12 +125,11 @@ describe Docket, :all_dbs do
 
           context "when called for ready is true and judge is passed" do
             let(:judge) { judge_decision_review_task.assigned_to }
-            subject { DirectReviewDocket.new.appeals(ready: true, judge: judge) }
+
+            subject { DirectReviewDocket.new.appeals(ready: true, priority: false, judge: judge) }
 
             it "returns non priority appeals" do
-              expect(subject).to include appeal
-              expect(subject).to include denied_aod_motion_appeal
-              expect(subject).to include inapplicable_aod_motion_appeal
+              expect(subject).to match_array([appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal])
             end
           end
         end
@@ -422,11 +425,7 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
-        let(:cavc_affinity_days) { CaseDistributionLever.cavc_affinity_days }
-
-        before do
-          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
-        end
+        let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 1).days.ago }
 
         context "when genpop: not_genpop is set" do
           it "is not distributed because it is now genpop" do

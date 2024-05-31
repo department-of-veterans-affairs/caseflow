@@ -8,15 +8,8 @@
 module DistributionScopes # rubocop:disable Metrics/ModuleLength
   extend ActiveSupport::Concern
 
-  def with_assigned_distribution_task_sql
-    # both `appeal_type` and `appeal_id` necessary due to composite index
-    <<~SQL
-      INNER JOIN tasks AS distribution_task
-      ON distribution_task.appeal_type = 'Appeal'
-      AND distribution_task.appeal_id = appeals.id
-      AND distribution_task.type = 'DistributionTask'
-      AND distribution_task.status = 'assigned'
-    SQL
+  def with_appeal_affinities
+    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
   end
 
   # From docket.rb
@@ -52,24 +45,130 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   end
 
-  def genpop
-    join_distribution_tasks
+  def genpop_base_query
+    with_appeal_affinities
       .with_original_appeal_and_judge_task
+      .include_aod_motions
+  end
+
+  def genpop_with_case_distribution_lever
+    genpop_cavc_affinity_days_query = generate_genpop_cavc_affinity_days_lever_query
+    genpop_cavc_aod_affinity_days_query = generate_genpop_cavc_aod_affinity_days_lever_query
+
+    result = genpop_cavc_affinity_days_query.or(genpop_cavc_aod_affinity_days_query)
+
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      result = result.or(
+        genpop_base_query
+        .where("original_judge_task.assigned_to_id in (?)", HearingRequestDistributionQuery.ineligible_judges_id_cache)
+      )
+    end
+
+    if FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      result = result.or(
+        genpop_base_query
+        .where("original_judge_task.assigned_to_id in (?)", JudgeTeam.judges_with_exclude_appeals_from_affinity)
+      )
+    end
+
+    result
+  end
+
+  def generate_genpop_cavc_affinity_days_lever_query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      genpop_base_query
+        .ama_non_aod_appeals
+        .where(
+          "appeals.stream_type != ? OR appeal_affinities.affinity_start_date <= ?",
+          Constants.AMA_STREAM_TYPES.court_remand,
+          CaseDistributionLever.cavc_affinity_days.days.ago
+        )
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .ama_non_aod_appeals
+        .where("appeals.stream_type != ?", Constants.AMA_STREAM_TYPES.court_remand)
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query
+        .ama_non_aod_appeals
+    end
+  end
+
+  def generate_genpop_cavc_aod_affinity_days_lever_query
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+      genpop_base_query
+        .ama_aod_appeals
+        .where(
+          "appeals.stream_type != ? OR appeal_affinities.affinity_start_date < ?",
+          Constants.AMA_STREAM_TYPES.court_remand,
+          CaseDistributionLever.cavc_aod_affinity_days.days.ago
+        )
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .ama_aod_appeals
+        .where("appeals.stream_type != ?", Constants.AMA_STREAM_TYPES.court_remand)
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query
+        .ama_aod_appeals
+    end
+  end
+
+  def non_genpop_with_case_distribution_lever(judge)
+    non_genpop_cavc_affinity_days_query = generate_non_genpop_cavc_affinity_days_lever_query(judge)
+    non_genpop_cavc_aod_affinity_days_query = generate_non_genpop_cavc_aod_affinity_days_lever_query(judge)
+
+    non_genpop_cavc_affinity_days_query.or(non_genpop_cavc_aod_affinity_days_query)
+  end
+
+  def generate_non_genpop_cavc_affinity_days_lever_query(judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+      non_genpop_for_judge(judge)
+        .ama_non_aod_appeals
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .ama_non_aod_appeals
+        .where(original_judge_task: { assigned_to_id: judge&.id },
+               appeals: { stream_type: Constants.AMA_STREAM_TYPES.court_remand })
+    elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query.ama_non_aod_appeals.none
+    end
+  end
+
+  def generate_non_genpop_cavc_aod_affinity_days_lever_query(judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+      non_genpop_for_judge(judge, CaseDistributionLever.cavc_aod_affinity_days)
+        .ama_non_aod_appeals
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      genpop_base_query
+        .ama_non_aod_appeals
+        .where(original_judge_task: { assigned_to_id: judge&.id },
+               appeals: { stream_type: Constants.AMA_STREAM_TYPES.court_remand })
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+      genpop_base_query.ama_non_aod_appeals.none
+    end
+  end
+
+  def genpop
+    genpop_base_query
       .where(
-        "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
+        "appeals.stream_type != ?
+          OR appeal_affinities.affinity_start_date <= ?
+          OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
         CaseDistributionLever.cavc_affinity_days.days.ago,
         JudgeTeam.judges_with_exclude_appeals_from_affinity
       )
   end
 
-  def ama_non_aod_hearing_appeals
-    where("advance_on_docket_motions.person_id IS NULL")
-      .where("people.date_of_birth > ?", 75.years.ago)
+  def ama_non_aod_appeals
+    where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted "\
+        "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
   end
 
-  def ama_aod_hearing_appeals
-    where("advance_on_docket_motions.person_id IS NOT NULL")
+  def ama_aod_appeals
+    where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.granted = ?", true)
       .or(where("people.date_of_birth <= ?", 75.years.ago))
   end
 
@@ -86,10 +185,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
-  def non_genpop_for_judge(judge)
-    join_distribution_tasks
-      .with_original_appeal_and_judge_task
-      .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
+  def non_genpop_for_judge(judge, lever_days = CaseDistributionLever.cavc_affinity_days)
+    genpop_base_query
+      .where("appeal_affinities.affinity_start_date > ?", lever_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
@@ -127,38 +225,34 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: judge.id })
   end
 
   def tied_to_ineligible_judge
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
   def expired_ama_affinity_cases(lever_days)
     where(hearings: { disposition: "held" })
-      .where("distribution_task.assigned_at <= ?", lever_days.to_i.days.ago)
+      .where("appeal_affinities.affinity_start_date <= ?", lever_days.to_i.days.ago)
   end
 
   def affinitized_ama_affinity_cases(lever_days)
-    where("distribution_task.assigned_at > ?", lever_days.to_i.days.ago)
-  end
-
-  def join_distribution_tasks
-    joins(with_assigned_distribution_task_sql)
+    where("appeal_affinities.affinity_start_date > ?", lever_days.to_i.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: nil })
   end
 
@@ -182,5 +276,15 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
+  end
+
+  def exclude_affinity_and_ineligible_judge_ids
+    judge_ids = JudgeTeam.judges_with_exclude_appeals_from_affinity
+
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      judge_ids.push(*HearingRequestDistributionQuery.ineligible_judges_id_cache)
+    end
+
+    judge_ids
   end
 end
