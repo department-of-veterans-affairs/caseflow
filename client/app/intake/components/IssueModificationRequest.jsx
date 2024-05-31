@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+import Dropdown from 'app/components/SearchableDropdown';
+import { capitalize } from 'lodash';
 
-const IssueModificationRequest = ({ issueModificationRequest }) => {
+const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, onClickIssueAction, issueIndex }) => {
   const {
     benefitType,
     requestType,
@@ -29,6 +31,15 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
   };
 
   const requestDetails = requestDetailsMapping[requestType];
+
+  let options = [];
+
+  if (userIsVhaAdmin) {
+    options.push({
+      label: `Review issue ${requestType} request`,
+      value: `reviewIssue${capitalize(requestType)}Request` }
+    );
+  }
 
   const requestReasonSection = (
     <>
@@ -64,19 +75,16 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
      `${requestIssue.nonratingIssueCategory} - ${requestIssue.nonratingIssueDescription}`;
 
     return <>
-      <div>
-        <h3>Original Issue</h3>
-        <div className="issue-modification-request-original">
-          <ol>
-            <li>
-              <p>{requestIsssueDescription}</p>
-              <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
-              <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
-            </li>
-          </ol>
-        </div>
+      <h3>Original Issue</h3>
+      <div className="issue-modification-request-original">
+        <ol>
+          <li>
+            <p>{requestIsssueDescription}</p>
+            <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
+            <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
+          </li>
+        </ol>
       </div>
-      <br />
     </>;
   };
 
@@ -102,16 +110,35 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
   const extraContent = extraContentMapping[requestType] || null;
 
   return (
-    <div>
-      {modificationRequestInfoSection}
-      {requestReasonSection}
-      {extraContent}
-    </div>
+    <>
+      <div className="issue" data-key={`issue-${requestType}`} key={`issue-${requestType}`}>
+        <div className="issue-desc">
+          {modificationRequestInfoSection}
+          {requestReasonSection}
+          {extraContent}
+        </div>
+        <div className="issue-action">
+          <Dropdown
+            name={`select-action-${requestType}`}
+            label="Actions"
+            options={options}
+            placeholder="Select action"
+            hideLabel
+            onChange={(option) => onClickIssueAction(issueIndex, option.value)}
+            doubleArrow
+            searchable={false}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 
 export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
-  issueModificationRequest: PropTypes.object
+  issueModificationRequest: PropTypes.object,
+  userIsVhaAdmin: PropTypes.bool,
+  onClickIssueAction: PropTypes.func,
+  issueIndex: PropTypes.number
 };

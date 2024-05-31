@@ -6,12 +6,19 @@ const IssueModificationList = (
   {
     sectionTitle,
     issueModificationRequests,
+    userIsVhaAdmin,
+    onClickIssueAction,
   }
 ) => {
   const issues = issueModificationRequests.map((issueModificationRequest, id) => {
     return (
       <li key={id}>
-        <IssueModificationRequest issueModificationRequest={issueModificationRequest} />
+        <IssueModificationRequest
+          issueModificationRequest={issueModificationRequest}
+          userIsVhaAdmin={userIsVhaAdmin}
+          onClickIssueAction={onClickIssueAction}
+          issueIndex={issueModificationRequest.id}
+        />
         {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
             <hr />
@@ -26,10 +33,13 @@ const IssueModificationList = (
       <div>
         <br />
         <h3>{sectionTitle}</h3>
-        <br />
-        <ol>
-          {issues}
-        </ol>
+        <div className="issues">
+          <div className="issue-container">
+            <ol>
+              {issues}
+            </ol>
+          </div>
+        </div>
       </div>
     </>
   );
@@ -40,4 +50,6 @@ export default IssueModificationList;
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
   issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
+  userIsVhaAdmin: PropTypes.bool,
+  onClickIssueAction: PropTypes.func,
 };

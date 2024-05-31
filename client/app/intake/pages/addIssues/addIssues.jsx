@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import issueModificationRow from 'app/intake/components/issueModificationRow';
+import issueModificationRow from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -80,7 +80,8 @@ class AddIssuesPage extends React.Component {
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
-      loading: false
+      loading: false,
+      adminEditIndex: 0
     };
   }
 
@@ -141,6 +142,30 @@ class AddIssuesPage extends React.Component {
         issueIndex: index
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        adminEditIndex: index
+      });
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        adminEditIndex: index
+      });
+      this.props.toggleRequestIssueAdditionModal(index);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        adminEditIndex: index
+      });
+      this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        adminEditIndex: index
+      });
+      this.props.toggleRequestIssueRemovalModal(index);
       break;
     default:
       this.props.undoCorrection(index);
@@ -356,6 +381,10 @@ class AddIssuesPage extends React.Component {
       !originalIssuesHaveNoDecisionDate() &&
       intakeData.benefitType === 'vha';
 
+    const makeButtonDisabledForAdmin = editPage &&
+      intakeData.userIsVhaAdmin &&
+      !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+
     const renderButtons = () => {
       if (showRequestIssueUpdateOptions) {
         return (
@@ -401,8 +430,9 @@ class AddIssuesPage extends React.Component {
             <Button
               name="add-issue"
               legacyStyling={false}
-              classNames={['usa-button-secondary']}
+              dangerStyling
               onClick={() => this.onClickAddIssue()}
+              disabled={makeButtonDisabledForAdmin}
             >
             + Add issue
             </Button>)}
@@ -562,7 +592,9 @@ class AddIssuesPage extends React.Component {
     if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
-        fieldTitle: 'Pending admin review'
+        fieldTitle: 'Pending admin review',
+        userIsVhaAdmin,
+        onClickIssueAction: this.onClickIssueAction
       }));
     }
 
@@ -669,6 +701,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
           />
         )}
 
@@ -677,7 +710,9 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+          />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
@@ -685,13 +720,17 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+          />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
-            addToPendingReviewSection={this.props.addToPendingReviewSection} />
+            addToPendingReviewSection={this.props.addToPendingReviewSection}
+            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+          />
         )}
 
         <h1 className="cf-txt-c">{messageHeader}</h1>

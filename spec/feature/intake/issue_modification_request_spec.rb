@@ -153,12 +153,25 @@ feature "Issue Modification Request", :postgres do
   context "admin user" do
     before do
       OrganizationsUser.make_user_admin(current_user, vha_org)
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
     end
 
     it "should open the edit issues page and not see the new non-admin content" do
-      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
-
       expect(page.has_no_content?("Request additional issue")).to eq(true)
+    end
+
+    it "Select action dropdown for Requested Issue Section should be enabled if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+
+      within "#issue-#{in_progress_hlr.request_issues.first.id}" do
+        select_action = find("select", text: "Select action")
+        expect(select_action[:disabled]).to eq "false"
+      end
+    end
+
+    it "+ Add Issues button for Admin edit should be enabled if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+      expect(page).to have_button("Add issue", disabled: false)
     end
   end
 

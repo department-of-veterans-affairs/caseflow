@@ -7,7 +7,9 @@ import { groupBy } from 'lodash';
 const issueModificationRow = (
   {
     fieldTitle,
-    issueModificationRequests
+    issueModificationRequests,
+    userIsVhaAdmin,
+    onClickIssueAction
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
@@ -35,6 +37,8 @@ const issueModificationRow = (
             sectionTitle={sectionTitleMapper[key]}
             lastSection={lastSection}
             key={`${key}-${i}`}
+            userIsVhaAdmin={userIsVhaAdmin}
+            onClickIssueAction={onClickIssueAction}
           />
           {lastSection ? null : <hr />}
         </React.Fragment>
@@ -55,5 +59,7 @@ export default issueModificationRow;
 
 issueModificationRow.propTypes = {
   fieldTitle: PropTypes.string,
-  issueModificationRequests: PropTypes.object
+  issueModificationRequests: PropTypes.object,
+  userIsVhaAdmin: PropTypes.bool,
+  onClickIssueAction: PropTypes.func
 };
