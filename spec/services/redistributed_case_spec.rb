@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe RedistributedCase, :all_dbs do
+  before do
+    create(:case_distribution_lever, :request_more_cases_minimum)
+  end
   let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }

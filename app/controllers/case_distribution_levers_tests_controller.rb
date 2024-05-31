@@ -53,6 +53,20 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def ineligible_judge_list
+    # change this to the correct class
+    csv_data = IneligibleJudgeList.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+    # Set dynamic filename with current date and time
+    filename = "#{current_datetime}_ineligible_judge_list.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
   private
 
   def check_environment

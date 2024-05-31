@@ -2,6 +2,8 @@
 
 describe ScheduleHearingColocatedTask, :all_dbs do
   describe ".completed!" do
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
     let(:appeal) { create(:appeal, :at_attorney_drafting) }
     let(:parent) { AttorneyTask.find_by(appeal: appeal) }
     let!(:schedule_hearing_colocated_task) do
