@@ -1,61 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
-import Button from '../components/Button';
-import Link from '../components/Link';
-import TextField from '../components/TextField';
-import { PageArrowLeftIcon } from '../components/icons/PageArrowLeftIcon';
-import { PageArrowRightIcon } from '../components/icons/PageArrowRightIcon';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
+import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
-const pdfWrapperSmall = 1165;
-const ENTER_KEY = 'Enter';
-const RADIX = 10;
-
-const pdfToolbarStyles = {
-  footer: css({
-    position: 'absolute',
-    bottom: 0,
-    display: 'flex',
-    alignItems: 'center',
-    '&&': { [`@media(max-width:${pdfWrapperSmall}px)`]: {
-      '& .left-button-label': { display: 'none' },
-      '& .right-button-label': { display: 'none' }
-    } }
-  })
-};
-
-export const isValidWholeNumber = (number) => {
-  return !isNaN(number) && number % 1 === 0;
-};
-
-const validatePageNum = (pageNumber) => {
-  let pageNum = parseInt(pageNumber, RADIX);
-
-  if (!pageNum || !isValidWholeNumber(pageNum) ||
-    (pageNum < 1 || pageNum > this.props.numPages)) {
-    return this.props.currentPage;
-  }
-
-  return pageNum;
-};
-
-
-const handleKeyPress = (event) => {
-  // if (event.key === ENTER_KEY) {
-  //   const pageNumber = event.target.value;
-  //   const newPageNumber = validatePageNum(pageNumber);
-
-  //   setPageNumber(newPageNumber);
-
-  //   if (props.currentPage !== newPageNumber) {
-  //     props.jumpToPage(newPageNumber, this.props.docId);
-  //   }
-  // }
-};
+import { pdfToolbarStyles } from '../layoutUtil';
+import { handleKeyPress } from '../documentUtil';
 
 const ReaderFooter = ({
-  pageCount,
+  docPageCount,
   prevDocId,
   nextDocId,
   showPreviousDocument,
@@ -63,8 +18,10 @@ const ReaderFooter = ({
   selectedDocIndex,
   docCount,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
   return (
-    <div className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
+    <div id="footerPrototype" className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
 
       <div className="cf-pdf-footer-buttons-left">
         {prevDocId && (
@@ -88,14 +45,15 @@ const ReaderFooter = ({
                   name=""
                   label=""
                   maxLength={4}
-                  // onChange={setPageNumber}
+                  onChange={setCurrentPage}
                   onKeyPress={handleKeyPress}
-                  // value={getPageNumber}
+                  value={currentPage}
                   required={false}
                   className={['page-progress-indicator-input']}
+                  disabled
                 />
               </div>
-              of {pageCount}
+              of {docPageCount}
             </span>
           </span>|
         </span>
@@ -120,7 +78,7 @@ const ReaderFooter = ({
 };
 
 ReaderFooter.propTypes = {
-  pageCount: PropTypes.number,
+  docPageCount: PropTypes.number,
   selectedDocIndex: PropTypes.number,
   docCount: PropTypes.number,
   prevDocId: PropTypes.number,
