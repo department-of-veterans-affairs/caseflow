@@ -2,17 +2,15 @@
 
 describe HearingRequestDocket, :postgres do
   before do
-    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
-    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    # these were the defaut values at time of writing tests but can change over time, so ensure they are
+    # what the tests were originally written for
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days, value: "60")
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days, value: "14")
+    create(:case_distribution_lever, :cavc_affinity_days, value: "21")
+    create(:case_distribution_lever, :cavc_aod_affinity_days, value: "14")
     create(:case_distribution_lever, :request_more_cases_minimum)
-    create(:case_distribution_lever, :cavc_affinity_days)
 
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
-
-    # these were the defaut values at time of writing tests but can change over time, so ensure they are set
-    # back to what the tests were originally written for
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).update!(value: "60")
-    CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days).update!(value: "14")
   end
 
   context "#ready_priority_appeals" do
