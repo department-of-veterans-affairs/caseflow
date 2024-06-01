@@ -2,7 +2,7 @@
 
 feature "NonComp Reviews Queue", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }
-  let(:user) { create(:default_user) }
+  let(:user) { create(:intake_user) }
 
   let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345", ssn: "140261454") }
   let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772", ssn: "191097395") }
@@ -288,7 +288,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION)
 
         click_on veteran_a_pending.name
-        expect(page).to have_content("Form created by")
+        expect(page).to have_content("Review not editable")
       end
     end
 
