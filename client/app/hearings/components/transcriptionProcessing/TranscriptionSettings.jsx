@@ -13,7 +13,8 @@ import COPY from '../../../../COPY';
 
 const buttonStyle = css({
   padding: '1rem 2.5rem 2rem 0',
-  display: 'inline-block'
+  display: 'inline-block',
+  float: 'right'
 });
 
 const contractorButtonStyle = css({
@@ -26,14 +27,9 @@ const headerContainerStyling = css({
   '& > *': {
     display: 'inline-block',
     paddingRight: '15px',
-    // paddingLeft: '15px',
     verticalAlign: 'middle',
-    margin: 0
+    margin: 0,
   }
-});
-
-const headerStyling = css({
-  paddingLeft: 0,
 });
 
 const instructionListStyle = css({
@@ -43,12 +39,17 @@ const instructionListStyle = css({
   fontSize: '19px',
 });
 
+const contactAlign = css({
+  paddingLeft: '4.5rem'
+})
+
 const returnLinkStyle = css({
-  padding: '1.5rem 0 2rem 0rem'
+  padding: '1.5rem 0 2rem 0rem',
 });
 
 const toggleStyle = css({
-  padding: '1.5rem 0 2rem 25rem'
+  padding: '1.5rem 2rem 2rem 2rem',
+  // textAlign: 'right'
 });
 
 const userListItemStyle = css({
@@ -137,15 +138,16 @@ export default class TranscriptionSettings extends React.PureComponent {
                 <h2>{contractor.name}<EditContractorLink /></h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
-                <li>{contractor.phone}</li>
-                <li>{contractor.email}</li>
+                <li {...contactAlign}>{contractor.phone}</li>
+                <li {...contactAlign}>{contractor.email}</li>
                 <span>
-                  <li><strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>{`0 of `}{contractor.current_goal}<EditHearingsSentLink /></li>
+                  <li><strong>{`Hearings sent to `}{contractor.name}{` this week: `}</strong>{`0 of `}{contractor.current_goal}<EditHearingsSentLink /></li>
                 </span>
               </ul>
             </div>
             <span {...toggleStyle}>
-              <h3>{COPY.TRANSCRIPTION_SETTINGS_WORK_TOGGLE}</h3>
+              <h3>{`Temporarily stop`}</h3>
+              <h3>{`work assignment`}</h3>
               <ToggleSwitch />
             </span>
           </div>
@@ -156,11 +158,11 @@ export default class TranscriptionSettings extends React.PureComponent {
     return (
       <React.Fragment>
         <div>
-          <h1 className="cf-margin-bottom-0" {...headerStyling}>
+          <h1 className="cf-margin-bottom-0">
             {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
           <div {...headerContainerStyling}>
-            <h2 {...headerStyling}>
+            <h2>
               {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
             <span {...contractorButtonStyle}>
