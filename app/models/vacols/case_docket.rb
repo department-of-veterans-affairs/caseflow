@@ -347,11 +347,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null and (#{priority_cdl_aod_query})
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null or (#{priority_cdl_aod_query}))
     SQL
 
     fmtd_query = sanitize_sql_array([
                                       query,
+                                      judge.vacols_attorney_id,
                                       judge.vacols_attorney_id
                                     ])
 
@@ -512,12 +513,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     query = if use_by_docket_date?
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) and (#{priority_cdl_aod_query} or #{priority_cdl_query}))
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) or #{priority_cdl_aod_query})
               SQL
             else
               <<-SQL
                 #{SELECT_PRIORITY_APPEALS}
-                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?) or #{priority_cdl_aod_query})
               SQL
             end
 
@@ -577,7 +578,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
-      # {Need to check for affinity_start_date on AMA DB is <= CaseDistributionLever.cavc_aod_affinity_days.days.ago}
+      # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
+      # {Need to add exclude affinity check to query}
       <<-SQL
       where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} and AOD = '1' and BFAC = '7' )
       SQL
