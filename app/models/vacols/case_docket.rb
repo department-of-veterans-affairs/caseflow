@@ -581,12 +581,12 @@ class VACOLS::CaseDocket < VACOLS::Record
       # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
       # {Need to add exclude affinity check to query}
       <<-SQL
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} and AOD = '1' and BFAC = '7' )
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity} and AOD = '1' and BFAC = '7' )
       SQL
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       <<-SQL
-      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} and AOD = '1' and BFAC = '7')
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity} and AOD = '1' and BFAC = '7')
       SQL
     end
   end
@@ -633,6 +633,16 @@ class VACOLS::CaseDocket < VACOLS::Record
     else
       "VLJ = 'false'"
     end
+  end
+
+  def self.vacols_judges_with_exclude_appeals_from_affinity
+    return "PREV_DECIDING_JUDGE in []" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+
+    satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
+        .where(exclude_appeals_from_affinity: true)
+        .flat_map(&:judge).compact.pluck(:css_id)).pluck(:sattyid)
+
+    "PREV_DECIDING_JUDGE in #{satty_ids}"
   end
 
   # rubocop:enable Metrics/MethodLength
