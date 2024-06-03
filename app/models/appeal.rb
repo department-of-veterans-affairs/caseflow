@@ -28,6 +28,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents, as: :appeal
   has_many :correspondence_appeals
   has_many :correspondences, through: :correspondence_appeals
+  has_many :notifications, as: :notifiable
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -957,6 +958,10 @@ class Appeal < DecisionReview
 
   def is_legacy?
     false
+  end
+
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
   end
 
   private
