@@ -13,17 +13,39 @@ const renderPage = async (pdfPage) => {
   pdfContainer.appendChild(canvasWrapper);
 
   let canvas = document.createElement('canvas');
+  const textLayer = document.createElement('div');
+
+  textLayer.className = 'cf-pdf-pdfjs-textLayer';
 
   canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
   canvas.className = 'canvasContainerPrototype';
   canvasWrapper.appendChild(canvas);
+  canvasWrapper.appendChild(textLayer);
 
   const viewport = pdfPage.getViewport({ scale: 1 });
   const canvasContext = canvas.getContext('2d');
 
   canvas.height = viewport.height;
   canvas.width = viewport.width;
-  await pdfPage.render({ canvasContext, viewport });
+  pdfPage.render({ canvasContext, viewport });
+  const pageText = await pdfPage.getTextContent();
+
+  textLayer.style = `
+    width: ${viewport.width}px;
+    height: ${viewport.height}px;
+    transformOrigin: left top;
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    left: 0
+  `;
+
+  PDFJS.renderTextLayer({
+    textContent: pageText,
+    container: textLayer,
+    viewport,
+    textDivs: []
+  });
 };
 
 const renderPageBatch = (pdfPages, startIndex, endIndex) => {
