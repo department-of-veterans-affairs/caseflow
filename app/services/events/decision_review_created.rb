@@ -95,14 +95,14 @@ class Events::DecisionReviewCreated
       Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
     end
 
+    # Checking for nonrating_issue_category is "Disposition" and processing such issues.
     def process_nonrating(payload)
-      # note: from consumer comes drc_params with "Unpermitted parameter: :type" message that we can see in rails console. Probably it is a bug.
       payload[:request_issues].each do |issue|
         category = issue[:nonrating_issue_category]
         contested_id = issue[:contested_decision_issue_id]
         ri = RequestIssue.where(contested_decision_issue_id: contested_id)
         if category == "Disposition"
-          if contested_id.present? && ri.length == 1 # && category == "Disposition"
+          if contested_id.present? && ri.length == 1
             return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
           else
             return issue[:nonrating_issue_category] = "Unknown Issue Category"
