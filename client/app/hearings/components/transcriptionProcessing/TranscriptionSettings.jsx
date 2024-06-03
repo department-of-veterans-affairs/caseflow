@@ -8,17 +8,17 @@ import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
+import PropTypes from 'prop-types';
 
 import COPY from '../../../../COPY';
 
 const buttonStyle = css({
-  padding: '1rem 2.5rem 2rem 0',
-  display: 'inline-block',
-  float: 'right'
+  float: 'left',
+  paddingLeft: '2rem'
 });
 
 const contractorButtonStyle = css({
-  paddingLeft: '41.55rem'
+  paddingRight: '0'
 });
 
 const headerContainerStyling = css({
@@ -41,23 +41,25 @@ const instructionListStyle = css({
 
 const contactAlign = css({
   paddingLeft: '4.5rem'
-})
+});
 
 const returnLinkStyle = css({
   padding: '1.5rem 0 2rem 0rem',
 });
 
 const toggleStyle = css({
-  padding: '1.5rem 2rem 2rem 2rem',
-  // textAlign: 'right'
+  padding: '1.5rem 6rem 2rem 2rem',
 });
 
 const userListItemStyle = css({
   display: 'flex',
   flexWrap: 'wrap',
   borderTop: '.1rem solid #d6d7d9',
-  padding: '4rem 0 2rem',
-  margin: '0'
+  padding: '4rem 0 2rem'
+});
+
+const contractorDetailStyle = css({
+  flex: '1'
 });
 
 const EditContractorLink = () => (
@@ -111,20 +113,22 @@ export default class TranscriptionSettings extends React.PureComponent {
     /></div>
 
   sortedContractors = () => {
-    const group = this.props.contractors.sort((a, b) => {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
+    const group = this.props.contractors.sort((aString, bString) => {
+      const nameA = aString.name.toUpperCase();
+      const nameB = bString.name.toUpperCase();
 
       if (nameA < nameB) {
         return -1;
-      } if (nameA > nameB) {
+      }
+
+      if (nameA > nameB) {
         return 1;
       }
 
       return 0;
     });
 
-    return group
+    return group;
   }
 
   mainContent = () => {
@@ -133,7 +137,7 @@ export default class TranscriptionSettings extends React.PureComponent {
       return (
         <React.Fragment>
           <div {...userListItemStyle}>
-            <div>
+            <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
                 <h2>{contractor.name}<EditContractorLink /></h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
@@ -141,13 +145,12 @@ export default class TranscriptionSettings extends React.PureComponent {
                 <li {...contactAlign}>{contractor.phone}</li>
                 <li {...contactAlign}>{contractor.email}</li>
                 <span>
-                  <li><strong>{`Hearings sent to `}{contractor.name}{` this week: `}</strong>{`0 of `}{contractor.current_goal}<EditHearingsSentLink /></li>
+                  <li><strong>{'Hearings sent to '}{contractor.name}{' this week: '}</strong>{'0 of '}{contractor.current_goal}<EditHearingsSentLink /></li>
                 </span>
               </ul>
             </div>
             <span {...toggleStyle}>
-              <h3>{`Temporarily stop`}</h3>
-              <h3>{`work assignment`}</h3>
+              <h3>Temporarily stop<br /> work assignment</h3>
               <ToggleSwitch />
             </span>
           </div>
@@ -165,22 +168,22 @@ export default class TranscriptionSettings extends React.PureComponent {
             <h2>
               {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
-            <span {...contractorButtonStyle}>
+            <span {...contractorButtonStyle} className="cf-push-right">
               {this.removeContractorButton()}
               {this.addContractorButton()}
             </span>
           </div>
         </div>
         <div>
-        { listOfContractors.length > 0 ? (
-          <ul>{listOfContractors}</ul>
-        ) : (
-          <>
-            <p className="no-results-found-styling">No contractors found</p>
-          </>
-        )
-        }
-      </div>
+          { listOfContractors.length > 0 ? (
+            <div>{listOfContractors}</div>
+          ) : (
+            <>
+              <p className="no-results-found-styling">No contractors found</p>
+            </>
+          )
+          }
+        </div>
       </React.Fragment>
     );
   }
@@ -197,5 +200,5 @@ export default class TranscriptionSettings extends React.PureComponent {
 }
 
 TranscriptionSettings.propTypes = {
-
+  contractors: PropTypes.array,
 };
