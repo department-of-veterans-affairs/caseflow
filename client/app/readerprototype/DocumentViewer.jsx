@@ -77,8 +77,6 @@ const DocumentViewer = (props) => {
             pageCount={getPageCount()}
           />
         </div>
-        <div className="cf-sidebar-wrapper">
-        </div>
       </div>
     </div>
   );
