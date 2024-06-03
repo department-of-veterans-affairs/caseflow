@@ -710,7 +710,6 @@ ActiveRecord::Schema.define(version: 2024_05_23_204158) do
   end
 
   create_table "correspondences", force: :cascade do |t|
-    t.bigint "assigned_by_id", comment: "Foreign key to users table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.boolean "nod", default: false, null: false, comment: "NOD (Notice of Disagreement)"
@@ -719,7 +718,6 @@ ActiveRecord::Schema.define(version: 2024_05_23_204158) do
     t.uuid "uuid", comment: "Unique identifier"
     t.datetime "va_date_of_receipt", comment: "Date package delivered"
     t.bigint "veteran_id", comment: "Foreign key to veterans table"
-    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
   end
@@ -2403,8 +2401,6 @@ ActiveRecord::Schema.define(version: 2024_05_23_204158) do
   add_foreign_key "correspondence_relations", "correspondences"
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences", "correspondence_types"
-  add_foreign_key "correspondences", "users", column: "assigned_by_id"
-  add_foreign_key "correspondences", "users", column: "updated_by_id"
   add_foreign_key "correspondences", "veterans"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
