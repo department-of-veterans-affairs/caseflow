@@ -4,6 +4,8 @@ class ReviewPackageTask < CorrespondenceTask
   class << self
     def create_from_params(params, user)
       parent_task = ReviewPackageTask.find(params[:parent_id])
+      # verify the user can create correspondence tasks
+      verify_correspondence_access(user)
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       params = modify_params_for_create(params)

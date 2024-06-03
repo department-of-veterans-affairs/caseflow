@@ -7,8 +7,11 @@
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
+  attr_reader :unassignable_reason
+
   def initialize(current_user)
     self.current_user = current_user
+    self.unassignable_reason = ""
   end
 
   def assignable_users_exist?
@@ -18,52 +21,77 @@ class AutoAssignableUserFinder
   end
 
   def get_first_assignable_user(correspondence:)
-    run_auto_assign_algorithm(correspondence)
+    run_auto_assign_algorithm(correspondence, assignable_users)
+  end
+
+  def can_user_work_this_correspondence?(user:, correspondence:)
+    return false if user_is_at_max_capacity?(user)
+
+    assignable = user_to_assignable_user(user)
+
+    run_auto_assign_algorithm(correspondence, [assignable]).present?
   end
 
   private
 
   attr_accessor :current_user
+  attr_writer :unassignable_reason
 
-  def run_auto_assign_algorithm(correspondence)
-    assignable_users.each do |user|
-      next if correspondence.nod && !user.nod?
+  def run_auto_assign_algorithm(correspondence, users)
+    users.each do |user|
+      if correspondence.nod && !user.nod?
+        self.unassignable_reason = "NOD permission is currently disabled for this user."
+        next
+      end
 
       user_obj = user.user_obj
 
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
+      else
+        self.unassignable_reason = "User does not meet the sensitivity level required."
       end
     end
 
     nil
   end
 
+  def user_is_at_max_capacity?(user)
+    if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
+      self.unassignable_reason = "Queue volume has reached maximum capacity for this user."
+      true
+    else
+      false
+    end
+  end
+
   def assignable_users
     users = []
 
     find_users.each do |user|
-      num_assigned = num_assigned_user_tasks(user)
+      next if user_is_at_max_capacity?(user)
 
-      next if num_assigned >= CorrespondenceAutoAssignmentLever.max_capacity
-
-      nod_eligible = permission_checker.can?(
-        permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
-        organization: InboundOpsTeam.singleton,
-        user: user
-      )
-
-      assignable = AssignableUser.new(
-        user_obj: user,
-        last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
-        num_assigned: num_assigned,
-        nod?: nod_eligible
-      )
+      assignable = user_to_assignable_user(user)
 
       users.push(assignable)
     end
 
     sorted_assignable_users(users)
+  end
+
+  def user_to_assignable_user(user)
+    nod_eligible = permission_checker.can?(
+      permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
+      organization: InboundOpsTeam.singleton,
+      user: user
+    )
+
+    AssignableUser.new(
+      user_obj: user,
+      last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
+      num_assigned: num_assigned_user_tasks(user),
+      nod?: nod_eligible
+    )
   end
 
   # :reek:UncommunicativeVariableName

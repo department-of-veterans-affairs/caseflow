@@ -118,7 +118,7 @@ export const ReviewForm = (props) => {
   };
 
   const vaDORReadOnly = () => {
-    if (props.userIsCorrespondenceSuperuser || props.userIsCorrespondenceSupervisor) {
+    if (props.isInboundOpsSuperuser || props.userIsInboundOpsSupervisor) {
       return false;
     }
 
@@ -368,8 +368,8 @@ ReviewForm.propTypes = {
   handleReview: PropTypes.func,
   errorMessage: PropTypes.any,
   isReadOnly: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool,
-  userIsCorrespondenceSupervisor: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   correspondence: PropTypes.object,
   setCorrTypeSelected: PropTypes.bool
 };

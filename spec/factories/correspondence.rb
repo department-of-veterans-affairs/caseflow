@@ -10,7 +10,6 @@ FactoryBot.define do
     va_date_of_receipt { Time.zone.yesterday }
     notes { "" }
     nod { false }
-    assigned_by factory: :user
     correspondence_type
     veteran
     package_document_type
@@ -27,7 +26,7 @@ FactoryBot.define do
 
     trait :with_correspondence_intake_task do
       transient do
-        assigned_to { User.first }
+        assigned_to { InboundOpsTeam.singleton.users.first }
       end
 
       after(:create) do |correspondence, evaluator|

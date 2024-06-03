@@ -72,7 +72,7 @@ const ReassignPackageModal = (props) => {
         className="cf-margin-left-2rem img"
         label="Assign to person"
         onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
-        options={buildMailUserData(props.mailTeamUsers)}
+        options={buildMailUserData(props.inboundOpsTeamUsers)}
       />
     </div>
   );
@@ -127,7 +127,7 @@ const ReassignPackageModal = (props) => {
 ReassignPackageModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   setModalState: PropTypes.func,
   correspondence_id: PropTypes.number,
   taskInstructions: PropTypes.array,

@@ -11,6 +11,11 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
 
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
+  let!(:package_document_type) do
+    PackageDocumentType.find_or_create_by!(id: 1) do |pdt|
+      pdt.name = "Some Document Type"
+    end
+  end
 
   before do
     Fakes::Initializer.load!
@@ -24,7 +29,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #review_package" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :review_package, params: { correspondence_uuid: correspondence.uuid }
     end
@@ -36,12 +41,12 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "PUT #update_cmp" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       put :update_cmp, params: {
         correspondence_uuid: correspondence.uuid,
         VADORDate: Time.zone.now,
-        packageDocument: { value: "1" }
+        packageDocument: { value: package_document_type.id.to_s }
       }
     end
 
@@ -52,7 +57,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #package_documents" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       Seeds::PackageDocumentTypes.new.seed!
       get :package_documents
@@ -81,7 +86,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
 
   describe "GET #show" do
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :show, params: { correspondence_uuid: correspondence.uuid }
     end
@@ -126,7 +131,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
   describe "PATCH #update" do
     let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       correspondence.update(veteran: veteran)
       patch :update, params: {
@@ -141,7 +146,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(veteran.reload.file_number).to eq(new_file_number)
       expect(correspondence.reload.notes).to eq("Updated notes")
       expect(correspondence.reload.correspondence_type_id).to eq(correspondence_type.id)
-      expect(correspondence.reload.updated_by_id).to eq(current_user.id)
     end
 
     it "returns an error message if something goes wrong" do
@@ -198,7 +202,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
 
     before do
-      MailTeam.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       allow(ExternalApi::ClaimEvidenceService).to receive(:document_types).and_return(document_types_response)
     end

@@ -252,8 +252,8 @@ export const CorrespondenceReviewPackage = (props) => {
             packageActionModal={packageActionModal}
             isReadOnly={isReadOnly}
             isReassignPackage={isReassignPackage}
-            mailTeamUsers={props.mailTeamUsers}
-            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
+            inboundOpsTeamUsers={props.inboundOpsTeamUsers}
+            userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
 
@@ -285,8 +285,8 @@ export const CorrespondenceReviewPackage = (props) => {
               setCorrTypeSelected
             }}
             {...props}
-            userIsCorrespondenceSupervisor={props.userIsCorrespondenceSupervisor}
-            userIsCorrespondenceSuperuser={props.userIsCorrespondenceSuperuser}
+            userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
+            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <CmpDocuments
             documents={props.correspondenceDocuments}
@@ -330,17 +330,16 @@ export const CorrespondenceReviewPackage = (props) => {
 
 CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
-  mailTeamUsers: PropTypes.array,
+  inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
-  userIsCorrespondenceSupervisor: PropTypes.bool,
-  userIsCorrespondenceSuperuser: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   isInboundOpsSuperuser: PropTypes.bool,
-  createRecordIsReadOnly: PropTypes.string
+  createRecordIsReadOnly: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

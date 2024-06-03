@@ -13,6 +13,10 @@ class OrganizationUserPermissionChecker
     true
   end
 
+  # Checks if a user possesses the permission and has the permitted flag enabled
+  # permission_name - a string pulled off a OrganizationPermission.permission attribute
+  # organization - an organization object
+  # user - an OrganizationUser object
   def can?(permission_name:, organization:, user:)
     org_permission = organization_permission(organization, permission_name)
     return false if org_permission.blank?

@@ -12,11 +12,10 @@ module CorrespondenceTaskHelpers
     review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
   end
 
-  def create_efolderupload_failed_task(correspondence, parent, user:)
+  def create_efolderupload_failed_task(correspondence, parent)
     correspondence.update!(
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
-      notes: "ABCDEFG".split("").shuffle.join,
-      updated_by_id: user.id
+      notes: "ABCDEFG".split("").shuffle.join
     )
 
     parent.update!(status: Constants.TASK_STATUSES.on_hold)
