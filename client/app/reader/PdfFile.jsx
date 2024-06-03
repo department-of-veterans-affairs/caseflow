@@ -28,7 +28,7 @@ import networkUtil from '../util/NetworkUtil';
 import * as PDFJS from 'pdfjs-dist';
 // import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 // PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+// PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
