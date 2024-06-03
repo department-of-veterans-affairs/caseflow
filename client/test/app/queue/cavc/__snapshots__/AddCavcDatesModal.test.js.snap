@@ -578,6 +578,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                       className="cf-modal-controls"
                     >
                       <Button
+                        aria-label="Cancel"
                         classNames={
                           Array [
                             "usa-button",
@@ -606,6 +607,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                         </span>
                       </Button>
                       <Button
+                        aria-label="Submit"
                         classNames={
                           Array [
                             "usa-button",
@@ -1243,6 +1245,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                       className="cf-modal-controls"
                     >
                       <Button
+                        aria-label="Cancel"
                         classNames={
                           Array [
                             "usa-button",
@@ -1271,6 +1274,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                         </span>
                       </Button>
                       <Button
+                        aria-label="Submit"
                         classNames={
                           Array [
                             "usa-button",
