@@ -39,8 +39,7 @@ class CorrespondenceDocument < CaseflowRecord
     documents = correspondence.correspondence_documents
     nod = documents.any? { |doc| Caseflow::DocumentTypes::TYPES[doc["vbms_document_type_id"]].include?("10182") }
     correspondence.update!(
-      nod: nod,
-      updated_by_id: RequestStore.store[:current_user].id
+      nod: nod
     )
   end
 end
