@@ -28,24 +28,17 @@ class IssueModificationRequest < CaseflowRecord
     withdrawal: "withdrawal"
   }
 
-  class ErrorCreatingNewRequest < StandardError
-    def initialize
-      super(COPY::ERROR_CREATING_NEW_REQUEST)
-    end
-  end
-
-  class ErrorModifyingExistingRequest < StandardError
-    def initialize
-      super(COPY::ERROR_MODIFYING_EXISTING_REQUEST)
-    end
-  end
-
   def serialize
     Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def self.create_from_params!(attributes, review, user)
-    fail ErrorCreatingNewRequest unless attributes[:status].casecmp("assigned").zero?
+    unless attributes[:status].casecmp("assigned").zero?
+      fail(
+        Caseflow::Error::ErrorCreatingNewRequest,
+        message: COPY::ERROR_CREATING_NEW_REQUEST
+      )
+    end
 
     create!(
       decision_review: review,
@@ -64,7 +57,10 @@ class IssueModificationRequest < CaseflowRecord
 
   def edit_from_params!(attributes, current_user)
     unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
-      fail ErrorModifyingExistingRequest
+      fail(
+        Caseflow::Error::ErrorModifyingExistingRequest,
+        message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
+      )
     end
 
     update!(
@@ -78,7 +74,10 @@ class IssueModificationRequest < CaseflowRecord
 
   def cancel_from_params!(attributes, current_user)
     unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
-      fail ErrorModifyingExistingRequest
+      fail(
+        Caseflow::Error::ErrorModifyingExistingRequest,
+        message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
+      )
     end
 
     update!(status: "cancelled")
@@ -87,8 +86,11 @@ class IssueModificationRequest < CaseflowRecord
   private
 
   def open_issue_modification_request
-    if assigned? && !!request_issue && request_issue.issue_modification_requests.any?(&:assigned?)
-      errors.add("Cannot exceed more than one issue modification request at a time")
+    if request_issue.issue_modification_requests.where.not(id: id).where(status: "assigned").any?
+      fail(
+        Caseflow::Error::ErrorOpenModifyingExistingRequest,
+        message: COPY::ERROR_OPEN_MODIFICATION_EXISTING_REQUEST
+      )
     end
   end
 

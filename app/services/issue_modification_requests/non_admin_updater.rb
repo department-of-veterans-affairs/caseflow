@@ -17,9 +17,9 @@ class IssueModificationRequests::NonAdminUpdater
   def process!
     return false if !process_modification?
 
-    new_modifications_process!(issue_modifications_data[:new]) if issue_modifications_data[:new].any?
-    edited_modifications_process!(issue_modifications_data[:edited]) if issue_modifications_data[:edited].any?
-    cancelled_modifications_process!(issue_modifications_data[:cancelled]) if issue_modifications_data[:cancelled].any?
+    new_modifications_process!(issue_modifications_data[:new])
+    edited_modifications_process!(issue_modifications_data[:edited])
+    cancelled_modifications_process!(issue_modifications_data[:cancelled])
   end
 
   private
