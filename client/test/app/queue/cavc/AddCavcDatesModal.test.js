@@ -12,6 +12,7 @@ import { screen } from '@testing-library/react';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/queue/reducers';
 
+
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
 
@@ -34,10 +35,7 @@ describe('AddCavcDatesModal', () => {
         <MemoryRouter>
           <AddCavcDatesModal appealId={id} />
         </MemoryRouter>
-      </Provider>,
-      {
-        wrappingComponent: queueWrapper,
-      }
+      </Provider>
     );
   };
 
