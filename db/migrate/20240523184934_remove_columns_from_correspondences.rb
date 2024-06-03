@@ -1,4 +1,4 @@
-class RemoveColumnsFromCorrespondences < ActiveRecord::Migration[6.0]
+class RemoveColumnsFromCorrespondences < Caseflow::Migration
   def change
     safety_assured do
       remove_column :correspondences, :portal_entry_date, :datetime
