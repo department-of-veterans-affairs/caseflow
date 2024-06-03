@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as pdfjs from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-import { css } from 'glamor';
 import _ from 'lodash';
 import CorrespondencePdfToolBar from './CorrespondencePdfToolBar';
 import ApiUtil from '../../../util/ApiUtil';
@@ -114,15 +113,6 @@ const CorrespondencePdfUI = (props) => {
   const ROTATION_INCREMENTS = 90;
   const COMPLETE_ROTATION = 360;
 
-  const pdfWrapper = css({
-    '@media(max-width: 920px)': {
-      width: 'unset',
-      right: '250px' },
-    '@media(min-width: 1240px )': {
-      width: 'unset',
-      right: '380px' }
-  });
-
   // ////////////// //
   // PDF Functions  //
   // ////////////// //
@@ -231,7 +221,7 @@ const CorrespondencePdfUI = (props) => {
   }
 
   return (
-    <div className="cf-pdf-preview-container" {...pdfWrapper}>
+    <div className="cf-pdf-preview-container pdf-wrapper">
       <CorrespondencePdfToolBar
         doc={mappedMockDocumentData[selectedId]}
         documentPathBase={documentPathBase}

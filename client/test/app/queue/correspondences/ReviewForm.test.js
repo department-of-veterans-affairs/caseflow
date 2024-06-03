@@ -26,6 +26,8 @@ describe('ReviewForm', () => {
   });
 
   it('renders the component', () => {
+     const mockFunction = jest.fn();
+    props.setCorrTypeSelected = mockFunction;
     render(
       <Provider store={store}>
         <ReviewForm {...props} />;
@@ -40,6 +42,9 @@ describe('ReviewForm', () => {
   });
 
   it('check if button is disabled', () => {
+    const mockFunction = jest.fn();
+    props.setCorrTypeSelected = mockFunction;
+
     render(
       <Provider store={store}>
         <ReviewForm {...props} />
@@ -53,8 +58,10 @@ describe('ReviewForm', () => {
 
   it('check if button is enable', () => {
     const mockFunction = jest.fn();
-
+    props.setCorrTypeSelected = mockFunction;
     props.setEditableData = mockFunction;
+    props.setIsReturnToQueue = mockFunction;
+
     render(
       <Provider store={store}>
         <ReviewForm {...props} />
@@ -64,7 +71,7 @@ describe('ReviewForm', () => {
     const inputNode = screen.getByRole('textbox', { name: 'veteran-file-number-input' });
 
     fireEvent.change(inputNode, { target: { value: '12345678' } });
-    expect(mockFunction).toHaveBeenCalledTimes(1);
+    expect(mockFunction).toHaveBeenCalledTimes(6);
   });
 
 });

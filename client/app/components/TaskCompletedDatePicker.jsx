@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
-import { css } from 'glamor';
 
 const dateDropdownMap = [
   { value: 0, label: 'Between these dates' },
@@ -37,59 +36,13 @@ const TaskCompletedDatePicker = (props) => {
       return (
         errors.map((error, index) =>
           (errType === error.key) &&
-            <p id={`${errType}Err${index}`} key={index}
-              style={{ color: 'red', fontSize: '13px', fontWeight: '900', marginBottom: '0px' }}>
+            <p id={`${errType}Err${index}`} key={index} className="error-msg">
               {error.message}
             </p>
         )
       );
     }
   };
-
-  const styles = {
-    optSelect: css({
-      '.receiptDate': {
-      },
-      '& .css-yk16xz-control': {
-        borderRadius: '0px'
-      },
-      '& .css-1pahdxg-control': {
-        borderColor: 'hsl(0, 0%, 100%)',
-        boxShadow: '0 0 0 1px #5B616B !important',
-        borderRadius: '0px !important',
-        ':hover': {
-          borderColor: 'hsl(0, 0%, 80%)',
-        }
-      }
-    })
-  };
-
-  const selectContainerStyles = css({
-    '& .data-css-1co2jut': {
-      margin: '0 5% 0 5%'
-    },
-    '& .cf-form-textinput.usa-input-error': {
-      borderLeft: '4px solid #cd2026',
-      marginTop: '0px',
-      paddingBottom: '0px',
-      paddingLeft: '0.5rem',
-      paddingTop: '0px',
-      position: 'relative',
-      right: '2px'
-    },
-    '& .usa-input-error input': {
-      width: 'inherit'
-    },
-    '& .cf-form-textinput': {
-      paddingTop: '10px !important',
-      marginBottom: 0,
-      '& .input-container': {
-        '& input': {
-          height: '37.5px'
-        }
-      }
-    }
-  });
 
   const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
   const isApplyFilterButtonDisabled =
@@ -101,7 +54,7 @@ const TaskCompletedDatePicker = (props) => {
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-selectors-margin">
         <DateSelector
           onChange={handleDateChange}
           label="From"
@@ -114,7 +67,7 @@ const TaskCompletedDatePicker = (props) => {
           errorMessage={errorMessagesNode(dateErrorsTo, 'toDate')} />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
-      <div style={{ margin: '0 5%' }} >
+      <div className="date-selectors-margin">
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -123,7 +76,7 @@ const TaskCompletedDatePicker = (props) => {
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-selectors-margin">
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -132,7 +85,7 @@ const TaskCompletedDatePicker = (props) => {
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
-      <div style={{ margin: '0 5%' }}>
+      <div className="date-selectors-margin">
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
@@ -145,23 +98,19 @@ const TaskCompletedDatePicker = (props) => {
     }
   };
 
-  return <div id="dropdown" {...selectContainerStyles}>
-    <div style={{ marginLeft: '5%', marginRight: '5%', marginTop: '2.9%' }}>
+  return <div id="dropdown" className="task-completed-date-picker-container">
+    <div className="react-select-dropdown-div">
       <ReactSelectDropdown
-        className = {`receiptDate ${styles.optSelect}`}
+        className="receipt-date opt-select"
         label="Date filter parameters"
         options={dateDropdownMap}
         onChangeMethod={props.onChangeMethod} />
     </div>
 
-    <div style={{ width: '100%', margin: 'auto', paddingBottom: '12.7%' }}>
+    <div className="date-picker-margin">
       {getDatePickerElements()}
     </div>
-    <div style={{ display: 'flex',
-      padding: '16px 10px 24px 0',
-      justifyContent: 'right',
-      width: '190px',
-      borderTop: '1px solid #d6d7d9' }}>
+    <div className="apply-filter-div">
       <Button onClick={handleApplyFilter} disabled={isApplyFilterButtonDisabled}>Apply filter</Button>
     </div>
   </div>;
