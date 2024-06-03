@@ -579,12 +579,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     if case_affinity_days_lever_value_is_selected(CaseDistributionLever.cavc_aod_affinity_days)
       # {Need to check for affinity_start_date on AMA DB is <= CaseDistributionLever.cavc_aod_affinity_days.days.ago}
       <<-SQL
-      where (PREV_DECIDING_JUDGE = ? and AOD = '1' and BFAC = '7' )
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} and AOD = '1' and BFAC = '7' )
       SQL
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       <<-SQL
-      where (PREV_DECIDING_JUDGE = ? and AOD = '1' and BFAC = '7')
+      where (PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} and AOD = '1' and BFAC = '7')
       SQL
     end
   end
@@ -595,7 +595,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
 
-  def self.ineligible_judges_sattyid_cache
+  def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
        !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
       list = Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
@@ -612,11 +612,22 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       vljs_strings = split_lists.flat_map do |k, v|
         base = "(#{v.join(', ')})"
-        base += " or VLJ in " unless k == split_lists.keys.last
+        if prev_deciding_judge
+          base += " or PREV_DECIDING_JUDGE in " unless k == split_lists.keys.last
+        else
+          base += " or VLJ in " unless k == split_lists.keys.last
+        end
         base
       end
 
-      "VLJ in #{vljs_strings.join}"
+      if prev_deciding_judge
+        "PREV_DECIDING_JUDGE in #{vljs_strings.join}"
+      else
+        "VLJ in #{vljs_strings.join}"
+      end
+
+    elsif prev_deciding_judge
+      "PREV_DECIDING_JUDGE = 'false'"
     else
       "VLJ = 'false'"
     end
