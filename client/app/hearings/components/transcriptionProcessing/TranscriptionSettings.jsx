@@ -229,7 +229,7 @@ export default class TranscriptionSettings extends React.PureComponent {
             </div>
             <span {...toggleStyle}>
               <h3>Temporarily stop<br /> work assignment</h3>
-              <ToggleSwitch selected={false} />
+              <ToggleSwitch selected={contractor.is_available_for_work} />
             </span>
           </div>
         </React.Fragment>
