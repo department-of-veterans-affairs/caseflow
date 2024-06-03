@@ -325,32 +325,32 @@ module Seeds
     def create_org_queue_users
       nca = BusinessLine.find_or_create_by!(name: "National Cemetery Administration", url: "nca")
       %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
-        u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
+        u = User.find_or_create_by(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
         nca.add_user(u)
       end
 
       %w[Kun Casey Ariel Naomi Kelly].each do |name|
-        u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{name}", full_name: "#{name} TranslationUser Cullen")
+        u = User.find_or_create_by(station_id: 101, css_id: "ORG_QUEUE_USER_#{name}", full_name: "#{name} TranslationUser Cullen")
         Translation.singleton.add_user(u)
       end
     end
 
     def create_qr_user
-      qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Yarden QualityReviewer Jordan")
+      qr_user = User.find_or_create_by(station_id: 101, css_id: "QR_USER", full_name: "Yarden QualityReviewer Jordan")
       QualityReview.singleton.add_user(qr_user)
     end
 
     def create_aod_user_and_tasks
-      u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "Shiloh AODUser Villar")
+      u = User.find_or_create_by(station_id: 101, css_id: "AOD_USER", full_name: "Shiloh AODUser Villar")
       AodTeam.singleton.add_user(u)
 
       root_task = create(:root_task)
-      mail_task = ::AodMotionMailTask.create!(
+      mail_task = ::AodMotionMailTask.find_or_create_by(
         appeal: root_task.appeal,
         parent_id: root_task.id,
         assigned_to: MailTeam.singleton
       )
-      ::AodMotionMailTask.create!(
+      ::AodMotionMailTask.find_or_create_by(
         appeal: root_task.appeal,
         parent_id: mail_task.id,
         assigned_to: AodTeam.singleton
@@ -358,26 +358,26 @@ module Seeds
     end
 
     def create_privacy_user
-      u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov")
+      u = User.find_or_create_by(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov")
       PrivacyTeam.singleton.add_user(u)
     end
 
     def create_lit_support_user
-      u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
+      u = User.find_or_create_by(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
       LitigationSupport.singleton.add_user(u)
     end
 
     def create_oai_team_user
-      u = User.create!(station_id: 101, css_id: "OAI_TEAM_USER", full_name: "Tywin OaiTeam Lannister")
+      u = User.find_or_create_by(station_id: 101, css_id: "OAI_TEAM_USER", full_name: "Tywin OaiTeam Lannister")
       OaiTeam.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, OaiTeam.singleton)
     end
 
     def create_occ_team_user
-      u = User.create!(station_id: 101, css_id: "OCC_TEAM_USER", full_name: "Jon OccTeam Snow")
+      u = User.find_or_create_by(station_id: 101, css_id: "OCC_TEAM_USER", full_name: "Jon OccTeam Snow")
       OccTeam.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, OccTeam.singleton)
-      u = User.create!(station_id: 101, css_id: "OCC_OAI_TEAM_USER", full_name: "Ned OccOaiTeam Stark")
+      u = User.find_or_create_by(station_id: 101, css_id: "OCC_OAI_TEAM_USER", full_name: "Ned OccOaiTeam Stark")
       OccTeam.singleton.add_user(u)
       OaiTeam.singleton.add_user(u)
     end
@@ -553,7 +553,7 @@ module Seeds
       ]
 
       users = users_info.map do |user_info|
-        User.create!(station_id: 101,
+        User.find_or_create_by(station_id: 101,
                      css_id: user_info[:css_id],
                      full_name: user_info[:full_name])
       end
@@ -564,12 +564,12 @@ module Seeds
     end
 
     def create_pulac_cerullo_user
-      u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN PulacCerulloUser SOSNA")
+      u = User.find_or_create_by(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN PulacCerulloUser SOSNA")
       PulacCerullo.singleton.add_user(u)
     end
 
     def create_mail_team_user
-      u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
+      u = User.find_or_create_by(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
       MailTeam.singleton.add_user(u)
     end
 
@@ -599,27 +599,27 @@ module Seeds
     end
 
     def create_case_search_only_user
-      User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
+      User.find_or_create_by(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
     end
 
     def create_split_appeals_test_users
-      ussc = User.create!(station_id: 101,
+      ussc = User.find_or_create_by(station_id: 101,
                           css_id: "SPLTAPPLSNOW",
                           full_name: "Jon SupervisorySeniorCouncilUser Snow",
                           roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussc)
-      ussc2 = User.create!(station_id: 101,
+      ussc2 = User.find_or_create_by(station_id: 101,
                            css_id: "SPLTAPPLTARGARYEN",
                            full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen",
                            roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussc2)
-      ussccr = User.create!(station_id: 101,
+      ussccr = User.find_or_create_by(station_id: 101,
                             css_id: "SPLTAPPLLANNISTER",
                             full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister",
                             roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr)
       CaseReview.singleton.add_user(ussccr)
-      ussccr2 = User.create!(station_id: 101,
+      ussccr2 = User.find_or_create_by(station_id: 101,
                              css_id: "SPLTAPPLSTARK",
                              full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark",
                              roles: ["Hearing Prep"])
@@ -640,20 +640,20 @@ module Seeds
     end
 
     def create_cda_control_group_users
-      bvaebeckser = User.create!(station_id: 101,
+      bvaebeckser = User.find_or_create_by(station_id: 101,
                                   css_id: "BVAEBECKSER",
                                   full_name: "Elizabeth Judge_VaseToAssign Becker",
                                   roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(bvaebeckser)
 
-      leo = User.create!(station_id: 101,
+      leo = User.find_or_create_by(station_id: 101,
                           css_id: "CDAADMINLEO",
                           full_name: "Leonardo CDAC_Admin Turtur",
                           roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(leo)
       OrganizationsUser.make_user_admin(leo, CDAControlGroup.singleton)
 
-      casey = User.create!(station_id: 101,
+      casey = User.find_or_create_by(station_id: 101,
                             css_id: "CDAUSERCASEY",
                             full_name: "Casey CDAC_User Jones",
                             roles: ["Mail Intake"])
@@ -663,7 +663,7 @@ module Seeds
     end
 
     def create_qa_admin_for_cda_control_group
-      qa_admin = User.create!(station_id: 101,
+      qa_admin = User.find_or_create_by(station_id: 101,
                             css_id: "QAACDPlus",
                             full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
                             roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
