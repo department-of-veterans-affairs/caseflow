@@ -9,10 +9,12 @@ const removalSchema = yup.object({
   requestReason: yup.string().required()
 });
 
-const RequestIssueRemovalContent = ({ currentIssue }) => {
+const RequestIssueRemovalContent = ({ currentIssue, pendingIssueModificationRequest }) => {
+  const originalIssue = pendingIssueModificationRequest?.requestIssue || currentIssue;
+
   return (
     <div>
-      <CurrentIssue currentIssue={currentIssue} />
+      <CurrentIssue currentIssue={originalIssue} />
 
       <RequestReason label="removal" />
     </div>
@@ -40,7 +42,8 @@ export const RequestIssueRemovalModal = (props) => {
 
 RequestIssueRemovalModal.propTypes = {
   onCancel: PropTypes.func,
-  currentIssue: PropTypes.object
+  currentIssue: PropTypes.object,
+  pendingIssueModificationRequest: PropTypes.object
 };
 
 export default RequestIssueRemovalModal;

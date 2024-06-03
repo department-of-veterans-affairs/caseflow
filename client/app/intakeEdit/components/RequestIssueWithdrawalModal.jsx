@@ -13,13 +13,15 @@ const withdrawalSchema = yup.object({
     max(new Date(), 'We cannot process your request. Please select a date prior to today\'s date.'),
 });
 
-const RequestIssueWithdrawalContent = ({ currentIssue }) => {
+const RequestIssueWithdrawalContent = ({ currentIssue, pendingIssueModificationRequest }) => {
+
+  const originalIssue = pendingIssueModificationRequest?.requestIssue || currentIssue;
 
   const { register, errors } = useFormContext();
 
   return (
     <div>
-      <CurrentIssue currentIssue={currentIssue} />
+      <CurrentIssue currentIssue={originalIssue} />
 
       <DateSelector
         label="Request date for withdrawal"
@@ -54,7 +56,8 @@ export const RequestIssueWithdrawalModal = (props) => {
 
 RequestIssueWithdrawalModal.propTypes = {
   onCancel: PropTypes.func,
-  currentIssue: PropTypes.object
+  currentIssue: PropTypes.object,
+  pendingIssueModificationRequest: PropTypes.object
 };
 
 export default RequestIssueWithdrawalModal;
