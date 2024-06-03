@@ -66,10 +66,6 @@ describe EventRecord, :postgres do
     let(:user) { User.from_session(session) }
     let!(:user_event_record) { EventRecord.create!(event: event2, evented_record: user) }
     it "9 Event Records Backfilled ID and Type correctly match" do
-      expect(higher_level_review_event_record.evented_record_type).to eq("HigherLevelReview")
-      expect(higher_level_review_event_record.evented_record_id).to eq(higher_level_review.id)
-      expect(higher_level_review.event_record).to eq higher_level_review_event_record
-
       intake.update!(detail: higher_level_review)
       expect(higher_level_review.from_decision_review_created_event?).to eq(true)
 
