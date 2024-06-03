@@ -71,6 +71,8 @@ describe EventRecord, :postgres do
     it "10 Event Records Backfilled ID and Type correctly match" do
 
       intake.update!(detail: higher_level_review)
+      expect(higher_level_review.from_decision_review_created_event?).to eq(true)
+
       expect(end_product_establishment_event_record.evented_record_type).to eq("EndProductEstablishment")
       expect(end_product_establishment_event_record.evented_record_id).to eq(end_product_establishment.id)
       expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
