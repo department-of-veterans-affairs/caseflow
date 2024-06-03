@@ -20,20 +20,12 @@ const buttonStyle = css({
   paddingLeft: '2rem'
 });
 
-const contractorButtonStyle = css({
-  padding: '1rem 0 2rem 0',
-  display: 'inline-block',
-  margin: 0
-});
-
 const headerContainerStyling = css({
-  margin: '1.5rem 0 3rem 0',
-  padding: '0',
-  '& > *': {
+  padding: '4rem 0 2.5rem',
+  '& h2': {
     display: 'inline-block',
-    paddingRight: '15px',
     verticalAlign: 'middle',
-    margin: 0,
+    paddingTop: '0.5rem',
   }
 });
 
@@ -254,7 +246,7 @@ export default class TranscriptionSettings extends React.PureComponent {
             <h2>
               {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
-            <span {...contractorButtonStyle} className="cf-push-right">
+            <span className="cf-push-right">
               {this.removeContractorButton()}
               {this.addContractorButton()}
             </span>
