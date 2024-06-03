@@ -2,15 +2,18 @@
 /* eslint-disable max-len */
 import React from 'react';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-
 import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
-import PropTypes from 'prop-types';
 
+import Alert from '../../../components/Alert';
+import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
+import { RemoveContractorModal } from './RemoveContractorModal';
+import { AddEditContractorModal } from './AddEditContractorModal';
 
 const buttonStyle = css({
   float: 'left',
@@ -18,7 +21,9 @@ const buttonStyle = css({
 });
 
 const contractorButtonStyle = css({
-  paddingRight: '0'
+  padding: '1rem 0 2rem 0',
+  display: 'inline-block',
+  margin: 0
 });
 
 const headerContainerStyling = css({
@@ -55,34 +60,37 @@ const userListItemStyle = css({
   display: 'flex',
   flexWrap: 'wrap',
   borderTop: '.1rem solid #d6d7d9',
-  padding: '4rem 0 2rem'
+  padding: '4rem 0 2rem',
+  clear: 'both'
 });
 
 const contractorDetailStyle = css({
   flex: '1'
 });
 
+const alertStyle = css({
+  '& .usa-alert': {
+    paddingBottom: '2rem'
+  }
+});
+
 const EditContractorLink = () => (
-  <Button
-    linkStyling
-    // open modal onClick
-  >
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })} >
+  <Button linkStyling>
+    <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
       Edit Information
     </span>
-    <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
+    <span {...css({ position: 'absolute' })}>
+      <PencilIcon size={25} />
+    </span>
   </Button>
 );
 
 const EditHearingsSentLink = () => (
-  <Button
-    linkStyling
-    // open modal onClick
-  >
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })} >
-      Edit Total
+  <Button linkStyling>
+    <span {...css({ marginRight: '1px', marginLeft: '5px' })}>Edit Total</span>
+    <span {...css({ position: 'absolute' })}>
+      <PencilIcon size={25} />
     </span>
-    <span {...css({ position: 'absolute' })}><PencilIcon size={25} /></span>
   </Button>
 );
 
@@ -92,25 +100,108 @@ export default class TranscriptionSettings extends React.PureComponent {
 
     this.state = {
       loading: true,
-      contractors: props.contractors
+      contractors: props.contractors,
+      isRemoveModalOpen: false,
+      isAddEditOpen: false,
+      alert: {
+        title: '',
+        message: '',
+        type: '',
+      }
     };
   }
 
-  addContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_ADD}
-      id="Add-contractor"
-      classNames={['usa-button-primary']}
-      // on click add contractor modal opens
-    /></div>
+  toggleRemoveModal = () => {
+    this.setState((prevState) => ({
+      isRemoveModalOpen: !prevState.isRemoveModalOpen,
+    }));
+  };
 
-  removeContractorButton = () =>
-    <div {...buttonStyle}><Button
-      name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
-      id="Remove-contractor"
-      classNames={['usa-button-secondary']}
-      // on click contractor is removed
-    /></div>
+  handleRemoveContractor = (contractorId) => {
+    return new Promise((resolve, reject) => {
+      ApiUtil.delete(`/hearings/find_by_contractor/${contractorId}`).
+        then(() => {
+          this.setState(
+            {
+              isRemoveModalOpen: false,
+            },
+            () => {
+              this.getContractors();
+              this.confirmRemoveModal({
+                title: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_SUCCESS,
+                message: '',
+                type: 'success',
+              });
+              resolve();
+            }
+          );
+        }).
+        catch((error) => {
+          console.error(error);
+          this.setState(
+            {
+              alert: {
+                title: 'Error',
+                message: COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_REMOVAL_FAIL,
+                type: 'error',
+              },
+              isRemoveModalOpen: false,
+            },
+            () => {
+              reject(error);
+            }
+          );
+        });
+    });
+  };
+
+  confirmRemoveModal = (alert) => {
+    this.setState({ alert });
+    this.toggleRemoveModal();
+  };
+
+  getContractors = () => {
+    ApiUtil.get('/hearings/find_by_contractor').then((response) => {
+      this.setState({
+        contractors: response.body.transcription_contractors,
+        loading: false,
+      });
+    });
+  };
+
+  componentDidMount() {
+    // this.getContractors();
+  }
+
+  addContractorButton = () => (
+    <div {...buttonStyle}>
+      <Button
+        name={COPY.TRANSCRIPTION_SETTINGS_ADD}
+        id="Add-contractor"
+        classNames={['usa-button-primary']}
+        onClick={() => this.toggleAddEditModal()}
+      />
+    </div>
+  );
+
+  removeContractorButton = () => (
+    <div {...buttonStyle}>
+      <Button
+        name={COPY.TRANSCRIPTION_SETTINGS_REMOVE}
+        id="Remove-contractor"
+        classNames={['usa-button-secondary']}
+        onClick={() => this.toggleRemoveModal()}
+      />
+    </div>
+  );
+
+  confirmEditAddModal = (response) => {
+    this.setState({ alert: response.alert });
+    this.getContractors();
+    this.toggleAddEditModal();
+  };
+
+  toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
   sortedContractors = () => {
     const group = this.props.contractors.sort((aString, bString) => {
@@ -133,9 +224,8 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   mainContent = () => {
     const listOfContractors = this.sortedContractors().map((contractor) => {
-
       return (
-        <React.Fragment>
+        <React.Fragment key={contractor.id}>
           <div {...userListItemStyle}>
             <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
@@ -151,7 +241,7 @@ export default class TranscriptionSettings extends React.PureComponent {
             </div>
             <span {...toggleStyle}>
               <h3>Temporarily stop<br /> work assignment</h3>
-              <ToggleSwitch />
+              <ToggleSwitch selected={false} />
             </span>
           </div>
         </React.Fragment>
@@ -184,21 +274,47 @@ export default class TranscriptionSettings extends React.PureComponent {
           )
           }
         </div>
+        {this.state.isAddEditOpen && <AddEditContractorModal
+          onCancel={this.toggleAddEditModal}
+          onConfirm={this.confirmEditAddModal}
+          // transcriptionContractor={{ ... pass in actual contractor with ID to trigger edit mode }}
+        />}
+        {this.state.isRemoveModalOpen && (
+          <RemoveContractorModal
+            onCancel={this.toggleRemoveModal}
+            onConfirm={this.handleRemoveContractor}
+            contractors={this.state.contractors}
+            title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
+          />
+        )}
       </React.Fragment>
     );
-  }
+  };
 
-  render = () =>
-    <AppSegment filledBackground>
-      <div {...returnLinkStyle}>
-        <span><Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>&nbsp;</span>
-      </div>
-      <div>
-        {this.mainContent()}
-      </div>
-    </AppSegment>;
+  render = () => (
+    <>
+      {this.state.alert.title && (
+        <div {...alertStyle}>
+          <Alert
+            title={this.state.alert.title}
+            message={this.state.alert.message}
+            type={this.state.alert.type}
+          />
+        </div>
+      )}
+      <AppSegment filledBackground>
+        <div {...returnLinkStyle}>
+          <span>
+            <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
+            &nbsp;
+          </span>
+        </div>
+        <div>{this.mainContent()}</div>
+      </AppSegment>
+    </>
+  );
 }
 
 TranscriptionSettings.propTypes = {
-  contractors: PropTypes.array,
+  contractors: PropTypes.array.isRequired,
 };
