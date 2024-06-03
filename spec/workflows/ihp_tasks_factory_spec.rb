@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 describe IhpTasksFactory, :postgres do
   let(:appeal) { create(:appeal) }
@@ -54,7 +54,7 @@ describe IhpTasksFactory, :postgres do
         allow(vso_organization).to receive(:should_write_ihp?).with(appeal).and_return(false)
         allow(appeal).to receive(:representatives).and_return([vso_organization])
 
-        expect { subject }.not_to change { InformalHearingPresentationTask.count }
+        expect { subject }.not_to change(InformalHearingPresentationTask, :count)
       end
 
       it "does not create duplicate IHP tasks" do
@@ -63,7 +63,7 @@ describe IhpTasksFactory, :postgres do
         allow(vso_organization).to receive(:should_write_ihp?).with(appeal).and_return(true)
         allow(appeal).to receive(:representatives).and_return([vso_organization])
 
-        expect { subject }.not_to change { InformalHearingPresentationTask.count }
+        expect { subject }.not_to change(InformalHearingPresentationTask, :count)
         expect(InformalHearingPresentationTask.last).to eq(ihp_task)
       end
     end
