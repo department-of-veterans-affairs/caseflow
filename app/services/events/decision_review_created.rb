@@ -42,7 +42,7 @@ class Events::DecisionReviewCreated
           vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
-          decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
+          decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(parser: parser)
 
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
