@@ -106,7 +106,7 @@ module CorrespondenceControllerConcern
   end
 
   def correspondence_params
-    params.require(:correspondence).permit(:notes, :correspondence_type_id)
+    params.require(:correspondence).permit(:notes, :correspondence_type_id, :va_date_of_receipt)
   end
 
   def veteran_params

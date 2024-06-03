@@ -18,8 +18,6 @@ export const correspondenceData = {
   created_at: '2023-11-16 01:44:47.094786',
   notes: 'Some CMP notes here',
   package_document_type_id: 15,
-  portal_entry_date: '2023-11-16 01:44:47.080996',
-  source_type: 'Mail',
   updated_at: '2023-11-16 01:44:47.094786',
   uuid: 'f67702ec-65fb-4b1e-b7c7-d493f7add9e9',
   va_date_of_receipt: '2023-11-15 00:00:00',
@@ -29,7 +27,7 @@ export const correspondenceData = {
 export const packageDocumentTypeData = {
   id: 15,
   active: true,
-  name: '10182',
+  name: 'NOD',
 };
 
 export const correspondenceDocumentsData = [

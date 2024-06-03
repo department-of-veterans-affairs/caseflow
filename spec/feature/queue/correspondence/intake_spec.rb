@@ -258,7 +258,8 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_text("Cancel")
       end
       find_by_id("Add-autotext-button-id-0").click
-      expect(all("#Add-autotext-button-id-0").length).to eq 0
+      cancel_count = all("#button-Return-to-queue").length
+      expect(cancel_count).to eq 1
     end
 
     it "The user can close the modal with the x button located in the top right." do
@@ -266,9 +267,9 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
-      find_by_id("Add-autotext-button-id-close").click
-      cancel_count = all("#button-Cancel").length
-      expect(cancel_count).to eq 0
+      find(".cf-icon-close").click
+      cancel_count = all("#button-Return-to-queue").length
+      expect(cancel_count).to eq 1
     end
 
     it "Clears all selected options in modal" do
@@ -394,16 +395,16 @@ RSpec.feature("The Correspondence Intake page") do
       end
     end
 
-    it "successfully loads the in progress tab" do
-      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Correspondence in progress")
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Correspondence that is currently assigned to mail team users")
     end
 
     it "navigates to intake form from in-progress tab to step 3 and checks for failed to upload to the eFolder banner" \
        " from the Centralized Mail Portal, if it needs to be processed." do
-      visit "/queue/correspondence?tab=correspondence_in_progress"
-      find("tbody > tr:last-child > td:nth-child(1)").click
-      using_wait_time(20) do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
+      find("tbody > tr:last-child > td:nth-child(2)").click
+      using_wait_time(15) do
         click_on("button-continue")
       end
       click_on("button-continue")
@@ -413,7 +414,10 @@ RSpec.feature("The Correspondence Intake page") do
       intake_path = current_path
       click_on("button-Return-to-queue")
       page.all(".cf-form-radio-option")[1].click
-      click_on("Confirm")
+      click_on("Return-To-Queue-button-id-1")
+      using_wait_time(15) do
+        expect(page).to have_content("You have successfully saved the intake form")
+      end
       visit intake_path
       using_wait_time(30) do
         expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
