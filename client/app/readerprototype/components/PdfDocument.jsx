@@ -4,6 +4,11 @@ import { css } from 'glamor';
 
 
 import * as PDFJS from 'pdfjs-dist';
+// PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
+
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
 import ApiUtil from '../../util/ApiUtil';
 
 const renderPage = async (pdfPage) => {
