@@ -19,6 +19,10 @@ module Seeds
       @inbound_ops_team_user ||= User.find_by_css_id("INBOUND_OPS_TEAM_MAIL_INTAKE_USER")
     end
 
+    def inbound_ops_team_superuser
+      @inbound_ops_team_superuser ||= User.find_by_css_id("INBOUND_OPS_TEAM_SUPERUSER1")
+    end
+
     def mail_team_superuser
       @mail_team_superuser ||= User.find_by_css_id("AMBRISVACO")
     end
@@ -30,7 +34,7 @@ module Seeds
       return create_queue_correspondences(user, veteran) unless user.blank? && veteran.blank?
 
       create_queue_correspondences(inbound_ops_team_user)
-      create_queue_correspondences(mail_team_superuser)
+      create_queue_correspondences(inbound_ops_team_superuser)
     end
 
     private

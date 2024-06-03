@@ -81,7 +81,6 @@ class SeedDB
     call_and_log_seed_step Seeds::VhaChangeHistory
     call_and_log_seed_step Seeds::CorrespondenceAutoTexts
     call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
     call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
