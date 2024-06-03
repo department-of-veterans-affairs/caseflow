@@ -52,7 +52,7 @@ class ScheduleHearingColocatedTask < ColocatedTask
   end
 
   # Selects all judge tasks that are NOT QualityReviewJudgeTasks
-  def handle_judge_tasks
+  def handle_judge_tasks!
     judge_tasks = JudgeTask.open.where(appeal: appeal)
     non_quality_review_judge_tasks = judge_tasks.to_a.reject { |task| task.type == "JudgeQualityReviewTask" }
     # Converts array to active record association and runs cancel_task_and_child_subtasks
