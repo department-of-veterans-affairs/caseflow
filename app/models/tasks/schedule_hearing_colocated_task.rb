@@ -62,7 +62,7 @@ class ScheduleHearingColocatedTask < ColocatedTask
   def send_to_hearings_branch
     parent = DistributionTask.create!(appeal: appeal, parent: appeal.root_task)
     ScheduleHearingTask.create!(appeal: appeal, parent: parent)
-    handle_judge_tasks
+    handle_judge_tasks!
     DistributedCase.find_by(case_id: appeal.uuid)&.rename_for_redistribution!
   end
 end
