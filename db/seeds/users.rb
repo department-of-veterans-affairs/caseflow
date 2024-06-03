@@ -27,6 +27,7 @@ module Seeds
 
     def seed!
       create_users
+      create_singleton_organizations
     end
 
     private
@@ -80,6 +81,11 @@ module Seeds
       User.find_or_create_by(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
       User.find_or_create_by(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
+    end
+
+    def create_singleton_organizations
+      singletons = Organization.subclasses.filter { |s| s.public_methods.include? :singleton }
+      singletons.map(&:singleton)
     end
 
     def create_bvaebecker

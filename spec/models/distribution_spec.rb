@@ -153,6 +153,7 @@ describe Distribution, :all_dbs do
         algorithm: "proportions", sct_appeals: 0
       }
     end
+
     let(:result_stats) do
       {
         batch_size: 0,
