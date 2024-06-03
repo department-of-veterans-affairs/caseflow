@@ -22,10 +22,13 @@ class AppealsUpdatedSinceQuery
     claims_folder_searches
     job_notes
     nod_date_updates
+    notifications
     record_synced_by_job
     request_decision_issues
     request_issues_updates
     vbms_uploaded_documents
+    correspondence_appeals
+    correspondences
   ].freeze
 
   attr_reader :since_date

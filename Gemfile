@@ -66,6 +66,8 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rtf"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "a2ecb0bf7f3d3aa8fd1429bfd78aa00e7270b0c8"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -81,6 +83,7 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
@@ -152,3 +155,5 @@ end
 # rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+
+gem "rcredstash", "~> 1.1.0"

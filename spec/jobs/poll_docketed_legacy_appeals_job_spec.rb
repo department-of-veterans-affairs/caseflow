@@ -39,7 +39,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
              appeals_id: "12342",
              appeals_type: "LegacyAppeal",
              event_date: today,
-             event_type: "Appeal docketed",
+             event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
              notification_type: "Email",
              notified_at: today)
     }
