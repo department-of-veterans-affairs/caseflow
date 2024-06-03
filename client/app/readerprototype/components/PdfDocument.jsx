@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { css } from 'glamor';
+
 
 import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
