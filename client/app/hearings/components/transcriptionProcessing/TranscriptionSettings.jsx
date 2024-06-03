@@ -169,10 +169,6 @@ export default class TranscriptionSettings extends React.PureComponent {
     });
   };
 
-  componentDidMount() {
-    // this.getContractors();
-  }
-
   addContractorButton = () => (
     <div {...buttonStyle}>
       <Button
@@ -204,7 +200,7 @@ export default class TranscriptionSettings extends React.PureComponent {
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
   sortedContractors = () => {
-    const group = this.props.contractors.sort((aString, bString) => {
+    const group = this.state.contractors.sort((aString, bString) => {
       const nameA = aString.name.toUpperCase();
       const nameB = bString.name.toUpperCase();
 
