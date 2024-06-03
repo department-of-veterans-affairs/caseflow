@@ -18,7 +18,7 @@ const modificationSchema = yup.object({
 });
 
 const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificationRequest }) => {
-  const originalIssue = currentIssue || pendingIssueModificationRequest.requestIssue;
+  const originalIssue = pendingIssueModificationRequest?.requestIssue || currentIssue;
 
   return (
     <div>

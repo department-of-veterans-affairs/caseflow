@@ -701,7 +701,10 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+            // pendingIssueModificationRequest={pendingIssueModificationRequests[this.state.adminEditIndex]}
+            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
+              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
+            }
           />
         )}
 
@@ -711,7 +714,9 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
+              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
+            }
           />
         )}
 
@@ -721,7 +726,9 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
+              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
+            }
           />
         )}
 
@@ -729,7 +736,9 @@ class AddIssuesPage extends React.Component {
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
             addToPendingReviewSection={this.props.addToPendingReviewSection}
-            pendingIssueModificationRequest={this.props?.pendingIssueModificationRequests[this.state.adminEditIndex]}
+            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
+              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
+            }
           />
         )}
 
