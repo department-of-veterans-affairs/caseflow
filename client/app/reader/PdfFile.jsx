@@ -15,7 +15,7 @@ import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadErr
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-// import * as PDFJS from 'pdfjs-dist';
+import * as PDFJS from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
