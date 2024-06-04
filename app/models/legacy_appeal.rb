@@ -636,10 +636,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
                         FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
-    issues.any?(&:mst_status) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
+    issues.any?(&:mst_status) || special_issue_list&.military_sexual_trauma
   end
 
   def pact?
