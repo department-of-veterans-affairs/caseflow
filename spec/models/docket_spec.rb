@@ -8,6 +8,9 @@ describe Docket, :all_dbs do
       CaseDistributionLever.find_by(item: "ama_#{lever}_start_distribution_prior_to_goals")
         .update!(is_toggle_active: true)
     end
+
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :request_more_cases_minimum)
   end
 
   context "docket" do
