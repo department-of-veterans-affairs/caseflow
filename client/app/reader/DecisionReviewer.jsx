@@ -146,7 +146,6 @@ export class DecisionReviewer extends React.PureComponent {
       <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}
         documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
