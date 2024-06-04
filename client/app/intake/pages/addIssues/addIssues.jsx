@@ -571,7 +571,7 @@ class AddIssuesPage extends React.Component {
             issueSectionRow({
               ...issueSectionRowProps,
               fieldTitle: 'Requested issues',
-              disableIssueActions: { disableIssueActions }
+              disableIssueActions
             }),
           );
         } else if (key === 'withdrawnIssues') {

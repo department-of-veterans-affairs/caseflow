@@ -37,7 +37,7 @@ const RequestIssueWithdrawalContent = ({ currentIssue, pendingIssueModificationR
 
 RequestIssueWithdrawalContent.propTypes = {
   currentIssue: PropTypes.object,
-  RequestIssueWithdrawalContent
+  pendingIssueModificationRequest: PropTypes.object
 };
 
 export const RequestIssueWithdrawalModal = (props) => {
