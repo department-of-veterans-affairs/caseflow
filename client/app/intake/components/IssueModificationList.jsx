@@ -9,6 +9,7 @@ const IssueModificationList = (
   }
 ) => {
   const issues = issueModificationRequests.map((issueModificationRequest, id) => {
+
     return (
       <li key={id}>
         <IssueModificationRequest issueModificationRequest={issueModificationRequest} />
