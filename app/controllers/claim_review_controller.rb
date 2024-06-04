@@ -28,7 +28,9 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if request_issues_update.perform!
+    if issues_modification_request_updater.process!
+      render_success
+    elsif request_issues_update.perform!
       render_success
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -54,6 +56,14 @@ class ClaimReviewController < ApplicationController
 
   def source_type
     fail "Must override source_type"
+  end
+
+  def issues_modification_request_updater
+    @issues_modification_request_updater ||= IssueModificationRequests::NonAdminUpdater.new(
+      current_user: current_user,
+      review: claim_review,
+      issue_modifications_data: params[:issue_modification_requests]
+    )
   end
 
   def request_issues_update
@@ -133,7 +143,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully #{[added_issues, removed_issues, withdrawn_issues].compact.to_sentence}."
   end
 
   def vha_edited_decision_date_message
