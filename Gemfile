@@ -9,7 +9,7 @@ gem "activerecord-import"
 gem "acts_as_tree"
 
 # Necessary for Shoryuken
-gem "aws-sdk-sqs"
+gem "aws-sdk"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
