@@ -71,14 +71,14 @@ RSpec.feature("The Correspondence Cases page") do
     it "successfully loads the unassigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Correspondence owned by the Mail team are unassigned to an individual:")
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Assign", disabled: true)
       expect(page).to have_button("Auto assign correspondence")
     end
 
     it "Verify the mail team user batch assignment with Assign button" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Assign", disabled: true)
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
@@ -104,7 +104,7 @@ RSpec.feature("The Correspondence Cases page") do
       end
 
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Assign", disabled: true)
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
@@ -125,13 +125,13 @@ RSpec.feature("The Correspondence Cases page") do
     it "successfully loads the assigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Reassign", disabled: true)
     end
 
     it "Verify the mail team user batch reassignment with Reassign button" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Reassign", disabled: true)
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
@@ -157,7 +157,7 @@ RSpec.feature("The Correspondence Cases page") do
       end
 
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Reassign", disabled: true)
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
@@ -185,7 +185,7 @@ RSpec.feature("The Correspondence Cases page") do
       end
 
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Reassign", disabled: true)
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
