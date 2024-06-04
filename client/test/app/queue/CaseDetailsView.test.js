@@ -6,7 +6,6 @@ import { amaAppeal, legacyAppeal, powerOfAttorney } from '../../data/appeals';
 import COPY from '../../../COPY';
 
 const defaultProps = {
-  userCanScheduleVirtualHearings: true,
   userCanAccessReader: true,
   userCanEditUnrecognizedPOA: true,
   vsoVirtualOptIn: true,
