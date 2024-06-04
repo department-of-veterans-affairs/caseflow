@@ -95,14 +95,6 @@ class AddIssuesPage extends React.Component {
     this.props.toggleRequestIssueAdditionModal();
   }
 
-  /* This is just temporarily used so that I can display the modal during BA/UX review. */
-  onClickPendingIssueAction = (option) => {
-    this.setState({ issueRemoveIndex: option.index }, () => {
-      this.props.toggleCancelPendingRequestIssueModal();
-    });
-
-  }
-
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
     case 'add_decision_date':
@@ -575,7 +567,6 @@ class AddIssuesPage extends React.Component {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
-        onClickPendingIssueAction: this.onClickPendingIssueAction,
       }));
     }
 
