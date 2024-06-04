@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 const IssueModificationRequest = ({
   issueModificationRequest,
-  onClickIssueAction
+  onClickIssueRequestModificationAction
 }) => {
   const {
     benefitType,
@@ -25,10 +25,6 @@ const IssueModificationRequest = ({
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
-  const pendingIssueModificationRequests = useSelector((state) => state.pendingIssueModificationRequests);
-
-  const issueModificationRequestIndex = pendingIssueModificationRequests?.findIndex(
-    (pendingIssueIndex) => pendingIssueIndex === issueModificationRequest);
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 
@@ -133,7 +129,7 @@ const IssueModificationRequest = ({
             options={options}
             placeholder="Select action"
             hideLabel
-            onChange={(option) => onClickIssueAction(issueModificationRequestIndex, option.value)}
+            onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
             doubleArrow
             searchable={false}
           />
@@ -147,5 +143,5 @@ export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
   issueModificationRequest: PropTypes.object,
-  onClickIssueAction: PropTypes.func
+  onClickIssueRequestModificationAction: PropTypes.func
 };

@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import { useSelector } from 'react-redux';
 import { formatDateStr, formatDate } from '../../../util/DateUtil';
+import uuid from 'uuid';
 
 export const RequestIssueFormWrapper = (props) => {
 
@@ -16,8 +17,7 @@ export const RequestIssueFormWrapper = (props) => {
     defaultValues: {
       requestReason: props.pendingIssueModificationRequest?.requestReason || '',
       nonratingIssueCategory: props.pendingIssueModificationRequest?.nonratingIssueCategory || '',
-      decisionDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.decisionDate),
-        'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+      decisionDate: props.pendingIssueModificationRequest?.decisionDate || '',
       nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
       withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
         'MM/DD/YYYY', 'YYYY-MM-DD') || ''
@@ -49,7 +49,8 @@ export const RequestIssueFormWrapper = (props) => {
       requestor: { fullName: userFullName, cssId: userCssId },
       requestType: props.type,
       ...issueModificationRequest,
-      decisionDate
+      decisionDate,
+      identifier: uuid.v4()
     };
 
     // close modal and move the issue

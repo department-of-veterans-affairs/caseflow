@@ -82,7 +82,8 @@ class AddIssuesPage extends React.Component {
       addingIssue: false,
       loading: false,
       editIndex: 0,
-      pendingRequestId: 0
+      pendingRequestId: 0,
+      pendingIssueModification: {}
     };
   }
 
@@ -93,6 +94,44 @@ class AddIssuesPage extends React.Component {
   onClickRequestAdditionalIssue = () => {
     this.props.toggleRequestIssueAdditionModal();
   }
+
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
+
+    const identifier = issueModificationRequest.identifier;
+
+    switch (requestType) {
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        pendingRequestId: identifier,
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueModificationModal(identifier);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        pendingRequestId: identifier,
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueAdditionModal(identifier);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        pendingRequestId: identifier,
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueWithdrawalModal(identifier);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        pendingRequestId: identifier,
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    default:
+      this.props.undoCorrection(identifier);
+    }
+  };
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -362,7 +401,7 @@ class AddIssuesPage extends React.Component {
     };
 
     const modifyingPendingIssue = () => {
-      return this.props.pendingIssueModificationRequests?.[this.state.editIndex];
+      return this.state.pendingIssueModification;
     };
 
     const issuesChanged = !_.isEqual(
@@ -600,7 +639,7 @@ class AddIssuesPage extends React.Component {
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
         userIsVhaAdmin,
-        onClickIssueAction: this.onClickIssueAction
+        onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
     }
 

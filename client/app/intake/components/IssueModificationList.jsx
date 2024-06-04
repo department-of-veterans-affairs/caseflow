@@ -6,7 +6,7 @@ const IssueModificationList = (
   {
     sectionTitle,
     issueModificationRequests,
-    onClickIssueAction,
+    onClickIssueRequestModificationAction,
   }
 ) => {
   const issueModificationLists = issueModificationRequests.map((issueModificationRequest, index) => {
@@ -14,8 +14,7 @@ const IssueModificationList = (
       <li key={index}>
         <IssueModificationRequest
           issueModificationRequest={issueModificationRequest}
-          onClickIssueAction={onClickIssueAction}
-          IssueModificationRequestIndex={index}
+          onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
         />
         {issueModificationRequests.length > 1 && index !== issueModificationRequests.length - 1 ?
           <>
@@ -48,5 +47,5 @@ export default IssueModificationList;
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
   issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onClickIssueAction: PropTypes.func,
+  onClickIssueRequestModificationAction: PropTypes.func,
 };

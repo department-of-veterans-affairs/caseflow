@@ -8,7 +8,7 @@ const IssueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
-    onClickIssueAction
+    onClickIssueRequestModificationAction
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
@@ -36,7 +36,7 @@ const IssueModificationRow = (
             sectionTitle={sectionTitleMapper[key]}
             lastSection={lastSection}
             key={`${key}-${i}`}
-            onClickIssueAction={onClickIssueAction}
+            onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
           />
           {lastSection ? null : <hr />}
         </React.Fragment>
@@ -59,5 +59,5 @@ IssueModificationRow.propTypes = {
   fieldTitle: PropTypes.string,
   issueModificationRequests: PropTypes.object,
   userIsVhaAdmin: PropTypes.bool,
-  onClickIssueAction: PropTypes.func
+  onClickIssueRequestModificationAction: PropTypes.func
 };
