@@ -67,10 +67,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: d47dc684ce633be0148f2fab2528390c62f80af9
-  ref: d47dc684ce633be0148f2fab2528390c62f80af9
+  revision: 166e08221f15e344156b93539b4b05514354b725
+  ref: 166e08221f15e344156b93539b4b05514354b725
   specs:
-    ruby_claim_evidence_api (0.1.0)
+    ruby_claim_evidence_api (0.0.1)
       activesupport
       aws-sdk-comprehend (~> 1.77)
       base64
