@@ -50,3 +50,11 @@ export const renderPageBatch = (pdfPages, startIndex, endIndex) => {
     renderPage(pdfPages[i]);
   }
 };
+
+export const rotatePages = (rotateDeg) => {
+  const pages = document.getElementsByClassName('canvas-wrapper-prototype');
+
+  pages.forEach((page) => {
+    page.style = `rotate: ${rotateDeg}`;
+  });
+};
