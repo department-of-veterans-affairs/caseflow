@@ -51,16 +51,14 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
   end
 
   def webex_recording_list_issues
-    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour
-    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour
-    query = "?max=#100?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
+    query = "?max=100?meetingId=123abc"
 
     details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       provider: "webex",
       api_call: "GET webex.com/recordings/list/#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
-      times: { from: from, to: to },
+      meeting_id: "123abc",
       docket_number: nil
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
@@ -68,11 +66,14 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
 
   def webex_recording_details_issues
     recording_id = "12345"
+    host_email = "fake@email.com"
+    query = "?hostEmail=#{host_email}"
     details = {
       error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
       provider: "webex",
       recording_id: recording_id,
-      api_call: "GET webex.com/recordings/details//#{recording_id}",
+      host_email: host_email,
+      api_call: "GET webex.com/recordings/details/#{recording_id}#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
       docket_number: nil
     }
