@@ -42,6 +42,7 @@ class LegacyAppeal < CaseflowRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
   has_one :appeal_state, as: :appeal
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :notifications, as: :notifiable
 
   class UnknownLocationError < StandardError; end
 
@@ -957,6 +958,10 @@ class LegacyAppeal < CaseflowRecord
     true
   end
   # rubocop:enable Naming/PredicateName
+
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
+  end
 
   private
 
