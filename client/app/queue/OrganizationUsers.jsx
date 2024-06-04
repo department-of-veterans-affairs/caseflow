@@ -28,8 +28,7 @@ const instructionListStyle = css({
   listStyle: 'none',
   margin: '0 0 0 3rem',
   padding: '1.5rem 0 2rem 0',
-  fontSize: '19px',
-  borderBottom: '.1rem solid black',
+  fontSize: '19px'
 });
 
 const userListStyle = css({
@@ -43,7 +42,8 @@ const userListItemStyle = css({
   padding: '4rem 0 2rem',
   margin: '0',
   ':first-child': {
-    borderTop: 'none',
+    borderTop: '.1rem solid black',
+    marginTop: '30px'
   }
 });
 
