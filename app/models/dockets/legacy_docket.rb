@@ -77,17 +77,8 @@ class LegacyDocket < Docket
   end
 
   def ready_priority_nonpriority_legacy_appeals(priority: false)
-    lever_item = priority ? "disable_legacy_priority" : "disable_legacy_non_priority"
-    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    lever_value = lever&.value
-
-    lever_value = case lever_value
-                  when "t", "true" then true
-                  when "f", "false" then false
-                  else lever_value
-                  end
-
-    lever_value != true
+    value = priority ? CaseDistributionLever.disable_legacy_priority : CaseDistributionLever.disable_legacy_non_priority
+    !value
   end
 
   # rubocop:disable Metrics/ParameterLists
