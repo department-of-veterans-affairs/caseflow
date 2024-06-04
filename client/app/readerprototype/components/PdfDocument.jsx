@@ -5,7 +5,7 @@ import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
 
 import ApiUtil from '../../util/ApiUtil';
-import { renderPageBatch } from '../util/pageUtil';
+import { renderPageBatch, rotatePages } from '../util/pageUtil';
 
 const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
@@ -56,9 +56,13 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
     renderPageBatch(pdfPages, 0, pdfPages.length);
   }, [pdfPages]);
 
+  useEffect(() => {
+    rotatePages(rotateDeg);
+  }, [rotateDeg]);
+
   return (
     <div
-      style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%`, rotate: `${rotateDeg}` }}
+      style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }}
       id = "pdfContainer">
     </div>
   );
