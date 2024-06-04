@@ -11,8 +11,8 @@ import { RotateIcon } from '../../components/icons/RotateIcon';
 import { SearchIcon } from '../../components/icons/SearchIcon';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
 
-import { handleClickDocumentTypeLink, openDownloadLink } from '../documentUtil';
-import { docToolbarStyles } from '../layoutUtil';
+import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
+import { docToolbarStyles } from '../util/layoutUtil';
 
 const ReaderToolbar = ({
   resetZoomLevel,
