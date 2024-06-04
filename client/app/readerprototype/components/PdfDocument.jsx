@@ -12,14 +12,14 @@ const renderPage = async (pdfPage) => {
   let canvasWrapper = document.createElement('div');
 
   canvasWrapper.setAttribute('id', `canvasContainer-${pdfPage.pageNumber}`);
-  canvasWrapper.className = 'canvasWrapperPrototype';
+  canvasWrapper.className = 'canvas-wrapper-prototype';
   pdfContainer.appendChild(canvasWrapper);
 
   let canvas = document.createElement('canvas');
   const textLayer = document.createElement('div');
 
   canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
-  canvas.className = 'canvasContainerPrototype';
+  canvas.className = 'canvas-container-prototype';
   canvasWrapper.appendChild(canvas);
   canvasWrapper.appendChild(textLayer);
 
@@ -65,7 +65,7 @@ const requestOptions = {
   responseType: 'arraybuffer'
 };
 
-const PdfDocument = ({ fileUrl, zoomLevel }) => {
+const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -111,7 +111,7 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 
   return (
     <div
-      style={{ height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }}
+      style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%`, rotate: `${rotateDeg}` }}
       id = "pdfContainer">
     </div>
   );
@@ -120,6 +120,7 @@ const PdfDocument = ({ fileUrl, zoomLevel }) => {
 PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
   zoomLevel: PropTypes.string,
+  rotateDeg: PropTypes.string,
   setDocumentPageCount: PropTypes.number
 };
 
