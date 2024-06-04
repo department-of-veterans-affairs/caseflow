@@ -54,4 +54,30 @@ export const openDownloadLink = (doc) => {
 
 export const handleClickDocumentTypeLink = () => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link');
-}
+};
+
+export const getRotationDeg = (rotateDeg) => {
+  let updatedRotateDeg;
+
+  switch (rotateDeg) {
+  case '0deg':
+    updatedRotateDeg = '90deg';
+    break;
+  case '90deg':
+    updatedRotateDeg = '180deg';
+    break;
+  case '180deg':
+    updatedRotateDeg = '270deg';
+    break;
+  case '270deg':
+    updatedRotateDeg = '360deg';
+    break;
+  case '360deg':
+    updatedRotateDeg = '90deg';
+    break;
+  default:
+    updatedRotateDeg = '0deg';
+  }
+
+  return updatedRotateDeg;
+};
