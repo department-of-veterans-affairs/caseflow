@@ -161,7 +161,9 @@ class SaveButtonUnconnected extends React.Component {
       processedInCaseflow,
       withdrawalDate,
       receiptDate,
-      benefitType
+      benefitType,
+      pendingIssueModificationRequests,
+      originalPendingIssueModificationRequests
     } = this.props;
 
     const invalidVeteran = !veteranValid && (_.some(
@@ -176,9 +178,10 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => !issue.withdrawalPending
     ) || validateWithdrawDateError;
 
-    const saveDisabled = _.isEqual(
-      addedIssues, originalIssues
-    ) || invalidVeteran || !withdrawDateValid;
+    const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
+       _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
+      invalidVeteran ||
+      !withdrawDateValid;
 
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
@@ -294,6 +297,8 @@ SaveButtonUnconnected.propTypes = {
   hasDistributionTask: PropTypes.bool,
   hasSpecialtyCaseTeamAssignTask: PropTypes.bool,
   specialtyCaseTeamDistribution: PropTypes.bool,
+  pendingIssueModificationRequests: PropTypes.array,
+  originalPendingIssueModificationRequests: PropTypes.array,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -315,6 +320,8 @@ const SaveButton = connect(
     hasDistributionTask: state.hasDistributionTask,
     hasSpecialtyCaseTeamAssignTask: state.hasSpecialtyCaseTeamAssignTask,
     specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
+    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    originalPendingIssueModificationRequests: state.originalPendingIssueModificationRequests,
     state
   }),
   (dispatch) => bindActionCreators({

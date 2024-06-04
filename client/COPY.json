@@ -1234,6 +1234,8 @@
   "VHA_INCOMPLETE_TAB_DESCRIPTION": "Cases that have been only saved and not yet established. Select the claimant name if you need to edit issues.",
   "VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION": "Cases below have requests for issue modification and require action. Please review each case and take the appropriate action for each. Once the issue modification is complete, each case will return to the appropriate queue tab for work by the VHA team.",
   "VHA_PENDING_REQUESTS_TAB_DESCRIPTION": "Cases below have requests for issue modification and are waiting Admin review. Once the Admin has taken action on the requested changes, the cases will be returned to the proper queue tab for work by the VHA team. Select the Claimant name if you need to edit a modification request.",
+  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE": "This case has pending issue modification requests",
+  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA Admin completes review of the requested changes.",
   "EDUCATION_LABEL": "Education Service",
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
@@ -1486,22 +1488,22 @@
   "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
   "ISSUE_MODIFICATION_REQUESTS": {
     "ADDITION": {
-      "REQUEST_TYPE": "Addition",
+      "REQUEST_TYPE": "addition",
       "SECTION_TITLE": "Requested Additional Issues",
       "DETAILS": "Reason for requested issue addition"
     },
     "MODIFICATION": {
-      "REQUEST_TYPE": "Modification",
+      "REQUEST_TYPE": "modification",
       "SECTION_TITLE": "Requested Changes",
       "DETAILS": "Reason for requested modification"
     },
     "REMOVAL": {
-      "REQUEST_TYPE": "Removal",
+      "REQUEST_TYPE": "removal",
       "SECTION_TITLE": "Requested Issue Removal",
       "DETAILS": "Reason for requested removal of issue"
     },
     "WITHDRAWAL": {
-      "REQUEST_TYPE": "Withdrawal",
+      "REQUEST_TYPE": "withdrawal",
       "SECTION_TITLE": "Requested Issue Withdrawal",
       "DETAILS": "Reason for requested withdrawal of issue",
       "DATE": "Requested date for withdrawal"

@@ -25,8 +25,7 @@ import { formatAddedIssues,
   formatRequestIssues,
   getAddIssuesFields,
   formatIssuesBySection,
-  formatLegacyAddedIssues,
-  formatIssueModificationRequestsBySection } from '../../util/issues';
+  formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 import issueModificationRow from 'app/intake/components/issueModificationRow';
@@ -268,7 +267,8 @@ class AddIssuesPage extends React.Component {
       userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
-      isLegacy
+      isLegacy,
+      pendingIssueModificationRequests
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
@@ -297,16 +297,21 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    // eslint-disable-next-line max-len
-    const issues = intakeData.docketType === 'Legacy' ? formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
+    const issues = intakeData.docketType === 'Legacy' ?
+      formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
+
+    // Filter the issues to remove those that have a pending modification request
+    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+      issues : issues.filter((issue) => {
+        return !pendingIssueModificationRequests.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id;
+        });
+      });
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
-    const issuesBySection = formatIssuesBySection(issues);
-
-    const modificationIssueRequestsBySection = editPage &&
-      formatIssueModificationRequestsBySection(this.props.issueModificationRequests);
+    const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -347,9 +352,9 @@ class AddIssuesPage extends React.Component {
     };
 
     const showRequestIssueUpdateOptions = editPage &&
-    userCanRequestIssueUpdates &&
-    !originalIssuesHaveNoDecisionDate() &&
-    intakeData.benefitType === 'vha';
+      userCanRequestIssueUpdates &&
+      !originalIssuesHaveNoDecisionDate() &&
+      intakeData.benefitType === 'vha';
 
     const renderButtons = () => {
       if (showRequestIssueUpdateOptions) {
@@ -553,18 +558,12 @@ class AddIssuesPage extends React.Component {
         return rowObjects;
       });
 
-    const modificationIssueRequestsObj = editPage &&
-      Object.groupBy(modificationIssueRequestsBySection.pendingAdminReview, ({ requestType }) => requestType);
-
-    const pendingSection = _.isEmpty(modificationIssueRequestsObj) ?
-      null :
-      issueModificationRow({
-        modificationIssueRequestsObj,
+    // Pending modifications table section
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
+      rowObjects = rowObjects.concat(issueModificationRow({
+        issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review'
-      });
-
-    if (pendingSection !== null) {
-      rowObjects.push(pendingSection);
+      }));
     }
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
@@ -803,6 +802,7 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
+    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,

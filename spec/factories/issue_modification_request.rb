@@ -9,6 +9,8 @@ FactoryBot.define do
     nonrating_issue_category {}
     status { "assigned" }
 
+    decision_date { Time.zone.today - rand(0..29) }
+
     withdrawal_date { nil }
     remove_original_issue { false }
     requestor_id { create(:user).id }

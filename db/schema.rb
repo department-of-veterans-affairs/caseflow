@@ -1148,7 +1148,7 @@ ActiveRecord::Schema.define(version: 2024_04_29_215736) do
     t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
     t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
     t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
-    t.string "request_type", default: "Addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
     t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
     t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
     t.datetime "updated_at", precision: 6, null: false
