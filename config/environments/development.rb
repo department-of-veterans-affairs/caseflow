@@ -128,9 +128,6 @@ Rails.application.configure do
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
 
-  # Quarterly Notifications Batch Sizes
-  ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
-
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
@@ -155,4 +152,7 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
+
+  # Appeals Consumer
+  config.hosts << "host.docker.internal"
 end
