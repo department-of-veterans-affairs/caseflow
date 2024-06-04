@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "node": "14.20.0"
+    "node": "14.20.0",
+    "picocolors": "^1.0.1"
   }
 }
