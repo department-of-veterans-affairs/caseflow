@@ -81,7 +81,8 @@ class AddIssuesPage extends React.Component {
       issueIndex: 0,
       addingIssue: false,
       loading: false,
-      adminEditIndex: 0
+      editIndex: 0,
+      pendingRequestId: 0
     };
   }
 
@@ -145,25 +146,25 @@ class AddIssuesPage extends React.Component {
       break;
     case 'reviewIssueModificationRequest':
       this.setState({
-        adminEditIndex: index
+        editIndex: index
       });
       this.props.toggleRequestIssueModificationModal(index);
       break;
     case 'reviewIssueAdditionRequest':
       this.setState({
-        adminEditIndex: index
+        editIndex: index
       });
       this.props.toggleRequestIssueAdditionModal(index);
       break;
     case 'reviewIssueWithdrawalRequest':
       this.setState({
-        adminEditIndex: index
+        editIndex: index
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
-        adminEditIndex: index
+        editIndex: index
       });
       this.props.toggleRequestIssueRemovalModal(index);
       break;
@@ -360,6 +361,10 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const modifyingPendingIssue = () => {
+      return this.props.pendingIssueModificationRequests?.[this.state.editIndex];
+    };
+
     const issuesChanged = !_.isEqual(
       intakeData.addedIssues, intakeData.originalIssues
     );
@@ -381,7 +386,7 @@ class AddIssuesPage extends React.Component {
       !originalIssuesHaveNoDecisionDate() &&
       intakeData.benefitType === 'vha';
 
-    const makeButtonDisabledForAdmin = editPage &&
+    const disableIssueActions = editPage &&
       intakeData.userIsVhaAdmin &&
       !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
 
@@ -432,7 +437,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               dangerStyling
               onClick={() => this.onClickAddIssue()}
-              disabled={makeButtonDisabledForAdmin}
+              disabled={disableIssueActions}
             >
             + Add issue
             </Button>)}
@@ -565,7 +570,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Requested issues'
+              fieldTitle: 'Requested issues',
+              disableIssueActions: { disableIssueActions }
             }),
           );
         } else if (key === 'withdrawnIssues') {
@@ -701,10 +707,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            // pendingIssueModificationRequest={pendingIssueModificationRequests[this.state.adminEditIndex]}
-            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
-              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
-            }
+            pendingIssueModificationRequest={modifyingPendingIssue()}
           />
         )}
 
@@ -714,9 +717,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
-              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
-            }
+            pendingIssueModificationRequest={modifyingPendingIssue()}
           />
         )}
 
@@ -726,9 +727,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
-            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
-              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
-            }
+            pendingIssueModificationRequest={modifyingPendingIssue()}
           />
         )}
 
@@ -736,9 +735,7 @@ class AddIssuesPage extends React.Component {
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
             addToPendingReviewSection={this.props.addToPendingReviewSection}
-            pendingIssueModificationRequest={pendingIssueModificationRequests.filter(
-              (issueRequest) => issueRequest.id === this.state.adminEditIndex)[this.state.issueIndex]
-            }
+            pendingIssueModificationRequest={modifyingPendingIssue()}
           />
         )}
 

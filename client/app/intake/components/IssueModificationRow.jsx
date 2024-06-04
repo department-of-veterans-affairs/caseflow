@@ -8,7 +8,6 @@ const IssueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
-    userIsVhaAdmin,
     onClickIssueAction
   }) => {
   const sectionTitleMapper = {
@@ -37,7 +36,6 @@ const IssueModificationRow = (
             sectionTitle={sectionTitleMapper[key]}
             lastSection={lastSection}
             key={`${key}-${i}`}
-            userIsVhaAdmin={userIsVhaAdmin}
             onClickIssueAction={onClickIssueAction}
           />
           {lastSection ? null : <hr />}

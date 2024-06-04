@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
-import Dropdown from 'app/components/SearchableDropdown';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 import { capitalize } from 'lodash';
+import { useSelector } from 'react-redux';
 
-const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, onClickIssueAction, issueIndex }) => {
+const IssueModificationRequest = ({
+  issueModificationRequest,
+  onClickIssueAction
+}) => {
   const {
     benefitType,
     requestType,
@@ -20,6 +24,11 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
   } = issueModificationRequest;
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
+  const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const pendingIssueModificationRequests = useSelector((state) => state.pendingIssueModificationRequests);
+
+  const issueModificationRequestIndex = pendingIssueModificationRequests?.findIndex(
+    (pendingIssueIndex) => pendingIssueIndex === issueModificationRequest);
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 
@@ -118,13 +127,13 @@ const IssueModificationRequest = ({ issueModificationRequest, userIsVhaAdmin, on
           {extraContent}
         </div>
         <div className="issue-action">
-          <Dropdown
+          <SearchableDropdown
             name={`select-action-${requestType}`}
             label="Actions"
             options={options}
             placeholder="Select action"
             hideLabel
-            onChange={(option) => onClickIssueAction(issueIndex, option.value)}
+            onChange={(option) => onClickIssueAction(issueModificationRequestIndex, option.value)}
             doubleArrow
             searchable={false}
           />
@@ -138,7 +147,5 @@ export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
   issueModificationRequest: PropTypes.object,
-  userIsVhaAdmin: PropTypes.bool,
-  onClickIssueAction: PropTypes.func,
-  issueIndex: PropTypes.number
+  onClickIssueAction: PropTypes.func
 };

@@ -2,6 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import issueModificationRow from 'app/intake/components/IssueModificationRow';
 import Table from 'app/components/Table';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore, compose } from 'redux';
+import thunk from 'redux-thunk';
+import {
+  createQueueReducer
+} from '../../../test/app/queue/components/modalUtils';
 
 const issueModification = {
   id: 40,
@@ -59,33 +65,52 @@ const BaseComponent = ({ content, field }) => (
 );
 
 const PendingAdminReviewTemplate = (args) => {
+  const { storeValues, issueRequestModification } = args;
+  const queueReducer = createQueueReducer(storeValues);
+  const store = createStore(
+    queueReducer,
+    compose(applyMiddleware(thunk))
+  );
+
   const Component = issueModificationRow({
-    issueModificationRequests: { ...args },
+    issueModificationRequests: { issueRequestModification },
     fieldTitle: 'Pending admin review',
-    userIsVhaAdmin: true,
     onClickIssueAction: {}
   });
 
   return (
-    <BaseComponent content={Component.content} field={Component.field} />
+    <Provider store={store}>
+      <BaseComponent content={Component.content} field={Component.field} />
+    </Provider>
   );
 };
 
 export const pendingModificationReviewForAdmin = PendingAdminReviewTemplate.bind({});
-pendingModificationReviewForAdmin.args = [issueModification];
+pendingModificationReviewForAdmin.args = {
+  storeValues: { userIsVhaAdmin: true },
+  issueRequestModification: issueModification
+};
 
 export const pendingAdditionReviewForAdmin = PendingAdminReviewTemplate.bind({});
-pendingAdditionReviewForAdmin.args = [issueAddition];
+pendingAdditionReviewForAdmin.args = {
+  storeValues: { userIsVhaAdmin: true },
+  issueRequestModification: issueAddition
+};
 
 export const pendingWithdrawalForAdmin = PendingAdminReviewTemplate.bind({});
-pendingWithdrawalForAdmin.args = [issueWithdrawal];
+pendingWithdrawalForAdmin.args = {
+  storeValues: { userIsVhaAdmin: true },
+  issueRequestModification: issueWithdrawal
+};
 
 export const pendingRemovalForAdmin = PendingAdminReviewTemplate.bind({});
-pendingRemovalForAdmin.args = [issueRemoval];
+pendingRemovalForAdmin.args = {
+  storeValues: { userIsVhaAdmin: true },
+  issueRequestModification: issueRemoval
+};
 
 BaseComponent.propTypes = {
   content: PropTypes.element,
   field: PropTypes.string,
-  userIsVhaAdmin: PropTypes.bool,
   onClickIssueAction: PropTypes.func
 };
