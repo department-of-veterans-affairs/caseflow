@@ -25,6 +25,32 @@ describe LegacyDocket do
     end
   end
 
+  context "#ready_priority_nonpriority_legacy_appeals" do
+    context "when priority is true" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: true)).to be_truthy
+      end
+    end
+
+    context "when priority is false" do
+      it "returns false when the lever is set to true" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_falsey
+      end
+
+      it "returns true when the lever is set to false" do
+        CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
+        expect(docket.ready_priority_nonpriority_legacy_appeals(priority: false)).to be_truthy
+      end
+    end
+  end
+
   context "#genpop_priority_count" do
     it "calls AppealRepository.genpop_priority_count" do
       expect(AppealRepository).to receive(:genpop_priority_count)
@@ -92,23 +118,52 @@ describe LegacyDocket do
     end
   end
 
+  context "#age_of_n_oldest_genpop_priority_appeals" do
+    let(:num) { 3 }
+
+    it "returns an empty array when the lever is set to true" do
+      CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+      expect(docket.age_of_n_oldest_genpop_priority_appeals(num)).to eq([])
+    end
+
+    it "calls the repository method when the lever is set to false" do
+      CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+      expect(LegacyAppeal.repository).to receive(:age_of_n_oldest_genpop_priority_appeals).with(num)
+      docket.age_of_n_oldest_genpop_priority_appeals(num)
+    end
+  end
+
   context "#age_of_n_oldest_priority_appeals_available_to_judge" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
-    subject { LegacyDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 3) }
+    let(:num) { 3 }
 
-    it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
-      appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
-      expect(subject).to eq([appeal.bfd19])
+    it "returns an empty array when the lever is set to true" do
+      CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+      expect(docket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)).to eq([])
+    end
+
+    it "calls the repository method when the lever is set to false" do
+      CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: false)
+      expect(LegacyAppeal.repository).to receive(:age_of_n_oldest_priority_appeals_available_to_judge).with(judge, num)
+      docket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     end
   end
 
   context "#age_of_n_oldest_nonpriority_appeals_available_to_judge" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
-    subject { LegacyDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 3) }
+    let(:num) { 3 }
 
-    it "returns the receipt_date(BFD19) field of the oldest legacy nonpriority appeals ready for distribution" do
-      appeal = create_nonpriority_distributable_legacy_appeal_not_tied_to_judge
-      expect(subject).to eq([appeal.bfd19])
+    it "returns an empty array when the lever is set to true" do
+      CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: true)
+      expect(docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)).to eq([])
+    end
+
+    it "calls the repository method when the lever is set to false" do
+      CaseDistributionLever.where(item: "disable_legacy_non_priority").update_all(value: false)
+      expect(LegacyAppeal.repository).to receive(
+        :age_of_n_oldest_nonpriority_appeals_available_to_judge
+      ).with(judge, num)
+      docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     end
   end
 
@@ -228,6 +283,19 @@ describe LegacyDocket do
           .with(distribution, style: style, genpop: genpop, limit: limit)
 
         subject
+      end
+    end
+
+    context "when levers are set to true" do
+      before do
+        CaseDistributionLever.where(item: "disable_legacy_priority").update_all(value: true)
+      end
+
+      it "does not call distribute_priority_appeals" do
+        expect(docket).not_to receive(:distribute_priority_appeals)
+          .with(distribution, style: style, genpop: genpop, limit: limit)
+
+        expect(subject).to eq []
       end
     end
 
