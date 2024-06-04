@@ -15,7 +15,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
       it "should create CF RequestIssues and backfill records" do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, retrieve_payload)
 
-        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe,
+                                             decision_review: higher_level_review)
 
         expect(backfilled_issues.count).to eq(2)
         expect(RequestIssue.count).to eq(2)
@@ -61,7 +62,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
 
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, hash)
 
-        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe,
+                                             decision_review: higher_level_review)
 
         expect(backfilled_issues.count).to eq(1)
         expect(RequestIssue.count).to eq(1)
@@ -79,7 +81,8 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new({}, hash)
         higher_level_review.update!(legacy_opt_in_approved: true)
 
-        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe, decision_review: higher_level_review)
+        backfilled_issues = subject.process!(event: event, parser: parser, epe: epe,
+                                             decision_review: higher_level_review)
 
         expect(backfilled_issues.count).to eq(1)
         expect(RequestIssue.count).to eq(1)
