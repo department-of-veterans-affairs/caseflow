@@ -1,38 +1,36 @@
 # frozen_string_literal: true
 
-# This job will retrieve a list of webex hearing recordings and details every hour
+# This job will retrieve a list of all the webex meeting rooms used by the VA to hold hearings
 
-class Hearings::FetchWebexRecordingsListJob < CaseflowJob
+class Hearings::FetchWebexRoomsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include Hearings::SendTranscriptionIssuesEmail
 
   queue_with_priority :low_priority
-  application_attr :hearing_schedule
-
-  attr_reader :meeting_id, :meeting_title
+  application_attr :hearings_schedule
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    max = 100
-    id = job.arguments&.first&.[](:meeting_id)
-    query = "?max=#{max}?meetingId=#{id}"
+    sort_by = "created"
+    max = 1000
+    query = { "sortBy": sort_by, "max": max }
     error_details = {
-      error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
+      error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
       provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      meeting_id: id,
+      times: nil,
       docket_number: nil
     }
     job.log_error(exception)
     job.send_transcription_issues_email(error_details)
   end
 
-  def perform(meeting_id:, meeting_title:)
+  def perform
     ensure_current_user_is_set
-    fetch_recordings_list(meeting_id).recordings.each do |recording|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(
-        recording_id: recording.id, host_email: recording.host_email, meeting_title: meeting_title
-      )
+    fetch_rooms_list.rooms.each do |room|
+      next if filter_title(room.title)
+
+      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: room.id, meeting_title: room.title)
     end
   end
 
@@ -42,18 +40,23 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
 
   private
 
-  def fetch_recordings_list(id)
-    max = 100
-    meeting_id = id
-    query = { "max": max, "meetingId": meeting_id }
+  def filter_title(title)
+    title.scan(/\d*-*\d+_\d+_[A-Za-z]*Hearing+(?=-)/).blank?
+  end
+
+  def fetch_rooms_list
+    sort_by = "created"
+    max = 1000
+    query = { "sortBy": sort_by, "max": max }
+
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: WebexService.access_token,
+      apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query
-    ).fetch_recordings_list
+    ).fetch_rooms_list
   end
 end

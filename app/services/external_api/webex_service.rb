@@ -31,6 +31,10 @@ class ExternalApi::WebexService
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def self.access_token
+    CredStash.get("webex_#{Rails.deploy_env}_access_token")
+  end
+
   def create_conference(conferenced_item)
     body = {
       "jwt": {
@@ -103,6 +107,20 @@ class ExternalApi::WebexService
     method = "GET"
     @api_endpoint += "recordings/#{recording_id}"
     ExternalApi::WebexService::RecordingDetailsResponse.new(send_webex_request(body, method))
+  end
+
+  def fetch_rooms_list
+    body = nil
+    method = "GET"
+    @api_endpoint += "rooms"
+    ExternalApi::WebexService::RoomsListResponse.new(send_webex_request(body, method))
+  end
+
+  def fetch_room_details(room_id)
+    body = nil
+    method = "GET"
+    @api_endpoint += "rooms/#{room_id}/meetingInfo"
+    ExternalApi::WebexService::RoomDetailsResponse.new(send_webex_request(body, method))
   end
 
   private
