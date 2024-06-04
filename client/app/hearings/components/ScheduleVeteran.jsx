@@ -371,6 +371,7 @@ export const ScheduleVeteran = ({
 
       // Handle legacy appeals
       } else if (appeal.isLegacyAppeal) {
+        console.log("Legacy appeal error", appeal.isLegacyAppeal)
         props.showErrorMessage({
           title: 'No Available Slots',
           detail:
