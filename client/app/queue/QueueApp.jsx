@@ -712,6 +712,17 @@ class QueueApp extends React.PureComponent {
       isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
     />
   );
+  routedCorrespondenceAdmin = (props) => (
+    <CorrespondenceIntake
+      {...props.match.params}
+      reduxStore={this.props.reduxStore}
+      autoTexts={this.props.autoTexts}
+      correspondence={this.props.correspondence}
+      priorMail={this.props.priorMail}
+      veteranInformation={this.props.veteranInformation}
+      isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
+    />
+  );
 
   routedCorrespondenceCases = () => (
     <CorrespondenceCases {...this.props} />
@@ -980,6 +991,11 @@ class QueueApp extends React.PureComponent {
               path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
+            />
+            <PageRoute
+              path="/queue/correspondence/admin"
+              // title=
+              // render=
             />
 
             {motionToVacateRoutes.page}
