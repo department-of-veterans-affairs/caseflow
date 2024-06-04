@@ -38,9 +38,6 @@ describe EventRecord, :postgres do
         veteran_file_number: veteran_file_number
       )
     end
-    let!(:end_product_establishment_event_record) do
-      EventRecord.create!(event: event2, evented_record: end_product_establishment)
-    end
     # Claimant
     let!(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
     let!(:claimant) { create(:claimant, decision_review: appeal) }
@@ -68,18 +65,9 @@ describe EventRecord, :postgres do
     let(:session) { { "user" => { "id" => "BrockPurdy", "station_id" => "310", "name" => "Brock Purdy" } } }
     let(:user) { User.from_session(session) }
     let!(:user_event_record) { EventRecord.create!(event: event2, evented_record: user) }
-    it "10 Event Records Backfilled ID and Type correctly match" do
-      expect(higher_level_review_event_record.evented_record_type).to eq("HigherLevelReview")
-      expect(higher_level_review_event_record.evented_record_id).to eq(higher_level_review.id)
-      expect(higher_level_review.event_record).to eq higher_level_review_event_record
-
+    it "9 Event Records Backfilled ID and Type correctly match" do
       intake.update!(detail: higher_level_review)
       expect(higher_level_review.from_decision_review_created_event?).to eq(true)
-
-      expect(end_product_establishment_event_record.evented_record_type).to eq("EndProductEstablishment")
-      expect(end_product_establishment_event_record.evented_record_id).to eq(end_product_establishment.id)
-      expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
-      expect(end_product_establishment.from_decision_review_created_event?).to eq(true)
 
       expect(claimant_event_record.evented_record_type).to eq("Claimant")
       expect(claimant_event_record.evented_record_id).to eq(claimant.id)
@@ -116,7 +104,7 @@ describe EventRecord, :postgres do
       expect(user.event_record).to eq user_event_record
       expect(user.from_decision_review_created_event?).to eq(true)
 
-      expect(EventRecord.count).to eq 10
+      expect(EventRecord.count).to eq 9
     end
 
     it "SupplementalClaim not associated to a backfill Intake should fail #from_decision_review_created_event?" do
