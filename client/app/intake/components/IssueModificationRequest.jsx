@@ -3,47 +3,108 @@ import PropTypes from 'prop-types';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { onClickModifcationAction } from 'app/intake/util/issueModificationRequests';
 
-const IssueModificationRequest = ({
-  benefitType,
-  decisionDate,
-  details,
-  nonRatingIssueCategory,
-  nonRatingIssueDescription,
-  requestor,
-  requestReason,
-  originalIssue,
-  withDrawal,
-  modificationActionOptions
-}) => {
-  return (
-    <div className="modification-request">
-      <div className="modification-request-text">
-        <div>
-          <p>{nonRatingIssueCategory} - {nonRatingIssueDescription}</p>
-          <p>Benefit type: {benefitType}</p>
-          <p>Decision date: {decisionDate}</p>
-          <br />
+const IssueModificationRequest = ({ issueModificationRequest }) => {
+  const {
+    benefitType,
+    requestType,
+    requestor,
+    decisionDate,
+    nonratingIssueCategory,
+    nonratingIssueDescription,
+    requestReason,
+    requestIssue,
+    withdrawalDate
+  } = issueModificationRequest;
+
+  const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
+
+  const readableBenefitType = BENEFIT_TYPES[benefitType];
+
+  const requestDetailsMapping = {
+    [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.DETAILS,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DETAILS,
+  };
+
+  const requestDetails = requestDetailsMapping[requestType];
+
+  const requestReasonSection = (
+    <>
+      <h4>{requestDetails}:</h4>
+      <p>{requestReason}</p>
+    </>
+  );
+
+  const modificationRequestInfoSection = (
+    <div>
+      <p>{nonratingIssueCategory} - {nonratingIssueDescription}</p>
+      <p>Benefit type: {readableBenefitType}</p>
+      <p>Decision date: {formatDateStr(decisionDate)}</p>
+      <br />
+    </div>
+  );
+
+  const requestedByUser = (
+    <div>
+      <br />
+      <h4>Requested by:</h4>
+      <p>{formattedRequestorName}</p>
+      <br />
+    </div>
+  );
+
+  const requestIssueInfo = () => {
+    if (!requestIssue) {
+      return;
+    }
+
+    const requestIsssueDescription = requestIssue.description ||
+     `${requestIssue.nonratingIssueCategory} - ${requestIssue.nonratingIssueDescription}`;
+
+    return <>
+      <div>
+        <h3>Original Issue</h3>
+        <div className="issue-modification-request-original">
+          <ol>
+            <li>
+              <p>{requestIsssueDescription}</p>
+              <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
+              <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
+            </li>
+          </ol>
         </div>
-        <h4>{details}:</h4>
-        <p>{requestReason}</p>
-        {withDrawal}
-        <div>
-          <br />
-          <h4>Requested by:</h4>
-          <p>{requestor.fullName} ({requestor.cssId})</p>
-          <br />
-        </div>
-        {originalIssue}
       </div>
-      <SearchableDropdown
-        name="modification-action"
-        label="Actions"
-        hideLabel
-        searchable={false}
-        options={modificationActionOptions}
-        placeholder="Select action"
-        onChange={(option) => onClickModifcationAction(option.value)}
-      />
+      <br />
+    </>;
+  };
+
+  const extraContentMapping = {
+    [COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.REQUEST_TYPE]: (
+      <>
+        {requestedByUser}
+        {requestIssueInfo()}
+      </>
+    ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.REQUEST_TYPE]: (
+      <>
+        <br />
+        <h4>{COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.DATE}:</h4>
+        <p>{formatDateStr(withdrawalDate)}</p>
+        {requestedByUser}
+      </>
+    ),
+    [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]: requestedByUser,
+    [COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.REQUEST_TYPE]: requestedByUser,
+  };
+
+  const extraContent = extraContentMapping[requestType] || null;
+
+  return (
+    <div>
+      {modificationRequestInfoSection}
+      {requestReasonSection}
+      {extraContent}
     </div>
   );
 };
@@ -51,14 +112,5 @@ const IssueModificationRequest = ({
 export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
-  benefitType: PropTypes.string.isRequired,
-  decisionDate: PropTypes.string.isRequired,
-  details: PropTypes.string.isRequired,
-  nonRatingIssueCategory: PropTypes.string.isRequired,
-  nonRatingIssueDescription: PropTypes.string.isRequired,
-  requestor: PropTypes.object.isRequired,
-  requestReason: PropTypes.string.isRequired,
-  originalIssue: PropTypes.object,
-  withDrawal: PropTypes.object,
-  modificationActionOptions: PropTypes.array
+  issueModificationRequest: PropTypes.object
 };

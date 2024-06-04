@@ -5,6 +5,7 @@ import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
+import { formatIssueModificationRequests } from '../../intake/util/issueModificationRequests';
 
 export const mapDataToInitialState = function(props = {}) {
   const {
@@ -56,10 +57,12 @@ export const mapDataToInitialState = function(props = {}) {
     activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
     addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    pendingIssueModificationRequests: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
+    originalPendingIssueModificationRequests:
+      formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    issueModificationRequests: [], // todo: retrieve from backend
     requestIssuesUpdateErrorCode: null,
     afterIssues: null,
     beforeIssues: null,

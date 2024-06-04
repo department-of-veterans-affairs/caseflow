@@ -8,8 +8,7 @@ import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 const IssueModificationList = (
   {
     sectionTitle,
-    issuesArr,
-    lastSection
+    issueModificationRequests,
   }
 ) => {
   const generateModificationOptions = (optionsLabel) => {
@@ -76,19 +75,8 @@ const IssueModificationList = (
 
     return (
       <li key={id}>
-        <IssueModificationRequest
-          benefitType={BENEFIT_TYPES[issue.benefitType]}
-          decisionDate={formatDateStr(issue.decisionDate)}
-          nonRatingIssueCategory={issue.nonRatingIssueCategory}
-          nonRatingIssueDescription={issue.nonRatingIssueDescription}
-          requestor={issue.requestor}
-          requestReason={issue.requestReason}
-          details={details}
-          originalIssue={originalIssue}
-          withDrawal={withDrawal}
-          modificationActionOptions={generateModificationOptions(optionsLabel)}
-        />
-        {issuesArr.length > 1 && id !== issuesArr.length - 1 ?
+        <IssueModificationRequest issueModificationRequest={issueModificationRequest modificationActionOptions={generateModificationOptions(optionsLabel)}} />
+        {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
             <hr />
             <br />
@@ -107,7 +95,6 @@ const IssueModificationList = (
           {issues}
         </ol>
       </div>
-      {lastSection ? null : <hr />}
     </>
   );
 };
@@ -116,6 +103,5 @@ export default IssueModificationList;
 
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
-  issuesArr: PropTypes.arrayOf(PropTypes.object).isRequired,
-  lastSection: PropTypes.bool.isRequired
+  issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
