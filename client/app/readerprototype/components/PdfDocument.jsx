@@ -1,69 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { css } from 'glamor';
 
 import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
 
 import ApiUtil from '../../util/ApiUtil';
-
-const renderPage = async (pdfPage) => {
-  let pdfContainer = document.getElementById('pdfContainer');
-  let canvasWrapper = document.createElement('div');
-
-  canvasWrapper.setAttribute('id', `canvasContainer-${pdfPage.pageNumber}`);
-  canvasWrapper.className = 'canvas-wrapper-prototype';
-  pdfContainer.appendChild(canvasWrapper);
-
-  let canvas = document.createElement('canvas');
-  const textLayer = document.createElement('div');
-
-  canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
-  canvas.className = 'canvas-container-prototype';
-  canvasWrapper.appendChild(canvas);
-  canvasWrapper.appendChild(textLayer);
-
-  const viewport = pdfPage.getViewport({ scale: 1 });
-  const canvasContext = canvas.getContext('2d');
-
-  canvas.height = viewport.height;
-  canvas.width = viewport.width;
-  pdfPage.render({ canvasContext, viewport });
-  const pageText = await pdfPage.getTextContent();
-
-  const textLayerStyle = css({
-    width: `${viewport.width}px`,
-    height: `${viewport.height}px`,
-    transformOrigin: 'left top',
-    opacity: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0
-  });
-
-  console.log(textLayerStyle)
-  textLayer.className = `cf-pdf-pdfjs-textLayer ${textLayerStyle}`;
-
-  PDFJS.renderTextLayer({
-    textContent: pageText,
-    container: textLayer,
-    viewport,
-    textDivs: []
-  });
-};
-
-const renderPageBatch = (pdfPages, startIndex, endIndex) => {
-  for (let i = startIndex; i < endIndex; i++) {
-    renderPage(pdfPages[i]);
-  }
-};
-
-const requestOptions = {
-  cache: true,
-  withCredentials: true,
-  timeout: true,
-  responseType: 'arraybuffer'
-};
+import { renderPageBatch } from '../util/pageUtil';
 
 const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
@@ -72,7 +14,12 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
   useEffect(() => {
     const getDocData = async () => {
-
+      const requestOptions = {
+        cache: true,
+        withCredentials: true,
+        timeout: true,
+        responseType: 'arraybuffer'
+      };
       const byteArr = await ApiUtil.get(fileUrl, requestOptions).
         then((response) => {
           return response.body;

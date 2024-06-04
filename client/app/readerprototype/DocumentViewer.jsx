@@ -6,8 +6,8 @@ import ReaderFooter from './components/ReaderFooter';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
 
-import { getNextDocId, getPrevDocId, selectedDoc, selectedDocIndex, getRotationDeg } from './documentUtil';
-import { docViewerStyles, pdfDocumentStyles } from './layoutUtil';
+import { getNextDocId, getPrevDocId, selectedDoc, selectedDocIndex, getRotationDeg } from './util/documentUtil';
+import { docViewerStyles, pdfDocumentStyles } from './util/layoutUtil';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
@@ -47,14 +47,12 @@ const DocumentViewer = (props) => {
           </div>
           <div className="cf-search-bar hidden"></div>
           <div className="cf-pdf-scroll-view">
-            <div id={`${doc.content_url}`} {...pdfDocumentStyles}>
-              <PdfDocument
-                key={`${doc.content_url}`}
-                fileUrl={`${doc.content_url}`}
-                zoomLevel={`${zoomLevel}`}
-                rotateDeg={rotateDeg}
-              />
-            </div>
+            <PdfDocument
+              key={`${doc.content_url}`}
+              fileUrl={`${doc.content_url}`}
+              zoomLevel={`${zoomLevel}`}
+              rotateDeg={rotateDeg}
+            />
           </div>
           <ReaderFooter
             selectedDocIndex={selectedDocIndex(props)}

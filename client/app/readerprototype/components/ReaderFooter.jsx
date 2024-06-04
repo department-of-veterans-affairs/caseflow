@@ -6,8 +6,8 @@ import TextField from '../../components/TextField';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
-import { docFooterStyles } from '../layoutUtil';
-import { handleKeyPress } from '../documentUtil';
+import { docFooterStyles } from '../util/layoutUtil';
+import { handleKeyPress } from '../util/documentUtil';
 
 const ReaderFooter = ({
   docPageCount,
