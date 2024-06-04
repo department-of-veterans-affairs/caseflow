@@ -12,7 +12,7 @@ import { SearchIcon } from '../../components/icons/SearchIcon';
 import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
 
 import { handleClickDocumentTypeLink, openDownloadLink } from '../documentUtil';
-import { pdfToolbarStyles } from '../layoutUtil';
+import { docToolbarStyles } from '../layoutUtil';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -24,11 +24,12 @@ const ReaderToolbar = ({
   setZoomInLevel,
   disableZoomIn,
   zoomLevel,
+  rotateDocument
   // hideSidebar,
   // toggleSidebar
 }) => {
   return <>
-    <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarLeft}>
+    <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarLeft}>
       {showClaimsFolderNavigation && (
         <Link
           to={`${documentPathBase}`}
@@ -38,8 +39,8 @@ const ReaderToolbar = ({
           <LeftChevronIcon /> &nbsp; Back
         </Link>
       )}
-    </span>
-    <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
+    </div>
+    <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarCenter}>
       <span className="category-icons-and-doc-type">
         <span className="cf-pdf-doc-category-icons">
           <DocumentCategoryIcons doc={doc} />
@@ -62,13 +63,13 @@ const ReaderToolbar = ({
           </Link>
         </span>
       </span>
-    </span>
-    <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
-      <span className="toolbarPrototype-text">Zoom:</span>
+    </div>
+    <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarRight}>
+      <span className="cf-pdf-button-text">Zoom:</span>
       <span className="cf-pdf-button-text">&nbsp;&nbsp;{ `${zoomLevel}%` }</span>
       <Button
         name="zoomOut"
-        classNames={['cf-pdf-button toolbarPrototype-items']}
+        classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
         onClick={() => setZoomOutLevel()}
         disabled={disableZoomOut}
         ariaLabel="zoom out">
@@ -76,7 +77,7 @@ const ReaderToolbar = ({
       </Button>
       <Button
         name="zoomIn"
-        classNames={['cf-pdf-button toolbarPrototype-items']}
+        classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
         onClick={() => setZoomInLevel()}
         disabled={disableZoomIn}
         ariaLabel="zoom in">
@@ -84,18 +85,16 @@ const ReaderToolbar = ({
       </Button>
       <Button
         name="zoomReset"
-        classNames={['cf-pdf-button toolbarPrototype-items']}
+        classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
         onClick={() => resetZoomLevel()}
         ariaLabel="fit to screen">
         <FitToScreenIcon />
       </Button>
       <Button
         name="rotation"
-        classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-        // onClick={rotateDocument}
-        ariaLabel="rotate document"
-        disabled
-      >
+        classNames={['cf-pdf-button cf-pdf-spaced-buttons-left']}
+        onClick={() => rotateDocument()}
+        ariaLabel="rotate document">
         <RotateIcon />
       </Button>
       <span className="cf-pdf-spaced-buttons">|</span>
@@ -108,7 +107,7 @@ const ReaderToolbar = ({
       </Button>
       <Button
         name="search"
-        classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
+        classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small cf-pdf-spaced-buttons-left']}
         ariaLabel="search text"
         type="submit"
         disabled
@@ -117,7 +116,7 @@ const ReaderToolbar = ({
         <SearchIcon />
       </Button>
       {/* {hideSidebar &&
-        (<span {...pdfToolbarStyles.openSidebarMenu}>
+        (<span {...docToolbarStyles.openSidebarMenu}>
           <Button
             name="open sidebar menu"
             classNames={['cf-pdf-button']}
@@ -126,7 +125,7 @@ const ReaderToolbar = ({
           </Button>
         </span>)
       } */}
-    </span>
+    </div>
   </>;
 };
 
@@ -140,6 +139,7 @@ ReaderToolbar.propTypes = {
   setZoomInLevel: PropTypes.func,
   disableZoomIn: PropTypes.bool,
   zoomLevel: PropTypes.number,
+  rotateDocument: PropTypes.func,
   hideSidebar: PropTypes.bool,
   toggleSidebar: PropTypes.func,
 };

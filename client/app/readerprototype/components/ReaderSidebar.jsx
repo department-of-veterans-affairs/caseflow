@@ -17,15 +17,13 @@ import SideBarComments from '../../reader/SideBarComments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import SideBarIssueTags from '../../reader/SideBarIssueTags';
 
-import { sidebarWrapper } from '../layoutUtil';
-
 const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   let comments = [];
   const hiddenSidebar = hideSidebar ? 'hidden-sidebar' : '';
 
   return (
-    <div className="cf-sidebar-wrapper" {...sidebarWrapper}>
+    <div className="cf-sidebar-wrapper-prototype">
       <div className="cf-sidebar-header">
         <Button
           name="hide menu"
