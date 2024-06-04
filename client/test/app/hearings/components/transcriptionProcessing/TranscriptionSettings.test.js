@@ -25,7 +25,7 @@ const renderTranscriptionSettings = () => {
   return render(
     <Provider store={store}>
       <Router>
-        < TranscriptionSettings />
+        <TranscriptionSettings contractors={[]} />
       </Router>
     </Provider>
   );
@@ -38,12 +38,7 @@ it('does render transcription settings information', async () => {
     },
   });
 
-  renderTranscriptionSettings();
+  const component = renderTranscriptionSettings();
 
-  expect(await screen.findByText(/Transcription Settings/)).toBeInTheDocument();
-  expect(await screen.findByText(/Edit Current Contractors/)).toBeInTheDocument();
-
-  expect(await screen.findByText(/Link to box.com:/)).toBeInTheDocument();
-  expect(await screen.findByText(/POC:/)).toBeInTheDocument();
-  expect(await screen.findByText(/Hearings sent to Contractor A this week:/)).toBeInTheDocument();
+  expect(component).toMatchSnapshot();
 });

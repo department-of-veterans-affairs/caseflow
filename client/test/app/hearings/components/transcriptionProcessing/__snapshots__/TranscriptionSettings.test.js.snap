@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`does render transcription settings information 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div
+          data-css-5djio0=""
+        >
+          <span>
+            <a>
+              &lt; 
+              Back to Transcription queue
+            </a>
+             
+          </span>
+        </div>
+        <div>
+          <div>
+            <h1
+              class="cf-margin-bottom-0"
+            >
+              Transcription settings
+            </h1>
+            <div
+              data-css-89ju4s=""
+            >
+              <h2>
+                Edit current contractors
+              </h2>
+              <span
+                class="cf-push-right"
+              >
+                <div
+                  data-css-19a7m7c=""
+                >
+                  <span>
+                    <button
+                      class="usa-button-secondary usa-button"
+                      id="Remove-contractor"
+                      type="button"
+                    >
+                      Remove contractor
+                    </button>
+                  </span>
+                </div>
+                <div
+                  data-css-19a7m7c=""
+                >
+                  <span>
+                    <button
+                      class="usa-button-primary usa-button"
+                      id="Add-contractor"
+                      type="button"
+                    >
+                      Add contractor
+                    </button>
+                  </span>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div>
+            <p
+              class="no-results-found-styling"
+            >
+              No contractors found
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+    >
+      <div
+        data-css-5djio0=""
+      >
+        <span>
+          <a>
+            &lt; 
+            Back to Transcription queue
+          </a>
+           
+        </span>
+      </div>
+      <div>
+        <div>
+          <h1
+            class="cf-margin-bottom-0"
+          >
+            Transcription settings
+          </h1>
+          <div
+            data-css-89ju4s=""
+          >
+            <h2>
+              Edit current contractors
+            </h2>
+            <span
+              class="cf-push-right"
+            >
+              <div
+                data-css-19a7m7c=""
+              >
+                <span>
+                  <button
+                    class="usa-button-secondary usa-button"
+                    id="Remove-contractor"
+                    type="button"
+                  >
+                    Remove contractor
+                  </button>
+                </span>
+              </div>
+              <div
+                data-css-19a7m7c=""
+              >
+                <span>
+                  <button
+                    class="usa-button-primary usa-button"
+                    id="Add-contractor"
+                    type="button"
+                  >
+                    Add contractor
+                  </button>
+                </span>
+              </div>
+            </span>
+          </div>
+        </div>
+        <div>
+          <p
+            class="no-results-found-styling"
+          >
+            No contractors found
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
