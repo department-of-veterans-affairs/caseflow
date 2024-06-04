@@ -6,7 +6,7 @@ import TextField from '../../components/TextField';
 import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
-import { pdfToolbarStyles } from '../layoutUtil';
+import { docFooterStyles } from '../layoutUtil';
 import { handleKeyPress } from '../documentUtil';
 
 const ReaderFooter = ({
@@ -21,8 +21,7 @@ const ReaderFooter = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   return (
-    <div id="footerPrototype" className="cf-pdf-footer cf-pdf-toolbar" {...pdfToolbarStyles.footer}>
-
+    <div id="footerPrototype" className="cf-pdf-footer cf-pdf-toolbar-prototype" {...docFooterStyles.container}>
       <div className="cf-pdf-footer-buttons-left">
         {prevDocId && (
           <Button
@@ -40,7 +39,7 @@ const ReaderFooter = ({
           <span className="page-progress-indicator">
             <span> Page </span>
             <span>
-              <div className="pageNumberInputPrototype">
+              <div {...docFooterStyles.pageNumInput}>
                 <TextField
                   name=""
                   label=""
