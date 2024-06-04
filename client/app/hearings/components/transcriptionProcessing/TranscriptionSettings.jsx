@@ -8,6 +8,7 @@ import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
+
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
@@ -15,28 +16,17 @@ import { RemoveContractorModal } from './RemoveContractorModal';
 import { AddEditContractorModal } from './AddEditContractorModal';
 
 const buttonStyle = css({
-  padding: '1rem 2.5rem 2rem 0',
-  display: 'inline-block',
-});
-
-const contractorButtonStyle = css({
-  paddingLeft: '41.55rem',
+  float: 'left',
+  paddingLeft: '2rem'
 });
 
 const headerContainerStyling = css({
-  margin: '1.5rem 0 3rem 0',
-  padding: '0',
-  '& > *': {
+  padding: '4rem 0 2.5rem',
+  '& h2': {
     display: 'inline-block',
-    paddingRight: '15px',
-    // paddingLeft: '15px',
     verticalAlign: 'middle',
-    margin: 0,
-  },
-});
-
-const headerStyling = css({
-  paddingLeft: 0,
+    paddingTop: '0.5rem',
+  }
 });
 
 const instructionListStyle = css({
@@ -46,12 +36,16 @@ const instructionListStyle = css({
   fontSize: '19px',
 });
 
+const contactAlign = css({
+  paddingLeft: '4.5rem'
+});
+
 const returnLinkStyle = css({
   padding: '1.5rem 0 2rem 0rem',
 });
 
 const toggleStyle = css({
-  padding: '1.5rem 0 2rem 25rem',
+  padding: '1.5rem 6rem 2rem 2rem',
 });
 
 const userListItemStyle = css({
@@ -59,7 +53,11 @@ const userListItemStyle = css({
   flexWrap: 'wrap',
   borderTop: '.1rem solid #d6d7d9',
   padding: '4rem 0 2rem',
-  margin: '0',
+  clear: 'both'
+});
+
+const contractorDetailStyle = css({
+  flex: '1'
 });
 
 const alertStyle = css({
@@ -93,15 +91,15 @@ export default class TranscriptionSettings extends React.PureComponent {
     super(props);
 
     this.state = {
+      loading: true,
+      contractors: props.contractors,
       isRemoveModalOpen: false,
       isAddEditOpen: false,
-      loading: true,
       alert: {
         title: '',
         message: '',
         type: '',
-      },
-      contractors: [],
+      }
     };
   }
 
@@ -163,10 +161,6 @@ export default class TranscriptionSettings extends React.PureComponent {
     });
   };
 
-  componentDidMount() {
-    this.getContractors();
-  }
-
   addContractorButton = () => (
     <div {...buttonStyle}>
       <Button
@@ -197,59 +191,77 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
 
+  sortedContractors = () => {
+    const group = this.state.contractors.sort((aString, bString) => {
+      const nameA = aString.name.toUpperCase();
+      const nameB = bString.name.toUpperCase();
+
+      if (nameA < nameB) {
+        return -1;
+      }
+
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    return group;
+  }
+
   mainContent = () => {
-    const listOfContractors = () => {
-      // pass in and iterate over contractors
+    const listOfContractors = this.sortedContractors().map((contractor) => {
       return (
-        <React.Fragment>
+        <React.Fragment key={contractor.id}>
           <div {...userListItemStyle}>
-            <div>
+            <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
-                <h2>
-                  {COPY.TRANSCRIPTION_SETTINGS_CONTRACTOR_NAME}
-                  <EditContractorLink />
-                </h2>
-                <li>
-                  <strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>
-                  `https://box.com/`
-                </li>
-                <li>
-                  <strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>
-                  `Address here`
-                </li>
+                <h2>{contractor.name}<EditContractorLink /></h2>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
+                <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
+                <li {...contactAlign}>{contractor.phone}</li>
+                <li {...contactAlign}>{contractor.email}</li>
                 <span>
-                  <li>
-                    <strong>{COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT}</strong>
-                    `50 of 160`
-                    <EditHearingsSentLink />
-                  </li>
+                  <li><strong>{'Hearings sent to '}{contractor.name}{' this week: '}</strong>{'0 of '}{contractor.current_goal}<EditHearingsSentLink /></li>
                 </span>
               </ul>
             </div>
             <span {...toggleStyle}>
-              <h3>{COPY.TRANSCRIPTION_SETTINGS_WORK_TOGGLE}</h3>
-              <ToggleSwitch />
+              <h3>Temporarily stop<br /> work assignment</h3>
+              <ToggleSwitch selected={contractor.is_available_for_work} />
             </span>
           </div>
         </React.Fragment>
       );
-    };
+    });
 
     return (
       <React.Fragment>
         <div>
-          <h1 className="cf-margin-bottom-0" {...headerStyling}>
+          <h1 className="cf-margin-bottom-0">
             {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
           <div {...headerContainerStyling}>
-            <h2 {...headerStyling}>{COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}</h2>
-            <span {...contractorButtonStyle}>
+            <h2>
+              {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
+            </h2>
+            <span className="cf-push-right">
               {this.removeContractorButton()}
               {this.addContractorButton()}
             </span>
           </div>
         </div>
-        <div>{listOfContractors()}</div>
+        <div>
+          { listOfContractors.length > 0 ? (
+            <div>{listOfContractors}</div>
+          ) : (
+            <>
+              <p className="no-results-found-styling">No contractors found</p>
+            </>
+          )
+          }
+        </div>
         {this.state.isAddEditOpen && <AddEditContractorModal
           onCancel={this.toggleAddEditModal}
           onConfirm={this.confirmEditAddModal}
