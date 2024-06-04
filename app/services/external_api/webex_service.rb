@@ -31,6 +31,10 @@ class ExternalApi::WebexService
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def self.access_token
+    CredStash.get("webex_#{Rails.deploy_env}_access_token")
+  end
+
   def create_conference(conferenced_item)
     body = {
       "jwt": {
