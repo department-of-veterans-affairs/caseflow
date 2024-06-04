@@ -167,53 +167,53 @@ class CorrespondenceIntakeProcessor
   end
 
   TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES = {
-    "CavcCorrespondenceCorrespondenceTask": CavcCorrespondenceCorrespondenceTask.name,
-    "CongressionalInterestCorrespondenceTask": CongressionalInterestCorrespondenceTask.name,
-    "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
-    "FoiaRequestCorrespondenceTask": FoiaRequestCorrespondenceTask.name,
-    "OtherMotionCorrespondenceTask": OtherMotionCorrespondenceTask.name,
-    "PrivacyActRequestCorrespondenceTask": PrivacyActRequestCorrespondenceTask.name,
-    "PrivacyComplaintCorrespondenceTask": PrivacyComplaintCorrespondenceTask.name,
-    "StatusInquiryCorrespondenceTask": StatusInquiryCorrespondenceTask.name,
-    "PowerOfAttorneyRelatedCorrespondenceTask": PowerOfAttorneyRelatedCorrespondenceTask.name
+    CavcCorrespondenceCorrespondenceTask.name => CavcCorrespondenceCorrespondenceTask.name,
+    CongressionalInterestCorrespondenceTask.name => CongressionalInterestCorrespondenceTask.name,
+    DeathCertificateCorrespondenceTask.name => DeathCertificateCorrespondenceTask.name,
+    FoiaRequestCorrespondenceTask.name => FoiaRequestCorrespondenceTask.name,
+    OtherMotionCorrespondenceTask.name => OtherMotionCorrespondenceTask.name,
+    PrivacyActRequestCorrespondenceTask.name => PrivacyActRequestCorrespondenceTask.name,
+    PrivacyComplaintCorrespondenceTask.name => PrivacyComplaintCorrespondenceTask.name,
+    StatusInquiryCorrespondenceTask.name => StatusInquiryCorrespondenceTask.name,
+    PowerOfAttorneyRelatedCorrespondenceTask.name => PowerOfAttorneyRelatedCorrespondenceTask.name
   }.with_indifferent_access
 
   TASKS_RELATED_TO_APPEAL_TASK_TYPES = {
-    "CavcCorrespondenceMailTask": CavcCorrespondenceMailTask.name,
-    "ClearAndUnmistakeableErrorMailTask": ClearAndUnmistakeableErrorMailTask.name,
-    "AddressChangeMailTask": AddressChangeMailTask.name,
-    "CongressionalInterestMailTask": CongressionalInterestMailTask.name,
-    "ControlledCorrespondenceMailTask": ControlledCorrespondenceMailTask.name,
-    "DeathCertificateMailTask": DeathCertificateMailTask.name,
-    "DocketSwitchMailTask": DocketSwitchMailTask.name,
-    "EvidenceOrArgumentMailTask": EvidenceOrArgumentMailTask.name,
-    "ExtensionRequestMailTask": ExtensionRequestMailTask.name,
-    "FoiaRequestMailTask": FoiaRequestMailTask.name,
-    "HearingPostponementRequestMailTask": HearingPostponementRequestMailTask.name,
-    "HearingRelatedMailTask": HearingRelatedMailTask.name,
-    "HearingWithdrawalRequestMailTask": HearingWithdrawalRequestMailTask.name,
-    "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
-    "AodMotionMailTask": AodMotionMailTask.name,
-    "OtherMotionMailTask": OtherMotionMailTask.name,
-    "PowerOfAttorneyRelatedMailTask": PowerOfAttorneyRelatedMailTask.name,
-    "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
-    "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
-    "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
-    "StatusInquiryMailTask": StatusInquiryMailTask.name,
-    "AppealWithdrawalMailTask": AppealWithdrawalMailTask.name
+    CavcCorrespondenceMailTask.name => CavcCorrespondenceMailTask.name,
+    ClearAndUnmistakeableErrorMailTask.name => ClearAndUnmistakeableErrorMailTask.name,
+    AddressChangeMailTask.name => AddressChangeMailTask.name,
+    CongressionalInterestMailTask.name => CongressionalInterestMailTask.name,
+    ControlledCorrespondenceMailTask.name => ControlledCorrespondenceMailTask.name,
+    DeathCertificateMailTask.name => DeathCertificateMailTask.name,
+    DocketSwitchMailTask.name => DocketSwitchMailTask.name,
+    EvidenceOrArgumentMailTask.name => EvidenceOrArgumentMailTask.name,
+    ExtensionRequestMailTask.name => ExtensionRequestMailTask.name,
+    FoiaRequestMailTask.name => FoiaRequestMailTask.name,
+    HearingPostponementRequestMailTask.name => HearingPostponementRequestMailTask.name,
+    HearingRelatedMailTask.name => HearingRelatedMailTask.name,
+    HearingWithdrawalRequestMailTask.name => HearingWithdrawalRequestMailTask.name,
+    ReconsiderationMotionMailTask.name => ReconsiderationMotionMailTask.name,
+    AodMotionMailTask.name => AodMotionMailTask.name,
+    OtherMotionMailTask.name => OtherMotionMailTask.name,
+    PowerOfAttorneyRelatedMailTask.name => PowerOfAttorneyRelatedMailTask.name,
+    PrivacyActRequestMailTask.name => PrivacyActRequestMailTask.name,
+    PrivacyComplaintMailTask.name => PrivacyComplaintMailTask.name,
+    ReturnedUndeliverableCorrespondenceMailTask.name => ReturnedUndeliverableCorrespondenceMailTask.name,
+    StatusInquiryMailTask.name => StatusInquiryMailTask.name,
+    AppealWithdrawalMailTask.name => AppealWithdrawalMailTask.name
   }.with_indifferent_access
 
   def class_for_assigned_to(assigned_to)
     available_assignees = {
-      "AodTeam": AodTeam.name,
-      "BvaDispatch": BvaDispatch.name,
-      "CaseReview": CaseReview.name,
-      "CavcLitigationSupport": CavcLitigationSupport.name,
-      "ClerkOfTheBoard": ClerkOfTheBoard.name,
-      "Colocated": Colocated.name,
-      "HearingAdmin": HearingAdmin.name,
-      "LitigationSupport": LitigationSupport.name,
-      "PrivacyTeam": PrivacyTeam.name
+      AodTeam.name => AodTeam.name,
+      BvaDispatch.name => BvaDispatch.name,
+      CaseReview.name => CaseReview.name,
+      CavcLitigationSupport.name => CavcLitigationSupport.name,
+      ClerkOfTheBoard.name => ClerkOfTheBoard.name,
+      Colocated.name => Colocated.name,
+      HearingAdmin.name => HearingAdmin.name,
+      LitigationSupport.name => LitigationSupport.name,
+      PrivacyTeam.name => PrivacyTeam.name
     }.with_indifferent_access
 
     available_assignees[assigned_to]&.constantize
