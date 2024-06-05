@@ -71,6 +71,30 @@ FactoryBot.define do
       lever_group_order { 1002 }
     end
 
+    trait :disable_legacy_non_priority do
+      item { "disable_legacy_non_priority" }
+      title { "ACD Disable Legacy Non-priority" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 101 }
+    end
+
+    trait :disable_legacy_priority do
+      item { "disable_legacy_priority" }
+      title { "ACD Disable Legacy Priority" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 105 }
+    end
+
     trait :ama_hearings_start_distribution_prior_to_goals do
       item { "ama_hearings_start_distribution_prior_to_goals" }
       title { "AMA Hearings Start Distribution Prior to Goals" }

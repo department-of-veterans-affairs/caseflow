@@ -4,6 +4,8 @@ describe LegacyDocket do
   before do
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   let(:docket) do

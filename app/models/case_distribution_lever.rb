@@ -30,6 +30,11 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.nod_adjustment}
   ).freeze
 
+  BOOLEAN_LEVERS = %W(
+    #{Constants.DISTRIBUTION.disable_legacy_priority}
+    #{Constants.DISTRIBUTION.disable_legacy_non_priority}
+  ).freeze
+
   def history_value
     if combination_lever?
       combination_value
@@ -184,6 +189,8 @@ class CaseDistributionLever < ApplicationRecord
           Integer(lever)
         elsif FLOAT_LEVERS.include?(name)
           Float(lever)
+        elsif BOOLEAN_LEVERS.include?(name)
+          ActiveModel::Type::Boolean.new.cast(lever)
         else
           boolean_value = boolean_lever_value(lever)
           return boolean_value unless boolean_value.nil?
@@ -192,14 +199,6 @@ class CaseDistributionLever < ApplicationRecord
         end
       rescue ArgumentError
         lever
-      end
-    end
-
-    def boolean_lever_value(lever)
-      if lever == "t" || lever == "true"
-        true
-      elsif lever == "f" || lever == "false"
-        false
       end
     end
 
