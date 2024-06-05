@@ -10,11 +10,18 @@ export default {
   },
   args: {
     review: {
-      intakeFromVbms: true,
+      intakeFromVbms: false,
     }
   }
 };
 
 const Template = (args) => <IntakeBadgeComponent {...args} />;
 
-export const IntakeBadge = Template.bind({});
+export const IntakeBadgeCF = Template.bind({});
+
+export const IntakeBadgeVBMS = Template.bind({});
+IntakeBadgeVBMS.args = {
+  review: {
+    intakeFromVbms: true,
+  }
+};
