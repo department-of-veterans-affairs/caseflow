@@ -34,7 +34,6 @@ import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 
-// jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
 import { act } from 'react-dom/test-utils';
 

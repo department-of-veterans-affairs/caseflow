@@ -21,7 +21,6 @@ import COPY from 'COPY';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 import { Provider } from 'react-redux';
-import { error } from 'console';
 
 describe('AddCavcDatesModal', () => {
   const appealId = amaAppeal.externalId;
@@ -41,7 +40,6 @@ describe('AddCavcDatesModal', () => {
 
   const clickSubmit = (cavcModal) => {
     const submitButton = cavcModal.container.querySelector('button#Add-Court-dates-button-id-1');
-    // console.log(submitButton)
     fireEvent.click(submitButton);
 };
 
