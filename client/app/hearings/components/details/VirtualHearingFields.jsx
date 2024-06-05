@@ -26,6 +26,7 @@ export const VirtualHearingFields = (
         scheduledForIsPast={hearing?.scheduledForIsPast}
         isVirtual={hearing?.isVirtual}
         wasVirtual={hearing?.wasVirtual}
+        isCancelled={['cancelled', 'closed'].includes(virtualHearing?.status)}
       />
     </ContentSection>
   );
