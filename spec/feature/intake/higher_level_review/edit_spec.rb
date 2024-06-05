@@ -656,7 +656,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
         expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
@@ -705,7 +705,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
         click_intake_add_issue
         click_intake_no_matching_issues
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
 
         expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
         expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
