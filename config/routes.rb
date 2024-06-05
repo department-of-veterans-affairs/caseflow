@@ -330,7 +330,6 @@ Rails.application.routes.draw do
     get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
     get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
-    get '/correspondence/admin', to: 'correspondence_admin#index'
     post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence_intake#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
@@ -464,6 +463,7 @@ Rails.application.routes.draw do
     resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
+    resources :correspondence, only: [:index]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
