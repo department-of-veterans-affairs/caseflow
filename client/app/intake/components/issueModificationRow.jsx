@@ -8,6 +8,8 @@ const issueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
+    currentUserCssId,
+    onClickAction
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
@@ -54,6 +56,8 @@ const issueModificationRow = (
 export default issueModificationRow;
 
 issueModificationRow.propTypes = {
-  fieldTitle: PropTypes.string,
-  issueModificationRequests: PropTypes.object
+  fieldTitle: PropTypes.string.isRequired,
+  onClickAction: PropTypes.func.isRequired,
+  currentUserCssId: PropTypes.string.isRequired,
+  issueModificationRequests: PropTypes.object.isRequired
 };

@@ -83,7 +83,8 @@ class AddIssuesPage extends React.Component {
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
-      loading: false
+      loading: false,
+      modificationIndex: 0,
     };
   }
 
@@ -144,6 +145,33 @@ class AddIssuesPage extends React.Component {
         issueIndex: index
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'edit-additionRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueAdditionModal(index);
+      break;
+    case 'edit-modificationRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'edit-removalRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'edit-withdrawalRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'cancelEditRequest':
+      console.log('Cancel Action');
       break;
     default:
       this.props.undoCorrection(index);
@@ -270,6 +298,7 @@ class AddIssuesPage extends React.Component {
       userIsVhaAdmin,
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
+      userCssId,
       isLegacy,
       pendingIssueModificationRequests
     } = this.props;
@@ -567,6 +596,8 @@ class AddIssuesPage extends React.Component {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
+        currentUserCssId: userCssId,
+        onClickAction: this.onClickIssueAction
       }));
     }
 
@@ -673,6 +704,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            issueModificationRequest={this.props?.issueModificationRequests[this.state.modificationIndex]}
           />
         )}
 
@@ -681,7 +713,9 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            issueModificationRequest={this.props?.issueModificationRequests[this.state.modificationIndex]}
+          />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
@@ -689,13 +723,17 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            issueModificationRequest={this.props?.issueModificationRequests[this.state.modificationIndex]}
+          />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
-            addToPendingReviewSection={this.props.addToPendingReviewSection} />
+            addToPendingReviewSection={this.props.addToPendingReviewSection}
+            issueModificationRequest={this.props?.issueModificationRequests[this.state.modificationIndex]}
+          />
         )}
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
@@ -822,6 +860,7 @@ export const EditAddIssuesPage = connect(
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
+    userCssId: state.userCssId,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy,
     issueModificationRequests: state.issueModificationRequests

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 
 const IssueModificationRequest = ({ issueModificationRequest }) => {
   const {
@@ -74,6 +75,40 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
               <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
             </li>
           </ol>
+const IssueModificationRequest = ({
+  benefitType,
+  decisionDate,
+  details,
+  nonRatingIssueCategory,
+  nonRatingIssueDescription,
+  requestor,
+  requestReason,
+  originalIssue,
+  withDrawal,
+  modificationActionOptions,
+  requestIndex,
+  currentUserMadeRequest,
+  onClickAction
+}) => {
+  // const isAuthorCurrentUser = currentUserCssId === requestor.cssId;
+
+  return (
+    <div className="modification-request">
+      <div className="modification-request-text">
+        <div>
+          <p>{nonRatingIssueCategory} - {nonRatingIssueDescription}</p>
+          <p>Benefit type: {benefitType}</p>
+          <p>Decision date: {decisionDate}</p>
+          <br />
+        </div>
+        <h4>{details}:</h4>
+        <p>{requestReason}</p>
+        {withDrawal}
+        <div>
+          <br />
+          <h4>Requested by:</h4>
+          <p>{requestor.fullName} ({requestor.cssId})</p>
+          <br />
         </div>
       </div>
       <br />
@@ -106,6 +141,16 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
       {modificationRequestInfoSection}
       {requestReasonSection}
       {extraContent}
+      <SearchableDropdown
+        name="modification-action"
+        label="Actions"
+        hideLabel
+        searchable={false}
+        options={modificationActionOptions}
+        placeholder="Select action"
+        onChange={(option) => onClickAction(requestIndex, option.value)}
+        readOnly={!currentUserMadeRequest}
+      />
     </div>
   );
 };

@@ -14,8 +14,9 @@ export const RequestIssueFormWrapper = (props) => {
 
   const methods = useForm({
     defaultValues: {
-      requestReason: '',
-      nonratingIssueCategory: '',
+      requestReason: props?.issueModificationRequest[props.issueIndex]?.requestReason || '',
+      // requestReason: '',
+      nonRatingIssueCategory: '',
       decisionDate: '',
       nonratingIssueDescription: ''
     },
