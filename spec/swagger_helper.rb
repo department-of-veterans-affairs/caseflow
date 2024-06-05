@@ -31,7 +31,11 @@ RSpec.configure do |config|
           description: 'Local Development server'
         }
       ],
-      paths: {}
+      paths: {
+        "/api/v1/cmp": {
+          '$ref' => './cmp/upload.yaml'
+        }
+      }
     },
     'v2/swagger.yaml' => {
       openapi: '3.0.2',
