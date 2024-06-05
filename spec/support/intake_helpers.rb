@@ -427,6 +427,22 @@ module IntakeHelpers
     end
   end
 
+  def click_edit_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+
+    within issue_el do
+      click_dropdown(prompt: "Select action", text: "Edit issue")
+    end
+  end
+
+  def click_edit_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(prompt: "Select action", text: "Edit issue")
+    end
+  end
+
   def select_correction_type_from_modal(value)
     find("label[for=correctionType_#{value}]").click
   end
