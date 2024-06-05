@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import COPY from '../../../COPY';
-import { formatDateStr } from 'app/util/DateUtil';
-import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import { onClickModifcationAction } from 'app/intake/util/issueModificationRequests';
 
 const IssueModificationRequest = ({ issueModificationRequest }) => {
   const {
