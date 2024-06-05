@@ -4,7 +4,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
 
-    return render json: { message: "Record already exists in Caseflow" }, status: :ok if event_exists_and_is_completed?(consumer_event_id)
+    return render json: { message: "Record already exists in Caseflow" }, status: :ok if Event.exists_and_is_completed?(consumer_event_id)
 
     claim_id = drc_params[:claim_id]
     headers = request.headers
@@ -73,8 +73,4 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
                                    :nonrating_issue_bgs_source])
   end
   # rubocop:enable Metrics/MethodLength
-
-  def event_exists_and_is_completed?(consumer_event_id)
-    Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
-  end
 end
