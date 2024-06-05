@@ -22,9 +22,9 @@ module PrintsTaskTree
   private
 
   def task_tree_children(tasks)
-    return (tasks.select { |task| task.id == parent_id }).sort_by { |task| task[:id] } if is_a? Task
+    return (tasks.select { |task| task.id == parent_id }).sort_by(&:id) if is_a? Task
 
-    (tasks.select { |task| task.parent_id.nil? }).sort_by { |task| task[:id] }
+    (tasks.select { |task| task.parent_id.nil? }).sort_by(&:id)
   end
 
   def task_tree_attributes(*atts)
