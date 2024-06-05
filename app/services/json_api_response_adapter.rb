@@ -26,7 +26,9 @@ class JsonApiResponseAdapter
       type_id: provider_data["documentTypeId"],
       doc_type: provider_data["documentTypeId"],
       subject: provider_data["subject"],
-      received_at: provider_data["dateVaReceivedDocument"],
+      # gsub here so that JS will correctly handle this date
+      # (with dashes the date is 1 day off due to UTC issues)
+      received_at: provider_data["dateVaReceivedDocument"]&.gsub("-", "/"),
       source: provider_data["contentSource"],
       mime_type: system_data["mimeType"],
       alt_doc_types: nil,
