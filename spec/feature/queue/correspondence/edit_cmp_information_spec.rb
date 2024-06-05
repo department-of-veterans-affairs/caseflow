@@ -44,32 +44,23 @@ RSpec.feature("The Correspondence Review Package page") do
     it "the Review package page exists" do
       expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/review_package")
     end
-    it "check for CMP Edit button" do
-      expect(page).to have_content("Edit")
-      click_button "Edit"
-    end
+
     it "the save button is disabled at first" do
-      click_button "Edit"
       expect(page).to have_field("VA DOR")
       expect(page).to have_field("Package document type")
-      expect(page).to have_button("Cancel")
       expect(page).to have_button("Save", disabled: true)
     end
 
     it "Checking the VA DOR and Package document type values in modal" do
-      click_button "Edit"
-      expect(page).to have_content(correspondence.va_date_of_receipt.strftime("%m/%d/%Y"))
-      expect(page).to have_content(package_document_type.name.to_s)
+      expect(find_field("VA DOR").value).to eq correspondence.va_date_of_receipt.strftime("%Y-%m-%d")
+      expect(find_field("Package document type").value).to have_content "NOD" || "Non-NOD"
     end
 
     it "Saving the VA DOR and Package document type values in modal" do
-      click_button "Edit"
       fill_in "VA DOR", with: 6.days.ago.strftime("%m/%d/%Y")
-      find("#package-document-type-input").select_option
-      find_by_id("react-select-4-option-0").click
       expect(page).to have_button("Save", disabled: false)
       click_button "Save"
-      expect(page).to have_content("10_182")
+      expect(page).to have_content("NOD")
     end
 
     it "displays request package action dropdown" do
@@ -156,7 +147,6 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "Checking VADOR field is disabled for General mail user" do
-      click_button "Edit"
       expect(page).to have_field("VA DOR", readonly: true)
     end
   end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "pry"
 RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
   let(:correspondence_type) { create(:correspondence_type) }
@@ -102,6 +103,11 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(general_info["file_number"]).to eq(veteran.file_number)
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
     end
+
+    it "returns the display_intake_appeal" do
+      json_response = JSON.parse(response.body)
+      expect(json_response["display_intake_appeal"]).to eq(true)
+    end
   end
 
   describe "GET #show" do
@@ -114,8 +120,11 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     it "returns a success response when current user is part of InboundOpsTeam" do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      correspondence.save(validate: false)
       get :show, params: { correspondence_uuid: correspondence.uuid }
       expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response["display_intake_appeal"]).to eq(false)
     end
   end
 

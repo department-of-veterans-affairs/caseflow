@@ -81,9 +81,9 @@ export const AddLetter = (props) => {
 
   return (
     <>
-      <div className="myletters" style={{ width: '100%', display: 'inline-block' }}>
+      <div className="myletters">
         { letters.map((letter) => (
-          <div id={letter} style={{ width: '50%', float: 'left', height: '840px' }} key={letter}>
+          <div id={letter} className="letter" key={letter}>
             <NewLetter
               index={letter}
               removeLetter={removeLetter}
@@ -95,7 +95,7 @@ export const AddLetter = (props) => {
         )) }
       </div>
 
-      <div style={{ width: '80%', marginBottom: '30px' }}>
+      <div className="add-letter-container">
         <Button
           type="button"
           name="addLetter"

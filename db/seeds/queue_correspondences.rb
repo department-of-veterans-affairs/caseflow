@@ -20,7 +20,7 @@ module Seeds
     end
 
     def mail_team_superuser
-      @mail_team_superuser ||= User.find_by_css_id("AMBRISVACO")
+      @mail_team_superuser ||= InboundOpsTeam.singleton.users.select { |user| user.inbound_ops_team_superuser? }.first
     end
 
     # seed with values for UAT rake task correspondence.rake

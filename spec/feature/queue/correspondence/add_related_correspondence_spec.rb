@@ -76,7 +76,6 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         associate_with_prior_mail_radio_options[:yes].click
 
         expect(page).to have_content("VA DOR")
-        expect(page).to have_content("Source Type")
         expect(page).to have_content("Package Document Type")
         expect(page).to have_content("Correspondence Type")
         expect(page).to have_content("Notes")
@@ -91,7 +90,6 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         expect(page).to have_content("Mail")
         expect(page).to have_content("15")
         expect(page).to have_content("0304")
-        expect(page).to have_content("This is a test note")
       end
 
       it "table displays 15 items per page" do

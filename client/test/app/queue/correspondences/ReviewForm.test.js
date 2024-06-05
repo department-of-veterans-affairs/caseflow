@@ -1,6 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ReviewForm from '../../../../app/queue/correspondence/ReviewPackage/ReviewForm';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from 'app/queue/reducers';
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
 describe('ReviewForm', () => {
   let props;
 
@@ -19,7 +26,13 @@ describe('ReviewForm', () => {
   });
 
   it('renders the component', () => {
-    render(<ReviewForm {...props} />);
+     const mockFunction = jest.fn();
+    props.setCorrTypeSelected = mockFunction;
+    render(
+      <Provider store={store}>
+        <ReviewForm {...props} />;
+      </Provider>
+    );
 
     expect(screen.getByText('General Information')).toBeInTheDocument();
     expect(screen.getByText('Veteran file number')).toBeInTheDocument();
@@ -29,7 +42,15 @@ describe('ReviewForm', () => {
   });
 
   it('check if button is disabled', () => {
-    render(<ReviewForm {...props} />);
+    const mockFunction = jest.fn();
+    props.setCorrTypeSelected = mockFunction;
+
+    render(
+      <Provider store={store}>
+        <ReviewForm {...props} />
+      </Provider>
+    );
+
     const button = screen.getByText('Save changes');
 
     expect(button).toBeDisabled();
@@ -37,13 +58,20 @@ describe('ReviewForm', () => {
 
   it('check if button is enable', () => {
     const mockFunction = jest.fn();
-
+    props.setCorrTypeSelected = mockFunction;
     props.setEditableData = mockFunction;
-    render(<ReviewForm {...props} />);
+    props.setIsReturnToQueue = mockFunction;
+
+    render(
+      <Provider store={store}>
+        <ReviewForm {...props} />
+      </Provider>
+    );
+
     const inputNode = screen.getByRole('textbox', { name: 'veteran-file-number-input' });
 
     fireEvent.change(inputNode, { target: { value: '12345678' } });
-    expect(mockFunction).toHaveBeenCalledTimes(1);
+    expect(mockFunction).toHaveBeenCalledTimes(6);
   });
 
 });

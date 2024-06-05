@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../../../../../components/TextField';
 import Button from '../../../../../components/Button';
-import { css } from 'glamor';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
@@ -277,22 +276,8 @@ export const NewLetter = (props) => {
     props.removeLetter(index);
   };
 
-  const letterSelectorStyling = css({
-    '& .cf-select__control': {
-      maxWidth: '60rem !important',
-    },
-  });
-
-  const letterDateStyling = css({
-    '.cf-form-textinput': {
-      maxWidth: '60rem !important',
-    },
-  });
-
   return (
-    <div className="gray-border" style={
-      { display: 'inline-block', padding: '2rem 2rem', marginBottom: '3rem', width: '95%' }
-    }>
+    <div className="gray-border new-letter-container">
       <div className="response_letter_date">
         <DateSelector
           name="date-set"
@@ -300,7 +285,6 @@ export const NewLetter = (props) => {
           value= {letterCard.date}
           onChange={(val) => changeDate(val)}
           type="date"
-          inputStyling={letterDateStyling}
         />
       </div>
       <br />
@@ -308,7 +292,6 @@ export const NewLetter = (props) => {
         name="response-letter-type"
         label="Letter type"
         placeholder="Select..."
-        styling={letterSelectorStyling}
         options={letterTypesData}
         value={letterCard.type}
         onChange={(val) => changeLetterType(val.value)}
@@ -318,7 +301,6 @@ export const NewLetter = (props) => {
         name="response-letter-title"
         label="Letter title"
         placeholder="Select..."
-        styling={letterSelectorStyling}
         readOnly = {letterCard.type.length === 0}
         options={letterTitleSelector}
         value={letterCard.title}
@@ -329,7 +311,6 @@ export const NewLetter = (props) => {
         name="response-letter-subcategory"
         label="Letter subcategory"
         placeholder="Select..."
-        styling={letterSelectorStyling}
         readOnly = {letterCard.title.length === 0}
         options={letterSubSelector}
         value={letterCard.subType}
@@ -340,7 +321,6 @@ export const NewLetter = (props) => {
         name="response-letter-subcategory-reason"
         label="Letter subcategory reason"
         placeholder="Select..."
-        styling={letterSelectorStyling}
         readOnly = {letterCard.subType.length === 0}
         options={letterSubReason}
         value={letterCard.reason}
@@ -359,7 +339,6 @@ export const NewLetter = (props) => {
           label="Number of days (Value must be between 1 and 64)"
           name="content"
           useAriaLabel
-          inputStyling={letterDateStyling}
           onChange={handleDays}
           value={letterCard.customValue}
         />
@@ -367,9 +346,8 @@ export const NewLetter = (props) => {
       <br />
       <Button
         name="Remove"
-        styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
         onClick={() => removeLetter()}
-        classNames={['cf-btn-link', 'cf-right-side']}
+        classNames={['cf-btn-link', 'cf-right-side', 'remove-button']}
       >
         <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
       </Button>

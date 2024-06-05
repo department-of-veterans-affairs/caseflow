@@ -168,15 +168,27 @@ $color-black: #323a45;
     td {
       border: 0;
       background-color: $caseflow-background;
-      padding-top: 2rem;
       padding-bottom: 0;
+    }
+
+    th {
+      width: 25%;
     }
 
     td {
       margin: 2px;
       padding-top: 0;
       padding-bottom: 25px;
-      }
+      width: 25%;
+    }
+
+    .corr-table-borderless-first-item {
+      padding-left: 30px;
+    }
+
+    .corr-table-borderless-last-item {
+      padding-right: 30px;
+    }
   }
 
 }
@@ -238,7 +250,6 @@ $color-black: #323a45;
 }
 
 .divide-styling-review-form {
-  display: flex;
   width: 50%;
   flex-direction: column;
   gap: 12%;
@@ -292,6 +303,13 @@ $color-black: #323a45;
   }
 }
 
+.nod-styling-review-form {
+  margin-top: 20px;
+  & .cf-form-textinput {
+    max-width: 72rem !important;
+  }
+}
+
 .tag-styling-review-form {
   .cf-select__control {
     max-width: 63rem;
@@ -302,6 +320,7 @@ $color-black: #323a45;
   width: 50rem;
   height: 15rem;
   resize: none;
+  max-width: 101%;
 }
 
 .review-form-title-style {
@@ -350,6 +369,7 @@ $color-black: #323a45;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
+  padding-right: 10px;
 }
 
 .correspondence-drop-down-div {
@@ -370,14 +390,12 @@ $color-black: #323a45;
     @media(max-width: 1165px) {
       width: 18%;
     }
-
   }
 
   &.toolbar-center {
     @media(max-width: 1165px) {
       width: 18%;
     }
-
   }
 
   &.toolbar-right {
@@ -422,7 +440,6 @@ $color-black: #323a45;
   border: 2px solid $color-gray-lighter;
   margin-bottom: 5rem;
   padding: 3rem 4rem;
-
 }
 
 .modal-fwb {
@@ -553,16 +570,12 @@ $color-black: #323a45;
   flex-direction: column;
   overflow-y: scroll;
   max-height: 400px;
-  padding-left: 1%;
-  margin-left: 100px;
-  padding-right: 10px;
-  padding-top: 0%;
+  padding: 0% 10px 1%;
   width: 73%;
   overflow-x: hidden;
   transform: scale(1.3);
   translate: 0%;
-  margin-top: 80px;
-  margin-bottom: 50px;
+  margin: 80px auto 50px 100px;
 }
 
 .confirm-correspondence-view-border {
@@ -574,6 +587,46 @@ $color-black: #323a45;
   margin-top: -1rem;
 }
 
+.review-package-field-styling {
+  // display: flex;
+  // gap: 5%;
+  margin-top: 20px;
+  max-width: 100rem !important;
+  @media (max-width: 1081px) {
+    flex-direction: column;
+  }
+}
+
+.review-package-searchable-dropdown-div {
+  margin-top: -3px;
+}
+
+.review-package-date-input{
+  margin-top: 7px;
+  max-width: none;
+}
+
+.review-package-text-input-read-only {
+  max-width: none;
+  margin-top: 7px;
+  input{
+    background: #f1f1f1 !important;
+    opacity: 1 !important;
+    color: #323a45;
+  }
+}
+
+.review-package-searchable-dropdown {
+  max-width: 70rem;
+
+}
+
+.add-task-appeals-styling {
+
+  border: 2px solid $color-gray-lighter;
+  padding: 0.5rem 2.5rem;
+  height: 215px;
+}
 .corr {
   .td1 {
     background-color: $color-gray-inverse-base;
@@ -975,3 +1028,208 @@ $color-black: #323a45;
 .width-of-add-tasks-button {
   width: 50%;
   }
+
+.receipt-date-picker-container {
+  & .data-css-1co2jut {
+    margin: 0 5% 0 5%;
+  }
+
+  & .cf-form-textinput.usa-input-error {
+    border-left: 4px solid #cd2026;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0.5rem;
+    padding-top: 0;
+    position: relative;
+    right: 2px;
+
+    .input-container {
+      input {
+        width: inherit;
+      }
+    }
+  }
+
+  & .cf-form-textinput {
+    padding-top: 6.2% !important;
+    margin-bottom: 0;
+
+    .input-container {
+      input {
+        margin: 0;
+        height: 37.5px;
+      }
+    }
+  }
+  .receipt-date-dropdown-div {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 2.7%;
+
+    .opt-select {
+      .receipt-date {
+        /* Add styles if needed */
+      }
+
+      .css-yk16xz-control {
+        border-radius: 0px;
+      }
+
+      .css-1pahdxg-control {
+        border-color: hsl(0, 0%, 100%);
+        box-shadow: 0 0 0 1px #5b616b !important;
+        border-radius: 0px !important;
+
+        &:hover {
+          border-color: hsl(0, 0%, 80%);
+        }
+      }
+    }
+
+  }
+  .date-pickers-div {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 12.7%;
+  }
+  .apply-filter-div {
+    display: flex;
+    padding: 16px 10px 24px 0;
+    justify-content: right;
+    width: 190px;
+    border-top: 1px solid #d6d7d9;
+  }
+  .date-pickers-margin {
+    margin: 0 5%;
+    .error-msg {
+      color: red;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.task-completed-date-picker-container {
+  .data-css-1co2jut {
+    margin: 0 5% 0 5%;
+  }
+
+  .cf-form-textinput.usa-input-error {
+    border-left: 4px solid #cd2026;
+    margin-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0.5rem;
+    padding-top: 0px;
+    position: relative;
+    right: 2px;
+  }
+
+  .usa-input-error input {
+    width: inherit;
+  }
+
+  .cf-form-textinput {
+    padding-top: 10px !important;
+    margin-bottom: 0;
+
+    .input-container {
+      input {
+        height: 37.5px;
+      }
+    }
+  }
+
+  .react-select-dropdown-div {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 2.9%;
+  }
+
+  .opt-select {
+    .receipt-date {
+      /* Add styles if needed */
+    }
+
+    .css-yk16xz-control {
+      border-radius: 0px;
+    }
+
+    .css-1pahdxg-control {
+      border-color: hsl(0, 0%, 100%);
+      box-shadow: 0 0 0 1px #5b616b !important;
+      border-radius: 0px !important;
+
+      &:hover {
+        border-color: hsl(0, 0%, 80%);
+      }
+    }
+  }
+  .date-picker-margin {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 12.7%;
+  }
+  .apply-filter-div {
+    display: flex;
+    padding: 16px 10px 24px 0;
+    justify-content: right;
+    width: 190px;
+    border-top: 1px solid #d6d7d9;
+  }
+  .date-selectors-margin {
+    margin: 0 5%;
+    .error-msg {
+      color: red;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.myletters {
+  width: 100%;
+  display: inline-block;
+}
+
+.letter {
+  width: 50%;
+  float: left;
+  height: 840px;
+}
+
+.add-letter-container {
+  width: 80%;
+  margin-bottom: 30px;
+}
+
+.new-letter-container {
+  display: inline-block;
+  padding: 2rem 2rem;
+  margin-bottom: 3rem;
+  width: 95%;
+  .cf-select__control {
+    max-width: 60rem !important;
+  }
+  .cf-form-textinput {
+    max-width: 60rem !important;
+  }
+  .remove-button {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+}
+
+.pdf-wrapper {
+  @media (max-width: 920px) {
+    width: unset;
+    right: 250px;
+  }
+
+  @media (min-width: 1240px) {
+    width: unset;
+    right: 380px;
+  }
+}
+

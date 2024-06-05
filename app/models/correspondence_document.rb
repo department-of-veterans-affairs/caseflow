@@ -4,6 +4,9 @@ class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
   belongs_to :vbms_document_type
 
+  # callbacks
+  after_update :update_correspondence_nod
+
   def pdf_name
     "#{uuid}.pdf"
   end
@@ -30,5 +33,13 @@ class CorrespondenceDocument < CaseflowRecord
         actionable: true
       }
     }
+  end
+
+  def update_correspondence_nod
+    documents = correspondence.correspondence_documents
+    nod = documents.any? { |doc| Caseflow::DocumentTypes::TYPES[doc["vbms_document_type_id"]].include?("10182") }
+    correspondence.update!(
+      nod: nod
+    )
   end
 end
