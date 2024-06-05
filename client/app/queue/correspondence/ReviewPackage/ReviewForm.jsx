@@ -31,6 +31,10 @@ export const ReviewForm = (props) => {
     setCreateRecordIsReadOnly('Select...');
   }, []);
 
+  useEffect(() => {
+    props.setCorrTypeSelected(correspondenceTypeID < 0);
+  }, [correspondenceTypeID]);
+
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeID < 0) {
       return 'Select...';
