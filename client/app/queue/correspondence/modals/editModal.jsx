@@ -143,18 +143,6 @@ class EditModal extends React.Component {
     }
   };
 
-  //getPackages = async() => {
-  //  await ApiUtil.get('/queue/correspondence/packages').then((resp) => {
-  //   const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
-  //      label: packages.name,
-  //      value: packages.id.toString()
-  //    }));
-  //
-  //    packageTypeOptions.sort((first, second) => (first.label - second.label));
-  //    this.setState({ packageOptions: packageTypeOptions });
-  //  });
-  //}
-
   render() {
     const { VADORDate, packageDocument, showEditModal } = this.state;
 
