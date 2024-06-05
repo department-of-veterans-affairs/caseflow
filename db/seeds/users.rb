@@ -2,6 +2,11 @@
 
 # Create Users/Organizations used by other seed classes.
 
+# Users that already exist in the VACOLS::Staff table need to be "created" by the
+# Users.rb model. This is because the model will make calls to the table to connect
+# the user and the VACOLS::staff entries, which affects things like displayed names and
+# permissions. New users should be created with the user factory and traits
+
 module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
@@ -268,46 +273,35 @@ module Seeds
 
     def create_judge_teams
       DEVELOPMENT_JUDGE_TEAMS.each_pair do |judge_css_id, h|
-        judge = User.find_by_css_id(judge_css_id) ||
-                create(:user, css_id: judge_css_id, station_id: 101)
+        judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         h[:attorneys].each do |css_id|
-          judge_team.add_user(
-            User.find_by_css_id(css_id) ||
-              create(:user, css_id: css_id, station_id: 101)
-          )
+          judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
         end
       end
     end
 
     def create_dvc_teams
       DEVELOPMENT_DVC_TEAMS.each_pair do |dvc_css_id, judges|
-        dvc = User.find_by_css_id(dvc_css_id) ||
-              create(:user, css_id: dvc_css_id, station_id: 101)
+        dvc = User.find_or_create_by(css_id: dvc_css_id, station_id: 101)
         dvc_team = DvcTeam.for_dvc(dvc) || DvcTeam.create_for_dvc(dvc)
         judges.each do |css_id|
-          dvc_team.add_user(
-            User.find_by_css_id(css_id) ||
-              create(:user, css_id: css_id, station_id: 101)
-          )
+          dvc_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
         end
       end
     end
 
     def create_transcription_team
-      transcription_member = User.find_by_css_id("TRANSCRIPTION_USER") ||
-                             create(
-                               :user,
-                               css_id: "TRANSCRIPTION_USER",
-                               station_id: 101,
-                               full_name: "Noel TranscriptionUser Vasquez"
-                             )
+      transcription_member = User.find_or_create_by(
+        css_id: "TRANSCRIPTION_USER",
+        station_id: 101,
+        full_name: "Noel TranscriptionUser Vasquez"
+      )
       TranscriptionTeam.singleton.add_user(transcription_member)
     end
 
     def create_hearings_user
-      hearings_member = User.find_by_css_id("BVATWARNER") ||
-                        create(:user, css_id: "BVATWARNER", station_id: 101)
+      hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
       HearingsManagement.singleton.add_user(hearings_member)
       HearingAdmin.singleton.add_user(hearings_member)
     end
@@ -487,27 +481,23 @@ module Seeds
     end
 
     def create_clerk_of_the_board_users
-      atty = User.find_by(css_id: "COB_USER") ||
-             create(
-               :user,
-               :with_vacols_attorney_record,
-               station_id: 101,
-               css_id: "COB_USER",
-               full_name: "Clark ClerkOfTheBoardUser Bard",
-               roles: ["Hearing Prep", "Mail Intake"]
-             )
+
+      atty = User.find_by(css_id: "COB_USER")  ||
+        create(
+          :user,
+          :with_vacols_attorney_record,
+          station_id: 101,
+          css_id: "COB_USER",
+          full_name: "Clark ClerkOfTheBoardUser Bard",
+          roles: ["Hearing Prep", "Mail Intake"]
+        )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = User.find_or_create_by(full_name: "Judith COTB Judge",
-                                     station_id: 101, css_id: "BVACOTBJUDGE",
-                                     roles: ["Hearing Prep", "Mail Intake"])
+      judge = User.find_or_create_by(full_name: "Judith COTB Judge", station_id: 101, css_id: "BVACOTBJUDGE", roles: ["Hearing Prep", "Mail Intake"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = User.find_or_create_by!(full_name: "Ty ClerkOfTheBoardAdmin Cobb",
-                                      station_id: 101,
-                                      css_id: "BVATCOBB",
-                                      roles: ["Hearing Prep", "Mail Intake"])
+      admin = User.find_or_create_by!(full_name: "Ty ClerkOfTheBoardAdmin Cobb", station_id: 101, css_id: "BVATCOBB", roles: ["Hearing Prep", "Mail Intake"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
 
