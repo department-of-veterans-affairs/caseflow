@@ -992,11 +992,6 @@ class QueueApp extends React.PureComponent {
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
-            <PageRoute
-              path="/queue/correspondence/admin"
-              // title=
-              // render=
-            />
 
             {motionToVacateRoutes.page}
 
