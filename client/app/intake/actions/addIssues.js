@@ -71,6 +71,10 @@ export const toggleRequestIssueAdditionModal = () => ({
   type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
 });
 
+export const toggleCancelPendingRequestIssueModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL
+});
+
 export const setMstPactDetails = (editIssuesDetails) => ({
   type: ACTIONS.SET_MST_PACT_DETAILS,
   payload: { editIssuesDetails }
@@ -140,6 +144,13 @@ export const addToPendingReviewSection = (issueModificationRequest) => (
   {
     type: ACTIONS.ADD_TO_PENDING_REVIEW,
     payload: { issueModificationRequest }
+  }
+);
+
+export const removeFromPendingReviewSection = (index) => (
+  {
+    type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
+    payload: { index }
   }
 );
 

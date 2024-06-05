@@ -7,7 +7,7 @@ import { groupBy } from 'lodash';
 const issueModificationRow = (
   {
     fieldTitle,
-    issueModificationRequests
+    issueModificationRequests,
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
