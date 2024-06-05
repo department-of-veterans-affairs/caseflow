@@ -8,6 +8,8 @@ const issueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
+    currentUserCssId,
+    onClickAction
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
@@ -35,6 +37,8 @@ const issueModificationRow = (
             sectionTitle={sectionTitleMapper[key]}
             lastSection={lastSection}
             key={`${key}-${i}`}
+            currentUserCssId={currentUserCssId}
+            onClickAction={onClickAction}
           />
           {lastSection ? null : <hr />}
         </React.Fragment>

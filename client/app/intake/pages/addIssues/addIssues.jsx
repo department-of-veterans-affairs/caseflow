@@ -83,7 +83,8 @@ class AddIssuesPage extends React.Component {
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
-      loading: false
+      loading: false,
+      modificationIndex: 0,
     };
   }
 
@@ -144,6 +145,33 @@ class AddIssuesPage extends React.Component {
         issueIndex: index
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'edit-additionRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueAdditionModal(index);
+      break;
+    case 'edit-modificationRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'edit-removalRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'edit-withdrawalRequest':
+      this.setState({
+        modificationIndex: index
+      });
+      this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    case 'cancelEditRequest':
+      console.log('Cancel Action');
       break;
     default:
       this.props.undoCorrection(index);
@@ -271,7 +299,8 @@ class AddIssuesPage extends React.Component {
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
       isLegacy,
-      pendingIssueModificationRequests
+      pendingIssueModificationRequests,
+      userCssId,
     } = this.props;
 
     const intakeData = intakeForms[formType];
@@ -567,6 +596,8 @@ class AddIssuesPage extends React.Component {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
+        currentUserCssId: userCssId,
+        onClickAction: this.onClickIssueAction
       }));
     }
 

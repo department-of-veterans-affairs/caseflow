@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 
-const IssueModificationRequest = ({ issueModificationRequest }) => {
+const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, onClickAction, modificationRequestIndex }) => {
   const {
     benefitType,
     requestType,
@@ -101,11 +102,36 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
 
   const extraContent = extraContentMapping[requestType] || null;
 
+  const generateActionOptions = (type) => {
+    return [{
+      label: `Edit issue ${type} request`,
+      value: `edit-${type}Request`
+    },
+    {
+      label: `Cancel ${type} request`,
+      value: 'cancelEditRequest'
+    }];
+  };
+
+  const currentUserMadeRequest = currentUserCssId === requestor.cssId;
+
   return (
-    <div>
-      {modificationRequestInfoSection}
-      {requestReasonSection}
-      {extraContent}
+    <div className="modification-request">
+      <div className="modification-request-text">
+        {modificationRequestInfoSection}
+        {requestReasonSection}
+        {extraContent}
+      </div>
+      <SearchableDropdown
+        name="modification-action"
+        label="Actions"
+        hideLabel
+        searchable={false}
+        options={generateActionOptions(requestType)}
+        placeholder="Select action"
+        onChange={(option) => onClickAction(modificationRequestIndex, option.value)}
+        // readOnly={!currentUserMadeRequest}
+      />
     </div>
   );
 };
@@ -113,5 +139,6 @@ const IssueModificationRequest = ({ issueModificationRequest }) => {
 export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
-  issueModificationRequest: PropTypes.object
+  issueModificationRequest: PropTypes.object.isRequired,
+  currentUserCssId: PropTypes.string.isRequired
 };

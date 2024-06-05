@@ -6,13 +6,21 @@ const IssueModificationList = (
   {
     sectionTitle,
     issueModificationRequests,
+    currentUserCssId,
+    onClickAction
   }
 ) => {
+
   const issues = issueModificationRequests.map((issueModificationRequest, id) => {
 
     return (
       <li key={id}>
-        <IssueModificationRequest issueModificationRequest={issueModificationRequest} />
+        <IssueModificationRequest
+          issueModificationRequest={issueModificationRequest}
+          currentUserCssId={currentUserCssId}
+          onClickAction={onClickAction}
+          modificationRequestIndex={id}
+        />
         {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
             <hr />
