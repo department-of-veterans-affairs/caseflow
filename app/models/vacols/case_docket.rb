@@ -550,12 +550,15 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
           appeals.reject do |appeal|
-            next if appeal["bfac"] != "7" ||
-                    !VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+            next if appeal["bfac"] != "7"
 
-            (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-              .appeal_affinity
-              .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+            if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+              appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+            else
+              VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+                .appeal_affinity
+                .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago
+            end
           end
         end
 
