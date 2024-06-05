@@ -41,7 +41,7 @@ class EditModal extends React.Component {
     await ApiUtil.get(`/queue/correspondence/${correspondenceId}`).then((response) => {
 
       const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
-      const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
+
 
       if (response.body.user_can_edit_vador) {
         this.setState({
@@ -143,17 +143,17 @@ class EditModal extends React.Component {
     }
   };
 
-  getPackages = async() => {
-    await ApiUtil.get('/queue/correspondence/packages').then((resp) => {
-      const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
-        label: packages.name,
-        value: packages.id.toString()
-      }));
-
-      packageTypeOptions.sort((first, second) => (first.label - second.label));
-      this.setState({ packageOptions: packageTypeOptions });
-    });
-  }
+  //getPackages = async() => {
+  //  await ApiUtil.get('/queue/correspondence/packages').then((resp) => {
+  //   const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
+  //      label: packages.name,
+  //      value: packages.id.toString()
+  //    }));
+  //
+  //    packageTypeOptions.sort((first, second) => (first.label - second.label));
+  //    this.setState({ packageOptions: packageTypeOptions });
+  //  });
+  //}
 
   render() {
     const { VADORDate, packageDocument, showEditModal } = this.state;

@@ -5,10 +5,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
   end
 
-  def package_documents
-    packages = PackageDocumentType.all
-  end
-
   def show
     corres_docs = correspondence.correspondence_documents
     task_instructions = CorrespondenceTask.package_action_tasks.open
