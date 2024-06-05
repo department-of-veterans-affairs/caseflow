@@ -1604,11 +1604,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
         end
 
         expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
-        fill_in(with: "")
+        find("textarea").fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
         expect(page).to have_button("Submit", disabled: true)
 
-        fill_in(with: "Right Knee")
+        find("textarea").fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)
         click_button("Submit")
         expect(page).to have_content("Right Knee")
