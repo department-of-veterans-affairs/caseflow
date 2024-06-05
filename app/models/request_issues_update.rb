@@ -9,7 +9,7 @@ class RequestIssuesUpdate < CaseflowRecord
   belongs_to :user
   belongs_to :review, polymorphic: true
 
-  attr_writer :request_issues_data
+  attr_writer :request_issues_data, :issue_modification_responses_data
   attr_reader :error_code
 
   delegate :veteran, :cancel_active_tasks, :create_business_line_tasks!, to: :review
@@ -22,6 +22,7 @@ class RequestIssuesUpdate < CaseflowRecord
     return false if processed?
 
     transaction do
+      #processe_issue_modification_responses!
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
@@ -270,6 +271,15 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def process_withdrawn_issues!
     withdrawal.call
+  end
+
+  def processe_issue_modification_responses!
+    IssueModificationRequests::AdminUpdater.new(
+      current_user: user,
+      review: review,
+      request_issues_update: self,
+      issue_modification_responses_data: @issue_modification_responses_data
+    ).perform!
   end
 
   def withdrawal
