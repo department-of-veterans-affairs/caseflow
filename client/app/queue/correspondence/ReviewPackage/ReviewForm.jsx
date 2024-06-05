@@ -27,7 +27,7 @@ export const ReviewForm = (props) => {
   );
 
   useEffect(() => {
-    setCorrespondenceTypeID(-1);
+    setCorrespondenceTypeID(props.correspondence.correspondence_type_id);
     setCreateRecordIsReadOnly('Select...');
   }, []);
 
@@ -304,7 +304,8 @@ export const ReviewForm = (props) => {
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
-                placeholder= {correspondenceTypeID < 0 ? 'Select...' : handleCorrespondenceTypeEmpty}
+                // defaultValue={generateOptions(props.reviewDetails.dropdown_values)[correspondenceTypeID]}
+                placeholder= {correspondenceTypeID < 0 ? 'Select...' : correspondenceTypes[correspondenceTypeID - 1]?.name}
               />
             </div>
           </div>
