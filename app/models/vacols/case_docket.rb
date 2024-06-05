@@ -340,7 +340,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  # {UPDATE}
+  # rubocop:disable Metrics/MethodLength
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     conn = connection
@@ -374,6 +374,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
@@ -507,7 +508,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
 
-  # {UPDATE}
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     query = if use_by_docket_date?
@@ -534,8 +534,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, limit, dry_run)
   end
-  # :nocov:
 
+  # :nocov:
+  # rubocop:disable Metrics/AbcSize
   def self.distribute_appeals(query, judge, limit, dry_run)
     conn = connection
 
@@ -583,11 +584,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
       # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
-      # {Need to add exclude affinity check to query}
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
+      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
+      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
     end
   end
 
@@ -595,7 +595,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
@@ -645,7 +645,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     "PREV_DECIDING_JUDGE in (#{satty_ids.join(', ')})"
   end
 
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
