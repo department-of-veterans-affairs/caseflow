@@ -2,7 +2,8 @@ type: object
 title: Upload / Update Provider Data
 description: Claim Evidence API Provider Data.
 required:
-  - contentSource
+  - claimantFirstName
+  - claimantLastName
   - documentTypeId
   - dateVaReceivedDocument
 properties:
@@ -75,3 +76,4 @@ properties:
     pattern: ^[0-9]*$
     example: '000000000'
 additionalProperties: false
+

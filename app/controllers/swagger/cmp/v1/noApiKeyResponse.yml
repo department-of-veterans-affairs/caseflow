@@ -1,0 +1,32 @@
+type: object
+title: Vefs No/Invalid API Key Error Response
+description: Error response when no or invalid API Key is present on the request
+properties:
+  messages:
+    type: array
+    items:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          example: "2024-05-20T15:53:29.389"
+        key:
+          type: string
+          enum:
+            - UNAUTHORIZED
+        severity:
+          type: string
+          enum:
+            - ERROR
+        status:
+          type: string
+          enum:
+            - "401"
+        text:
+          type: string
+          enum:
+            - "No/Invalid API Key Token in Header."
+        httpStatus:
+          type: string
+          enum:
+            - UNAUTHORIZED

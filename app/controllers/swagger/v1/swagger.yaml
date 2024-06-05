@@ -9,8 +9,6 @@ servers:
 - url: http://localhost:3000
   description: Local Development server
 paths:
-  "/api/v1/cmp":
-    "$ref": "./cmp/upload.yaml"
   "/api/v1/jobs":
     post:
       summary: create job
