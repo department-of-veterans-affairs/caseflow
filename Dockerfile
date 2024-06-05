@@ -44,10 +44,10 @@ RUN apt -y update && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update
 
-#install node
+# Install node
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 14.20.0
+ENV NODE_VERSION 16.16.0
 ENV NVM_INSTALL_PATH $NVM_DIR/versions/node/v$NODE_VERSION
 RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
@@ -84,5 +84,3 @@ RUN bundle install && \
 
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
-
-
