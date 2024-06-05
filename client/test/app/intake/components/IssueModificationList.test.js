@@ -35,7 +35,9 @@ describe('IssueModificationList', () => {
   const additionalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
     issueModificationRequests: mockedAdditionRequestTypeProps,
-    lastSection: true
+    lastSection: true,
+    allPendingIssues: [{}],
+    onClickPendingIssueAction: jest.fn()
   };
 
   const storeValues = { userIsVhaAdmin: true };
@@ -43,19 +45,25 @@ describe('IssueModificationList', () => {
   const modificationProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
     issueModificationRequests: mockedModificationRequestProps,
-    lastSection: true
+    lastSection: true,
+    allPendingIssues: [{}],
+    onClickPendingIssueAction: jest.fn()
   };
 
   const removalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
     issueModificationRequests: mockedRemovalRequestTypeProps,
-    lastSection: true
+    lastSection: true,
+    allPendingIssues: [{}],
+    onClickPendingIssueAction: jest.fn()
   };
 
   const withdrawalProps = {
     sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
     issueModificationRequests: mockedWithdrawalRequestTypeProps,
-    lastSection: true
+    lastSection: true,
+    allPendingIssues: [{}],
+    onClickPendingIssueAction: jest.fn()
   };
 
   it('renders the section title for a "Addition" request type', () => {

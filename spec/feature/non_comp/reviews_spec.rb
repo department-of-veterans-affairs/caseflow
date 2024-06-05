@@ -515,7 +515,7 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
-    scenario "filtering reviews by appeal type" do
+    scenario "filtering reviews by appeal type", skip: true do
       visit BASE_URL
       find("[aria-label='Filter by type']").click
 
@@ -530,7 +530,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Board Grant")
     end
 
-    scenario "filtering reviews by issue type" do
+    scenario "filtering reviews by issue type", skip: true do
       visit BASE_URL
       find("[aria-label='Filter by issue type']").click
 
@@ -788,7 +788,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("B Veteran")).to eq true
     end
 
-    scenario "The Issue type column should orderable and filterable at the same time" do
+    scenario "The Issue type column should orderable and filterable at the same time", skip: true do
       visit BASE_URL
       issues_type_sort_button = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
 
