@@ -4,11 +4,12 @@ require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
   before do
-    %w[hearing direct_review evidence_submission].each do |lever|
-      CaseDistributionLever.find_by(item: "ama_#{lever}_start_distribution_prior_to_goals")
-        .update!(is_toggle_active: true)
-    end
-
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
   end
@@ -319,8 +320,8 @@ describe Docket, :all_dbs do
       end
 
       it "returns an empty array when the corresponding CaseDistributionLever value is true" do
-        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: "true")
-        lever = CaseDistributionLever.find_by_item("disable_ama_non_priority_direct_review")
+        lever = create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
+        lever.update(value: "true")
         expect(lever.value).to eq("true")
         result = docket.ready_priority_nonpriority_appeals(priority: false)
         expect(result).to eq([])

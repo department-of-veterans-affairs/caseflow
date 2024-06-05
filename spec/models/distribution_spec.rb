@@ -17,6 +17,9 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
   end
 
   context "validations" do

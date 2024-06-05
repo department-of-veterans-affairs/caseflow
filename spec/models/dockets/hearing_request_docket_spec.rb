@@ -6,6 +6,8 @@ describe HearingRequestDocket, :postgres do
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
 
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
 
