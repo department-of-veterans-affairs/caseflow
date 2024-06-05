@@ -195,6 +195,7 @@ describe HearingTimeService, :all_dbs do
             min: 30
           )
         end
+
         expect(legacy_hearing.time.local_time).to eq(expected_time)
       end
 
@@ -223,6 +224,7 @@ describe HearingTimeService, :all_dbs do
             min: 30
           )
         end
+
         expect(legacy_hearing.time.local_time).to eq(expected_time)
       end
     end
