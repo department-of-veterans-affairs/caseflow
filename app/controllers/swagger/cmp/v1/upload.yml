@@ -43,7 +43,7 @@ post:
               - $ref: './vefsErrorCodes.yml#/components/schemas/VALIDATE_INVALID_VALUE'
               - $ref: './vefsErrorCodes.yml#/components/schemas/DUPLICATE_PROVIDERDATA_KEYS'
     '401':
-      description: JWT contains claims which indicate the consumer is not authorized to access the resource.
+      description: API Key does not exist or is not authorized to access the resource.
       content:
         application/json:
           schema:
