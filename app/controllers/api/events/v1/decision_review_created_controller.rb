@@ -3,6 +3,9 @@
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
+
+    return render json: { message: "Record already exists in Caseflow" }, status: :ok if event_exists_and_is_completed?(consumer_event_id)
+
     claim_id = drc_params[:claim_id]
     headers = request.headers
     ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, drc_params)
@@ -10,12 +13,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
-    # check if error.message about record already exists in Caseflow
-    if error.message.include?("already exists")
-      render json: { message: "Record already exists in Caseflow" }, status: :ok
-    else
-      render json: { message: error.message }, status: :unprocessable_entity
-    end
+    render json: { message: error.message }, status: :unprocessable_entity
   end
 
   def decision_review_created_error
@@ -75,4 +73,8 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
                                    :nonrating_issue_bgs_source])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def event_exists_and_is_completed?(consumer_event_id)
+    Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
+  end
 end
