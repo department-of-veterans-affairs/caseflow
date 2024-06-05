@@ -533,7 +533,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
 
   def self.generate_priority_case_distribution_lever_query(judge)
-    judge_ids = ineligible_judges_id_cache.push(judge.id).join(", ")
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
       "PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity} and BFAC = '7'"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
@@ -580,7 +579,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.reject do |appeal|
       next if appeal["bfac"] != "7"
 
-      VACOLS::Case.find_by(bfkey: appeal["bfkey"]).appeal_affinity.affinity_start_date <= lever_days.days.ago
+      if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+        appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+      else
+        VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+          .appeal_affinity
+          .affinity_start_date > lever_days.days.ago
+      end
     end
     appeals
   end
@@ -629,17 +634,13 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/MethodLength
 
   def self.vacols_judges_with_exclude_appeals_from_affinity
-    return "PREV_DECIDING_JUDGE in []" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+    return "PREV_DECIDING_JUDGE in ()" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
     satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
         .where(exclude_appeals_from_affinity: true)
         .flat_map(&:judge).compact.pluck(:css_id)).pluck(:sattyid)
 
-    "PREV_DECIDING_JUDGE in #{satty_ids}"
-  end
-
-  def self.ineligible_judges_id_cache
-    HearingRequestDistributionQuery.ineligible_judges_id_cache
+    "PREV_DECIDING_JUDGE in (#{satty_ids.join(', ')})"
   end
 
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
