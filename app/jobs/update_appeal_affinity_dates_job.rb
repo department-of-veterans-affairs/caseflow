@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class UpdateAppealAffinityDatesJob < CaseflowJob
-  include DistributionScopes
-
   queue_with_priority :low_priority
   application_attr :queue
 
