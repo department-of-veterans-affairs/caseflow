@@ -304,7 +304,6 @@ export const ReviewForm = (props) => {
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
-                // defaultValue={generateOptions(props.reviewDetails.dropdown_values)[correspondenceTypeID]}
                 placeholder= {correspondenceTypeID < 0 ? 'Select...' : correspondenceTypes[correspondenceTypeID - 1]?.name}
               />
             </div>
