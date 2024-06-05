@@ -24,7 +24,7 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def access_allowed?
-    Rails.env.demo? ||
+    Rails.deploy_env?(:uat) ||
     Rails.env.production?
   end
 
