@@ -72,14 +72,9 @@ class SeedDB
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CorrespondenceSeed
-    call_and_log_seed_step Seeds::Correspondence
-    call_and_log_seed_step Seeds::MultiCorrespondences
-    call_and_log_seed_step Seeds::QueueCorrespondences
     call_and_log_seed_step Seeds::VbmsDocumentTypes
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
-    call_and_log_seed_step Seeds::CorrespondenceAutoTexts
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
     call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
