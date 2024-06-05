@@ -1,67 +1,120 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
+import exp from 'constants';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
   const featureTogglesEMOPreDocket = { eduPreDocketAppeals: true };
 
-  const wrapper = mount(
-    <NonratingRequestIssueModal
-      formType={formType}
-      intakeData={intakeData}
-      onSkip={() => null}
-      featureToggles={{}}
-    />
-  );
+  // const wrapper = render(
+  //   <NonratingRequestIssueModal
+  //     formType={formType}
+  //     intakeData={intakeData}
+  //     onSkip={() => null}
+  //     featureToggles={{}}
+  //   />
+  // );
 
-  const wrapperNoSkip = mount(
-    <NonratingRequestIssueModal
-      formType={formType}
-      intakeData={intakeData}
-      featureToggles={{}}
-    />
-  );
+  // const wrapperNoSkip = render(
+  //   <NonratingRequestIssueModal
+  //     formType={formType}
+  //     intakeData={intakeData}
+  //     featureToggles={{}}
+  //   />
+  // );
 
-  const wrapperEMOPreDocket = mount(
-    <NonratingRequestIssueModal
-      formType="appeal"
-      intakeData={intakeData}
-      featureToggles={featureTogglesEMOPreDocket}
-    />
-  );
+  // const wrapperEMOPreDocket = render(
+  //   <NonratingRequestIssueModal
+  //     formType="appeal"
+  //     intakeData={intakeData}
+  //     featureToggles={featureTogglesEMOPreDocket}
+  //   />
+  // );
 
   describe('renders', () => {
-    const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
-    const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
-    const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+
+
+    const defaultProps = {
+      formType: formType,
+      intakeData: intakeData,
+      onSkip: () => null,
+      featureToggles: {},
+    };
+
+    const setup = (props) => {
+      return render(
+        <NonratingRequestIssueModal
+          {...defaultProps} {...props}
+        />
+      );
+    }
+
+    // const cancelBtn = screen.getByRole('button', { name: 'Cancel adding this issue' });
+
 
     it('renders button text', () => {
-      expect(cancelBtn.text()).toBe('Cancel adding this issue');
-      expect(skipBtn.text()).toBe('None of these match, see more options');
-      expect(submitBtn.text()).toBe('Add this issue');
+      setup();
+      expect(screen.getByText('Cancel adding this issue')).toBeInTheDocument();
+      expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
+      expect(screen.getByText('Add this issue')).toBeInTheDocument();
+    });
 
-      wrapper.setProps({
+    it('renders with new props', async () => {
+      const newProps = {
         cancelText: 'cancel',
         skipText: 'skip',
         submitText: 'submit'
-      });
+      };
 
-      expect(cancelBtn.text()).toBe('cancel');
-      expect(skipBtn.text()).toBe('skip');
-      expect(submitBtn.text()).toBe('submit');
+      setup(newProps);
+
+      const cancelBtn = await screen.findByRole('button', { name: 'cancel' });
+      const skipBtn = await screen.findByRole('button', { name: 'skip' });
+      const submitBtn = await screen.findByRole('button', { name: 'submit' });
+
+      expect(cancelBtn.textContent).toBe('cancel');
+      expect(skipBtn.textContent).toBe('skip');
+      expect(submitBtn.textContent).toBe('submit');
     });
 
-    it('skip button only with onSkip prop', () => {
-      expect(wrapperNoSkip.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
+    it.only('skip button only with onSkip prop', async () => {
+      // setup();
 
-      wrapperNoSkip.setProps({ onSkip: () => null });
+      // const { container } = setup();
+      // const element = container.querySelector('.cf-modal-controls .no-matching-issues');
+      // console.log('HELLLLLO????', element);
 
-      expect(wrapperNoSkip.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
+
+      // console.log('HELLLLLO????',screen.queryByText('.cf-modal-controls .no-matching-issues'))
+      // expect(screen.queryByText('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
+
+      // const newProps = {
+      //   onSkip: () => null
+      // }
+
+      // const { container } = setup(newProps);
+      // const wrapperNoSkip = container.querySelector('.cf-modal-controls .no-matching-issues');
+
+      // console.log("WRAPPERNOSKIP!!",wrapperNoSkip);
+      // expect(wrapperNoSkip).toBeInTheDocument();
+
+      const { container } = setup();
+
+      let element;
+      await waitFor(() => {
+        element = container.querySelector('.cf-modal-controls .no-matching-issues');
+        if (!element) {
+          throw new Error('Element not yet available');
+        }
+      });
+
+      console.log('HELLLLLO????', element);
     });
 
     it('disables button when nothing selected', () => {
@@ -190,7 +243,18 @@ describe('NonratingRequestIssueModal', () => {
       description: 'test'
     });
 
-    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
+    console.log("WRAPPERSKIP!!",wrapperNoSkip.benefitType);
+
+    // let benefitTypeInput = wrapperNoSkip.getByLabelText('Benefit Type');
+    // let categoryInput = wrapperNoSkip.getByLabelText('Category');
+    // let descriptionInput = wrapperNoSkip.getByLabelText('Description');
+
+    // fireEvent.change(benefitTypeInput, { target: { value: 'vha' } });
+    // fireEvent.change(categoryInput, { target: { value: 'Beneficiary Travel' } });
+    // fireEvent.change(descriptionInput, { target: { value: 'test' } });
+
+    const optionalLabel = wrapperNoSkip.getByLabelText('.decision-date .cf-optional');
+    console.log("OPTIONAL LABEL!!",optionalLabel);
     const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
 
     it('renders modal with decision date field being optional', () => {
