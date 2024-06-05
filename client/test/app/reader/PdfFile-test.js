@@ -55,7 +55,7 @@ const storeMetricsError = {
     documentType: 'test',
   },
   info: {
-    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
+    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ()]*)$/),
     product: 'browser',
     type: 'error'
   },
@@ -169,7 +169,8 @@ describe('PdfFile', () => {
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+        expect(storeMetrics).toBeCalledWith(
+          storeMetricsError.uuid,
           storeMetricsError.data,
           storeMetricsError.info,
           storeMetricsError.eventId);
