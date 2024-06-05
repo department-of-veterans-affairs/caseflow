@@ -127,6 +127,66 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       expect(parser.ri_nonrating_issue_bgs_id(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
       expect(parser.ri_nonrating_issue_bgs_source(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_source"]
     end
+    describe "#process_nonrating" do
+      let(:payload_with_valid_issue) do
+        {
+          request_issues: [
+            {
+              nonrating_issue_category: "Disposition",
+              contested_decision_issue_id: 1
+            }
+          ]
+        }
+      end
+
+      let(:payload_with_invalid_issue) do
+        {
+          request_issues: [
+            {
+              nonrating_issue_category: "Other",
+              contested_decision_issue_id: nil
+            }
+          ]
+        }
+      end
+
+      let(:payload_with_unknown_issue) do
+        {
+          request_issues: [
+            {
+              nonrating_issue_category: "Disposition",
+              contested_decision_issue_id: 2
+            }
+          ]
+        }
+      end
+
+      before do
+        create(:decision_issue, id: 1)
+        create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Valid Category")
+      end
+
+      it "sets the nonrating_issue_category from the database when there is exactly one matching issue" do
+        parser.process_nonrating(payload_with_valid_issue)
+        expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Valid Category")
+      end
+
+      it "sets the nonrating_issue_category to 'Unknown Issue Category' when there are multiple matching issues" do
+        create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Another Valid Category")
+        parser.process_nonrating(payload_with_valid_issue)
+        expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
+      end
+
+      it "doesn't change anything if nonrating_issue_category is not Disposition" do
+        parser.process_nonrating(payload_with_invalid_issue)
+        expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Other")
+      end
+
+      it "sets the nonrating_issue_category to 'Unknown Issue Category' when the contested_decision_issue_id is not found" do
+        parser.process_nonrating(payload_with_unknown_issue)
+        expect(payload_with_unknown_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
+      end
+    end
   end
   def read_json_payload
     JSON.parse(File.read(Rails.root.join("app",

@@ -15,7 +15,6 @@ class Events::DecisionReviewCreated
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
-
       return if event_exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -25,8 +24,6 @@ class Events::DecisionReviewCreated
         fail Caseflow::Error::RedisLockFailed,
              message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
-
-      process_nonrating(payload) if payload[:request_issues].present?
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
         # key => "EndProductEstablishment:reference_id" aka "claim ID"
@@ -93,22 +90,6 @@ class Events::DecisionReviewCreated
     # was successfully completed
     def event_exists_and_is_completed?(consumer_event_id)
       Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
-    end
-
-    # Checking for nonrating_issue_category is "Disposition" and processing such issues.
-    def process_nonrating(payload)
-      payload[:request_issues].each do |issue|
-        category = issue[:nonrating_issue_category]
-        contested_id = issue[:contested_decision_issue_id]
-        ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-        if category == "Disposition"
-          if contested_id.present? && ri.length == 1
-            return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
-          else
-            return issue[:nonrating_issue_category] = "Unknown Issue Category"
-          end
-        end
-      end
     end
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
