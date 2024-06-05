@@ -58,6 +58,5 @@ export default IssueModificationRow;
 IssueModificationRow.propTypes = {
   fieldTitle: PropTypes.string,
   issueModificationRequests: PropTypes.object,
-  userIsVhaAdmin: PropTypes.bool,
   onClickIssueRequestModificationAction: PropTypes.func
 };
