@@ -20,11 +20,11 @@ describe JsonApiResponseAdapter do
 
       expect(parsed.length).to eq 2
 
-      expect(parsed[0].document_id).to eq "03223945-468b-4e8a-b79b-82fa73c2d2d9"
+      expect(parsed[0].document_id).to eq "{03223945-468B-4E8A-B79B-82FA73C2D2D9}"
       expect(parsed[0].received_at).to eq "2018-03-08"
       expect(parsed[0].mime_type).to eq "application/pdf"
 
-      expect(parsed[1].document_id).to eq "7d6afd8c-3bf7-4224-93ae-e1f07ac43c71"
+      expect(parsed[1].document_id).to eq "{7D6AFD8C-3BF7-4224-93AE-E1F07AC43C71}"
       expect(parsed[1].received_at).to eq "2018-12-08"
       expect(parsed[1].mime_type).to eq "application/pdf"
     end

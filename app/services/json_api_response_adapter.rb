@@ -19,8 +19,8 @@ class JsonApiResponseAdapter
     provider_data = file_json["currentVersion"]["providerData"]
 
     OpenStruct.new(
-      document_id: file_json["currentVersionUuid"],
-      series_id: file_json["uuid"],
+      document_id: "{#{file_json["currentVersionUuid"].upcase}}",
+      series_id: "{#{file_json["uuid"].upcase}}",
       version: "1",
       type_description: provider_data["subject"],
       type_id: provider_data["documentTypeId"],
