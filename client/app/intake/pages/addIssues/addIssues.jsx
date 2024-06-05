@@ -186,30 +186,6 @@ class AddIssuesPage extends React.Component {
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
-    case 'reviewIssueModificationRequest':
-      this.setState({
-        editIndex: index
-      });
-      this.props.toggleRequestIssueModificationModal(index);
-      break;
-    case 'reviewIssueAdditionRequest':
-      this.setState({
-        editIndex: index
-      });
-      this.props.toggleRequestIssueAdditionModal(index);
-      break;
-    case 'reviewIssueWithdrawalRequest':
-      this.setState({
-        editIndex: index
-      });
-      this.props.toggleRequestIssueWithdrawalModal(index);
-      break;
-    case 'reviewIssueRemovalRequest':
-      this.setState({
-        editIndex: index
-      });
-      this.props.toggleRequestIssueRemovalModal(index);
-      break;
     default:
       this.props.undoCorrection(index);
     }
