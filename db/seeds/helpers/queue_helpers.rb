@@ -21,12 +21,12 @@ module QueueHelpers
   # create correspondence for given veteran/user, or create one
   def create_correspondence(user = {}, veteran = {})
     vet = veteran
-    user = user.blank? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
+    user = user.blank? ? InboundOpsTeam.singleton.users.first : user
     package_doc_type = PackageDocumentType.all.sample
     corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
 
-    ::Correspondence.create!(
+    correspondence = ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       portal_entry_date: Time.zone.now,
       source_type: "Mail",
@@ -38,7 +38,9 @@ module QueueHelpers
       notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
       veteran_id: vet.id,
       nod: [true, false].sample,
-    ).tap { @cmp_packet_number += 1 }
+    )
+    create_correspondence_document(correspondence, vet)
+    correspondence.tap { @cmp_packet_number += 1 }
   end
 
   # randomly generates notes for the correspondence
