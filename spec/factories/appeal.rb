@@ -444,6 +444,15 @@ FactoryBot.define do
     trait :ready_for_distribution do
       with_post_intake_tasks
       completed_distribution_task
+
+      after(:create) do |appeal, _evaluator|
+        appeal.reload
+      end
+    end
+
+    trait :ready_for_distribution_with_appeal_affinity do
+      ready_for_distribution
+      with_appeal_affinity
     end
 
     trait :ready_for_distribution_with_appeal_affinity do

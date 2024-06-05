@@ -529,12 +529,10 @@ module Seeds
     end
 
     def create_qa_admin_for_cda_control_group
-
-      qa_admin = User.find_or_create_by!(station_id: 101,
-                            css_id: "QAACDPLUS",
-                            full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
-                            roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
-
+      qa_admin = create(:user, :judge, :with_vacols_judge_record,
+                        css_id: "QAACDPLUS",
+                        full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
+                        roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
 
       # {CDA Control Group Admin}
       CDAControlGroup.singleton.add_user(qa_admin)
