@@ -46,7 +46,8 @@ export const RequestIssueFormWrapper = (props) => {
       requestor: { fullName: userFullName, cssId: userCssId },
       requestType: props.type,
       ...issueModificationRequest,
-      decisionDate
+      decisionDate,
+      status: issueModificationRequest.status || 'assigned'
     };
 
     // close modal and move the issue

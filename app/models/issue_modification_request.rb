@@ -10,7 +10,8 @@ class IssueModificationRequest < CaseflowRecord
 
   validates :status, :requestor, presence: true
 
-  validate :open_issue_modification_request, if: proc { |imr| !imr.addition? }
+  validate :only_one_assigned_issue_modification_request, if: :request_issue
+  validate :request_issue_exists_unless_addition
 
   before_save :set_decided_at
 
@@ -85,12 +86,18 @@ class IssueModificationRequest < CaseflowRecord
 
   private
 
-  def open_issue_modification_request
-    if request_issue.issue_modification_requests.where.not(id: id).where(status: "assigned").any?
+  def only_one_assigned_issue_modification_request
+    if assigned? && request_issue.issue_modification_requests.assigned.exists?
       fail(
         Caseflow::Error::ErrorOpenModifyingExistingRequest,
         message: COPY::ERROR_OPEN_MODIFICATION_EXISTING_REQUEST
       )
+    end
+  end
+
+  def request_issue_exists_unless_addition
+    if (!addition? || (addition? && approved?)) && request_issue.nil?
+      errors.add(:request_issue, "must exist if request_type is not addition")
     end
   end
 

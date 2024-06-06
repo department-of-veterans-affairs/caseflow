@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
     return;
@@ -53,4 +55,47 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       decider: formatUserForPendingRequest(modificationRequest.decider),
     };
   });
+};
+
+// This might need to compare old and current to know which ones have been finished.
+// Either that or we need to only grab the ones where the status is still assigned.
+// TODO: Auto format all the non object attribute keys via a camel case -> snake case conversion
+export const formatIssueModificationRequestSubmissionData = (state) => {
+  const groupedRequests = {
+    new: [],
+    cancelled: [],
+    edited: [],
+    approved: [],
+    denied: []
+  };
+
+  (state.pendingIssueModificationRequests || []).
+    filter((modificationRequest) => Boolean(modificationRequest)).
+    forEach((modificationRequest) => {
+      const formattedRequest = {
+        id: modificationRequest.id,
+        status: modificationRequest.status,
+        request_type: modificationRequest.requestType,
+        benefit_type: modificationRequest.benefitType,
+        nonrating_issue_category: modificationRequest.nonratingIssueCategory,
+        nonrating_issue_description: modificationRequest.nonratingIssueDescription,
+        decision_date: modificationRequest.decisionDate,
+        withdrawal_date: modificationRequest.withdrawalDate,
+        requestIssueId: modificationRequest.requestIssueId,
+        request_reason: modificationRequest.requestReason,
+        decision_reason: modificationRequest.decisionReason,
+        request_issue_id: modificationRequest.requestIssueId,
+        remove_original_issue: modificationRequest.removeOriginalIssue,
+      };
+
+      if (isEmpty(modificationRequest.id)) {
+        groupedRequests.new.push(formattedRequest);
+      } else {
+        // Placeholder for now. If it was edited somehow we gotta figure that out
+        // Approved will likely check for a variable that is set just like all the others
+        // groupedRequests.approved.push(formattedRequest);
+      }
+    });
+
+  return groupedRequests;
 };
