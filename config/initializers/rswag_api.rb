@@ -13,6 +13,7 @@ Rswag::Api.configure do |c|
   #c.swagger_filter = lambda { |swagger, env| swagger['host'] = env['HTTP_HOST'] }
 end
 
+# Overwriting this method from rswag_api so that Date is whitelisted when loading YAML files
 Rswag::Api::Middleware.module_eval do
   def load_yaml(filename)
     YAML.safe_load(File.read(filename), [Symbol, Date, Time])
