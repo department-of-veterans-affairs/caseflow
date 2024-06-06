@@ -6,6 +6,7 @@ describe Docket, :all_dbs do
   before do
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
   end
 
   context "docket" do
