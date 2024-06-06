@@ -18,7 +18,7 @@ class Event < CaseflowRecord
   end
 
   # Check if there's already a CF Event that references that Appeals-Consumer EventID and
-    # was successfully completed
+  # was successfully completed
   def self.exists_and_is_completed?(consumer_event_id)
     where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
   end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
+  # rubocop:disable Layout/LineLength
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
 
@@ -15,6 +16,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue StandardError => error
     render json: { message: error.message }, status: :unprocessable_entity
   end
+  # rubocop:enable Layout/LineLength
 
   def decision_review_created_error
     event_id = drc_error_params[:event_id]

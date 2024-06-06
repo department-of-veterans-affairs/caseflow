@@ -31,7 +31,6 @@ RSpec.describe Event, type: :model do
   end
 
   describe "#exists_and_is_completed?" do
-
     context "When there is no previous Event" do
       it "should return false" do
         expect(described_class.exists_and_is_completed?(consumer_event_id)).to be_falsey
