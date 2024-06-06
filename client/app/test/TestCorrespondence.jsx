@@ -1,22 +1,45 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ApiUtil from '../util/ApiUtil';
-import StringUtil from '../util/StringUtil';
-import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextareaField from '../components/TextareaField';
 import NumberField from '../components/NumberField';
+import TextField from '../components/TextField';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
-import Alert from '../components/Alert';
-import { trim, escapeRegExp } from 'lodash';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 export default function TestCorrespondence(props) {
+  const [correspondenceCount, setCorrespondenceCount] = useState(0);
+  const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
+
+  const handleVeteranFileNumbers = (e) => {
+    const inputValue = e.target.value;
+    // Allow only digits and commas
+    const sanitizedValue = inputValue.replace(/[^0-9,]/g, '');
+    // Split the input by commas and count the number of elements
+    const numbers = sanitizedValue.split(',');
+
+    // If the number of elements exceeds 10, truncate the input
+    if (numbers.length > 10) {
+      setVeteranFileNumbers(numbers.slice(0, 10).join(','));
+    } else {
+      setVeteranFileNumbers(sanitizedValue);
+    }
+  };
+  const handleCorrespondenceCountChange = (value) => {
+    setCorrespondenceCount(value);
+  };
+
+  const handleSubmit = () => {
+    // Submit the form values
+    console.log('Text Area Value:', veteranFileNumbers);
+    console.log('Number Value:', correspondenceCount);
+    // Here you can add your logic to handle form submission (e.g., API call)
+  };
 
   return <BrowserRouter>
     <div>
@@ -41,16 +64,20 @@ export default function TestCorrespondence(props) {
               name="Enter up to 10 veteran file numbers separated by a comma."
             />
           </div>
-          <p>Enter the number of correspondence to be generated</p>
+          <p>{COPY.CORRESPONDENCE_ADMIN.COUNT_LABEL}</p>
           <div>
-            <NumberField
+            <TextField
+              type="number"
               className={['number-field-styling-test-correspondence']}
+              value={correspondenceCount}
+              onChange={handleCorrespondenceCountChange}
             />
           </div>
           <div>
             <Button
               name="Generate correspondence"
               classNames={['correspondence-intake-appeal-button']}
+              onClick={handleSubmit}
             />
           </div>
         </AppSegment>

@@ -1562,6 +1562,8 @@
   "CORRESPONDENCE_ADMIN": {
     "HEADER": "Correspondence admin",
     "SUB_HEADER": "Correspondence generation process",
-    "DESCRIPTION": "Unassigned correspondence can be created below by entering the veteran file number(s) and the number of correspondence needed. This number of correspondence will appear in the unassigned tab of the Correspondence Team Queue and will be associated to the specific veteran(s) listed below."
+    "DESCRIPTION": "Unassigned correspondence can be created below by entering the veteran file number(s) and the number of correspondence needed. This number of correspondence will appear in the unassigned tab of the Correspondence Team Queue and will be associated to the specific veteran(s) listed below.",
+    "COUNT_LABEL": "Enter the number of correspondence to be generated:",
+    "SUBMIT_BUTTON_TEXT": "Generate correspondence"
   }
 }
