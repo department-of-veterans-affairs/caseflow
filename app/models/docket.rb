@@ -169,7 +169,9 @@ class Docket
   end
 
   def docket_time_goal
-    @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals")
+    lever_item = CaseDistributionLever.find_by_item("ama_#{docket_type}_docket_time_goals")
+    lever_value = lever_item ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : nil
+    @docket_time_goal ||= lever_value
   end
 
   def start_distribution_prior_to_goal
