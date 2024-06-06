@@ -4,8 +4,13 @@ import COPY from '../../../COPY';
 import { formatDateStr } from 'app/util/DateUtil';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { capitalize } from 'lodash';
+import { useSelector } from 'react-redux';
 
-const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, onClickAction, modificationRequestIndex }) => {
+const IssueModificationRequest = ({
+  issueModificationRequest,
+  onClickIssueRequestModificationAction
+}) => {
   const {
     benefitType,
     requestType,
@@ -19,6 +24,9 @@ const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, 
   } = issueModificationRequest;
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
+  // const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const currentUserCssId = useSelector((state) => state.userCssId);
+  const currentUserMadeRequest = currentUserCssId === requestor.cssId;
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 
@@ -105,15 +113,13 @@ const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, 
   const generateActionOptions = (type) => {
     return [{
       label: `Edit ${type} request`,
-      value: `edit-${type}Request`
+      value: `reviewIssue${capitalize(requestType)}Request`
     },
     {
       label: `Cancel ${type} request`,
-      value: 'cancelEditRequest'
+      value: 'cancelReviewIssueRequest'
     }];
   };
-
-  const currentUserMadeRequest = currentUserCssId === requestor.cssId;
 
   return (
     <div className="modification-request">
@@ -129,8 +135,8 @@ const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, 
         searchable={false}
         options={generateActionOptions(requestType)}
         placeholder="Select action"
-        onChange={(option) => onClickAction(modificationRequestIndex, option.value)}
-        // readOnly={!currentUserMadeRequest}
+        onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
+        readOnly={!currentUserMadeRequest}
       />
     </div>
   );
@@ -140,5 +146,6 @@ export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
   issueModificationRequest: PropTypes.object.isRequired,
-  currentUserCssId: PropTypes.string.isRequired
+  currentUserCssId: PropTypes.string.isRequired,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired,
 };
