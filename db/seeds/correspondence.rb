@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+#create queue correspondence seeds
+require_relative "./helpers/queue_helpers"
+
 module Seeds
-  class CorrespondenceSeed < Base
+  class Correspondence < Base
     include QueueHelpers
 
     def initialize
