@@ -1,15 +1,14 @@
-require 'swagger_helper'
+# frozen_string_literal: true
 
-RSpec.describe 'api/v1/jobs', type: :request, skip: true do
+require "swagger_helper"
 
-  path '/api/v1/jobs' do
-
-    post('create job') do
-      response(200, 'successful') do
-
+RSpec.describe "api/v1/jobs", type: :request, skip: true do
+  path "/api/v1/jobs" do
+    post("create job") do
+      response(200, "successful") do
         after do |example|
           example.metadata[:response][:content] = {
-            'application/json' => {
+            "application/json" => {
               example: JSON.parse(response.body, symbolize_names: true)
             }
           }

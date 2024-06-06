@@ -16,7 +16,7 @@ class Api::V1::CmpController < Api::ApplicationController
   def validate_payload?
     payload = JSON.parse(upload_params[:payload])
 
-    validate_provider_data?(payload['providerData']) if payload.present?
+    validate_provider_data?(payload["providerData"]) if payload.present?
   end
 
   def validate_provider_data?(provider_data)

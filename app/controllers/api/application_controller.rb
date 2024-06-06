@@ -94,7 +94,6 @@ class Api::ApplicationController < ActionController::Base
   end
 
   def endpoint_disabled(message)
-
     result = {
       uuid: SecureRandom.uuid,
       code: "VEFSERR50102",
