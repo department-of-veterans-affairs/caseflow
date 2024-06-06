@@ -21,9 +21,6 @@ post:
       multipart/form-data: # Media type
         schema: # Request payload
           $ref: './uploadRequest.yml'
-        encoding:
-          file:
-            contentType: image/png, image/jpeg
   responses:
     '200':
       description: >-

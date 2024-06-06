@@ -7,6 +7,9 @@ required:
 properties:
   payload:
     $ref: './payload.yml'
-  file:
-    type: string
-    format: binary
+  'file[]':
+    description: Array of files to be uploaded
+    type: array
+    items:
+      type: string
+      format: binary
