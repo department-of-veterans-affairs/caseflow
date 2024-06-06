@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import { v4 } from 'uuid';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -53,6 +54,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),
       decider: formatUserForPendingRequest(modificationRequest.decider),
+      identifier: String(modificationRequest.id) || v4()
     };
   });
 };

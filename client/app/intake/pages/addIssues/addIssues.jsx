@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import issueModificationRow from 'app/intake/components/issueModificationRow';
+import issueModificationRow from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -83,7 +83,8 @@ class AddIssuesPage extends React.Component {
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
-      loading: false
+      loading: false,
+      pendingIssueModification: {}
     };
   }
 
@@ -94,6 +95,41 @@ class AddIssuesPage extends React.Component {
   onClickRequestAdditionalIssue = () => {
     this.props.toggleRequestIssueAdditionModal();
   }
+
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
+
+    const identifier = issueModificationRequest.identifier;
+
+    switch (requestType) {
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueModificationModal(identifier);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueAdditionModal(identifier);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueWithdrawalModal(identifier);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
+    }
+  };
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -360,6 +396,10 @@ class AddIssuesPage extends React.Component {
       !originalIssuesHaveNoDecisionDate() &&
       intakeData.benefitType === 'vha';
 
+    const disableIssueActions = editPage &&
+      intakeData.userIsVhaAdmin &&
+      !_.isEmpty(intakeData.originalPendingIssueModificationRequests);
+
     const renderButtons = () => {
       if (showRequestIssueUpdateOptions) {
         return (
@@ -405,8 +445,9 @@ class AddIssuesPage extends React.Component {
             <Button
               name="add-issue"
               legacyStyling={false}
-              classNames={['usa-button-secondary']}
+              dangerStyling
               onClick={() => this.onClickAddIssue()}
+              disabled={disableIssueActions}
             >
             + Add issue
             </Button>)}
@@ -539,7 +580,8 @@ class AddIssuesPage extends React.Component {
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
-              fieldTitle: 'Requested issues'
+              fieldTitle: 'Requested issues',
+              disableIssueActions
             }),
           );
         } else if (key === 'withdrawnIssues') {
@@ -567,6 +609,7 @@ class AddIssuesPage extends React.Component {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
+        onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
     }
 
@@ -673,6 +716,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
           />
         )}
 
@@ -681,7 +725,9 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
@@ -689,13 +735,17 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
-            addToPendingReviewSection={this.props.addToPendingReviewSection} />
+            addToPendingReviewSection={this.props.addToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
