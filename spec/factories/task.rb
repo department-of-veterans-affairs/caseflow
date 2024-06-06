@@ -562,6 +562,16 @@ FactoryBot.define do
           associated_attorney { nil }
         end
 
+        trait :advanced_on_docket do
+          appeal do
+            create(:appeal,
+                   :with_vha_issue,
+                   :with_post_intake_tasks,
+                   :direct_review_docket,
+                   :advanced_on_docket_due_to_age)
+          end
+        end
+
         trait :action_required do
           after(:create) do |task, evaluator|
             task.update(status: Constants.TASK_STATUSES.in_progress)
