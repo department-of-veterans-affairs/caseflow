@@ -12,12 +12,325 @@ paths:
   "/api/v2/appeals":
     get:
       summary: list appeals
+      parameters:
+        - name: ssn
+          in: header
+          description: SSN of the veteran whose appeals will be retrieved
+          schema:
+            type : string
+          required: true
+        - name: source
+          in: header
+          description: Name of the caller to self-identify who they are
+          schema:
+            type : string
+          required: false
       responses:
         '200':
-          description: successful
+          description: Decision reviews are successfully retrieved
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        attributes:
+                          type: object
+                          properties:
+                            appealIds:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  0:
+                                    type: string
+                                  1:
+                                    type: string
+                                  2:
+                                    type: string
+                                  3:
+                                    type: string
+                            updated:
+                              type: string
+                              format: date-time
+                            incompleteHistory:
+                              type: boolean
+                            active:
+                              type: boolean
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            aoj:
+                              type: string
+                            programArea:
+                              type: string
+                            status:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                details:
+                                  type: object
+                                  properties: {}
+                            alerts:
+                              type: array
+                              items:
+                                type: object
+                                properties: {}
+                            issues:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  active:
+                                    type: boolean
+                                  lastAction:
+                                    type: string
+                                    format: nullable
+                                  date:
+                                    type: string
+                                    format: nullable
+                                  description:
+                                    type: string
+                                  diagnosticCode:
+                                    type: string
+                            events:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  date:
+                                    type: string
+                                    format: date
+                            evidence:
+                              type: array
+                              items:
+                                type: object
+              examples:
+                AMA appeal, Supplemental Claim, and Higher Level Review:
+                  value:
+                    data:
+                      - id: HLR1
+                        type: higherLevelReview
+                        attributes:
+                          appealIds:
+                            - HLR1
+                          updated: '2024-06-06T19:26:02-04:00'
+                          incompleteHistory: false
+                          active: true
+                          description: Streptococcic arthritis and 2 others
+                          location: aoj
+                          aoj: vba
+                          programArea: compensation
+                          status:
+                            type: hlr_received
+                            details: {}
+                          alerts: []
+                          issues:
+                            - active: true
+                              lastAction: null
+                              date: null
+                              description: Streptococcic arthritis
+                              diagnosticCode: '5008'
+                            - active: true
+                              lastAction: null
+                              date: null
+                              description: Streptococcic arthritis
+                              diagnosticCode: '5008'
+                            - active: true
+                              lastAction: null
+                              date: null
+                              description: Streptococcic arthritis
+                              diagnosticCode: '5008'
+                          events:
+                            - type: hlr_request
+                              date: '2024-04-16'
+                          evidence: []
+                      - id: SC1
+                        type: supplementalClaim
+                        attributes:
+                          appealIds:
+                            - SC1
+                          updated: '2024-06-06T19:26:02-04:00'
+                          incompleteHistory: false
+                          active: false
+                          description: null
+                          location: aoj
+                          aoj: null
+                          programArea: compensation
+                          status:
+                            type: sc_closed
+                            details: {}
+                          alerts: []
+                          issues: []
+                          events:
+                            - type: sc_request
+                              date: '2024-05-16'
+                          evidence: []
+                      - id: A1
+                        type: appeal
+                        attributes:
+                          appealIds:
+                            - A1
+                          type: Original
+                          updated: '2024-06-06T19:26:02-04:00'
+                          incompleteHistory: false
+                          active: true
+                          description: null
+                          aod: false
+                          location: bva
+                          aoj: null
+                          programArea: null
+                          status:
+                            type: scheduled_hearing
+                            details:
+                              type: central_office
+                              date: '2024-06-13'
+                              location: St. Louis regional office
+                          alerts: []
+                          docket:
+                            type: evidenceSubmission
+                            month: '2024-05-01'
+                            switchDueDate: null
+                            eligibleToSwitch: false
+                          events:
+                            - type: ama_nod
+                              date: '2024-05-15'
+                          issues: []
+                          evidence: []
+
+
+        '404':
+          description: The SSN provided didn't correlate with any Veteran we are aware of
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                When a hearing day cannot be found:
+                  value:
+                    errors:
+                      status: 404
+                      title: "Veteran not found"
+                      detail: "A veteran with that SSN was not found in our systems."
+  "/api/v2/hearings":
+    get:
+      summary: Retrieves all hearings scheduled for a particular hearing day. Utilized by VEText.
+      parameters:
+        - name: hearing_day
+          in: path
+          description: Hearing date in YYYY-MM-DD format
+          schema:
+            type : string
+          required: true
+      responses:
+        '200':
+          description: A list of all of the hearings for a particular date across all dockets
+          content:
+            application/vnd.api+json:
+              schema:
+                  type: object
+                  properties:
+                    hearings:
+                      type: array
+                      items:
+                        type: object
+                        description: Information about a single hearing including its location and its appellant
+                        properties:
+                          address:
+                            type: string
+                          city:
+                            type: string
+                          appeal:
+                            type: string
+                          facility_id:
+                            type: string
+                          first_name:
+                            type: string
+                          last_name:
+                            type: string
+                          participant_id:
+                            type: string
+                          hearing_location:
+                            type: string
+                          is_virtual:
+                            type: boolean
+                          room:
+                            type: string
+                          scheduled_for:
+                            type: string
+                            format: date-time
+                          ssn:
+                            type: string
+                          state:
+                            type: string
+                          timezone:
+                            type: string
+                          zip_code:
+                            type: string
+        '404':
+          description: When a hearing date cannot be found. There are no corresponding dockets.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                When a hearing day cannot be found:
+                  value:
+                    errors:
+                      status: 404
+                      title: "Hearing day not found"
+                      detail: "No hearing days with that date were found."
+
+        '422':
+          description: When the date provided is invalid.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/Errors"
+              examples:
+                When a provided date is invalid:
+                  value:
+                    errors:
+                      status: 422
+                      title: "Invalid Date"
+                      detail: "Please enter a valid date"
+
 components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: TOKEN
+  schemas:
+    Errors:
+      type: array
+      items:
+        type: object
+        properties:
+          status:
+            type: string
+          title:
+            type: string
+          detail:
+            type: string
