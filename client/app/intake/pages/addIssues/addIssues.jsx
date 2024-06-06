@@ -84,7 +84,7 @@ class AddIssuesPage extends React.Component {
       issueIndex: 0,
       addingIssue: false,
       loading: false,
-      modificationIndex: 0,
+      pendingIssueModification: {}
     };
   }
 
@@ -95,6 +95,44 @@ class AddIssuesPage extends React.Component {
   onClickRequestAdditionalIssue = () => {
     this.props.toggleRequestIssueAdditionModal();
   }
+
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
+
+    const identifier = issueModificationRequest.identifier;
+
+    switch (requestType) {
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueModificationModal(identifier);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueAdditionModal(identifier);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueWithdrawalModal(identifier);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    case 'cancelReviewIssueRequest':
+      this.props.toggleCancelPendingRequestIssueModal();
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
+    }
+  };
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -130,48 +168,24 @@ class AddIssuesPage extends React.Component {
       break;
     case 'requestModification':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueModificationModal(index);
       break;
     case 'requestRemoval':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueRemovalModal(index);
       break;
     case 'requestWithdrawal':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
-      break;
-    case 'edit-additionRequest':
-      this.setState({
-        modificationIndex: index
-      });
-      this.props.toggleRequestIssueAdditionModal(index);
-      break;
-    case 'edit-modificationRequest':
-      this.setState({
-        modificationIndex: index
-      });
-      this.props.toggleRequestIssueModificationModal(index);
-      break;
-    case 'edit-removalRequest':
-      this.setState({
-        modificationIndex: index
-      });
-      this.props.toggleRequestIssueRemovalModal(index);
-      break;
-    case 'edit-withdrawalRequest':
-      this.setState({
-        modificationIndex: index
-      });
-      this.props.toggleRequestIssueWithdrawalModal(index);
-      break;
-    case 'cancelEditRequest':
-      this.props.toggleCancelPendingRequestIssueModal();
       break;
     default:
       this.props.undoCorrection(index);
@@ -300,7 +314,6 @@ class AddIssuesPage extends React.Component {
       userCanRequestIssueUpdates,
       isLegacy,
       pendingIssueModificationRequests,
-      userCssId,
     } = this.props;
 
     const intakeData = intakeForms[formType];
@@ -596,8 +609,7 @@ class AddIssuesPage extends React.Component {
       rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
-        currentUserCssId: userCssId,
-        onClickAction: this.onClickIssueAction
+        onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
     }
 
@@ -704,6 +716,7 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
           />
         )}
 
@@ -712,7 +725,9 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.requestIssueWithdrawalModalVisible && (
@@ -720,13 +735,17 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             issueIndex={this.state.issueIndex}
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
-            moveToPendingReviewSection={this.props.moveToPendingReviewSection} />
+            moveToPendingReviewSection={this.props.moveToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.requestIssueAdditionModalVisible && (
           <RequestIssueAdditionModal
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
-            addToPendingReviewSection={this.props.addToPendingReviewSection} />
+            addToPendingReviewSection={this.props.addToPendingReviewSection}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+          />
         )}
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
@@ -855,7 +874,7 @@ export const EditAddIssuesPage = connect(
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy,
-    issueModificationRequests: state.issueModificationRequests
+    issueModificationRequests: state.issueModificationRequests,
   }),
   (dispatch) =>
     bindActionCreators(
