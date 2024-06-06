@@ -8,9 +8,8 @@ class SendNotificationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include IgnoreJobExecutionTime
 
-  queue_with_priority :low_priority
+  queue_as { self.class.queue_name_suffix }
   application_attr :va_notify
-
   attr_accessor :notification_audit, :message
 
   class SendNotificationJobError < StandardError; end

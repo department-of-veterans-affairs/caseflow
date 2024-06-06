@@ -15,7 +15,7 @@ class NotificationInitializationJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include IgnoreJobExecutionTime
 
-  queue_as SendNotificationJob.queue_name_suffix
+  queue_with_priority :low_priority
   application_attr :va_notify
 
   # ...
