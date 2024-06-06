@@ -9,6 +9,8 @@ class AppealsReadyForDistribution
     cavc: "CAVC",
     receipt_date: "Receipt Date",
     ready_for_distribution_at: "Ready for Distribution at",
+    target_distro_date: "Target Distro Date",
+    days_before_goal_date: "Days Before Goal Date",
     hearing_judge: "Hearing Judge",
     veteran_file_number: "Veteran File number",
     veteran_name: "Veteran"
@@ -41,14 +43,14 @@ class AppealsReadyForDistribution
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
         if sym == :legacy
-          legacy_rows(appeals, sym)
+          legacy_rows(appeals, docket, sym)
         else
-          ama_rows(appeals, sym)
+          ama_rows(appeals, docket, sym)
         end
       end
   end
 
-  def self.legacy_rows(appeals, docket)
+  def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
@@ -59,11 +61,13 @@ class AppealsReadyForDistribution
                       end
       {
         docket_number: appeal["tinum"],
-        docket: docket.to_s,
+        docket: sym.to_s,
         aod: appeal["aod"] == 1,
         cavc: appeal["cavc"] == 1,
         receipt_date: appeal["bfd19"],
         ready_for_distribution_at: appeal["bfdloout"],
+        target_distro_date: docket.docket_time_goal,
+        days_before_goal_date: docket.start_distribution_prior_to_goal,
         hearing_judge: hearing_judge,
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
         veteran_name: veteran_name
@@ -71,7 +75,7 @@ class AppealsReadyForDistribution
     end
   end
 
-  def self.ama_rows(appeals, docket)
+  def self.ama_rows(appeals, docket, sym)
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
       ready_for_distribution_at = appeal.tasks
@@ -85,11 +89,13 @@ class AppealsReadyForDistribution
 
       {
         docket_number: appeal.docket_number,
-        docket: docket.to_s,
+        docket: sym.to_s,
         aod: appeal.aod,
         cavc: appeal.cavc,
         receipt_date: appeal.receipt_date,
         ready_for_distribution_at: ready_for_distribution_at,
+        target_distro_date: docket.docket_time_goal,
+        days_before_goal_date: docket.start_distribution_prior_to_goal,
         hearing_judge: hearing_judge,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s
