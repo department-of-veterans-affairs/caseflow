@@ -340,14 +340,14 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     conn = connection
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null or (#{priority_cdl_aod_query}))
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null or #{priority_cdl_aod_query})
     SQL
 
     fmtd_query = sanitize_sql_array([
@@ -362,9 +362,13 @@ class VACOLS::CaseDocket < VACOLS::Record
       appeals.reject do |appeal|
         next if appeal["bfac"] != "7"
 
-        (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-          .appeal_affinity
-          .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
+          appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+        else
+          VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+            .appeal_affinity
+            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago
+        end
       end
     end
 
@@ -374,7 +378,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
