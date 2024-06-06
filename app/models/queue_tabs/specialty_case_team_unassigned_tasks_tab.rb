@@ -27,7 +27,7 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
 
   # This only affects bulk assign on the standard queue tab view
   def allow_bulk_assign?
-    true
+    false
   end
 
   def hide_from_queue_table_view
@@ -36,9 +36,5 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
 
   def no_task_limit
     false
-  end
-
-  def custom_task_limit
-    60
   end
 end
