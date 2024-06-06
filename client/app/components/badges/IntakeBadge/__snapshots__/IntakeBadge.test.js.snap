@@ -23,7 +23,7 @@ exports[`IntakeBadge renders correctly 1`] = `
       ariaLabel="VBMS Intake"
       color="#844E9F"
       displayName="VBMS"
-      id="cf-undefined"
+      id="vbms-undefined"
       name="vbms"
       tooltipText="Case was intaken through VBMS"
     >
@@ -32,30 +32,30 @@ exports[`IntakeBadge renders correctly 1`] = `
       >
         <Tooltip
           ariaLabel="VBMS Intake"
-          id="badge-cf-undefined"
+          id="badge-vbms-undefined"
           position="bottom"
           text="Case was intaken through VBMS"
         >
           <span
-            aria-describedby="badge-cf-undefined"
+            aria-describedby="badge-vbms-undefined"
             aria-label="VBMS Intake"
             data-css-j1ndum=""
             data-event="focus mouseenter"
             data-event-off="mouseleave keydown"
-            data-for="badge-cf-undefined"
+            data-for="badge-vbms-undefined"
             data-tip={true}
             tabIndex={0}
           >
             VBMS
           </span>
           <span
-            data-css-yt1t42=""
+            data-css-131kpwj=""
           >
             <ReactTooltip
               className="cf-tooltip"
               clickable={false}
               effect="solid"
-              id="badge-cf-undefined"
+              id="badge-vbms-undefined"
               insecure={true}
               multiline={true}
               offset={Object {}}
@@ -67,7 +67,7 @@ exports[`IntakeBadge renders correctly 1`] = `
               <div
                 className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                 data-id="tooltip"
-                id="badge-cf-undefined"
+                id="badge-vbms-undefined"
                 role="tooltip"
               >
                 <style
