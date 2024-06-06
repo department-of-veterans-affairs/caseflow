@@ -17,8 +17,15 @@ export default function TestCorrespondence(props) {
     const inputValue = e.target.value;
     // Allow only digits and commas
     const sanitizedValue = inputValue.replace(/[^0-9,]/g, '');
+    // Split the input by commas and count the number of elements
+    const numbers = sanitizedValue.split(',');
 
-    setVeteranFileNumbers(sanitizedValue);
+    // If the number of elements exceeds 10, truncate the input
+    if (numbers.length > 10) {
+      setVeteranFileNumbers(numbers.slice(0, 10).join(','));
+    } else {
+      setVeteranFileNumbers(sanitizedValue);
+    }
   };
   const handleCorrespondenceCountChange = (value) => {
     setCorrespondenceCount(value);
