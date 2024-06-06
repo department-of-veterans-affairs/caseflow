@@ -36,6 +36,7 @@ import {
   toggleAddIssuesModal,
   toggleUntimelyExemptionModal,
   toggleNonratingRequestIssueModal,
+  addIssue,
   removeIssue,
   withdrawIssue,
   setIssueWithdrawalDate,
@@ -46,16 +47,19 @@ import {
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal,
-  toggleEditIntakeIssueModal,
+  toggleEditIntakeIssueModal
+} from '../../actions/addIssues';
+import {
   toggleRequestIssueModificationModal,
   toggleRequestIssueRemovalModal,
   toggleRequestIssueWithdrawalModal,
   toggleRequestIssueAdditionModal,
   toggleCancelPendingRequestIssueModal,
+  toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
   removeFromPendingReviewSection
-} from '../../actions/addIssues';
+} from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
@@ -66,6 +70,7 @@ import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssue
 import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
+import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -717,6 +722,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
+            toggleConfirmPendingRequestIssueModal={this.props.toggleConfirmPendingRequestIssueModal}
           />
         )}
 
@@ -755,6 +761,16 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
             removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
             toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
+          />
+        )}
+
+        {intakeData.confirmPendingRequestIssueModalVisible && (
+          <ConfirmPendingRequestIssueModal
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            toggleConfirmPendingRequestIssueModal={this.props.toggleConfirmPendingRequestIssueModal}
+            addIssue={this.props.addIssue}
+            removeIssue={this.props.removeIssue}
+            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
           />
         )}
 
@@ -889,6 +905,7 @@ export const EditAddIssuesPage = connect(
         toggleRequestIssueWithdrawalModal,
         toggleRequestIssueAdditionModal,
         toggleCancelPendingRequestIssueModal,
+        toggleConfirmPendingRequestIssueModal,
         removeIssue,
         withdrawIssue,
         moveToPendingReviewSection,
@@ -900,6 +917,7 @@ export const EditAddIssuesPage = connect(
         undoCorrection,
         toggleUnidentifiedIssuesModal,
         editEpClaimLabel,
+        addIssue
       },
       dispatch
     )

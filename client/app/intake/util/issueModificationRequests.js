@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { formatDateStr } from '../../util/DateUtil';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -56,4 +57,17 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       identifier: String(modificationRequest.id) || v4()
     };
   });
+};
+
+export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  return {
+    id: String(issueModificationRequest.requestIssue.id),
+    benefitType: issueModificationRequest.benefitType,
+    description: `${issueModificationRequest.nonratingIssueCategory} -
+      ${issueModificationRequest.nonratingIssueDescription}`,
+    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    decisionDate: formatDateStr(issueModificationRequest.decisionDate),
+    category: issueModificationRequest.nonratingIssueCategory,
+    editable: true,
+  };
 };
