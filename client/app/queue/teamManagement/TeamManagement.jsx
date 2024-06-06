@@ -73,14 +73,15 @@ export const TeamManagement = React.memo(({
         message: 'Loading teams...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load Caseflow teams'
+        title: 'Unable to load Caseflow teams',
+        message: error
       }}>
       <AppSegment filledBackground>
         <div>
           <h1>{TEAM_MANAGEMENT_PAGE_HEADER}</h1>
 
           { success && <Alert type="success" title={success.title} message={success.detail} /> }
-          { error && <Alert type="error" title={error.title} message={error.detail} /> }
+          { error && <Alert type="error" title="Error" message={error} /> }
 
           { dvcTeams && <OrgSection>
             <OrgHeader>
@@ -196,8 +197,13 @@ export const TeamManagementWrapper = (featureToggleProp) => {
     vhaProgramOffices,
     vhaRegionalOffices,
     educationRpos,
-    otherOrgs
-  } = useSelector((state) => state.teamManagement.data);
+    otherOrgs,
+    errorMessage,
+  } = useSelector((state) => ({
+    ...state.teamManagement.data,
+    errorMessage: state.teamManagement.error
+  }));
+
   const { statuses } = useSelector((state) => state.teamManagement);
   const { featureToggles } = featureToggleProp;
 
@@ -232,7 +238,7 @@ export const TeamManagementWrapper = (featureToggleProp) => {
     educationRpos,
     otherOrgs,
     success,
-    error,
+    error: errorMessage,
     loadingPromise,
     onAddDvcTeam,
     onAddJudgeTeam,
