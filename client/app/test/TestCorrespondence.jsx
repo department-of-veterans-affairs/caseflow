@@ -13,27 +13,27 @@ import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import { trim, escapeRegExp } from 'lodash';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import COPY from "../../COPY.json";
 
 export default function TestCorrespondence(props) {
 
   return <BrowserRouter>
     <div>
       <NavigationBar
+        wideApp
         userDisplayName={props.userDisplayName}
         dropdownUrls={props.dropdownUrls}
-        appName="Correspondence Admin"
+        applicationUrls={props.applicationUrls}
+        defaultUrl="/test/correspondence"
         logoProps={{
           accentColor: COLORS.GREY_DARK,
           overlapColor: COLORS.GREY_DARK
         }} />
       <AppFrame>
         <AppSegment filledBackground>
-          <h1>Correspondence admin</h1>
-          <h3>Correspondence generation process</h3>
-          <p>
-            Unassigned correspondence can be created below by entering the veteran file number(s) and the number of
-            correspondence needed. This number of correspondence will appear in the unassigned tab of the Correspondence
-            Team Queue and will be associated to the specific veteran(s) listed below.</p>
+          <h1>{COPY.CORRESPONDENCE_ADMIN.HEADER}</h1>
+          <h3>{COPY.CORRESPONDENCE_ADMIN.SUB_HEADER}</h3>
+          <p>{COPY.CORRESPONDENCE_ADMIN.DESCRIPTION}</p>
         </AppSegment>
       </AppFrame>
     </div>
@@ -43,4 +43,5 @@ export default function TestCorrespondence(props) {
 TestCorrespondence.propTypes = {
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
 };
