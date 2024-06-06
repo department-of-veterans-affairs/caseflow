@@ -110,7 +110,8 @@ export default class IssuesList extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       editPage,
-      featureToggles
+      featureToggles,
+      disableIssueActions
     } = this.props;
 
     return <div className="issues">
@@ -164,6 +165,7 @@ export default class IssuesList extends React.Component {
                   onChange={(option) => onClickIssueAction(issue.index, option.value)}
                   searchable={false}
                   doubleArrow
+                  readOnly={disableIssueActions}
                 /> }
                 {!editPage && <Button
                   onClick={() => onClickIssueAction(issue.index)}
@@ -202,5 +204,6 @@ IssuesList.propTypes = {
   userCanRequestIssueUpdates: PropTypes.bool,
   showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  disableIssueActions: PropTypes.bool
 };

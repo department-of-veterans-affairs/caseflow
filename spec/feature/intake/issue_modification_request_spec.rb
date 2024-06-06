@@ -21,6 +21,83 @@ feature "Issue Modification Request", :postgres do
            claimant_type: :veteran_claimant)
   end
 
+  let!(:in_pending_hlr) do
+    create(:higher_level_review,
+           :with_vha_issue,
+           :with_end_product_establishment,
+           :processed,
+           benefit_type: "vha",
+           veteran: veteran,
+           claimant_type: :veteran_claimant)
+  end
+
+  let!(:modified_request_issue) do
+    create(:request_issue,
+           benefit_type: "vha",
+           nonrating_issue_category: "CHAMPVA",
+           nonrating_issue_description: "A description of the newly added issue",
+           decision_review: in_pending_hlr,
+           decision_date: Time.zone.now - 10.days)
+  end
+
+  let!(:withdrawal_request_issue) do
+    create(:request_issue,
+           benefit_type: "vha",
+           nonrating_issue_category: "Foreign Medical Program",
+           nonrating_issue_description: "A description of the issue that is being withdrawn",
+           decision_review: in_pending_hlr,
+           decision_date: Time.zone.now - 10.days)
+  end
+
+  let!(:removal_request_issue) do
+    create(:request_issue,
+           benefit_type: "vha",
+           nonrating_issue_category: "Medical and Dental Care Reimbursement",
+           nonrating_issue_description: "A description of the issue that is being removed",
+           decision_review: in_pending_hlr,
+           decision_date: Time.zone.now - 10.days)
+  end
+
+  let!(:addition_modification_request) do
+    create(:issue_modification_request,
+           decision_review: in_pending_hlr,
+           benefit_type: "vha",
+           nonrating_issue_category: "Caregiver | Eligibility",
+           nonrating_issue_description: "A description of a newly added issue",
+           decision_date: Time.zone.now - 5.days)
+  end
+
+  let!(:removal_modification_request) do
+    create(:issue_modification_request,
+           decision_review: in_pending_hlr,
+           request_type: :removal,
+           nonrating_issue_category: removal_request_issue.nonrating_issue_category,
+           nonrating_issue_description: removal_request_issue.nonrating_issue_description,
+           decision_date: removal_request_issue.decision_date,
+           request_issue: removal_request_issue)
+  end
+
+  let!(:withdrawal_modification_request) do
+    create(:issue_modification_request,
+           decision_review: in_pending_hlr,
+           request_type: :withdrawal,
+           nonrating_issue_category: withdrawal_request_issue.nonrating_issue_category,
+           nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
+           decision_date: withdrawal_request_issue.decision_date,
+           request_issue: withdrawal_request_issue,
+           withdrawal_date: Time.zone.now)
+  end
+
+  let!(:modify_existing_modification_request) do
+    create(:issue_modification_request,
+           decision_review: in_pending_hlr,
+           request_type: :modification,
+           nonrating_issue_category: "Camp Lejune Family Member",
+           nonrating_issue_description: "Newly modified issue description",
+           decision_date: modified_request_issue.decision_date,
+           request_issue: modified_request_issue)
+  end
+
   let(:current_user) do
     User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
   end
@@ -30,10 +107,6 @@ feature "Issue Modification Request", :postgres do
   end
 
   context "non-admin user" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"])
-    end
-
     it "should open the edit issues page and show non-admin content" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
@@ -153,85 +226,73 @@ feature "Issue Modification Request", :postgres do
   context "admin user" do
     before do
       OrganizationsUser.make_user_admin(current_user, vha_org)
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
     end
 
     it "should open the edit issues page and not see the new non-admin content" do
-      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
-
       expect(page.has_no_content?("Request additional issue")).to eq(true)
+    end
+
+    it "should enable dropdown for Requested Issue Section if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+
+      within "#issue-#{in_progress_hlr.request_issues.first.id}" do
+        select_action = find("select", text: "Select action")
+        expect(select_action[:disabled]).to eq "false"
+      end
+    end
+
+    it "+ Add Issues button for Admin edit should be enabled if no pending request is present" do
+      expect(page).not_to have_text("Pending admin review")
+      expect(page).to have_button("Add issue", disabled: false)
+    end
+
+    it "+ Add Issues button for Admin edit should be disabled if pending request is present" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Pending admin review")
+      expect(page).to have_button("Add issue", disabled: true)
+    end
+
+    it "should disable Select action dropdown for Requested Issue Section if pending request is present" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+
+      expect(page).to have_text("Pending admin review")
+
+      within "#issue-#{in_pending_hlr.request_issues.first.id}" do
+        select_action = find("select", text: "Select action")
+        expect(select_action[:disabled]).to eq "true"
+      end
+    end
+
+    it "should have a dropdown with specific option for each request type" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Pending admin review")
+
+      step "request type Addition" do
+        expect(page).to have_text("Requested Additional Issues")
+        verify_admin_select_action_dropdown("addition")
+      end
+
+      step "request type modification" do
+        expect(page).to have_text("Requested Changes")
+        verify_admin_select_action_dropdown("modification")
+      end
+
+      step "request type removal" do
+        expect(page).to have_text("Requested Issue Removal")
+        verify_admin_select_action_dropdown("removal")
+      end
+
+      step "request type withdrawal" do
+        expect(page).to have_text("Requested Issue Withdrawal")
+        verify_admin_select_action_dropdown("withdrawal")
+      end
     end
   end
 
   context "Claim with all 4 types of pending issue modification requests" do
-    let!(:modified_request_issue) do
-      create(:request_issue,
-             benefit_type: "vha",
-             nonrating_issue_category: "CHAMPVA",
-             nonrating_issue_description: "A description of the newly added issue",
-             decision_review: in_progress_hlr,
-             decision_date: Time.zone.now - 10.days)
-    end
-
-    let!(:withdrawal_request_issue) do
-      create(:request_issue,
-             benefit_type: "vha",
-             nonrating_issue_category: "Foreign Medical Program",
-             nonrating_issue_description: "A description of the issue that is being withdrawn",
-             decision_review: in_progress_hlr,
-             decision_date: Time.zone.now - 10.days)
-    end
-
-    let!(:removal_request_issue) do
-      create(:request_issue,
-             benefit_type: "vha",
-             nonrating_issue_category: "Medical and Dental Care Reimbursement",
-             nonrating_issue_description: "A description of the issue that is being removed",
-             decision_review: in_progress_hlr,
-             decision_date: Time.zone.now - 10.days)
-    end
-
-    let!(:addition_modification_request) do
-      create(:issue_modification_request,
-             decision_review: in_progress_hlr,
-             benefit_type: "vha",
-             nonrating_issue_category: "Caregiver | Eligibility",
-             nonrating_issue_description: "A description of a newly added issue",
-             decision_date: Time.zone.now - 5.days)
-    end
-
-    let!(:removal_modification_request) do
-      create(:issue_modification_request,
-             decision_review: in_progress_hlr,
-             request_type: :removal,
-             nonrating_issue_category: removal_request_issue.nonrating_issue_category,
-             nonrating_issue_description: removal_request_issue.nonrating_issue_description,
-             decision_date: removal_request_issue.decision_date,
-             request_issue: removal_request_issue)
-    end
-
-    let!(:withdrawal_modification_request) do
-      create(:issue_modification_request,
-             decision_review: in_progress_hlr,
-             request_type: :withdrawal,
-             nonrating_issue_category: withdrawal_request_issue.nonrating_issue_category,
-             nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
-             decision_date: withdrawal_request_issue.decision_date,
-             request_issue: withdrawal_request_issue,
-             withdrawal_date: Time.zone.now)
-    end
-
-    let!(:modify_existing_modification_request) do
-      create(:issue_modification_request,
-             decision_review: in_progress_hlr,
-             request_type: :modification,
-             nonrating_issue_category: "Camp Lejune Family Member",
-             nonrating_issue_description: "Newly modified issue description",
-             decision_date: modified_request_issue.decision_date,
-             request_issue: modified_request_issue)
-    end
-
     it "should display the banner and all 4 types of pending issue modification requests upon loading the page" do
-      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
 
       check_for_pending_requests_banner
 
@@ -303,5 +364,19 @@ feature "Issue Modification Request", :postgres do
       "Decision date: #{issue_modification_request.decision_date.strftime('%m/%d/%Y')}"
     )
     expect(page).to have_content(issue_modification_request.request_reason)
+  end
+
+  def verify_admin_select_action_dropdown(request_type)
+    data_key = "div[data-key=issue-#{request_type}]"
+    option = "Review issue #{request_type} request"
+    modal_title = "Request issue #{request_type}"
+    selector = page.find(data_key)
+    dropdown_div = selector.find("div.cf-form-dropdown")
+    dropdown_div.click
+    expect(page).to have_text(option)
+    # click_dropdown(text: "#{option} request", container = selector)
+    click_dropdown(name: "select-action-#{request_type}", text: option)
+    expect(page).to have_text(modal_title)
+    click_on "Cancel"
   end
 end
