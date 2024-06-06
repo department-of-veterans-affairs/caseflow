@@ -154,6 +154,10 @@ class ClaimReviewController < ApplicationController
     "You have successfully established #{claimant_name}'s #{claim_review.class.review_title}"
   end
 
+  def vha_pending_reviews_message
+    "#{claimant_name}'s #{claim_review.class.review_title} was saved."
+  end
+
   def claimant_name
     if claim_review.veteran_is_not_claimant
       claim_review.claimant.try(:name)
@@ -168,24 +172,28 @@ class ClaimReviewController < ApplicationController
                                 request_issues_update.removed_or_withdrawn_issues)
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
-    if issues_without_decision_date.empty?
-      vha_established_message
+    # TODO: Do different stuff for admin vs non admin here
+    if claim_review.pending_issue_modification_requests.any?
+      # TODO: Put this string into copy.json
+      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
+    elsif issues_without_decision_date.empty?
+      { title: "Edit Completed", message: vha_established_message }
     elsif request_issues_update.edited_issues.any?
-      vha_edited_decision_date_message
+      { title: "Edit Completed", message: vha_edited_decision_date_message }
     else
-      review_edited_message
+      { title: "Edit Completed", message: review_edited_message }
     end
   end
 
   def set_flash_success_message
-    flash[:edited] = if request_issues_update.after_issues.empty?
-                       decisions_removed_message
+    flash[:custom] = if request_issues_update.after_issues.empty?
+                       { title: "Edit Completed", message: decisions_removed_message }
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
-                       review_withdrawn_message
+                       { title: "Edit Completed", message: review_withdrawn_message }
                      elsif claim_review.benefit_type == "vha"
                        vha_flash_message
                      else
-                       review_edited_message
+                       { title: "Edit Completed", message: review_edited_message }
                      end
   end
 
