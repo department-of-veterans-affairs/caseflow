@@ -20,13 +20,13 @@ module QueueHelpers
 
   # create correspondence for given veteran/user, or create one
   def create_correspondence(user = {}, veteran = {})
-    vet = veteran.blank? ? create_veteran : veteran
-    user = user.blank? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
+    vet = veteran
+    user = user.blank? ? InboundOpsTeam.singleton.users.first : user
     package_doc_type = PackageDocumentType.all.sample
     corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
 
-    ::Correspondence.create!(
+    correspondence = ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       portal_entry_date: Time.zone.now,
       source_type: "Mail",
@@ -38,7 +38,9 @@ module QueueHelpers
       notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
       veteran_id: vet.id,
       nod: [true, false].sample,
-    ).tap { @cmp_packet_number += 1 }
+    )
+    create_correspondence_document(correspondence, vet)
+    correspondence.tap { @cmp_packet_number += 1 }
   end
 
   # randomly generates notes for the correspondence
@@ -133,37 +135,6 @@ module QueueHelpers
     cavct
   end
 
-  # :reek:FeatureEnvy
-  def create_cavc_mailtask(correspondence, user)
-    process_correspondence(correspondence, user)
-    assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    task = CavcCorrespondenceCorrespondenceTask.create!(
-      parent_id: correspondence&.root_task&.id,
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      assigned_by: assigned_by,
-      assigned_to: CavcLitigationSupport.singleton,
-      status: Constants.TASK_STATUSES.assigned
-    )
-    randomize_days_waiting_value(task)
-    task
-  end
-  # :reek:FeatureEnvy
-  def create_congress_interest_mailtask(correspondence, user)
-    process_correspondence(correspondence, user)
-    assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    task = CongressionalInterestCorrespondenceTask.create!(
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      assigned_by: assigned_by,
-      assigned_to: LitigationSupport.singleton,
-      status: Constants.TASK_STATUSES.assigned,
-      parent_id: correspondence&.root_task&.id
-    )
-    randomize_days_waiting_value(task)
-    task
-  end
-
   # :reek:UtilityFunction
   def complete_task(task, user_id)
     task.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user_id)
@@ -180,5 +151,40 @@ module QueueHelpers
 
   def randomize_days_waiting_value(task)
     task.update(assigned_at: rand(1.month.ago..1.day.ago))
+  end
+
+  def create_multiple_docs(corres, veteran)
+    CorrespondenceDocument.find_or_create_by(
+      document_file_number: veteran.file_number,
+      uuid: SecureRandom.uuid,
+      correspondence_id: corres.id,
+      document_type: 1250,
+      pages: 30,
+      vbms_document_type_id: 1250
+    )
+    CorrespondenceDocument.find_or_create_by(
+      document_file_number: veteran.file_number,
+      uuid: SecureRandom.uuid,
+      correspondence_id: corres.id,
+      document_type: 719,
+      pages: 20,
+      vbms_document_type_id: 719
+    )
+    CorrespondenceDocument.find_or_create_by(
+      document_file_number: veteran.file_number,
+      uuid: SecureRandom.uuid,
+      correspondence_id: corres.id,
+      document_type: 672,
+      pages: 10,
+      vbms_document_type_id: 672
+    )
+    CorrespondenceDocument.find_or_create_by(
+      document_file_number: veteran.file_number,
+      uuid: SecureRandom.uuid,
+      correspondence_id: corres.id,
+      document_type: 18,
+      pages: 5,
+      vbms_document_type_id: 18
+    )
   end
 end
