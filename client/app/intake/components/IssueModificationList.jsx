@@ -6,8 +6,7 @@ const IssueModificationList = (
   {
     sectionTitle,
     issueModificationRequests,
-    currentUserCssId,
-    onClickAction
+    onClickIssueRequestModificationAction
   }
 ) => {
 
@@ -17,9 +16,7 @@ const IssueModificationList = (
       <li key={id}>
         <IssueModificationRequest
           issueModificationRequest={issueModificationRequest}
-          currentUserCssId={currentUserCssId}
-          onClickAction={onClickAction}
-          modificationRequestIndex={id}
+          onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
         />
         {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
           <>
@@ -49,4 +46,5 @@ export default IssueModificationList;
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
   issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired
 };
