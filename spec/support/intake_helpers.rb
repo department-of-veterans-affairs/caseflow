@@ -411,6 +411,15 @@ module IntakeHelpers
     click_remove_issue_confirmation
   end
 
+  def click_remove_intake_issue_dropdown_by_number(number)
+    issue_el = find_intake_issue_by_number(number)
+
+    within issue_el do
+      click_dropdown(text: "Remove")
+    end
+    click_remove_issue_confirmation
+  end
+
   def click_withdraw_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
 
