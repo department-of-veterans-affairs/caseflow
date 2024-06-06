@@ -104,7 +104,7 @@ const IssueModificationRequest = ({ issueModificationRequest, currentUserCssId, 
 
   const generateActionOptions = (type) => {
     return [{
-      label: `Edit issue ${type} request`,
+      label: `Edit ${type} request`,
       value: `edit-${type}Request`
     },
     {
