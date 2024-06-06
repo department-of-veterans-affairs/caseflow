@@ -551,7 +551,11 @@ const errorTasksAndAppealsOfAttorney = (state, action) => {
 const setSelectionOfTaskOfUser = (state, action) => {
   const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
     [action.payload.taskId]: {
-      $set: action.payload.selected
+      $set: {
+        selected: action.payload.selected,
+        task: action.payload.task
+      },
+
     }
   });
 
