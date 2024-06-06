@@ -142,7 +142,7 @@ module Seeds
         @file_number += 1
         @participant_id += 1
         veteran = create(:veteran, file_number: @file_number, participant_id: @participant_id)
-        10.times do
+        15.times do
           appeal = create(:appeal, veteran: veteran)
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
         end
