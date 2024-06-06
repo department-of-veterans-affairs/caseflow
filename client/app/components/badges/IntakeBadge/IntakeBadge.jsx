@@ -10,7 +10,7 @@ import { COLORS } from 'app/constants/AppConstants';
 
 const IntakeBadge = (props) => {
   const { review } = props;
-  let tooltipText;
+  let tooltipText = '';
 
   if (review.intakeFromVbms) {
     tooltipText = 'Case was intaken through VBMS';
@@ -20,7 +20,7 @@ const IntakeBadge = (props) => {
       displayName="VBMS"
       color={COLORS.PURPLE}
       tooltipText={tooltipText}
-      id={`cf-${review.id}`}
+      id={`vbms-${review.id}`}
       ariaLabel="VBMS Intake"
     />;
   }
