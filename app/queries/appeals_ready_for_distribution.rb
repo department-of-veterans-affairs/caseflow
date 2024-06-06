@@ -54,11 +54,7 @@ class AppealsReadyForDistribution
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = if vlj_name.empty?
-                        nil
-                      else
-                        vlj_name
-                      end
+      hearing_judge = vlj_name.empty? ? nil : vlj_name
       {
         docket_number: appeal["tinum"],
         docket: sym.to_s,
@@ -78,15 +74,9 @@ class AppealsReadyForDistribution
   def self.ama_rows(appeals, docket, sym)
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
-      ready_for_distribution_at = appeal.tasks
-        .filter { |task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
-        .first&.assigned_at
-
+      ready_for_distribution_at = distribution_task_query(appeal)
       # only look for hearings that were held
-      hearing_judge = appeal.hearings
-        .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
-        .first&.judge&.full_name
-
+      hearing_judge = with_held_hearings(appeal)
       {
         docket_number: appeal.docket_number,
         docket: sym.to_s,
@@ -102,5 +92,17 @@ class AppealsReadyForDistribution
 
       }
     end
+  end
+
+  def self.distribution_task_query(appeal)
+    appeal.tasks
+      .filter { |task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
+      .first&.assigned_at
+  end
+
+  def self.with_held_hearings(appeal)
+    appeal.hearings
+      .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
+      .first&.judge&.full_name
   end
 end
