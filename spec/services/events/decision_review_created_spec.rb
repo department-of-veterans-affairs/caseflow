@@ -31,7 +31,8 @@ describe Events::DecisionReviewCreated do
 
     context "When event is completed info field returns to default state" do
       it "event field is an empty json object" do
-        completed = DecisionReviewCreatedEvent.last
+        subject # runs and completes the process
+        completed = DecisionReviewCreatedEvent.find_by(reference_id: consumer_event_id)
         expect(completed.info).to eq({})
       end
     end
