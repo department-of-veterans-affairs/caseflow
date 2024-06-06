@@ -305,9 +305,9 @@ getFilteredUsers = () => {
               }
 
             </div>
-            <div {...radioButtonsStyle}>
-              {this.state.organizationName === 'Hearings Management' &&
+            {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
+              <div {...radioButtonsStyle}>
                 <div>
                   <SelectConferenceTypeRadioField
                     key={`${user.id}-conference-selection`}
@@ -319,8 +319,9 @@ getFilteredUsers = () => {
                     user={user}
                   />
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
           </li>
         </React.Fragment>
       );
