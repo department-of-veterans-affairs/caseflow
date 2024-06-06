@@ -24,7 +24,6 @@ const IssueModificationRequest = ({
   } = issueModificationRequest;
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
-  // const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
   const currentUserCssId = useSelector((state) => state.userCssId);
   const currentUserMadeRequest = currentUserCssId === requestor.cssId;
 
