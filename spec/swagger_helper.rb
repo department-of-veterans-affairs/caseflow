@@ -2,6 +2,30 @@
 
 require 'rails_helper'
 
+OPENAPI = '3.0.2'
+INFO = {
+  title: 'API V1',
+  version: 'v1'
+}
+SERVERS = [
+  {
+    url: 'http://localhost:3000',
+    description: 'Local Development server'
+  },
+  {
+    url: 'https://appeals.cf.uat.ds.va.gov',
+    description: 'UAT/Staging server'
+  }
+]
+SECURITY_SCHEMES = {
+  ApiKeyAuth: {
+    type: 'apiKey',
+    in: 'header',
+    name: 'TOKEN'
+  }
+}
+
+
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
@@ -16,58 +40,31 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', openapi_spec: 'v2/swagger.json'
   config.openapi_specs = {
     'v1/swagger.yaml' => {
-      openapi: '3.0.2',
-      info: {
-        title: 'API V1',
-        version: 'v1'
-      },
-      servers: [
-        {
-          url: 'https://appeals.cf.uat.ds.va.gov',
-          description: 'UAT/Staging server'
-        },
-        {
-          url: 'http://localhost:3000',
-          description: 'Local Development server'
-        }
-      ],
-      paths: {}
+      openapi: OPENAPI,
+      info: INFO,
+      servers: SERVERS,
+      paths: {},
+      components: {
+        securitySchemes: SECURITY_SCHEMES
+      }
     },
     'v2/swagger.yaml' => {
-      openapi: '3.0.2',
-      info: {
-        title: 'API V2',
-        version: 'v2'
-      },
-      servers: [
-        {
-          url: 'https://appeals.cf.uat.ds.va.gov',
-          description: 'UAT/Staging server'
-        },
-        {
-          url: 'http://localhost:3000',
-          description: 'Local Development server'
-        }
-      ],
-      paths: {}
+      openapi: OPENAPI,
+      info: INFO,
+      servers: SERVERS,
+      paths: {},
+      components: {
+        securitySchemes: SECURITY_SCHEMES
+      }
     },
     'v3/swagger.yaml' => {
-      openapi: '3.0.2',
-      info: {
-        title: 'API V3',
-        version: 'v3'
-      },
-      servers: [
-        {
-          url: 'https://appeals.cf.uat.ds.va.gov',
-          description: 'UAT/Staging server'
-        },
-        {
-          url: 'http://localhost:3000',
-          description: 'Local Development server'
-        }
-      ],
-      paths: {}
+      openapi: OPENAPI,
+      info: INFO,
+      servers: SERVERS,
+      paths: {},
+      components: {
+        securitySchemes: SECURITY_SCHEMES
+      }
     }
   }
 

@@ -33,10 +33,10 @@ info:
 
   version: 3.0.0
 servers:
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
 - url: http://localhost:3000
   description: Local Development server
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
 paths:
   /higher_level_reviews:
     post:
@@ -1417,3 +1417,8 @@ components:
                     * `attempted` - Processing of the DecisionReview is being attempted.
                     * `canceled` - The DecisionReview has been successfully canceled.
                     * `processed` - The DecisionReview has been processed and transmitted to the appropriate government agency.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: TOKEN

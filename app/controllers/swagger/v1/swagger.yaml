@@ -4,10 +4,10 @@ info:
   title: API V1
   version: v1
 servers:
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
 - url: http://localhost:3000
   description: Local Development server
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
 paths:
   "/api/v1/jobs":
     post:
@@ -21,3 +21,9 @@ paths:
       responses:
         '200':
           description: successful
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: TOKEN

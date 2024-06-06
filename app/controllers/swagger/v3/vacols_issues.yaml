@@ -34,10 +34,10 @@ info:
 
   version: 3.0.0
 servers:
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
 - url: http://localhost:3000
   description: Local Development server
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
 paths:
   /api/v3/issues/vacols/find_by_veteran:
     get:
@@ -275,3 +275,8 @@ components:
             issue_note:
               type: string
               description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: TOKEN

@@ -12,10 +12,10 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
 servers:
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
 - url: http://localhost:3000
   description: Local Development server
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
 paths:
   /idt/api/v1/addresses/validate:
     post:
