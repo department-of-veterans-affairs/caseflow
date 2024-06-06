@@ -29,6 +29,13 @@ describe Events::DecisionReviewCreated do
   describe "#create!" do
     subject { described_class.create!(consumer_event_id, reference_id, headers, read_json_payload) }
 
+    context "When event is completed info field returns to default state" do
+      it "event field is an empty json object" do
+        completed = DecisionReviewCreatedEvent.last
+        expect(completed.info).to eq({})
+      end
+    end
+
     context "when lock acquisition fails" do
       before do
         allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
