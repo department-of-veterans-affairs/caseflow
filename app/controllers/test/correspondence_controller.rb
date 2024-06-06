@@ -6,7 +6,7 @@ class Test::CorrespondenceController < ApplicationController
   before_action :verify_access
   before_action :verify_feature_toggle
   def index
-    return render_access_error unless access_allowed?
+    return render_access_error unless verify_access && access_allowed?
     # More code to come
   end
 
