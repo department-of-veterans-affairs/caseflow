@@ -9,7 +9,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   extend ActiveSupport::Concern
 
   def with_appeal_affinities
-    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
+    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id
+      and appeal_affinities.case_type = 'Appeal'")
   end
 
   # From docket.rb
@@ -40,9 +41,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def ready_for_distribution
     joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .where(tasks: { type: DistributionTask.name, status: Constants.TASK_STATUSES.assigned })
   end
 
   def genpop
