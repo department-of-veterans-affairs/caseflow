@@ -34,7 +34,7 @@ const accessDeniedMsg = <div>
   </div>
   <br />
   If you have any questions or need assistance with the request form linked above,
-  please contact the Restricted Portfolio Management team at
+  please contact the Restricted Portfolio Management team at&nbsp;
   <a href="mailto:VBA.RPM@va.gov">VBA.RPM@va.gov</a>.
 </div>;
 
