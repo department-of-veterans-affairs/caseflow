@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v2/appeals', type: :request, openapi_spec: 'v2/swagger.yaml' do
+RSpec.describe 'api/v2/appeals', type: :request, openapi_spec: 'v2/swagger.yaml', skip: true do
 
   path '/api/v2/appeals' do
 

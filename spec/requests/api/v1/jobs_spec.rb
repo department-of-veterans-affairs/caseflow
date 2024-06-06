@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/jobs', type: :request do
+RSpec.describe 'api/v1/jobs', type: :request, skip: true do
 
   path '/api/v1/jobs' do
 

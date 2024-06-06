@@ -1,36 +1,35 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-OPENAPI = '3.0.2'
+OPENAPI = "3.0.2"
 INFO = {
-  title: 'API V1',
-  version: 'v1'
-}
+  title: "API V1",
+  version: "v1"
+}.freeze
 SERVERS = [
   {
-    url: 'http://localhost:3000',
-    description: 'Local Development server'
+    url: "http://localhost:3000",
+    description: "Local Development server"
   },
   {
-    url: 'https://appeals.cf.uat.ds.va.gov',
-    description: 'UAT/Staging server'
+    url: "https://appeals.cf.uat.ds.va.gov",
+    description: "UAT/Staging server"
   }
-]
+].freeze
 SECURITY_SCHEMES = {
   ApiKeyAuth: {
-    type: 'apiKey',
-    in: 'header',
-    name: 'TOKEN'
+    type: "apiKey",
+    in: "header",
+    name: "TOKEN"
   }
-}
-
+}.freeze
 
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
-  config.openapi_root = Rails.root.join('app/controllers/swagger').to_s
+  config.openapi_root = Rails.root.join("app/controllers/swagger").to_s
 
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
@@ -39,7 +38,7 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a openapi_spec tag to the
   # the root example_group in your specs, e.g. describe '...', openapi_spec: 'v2/swagger.json'
   config.openapi_specs = {
-    'v1/swagger.yaml' => {
+    "v1/swagger.yaml" => {
       openapi: OPENAPI,
       info: INFO,
       servers: SERVERS,
@@ -48,7 +47,7 @@ RSpec.configure do |config|
         securitySchemes: SECURITY_SCHEMES
       }
     },
-    'v2/swagger.yaml' => {
+    "v2/swagger.yaml" => {
       openapi: OPENAPI,
       info: INFO,
       servers: SERVERS,
@@ -57,7 +56,7 @@ RSpec.configure do |config|
         securitySchemes: SECURITY_SCHEMES
       }
     },
-    'v3/swagger.yaml' => {
+    "v3/swagger.yaml" => {
       openapi: OPENAPI,
       info: INFO,
       servers: SERVERS,
