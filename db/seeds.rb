@@ -73,6 +73,8 @@ class SeedDB
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CorrespondenceTypes
     call_and_log_seed_step Seeds::PackageDocumentTypes
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
     call_and_log_seed_step Seeds::Correspondence
     call_and_log_seed_step Seeds::MultiCorrespondences
     call_and_log_seed_step Seeds::QueueCorrespondences
@@ -80,8 +82,6 @@ class SeedDB
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
     call_and_log_seed_step Seeds::CorrespondenceAutoTexts
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
     call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals

@@ -39,17 +39,16 @@ module Seeds
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_multi_correspondences(user = {}, veteran = {})
       if user.blank?
-        # grab list of inbound ops team base users
-        users = InboundOpsTeam.singleton.users.each {|user| user.inbound_ops_team_user? }
+        # grab inbound ops base user
+        user = InboundOpsTeam.singleton.users.select { |user| user.inbound_ops_team_user? }.first
         # create veterans
         west = create_veteran(first_name: "Adam", last_name: "West")
         bale = create_veteran(first_name: "Christian", last_name: "Bale")
         keaton = create_veteran(first_name: "Michael", last_name: "Keaton")
-
-        # build correspondences for different users
-        build_correspondences(west, users.first, 5)
-        build_correspondences(bale, users.second, 10)
-        build_correspondences(keaton, users.third, 20)
+        # build correspondences for user
+        build_correspondences(west, user, 5)
+        build_correspondences(bale, user, 10)
+        build_correspondences(keaton, user, 20)
         return
       end
 
