@@ -42,7 +42,7 @@ class Events::DecisionReviewCreated
           vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event: event, parser: parser)
 
           # Note Create Claim Review, parsed schema info passed through claim_review and intake
-          decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(event: event, parser: parser)
+          decision_review = Events::DecisionReviewCreated::CreateClaimReview.process!(parser: parser)
 
           # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           Events::CreateClaimantOnEvent.process!(event: event, parser: parser,
@@ -56,7 +56,7 @@ class Events::DecisionReviewCreated
           # claim_review can either be a higher_level_revew or supplemental_claim
           epe = Events::DecisionReviewCreated::CreateEpEstablishment.process!(parser: parser,
                                                                               claim_review: decision_review,
-                                                                              user: user, event: event)
+                                                                              user: user)
 
           # Note: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
           Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
