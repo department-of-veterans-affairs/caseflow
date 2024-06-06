@@ -110,7 +110,8 @@ export default class IssuesList extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       editPage,
-      featureToggles
+      featureToggles,
+      disableIssueActions
     } = this.props;
 
     return <div className="issues">
@@ -160,6 +161,7 @@ export default class IssuesList extends React.Component {
                   hideLabel
                   options={issueActionOptions}
                   defaultText="Select action"
+                  readOnly={disableIssueActions}
                   onChange={(option) => onClickIssueAction(issue.index, option)}
                 /> }
                 {!editPage && <Button
@@ -199,5 +201,6 @@ IssuesList.propTypes = {
   userCanRequestIssueUpdates: PropTypes.bool,
   showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  disableIssueActions: PropTypes.bool
 };
