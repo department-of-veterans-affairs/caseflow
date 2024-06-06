@@ -20,16 +20,6 @@ export const setCorrespondenceDocuments = (correspondenceDocuments) =>
     });
   };
 
-export const setPackageDocumentType = (packageDocumentType) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_PACKAGE_DOCUMENT_TYPE,
-      payload: {
-        packageDocumentType
-      }
-    });
-  };
-
 export const setVeteranInformation = (veteranInfo) =>
   (dispatch) => {
     dispatch({
@@ -50,12 +40,11 @@ export const setCreateRecordIsReadOnly = (createRecordIsReadOnly) =>
     });
   };
 
-export const updateCmpInformation = (packageDocumentType, date) =>
+export const updateCmpInformation = (date) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.UPDATE_CMP_INFORMATION,
       payload: {
-        packageDocumentType,
         date
       }
     });

@@ -333,7 +333,6 @@ CorrespondenceReviewPackage.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
-  packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
@@ -345,7 +344,6 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
   createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
 });

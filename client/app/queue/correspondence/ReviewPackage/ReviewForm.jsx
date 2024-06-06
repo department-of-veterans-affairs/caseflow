@@ -377,8 +377,7 @@ ReviewForm.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType,
-  veteranInformation: state.reviewPackage.veteranInformation,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

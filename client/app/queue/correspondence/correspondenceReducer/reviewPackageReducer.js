@@ -4,7 +4,6 @@ import { ACTIONS } from './reviewPackageConstants';
 export const initialState = {
   correspondence: {},
   correspondenceDocuments: [],
-  packageDocumentType: {},
   veteranInformation: {},
   lastAction: {},
   taskInstructions: [],
@@ -34,13 +33,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.SET_PACKAGE_DOCUMENT_TYPE:
-    return update(state, {
-      packageDocumentType: {
-        $set: action.payload.packageDocumentType
-      }
-    });
-
   case ACTIONS.SET_VETERAN_INFORMATION:
     return update(state, {
       veteranInformation: {
@@ -62,14 +54,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       correspondence: {
         va_date_of_receipt: {
           $set: action.payload.date
-        }
-      },
-      packageDocumentType: {
-        id: {
-          $set: action.payload.packageDocumentType.value
-        },
-        name: {
-          $set: action.payload.packageDocumentType.label
         }
       }
     });

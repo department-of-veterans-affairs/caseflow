@@ -23,12 +23,6 @@ export const correspondenceData = {
   veteran_id: 1928,
 };
 
-export const packageDocumentTypeData = {
-  id: 15,
-  active: true,
-  name: 'NOD',
-};
-
 export const correspondenceDocumentsData = [
   {
     correspondence_id: 1,

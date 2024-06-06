@@ -62,22 +62,6 @@ export const ConfirmCorrespondenceView = (props) => {
         )
       },
       {
-        cellClass: 'package-document-type-column',
-        ariaLabel: 'package-document-type-header-label',
-        header: (
-          <div id="package-document-type-header">
-            <span id="package-document-type-header-label" className="table-header-label">
-              Package Document Type
-            </span>
-          </div>
-        ),
-        valueFunction: () => (
-          <span className="va-package-document-type-item">
-            <p>{correspondence.packageDocumentType}</p>
-          </span>
-        )
-      },
-      {
         cellClass: 'correspondence-type-column',
         ariaLabel: 'correspondence-type-header-label',
         header: (

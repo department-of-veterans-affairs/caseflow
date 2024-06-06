@@ -51,9 +51,7 @@ class EditModal extends React.Component {
 
       this.setState({
         VADORDate: formattedVADORDate,
-        packageDocument: packageDocumentTypeName,
-        defaultVADORDate: formattedVADORDate,
-        defaultPackageDocument: packageDocumentTypeName
+        defaultVADORDate: formattedVADORDate
       });
     });
   }

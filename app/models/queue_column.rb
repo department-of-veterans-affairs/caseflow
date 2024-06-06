@@ -43,7 +43,7 @@ class QueueColumn
   def filter_options(tasks)
     filter_option_func = self.class::FILTER_OPTIONS[name]
 
-    if filter_option_func
+    if filter_option_func.present?
       send(filter_option_func, tasks)
     #else
     #  fail(

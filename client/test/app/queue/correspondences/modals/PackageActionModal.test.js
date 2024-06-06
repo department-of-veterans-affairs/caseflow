@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import PackageActionModal from '../../../../../app/queue/correspondence/modals/PackageActionModal';
 import thunk from 'redux-thunk';
 import rootReducer from 'app/queue/reducers';
-import { correspondenceData, packageDocumentTypeData, veteranInformation } from '../../../../data/correspondence';
+import { correspondenceData, veteranInformation } from '../../../../data/correspondence';
 
 jest.mock('react-router', () => ({
   useHistory: () => ({
@@ -18,7 +18,6 @@ const mockCloseHandler = jest.fn();
 let initialState = {
   reviewPackage: {
     correspondence: correspondenceData,
-    packageDocumentType: packageDocumentTypeData,
     veteranInformation
   }
 };

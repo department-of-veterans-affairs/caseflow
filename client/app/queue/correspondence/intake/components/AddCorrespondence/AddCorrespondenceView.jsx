@@ -23,7 +23,6 @@ class AddCorrespondenceView extends React.Component {
     this.state = {
       veteranId: '',
       vaDateOfReceipt: '',
-      packageDocumentType: '',
       correspondenceType: '',
       notes: '',
       selectedCheckboxes: [],
@@ -98,22 +97,6 @@ class AddCorrespondenceView extends React.Component {
             </span>
           );
         }
-      },
-      {
-        cellClass: 'package-document-type-column',
-        ariaLabel: 'package-document-type-header-label',
-        header: (
-          <div id="package-document-type-header">
-            <span id="package-document-type-header-label" className="table-header-label">
-              Package Document Type
-            </span>
-          </div>
-        ),
-        valueFunction: () => (
-          <span className="va-package-document-type-item">
-            <p>{correspondence.packageDocumentType}</p>
-          </span>
-        )
       },
       {
         cellClass: 'correspondence-type-column',

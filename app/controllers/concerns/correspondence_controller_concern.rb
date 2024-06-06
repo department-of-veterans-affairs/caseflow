@@ -137,8 +137,7 @@ module CorrespondenceControllerConcern
       firstName: veteran.first_name,
       lastName: veteran.last_name,
       fileNumber: veteran.file_number,
-      correspondenceUuid: correspondence.uuid,
-      packageDocumentType: correspondence.correspondence_type_id
+      correspondenceUuid: correspondence.uuid
     }
   end
 
