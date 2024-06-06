@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
+require 'opentelemetry/sdk'
+require 'opentelemetry/instrumentation/all'
+
 # rubocop:disable Layout/LineLength
 
 DT_API_URL = ENV["DT_API_URL"]
 DT_API_TOKEN = ENV["DT_API_TOKEN"]
 
+Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
+
 OpenTelemetry::SDK.configure do |config|
+
+  Rails.logger.info("OpenTelemetry configuration started")
+
   config.service_name = "caseflow"
   config.service_version = "1.0.1"
   # automatic instrumentation
@@ -14,7 +22,7 @@ OpenTelemetry::SDK.configure do |config|
     begin
       config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
     rescue StandardError => error
-      Rails.logger.error(error.full_message)
+      Rails.logger.error("OpenTelemetry config error for #{name}: #{error.full_message}")
       raise error.full_message
     end
   end
