@@ -169,6 +169,7 @@ class Docket
   end
 
   def docket_time_goal
+    lever_value = CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals").exists? ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : nil
     @docket_time_goal ||= CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals")
   end
 
