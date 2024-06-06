@@ -414,8 +414,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "+ Add issue"
       add_intake_nonrating_issue(date: issue_date)
       3.times do
-        find("#issue-action-0").find(:xpath, "option[2]").select_option
-        click_on "Yes, remove issue"
+        click_remove_intake_issue_dropdown_by_number(1)
       end
       click_on "Save"
       click_on "Yes, save"
