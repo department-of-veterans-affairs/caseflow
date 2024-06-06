@@ -95,6 +95,18 @@ FactoryBot.define do
       lever_group_order { 105 }
     end
 
+    trait :disable_ama_non_priority_direct_review do
+      item { "disable_ama_non_priority_direct_review" }
+      title { "ACD Disable AMA Non-Priority Direct Review" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+    end
+
     trait :ama_hearings_start_distribution_prior_to_goals do
       item { "ama_hearings_start_distribution_prior_to_goals" }
       title { "AMA Hearings Start Distribution Prior to Goals" }
