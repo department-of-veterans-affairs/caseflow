@@ -202,11 +202,11 @@ const CorrespondenceTableBuilder = (props) => {
 
     const getBulkAssignArea = () => {
       return (<>
-        <p className="correspondence-table-builder-margin">Assign to mail team user</p>
+        <p className="correspondence-table-builder-margin">Assign to Inbound Ops Team user</p>
         <div className="correspondence-table-builder-searchable-dropdown-position">
           <div className= "correspondence-table-builder-searchable-dropdown-style">
             <SearchableDropdown
-              name="Assign to mail team user"
+              name="Assign to Inbound Ops Team user"
               hideLabel
               options={buildMailUserData(props.inboundOpsTeamUsers)}
               onChange={handleMailTeamUserChange}

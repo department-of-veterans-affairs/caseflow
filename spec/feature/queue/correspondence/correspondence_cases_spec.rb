@@ -552,7 +552,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "successfully loads the unassigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Correspondence owned by the Mail team are unassigned to an individual:")
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Assign")
       expect(page).to have_button("Auto assign correspondence")
     end
@@ -709,7 +709,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "successfully loads the assigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
-      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Reassign", disabled: true)
     end
 
