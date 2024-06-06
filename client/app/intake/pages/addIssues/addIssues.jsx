@@ -171,7 +171,7 @@ class AddIssuesPage extends React.Component {
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
     case 'cancelEditRequest':
-      console.log('Cancel Action');
+      this.props.toggleCancelPendingRequestIssueModal();
       break;
     default:
       this.props.undoCorrection(index);
