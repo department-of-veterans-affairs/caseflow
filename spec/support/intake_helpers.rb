@@ -406,7 +406,7 @@ module IntakeHelpers
     issue_el = find_intake_issue_by_text(text)
 
     within issue_el do
-      click_dropdown(prompt: "Select action", text: "Remove")
+      click_dropdown(text: "Remove")
     end
     click_remove_issue_confirmation
   end
@@ -415,7 +415,7 @@ module IntakeHelpers
     issue_el = find_intake_issue_by_text(text)
 
     within issue_el do
-      click_dropdown(prompt: "Select action", text: "Withdraw")
+      click_dropdown(text: "Withdraw")
     end
   end
 
@@ -423,7 +423,7 @@ module IntakeHelpers
     issue_el = find_intake_issue_by_text(text)
 
     within issue_el do
-      click_dropdown(prompt: "Select action", text: "Correct")
+      click_dropdown(text: "Correct")
     end
   end
 
@@ -431,7 +431,7 @@ module IntakeHelpers
     issue_el = find_intake_issue_by_text(text)
 
     within issue_el do
-      click_dropdown(prompt: "Select action", text: "Edit issue")
+      click_dropdown(text: "Edit issue")
     end
   end
 
@@ -439,7 +439,7 @@ module IntakeHelpers
     issue_el = find_intake_issue_by_number(number)
 
     within issue_el do
-      click_dropdown(prompt: "Select action", text: "Edit issue")
+      click_dropdown(text: "Edit issue")
     end
   end
 
