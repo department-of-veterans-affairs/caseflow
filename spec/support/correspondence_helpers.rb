@@ -34,8 +34,7 @@ module CorrespondenceHelpers
         assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1),
-        package_document_type: create(:package_document_type, name: "0304")
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
     end
     find_and_route_to_intake

@@ -7,14 +7,9 @@ class WorkQueue::CorrespondenceSerializer
 
   attribute :uuid
   attribute :id
-  attribute :cmp_packet_number
   attribute :notes
-  attribute :portal_entry_date
-  attribute :source_type
   attribute :va_date_of_receipt
   attribute :nod
-  # Is this a future table?
-  attribute :cmp_queue_id
 
   attribute :correspondence_type do |object|
     object.correspondence_type&.name
@@ -22,10 +17,6 @@ class WorkQueue::CorrespondenceSerializer
 
   attribute :veteran_full_name do |object|
     [object.veteran_full_name&.first_name, object.veteran_full_name&.last_name].join(" ")
-  end
-
-  attribute :package_document_type do |object|
-    object.package_document_type&.name
   end
 
   attribute :veteran_file_number do |object|
