@@ -540,26 +540,26 @@ module Seeds
     end
 
     def create_qa_admin_for_cda_control_group
-      qa_admin = User.find_or_create_by!(station_id: 101,
-                            css_id: "QAACDPLUS",
-                            full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
-                            roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
+      qa_admin = create(:user, :judge, :with_vacols_judge_record,
+                        css_id: "QAACDPLUS",
+                        full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
+                        roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
 
-      #{CDA Control Group Admin}
+      # {CDA Control Group Admin}
       CDAControlGroup.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, CDAControlGroup.singleton)
 
-      #{BVA Intake Admin}
+      # {BVA Intake Admin}
       BvaIntake.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, BvaIntake.singleton)
 
-      #{BVA Org Admin}
+      # {BVA Org Admin}
       existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
       Functions.grant!("System Admin", users: existing_sysadmins + [qa_admin.css_id])
       Bva.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, Bva.singleton)
 
-      #{Adds attorney so judge team can be targeted by Ama_affinity_cases.rb seed script}
+      # {Adds attorney so judge team can be targeted by Ama_affinity_cases.rb seed script}
       judge_team = JudgeTeam.for_judge(qa_admin) || JudgeTeam.create_for_judge(qa_admin)
       judge_team.add_user(User.find_by_css_id("BVASCASPER1"))
     end
