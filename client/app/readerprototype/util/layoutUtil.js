@@ -1,4 +1,5 @@
 import { css } from 'glamor';
+const docWrapperSmall = 1165;
 
 export const pdfDocumentStyles = css({
   position: 'relative',
@@ -8,18 +9,22 @@ export const pdfDocumentStyles = css({
 
 export const docViewerStyles = {
   sidebarContainer: css({
-    width: '30%',
+    width: '20%',
+    overflow: 'hidden',
+    textAlign: 'right',
+    '&&': { [`@media(max-width:${docWrapperSmall}px)`]: {
+      width: '20%',
+      '& .cf-pdf-button-text': { display: 'none' } }
+    },
     top: '0px',
     bottom: '0px',
     right: '0px',
     position: 'absolute',
   }),
   documentContainer: css({
-    width: '70%',
+    width: '80%',
   })
 };
-
-const docWrapperSmall = 1165;
 
 export const docToolbarStyles = {
   openSidebarMenu: css({ marginRight: '2%' }),
