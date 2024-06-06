@@ -17,6 +17,8 @@ describe IncompleteDistributionsJob, :postgres do
     create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
     create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
     create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   context ".perform" do
