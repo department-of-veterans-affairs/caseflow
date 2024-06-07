@@ -4,7 +4,6 @@ import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextareaField from '../components/TextareaField';
 import NumberField from '../components/NumberField';
-import TextField from '../components/TextField';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
@@ -66,7 +65,7 @@ export default function TestCorrespondence(props) {
           </div>
           <p>{COPY.CORRESPONDENCE_ADMIN.COUNT_LABEL}</p>
           <div>
-            <TextField
+            <NumberField
               type="number"
               className={['number-field-styling-test-correspondence']}
               value={correspondenceCount}
