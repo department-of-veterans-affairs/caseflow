@@ -571,6 +571,19 @@ export default class QueueTable extends React.PureComponent {
     const tableParams = new URLSearchParams(this.requestQueryString());
     const tabParams = new URLSearchParams(this.props.taskPagesApiEndpoint.split('?')[1]);
 
+    // List of parameters that should be cleared if not present in tableParams
+    const paramsToClear = [
+      QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM,
+      `${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`,
+    ];
+
+    // Remove paramsToClear from currentParams if they are not in tableParams
+    paramsToClear.forEach((param) => {
+      if (!tableParams.has(param)) {
+        currentParams.delete(param);
+      }
+    });
+
     // Merge tableParams and tabParams into currentParams, overwriting any duplicate keys
     for (const [key, value] of [...tabParams.entries(), ...tableParams.entries()]) {
       currentParams.set(key, value);
