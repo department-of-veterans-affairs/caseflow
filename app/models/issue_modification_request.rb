@@ -13,6 +13,7 @@ class IssueModificationRequest < CaseflowRecord
   validate :open_issue_modification_request, if: proc { |imr| !imr.addition? }
 
   before_save :set_decided_at
+  after_update :set_edited_at
 
   enum status: {
     assigned: "assigned",
@@ -98,5 +99,9 @@ class IssueModificationRequest < CaseflowRecord
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
+  end
+
+  def set_edited_at
+    self.edited_at = Time.zone.now
   end
 end
