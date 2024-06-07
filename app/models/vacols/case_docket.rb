@@ -340,7 +340,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     conn = connection
@@ -359,20 +359,21 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals = conn.exec_query(fmtd_query).to_a
 
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      appeals.reject do |appeal|
-        next if appeal["bfac"] != "7"
+      appeals.reject! do |appeal|
+        next if appeal["bfac"] != "7" || appeal["aod"] != 1
 
         if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
           appeal["prev_deciding_judge"] != judge.vacols_attorney_id
         else
-          VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+          ((VACOLS::Case.find_by(bfkey: appeal["bfkey"])
             .appeal_affinity
-            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago
+            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) &&
+            (appeal["prev_deciding_judge"] != judge.vacols_attorney_id))
         end
       end
     end
 
-    appeals.sort_by { appeal[:bfd19] } if use_by_docket_date?
+    appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
     appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
@@ -469,7 +470,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_a
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -554,20 +555,21 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-          appeals.reject do |appeal|
-            next if appeal["bfac"] != "7"
+          appeals.reject! do |appeal|
+            next if appeal["bfac"] != "7" || appeal["aod"] != 1
 
             if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
               appeal["prev_deciding_judge"] != judge.vacols_attorney_id
             else
-              VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+              ((VACOLS::Case.find_by(bfkey: appeal["bfkey"])
                 .appeal_affinity
-                .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago
+                .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) &&
+                (appeal["prev_deciding_judge"] != judge.vacols_attorney_id))
             end
           end
         end
 
-        appeals.sort_by { appeal[:bfd19] } if use_by_docket_date?
+        appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
         appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
 
