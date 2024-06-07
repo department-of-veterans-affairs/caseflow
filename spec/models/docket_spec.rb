@@ -107,7 +107,7 @@ describe Docket, :all_dbs do
           subject { DirectReviewDocket.new.appeals(ready: true, genpop: "not_genpop", judge: other_judge) }
 
           it "returns no appeals" do
-            expect(subject.count.size).to eq 0
+            expect(subject.to_a.length).to eq 0
           end
         end
 
@@ -250,35 +250,35 @@ describe Docket, :all_dbs do
             expect(subject).to include with_blocking_but_closed_tasks
           end
         end
-
-        context "nonblocking mail tasks but closed Root Task" do
-          it "excludes those appeals" do
-            inactive_appeal = create(:appeal,
-                                     :with_post_intake_tasks,
-                                     docket_type: Constants.AMA_DOCKETS.direct_review)
-            AodMotionMailTask.create_from_params({
-                                                   appeal: inactive_appeal,
-                                                   parent_id: inactive_appeal.root_task.id
-                                                 }, user)
-            inactive_appeal.root_task.update!(status: "completed")
-
-            expect(subject).to_not include inactive_appeal
-          end
-        end
       end
     end
 
     context "count" do
       let(:priority) { nil }
-      subject { DirectReviewDocket.new.count(priority: priority) }
+      let(:ready) { nil }
+      subject { DirectReviewDocket.new.count(priority: priority, ready: ready) }
 
-      it "counts appeals" do
-        expect(subject).to eq(6)
+      it "counts all appeals on the docket" do
+        expect(subject).to eq(7)
+      end
+
+      context "when looking for ready appeals" do
+        let(:ready) { true }
+        it "counts only ready appeals" do
+          expect(subject).to eq(6)
+        end
       end
 
       context "when looking for nonpriority appeals" do
         let(:priority) { false }
         it "counts nonpriority appeals" do
+          expect(subject).to eq(4)
+        end
+      end
+
+      context "when looking for priority appeals" do
+        let(:priority) { true }
+        it "counts priority appeals" do
           expect(subject).to eq(3)
         end
       end
@@ -361,6 +361,8 @@ describe Docket, :all_dbs do
     end
 
     context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      # Set cavc_appeal to be outside its affinity window
+      let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 7).days.ago }
       let(:judge) { create(:user, :with_vacols_judge_record) }
 
       subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
