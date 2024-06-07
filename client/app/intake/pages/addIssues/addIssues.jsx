@@ -101,7 +101,6 @@ class AddIssuesPage extends React.Component {
   }
 
   onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
-
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
@@ -131,41 +130,6 @@ class AddIssuesPage extends React.Component {
       break;
     case 'cancelReviewIssueRequest':
       this.props.toggleCancelPendingRequestIssueModal();
-      break;
-    default:
-      // Do nothing if the dropdown option was not set or implemented.
-      break;
-    }
-  };
-
-  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
-
-    const identifier = issueModificationRequest.identifier;
-
-    switch (requestType) {
-    case 'reviewIssueModificationRequest':
-      this.setState({
-        pendingIssueModification: issueModificationRequest
-      });
-      this.props.toggleRequestIssueModificationModal(identifier);
-      break;
-    case 'reviewIssueAdditionRequest':
-      this.setState({
-        pendingIssueModification: issueModificationRequest
-      });
-      this.props.toggleRequestIssueAdditionModal(identifier);
-      break;
-    case 'reviewIssueWithdrawalRequest':
-      this.setState({
-        pendingIssueModification: issueModificationRequest
-      });
-      this.props.toggleRequestIssueWithdrawalModal(identifier);
-      break;
-    case 'reviewIssueRemovalRequest':
-      this.setState({
-        pendingIssueModification: issueModificationRequest
-      });
-      this.props.toggleRequestIssueRemovalModal(identifier);
       break;
     default:
       // Do nothing if the dropdown option was not set or implemented.
