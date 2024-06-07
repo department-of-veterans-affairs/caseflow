@@ -9,11 +9,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 871f7034c502f8d7101bde74e58606716b601c70
-  ref: 871f7034c502f8d7101bde74e58606716b601c70
+  revision: 716b58caf2116da5fca21c3b3aeea6c9712f3b9d
+  ref: 716b58caf2116da5fca21c3b3aeea6c9712f3b9d
   specs:
     caseflow (0.4.8)
-      aws-sdk (~> 3.2)
+      aws-sdk-s3
       bourbon (= 4.2.7)
       d3-rails
       jquery-rails
@@ -2238,6 +2238,7 @@ DEPENDENCIES
   acts_as_tree
   amoeba
   anbt-sql-formatter
+  aws-sdk
   bgs!
   bootsnap
   brakeman
