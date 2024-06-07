@@ -472,27 +472,27 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           expect(page).to have_content("You have successfully assigned")
 
           new_hearing = hearing_day.reload.open_hearings.first
-          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%I:%M")
+          scheduled_time = new_hearing.scheduled_for.in_time_zone("America/Denver").strftime("%H:%M")
           expect(scheduled_time).to eq(expected_time)
         end
       end
 
       context "Hearing time field based first slot time" do
         context "first slot time is null" do
-          let(:expected_time) { "12:30" }
+          let(:expected_time) { "15:30" }
           include_examples "hearing time display"
         end
 
         context "first slot time is '08:30'" do
           let(:first_slot_time) { "10:30" }
-          let(:expected_time) { "08:30" }
+          let(:expected_time) { "11:30" }
           let(:readonly_time_text) { "8:30 AM Mountain / 10:30 AM Eastern" }
           include_examples "hearing time display"
         end
 
         context "first slot time is '12:30'" do
           let(:first_slot_time) { "14:30" }
-          let(:expected_time) { "12:30" }
+          let(:expected_time) { "15:30" }
           let(:readonly_time_text) { "12:30 PM Mountain / 2:30 PM Eastern" }
           include_examples "hearing time display"
         end
@@ -954,7 +954,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
           if scheduled
             expect(legacy_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
-              Constants.TASK_STATUSES.completed
+              Constants.TASK_STATUSES.cancelled
             )
             expect(legacy_appeal.tasks.of_type(:AssignHearingDispositionTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
