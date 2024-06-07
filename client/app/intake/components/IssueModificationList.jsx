@@ -6,19 +6,17 @@ const IssueModificationList = (
   {
     sectionTitle,
     issueModificationRequests,
-    onClickIssueRequestModificationAction
+    onClickIssueRequestModificationAction,
   }
 ) => {
-
-  const issues = issueModificationRequests.map((issueModificationRequest, id) => {
-
+  const issueModificationLists = issueModificationRequests.map((issueModificationRequest, index) => {
     return (
-      <li key={id}>
+      <li key={index}>
         <IssueModificationRequest
           issueModificationRequest={issueModificationRequest}
           onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
         />
-        {issueModificationRequests.length > 1 && id !== issueModificationRequests.length - 1 ?
+        {issueModificationRequests.length > 1 && index !== issueModificationRequests.length - 1 ?
           <>
             <hr />
             <br />
@@ -32,10 +30,13 @@ const IssueModificationList = (
       <div>
         <br />
         <h3>{sectionTitle}</h3>
-        <br />
-        <ol>
-          {issues}
-        </ol>
+        <div className="issue-modifications">
+          <div className="issue-container">
+            <ol>
+              {issueModificationLists}
+            </ol>
+          </div>
+        </div>
       </div>
     </>
   );

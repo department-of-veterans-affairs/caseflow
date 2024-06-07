@@ -6,7 +6,7 @@ class CreateIssueModificationRequest < ActiveRecord::Migration[6.0]
       t.string "request_type", default: "addition", comment:  "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
       t.text "request_reason", null: true, comment: "The reason behind the modification request provided by the user initiating it."
       t.string "benefit_type", null: true, comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
-      t.datetime "decision_date", null: true, comment: "The decision date of the request issue that is being modified"
+      t.date "decision_date", null: true, comment: "The decision date of the request issue that is being modified"
       t.text "decision_reason", null: true, comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
       t.string "nonrating_issue_category", null: true, comment: "The nonrating issue category of the request issue that is being modified or added by the request"
       t.string "nonrating_issue_description", null: true, comment: "The nonrating issue description of the request issue that is being modified or added by the request"

@@ -20,7 +20,8 @@ const issueSectionRow = (
     userCanEditIntakeIssues,
     userCanRequestIssueUpdates,
     showRequestIssueUpdateOptions,
-    withdrawReview
+    withdrawReview,
+    disableIssueActions
   }) => {
   const reviewHasPredocketVhaIssues = sectionIssues.some(
     (issue) => issue.benefitType === 'vha' && issue.isPreDocketNeeded === 'true'
@@ -46,6 +47,7 @@ const issueSectionRow = (
           userCanEditIntakeIssues={userCanEditIntakeIssues}
           userCanRequestIssueUpdates={userCanRequestIssueUpdates}
           showRequestIssueUpdateOptions={showRequestIssueUpdateOptions}
+          disableIssueActions={disableIssueActions}
         />
         {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
       </div>
@@ -66,5 +68,6 @@ issueSectionRow.propTypes = {
   sectionIssues: PropTypes.arrayOf(PropTypes.object),
   userCanWithdrawIssues: PropTypes.bool,
   withdrawIssue: PropTypes.func,
-  userCanEditIntakeIssues: PropTypes.bool
+  userCanEditIntakeIssues: PropTypes.bool,
+  disableIssueActions: PropTypes.bool
 };

@@ -24,6 +24,7 @@ const IssueModificationRequest = ({
   } = issueModificationRequest;
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
+  const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
   const currentUserCssId = useSelector((state) => state.userCssId);
   const currentUserMadeRequest = currentUserCssId === requestor.cssId;
 
@@ -37,6 +38,15 @@ const IssueModificationRequest = ({
   };
 
   const requestDetails = requestDetailsMapping[requestType];
+
+  let options = [];
+
+  if (userIsVhaAdmin) {
+    options.push({
+      label: `Review issue ${requestType} request`,
+      value: `reviewIssue${capitalize(requestType)}Request` }
+    );
+  }
 
   const requestReasonSection = (
     <>
@@ -72,19 +82,16 @@ const IssueModificationRequest = ({
      `${requestIssue.nonratingIssueCategory} - ${requestIssue.nonratingIssueDescription}`;
 
     return <>
-      <div>
-        <h3>Original Issue</h3>
-        <div className="issue-modification-request-original">
-          <ol>
-            <li>
-              <p>{requestIsssueDescription}</p>
-              <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
-              <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
-            </li>
-          </ol>
-        </div>
+      <h3>Original Issue</h3>
+      <div className="issue-modification-request-original">
+        <ol>
+          <li>
+            <p>{requestIsssueDescription}</p>
+            <p>Benefit type: {BENEFIT_TYPES[requestIssue.benefitType]}</p>
+            <p>Decision date: {formatDateStr(requestIssue.decisionDate)}</p>
+          </li>
+        </ol>
       </div>
-      <br />
     </>;
   };
 
@@ -121,30 +128,33 @@ const IssueModificationRequest = ({
   };
 
   return (
-    <div className="modification-request">
-      <div className="modification-request-text">
-        {modificationRequestInfoSection}
-        {requestReasonSection}
-        {extraContent}
+    <>
+      <div className="issue" data-key={`issue-${requestType}`} key={`issue-${requestType}`}>
+        <div className="issue-desc">
+          {modificationRequestInfoSection}
+          {requestReasonSection}
+          {extraContent}
+        </div>
+        <div className="issue-action">
+          <SearchableDropdown
+            name={`select-action-${requestType}`}
+            label="Actions"
+            options={options}
+            placeholder="Select action"
+            hideLabel
+            onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
+            doubleArrow
+            searchable={false}
+          />
+        </div>
       </div>
-      <SearchableDropdown
-        name="modification-action"
-        label="Actions"
-        hideLabel
-        searchable={false}
-        options={generateActionOptions(requestType)}
-        placeholder="Select action"
-        onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
-        readOnly={!currentUserMadeRequest}
-      />
-    </div>
+    </>
   );
 };
 
 export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
-  issueModificationRequest: PropTypes.object.isRequired,
-  currentUserCssId: PropTypes.string.isRequired,
+  issueModificationRequest: PropTypes.object,
   onClickIssueRequestModificationAction: PropTypes.func.isRequired,
 };

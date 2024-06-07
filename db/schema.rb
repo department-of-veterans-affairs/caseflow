@@ -1138,7 +1138,7 @@ ActiveRecord::Schema.define(version: 2024_04_29_215736) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
     t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
-    t.datetime "decision_date", comment: "The decision date of the request issue that is being modified"
+    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
     t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
     t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
     t.string "decision_review_type"
