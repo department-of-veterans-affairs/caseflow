@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../components/Button';
-import TabWindow from '../components/TabWindow';
 import TextareaField from '../components/TextareaField';
 import NumberField from '../components/NumberField';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -15,8 +14,7 @@ export default function TestCorrespondence(props) {
   const [correspondenceCount, setCorrespondenceCount] = useState(0);
   const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
 
-  const handleVeteranFileNumbers = (e) => {
-    const inputValue = e.target.value;
+  const handleVeteranFileNumbers = (inputValue) => {
     // Allow only digits and commas
     const sanitizedValue = inputValue.replace(/[^0-9,]/g, '');
     // Split the input by commas and count the number of elements
@@ -35,8 +33,6 @@ export default function TestCorrespondence(props) {
 
   const handleSubmit = () => {
     // Submit the form values
-    console.log('Text Area Value:', veteranFileNumbers);
-    console.log('Number Value:', correspondenceCount);
     // Here you can add your logic to handle form submission (e.g., API call)
   };
 
@@ -54,28 +50,27 @@ export default function TestCorrespondence(props) {
         }} />
       <AppFrame>
         <AppSegment filledBackground>
-          <h1>{COPY.CORRESPONDENCE_ADMIN.HEADER}</h1>
-          <h3>{COPY.CORRESPONDENCE_ADMIN.SUB_HEADER}</h3>
-          <p>{COPY.CORRESPONDENCE_ADMIN.DESCRIPTION}</p>
-          <div className="textarea-div-styling-test-correspondence">
-            <TextareaField
-              id= "textarea-styling-test-correspondence"
-              name="Enter up to 10 veteran file numbers separated by a comma."
-            />
-          </div>
-          <p>{COPY.CORRESPONDENCE_ADMIN.COUNT_LABEL}</p>
-          <div>
+          <div className="correspondence-admin-container">
+            <h1>{COPY.CORRESPONDENCE_ADMIN.HEADER}</h1>
+            <h3>{COPY.CORRESPONDENCE_ADMIN.SUB_HEADER}</h3>
+            <p>{COPY.CORRESPONDENCE_ADMIN.DESCRIPTION}</p>
+            <div className="textarea-div-styling-test-correspondence">
+              <TextareaField
+                id= "textarea-styling-test-correspondence"
+                name="Enter up to 10 veteran file numbers separated by a comma."
+                onChange={(val) => handleVeteranFileNumbers(val)}
+                value={veteranFileNumbers}
+              />
+            </div>
             <NumberField
+              name={COPY.CORRESPONDENCE_ADMIN.COUNT_LABEL}
               type="number"
-              className={['number-field-styling-test-correspondence']}
               value={correspondenceCount}
               onChange={handleCorrespondenceCountChange}
+              className={['correspondence-number']}
             />
-          </div>
-          <div>
             <Button
               name="Generate correspondence"
-              classNames={['correspondence-intake-appeal-button']}
               onClick={handleSubmit}
             />
           </div>
