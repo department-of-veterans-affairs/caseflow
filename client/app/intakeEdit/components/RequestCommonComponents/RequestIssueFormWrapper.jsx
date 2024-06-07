@@ -12,6 +12,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
+  const pendingIssueModificationRequestsEmpty = Object.entries(props.pendingIssueModificationRequest).length === 0;
 
   const methods = useForm({
     defaultValues: {
@@ -68,7 +69,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={`Request issue ${props.type}`}
+            title={pendingIssueModificationRequestsEmpty ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
