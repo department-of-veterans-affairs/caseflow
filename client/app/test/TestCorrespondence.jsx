@@ -9,10 +9,15 @@ import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY';
+import Alert from "app/components/Alert";
 
 export default function TestCorrespondence(props) {
   const [correspondenceCount, setCorrespondenceCount] = useState(0);
   const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
+  const [showInvalidVeteransBanner, setShowInvalidVeteransBanner] = useState(false);
+  const [invalidFileNumbers, setInvalidFileNumbers] = useState('000');
+  const [validFileNumbers, setValidFileNumbers] = useState('000');
+  const [correspondenceSize, setCorrespondenceSize] = useState(0);
 
   const handleVeteranFileNumbers = (inputValue) => {
     // Allow only digits and commas
@@ -34,6 +39,11 @@ export default function TestCorrespondence(props) {
   const handleSubmit = () => {
     // Submit the form values
     // Here you can add your logic to handle form submission (e.g., API call)
+    setShowInvalidVeteransBanner(false);
+    setShowInvalidVeteransBanner(true);
+    setInvalidFileNumbers('12345');
+    setValidFileNumbers('7890');
+    setCorrespondenceSize(15);
   };
 
   return <BrowserRouter>
@@ -49,6 +59,24 @@ export default function TestCorrespondence(props) {
           overlapColor: COLORS.GREY_DARK
         }} />
       <AppFrame>
+        {
+          showInvalidVeteransBanner &&
+            <div style={{ padding: '10px' }}>
+              <Alert
+                type="success"
+                title={COPY.CORRESPONDENCE_ADMIN.SUCCESS.TITLE}
+                message={correspondenceSize + COPY.CORRESPONDENCE_ADMIN.SUCCESS.MESSAGE + validFileNumbers} />
+            </div>
+        }
+        {
+          showInvalidVeteransBanner &&
+            <div style={{ padding: '10px' }}>
+              <Alert
+                type="warning"
+                title={COPY.CORRESPONDENCE_ADMIN.INVALID_ERROR.TITLE}
+                message={COPY.CORRESPONDENCE_ADMIN.INVALID_ERROR.MESSAGE + invalidFileNumbers} />
+            </div>
+        }
         <AppSegment filledBackground>
           <div className="correspondence-admin-container">
             <h1>{COPY.CORRESPONDENCE_ADMIN.HEADER}</h1>
