@@ -128,7 +128,7 @@ export class TaskTableUnconnected extends React.PureComponent {
       onHistoryUpdate={this.props.onHistoryUpdate}
       preserveFilter={this.props.preserveQueueFilter}
       rowClassNames={(task) =>
-        this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
+        (this.taskHasDASRecord(task) || !this.props.requireDasRecord) ? null : 'usa-input-error'}
       taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
       useTaskPagesApi={this.props.useTaskPagesApi}
       tabPaginationOptions={this.props.tabPaginationOptions}

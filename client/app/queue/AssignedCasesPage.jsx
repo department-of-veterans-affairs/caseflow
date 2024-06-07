@@ -18,7 +18,7 @@ import {
 import Alert from '../components/Alert';
 
 import COPY from '../../COPY';
-import QUEUE_CONFIG from 'constants/QUEUE_CONFIG';
+import { DEFAULT_QUEUE_TABLE_SORT } from './constants';
 
 /**
  * Component showing the cases assigned to a specific attorney referenced by `attorneyId`.
@@ -103,11 +103,6 @@ class AssignedCasesPage extends React.Component {
     )?.full_name;
     /* eslint-enable camelcase */
 
-    const defaultTableSort = {
-      sortColName: QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
-      sortAscending: true
-    };
-
     return <React.Fragment>
       <h2 className="cases-title">{attorneyName || attorneyId}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
@@ -128,7 +123,7 @@ class AssignedCasesPage extends React.Component {
         includeNewDocsIcon
         tasks={this.props.tasksOfAttorney}
         userId={attorneyId}
-        defaultSort={defaultTableSort} />
+        defaultSort={DEFAULT_QUEUE_TABLE_SORT} />
     </React.Fragment>;
   }
 }
