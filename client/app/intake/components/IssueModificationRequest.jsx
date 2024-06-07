@@ -26,7 +26,6 @@ const IssueModificationRequest = ({
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
   const currentUserCssId = useSelector((state) => state.userCssId);
-  // const currentUserMadeRequestOrIsAdmin = currentUserCssId === requestor.cssId;
   const currentUserMadeRequestOrIsAdmin = userIsVhaAdmin || currentUserCssId === requestor.cssId;
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
