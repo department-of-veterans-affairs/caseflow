@@ -33,18 +33,14 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def build_lever_item(docket_type, priority_status)
-    "disable_ama_#{priority_status}_#{docket_type.downcase}"
-  end
-
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
     appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
-    lever_item = build_lever_item(docket_type, priority_status)
-    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    lever_value = lever&.value
+    lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
+    item = CaseDistributionLever.find_by_item(lever_item)
+    value = item ? CaseDistributionLever.public_send(lever_item) : nil
 
-    if lever_value == "true"
+    if value == "true"
       appeals.none
     else
       appeals
