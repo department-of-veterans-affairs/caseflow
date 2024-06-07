@@ -3,10 +3,6 @@
 require "rails_helper"
 
 OPENAPI = "3.0.2"
-INFO = {
-  title: "API V1",
-  version: "v1"
-}.freeze
 SERVERS = [
   {
     url: "http://localhost:3000",
@@ -40,7 +36,10 @@ RSpec.configure do |config|
   config.openapi_specs = {
     "v1/swagger.yaml" => {
       openapi: OPENAPI,
-      info: INFO,
+      info: {
+        title: "API V1",
+        version: "v1"
+      },
       servers: SERVERS,
       paths: {},
       components: {
@@ -49,7 +48,10 @@ RSpec.configure do |config|
     },
     "v2/swagger.yaml" => {
       openapi: OPENAPI,
-      info: INFO,
+      info: {
+        title: "API V2",
+        version: "V2"
+      },
       servers: SERVERS,
       paths: {},
       components: {
@@ -58,7 +60,10 @@ RSpec.configure do |config|
     },
     "v3/swagger.yaml" => {
       openapi: OPENAPI,
-      info: INFO,
+      info: {
+        title: "API V3",
+        version: "V3"
+      },
       servers: SERVERS,
       paths: {},
       components: {
