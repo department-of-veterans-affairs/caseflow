@@ -26,7 +26,8 @@ const IssueModificationRequest = ({
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
   const currentUserCssId = useSelector((state) => state.userCssId);
-  const currentUserMadeRequest = currentUserCssId === requestor.cssId;
+  // const currentUserMadeRequestOrIsAdmin = currentUserCssId === requestor.cssId;
+  const currentUserMadeRequestOrIsAdmin = userIsVhaAdmin || currentUserCssId === requestor.cssId;
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 
@@ -39,14 +40,24 @@ const IssueModificationRequest = ({
 
   const requestDetails = requestDetailsMapping[requestType];
 
-  let options = [];
+  const generateActionOptions = (type) => {
+    let options = [];
+    const label = userIsVhaAdmin ? 'Review issue' : 'Edit';
 
-  if (userIsVhaAdmin) {
     options.push({
-      label: `Review issue ${requestType} request`,
-      value: `reviewIssue${capitalize(requestType)}Request` }
-    );
-  }
+      label: `${label} ${requestType} request`,
+      value: `reviewIssue${capitalize(requestType)}Request`
+    });
+
+    if (!userIsVhaAdmin) {
+      options.push({
+        label: `Cancel ${type} request`,
+        value: 'cancelReviewIssueRequest'
+      });
+    }
+
+    return options;
+  };
 
   const requestReasonSection = (
     <>
@@ -116,17 +127,6 @@ const IssueModificationRequest = ({
 
   const extraContent = extraContentMapping[requestType] || null;
 
-  const generateActionOptions = (type) => {
-    return [{
-      label: `Edit ${type} request`,
-      value: `reviewIssue${capitalize(requestType)}Request`
-    },
-    {
-      label: `Cancel ${type} request`,
-      value: 'cancelReviewIssueRequest'
-    }];
-  };
-
   return (
     <>
       <div className="issue" data-key={`issue-${requestType}`} key={`issue-${requestType}`}>
@@ -139,12 +139,13 @@ const IssueModificationRequest = ({
           <SearchableDropdown
             name={`select-action-${requestType}`}
             label="Actions"
-            options={options}
+            options={generateActionOptions(requestType)}
             placeholder="Select action"
             hideLabel
             onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
             doubleArrow
             searchable={false}
+            readOnly={!currentUserMadeRequestOrIsAdmin}
           />
         </div>
       </div>
