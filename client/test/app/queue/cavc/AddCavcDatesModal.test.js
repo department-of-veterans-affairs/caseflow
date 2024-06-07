@@ -1,18 +1,12 @@
 import React from 'react';
-// import { mount } from 'enzyme';
 import moment from 'moment';
 import thunk from 'redux-thunk';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
-
-
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/queue/reducers';
-
-
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
 
@@ -26,8 +20,6 @@ describe('AddCavcDatesModal', () => {
   const appealId = amaAppeal.externalId;
   // Pass in the rootReducer and thunk middleware to createStore
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
-
-
   const setup = ({ appealId: id, store }) => {
     return render(
       <Provider store={store}>
@@ -146,7 +138,6 @@ describe('AddCavcDatesModal', () => {
       const error = COPY.CAVC_MANDATE_DATE_ERROR;
 
       it('shows error on no selected date', () => {
-      // const cavcModal = setup({ appealId });
         const store = getStore();
         const cavcModal = setup({ appealId, store });
 
@@ -154,7 +145,6 @@ describe('AddCavcDatesModal', () => {
       });
 
       it('shows error on future date selection', () => {
-        // const cavcModal = setup({ appealId });
         const store = getStore();
         const cavcModal = setup({ appealId, store });
 
@@ -184,7 +174,6 @@ describe('AddCavcDatesModal', () => {
 
         const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
         fireEvent.change(instructionsElement, { target: { value: '' } });
-        // cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
@@ -195,7 +184,6 @@ describe('AddCavcDatesModal', () => {
 
         const instructionsElement = screen.getByLabelText(/Provide instructions and context for this action/i);
         fireEvent.change(instructionsElement, { target: { value: '2020-11-11' } });
-        // cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '2020-11-11' } });
 
         expect(validationErrorShows(cavcModal, error)).toBeFalsy();
       });
