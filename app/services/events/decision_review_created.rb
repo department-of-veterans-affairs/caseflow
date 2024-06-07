@@ -14,7 +14,7 @@ class Events::DecisionReviewCreated
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
     def create!(consumer_event_id, reference_id, headers, payload)
-      return if event_exists_and_is_completed?(consumer_event_id)
+      return if Event.exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
@@ -84,12 +84,6 @@ class Events::DecisionReviewCreated
       raise error
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
-
-    # Check if there's already a CF Event that references that Appeals-Consumer EventID and
-    # was successfully completed
-    def event_exists_and_is_completed?(consumer_event_id)
-      Event.where(reference_id: consumer_event_id).where.not(completed_at: nil).exists?
-    end
 
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one
