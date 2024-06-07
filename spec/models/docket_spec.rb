@@ -302,6 +302,8 @@ describe Docket, :all_dbs do
     end
 
     context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      # Set cavc_appeal to be outside its affinity window
+      let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 7).days.ago }
       let(:judge) { create(:user, :with_vacols_judge_record) }
 
       subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
