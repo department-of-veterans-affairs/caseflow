@@ -590,6 +590,46 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           expect(Appeal.where(docket_type: "direct_review").count).to eq(5)
         end
       end
+
+      context "a multiple seeds of each type with given judges" do
+        it "makes all seeds" do
+          data = [
+            {
+              seed_type:"ama-aod-hearing-seeds",
+              seed_count:"1",
+              days_ago: "10",
+              judge_css_id: "TEST10JUDGE"
+            },
+            {
+              seed_type:"ama-non-aod-hearing-seeds",
+              seed_count:"1",
+              days_ago: "15",
+              judge_css_id: "TEST15JUDGE"
+            },
+            {
+              seed_type:"legacy-case-seeds",
+              seed_count:"1",
+              days_ago: "20",
+              judge_css_id: "TEST20JUDGE"
+            },
+            {
+              seed_type:"ama-direct-review-seeds",
+              seed_count:"1",
+              days_ago: "25",
+              judge_css_id: ""
+            }
+          ]
+
+          post :seed_dockets, body: data.to_json, as: :json
+
+          expect(response.status).to eq 200
+          expect(Appeal.count).to eq(3)
+          expect(Appeal.where(docket_type: "hearing", aod_based_on_age: true).count).to eq(1)
+          expect(Appeal.where(docket_type: "hearing", aod_based_on_age: nil).count).to eq(1)
+          expect(LegacyAppeal.count).to eq(1)
+          expect(Appeal.where(docket_type: "direct_review").count).to eq(1)
+        end
+      end
     end
   end
 end
