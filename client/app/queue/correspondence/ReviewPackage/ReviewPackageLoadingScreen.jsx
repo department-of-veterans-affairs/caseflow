@@ -10,7 +10,6 @@ import ApiUtil from '../../../util/ApiUtil';
 import {
   setCorrespondence,
   setCorrespondenceDocuments,
-  setPackageDocumentType,
   setVeteranInformation,
   setTaskInstructions
 } from '../correspondenceReducer/reviewPackageActions';
