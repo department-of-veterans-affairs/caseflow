@@ -157,10 +157,6 @@
     "VETERAN_DETAILS": {
       "name": "veteranDetails"
     },
-    "PACKAGE_DOCUMENT_TYPE": {
-      "filterable": true,
-      "name": "packageDocTypeColumn"
-    },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },

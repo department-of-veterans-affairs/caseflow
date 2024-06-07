@@ -23,8 +23,7 @@ import {
   taskColumn,
   correspondenceCompletedDateColumn,
   vaDor,
-  veteranDetails,
-  packageDocumentType
+  veteranDetails
 } from '../components/TaskTableColumns';
 
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
@@ -162,8 +161,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
-      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
-      [QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name]: packageDocumentType(filterOptions)
+      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType()
     };
 
     return functionForColumn[column.name];

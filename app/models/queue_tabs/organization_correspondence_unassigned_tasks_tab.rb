@@ -29,7 +29,6 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
     user = RequestStore.store[:current_user]
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
-      Constants.QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
       Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name

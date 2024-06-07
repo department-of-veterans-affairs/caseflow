@@ -314,24 +314,6 @@ export const vaDor = () => {
   };
 };
 
-export const packageDocumentType = (filterOptions) => {
-  return {
-    header: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
-    filterOptions,
-    columnName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
-    valueName: COPY.CASE_LIST_TABLE_PACKAGE_DOCUMENT_TYPE_COLUMN_TITLE,
-    backendCanSort: true,
-    enableFilter: true,
-    anyFiltersAreSet: true,
-    getSortValue: (task) => task.nod,
-    name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
-    label: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
-    valueFunction: (task) => {
-      return task.nod ? 'NOD' : 'Non-NOD';
-    }
-  };
-};
-
 export const notes = () => {
   return {
     header: 'Notes',
