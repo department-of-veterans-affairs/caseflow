@@ -358,20 +358,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals = conn.exec_query(fmtd_query).to_a
 
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      appeals.reject! do |appeal|
-        next if appeal["bfac"] != "7" || appeal["aod"] != 1
-
-        if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
-          appeal["prev_deciding_judge"] != judge.vacols_attorney_id
-        else
-          ((VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-            .appeal_affinity
-            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) &&
-            (appeal["prev_deciding_judge"] != judge.vacols_attorney_id))
-        end
-      end
-    end
+    cavc_aod_affinity_filter(appeals, judge)
 
     appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
@@ -554,20 +541,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(query).to_a
         return appeals if appeals.empty?
 
-        if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-          appeals.reject! do |appeal|
-            next if appeal["bfac"] != "7" || appeal["aod"] != 1
-
-            if VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil?
-              appeal["prev_deciding_judge"] != judge.vacols_attorney_id
-            else
-              ((VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-                .appeal_affinity
-                .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago) &&
-                (appeal["prev_deciding_judge"] != judge.vacols_attorney_id))
-            end
-          end
-        end
+        cavc_aod_affinity_filter(appeals, judge)
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
@@ -601,7 +575,25 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def self.cavc_aod_affinity_filter(appeals, judge)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+      appeals.reject! do |appeal|
+        next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
+                (appeal["prev_deciding_judge"] == judge.vacols_attorney_id)
+
+        VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
+          (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+            .appeal_affinity
+            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+      end
+    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+      appeals.reject! do |appeal|
+        next if appeal["bfac"] != "7" || appeal["aod"] != 1
+
+        appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+      end
+    end
+  end
 
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
