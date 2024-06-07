@@ -468,14 +468,9 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
-  scope path: 'seeds', as: 'seeds' do
-    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
-  end
-
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
-    get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :hearings, only: [:index]
 
