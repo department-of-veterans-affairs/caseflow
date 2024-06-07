@@ -78,23 +78,25 @@ class UnassignedCasesPage extends React.PureComponent {
 
     const HeadingTag = userIsSCTCoordinator ? 'h1' : 'h2';
 
+    // Setup for backend paginated task retrieval
     const tabPaginationOptions = querystring.parse(window.location.search.slice(1));
-
     const queueConfig = this.props.queueConfig;
-    const tabConfig = queueConfig.tabs[0];
-
+    const tabConfig = queueConfig.tabs?.[0] || {};
     const tabColumns = columnsFromConfig(queueConfig, tabConfig, []);
 
-    // Order all of the columns from the backend except badges so any included columns will be in front
-    tabColumns.slice(1).forEach((obj) => {
-      obj.order = 1;
-    });
+    if (tabConfig) {
+      // Order all of the columns from the backend except badges so any included columns will be in front
+      tabColumns.slice(1).forEach((obj) => {
+        obj.order = 1;
+      });
 
-    // // Setup default sorting for the SCT assign page.
-    // If there is no sort by column in the pagination options, then use the tab config default sort
-    if (!tabPaginationOptions.sort_by) {
-      tabPaginationOptions.sort_by = tabConfig.defaultSort?.sortColName;
-      tabPaginationOptions.order = tabConfig.defaultSort?.sortAscending ? 'asc' : 'desc';
+      // // Setup default sorting for the SCT assign page.
+      // If there is no sort by column in the pagination options, then use the tab config default sort
+      if (!tabPaginationOptions.sort_by) {
+        tabPaginationOptions.sort_by = tabConfig.defaultSort?.sortColName;
+        tabPaginationOptions.order = tabConfig.defaultSort?.sortAscending ? 'asc' : 'desc';
+      }
+
     }
 
     const includedColumnProps = {
