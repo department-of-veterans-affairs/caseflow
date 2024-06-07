@@ -43,13 +43,13 @@ class QueueColumn
   def filter_options(tasks)
     filter_option_func = self.class::FILTER_OPTIONS[name]
 
-    if filter_option_func.present?
+    if filter_option_func
       send(filter_option_func, tasks)
-    #else
-    #  fail(
-    #    Caseflow::Error::MustImplementInSubclass,
-    #    "Filterable tasks must have an associated function to collect filter options"
-    #  )
+    else
+      fail(
+        Caseflow::Error::MustImplementInSubclass,
+        "Filterable tasks must have an associated function to collect filter options"
+      )
     end
   end
 
