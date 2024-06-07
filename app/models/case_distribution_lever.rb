@@ -19,6 +19,7 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.batch_size_per_attorney}
     #{Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals}
     #{Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
+    #{Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days}
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
@@ -28,6 +29,11 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.maximum_direct_review_proportion}
     #{Constants.DISTRIBUTION.minimum_legacy_proportion}
     #{Constants.DISTRIBUTION.nod_adjustment}
+  ).freeze
+
+  BOOLEAN_LEVERS = %W(
+    #{Constants.DISTRIBUTION.disable_legacy_priority}
+    #{Constants.DISTRIBUTION.disable_legacy_non_priority}
   ).freeze
 
   def history_value
@@ -184,6 +190,8 @@ class CaseDistributionLever < ApplicationRecord
           Integer(lever)
         elsif FLOAT_LEVERS.include?(name)
           Float(lever)
+        elsif BOOLEAN_LEVERS.include?(name)
+          ActiveModel::Type::Boolean.new.cast(lever)
         else
           lever
         end

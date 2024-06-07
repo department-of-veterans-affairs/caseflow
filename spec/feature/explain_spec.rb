@@ -1,15 +1,47 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_exporter.rb"
-require "helpers/sanitized_json_importer.rb"
-require "helpers/intake_renderer.rb"
-require "helpers/hearing_renderer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_exporter"
+require "helpers/sanitized_json_importer"
+require "helpers/intake_renderer"
+require "helpers/hearing_renderer"
 
 RSpec.feature "Explain JSON" do
   let(:user_roles) { ["System Admin"] }
   before do
     User.authenticate!(roles: user_roles)
+  end
+
+  context "given Correspondence" do
+    let(:veteran) { create(:veteran) }
+    let(:package_document_type) do
+      PackageDocumentType.create(
+        id: 15,
+        active: true,
+        created_at: Time.zone.now,
+        name: "10182",
+        updated_at: Time.zone.now
+      )
+    end
+    let(:correspondence) do
+      create(
+        :correspondence,
+        :with_single_doc,
+        veteran_id: veteran.id,
+        package_document_type_id: package_document_type.id
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    scenario "admin visits explain page for correspondence" do
+      visit "explain/correspondence/#{correspondence.uuid}/"
+      expect(page).to have_content("Correspondence #{correspondence.uuid}")
+      expect(page).to have_content("Task Tree")
+      expect(page).to have_content("Task Versions")
+    end
   end
 
   context "given Legacy appeal" do
@@ -201,6 +233,51 @@ RSpec.feature "Explain JSON" do
         req_issue = real_appeal.request_issues.sample
         expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
       end
+    end
+  end
+
+  context "for appeals with affinity dates" do
+    let!(:legacy_appeal_with_affinity) do
+      vacols_case = create(:case_with_form_9, :with_appeal_affinity, :ready_for_distribution)
+      create(:legacy_appeal, vacols_case: vacols_case)
+      vacols_case
+    end
+    let!(:legacy_appeal_without_affinity) do
+      vacols_case = create(:case_with_form_9, :ready_for_distribution)
+      create(:legacy_appeal, vacols_case: vacols_case)
+      vacols_case
+    end
+    let!(:ama_appeal_with_affinity) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, :with_appeal_affinity,
+             tied_judge: create(:user, :judge, :with_vacols_judge_record))
+    end
+    let!(:ama_appeal_without_affinity) do
+      create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute,
+             tied_judge: create(:user, :judge, :with_vacols_judge_record))
+    end
+
+    it "legacy appeals show the date if one exists" do
+      visit "explain/appeals/#{legacy_appeal_with_affinity.bfkey}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .to have_text "Affinity Start Date: #{legacy_appeal_with_affinity.appeal_affinity.affinity_start_date}"
+
+      visit "explain/appeals/#{legacy_appeal_without_affinity.bfkey}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .not_to have_text "Affinity Start Date:"
+    end
+
+    it "AMA appeals show the date if one exists" do
+      visit "explain/appeals/#{ama_appeal_with_affinity.uuid}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .to have_text "Affinity Start Date: #{ama_appeal_with_affinity.reload.appeal_affinity.affinity_start_date}"
+
+      visit "explain/appeals/#{ama_appeal_without_affinity.uuid}"
+      page.find("label", text: "Task Tree").click
+      expect(page)
+        .not_to have_text "Affinity Start Date:"
     end
   end
 end

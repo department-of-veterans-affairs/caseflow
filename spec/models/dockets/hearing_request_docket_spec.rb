@@ -16,27 +16,29 @@ describe HearingRequestDocket, :postgres do
   end
 
   context "#ready_priority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
     let!(:ready_priority_appeal) { create_ready_aod_appeal }
     let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
     let!(:not_ready_priority_appeal) { create_not_ready_aod_appeal }
-    let!(:not_ready_cavc_appeal) { create_not_ready_cavc_appeal }
-
-    subject { HearingRequestDocket.new.ready_priority_appeals }
 
     it "returns only ready priority appeals" do
-      expect(subject).to match_array([ready_priority_appeal])
+      allow(docket).to receive(:ready_priority_nonpriority_appeals).and_return([ready_priority_appeal])
+      expect(docket.ready_priority_nonpriority_appeals(priority: true, ready: true))
+        .to match_array([ready_priority_appeal])
     end
   end
 
   context "#ready_nonpriority_appeals" do
+    let(:docket) { HearingRequestDocket.new }
     let!(:ready_priority_appeal) { create_ready_aod_appeal }
-    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
     let!(:not_ready_nonpriority_appeal) { create_not_ready_nonpriority_appeal }
+    let!(:ready_nonpriority_appeal) { create_ready_nonpriority_appeal }
 
     subject { HearingRequestDocket.new.ready_nonpriority_appeals }
 
     it "returns only ready nonpriority appeals" do
-      expect(subject).to match_array([ready_nonpriority_appeal])
+      expect(docket.ready_priority_nonpriority_appeals(priority: false, ready: true))
+        .to match_array([ready_nonpriority_appeal])
     end
   end
 
@@ -664,6 +666,7 @@ describe HearingRequestDocket, :postgres do
       :advanced_on_docket_due_to_age,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return
@@ -700,6 +703,7 @@ describe HearingRequestDocket, :postgres do
     remand_appeal = cavc_remand.remand_appeal
     distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
     (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    create(:appeal_affinity, appeal: remand_appeal)
     Timecop.return
 
     remand_appeal
@@ -712,6 +716,7 @@ describe HearingRequestDocket, :postgres do
       :hearing_docket,
       :with_post_intake_tasks,
       :held_hearing_and_ready_to_distribute,
+      :with_appeal_affinity,
       tied_judge: tied_judge || create(:user, :judge, :with_vacols_judge_record)
     )
     Timecop.return

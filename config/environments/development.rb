@@ -120,16 +120,13 @@ Rails.application.configure do
   ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
 
   # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Used by VirtualHearings::PexipLinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"
 
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
-
-  # Quarterly Notifications Batch Sizes
-  ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
