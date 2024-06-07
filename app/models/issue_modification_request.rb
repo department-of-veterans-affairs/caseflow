@@ -64,13 +64,14 @@ class IssueModificationRequest < CaseflowRecord
       )
     end
 
-    update!(
-      nonrating_issue_category: attributes[:nonrating_issue_category],
-      decision_date: attributes[:decision_date],
-      nonrating_issue_description: attributes[:nonrating_issue_description],
-      request_reason: attributes[:request_reason],
-      edited_at: Time.zone.now
-    )
+    update_attributes = attributes.slice(
+      :nonrating_issue_category,
+      :decision_date,
+      :nonrating_issue_description,
+      :request_reason
+    ).merge(edited_at: Time.zone.now)
+
+    update!(update_attributes)
   end
 
   def cancel_from_params!(attributes, current_user)
