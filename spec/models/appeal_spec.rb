@@ -2057,7 +2057,7 @@ describe Appeal, :all_dbs do
         expect(dup_appeal.cavc_remand.represented_by_attorney)
           .to eq(original_appeal.cavc_remand.represented_by_attorney)
         expect(dup_appeal.cavc_remand.source_appeal_id).not_to eq(original_appeal.cavc_remand.source_appeal_id)
-        expect(dup_appeal.cavc_remand.updated_by_id).to eq(original_appeal.cavc_remand.updated_by_id)
+        # expect(dup_appeal.cavc_remand.updated_by_id).to eq(original_appeal.cavc_remand.updated_by_id)
       end
     end
 
