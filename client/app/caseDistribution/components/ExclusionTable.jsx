@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import cx from 'classnames';
 import COPY from '../../../COPY';
@@ -8,9 +8,11 @@ import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import ExcludeDocketLever from './ExcludeDocketLever';
+import { updateLeverValue } from '../reducers/levers/leversActions';
 
 const ExclusionTable = () => {
   const theState = useSelector((state) => state);
+  const dispatch = useDispatch();
 
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
@@ -39,10 +41,66 @@ const ExclusionTable = () => {
     leverGroup: lever.lever_group,
   }));
 
+  const [priorityToggle, setPriorityToggle] = useState(false);
+  const [nonPriorityToggle, setNonPriorityToggle] = useState(false);
+  const [comboPriorityToggle, setComboPriorityToggle] = useState(false);
+  const [comboNonPriorityToggle, setComboNonPriorityToggle] = useState(false);
+
+  useEffect(() => {
+    const allPrioritySelected = priorityRadios.every((lever) => lever.value === 'true');
+    const allPriorityUnselected = priorityRadios.every((lever) => lever.value === 'false');
+    const allNonPrioritySelected = nonPriorityRadios.every((lever) => lever.value === 'true');
+    const allNonPriorityUnselected = nonPriorityRadios.every((lever) => lever.value === 'false');
+
+    if (allPrioritySelected) {
+      setPriorityToggle(true);
+      setComboPriorityToggle(false);
+    } else if (allPriorityUnselected) {
+      setPriorityToggle(false);
+      setComboPriorityToggle(false);
+    } else {
+      setPriorityToggle(false);
+      setComboPriorityToggle(true);
+    }
+
+    if (allNonPrioritySelected) {
+      setNonPriorityToggle(true);
+      setComboNonPriorityToggle(false);
+    } else if (allNonPriorityUnselected) {
+      setNonPriorityToggle(false);
+      setComboNonPriorityToggle(false);
+    } else {
+      setNonPriorityToggle(false);
+      setComboNonPriorityToggle(true);
+    }
+  }, [priorityRadios, nonPriorityRadios]);
+
+  const handleToggleChange = (isPriority) => {
+    if (isPriority) {
+      const toggleState = priorityToggle !== true;
+
+      setPriorityToggle(toggleState);
+      const newToggleState = toggleState ? 'true' : 'false';
+
+      priorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+      });
+    } else {
+      const toggleState = nonPriorityToggle !== true;
+
+      setNonPriorityToggle(toggleState);
+      const newToggleState = toggleState ? 'true' : 'false';
+
+      nonPriorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+      });
+    }
+  };
+
   const filterOptionValue = (lever) => {
     let enabled = lever?.value;
 
-    if (enabled) {
+    if (enabled === 'true') {
       return COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_ON;
     }
 
@@ -93,14 +151,19 @@ const ExclusionTable = () => {
                   </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}
-                    selected = {false}
-                    disabled
+                    selected = {nonPriorityToggle}
+                    toggleSelected = {() => handleToggleChange(false)}
+                    isIdle = {comboNonPriorityToggle}
                   />
                 </span>
               </td>
 
               {nonPriorityRadios && nonPriorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, false)} >
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, false)}
+                  key={lever.item}
+                >
                   <ExcludeDocketLever lever={lever} />
                 </td>
               ))}
@@ -115,13 +178,18 @@ const ExclusionTable = () => {
                   </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_priority}
-                    selected = {false}
-                    disabled
+                    selected = {priorityToggle}
+                    toggleSelected = {() => handleToggleChange(true)}
+                    isIdle = {comboPriorityToggle}
                   />
                 </span>
               </td>
               {priorityRadios && priorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, true)} >
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, true)}
+                  key={lever.item}
+                >
                   <ExcludeDocketLever lever={lever} />
                 </td>
               ))}
@@ -135,8 +203,14 @@ const ExclusionTable = () => {
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
               {nonPriorityRadios && nonPriorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, false)}>
-                  {filterOptionValue(lever)}
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, false)}
+                  key={lever.item}
+                >
+                  <label className="exclusion-table-member-view-styling">
+                    {filterOptionValue(lever)}
+                  </label>
                 </td>
               ))}
             </tr>
@@ -147,8 +221,14 @@ const ExclusionTable = () => {
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3>
               </td>
               {priorityRadios && priorityRadios.map((lever) => (
-                <td className={cx('exclusion-table-styling')} aria-label={buildAriaLabel(lever, true)} >
-                  {filterOptionValue(lever)}
+                <td
+                  className={cx('exclusion-table-styling')}
+                  aria-label={buildAriaLabel(lever, true)}
+                  key={lever.item}
+                >
+                  <label className="exclusion-table-member-view-styling">
+                    {filterOptionValue(lever)}
+                  </label>
                 </td>
               ))}
             </tr>

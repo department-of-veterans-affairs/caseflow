@@ -1006,7 +1006,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 104,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1033,7 +1033,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 105,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1060,7 +1060,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 106,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1087,7 +1087,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 107,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
