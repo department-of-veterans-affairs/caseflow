@@ -17,6 +17,8 @@ describe Distribution, :all_dbs do
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   context "validations" do

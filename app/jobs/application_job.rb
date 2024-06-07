@@ -18,6 +18,21 @@ class ApplicationJob < ActiveJob::Base
       @app_name = app_name
     end
 
+    # Override in job classes if you anticipate that the job will take longer than the SQS visibility
+    # timeout value (ex: currently 5 hours for our low priority queue at the time of writing this)
+    # to prevent multiple instances of the job from being executed.
+    #
+    # See https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
+    def delete_sqs_message_before_start?
+      false
+    end
+
+    # For jobs that run multiple times in a short time span, we do not want to continually update
+    # the JobsExecutionTime table. This boolean will help us ignore those jobs
+    def ignore_job_execution_time?
+      false
+    end
+
     attr_reader :app_name
   end
 
@@ -47,6 +62,16 @@ class ApplicationJob < ActiveJob::Base
   before_perform do
     if self.class.app_name.present?
       RequestStore.store[:application] = "#{self.class.app_name}_job"
+    end
+
+    # Check whether Job execution time should be tracked
+    unless self.class.ignore_job_execution_time?
+      # Add Record to JobExecutionTimes to track the current job execution time
+      JobExecutionTime.upsert(
+        { job_name: self.class.to_s,
+          last_executed_at: Time.now.utc },
+        unique_by: :job_name
+      )
     end
   end
 end

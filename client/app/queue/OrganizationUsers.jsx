@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -16,30 +18,56 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+import OrganizationPermissions from './OrganizationPermissions';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
+const addDropdownStyle = css({
+  padding: '3rem 0 4rem'
 });
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
+
+const instructionListStyle = css({
+  listStyle: 'none',
+  margin: '0 0 0 3rem',
+  padding: '1.5rem 0 2rem 0',
+  fontSize: '19px',
+  borderBottom: '.1rem solid black',
 });
+
+const userListStyle = css({
+  margin: '0'
+});
+
+const userListItemStyle = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  borderTop: '.1rem solid black',
+  padding: '4rem 0 2rem',
+  margin: '0',
+  ':first-child': {
+    borderTop: 'none',
+  }
+});
+
 const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
+  borderBottom: '.1rem solid gray'
 });
+
+const titleButtonsStyle = css({
+  width: '60rem'
+});
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
+});
+
 const buttonStyle = css({
-  paddingRight: '1rem',
+  padding: '1rem 2.5rem 2rem 0',
   display: 'inline-block'
 });
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 0 2rem',
-});
+
 const listStyle = css({
   listStyle: 'none'
 });
@@ -195,6 +223,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -207,7 +236,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -226,7 +254,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   adminButton = (user, admin) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
       id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
       classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
@@ -234,7 +262,7 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.modifyAdminRights(user, !admin)} /></div>
 
   removeUserButton = (user) =>
-    <div {...buttonStyle}><Button
+    <div className="button-style"><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
       id={`Remove-user-${user.id}`}
       classNames={['usa-button-secondary']}
@@ -258,24 +286,57 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
+      const { conferenceSelectionVisibility } = this.props;
 
-      return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
-      </React.Fragment>;
+      return (
+        <React.Fragment key={user.id}>
+          <li key={user.id} {...userListItemStyle}>
+            <div {...titleButtonsStyle}>
+              { this.formatName(user) }
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+
+              {
+                (judgeTeam || dvcTeam) && admin ?
+                  <div {...topUserBorder}></div> :
+                  <div>
+                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                    { this.removeUserButton(user) }
+                  </div>
+              }
+
+            </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
+                    conferenceSelectionVisibility && (
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
+                </div>
+              )}
+              {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
+                <OrganizationPermissions
+                  organization={this.props.organization}
+                  permissions={this.props.organizationPermissions}
+                  user={user}
+                  orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+                  orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+              </div>}
+            </div>
+          </li>
+        </React.Fragment>
+      );
     });
 
     const handleSearchChange = (value) => {
@@ -292,26 +353,27 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
+      <div {...addDropdownStyle}>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
+          <ul {...instructionListStyle}>
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
@@ -334,7 +396,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul>{listOfUsers}</ul>
+          <ul {...userListStyle}>{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
@@ -342,7 +404,6 @@ getFilteredUsers = () => {
           </>
         )
         }
-
       </div>
     </React.Fragment>;
   }
@@ -414,5 +475,8 @@ getFilteredUsers = () => {
 }
 
 OrganizationUsers.propTypes = {
-  organization: PropTypes.string
+  organization: PropTypes.string,
+  conferenceSelectionVisibility: PropTypes.bool,
+  organizationPermissions: PropTypes.array,
+  orgnizationUserPermissions: PropTypes.array
 };
