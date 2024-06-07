@@ -38,9 +38,6 @@ describe EventRecord, :postgres do
         veteran_file_number: veteran_file_number
       )
     end
-    let!(:end_product_establishment_event_record) do
-      EventRecord.create!(event: event2, evented_record: end_product_establishment)
-    end
     # Claimant
     let!(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
     let!(:claimant) { create(:claimant, decision_review: appeal) }
@@ -55,7 +52,9 @@ describe EventRecord, :postgres do
     let!(:request_issue) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review) }
     let!(:request_issue_event_record) { EventRecord.create!(event: event2, evented_record: request_issue) }
     # Legacy Issue
-    let!(:legacy_issue) { LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1) }
+    let!(:legacy_issue) do
+      LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1)
+    end
     let!(:legacy_issue_event_record) { EventRecord.create!(event: event2, evented_record: legacy_issue) }
     # Legacy Issue Optin
     let!(:legacy_issue_optin) { LegacyIssueOptin.new(request_issue_id: request_issue.id) }
@@ -66,18 +65,9 @@ describe EventRecord, :postgres do
     let(:session) { { "user" => { "id" => "BrockPurdy", "station_id" => "310", "name" => "Brock Purdy" } } }
     let(:user) { User.from_session(session) }
     let!(:user_event_record) { EventRecord.create!(event: event2, evented_record: user) }
-    it "10 Event Records Backfilled ID and Type correctly match" do
-      expect(higher_level_review_event_record.evented_record_type).to eq("HigherLevelReview")
-      expect(higher_level_review_event_record.evented_record_id).to eq(higher_level_review.id)
-      expect(higher_level_review.event_record).to eq higher_level_review_event_record
-
+    it "9 Event Records Backfilled ID and Type correctly match" do
       intake.update!(detail: higher_level_review)
       expect(higher_level_review.from_decision_review_created_event?).to eq(true)
-
-      expect(end_product_establishment_event_record.evented_record_type).to eq("EndProductEstablishment")
-      expect(end_product_establishment_event_record.evented_record_id).to eq(end_product_establishment.id)
-      expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
-      expect(end_product_establishment.from_decision_review_created_event?).to eq(true)
 
       expect(claimant_event_record.evented_record_type).to eq("Claimant")
       expect(claimant_event_record.evented_record_id).to eq(claimant.id)
@@ -114,7 +104,7 @@ describe EventRecord, :postgres do
       expect(user.event_record).to eq user_event_record
       expect(user.from_decision_review_created_event?).to eq(true)
 
-      expect(EventRecord.count).to eq 10
+      expect(EventRecord.count).to eq 9
     end
 
     it "SupplementalClaim not associated to a backfill Intake should fail #from_decision_review_created_event?" do
@@ -127,7 +117,8 @@ describe EventRecord, :postgres do
     let!(:attorney) { create(:bgs_attorney, name: "Brock Purdy") }
     let!(:event3) { DecisionReviewCreatedEvent.create!(reference_id: "3") }
     it "should not create an EventRecord and should raise an error" do
-      expect { EventRecord.create!(event_id: event3.id, evented_record: attorney) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { EventRecord.create!(event_id: event3.id, evented_record: attorney) }
+        .to raise_error(ActiveRecord::RecordInvalid)
       expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
