@@ -84,4 +84,3 @@ RUN bundle install && \
 
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
-
