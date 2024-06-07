@@ -72,6 +72,8 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rswag-api"
+gem "rswag-ui"
 gem "rtf"
 gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "a2ecb0bf7f3d3aa8fd1429bfd78aa00e7270b0c8"
 # Use SCSS for stylesheets
@@ -123,6 +125,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
+  gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
