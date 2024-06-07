@@ -116,6 +116,7 @@ class UnassignedCasesPage extends React.PureComponent {
       taskPagesApiEndpoint: tabConfig.task_page_endpoint_base_path,
       useTaskPagesApi: true,
       tabPaginationOptions,
+      useReduxCache: true,
     };
 
     return <React.Fragment>

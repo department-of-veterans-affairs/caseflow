@@ -142,7 +142,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
     useTaskPagesApi={this.props.useTaskPagesApi}
     tabPaginationOptions={this.props.tabPaginationOptions}
-    useReduxCache
+    useReduxCache={this.props.useReduxCache}
     reduxCache={this.props.queueTableResponseCache}
     updateReduxCache={this.props.updateQueueTableCache}
   />;
@@ -177,6 +177,7 @@ TaskTableUnconnected.propTypes = {
   preserveQueueFilter: PropTypes.bool,
   queueTableResponseCache: PropTypes.object,
   updateQueueTableCache: PropTypes.func,
+  useReduxCache: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
