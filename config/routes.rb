@@ -425,6 +425,7 @@ Rails.application.routes.draw do
 
   scope path: 'seeds', as: 'seeds' do
     post 'run-demo', to: 'test_docket_seeds#seed_dockets'
+    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
   end
 
   # :nocov:

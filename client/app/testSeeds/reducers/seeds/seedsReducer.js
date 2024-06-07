@@ -16,15 +16,19 @@ const seedsReducer = (state = initialState, action = {}) => {
       seeds: [...state.seeds, action.payload.seed]
     };
   case ACTIONS.REMOVE_CUSTOM_SEED:
-    return update(state, {
-      seeds: {
-        $unset: action.payload.seed
-      }
-    });
+    return {
+      ...state,
+      seeds: state.seeds.filter((_, index) => index !== action.payload.index)
+    };
   case ACTIONS.SAVE_CUSTOM_SEEDS:
     return {
       ...state,
       displayBanner: true
+    };
+  case ACTIONS.RESET_CUSTOM_SEEDS:
+    return {
+      ...state,
+      seeds: []
     };
   default:
     return state;

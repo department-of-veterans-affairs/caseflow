@@ -12,13 +12,21 @@ export const addCustomSeed = (seed) =>
     });
   };
 
-export const removeCustomSeed = (seed) =>
+export const removeCustomSeed = (seed, index) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.REMOVE_CUSTOM_SEED,
       payload: {
-        seed
+        seed,
+        index
       }
+    });
+  };
+
+export const resetCustomSeeds = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.RESET_CUSTOM_SEEDS
     });
   };
 
