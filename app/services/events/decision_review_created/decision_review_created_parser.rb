@@ -408,7 +408,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def ri_rating_issue_associated_at(issue)
-    issue.dig(:rating_issue_associated_at)
+    ri_rating_issue_associated_at_in_ms = issue.dig(:rating_issue_associated_at)
+    convert_milliseconds_to_datetime(ri_rating_issue_associated_at_in_ms)
   end
 
   def ri_nonrating_issue_bgs_id(issue)
