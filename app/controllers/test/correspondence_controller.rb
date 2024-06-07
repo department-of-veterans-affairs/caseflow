@@ -27,7 +27,7 @@ class Test::CorrespondenceController < ApplicationController
 
   def access_allowed?
     Rails.deploy_env?(:uat) ||
-    Rails.env.production?
+    Rails.deploy_env?(:demo)
   end
 
   def render_access_error
@@ -43,6 +43,23 @@ class Test::CorrespondenceController < ApplicationController
       redirect_to "/under_construction"
     elsif !correspondence_queue || !verify_access || correspondence_admin
       redirect_to "/unauthorized"
+    end
+  end
+
+  def valid_veteran?(file_number)
+
+    if Rails.deploy_env?(:uat)
+    veteran = VeteranFinder.find_best_match(file_number)
+
+    return veteran&.fetch_bgs_record.present?
+
+    elsif Rails.deploy_env?(:demo)
+      veterans = Veteran.all.map do |veteran|
+        veteran.file_number
+      end
+
+      return veterans.any?(file_number.to_s)
+
     end
   end
 end
