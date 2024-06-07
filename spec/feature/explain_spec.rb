@@ -14,15 +14,6 @@ RSpec.feature "Explain JSON" do
 
   context "given Correspondence" do
     let(:veteran) { create(:veteran) }
-    let(:package_document_type) do
-      PackageDocumentType.create(
-        id: 15,
-        active: true,
-        created_at: Time.zone.now,
-        name: "10182",
-        updated_at: Time.zone.now
-      )
-    end
     let(:correspondence) do
       create(
         :correspondence,

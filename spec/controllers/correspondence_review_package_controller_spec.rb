@@ -11,11 +11,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
 
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
-  let!(:package_document_type) do
-    PackageDocumentType.find_or_create_by!(id: 1) do |pdt|
-      pdt.name = "Some Document Type"
-    end
-  end
 
   before do
     Fakes::Initializer.load!
@@ -45,8 +40,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       User.authenticate!(user: current_user)
       put :update_cmp, params: {
         correspondence_uuid: correspondence.uuid,
-        VADORDate: Time.zone.now,
-        packageDocument: { value: package_document_type.id.to_s }
+        VADORDate: Time.zone.now
       }
     end
 
@@ -59,7 +53,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     before do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
-      Seeds::PackageDocumentTypes.new.seed!
       get :package_documents
     end
 
@@ -68,7 +61,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
 
     it "returns package document types" do
-      doc_types = JSON.parse(response.body, symbolize_names: true)[:package_document_types]
 
       expect(doc_types).to be_an(Array)
       expect(doc_types.empty?).to eq(false)
@@ -78,7 +70,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
         expect(doc_type.key?(:name)).to eq true
       end
 
-      names_from_db = PackageDocumentType.pluck(:name)
       names_from_response = doc_types.map { |doc_type| doc_type[:name] }
       expect(names_from_db).to eq(names_from_response)
     end

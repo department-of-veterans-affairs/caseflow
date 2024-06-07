@@ -3,7 +3,6 @@
 # rubocop:disable Layout/LineLength
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
-  let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
   let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
   let(:mail_team_supervisor_user) { create(:inbound_ops_team_supervisor) }
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
@@ -51,11 +50,7 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "Intake appeal button should be hidden for document type 10182" do
-      if package_document_type.name.to_s == "10182"
-        expect(page).to have_content("Intake appeal")
-      else
         expect(page).to_not have_content("Intake appeal")
-      end
     end
 
     context "when remove package task is pending review" do
@@ -123,7 +118,6 @@ RSpec.feature("The Correspondence Review Package page") do
   end
 
   context "Review package - intake appeal" do
-    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
     let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
@@ -146,7 +140,6 @@ RSpec.feature("The Correspondence Review Package page") do
   end
 
   context "Review package - Create record" do
-    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
     let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
@@ -169,7 +162,6 @@ RSpec.feature("The Correspondence Review Package page") do
   end
 
   context "Review package - check on ReviewPackageTask status" do
-    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
     let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
 
     before do
