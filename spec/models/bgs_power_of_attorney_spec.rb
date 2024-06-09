@@ -407,7 +407,6 @@ describe BgsPowerOfAttorney do
   describe "#update_ihp_task" do
     let(:poa) { create(:bgs_power_of_attorney) }
     let(:appeal) { create(:appeal) }
-    #let(:ihp_task) { instance_double(InformalHearingPresentationTask) }
     let(:ihp_task) { create(:informal_hearing_presentation_task) }
     let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
 
