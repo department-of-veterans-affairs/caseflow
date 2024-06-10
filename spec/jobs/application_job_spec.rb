@@ -40,8 +40,6 @@ describe "ApplicationJob" do
 
     it "update existing record in JobExecutionTime table when job is run multiple times" do
       allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
-      byebug
-
       JobExecutionTime.create(job_name: JobThatIsGood.name, last_executed_at: 2.days.ago)
 
       Timecop.freeze(freeze_time_first_run) do
@@ -59,6 +57,7 @@ describe "ApplicationJob" do
         expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
       end
     end
+  end
 
   context ".queue_with_priority" do
     it "performs with valid priority" do
