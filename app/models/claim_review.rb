@@ -217,7 +217,8 @@ class ClaimReview < DecisionReview
       receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url,
+      intake_from_vbms: from_decision_review_created_event?
     }
   end
 
