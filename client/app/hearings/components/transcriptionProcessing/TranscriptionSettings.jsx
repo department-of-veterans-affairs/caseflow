@@ -183,6 +183,14 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
+  // editContractorLink = () => {
+  //   <div>
+  //     <EditContractorLink>
+
+  //     </EditContractorLink>
+  //   </div>
+  // }
+
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
     this.getContractors();
@@ -217,7 +225,12 @@ export default class TranscriptionSettings extends React.PureComponent {
           <div {...userListItemStyle}>
             <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
-                <h2>{contractor.name}<EditContractorLink /></h2>
+                <h2>
+                  {contractor.name}
+                  <EditContractorLink
+                    onClick={() => this.toggleAddEditModal(contractor)}
+                  />
+                </h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
                 <li {...contactAlign}>{contractor.phone}</li>
