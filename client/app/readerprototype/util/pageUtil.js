@@ -1,15 +1,15 @@
 import { css } from 'glamor';
 import * as PDFJS from 'pdfjs-dist';
 
-const renderPage = async (pdfPage) => {
-  let pdfContainer = document.getElementById('pdfContainer');
-  let canvasWrapper = document.createElement('div');
+export const renderPage = async (pdfPage) => {
+  const pdfContainer = document.getElementById('pdfContainer');
+  const canvasWrapper = document.createElement('div');
 
   canvasWrapper.setAttribute('id', `canvasContainer-${pdfPage.pageNumber}`);
   canvasWrapper.className = 'canvas-wrapper-prototype';
   pdfContainer.appendChild(canvasWrapper);
 
-  let canvas = document.createElement('canvas');
+  const canvas = document.createElement('canvas');
   const textLayer = document.createElement('div');
 
   canvas.setAttribute('id', `canvas-${pdfPage.pageNumber}`);
