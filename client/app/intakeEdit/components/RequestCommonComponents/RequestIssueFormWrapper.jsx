@@ -51,16 +51,20 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       decisionDate,
-      identifier: uuid.v4()
+      identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4()
     };
 
     // close modal and move the issue
     props.onCancel();
 
-    if (props.type === 'addition') {
-      props.addToPendingReviewSection(enhancedData);
+    if (pendingIssueModificationRequestsEmpty) {
+      if (props.type === 'addition') {
+        props.addToPendingReviewSection(enhancedData);
+      } else {
+        props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+      }
     } else {
-      props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+      props.updatePendingReview(enhancedData.identifier, enhancedData);
     }
   };
 
@@ -101,7 +105,8 @@ RequestIssueFormWrapper.propTypes = {
   type: PropTypes.string,
   moveToPendingReviewSection: PropTypes.func,
   addToPendingReviewSection: PropTypes.func,
-  pendingIssueModificationRequest: PropTypes.object
+  pendingIssueModificationRequest: PropTypes.object,
+  updatePendingReview: PropTypes.func,
 };
 
 export default RequestIssueFormWrapper;
