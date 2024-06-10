@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
-import { anyUser, vsoUser } from 'test/data/user';
+import { anyUser, vsoUser, hearingUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
 import { virtualHearing, amaHearing, virtualWebexHearing } from 'test/data/hearings';
 import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
 
@@ -172,5 +173,19 @@ describe('HearingLinks', () => {
     expect(form.find(VirtualHearingLink)).toHaveLength(1);
     // Ensure it's the guest link
     expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink);
+  });
+
+  test('Display NA for links when hearing is cancelled', () => {
+    render(
+      <HearingLinks
+        hearing={amaHearing}
+        isVirtual
+        user={hearingUser}
+        virtualHearing={virtualHearing.virtualHearing}
+        isCancelled
+      />
+    );
+
+    expect(screen.getAllByText('N/A').length).toBe(9);
   });
 });

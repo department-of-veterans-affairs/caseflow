@@ -12,6 +12,12 @@ export const VirtualHearingFields = (
 ) => {
   const user = useContext(HearingsUserContext);
 
+  const checkCancelled = () => {
+    const disposition = ['postponed', 'cancelled', 'scheduled_in_error'];
+
+    return disposition.includes(hearing?.disposition);
+  };
+
   return (
     <ContentSection
       header="Hearing Links"
@@ -26,6 +32,7 @@ export const VirtualHearingFields = (
         scheduledForIsPast={hearing?.scheduledForIsPast}
         isVirtual={hearing?.isVirtual}
         wasVirtual={hearing?.wasVirtual}
+        isCancelled={checkCancelled()}
       />
     </ContentSection>
   );

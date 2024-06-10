@@ -9,27 +9,30 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
+  attr_reader :meeting_id, :meeting_title
+
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour
-    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour
     max = 100
-    query = "?max=#{max}?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
+    id = job.arguments&.first&.[](:meeting_id)
+    query = "?max=#{max}?meetingId=#{id}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       provider: "webex",
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
-      times: { from: from, to: to },
+      meeting_id: id,
       docket_number: nil
     }
     job.log_error(exception)
     job.send_transcription_issues_email(error_details)
   end
 
-  def perform
+  def perform(meeting_id:, meeting_title:)
     ensure_current_user_is_set
-    fetch_recordings_list.ids.each do |n|
-      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n)
+    fetch_recordings_list(meeting_id).recordings.each do |recording|
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(
+        recording_id: recording.id, host_email: recording.host_email, meeting_title: meeting_title
+      )
     end
   end
 
@@ -39,17 +42,15 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
 
   private
 
-  def fetch_recordings_list
-    from = 2.hours.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601
-    to = 1.hour.ago.in_time_zone("America/New_York").beginning_of_hour.iso8601
+  def fetch_recordings_list(id)
     max = 100
-    query = { "from": from, "to": to, "max": max }
-
+    meeting_id = id
+    query = { "max": max, "meetingId": meeting_id }
     WebexService.new(
       host: ENV["WEBEX_HOST_MAIN"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: CredStash.get("webex_#{Rails.deploy_env}_access_token"),
+      apikey: WebexService.access_token,
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query

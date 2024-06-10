@@ -4,7 +4,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -19,58 +18,8 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+
 import OrganizationPermissions from './OrganizationPermissions';
-
-const addDropdownStyle = css({
-  padding: '3rem 0 4rem'
-});
-
-const instructionListStyle = css({
-  listStyle: 'none',
-  margin: '0 0 0 3rem',
-  padding: '1.5rem 0 2rem 0',
-  fontSize: '19px',
-  borderBottom: '.1rem solid black',
-});
-
-const userListStyle = css({
-  margin: '0'
-});
-
-const userListItemStyle = css({
-  display: 'flex',
-  flexWrap: 'wrap',
-  borderTop: '.1rem solid black',
-  padding: '4rem 0 2rem',
-  margin: '0',
-  ':first-child': {
-    borderTop: 'none',
-  }
-});
-
-const topUserBorder = css({
-  borderBottom: '.1rem solid gray'
-});
-
-const titleButtonsStyle = css({
-  width: '60rem'
-});
-
-const radioButtonsStyle = css({
-  paddingBottom: '2rem',
-  '& legend': {
-    margin: '0'
-  }
-});
-
-const buttonStyle = css({
-  padding: '1rem 2.5rem 2rem 0',
-  display: 'inline-block'
-});
-
-const listStyle = css({
-  listStyle: 'none'
-});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -292,8 +241,8 @@ getFilteredUsers = () => {
 
       return (
         <React.Fragment key={user.id}>
-          <li key={user.id} {...userListItemStyle}>
-            <div {...titleButtonsStyle}>
+          <li key={user.id} className="user-list-item">
+            <div className="title-buttons">
               { this.formatName(user) }
               { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
               { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
@@ -302,7 +251,7 @@ getFilteredUsers = () => {
 
               {
                 (judgeTeam || dvcTeam) && admin ?
-                  <div {...topUserBorder}></div> :
+                  null :
                   <div>
                     { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
                     { this.removeUserButton(user) }
@@ -310,9 +259,9 @@ getFilteredUsers = () => {
               }
 
             </div>
-            <div {...radioButtonsStyle}>
-              {this.state.organizationName === 'Hearings Management' &&
+            {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
+              <div className="button-style">
                 <div>
                   <SelectConferenceTypeRadioField
                     key={`${user.id}-conference-selection`}
@@ -324,16 +273,18 @@ getFilteredUsers = () => {
                     user={user}
                   />
                 </div>
-              )}
-              {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
+              </div>
+            )}
+            {(this.props.organizationPermissions.length > 0) &&
+              <div className={['team-member-permission-toggles-container']}>
                 <OrganizationPermissions
                   organization={this.props.organization}
                   permissions={this.props.organizationPermissions}
                   user={user}
                   orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
                   orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
-              </div>}
-            </div>
+              </div>
+            }
           </li>
         </React.Fragment>
       );
@@ -353,7 +304,7 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <div {...addDropdownStyle}>
+      <div className="add-dropdown">
         <SearchableDropdown
           name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
           hideLabel
@@ -373,7 +324,7 @@ getFilteredUsers = () => {
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...instructionListStyle}>
+          <ul className="instruction-list">
             { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
             <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
@@ -396,7 +347,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul {...userListStyle}>{listOfUsers}</ul>
+          <ul className="user-list">{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
