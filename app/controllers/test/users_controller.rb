@@ -14,7 +14,8 @@ class Test::UsersController < ApplicationController
     {
       name: "Queue",
       links: {
-        your_queue: "/queue"
+        your_queue: "/queue",
+        assignment_queue: "/queue/USER_CSS_ID/assign" # USER_CSS_ID is then updated in TestUsers file
       }
     },
     {
@@ -64,7 +65,8 @@ class Test::UsersController < ApplicationController
         admin: "/admin",
         test_veterans: "/test/data",
         metrics_dashboard: "/metrics/dashboard",
-        case_distribution_dashboard: "/acd-controls/test"
+        case_distribution_dashboard: "/acd-controls/test",
+        swagger: "/api-docs"
       }
     }
   ].freeze

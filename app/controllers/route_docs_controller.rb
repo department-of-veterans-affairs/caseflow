@@ -57,7 +57,9 @@ class RouteDocsController < ApplicationController
 
   def index
     all_routes = Rails.application.routes.routes.map(&method(:documented_route))
-    @routes = all_routes.compact.sort_by { |rt| [(rt.schema.present? ? 0 : 1), rt.path] }
+    @routes = all_routes.compact
+      .filter { |route| route.schema.present? }
+      .sort_by { |rt| [(rt.schema.present? ? 0 : 1), rt.path] }
   end
 
   private

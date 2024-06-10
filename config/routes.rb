@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -27,6 +29,7 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
@@ -46,6 +49,7 @@ Rails.application.routes.draw do
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
       post 'va_notify_update', to: 'va_notify#notifications_update'
+      post 'cmp', to: 'cmp#upload'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -79,9 +83,9 @@ Rails.application.routes.draw do
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-        get "ama_issues", to: "docs#ama_issues"
-        get "vacols_issues", to: "docs#vacols_issues"
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
     get "metadata", to: 'metadata#index'
