@@ -214,18 +214,6 @@ export const commonReducers = (state, action) => {
     };
   };
 
-  actionsMap[ACTIONS.ADD_DECISION_DATE] = () => {
-    const { decisionDate, index } = action.payload;
-
-    listOfIssues[index].decisionDate = decisionDate;
-    listOfIssues[index].editedDecisionDate = decisionDate;
-
-    return {
-      ...state,
-      editedIssues: listOfIssues
-    };
-  };
-
   actionsMap[ACTIONS.EDIT_PENDING_REVIEW] = () => {
     const { issueModificationData, index } = action.payload;
 
