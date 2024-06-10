@@ -62,4 +62,26 @@ class Test::CorrespondenceController < ApplicationController
 
     end
   end
+
+  def invalid_file_num_error_message(file_number_arr)
+
+    invalid_file_num = []
+
+      file_number_arr.map do |vet_file_num|
+        if valid_veteran?(vet_file_num) === false
+          invalid_file_num.push(vet_file_num)
+        end
+      end
+
+      if invalid_file_num.to_s.tr('[]', '') != ""
+        return COPY::CORRESPONDENCE_ADMIN["INVALID_ERROR"]["MESSAGE"] + invalid_file_num.to_s.tr('[]', '')
+      end
+
+      return
+  end
+
+
+  def generate_correspondence(file_number_arr)
+
+  end
 end
