@@ -154,10 +154,12 @@ export const removeFromPendingReviewSection = (index) => (
   }
 );
 
-export const editPendingReview = (issueModificationRequest, index) => ({
-  type: ACTIONS.EDIT_PENDING_REVIEW,
-  payload: { issueModificationRequest, index }
-});
+export const updatePendingReview = (identifier, data) => (
+  {
+    type: ACTIONS.UPDATE_PENDING_REVIEW,
+    payload: { identifier, data }
+  }
+);
 
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);

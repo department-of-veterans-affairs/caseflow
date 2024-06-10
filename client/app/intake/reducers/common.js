@@ -214,15 +214,16 @@ export const commonReducers = (state, action) => {
     };
   };
 
-  actionsMap[ACTIONS.EDIT_PENDING_REVIEW] = () => {
-    const { issueModificationData, index } = action.payload;
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
 
-    pendingIssueModificationRequests[index] = issueModificationData;
-
-    return {
-      ...state,
-      pendingIssueModificationRequests
-    };
+    return update(state, {
+      pendingIssueModificationRequests: {
+        [index]: {
+          $merge: action.payload.data
+        }
+      }
+    });
   };
 
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
