@@ -156,6 +156,14 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
             {
               nonrating_issue_category: "Disposition",
               contested_decision_issue_id: 2
+            },
+            {
+              nonrating_issue_category: "Disposition",
+              contested_decision_issue_id: 1
+            },
+            {
+              nonrating_issue_category: "Disposition",
+              contested_decision_issue_id: 3
             }
           ]
         }

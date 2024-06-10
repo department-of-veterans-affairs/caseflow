@@ -46,11 +46,11 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
       contested_id = issue[:contested_decision_issue_id]
       ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-      if contested_id.present? && ri.length == 1
-        return issue[:nonrating_issue_category] = ri.first.nonrating_issue_category
-      else
-        return issue[:nonrating_issue_category] = "Unknown Issue Category"
-      end
+      issue[:nonrating_issue_category] = if contested_id.present? && ri.length == 1
+                                           ri.first.nonrating_issue_category
+                                         else
+                                           "Unknown Issue Category"
+                                         end
     end
   end
 
