@@ -159,7 +159,7 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
             },
             {
               nonrating_issue_category: "Disposition",
-              contested_decision_issue_id: 1
+              contested_decision_issue_id: 5
             },
             {
               nonrating_issue_category: "Disposition",
@@ -190,12 +190,15 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
         expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Other")
       end
 
-      it "sets the nonrating_issue_category to 'Unknown Issue Category' when the contested_decision_issue_id is not found" do
+      it "sets the nonrating_issue_category to 'Unknown Issue Category' for all request issues when the contested_decision_issue_id is not found" do
         parser.process_nonrating(payload_with_unknown_issue)
-        expect(payload_with_unknown_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
+        payload_with_unknown_issue[:request_issues].each do |issue|
+          expect(issue[:nonrating_issue_category]).to eq("Unknown Issue Category")
+        end
       end
     end
   end
+
   def read_json_payload
     JSON.parse(File.read(Rails.root.join("app",
                                          "services",
