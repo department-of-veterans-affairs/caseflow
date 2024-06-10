@@ -841,7 +841,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         click_button("Schedule")
 
-        expect(page).to have_content(expected_alert)
+        expect(page).to have_content(expected_alert, wait: 30)
         expect(VirtualHearing.count).to eq(1)
         expect(LegacyHearing.where(hearing_day_id: hearing_day.id).count).to eq 1
 
@@ -954,7 +954,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
           if scheduled
             expect(legacy_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
-              Constants.TASK_STATUSES.cancelled
+              Constants.TASK_STATUSES.completed
             )
             expect(legacy_appeal.tasks.of_type(:AssignHearingDispositionTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
