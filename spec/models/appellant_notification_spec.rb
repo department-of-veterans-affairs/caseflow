@@ -589,16 +589,17 @@ describe AppellantNotification do
         let(:task_params) do
           {
             type: "PrivacyActRequestMailTask",
-            instructions: "fjdkfjwpie"
+            instructions: "fjdkfjwpie",
+            parent_id: appeal.root_task.id
           }
         end
         it "sends a notification when PrivacyActRequestMailTask is created" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
-          mail_task.create_twin_of_type(task_params)
+          PrivacyActRequestMailTask.create_from_params(task_params, current_user)
         end
         it "updates appeal state when PrivacyActRequestMailTask is created" do
           expect_any_instance_of(AppealState).to receive(:privacy_act_pending_appeal_state_update_action!)
-          mail_task.create_twin_of_type(task_params)
+          PrivacyActRequestMailTask.create_from_params(task_params, current_user)
         end
         it "sends a notification when PrivacyActRequestMailTask is completed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
