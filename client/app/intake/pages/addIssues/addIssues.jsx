@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -358,8 +358,7 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
-    const activePendingIssues = useSelector((state) => state.pendingIssueModificationRequests.
-      filter((issue) => issue.status === 'assigned'));
+    const activePendingIssues = pendingIssueModificationRequests.filter((issue) => issue.status === 'assigned');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
