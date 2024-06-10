@@ -316,6 +316,8 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
         content: intakeData.sameOffice ? 'Yes' : 'No' },
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
+      { field: 'Intake system',
+        content: intakeData.processedInCaseflow ? 'Caseflow' : 'VBMS' },
     ];
     break;
   case 'supplemental_claim':
