@@ -8,15 +8,9 @@
 module DistributionScopes # rubocop:disable Metrics/ModuleLength
   extend ActiveSupport::Concern
 
-  def with_assigned_distribution_task_sql
-    # both `appeal_type` and `appeal_id` necessary due to composite index
-    <<~SQL
-      INNER JOIN tasks AS distribution_task
-      ON distribution_task.appeal_type = 'Appeal'
-      AND distribution_task.appeal_id = appeals.id
-      AND distribution_task.type = 'DistributionTask'
-      AND distribution_task.status = 'assigned'
-    SQL
+  def with_appeal_affinities
+    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id
+      and appeal_affinities.case_type = 'Appeal'")
   end
 
   # From docket.rb
@@ -47,16 +41,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def ready_for_distribution
     joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .where(tasks: { type: DistributionTask.name, status: Constants.TASK_STATUSES.assigned })
   end
 
   def genpop
-    join_distribution_tasks
+    with_appeal_affinities
       .with_original_appeal_and_judge_task
       .where(
-        "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
+        "appeals.stream_type != ?
+          OR appeal_affinities.affinity_start_date <= ?
+          OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
         CaseDistributionLever.cavc_affinity_days.days.ago,
         JudgeTeam.judges_with_exclude_appeals_from_affinity
@@ -87,9 +81,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge)
-    join_distribution_tasks
+    with_appeal_affinities
       .with_original_appeal_and_judge_task
-      .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
+      .where("appeal_affinities.affinity_start_date > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
@@ -127,38 +121,34 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: judge.id })
   end
 
   def tied_to_ineligible_judge
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
   def expired_ama_affinity_cases(lever_days)
     where(hearings: { disposition: "held" })
-      .where("distribution_task.assigned_at <= ?", lever_days.to_i.days.ago)
+      .where("appeal_affinities.affinity_start_date <= ?", lever_days.to_i.days.ago)
   end
 
   def affinitized_ama_affinity_cases(lever_days)
-    where("distribution_task.assigned_at > ?", lever_days.to_i.days.ago)
-  end
-
-  def join_distribution_tasks
-    joins(with_assigned_distribution_task_sql)
+    where("appeal_affinities.affinity_start_date > ?", lever_days.to_i.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
-    join_distribution_tasks
+    with_appeal_affinities
       .where(hearings: { disposition: "held", judge_id: nil })
   end
 
