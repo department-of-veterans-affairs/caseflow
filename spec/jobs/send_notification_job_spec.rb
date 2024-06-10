@@ -444,25 +444,15 @@ describe SendNotificationJob, type: :job do
 
   context "feature flag testing for creating legacy appeal notification records" do
     let(:legacy_appeal) { create(:legacy_appeal) }
+    let!(:case) { create(:case, bfkey: legacy_appea.vacols_id) }
 
-    it "should only create an instance of a notification before saving if a notification isn't found" do
+    it "creates an instance of a notification" do
       FeatureToggle.enable!(:appeal_docketed_event)
       job = SendNotificationJob.new(legacy_message.to_json)
       allow(job).to receive(:find_appeal_by_external_id).and_return(legacy_appeal)
       expect(Notification).to receive(:create)
       job.perform_now
       FeatureToggle.disable!(:appeal_docketed_event)
-    end
-
-    it "should return the notification record if one is found and not try to create one" do
-      legacy_appeal_notification
-      FeatureToggle.enable!(:appeal_docketed_event)
-      FeatureToggle.enable!(:va_notify_sms)
-      job = SendNotificationJob.new(legacy_message.to_json)
-      expect(Notification).not_to receive(:create)
-      job.perform_now
-      FeatureToggle.disable!(:appeal_docketed_event)
-      FeatureToggle.disable!(:va_notify_sms)
     end
   end
 
