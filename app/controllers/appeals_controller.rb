@@ -42,9 +42,9 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
+          caseflow_veteran_ids: veteran_ids[:veteran_ids]&.split(","), user: current_user
         ).search_call
-#before pr
+
         render_search_results_as_json(result)
       end
     end
@@ -52,7 +52,7 @@ class AppealsController < ApplicationController
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
-    appeals_id = params[:appeals_id]
+    appeals_id = appeals_id_from_param[:appeals_id]
     respond_to do |format|
       format.json do
         results = find_notifications_by_appeals_id(appeals_id)
@@ -138,7 +138,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         if appeal.accessible?
-          id = params[:appeal_id]
+          id = url_appeal_uuid
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
@@ -162,11 +162,11 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(url_appeal_uuid)
   end
 
   def url_appeal_uuid
-    params[:appeal_id]
+    params.permit(:appeal_id)[:appeal_id]
   end
 
   def update
@@ -188,11 +188,23 @@ class AppealsController < ApplicationController
   end
 
   def active_evidence_submissions
-    appeal = Appeal.find(params[:appeal_id])
+    appeal = Appeal.find(url_appeal_uuid)
     render json: appeal.evidence_submission_task
   end
 
   private
+
+  def veteran_ids
+    params.permit(:veteran_ids)
+  end
+
+  def appeals_id_from_param
+    params.permit(:appeals_id)
+  end
+
+  def request_issues
+    params.permit(:request_issues)
+  end
 
   def create_subtasks!
     # if cc appeal, create SendInitialNotificationLetterTask
