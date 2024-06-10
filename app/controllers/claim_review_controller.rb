@@ -158,6 +158,14 @@ class ClaimReviewController < ApplicationController
     "#{claimant_name}'s #{claim_review.class.review_title} was saved."
   end
 
+  def vha_edited_title
+    "You have successfully established #{claimant_name}'s #{claim_review.class.review_title}"
+  end
+
+  def vha_edited_message
+    "The claim has been modified."
+  end
+
   def claimant_name
     if claim_review.veteran_is_not_claimant
       claim_review.claimant.try(:name)
@@ -172,29 +180,44 @@ class ClaimReviewController < ApplicationController
                                 request_issues_update.removed_or_withdrawn_issues)
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
-    # TODO: Do different stuff for admin vs non admin here
     if claim_review.pending_issue_modification_requests.any?
-      # TODO: Put this string into copy.json
       { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }
     elsif request_issues_update.edited_issues.any?
       { title: "Edit Completed", message: vha_edited_decision_date_message }
     else
-      { title: "Edit Completed", message: review_edited_message }
+      decisions_message_hash_builder(vha_edited_message, review_edited_message)
     end
   end
 
   def set_flash_success_message
     flash[:custom] = if request_issues_update.after_issues.empty?
-                       { title: "Edit Completed", message: decisions_removed_message }
+                       decisions_removed_hash
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
-                       { title: "Edit Completed", message: review_withdrawn_message }
-                     elsif claim_review.benefit_type == "vha"
+                       decisions_withdrawn_hash
+                     elsif claim_review.vha_claim?
                        vha_flash_message
                      else
                        { title: "Edit Completed", message: review_edited_message }
                      end
+  end
+
+  # TODO: Move this into some sort of message builder helper if I have time.
+  def decisions_message_hash_builder(vha_message, default_message)
+    if claim_review.vha_claim?
+      { title: vha_edited_title, message: vha_message }
+    else
+      { title: "Edit Completed", message: default_message }
+    end
+  end
+
+  def decisions_removed_hash
+    decisions_message_hash_builder("The claim has been removed.", decisions_removed_message)
+  end
+
+  def decisions_withdrawn_hash
+    decisions_message_hash_builder("The claim has been withdrawn.", review_withdrawn_message)
   end
 
   def decisions_removed_message
