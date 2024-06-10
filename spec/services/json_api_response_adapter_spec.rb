@@ -8,13 +8,35 @@ describe JsonApiResponseAdapter do
   let(:api_response) { instance_double(ExternalApi::Response) }
 
   describe "#adapt_fetch_document_series_for" do
+    context "with invalid responses" do
+      it "handles blank responses" do
+        parsed = described.adapt_fetch_document_series_for(nil)
+
+        expect(parsed.length).to eq 0
+      end
+
+      it "handles blank response bodies" do
+        response = instance_double(ExternalApi::Response, body: nil)
+        parsed = described.adapt_fetch_document_series_for(response)
+
+        expect(parsed.length).to eq 0
+      end
+
+      it "handles response bodies with no files" do
+        response = instance_double(ExternalApi::Response, body: {})
+        parsed = described.adapt_fetch_document_series_for(response)
+
+        expect(parsed.length).to eq 0
+      end
+    end
+
     it "correctly parses an API response" do
       file = File.open(Rails.root.join("spec/support/api_responses/ce_api_folders_files_search.json"))
       data_hash = JSON.parse(File.read(file))
       file.close
 
       expect(api_response).to receive(:body)
-        .and_return(data_hash)
+        .exactly(3).times.and_return(data_hash)
 
       parsed = described.adapt_fetch_document_series_for(api_response)
 
