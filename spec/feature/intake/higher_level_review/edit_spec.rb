@@ -775,7 +775,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
-      expect(page).to have_content("Intake system")
       expect(page).to have_content(request_issue.nonrating_issue_description)
       click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
     end
@@ -991,6 +990,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
         check_row("Benefit type", "Pension")
         check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
+        check_row("Intake system", "Caseflow")
       end
     end
 
