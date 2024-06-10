@@ -42,9 +42,9 @@ const DocumentViewer = (props) => {
   const doc = selectedDoc(props);
 
   const getPageNumFromScrollTop = (event) => {
-    const { scrollTop, scrollHeight } = event.target;
-    const pageHeight = scrollHeight / numPages;
-    const pageNumber = Math.floor((pageHeight + scrollTop) / pageHeight);
+    const { clientHeight, scrollTop, scrollHeight } = event.target;
+    const pageHeightEstimate = (rotateDeg === '90deg' || rotateDeg === '270deg') ? clientHeight : (scrollHeight / numPages);
+    const pageNumber = Math.floor((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
     setCurrentPage(pageNumber);
   };
