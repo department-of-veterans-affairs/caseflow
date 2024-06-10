@@ -17,15 +17,15 @@ class IssueModificationRequests::AdminUpdater
     binding.pry
 
     decisions.each_value do |value|
-      request_issue_modification = IssueModificationRequest.find(value[:id])
-      case request_issue_modification.request_type.to_sym
+      issue_modification_request = IssueModificationRequest.find(value[:id])
+      case issue_modification_request.request_type.to_sym
 
         # When addition
       when :addition
         if value[:status] == 'approved'
           # -> Create RequestIssue based on Request
           # update IssueModificationRequest with decider_id,decided_at, decision_date
-          request_issue_modification.update!(
+          issue_modification_request.update!(
             decider_id: current_user,
             decided_at: Time.zone.now,
             request_issue_id: value[:request_issue_id], # need to figure out how to update request_issue_id after request issue is created
@@ -38,7 +38,7 @@ class IssueModificationRequests::AdminUpdater
         # else status=denied
         else
           # updated IssueModificationRequest with decision_reason, status denied, decider_id, decided_at
-          request_issue_modification.update!(
+          issue_modification_request.update!(
             decision_reason: value[:decision_reason],
             decider_id: current_user,
             decided_at: Time.zone.now,
@@ -54,7 +54,7 @@ class IssueModificationRequests::AdminUpdater
         # -> update RequestIssue based on Request
         if value[:status] == 'approved'
           if value[:remove_original_issue] == false
-            request_issue_modification.update!(
+            issue_modification_request.update!(
             decider_id: current_user,
             decided_at: Time.zone.now,
             request_issue_id: value[:request_issue_id], # need to figure out how to update request_issue_id after request issue is created
@@ -75,11 +75,11 @@ class IssueModificationRequests::AdminUpdater
               benefit_type: 'vha',
               decision_review: review,
             }
-            request_issue_modification.create_issues(new_request_issue)
+            issue_modification_request.create_request_issue(new_request_issue)
           end
           # update IssueModificationRequest with decider_id, decided_at, decision_date,
         else
-          request_issue_modification.update!(
+          issue_modification_request.update!(
             decider_id: current_user,
             decided_at: Time.zone.now,
             decision_reason: value[:decision_reason],
@@ -91,8 +91,44 @@ class IssueModificationRequests::AdminUpdater
           )
         end
       when :withdrawal
-        # Validate that the same user is the one is canceling his own modification
+        if value[:status] == 'approved'
+          issue_modification_request.update!(
+            decider_id: current_user,
+            decided_at: Time.zone.now,
+            decision_date: value[:decision_date],
+            request_reason: value[:request_reason],
+            withdrawal_date: value[:withdrawal_date],
+            status: value[:status]
+          )
+          # RequestIssue.find(value[:request_issue_id]).withdraw!(value[:withdrawal_date])
+        else
+          issue_modification_request.update!(
+            decider_id: current_user,
+            decided_at: Time.zone.now,
+            decision_date: value[:decision_date],
+            request_reason: value[:request_reason],
+            status: value[:status],
+            decision_reason: value[:decision_reason]
+          )
+        end
       when :removal
+        if value[:status] == 'approved'
+          issue_modification_request.update!(
+            decider_id: current_user,
+            decided_at: Time.zone.now,
+            request_reason: value[:request_reason],
+            status: value[:status]
+          )
+          # RequestIssue.find(value[:request_issue_id]).remove!
+        else
+          issue_modification_request.update!(
+            decider_id: current_user,
+            decided_at: Time.zone.now,
+            request_reason: value[:request_reason],
+            status: value[:status],
+            decision_reason: value[:status]
+          )
+        end
       end
     end
   end
