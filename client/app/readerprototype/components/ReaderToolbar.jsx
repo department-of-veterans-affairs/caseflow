@@ -110,7 +110,6 @@ const ReaderToolbar = ({
         classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small cf-pdf-spaced-buttons-left']}
         ariaLabel="search text"
         type="submit"
-        disabled
         // onClick={toggleSearchBar()}
       >
         <SearchIcon />
