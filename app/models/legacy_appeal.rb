@@ -348,6 +348,10 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def appeal_affinity
+    VACOLS::Case.find_by(bfkey: vacols_id).appeal_affinity
+  end
+
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
