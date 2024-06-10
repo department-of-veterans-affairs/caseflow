@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -7,18 +7,25 @@ import { PageArrowLeftIcon } from '../../components/icons/PageArrowLeftIcon';
 import { PageArrowRightIcon } from '../../components/icons/PageArrowRightIcon';
 
 import { docFooterStyles } from '../util/layoutUtil';
-import { handleKeyPress } from '../util/documentUtil';
 
 const ReaderFooter = ({
-  docPageCount,
-  prevDocId,
-  nextDocId,
-  showPreviousDocument,
-  showNextDocument,
-  selectedDocIndex,
+  currentPage,
   docCount,
+  nextDocId,
+  numPages,
+  prevDocId,
+  setCurrentPage,
+  selectedDocIndex,
+  showNextDocument,
+  showPreviousDocument
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      document.getElementById(`canvasContainer-${event.target.value}`).scrollIntoView({ behavior: 'smooth' });
+      setCurrentPage(event.target.value);
+    }
+  };
 
   return (
     <div id="footerPrototype" className="cf-pdf-footer cf-pdf-toolbar-prototype" {...docFooterStyles.container}>
@@ -44,15 +51,14 @@ const ReaderFooter = ({
                   name=""
                   label=""
                   maxLength={4}
-                  onChange={setCurrentPage}
+                  onChange={() => setCurrentPage()}
                   onKeyPress={handleKeyPress}
                   value={currentPage}
                   required={false}
                   className={['page-progress-indicator-input']}
-                  disabled
                 />
               </div>
-              of {docPageCount}
+              of {numPages}
             </span>
           </span>|
         </span>
@@ -77,13 +83,15 @@ const ReaderFooter = ({
 };
 
 ReaderFooter.propTypes = {
-  docPageCount: PropTypes.number,
-  selectedDocIndex: PropTypes.number,
+  currentPage: PropTypes.number,
   docCount: PropTypes.number,
-  prevDocId: PropTypes.number,
   nextDocId: PropTypes.number,
-  showPreviousDocument: PropTypes.func,
+  numPages: PropTypes.number,
+  prevDocId: PropTypes.number,
+  setCurrentPage: PropTypes.func,
+  selectedDocIndex: PropTypes.number,
   showNextDocument: PropTypes.func,
+  showPreviousDocument: PropTypes.func,
 };
 
 export default ReaderFooter;
