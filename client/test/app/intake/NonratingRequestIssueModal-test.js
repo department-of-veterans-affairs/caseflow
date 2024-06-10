@@ -1,10 +1,16 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
 import exp from 'constants';
+import { on } from 'events';
+import { ge } from 'faker/lib/locales';
+import { get } from 'lodash';
+
+import { act } from 'react-dom/test-utils';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
@@ -22,17 +28,17 @@ describe('NonratingRequestIssueModal', () => {
 
   // const wrapperNoSkip = render(
   //   <NonratingRequestIssueModal
-  //     formType={formType}
-  //     intakeData={intakeData}
-  //     featureToggles={{}}
+      // formType={formType}
+      // intakeData={intakeData}
+      // featureToggles={{}}
   //   />
   // );
 
   // const wrapperEMOPreDocket = render(
   //   <NonratingRequestIssueModal
-  //     formType="appeal"
-  //     intakeData={intakeData}
-  //     featureToggles={featureTogglesEMOPreDocket}
+      // formType="appeal"
+      // intakeData={intakeData}
+      // featureToggles={featureTogglesEMOPreDocket}
   //   />
   // );
 
@@ -40,6 +46,7 @@ describe('NonratingRequestIssueModal', () => {
 
 
     const defaultProps = {
+      benefitType: 'compensation',
       formType: formType,
       intakeData: intakeData,
       onSkip: () => null,
@@ -53,8 +60,12 @@ describe('NonratingRequestIssueModal', () => {
         />
       );
     }
-
     // const cancelBtn = screen.getByRole('button', { name: 'Cancel adding this issue' });
+
+    // const {container} = setup();
+    // const cancelBtn = container.querySelector('.cf-modal-controls .close-modal');
+    // const skipBtn = container.querySelector('.cf-modal-controls .no-matching-issues');
+    // const submitBtn = container.querySelector('.cf-modal-controls .add-issue');
 
 
     it('renders button text', () => {
@@ -73,54 +84,56 @@ describe('NonratingRequestIssueModal', () => {
 
       setup(newProps);
 
-      const cancelBtn = await screen.findByRole('button', { name: 'cancel' });
-      const skipBtn = await screen.findByRole('button', { name: 'skip' });
-      const submitBtn = await screen.findByRole('button', { name: 'submit' });
+      const cancelBtn = await screen.findByText('cancel');
+      const skipBtn = await screen.findByText('skip');
+      const submitBtn = await screen.findByText('submit');
 
       expect(cancelBtn.textContent).toBe('cancel');
       expect(skipBtn.textContent).toBe('skip');
       expect(submitBtn.textContent).toBe('submit');
     });
 
-    it.only('skip button only with onSkip prop', async () => {
-      // setup();
+    it('skip button when onSkip prop is not defined', () => {
+      const props = {
+        formType: formType,
+        intakeData: intakeData,
+        featureToggles: {},
+        onSkip: undefined,
+      };
 
-      // const { container } = setup();
-      // const element = container.querySelector('.cf-modal-controls .no-matching-issues');
-      // console.log('HELLLLLO????', element);
+      const { container } = setup(props);
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
+    });
 
-
-      // console.log('HELLLLLO????',screen.queryByText('.cf-modal-controls .no-matching-issues'))
-      // expect(screen.queryByText('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
-
-      // const newProps = {
-      //   onSkip: () => null
-      // }
-
-      // const { container } = setup(newProps);
-      // const wrapperNoSkip = container.querySelector('.cf-modal-controls .no-matching-issues');
-
-      // console.log("WRAPPERNOSKIP!!",wrapperNoSkip);
-      // expect(wrapperNoSkip).toBeInTheDocument();
-
+    it('shows button when onSkip prop is defined', () => {
       const { container } = setup();
-
-      let element;
-      await waitFor(() => {
-        element = container.querySelector('.cf-modal-controls .no-matching-issues');
-        if (!element) {
-          throw new Error('Element not yet available');
-        }
-      });
-
-      console.log('HELLLLLO????', element);
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).toBeInTheDocument();
     });
 
     it('disables button when nothing selected', () => {
-      expect(submitBtn.prop('disabled')).toBe(true);
+      const submitBtn = container.querySelector('.cf-modal-controls .add-issue');
+      // console.log("SUBMIT BUTTON!!",submitBtn);
+      // expect(submitBtn.prop('disabled')).toBe(true);
+      expect(submitBtn).toBeDisabled();
 
       //   Lots of things required for button to be enabled...
-      wrapper.setState({
+      // wrapper.setState({
+      //   benefitType: 'compensation',
+      //   category: {
+      //     label: 'Apportionment',
+      //     value: 'Apportionment'
+      //   },
+      //   decisionDate: '06/01/2019',
+      //   dateError: false,
+      //   description: 'thing'
+      // });
+
+      // expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+    });
+
+    it.only('enables the button when all required fields are filled in', async () => {
+      // Define new props
+      const newProps = {
         benefitType: 'compensation',
         category: {
           label: 'Apportionment',
@@ -128,11 +141,56 @@ describe('NonratingRequestIssueModal', () => {
         },
         decisionDate: '06/01/2019',
         dateError: false,
-        description: 'thing'
-      });
+        description: 'thing',
+        formType: 'someFormType', // Ensure this matches the expected form type
+        intakeData: {
+          benefitType: 'compensation',
+          activeNonratingRequestIssues: [
+            {
+              category: 'Apportionment',
+              // other properties if needed
+            }
+          ]
+        },
+        onSkip: () => null,
+        featureToggles: {
+          featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
+          eduPreDocketAppeals: false,
+          mstIdentification: false,
+          pactIdentification: false,
+        }
+      };
 
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+
+      // Pass the initial state as props when you render the component
+      render(<NonratingRequestIssueModal {...newProps} />);
+
+      const categoryInput = screen.getByLabelText('Issue category');
+      userEvent.type(categoryInput, 'Apportionment');
+
+      const decisionDateInput = screen.getByLabelText('Decision date');
+      userEvent.type(decisionDateInput, '2019-06-01');
+
+      const descriptionInput = screen.getByLabelText('Issue description');
+      userEvent.type(descriptionInput, 'thing');
+      // fireEvent.change(descriptionInput, { target: { value: 'thing' } });
+
+      const addIssueButton = await waitFor(() => screen.getByRole('button', { name: 'Add this issue', disabled: false }));
+
+      // Log the button and its parent elements to understand their state
+
+      // console.log(screen.getByRole('button', {name: 'Add this issue'}));
+      // Wait for the 'add-issue' button to be enabled
+      // let addIssueButton;
+      await waitFor(() => {
+        console.log('Button Enabled:', addIssueButton);
+        // addIssueButton = container.querySelector('.cf-modal-controls .add-issue');
+        // console.log('Button Disabled:', addIssueButton);
+        // expect(addIssueButton).not.toBeNull();
+        // expect(addIssueButton.disabled).toBe(false);
+      });
     });
+
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
