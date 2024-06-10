@@ -576,29 +576,36 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.cavc_aod_affinity_filter(appeals, judge)
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
-      appeals.reject! do |appeal|
-        next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
-                (appeal["prev_deciding_judge"] == judge.vacols_attorney_id)
+    appeals.reject! do |appeal|
+      next if (appeal["bfac"] != "7" || appeal["aod"] != 1) &&
+              ((appeal["vlj"] && appeal["vlj"] == appeal["prev_deciding_judge"] && appeal["vlj"] == judge.vacols_attorney_id) ||
+              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?))
 
+      if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
+        return false if ineligible_judges_sattyids.includes?(appeal["vlj"])
+
+        return true
+      end
+
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
         VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
           (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
             .appeal_affinity
             .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
-      end
-    elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-      appeals.reject! do |appeal|
-        next if appeal["bfac"] != "7" || appeal["aod"] != 1
-
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
         appeal["prev_deciding_judge"] != judge.vacols_attorney_id
       end
     end
   end
 
+  def self.ineligible_judges_sattyids
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
+  end
+
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
-       !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
-      list = Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
+       !ineligible_judges_sattyids.blank?
+      list = ineligible_judges_sattyids
       split_lists = {}
       num_of_lists = (list.size.to_f / 999).ceil
 
