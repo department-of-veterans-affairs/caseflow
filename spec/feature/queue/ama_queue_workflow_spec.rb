@@ -298,7 +298,7 @@ feature "Attorney checkout flow", :all_dbs do
 
   context " AC 2.5 adding a new issue appeal MST & PACT coming from a contention, then removing MST/PACT designation" do
     scenario "Adding a new issue with MST & PACT" do
-      rating = generate_rating_with_mst_pact(veteran)
+      generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
       visit "/appeals/#{appeal.uuid}/edit"
       click_on "+ Add issue"
@@ -310,7 +310,7 @@ feature "Attorney checkout flow", :all_dbs do
       radio_choices[1].click
       click_on "Add this issue"
 
-      click_edit_intake_issue_dropdown(rating.issues[2].decision_text)
+      click_edit_intake_issue_dropdown_by_number(4)
 
       find("label[for='Military Sexual Trauma (MST)']").click
       find("label[for='PACT Act']").click
