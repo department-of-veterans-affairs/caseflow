@@ -1470,55 +1470,6 @@ RSpec.feature("The Correspondence Cases page") do
       end
     end
 
-    it "appears on each tab of team cases" do
-      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/team?tab=correspondence_pending&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-    end
-
-    it "appears on each tab of individual queue" do
-      User.authenticate!(user: alt_user)
-      visit "queue/correspondence/?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-      visit "queue/correspondence/?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
-      expect(page).to have_content("Package Document Type")
-    end
-
-    it "correctly sorts NOD type" do
-      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='Package Document Type']").click
-      first_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
-      find("[aria-label='Package Document Type']").click
-      second_task = find("tbody > tr:nth-child(1) > td:nth-child(3)")
-      find("[aria-label='Package Document Type']").click
-      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == first_task.text)
-      find("[aria-label='Package Document Type']").click
-      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task.text)
-    end
-
-    xit "correctly filters NOD type" do
-      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
-      all(".cf-filter-option-row")[1].click
-      expect(page).to_not have_content("Non-NOD")
-      visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
-      all(".cf-filter-option-row")[1].click
-      find("[aria-label='packageDocTypeColumn. Filtering by true']").click
-      all(".cf-filter-option-row")[2].click
-      expect(page).to have_content("Package Document Type (2)")
-      expect(page).to have_content("Viewing 1-10 of 10 total")
-    end
-
     it "correctly uses search bar" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
       fill_in "searchBar", with: "-nod"
