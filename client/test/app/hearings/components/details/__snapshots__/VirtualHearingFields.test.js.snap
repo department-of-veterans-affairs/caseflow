@@ -213,6 +213,7 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
               "worksheetIssues": Object {},
             }
           }
+          isCancelled={false}
           isVirtual={false}
           scheduledForIsPast={false}
           user={
@@ -931,6 +932,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               "worksheetIssues": Object {},
             }
           }
+          isCancelled={false}
           isVirtual={true}
           scheduledForIsPast={false}
           user={
@@ -1979,6 +1981,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
               "worksheetIssues": Object {},
             }
           }
+          isCancelled={false}
           isVirtual={true}
           scheduledForIsPast={false}
           user={
@@ -3017,6 +3020,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
               "worksheetIssues": Object {},
             }
           }
+          isCancelled={false}
           isVirtual={true}
           scheduledForIsPast={false}
           user={
@@ -4065,6 +4069,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
               "worksheetIssues": Object {},
             }
           }
+          isCancelled={false}
           isVirtual={true}
           scheduledForIsPast={false}
           user={

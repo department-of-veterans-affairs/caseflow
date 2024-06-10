@@ -119,7 +119,7 @@ LinkContainer.propTypes = {
   links: PropTypes.object
 };
 
-export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
+export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user, isCancelled }) => {
   const {
     scheduledForIsPast,
     conferenceProvider,
@@ -129,7 +129,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
   const getLinks = () => {
-    if (scheduledForIsPast) {
+    if (scheduledForIsPast || isCancelled) {
       return null;
     } else if (isVirtual) {
       return virtualHearing;
@@ -193,5 +193,6 @@ HearingLinks.propTypes = {
   hearing: PropTypes.object,
   isVirtual: PropTypes.bool,
   wasVirtual: PropTypes.bool,
-  virtualHearing: PropTypes.object
+  virtualHearing: PropTypes.object,
+  isCancelled: PropTypes.bool
 };
