@@ -28,7 +28,7 @@ export const RequestIssueFormWrapper = (props) => {
 
   const { handleSubmit, formState } = methods;
 
-  const onSubmit = (issueModificationRequest) => {
+  const onSubmit = (issueModificationRequestFormData) => {
     const currentIssueFields = props.currentIssue ?
       {
         requestIssueId: props.currentIssue.id,
@@ -39,7 +39,7 @@ export const RequestIssueFormWrapper = (props) => {
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
-    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
+    const decisionDate = formatDateStr(issueModificationRequestFormData.decisionDate) ||
        formatDateStr(props.currentIssue.decisionDate);
 
     const enhancedData = {
@@ -48,10 +48,10 @@ export const RequestIssueFormWrapper = (props) => {
       ...(props.type === 'addition') && { benefitType },
       requestor: { fullName: userFullName, cssId: userCssId },
       requestType: props.type,
-      ...issueModificationRequest,
+      ...issueModificationRequestFormData,
       decisionDate,
-      status: issueModificationRequest?.status || 'assigned',
-      identifier: issueModificationRequest?.identifier || uuid.v4()
+      status: props.pendingIssueModificationRequest?.status || 'assigned',
+      identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4()
     };
 
     // close modal and move the issue
