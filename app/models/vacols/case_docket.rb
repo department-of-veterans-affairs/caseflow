@@ -583,7 +583,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?))
 
       if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
-        return false if ineligible_judges_sattyids.includes?(appeal["vlj"])
+        return false if ineligible_judges_sattyids.include?(appeal["vlj"])
 
         return true
       end
@@ -647,13 +647,17 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/MethodLength
 
   def self.vacols_judges_with_exclude_appeals_from_affinity
-    return "PREV_DECIDING_JUDGE in ()" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+    return "PREV_DECIDING_JUDGE in = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
     satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
         .where(exclude_appeals_from_affinity: true)
         .flat_map(&:judge).compact.pluck(:css_id)).pluck(:sattyid)
 
-    "PREV_DECIDING_JUDGE in (#{satty_ids.join(', ')})"
+    if satty_ids.blank?
+      "PREV_DECIDING_JUDGE = 'false'"
+    else
+      "PREV_DECIDING_JUDGE = '(#{satty_ids.join(', ')})'"
+    end
   end
 
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
