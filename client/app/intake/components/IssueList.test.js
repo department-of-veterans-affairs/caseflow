@@ -91,8 +91,6 @@ describe('IssuesList', () => {
     setup(propsWithRequestForIssueUpdates);
     const dropdown = screen.getByText('Select action');
 
-    // fireEvent.click(dropdown);
-
     await userEvent.click(dropdown);
 
     expect(screen.getByText('Request modification')).toBeInTheDocument();
