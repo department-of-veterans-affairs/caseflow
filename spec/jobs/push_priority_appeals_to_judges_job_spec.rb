@@ -2,6 +2,8 @@
 
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
   before do
+    allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(20)
+
     create(:case_distribution_lever, :request_more_cases_minimum)
     create(:case_distribution_lever, :alternative_batch_size)
     create(:case_distribution_lever, :nod_adjustment)
@@ -51,6 +53,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:ready_priority_bfkey2) { "12346" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
     let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
+    let(:receipt_date) { 30.days.ago }
     let!(:judge_with_ready_priority_cases) do
       create(:user, :judge, :with_vacols_judge_record).tap do |judge|
         vacols_case = create(
@@ -78,7 +81,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
           uuid: ready_priority_uuid,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -109,7 +113,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -142,7 +147,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :advanced_on_docket_due_to_age,
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -176,7 +182,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
           uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
-          docket_type: Constants.AMA_DOCKETS.hearing
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          receipt_date: receipt_date
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -305,7 +312,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.hearing)
+                        docket_type: Constants.AMA_DOCKETS.hearing,
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
@@ -315,7 +323,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.evidence_submission)
+                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                        receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
@@ -334,6 +343,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
+
+    before do
+      ready_priority_evidence_cases.each { |appeal| appeal.update(receipt_date: 1.month.ago) }
+    end
 
     context "using Automatic Case Distribution module" do
       it "should distribute ready priority appeals to the judges" do
@@ -500,6 +513,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
+      allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
