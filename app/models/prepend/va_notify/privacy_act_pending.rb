@@ -21,7 +21,7 @@ module PrivacyActPending
     super_return_value = super
     if organization_assigned_privacy_task?(params) ||
        privacy_act_mail_task?(params) ||
-       valid_hearing_admin_foia_privacy_request?(params)
+       valid_hearing_admin_foia_privacy_request?(params, parent)
       AppellantNotification.notify_appellant(parent.appeal,
                                              Constants.EVENT_TYPE_FILTERS.privacy_act_request_pending)
     end
@@ -44,7 +44,7 @@ module PrivacyActPending
     params[:type] == "PrivacyActTask" && params[:assigned_to_type].include?("Organization")
   end
 
-  def valid_hearing_admin_foia_privacy_request?(params)
+  def valid_hearing_admin_foia_privacy_request?(params, parent)
     params[:type] == "HearingAdminActionFoiaPrivacyRequestTask" && parent.type == "ScheduleHearingTask"
   end
 end
