@@ -613,9 +613,9 @@ class AddIssuesPage extends React.Component {
       });
 
     // Pending modifications table section
-    if (!_.isEmpty(activePendingIssues)) {
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
-        issueModificationRequests: activePendingIssues,
+        issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
