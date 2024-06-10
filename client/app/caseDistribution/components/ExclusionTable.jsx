@@ -77,13 +77,34 @@ const ExclusionTable = () => {
 
   const handleToggleChange = (isPriority) => {
     if (isPriority) {
-      const toggleState = priorityToggle !== true;
+      if (comboPriorityToggle) {
+        let priorityStatus = false;
 
-      setPriorityToggle(toggleState);
-      const newToggleState = toggleState ? 'true' : 'false';
+        setPriorityToggle(priorityStatus);
+        const leverStatus = 'false';
 
-      priorityRadios.forEach((lever) => {
-        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+        priorityRadios.forEach((lever) => {
+          dispatch(updateLeverValue(lever.leverGroup, lever.item, leverStatus));
+        });
+      } else {
+        const toggleState = priorityToggle !== true;
+
+        setPriorityToggle(toggleState);
+        const newToggleState = toggleState ? 'true' : 'false';
+
+        priorityRadios.forEach((lever) => {
+          dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
+        });
+      }
+
+    } else if (comboNonPriorityToggle) {
+      let nonPriorityStatus = false;
+
+      setNonPriorityToggle(nonPriorityStatus);
+      const leverStatus = 'false';
+
+      nonPriorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, leverStatus));
       });
     } else {
       const toggleState = nonPriorityToggle !== true;
