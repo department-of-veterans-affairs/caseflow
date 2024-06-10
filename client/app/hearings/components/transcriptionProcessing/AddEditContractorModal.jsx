@@ -50,18 +50,28 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContr
   };
 
   const updateContractor = (contractorFormData) => {
+    const data = {
+      transcription_contractor: contractorFormData
+    };
 
-    // call patch instead of setting it directly
-    const contractor = contractorFormData;
+    ApiUtil.patch('/hearings/find_by_contractor', { data }).
+      then((response) => {
 
-    onConfirm({
-      transcription_contractor: contractor,
-      alert: {
-        title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
-        message: sprintf(COPY.TRANSCRIPTION_SETTINGS_UPDATE_MESSAGE, contractor.name),
-        type: 'success'
-      }
-    });
+        if (response.body.transcription_contractor) {
+          const contractor = response.body.transcription_contractor;
+
+          onConfirm({
+            transcription_contractor: contractor,
+            alert: {
+              title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
+              message: sprintf(COPY>TRANSCRIPTION_SETTINGS_UPDATE_MESSAGE, contractor.name),
+              type: 'successa'
+            }
+          });
+        }
+      }, () => {
+        setServerError(true);
+      });
   };
 
   const handleConfirm = () => {
