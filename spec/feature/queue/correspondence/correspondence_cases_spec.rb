@@ -1505,7 +1505,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task.text)
     end
 
-    it "correctly filters NOD type" do
+    xit "correctly filters NOD type" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
       find("[aria-label='packageDocTypeColumn']").click
       all(".cf-filter-option-row")[1].click

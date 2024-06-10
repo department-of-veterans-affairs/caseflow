@@ -9,9 +9,6 @@ class CorrespondenceTaskFilter < TaskFilter
       when /col=vaDor/
         value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
         result = result.merge(filter_by_va_dor(value_hash[:val]))
-      when /col=packageDocTypeColumn/
-        value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-        result = result.merge(filter_by_nod(value_hash[:val]))
       when /col=taskColumn/
         task_column_params = param.sub("col=taskColumn&val=", "").split("|")
         result = result.merge(filter_by_task(task_column_params))

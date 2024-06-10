@@ -58,30 +58,30 @@ describe CorrespondenceConfig, :postgres do
         it "tabs have the correct columns" do
           expect(subject[:tabs].find { |tab| tab[:label] == "Unassigned" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[checkboxColumn veteranDetails packageDocTypeColumn vaDor daysWaitingCorrespondence notes])
+            .to eq(%w[checkboxColumn veteranDetails vaDor daysWaitingCorrespondence notes])
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Action Required" }[:columns]
           .map { |column| column[:name] })
             .to eq(
-              %w[veteranDetails packageDocTypeColumn vaDor daysWaitingCorrespondence assignedByColumn actionType notes]
+              %w[veteranDetails vaDor daysWaitingCorrespondence assignedByColumn actionType notes]
             )
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Pending" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails packageDocTypeColumn vaDor daysWaitingCorrespondence taskColumn assignedToColumn])
+            .to eq(%w[veteranDetails vaDor daysWaitingCorrespondence taskColumn assignedToColumn])
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Assigned" }[:columns]
           .map { |column| column[:name] })
             .to eq(
               %w[
-                checkboxColumn veteranDetails packageDocTypeColumn
+                checkboxColumn veteranDetails
                 vaDor daysWaitingCorrespondence taskColumn assignedToColumn notes
               ]
             )
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Completed" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails packageDocTypeColumn vaDor correspondenceCompletedDateColumn notes])
+            .to eq(%w[veteranDetails vaDor correspondenceCompletedDateColumn notes])
         end
       end
 
@@ -97,15 +97,15 @@ describe CorrespondenceConfig, :postgres do
         it "tabs have the correct columns" do
           expect(subject[:tabs].find { |tab| tab[:label] == "Assigned" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails packageDocTypeColumn vaDor daysWaitingCorrespondence notes])
+            .to eq(%w[veteranDetails vaDor daysWaitingCorrespondence notes])
 
           expect(subject[:tabs].find { |tab| tab[:label] == "In Progress" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails packageDocTypeColumn vaDor taskColumn daysWaitingCorrespondence notes])
+            .to eq(%w[veteranDetails vaDor taskColumn daysWaitingCorrespondence notes])
 
           expect(subject[:tabs].find { |tab| tab[:label] == "Completed" }[:columns]
           .map { |column| column[:name] })
-            .to eq(%w[veteranDetails packageDocTypeColumn vaDor correspondenceCompletedDateColumn notes])
+            .to eq(%w[veteranDetails vaDor correspondenceCompletedDateColumn notes])
         end
       end
     end
