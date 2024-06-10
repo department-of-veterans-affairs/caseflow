@@ -585,22 +585,37 @@ describe AppellantNotification do
       before do
         priv_org.add_user(current_user)
       end
+
       context "PrivacyActRequestMailTask" do
-        let(:task_params) do
-          {
-            type: "PrivacyActRequestMailTask",
-            instructions: "fjdkfjwpie",
-            parent_id: appeal.root_task.id
-          }
+        context "being created" do
+          let(:appeal) { create(:appeal) }
+          let(:root_task) { RootTask.create!(appeal: appeal) }
+          let!(:distribution_task) { DistributionTask.create!(appeal: appeal, parent: root_task) }
+          let(:current_user) do
+            create(:user).tap do |user|
+              MailTeam.singleton.add_user(user)
+            end
+          end
+
+          let(:task_params) do
+            {
+              type: "PrivacyActRequestMailTask",
+              instructions: "fjdkfjwpie",
+              parent_id: root_task.id
+            }
+          end
+
+          it "sends a notification when PrivacyActRequestMailTask is created" do
+            expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
+            PrivacyActRequestMailTask.create_from_params(task_params, current_user)
+          end
+
+          it "updates appeal state when PrivacyActRequestMailTask is created" do
+            expect_any_instance_of(AppealState).to receive(:privacy_act_pending_appeal_state_update_action!)
+            PrivacyActRequestMailTask.create_from_params(task_params, current_user)
+          end
         end
-        it "sends a notification when PrivacyActRequestMailTask is created" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
-          PrivacyActRequestMailTask.create_from_params(task_params, current_user)
-        end
-        it "updates appeal state when PrivacyActRequestMailTask is created" do
-          expect_any_instance_of(AppealState).to receive(:privacy_act_pending_appeal_state_update_action!)
-          PrivacyActRequestMailTask.create_from_params(task_params, current_user)
-        end
+
         it "sends a notification when PrivacyActRequestMailTask is completed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
           foia_child.update!(status: "completed")
