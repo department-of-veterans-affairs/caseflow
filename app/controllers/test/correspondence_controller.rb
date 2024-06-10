@@ -6,7 +6,7 @@ class Test::CorrespondenceController < ApplicationController
   before_action :verify_access
   before_action :verify_feature_toggle
   def index
-    return render_access_error unless verify_access && access_allowed?
+    render_access_error unless verify_access && access_allowed?
     # More code to come
   end
 
@@ -20,9 +20,7 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def bva?
-    Bva.singleton.user_has_access?(current_user) ||
-      BvaIntake.singleton.user_has_access?(current_user) ||
-      BvaDispatch.singleton.user_has_access?(current_user)
+    Bva.singleton.user_has_access?(current_user)
   end
 
   def access_allowed?
