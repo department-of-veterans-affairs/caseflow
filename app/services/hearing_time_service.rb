@@ -71,15 +71,13 @@ class HearingTimeService
   end
 
   def local_time
-    # returns the date and time a hearing is scheduled for in the regional
-    # office's time zone; or the central office's time zone if no regional
-    # office is associated with the hearing.
-
     # for AMA hearings, return the hearing object's scheduled_for
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
-    # for legacy hearings, convert to the regional office's time zone
+    # for legacy hearings with non-nil scheduled_in_timezone value, convert to scheduled_in_timezone
+    return @hearing.scheduled_for.in_time_zone(@hearing.scheduled_in_timezone) if @hearing.scheduled_in_timezone
 
+    # for legacy hearings with nil scheduled_in_timezone, convert to the regional office's time zone.
     # if the hearing's regional_office_timezone is nil, assume this is a
     # central office hearing (eastern time)
     regional_office_timezone = @hearing.regional_office_timezone || CENTRAL_OFFICE_TIMEZONE
