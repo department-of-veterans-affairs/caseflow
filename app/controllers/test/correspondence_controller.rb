@@ -46,19 +46,19 @@ class Test::CorrespondenceController < ApplicationController
 
   def valid_veteran?(file_number)
 
-    if Rails.deploy_env?(:uat)
-    veteran = VeteranFinder.find_best_match(file_number)
+    # if Rails.deploy_env?(:uat)
+    # veteran = VeteranFinder.find_best_match(file_number)
 
-    return veteran&.fetch_bgs_record.present?
+    # return veteran&.fetch_bgs_record.present?
 
-    elsif Rails.deploy_env?(:demo)
+    # elsif Rails.deploy_env?(:demo)
       veterans = Veteran.all.map do |veteran|
         veteran.file_number
       end
 
       return veterans.any?(file_number.to_s)
 
-    end
+    # end
   end
 
   def invalid_file_num_error_message(file_number_arr)

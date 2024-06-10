@@ -8,8 +8,9 @@ import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY';
-import Alert from "app/components/Alert";
+import Alert from 'app/components/Alert';
 
 export default function TestCorrespondence(props) {
   const [correspondenceCount, setCorrespondenceCount] = useState(0);
@@ -20,6 +21,7 @@ export default function TestCorrespondence(props) {
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
 
   const handleVeteranFileNumbers = (inputValue) => {
+    console.log(veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum)));
     // Allow only digits and commas
     const sanitizedValue = inputValue.replace(/[^0-9,]/g, '');
     // Split the input by commas and count the number of elements
@@ -35,10 +37,23 @@ export default function TestCorrespondence(props) {
   const handleCorrespondenceCountChange = (value) => {
     setCorrespondenceCount(value);
   };
+  const data = veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum));
+
+  const checkIfInvalid = async () => {
+    ApiUtil.post(
+      '/test/correspondence/error_message', { data }
+    ).then(
+      (response) => {
+        console.log(response);
+      }
+    );
+
+  };
 
   const handleSubmit = () => {
     // Submit the form values
     // Here you can add your logic to handle form submission (e.g., API call)
+    checkIfInvalid();
     setShowInvalidVeteransBanner(false);
     setShowInvalidVeteransBanner(true);
     setInvalidFileNumbers('12345');
