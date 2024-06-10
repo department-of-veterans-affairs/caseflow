@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+  useSelector: jest.fn(),
+  useDispatch: jest.fn()
 }));
 
 describe('ConfirmPendingRequestIssueModal', () => {
@@ -30,7 +31,7 @@ describe('ConfirmPendingRequestIssueModal', () => {
 
   it('renders the confirm pending issue modal for modification', () => {
     setup(propsForConfirmModification);
-    // The modal uses a useSelector hook on load so we must mock its return value since we are not connecting to redux.
+    // The modal uses a useSelector hook on load so we will mock its return value since we are not connecting to redux.
     useSelector.mockReturnValueOnce(0);
 
     expect(screen.getByText(/Confirm changes/)).toBeInTheDocument();
