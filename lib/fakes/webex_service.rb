@@ -22,7 +22,7 @@ class Fakes::WebexService
   end
 
   def self.access_token
-    'access_token'
+    "access_token"
   end
 
   def create_conference(virtual_hearing)
