@@ -7,7 +7,7 @@ import COPY from '../../../COPY';
 import { convertPendingIssueToRequestIssue } from '../util/issueModificationRequests';
 import { addIssue, removeIssue } from '../actions/addIssues';
 import {
-  removeFromPendingReviewSection,
+  updatePendingReview,
   toggleConfirmPendingRequestIssueModal
 } from '../actions/issueModificationRequest';
 
@@ -59,8 +59,8 @@ export const ConfirmPendingRequestIssueModal = (props) => {
     dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues
     dispatch(addIssue(newRequestIssue));
-    // Remove the pending issue as it is now a request issue
-    dispatch(removeFromPendingReviewSection(null, pendingIssueModificationRequest));
+    // Update the pending issue status
+    dispatch(updatePendingReview(pendingIssueModificationRequest.identifier, { status: 'approved' }));
     dispatch(toggleConfirmPendingRequestIssueModal());
   };
 

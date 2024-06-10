@@ -228,6 +228,18 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    return update(state, {
+      pendingIssueModificationRequests: {
+        [index]: {
+          $merge: action.payload.data
+        }
+      }
+    });
+  };
+
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,

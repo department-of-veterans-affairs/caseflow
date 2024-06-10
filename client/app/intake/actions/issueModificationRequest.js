@@ -46,3 +46,10 @@ export const removeFromPendingReviewSection = (index, issueModificationRequest =
     payload: { index, issueModificationRequest }
   }
 );
+
+export const updatePendingReview = (identifier, data) => (
+  {
+    type: ACTIONS.UPDATE_PENDING_REVIEW,
+    payload: { identifier, data }
+  }
+);
