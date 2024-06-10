@@ -249,7 +249,7 @@ getFilteredUsers = () => {
 
               {
                 (judgeTeam || dvcTeam) && admin ?
-                  <div className="top-user-border"></div> :
+                  null :
                   <div>
                     { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
                     { this.removeUserButton(user) }
