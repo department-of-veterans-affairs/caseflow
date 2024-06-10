@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import Button from '../../components/Button';
 import Link from '../../components/Link';
