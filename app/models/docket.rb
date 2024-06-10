@@ -166,8 +166,8 @@ class Docket
 
   def docket_time_goal
     @docket_time_goal ||= begin
-      lever = CaseDistributionLever.find_by(item: "ama_#{docket_type}_docket_time_goals")
-      lever ? Integer(lever.value) : 0
+      does_lever_exist = CaseDistributionLever.exists?(item: "ama_#{docket_type}_docket_time_goals")
+      does_lever_exist ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : 0
     end
   end
 
