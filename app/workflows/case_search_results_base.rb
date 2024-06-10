@@ -3,6 +3,8 @@
 class CaseSearchResultsBase
   include ActiveModel::Validations
 
+  attr_accessor :workflow
+
   validate :vso_employee_has_access
 
   def initialize(user:)
