@@ -444,7 +444,7 @@ describe SendNotificationJob, type: :job do
 
   context "feature flag testing for creating legacy appeal notification records" do
     let(:legacy_appeal) { create(:legacy_appeal) }
-    let!(:case) { create(:case, bfkey: legacy_appea.vacols_id) }
+    let!(:case) { create(:case, bfkey: legacy_appeal.vacols_id) }
 
     it "creates an instance of a notification" do
       FeatureToggle.enable!(:appeal_docketed_event)
