@@ -473,7 +473,9 @@ export class PdfFile extends React.PureComponent {
 
       this.scrollTimer = setTimeout(() => {
         const scrollEnd = performance.now();
-        const scrollMessage = `Scroll to page ${this.currentPage + 1} (${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)}, ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)})`;
+        const scrollMessage = `Scroll to page ${this.currentPage + 1}
+        (${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)},
+        ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)})`;
 
         this.metricsAttributes.name = scrollMessage;
 
