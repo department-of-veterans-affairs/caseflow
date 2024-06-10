@@ -359,7 +359,7 @@ class AddIssuesPage extends React.Component {
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
     const activePendingIssues = useSelector((state) => state.pendingIssueModificationRequests.
-      some((issue) => issue.status === 'assigned'));
+      filter((issue) => issue.status === 'assigned'));
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -613,9 +613,9 @@ class AddIssuesPage extends React.Component {
       });
 
     // Pending modifications table section
-    if (!_.isEmpty(pendingIssueModificationRequests)) {
+    if (!_.isEmpty(activePendingIssues)) {
       rowObjects = rowObjects.concat(issueModificationRow({
-        issueModificationRequests: pendingIssueModificationRequests,
+        issueModificationRequests: activePendingIssues,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
