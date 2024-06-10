@@ -55,7 +55,7 @@ import {
   moveToPendingReviewSection,
   addToPendingReviewSection,
   removeFromPendingReviewSection,
-  editPendingReview,
+  updatePendingReview,
 } from '../../actions/addIssues';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -100,31 +100,35 @@ class AddIssuesPage extends React.Component {
     this.props.toggleRequestIssueAdditionModal();
   }
 
-  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType, modificationRequestIndex) => {
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
     case 'reviewIssueModificationRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
+        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueModificationModal(identifier);
       break;
     case 'reviewIssueAdditionRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
+        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueAdditionModal(identifier);
       break;
     case 'reviewIssueWithdrawalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
+        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueWithdrawalModal(identifier);
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
+        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
@@ -726,7 +730,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueModificationModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
-            editPendingReview={this.props.editPendingReview}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -737,7 +741,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
-            editPendingReview={this.props.editPendingReview}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -748,7 +752,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
-            editPendingReview={this.props.editPendingReview}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -757,7 +761,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
             addToPendingReviewSection={this.props.addToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
-            editPendingReview={this.props.editPendingReview}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -887,7 +891,6 @@ export const EditAddIssuesPage = connect(
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy,
-    issueModificationRequests: state.issueModificationRequests,
   }),
   (dispatch) =>
     bindActionCreators(
@@ -907,7 +910,7 @@ export const EditAddIssuesPage = connect(
         moveToPendingReviewSection,
         addToPendingReviewSection,
         removeFromPendingReviewSection,
-        editPendingReview,
+        updatePendingReview,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,
