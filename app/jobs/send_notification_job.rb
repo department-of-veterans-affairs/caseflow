@@ -63,7 +63,7 @@ class SendNotificationJob < CaseflowJob
       end
     rescue StandardError => error
       log_error(error)
-      fail error
+      raise error
     end
   end
 

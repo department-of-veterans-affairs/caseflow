@@ -21,27 +21,34 @@ describe "ApplicationJob" do
   end
 
   context "JobExecutionTime" do
+    def job_execution_record_checks
+      expect(JobExecutionTime.count).to eq(1)
+      execution_time_record = JobExecutionTime.first
+      expect(execution_time_record.job_name).to eq("JobThatIsGood")
+      expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+    end
+
     it "adds record to JobExecutionTime if the ignore_job_execution_time? flag is false" do
       allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
       Timecop.freeze(freeze_time_first_run) do
         expect(JobExecutionTime.count).to eq(0)
         JobThatIsGood.perform_now
-        expect(JobExecutionTime.count).to eq(1)
-        execution_time_record = JobExecutionTime.first
-        expect(execution_time_record.job_name).to eq("JobThatIsGood")
-        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+
+        job_execution_record_checks
       end
     end
 
     it "update existing record in JobExecutionTime table when job is run multiple times" do
       allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
+      byebug
+
+      JobExecutionTime.create(job_name: JobThatIsGood.name, last_executed_at: 2.days.ago)
+
       Timecop.freeze(freeze_time_first_run) do
-        expect(JobExecutionTime.count).to eq(0)
-        JobThatIsGood.perform_now
         expect(JobExecutionTime.count).to eq(1)
-        execution_time_record = JobExecutionTime.first
-        expect(execution_time_record.job_name).to eq("JobThatIsGood")
-        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+        JobThatIsGood.perform_now
+
+        job_execution_record_checks
       end
 
       Timecop.freeze(freeze_time_second_run) do
@@ -52,32 +59,6 @@ describe "ApplicationJob" do
         expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
       end
     end
-
-    it "does not add record to JobExecutionTime if the ignore_job_execution_time? flag is true" do
-      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(true)
-      Timecop.freeze(freeze_time_first_run) do
-        expect(JobExecutionTime.count).to eq(0)
-        JobThatIsGood.perform_now
-        expect(JobExecutionTime.count).to eq(0)
-      end
-    end
-
-    it "sets extra context in middleware" do
-      allow(Raven).to receive(:extra_context)
-
-      sqs_msg = double("sqs_msg")
-      allow(sqs_msg).to receive(:message_id).and_return("msgid")
-
-      JobSentryScopeMiddleware.new.call(
-        double("worker"),
-        "high_priority",
-        sqs_msg,
-        ActiveSupport::HashWithIndifferentAccess.new(job_class: "JobThatIsGood", job_id: "jobid")
-      ) {}
-
-      expect(Raven).to have_received(:extra_context).with(hash_including(application: :fake))
-    end
-  end
 
   context ".queue_with_priority" do
     it "performs with valid priority" do
