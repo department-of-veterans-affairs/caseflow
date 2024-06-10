@@ -698,6 +698,10 @@ class Appeal < DecisionReview
     court_remand?
   end
 
+  def predocketed?
+    tasks.select { |task| task.class.name == "PreDocketTask" && task.open? }
+  end
+
   def vha_predocket_needed?
     request_issues.active.any?(&:vha_predocket?)
   end
