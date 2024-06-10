@@ -43,10 +43,15 @@ const DocumentViewer = (props) => {
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate = (rotateDeg === '90deg' || rotateDeg === '270deg') ? clientHeight : (scrollHeight / numPages);
+    const pageHeightEstimate = (rotateDeg === '90deg' || rotateDeg === '270deg') ?
+      clientHeight : (scrollHeight / numPages);
     const pageNumber = Math.floor((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
-    setCurrentPage(pageNumber);
+    if (pageNumber > numPages) {
+      setCurrentPage(numPages);
+    } else {
+      setCurrentPage(pageNumber);
+    }
   };
 
   document.body.style.overflow = 'hidden';
