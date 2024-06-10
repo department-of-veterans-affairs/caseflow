@@ -223,8 +223,8 @@ export const commonReducers = (state, action) => {
 
     return {
       ...state,
-      pendingIssueModificationRequests: pendingIssueModificationRequests.filter(
-        (issue) => (issue.id !== action.payload.issueModificationRequest.id))
+      pendingIssueModificationRequests: pendingIssueModificationRequests.find(
+        (issue) => (issue.identifier !== action.payload.issueModificationRequest.identifier))
     };
   };
 

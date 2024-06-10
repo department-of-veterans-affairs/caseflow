@@ -1,24 +1,27 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import { formatDateStr } from '../../util/DateUtil';
 import COPY from '../../../COPY';
 import { convertPendingIssueToRequestIssue } from '../util/issueModificationRequests';
+import { addIssue, removeIssue } from '../actions/addIssues';
+import {
+  removeFromPendingReviewSection,
+  toggleConfirmPendingRequestIssueModal
+} from '../actions/issueModificationRequest';
 
 export const ConfirmPendingRequestIssueModal = (props) => {
 
   const {
     pendingIssueModificationRequest,
-    toggleConfirmPendingRequestIssueModal,
-    addIssue,
-    removeIssue,
-    removeFromPendingReviewSection
   } = props;
 
   const requestIssue = pendingIssueModificationRequest.requestIssue;
   const indexOfOriginalIssue = useSelector(
     (state) => state.addedIssues.findIndex((issue) => issue.id === pendingIssueModificationRequest.requestIssue.id));
+
+  const dispatch = useDispatch();
 
   const originalIssue = (
     <div>
@@ -53,12 +56,12 @@ export const ConfirmPendingRequestIssueModal = (props) => {
     const newRequestIssue = convertPendingIssueToRequestIssue(pendingIssueModificationRequest);
 
     // Remove the original issue from addedIssues
-    removeIssue(indexOfOriginalIssue);
+    dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues
-    addIssue(newRequestIssue);
+    dispatch(addIssue(newRequestIssue));
     // Remove the pending issue as it is now a request issue
-    removeFromPendingReviewSection(null, pendingIssueModificationRequest);
-    toggleConfirmPendingRequestIssueModal();
+    dispatch(removeFromPendingReviewSection(null, pendingIssueModificationRequest));
+    dispatch(toggleConfirmPendingRequestIssueModal());
   };
 
   return (
@@ -72,7 +75,7 @@ export const ConfirmPendingRequestIssueModal = (props) => {
         {
           classNames: ['usa-button', 'usa-button-primary'],
           name: 'Confirm',
-          onClick: () => onSubmit()
+          onClick: onSubmit
         }
       ]}
       closeHandler={toggleConfirmPendingRequestIssueModal}
@@ -84,8 +87,4 @@ export const ConfirmPendingRequestIssueModal = (props) => {
 
 ConfirmPendingRequestIssueModal.propTypes = {
   pendingIssueModificationRequest: PropTypes.object,
-  toggleConfirmPendingRequestIssueModal: PropTypes.func,
-  addIssue: PropTypes.func,
-  removeIssue: PropTypes.func,
-  removeFromPendingReviewSection: PropTypes.func
 };

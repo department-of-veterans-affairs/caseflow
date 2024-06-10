@@ -767,10 +767,6 @@ class AddIssuesPage extends React.Component {
         {intakeData.confirmPendingRequestIssueModalVisible && (
           <ConfirmPendingRequestIssueModal
             pendingIssueModificationRequest={this.state.pendingIssueModification}
-            toggleConfirmPendingRequestIssueModal={this.props.toggleConfirmPendingRequestIssueModal}
-            addIssue={this.props.addIssue}
-            removeIssue={this.props.removeIssue}
-            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
           />
         )}
 

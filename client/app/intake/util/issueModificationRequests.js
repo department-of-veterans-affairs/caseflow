@@ -1,5 +1,4 @@
 import { v4 } from 'uuid';
-import { formatDateStr } from '../../util/DateUtil';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -66,7 +65,7 @@ export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
     description: `${issueModificationRequest.nonratingIssueCategory} -
       ${issueModificationRequest.nonratingIssueDescription}`,
     nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
-    decisionDate: formatDateStr(issueModificationRequest.decisionDate),
+    decisionDate: issueModificationRequest.decisionDate,
     category: issueModificationRequest.nonratingIssueCategory,
     editable: true,
   };

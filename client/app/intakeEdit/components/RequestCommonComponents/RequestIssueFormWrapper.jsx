@@ -50,7 +50,7 @@ export const RequestIssueFormWrapper = (props) => {
 
       // The decision date will come from the current issue for removal and withdrawal requests.
       // Ensure date is in a serializable format for redux
-      const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
+      const decisionDate = issueModificationRequest.decisionDate ||
         formatDateStr(props.currentIssue.decisionDate);
 
       const enhancedData = {
