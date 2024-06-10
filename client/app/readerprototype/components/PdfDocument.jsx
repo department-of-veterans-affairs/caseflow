@@ -8,7 +8,6 @@ import ApiUtil from '../../util/ApiUtil';
 import { renderPageBatch, rotatePages } from '../util/pageUtil';
 
 const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
-
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
@@ -18,12 +17,11 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
         cache: true,
         withCredentials: true,
         timeout: true,
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
       };
-      const byteArr = await ApiUtil.get(fileUrl, requestOptions).
-        then((response) => {
-          return response.body;
-        });
+      const byteArr = await ApiUtil.get(fileUrl, requestOptions).then((response) => {
+        return response.body;
+      });
       const docProxy = await PDFJS.getDocument({ data: byteArr }).promise;
 
       if (docProxy) {
@@ -60,19 +58,14 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
     rotatePages(rotateDeg);
   }, [rotateDeg]);
 
-  return (
-    <div
-      style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }}
-      id = "pdfContainer">
-    </div>
-  );
+  return <div style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }} id="pdfContainer" />;
 };
 
 PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
   zoomLevel: PropTypes.string,
   rotateDeg: PropTypes.string,
-  setDocumentPageCount: PropTypes.number
+  setDocumentPageCount: PropTypes.number,
 };
 
 export default PdfDocument;

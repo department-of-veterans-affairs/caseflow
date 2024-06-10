@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useState} from 'react';
 
 import Button from '../../components/Button';
 import Link from '../../components/Link';
@@ -13,6 +13,7 @@ import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
 
 import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
 import { docToolbarStyles } from '../util/layoutUtil';
+import { toggleSearchBar as toggleSearchBarAction } from '../../reader/PdfViewer/PdfViewerActions';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -24,10 +25,24 @@ const ReaderToolbar = ({
   setZoomInLevel,
   disableZoomIn,
   zoomLevel,
-  rotateDocument
+  rotateDocument,
+  toggleSearchBar,
+  showSearchBar,
   // hideSidebar,
   // toggleSidebar
 }) => {
+  const [searchTerm, setSearchTerm] = useState(null);
+
+  const onToggleSearchBar = () => {
+    if (showSearchBar) {
+      setSearchTerm(null);
+      toggleSearchBar(false);
+
+      return;
+    }
+    toggleSearchBar(true);
+  };
+
   return <>
     <div {...docToolbarStyles.toolbar} {...docToolbarStyles.toolbarLeft}>
       {showClaimsFolderNavigation && (
@@ -110,8 +125,7 @@ const ReaderToolbar = ({
         classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small cf-pdf-spaced-buttons-left']}
         ariaLabel="search text"
         type="submit"
-        disabled
-        // onClick={toggleSearchBar()}
+        onClick={onToggleSearchBar}
       >
         <SearchIcon />
       </Button>
@@ -142,6 +156,8 @@ ReaderToolbar.propTypes = {
   rotateDocument: PropTypes.func,
   hideSidebar: PropTypes.bool,
   toggleSidebar: PropTypes.func,
+  toggleSearchBar: PropTypes.func,
+  showSearchBar: PropTypes.bool
 };
 
 export default ReaderToolbar;
