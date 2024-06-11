@@ -4,8 +4,15 @@ require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
   before do
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_review_start_distribution_prior_to_goals)
     create(:case_distribution_lever, :cavc_affinity_days)
     create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :disable_ama_non_priority_direct_review)
   end
 
   context "docket" do
@@ -292,6 +299,64 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "ready_priority_nonpriority_appeals" do
+      let(:docket) { DirectReviewDocket.new }
+      let(:judge) { create(:user, :judge, :with_judge_team) }
+
+      it "returns appeals when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expected_appeals = docket.appeals(priority: false, ready: true)
+        expect(result.map(&:id)).to eq(expected_appeals.map(&:id))
+      end
+
+      it "returns docket when the corresponding CaseDistributionLever value is false" do
+        CaseDistributionLever.where(item: "disable_ama_non_priority_direct_review").update(value: false)
+        result = docket.ready_priority_nonpriority_appeals(priority: false, ready: true, genpop: true, judge: judge)
+        expected_attributes = docket.appeals(
+          priority: false,
+          ready: true,
+          genpop: true,
+          judge: judge
+        ).map(&:attributes)
+        result_attributes = result.map(&:attributes)
+        expect(result_attributes).to eq(expected_attributes)
+      end
+
+      it "returns an empty array when the corresponding CaseDistributionLever value is true" do
+        lever = CaseDistributionLever.find_by(item: "disable_ama_non_priority_direct_review")
+        lever.update(value: "true")
+        expect(lever.value).to eq("true")
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expect(result).to eq([])
+      end
+
+      it "returns an empty list when the corresponding CaseDistributionLever record is not found" do
+        result = docket.ready_priority_nonpriority_appeals(priority: false)
+        expected_result = docket.appeals(priority: false, ready: true)
+        expect(result.map(&:id)).to eq(expected_result.map(&:id))
+      end
+
+      it "returns an empty array when the lever value is true and priority is true" do
+        allow(CaseDistributionLever).to receive(:find_by_item).and_return(double(value: "true"))
+        expect(docket.ready_priority_nonpriority_appeals(ready: true)).to eq([])
+      end
+
+      it "returns the correct appeals when the lever value is false and priority is true" do
+        expected_appeals = docket.appeals(priority: true)
+        result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
+        expect(result).to match_array(expected_appeals)
+      end
+
+      it "correctly builds the lever item based on docket type" do
+        expect(docket).to receive(:docket_type).exactly(3).times.and_return("direct_review")
+        lever_item_key = "disable_ama_non_priority_direct_review"
+        expect(CaseDistributionLever).to receive(:find_by_item).with(lever_item_key).and_return(double(value: "false"))
+        expect(CaseDistributionLever).to receive(:public_send).with(lever_item_key).and_return("false")
+        docket.ready_priority_nonpriority_appeals(priority: false)
+      end
+    end
+
     context "age_of_n_oldest_genpop_priority_appeals" do
       subject { DirectReviewDocket.new.age_of_n_oldest_genpop_priority_appeals(1) }
 
@@ -324,6 +389,20 @@ describe Docket, :all_dbs do
         expect(subject).to eq(
           [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
         )
+      end
+
+      context "when calculated time goal days are 20" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals)
+            .update!(value: 385)
+          appeal.update!(receipt_date: 25.days.ago)
+          denied_aod_motion_appeal.update!(receipt_date: 25.days.ago)
+        end
+
+        it "returns only receipt_date with in the time goal" do
+          expect(subject.length).to eq(2)
+          expect(subject).to eq([appeal.receipt_date, denied_aod_motion_appeal.receipt_date])
+        end
       end
     end
 
@@ -676,6 +755,8 @@ describe Docket, :all_dbs do
           appeals.each do |appeal|
             appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
           end
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals)
+            .update!(value: 61)
         end
 
         subject { EvidenceSubmissionDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
