@@ -31,10 +31,7 @@ export const resetCustomSeeds = () =>
   };
 
 export const saveCustomSeeds = (seeds) =>
-  (dispatch) => {
-
-    console.log('saveCustomSeeds');
-    console.log(seeds);
+  () => {
     return ApiUtil.post('/seeds/run-demo', { data: seeds }).then(() => {
       console.log("saved custom seed");
     }).
