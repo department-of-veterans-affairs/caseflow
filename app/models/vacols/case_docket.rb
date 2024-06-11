@@ -362,7 +362,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
-    appeals.first(num) unless num.nil? # {Reestablishes the limit}
+    appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
@@ -545,7 +545,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
-        appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
+        appeals = appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
