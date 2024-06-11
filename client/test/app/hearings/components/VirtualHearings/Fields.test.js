@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import { render, screen, waitFor } from '@testing-library/react';
 
 import { EmailNotificationFields } from 'app/hearings/components/details/EmailNotificationFields';
 import { defaultHearing as hearing } from 'test/data/hearings';
@@ -8,31 +9,43 @@ import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 
 describe('Fields', () => {
-  const expectations = (fields) => {
+
+  const expectations = async (container) => {
     // Emails
-    expect(fields.find(HearingEmail)).toHaveLength(2);
-    expect(fields.find(HearingEmail).first().
-      prop('email')).toEqual(hearing.appellantEmailAddress);
-    expect(fields.find(HearingEmail).first().
-      prop('label')).toEqual('Veteran Email');
-    expect(fields.find(HearingEmail).at(1).
-      prop('email')).toEqual(hearing.representativeEmailAddress);
+    const appellantEmailInput = screen.getByRole('textbox', { name: /Veteran Email/i });
+    const poaRepEmailInput = screen.getByRole('textbox', { name: /POA\/Representative Email/i });
+    expect(appellantEmailInput).toBeInTheDocument();
+    expect(poaRepEmailInput).toBeInTheDocument();
 
-    // Timezones
-    expect(fields.find(Timezone)).toHaveLength(2);
-    expect(fields.find(Timezone).first().
-      prop('value')).toEqual(hearing.appellantTz);
-    expect(fields.find(Timezone).at(1).
-      prop('value')).toEqual(hearing.representativeTz);
+    expect(appellantEmailInput).toHaveValue(hearing.appellantEmailAddress);
+;
+    const labelElement = appellantEmailInput.parentElement.previousElementSibling;
+    let labelText = labelElement.textContent.trim();
+    labelText = labelText.replace('Optional', '').trim();
+    expect(labelText).toEqual('Veteran Email');
 
-    // Other components
-    expect(fields.find('.cf-help-divider')).toHaveLength(1);
-    expect(fields).toMatchSnapshot();
+    expect(poaRepEmailInput).toHaveValue(hearing.representativeEmailAddress);
+
+    // // Timezones
+    const veteranTimezoneInput = screen.getByRole('combobox', { name: /Veteran Timezone/i });
+    const poaRepTimezoneInput = screen.getByRole('combobox', { name: /POA\/Representative Timezone/i });
+    expect(veteranTimezoneInput).toBeInTheDocument();
+    expect(poaRepTimezoneInput).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(veteranTimezoneInput).toHaveValue(hearing.appellantTz);
+      expect(poaRepTimezoneInput).toHaveValue(hearing.representativeTz);
+    });
+
+    // // Other components
+    const dividerElement = container.querySelector('.cf-help-divider');
+    console.log("DIVIDER ELEMENT!!", dividerElement);
+    expect(dividerElement).toBeInTheDocument();
   };
 
   test('Display timezone and divider for Central', () => {
     // Run the test
-    const fields = mount(
+    const { container } = render(
       <EmailNotificationFields
         appellantTitle="Veteran"
         time={HEARING_TIME_OPTIONS[0].value}
@@ -41,12 +54,13 @@ describe('Fields', () => {
       />
     );
 
-    expectations(fields);
+    expectations(container);
+    expect(container).toMatchSnapshot();
   });
 
   test('Display timezone and divider for Video', () => {
     // Run the test
-    const fields = mount(
+    const { container } = render(
       <EmailNotificationFields
         appellantTitle="Veteran"
         time={HEARING_TIME_OPTIONS[0].value}
@@ -55,6 +69,7 @@ describe('Fields', () => {
       />
     );
 
-    expectations(fields);
+    expectations(container);
+    expect(container).toMatchSnapshot();
   });
 });
