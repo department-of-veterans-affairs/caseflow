@@ -369,7 +369,7 @@ feature "Issue Modification Request", :postgres do
   def verify_admin_select_action_dropdown(request_type)
     data_key = "div[data-key=issue-#{request_type}]"
     option = "Review issue #{request_type} request"
-    modal_title = "Request issue #{request_type}"
+    modal_title = "Edit pending request"
     selector = page.find(data_key)
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
