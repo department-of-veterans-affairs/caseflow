@@ -67,7 +67,10 @@ const alertStyle = css({
 });
 
 const EditContractorLink = () => (
-  <Button linkStyling>
+  <Button
+    linkStyling
+    onClick={() => this.toggleAddEditModal()}
+  >
     <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
       Edit Information
     </span>
@@ -183,13 +186,20 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
-  // editContractorLink = () => {
-  //   <div>
-  //     <EditContractorLink>
-
-  //     </EditContractorLink>
+  // editContractorLink = () => (
+  //   <div linkStyling>
+  //     <Button
+  //       onClick={() => this.toggleAddEditModal}
+  //     >
+  //       <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
+  //         Edit Information
+  //       </span>
+  //       <span {...css({ position: 'absolute' })}>
+  //         <PencilIcon size={25} />
+  //       </span>
+  //     </Button>
   //   </div>
-  // }
+  // )
 
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
@@ -227,9 +237,9 @@ export default class TranscriptionSettings extends React.PureComponent {
               <ul {...instructionListStyle}>
                 <h2>
                   {contractor.name}
-                  <EditContractorLink
-                    onClick={() => this.toggleAddEditModal(contractor)}
-                  />
+                  {/* {this.editContractorLink}
+                   */}
+                  <EditContractorLink />
                 </h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
@@ -294,6 +304,12 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   render = () => (
     <>
+      <div {...returnLinkStyle}>
+        <span>
+          <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
+          &nbsp;
+        </span>
+      </div>
       {this.state.alert.title && (
         <div {...alertStyle}>
           <Alert
@@ -304,12 +320,6 @@ export default class TranscriptionSettings extends React.PureComponent {
         </div>
       )}
       <AppSegment filledBackground>
-        <div {...returnLinkStyle}>
-          <span>
-            <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
-            &nbsp;
-          </span>
-        </div>
         <div>{this.mainContent()}</div>
       </AppSegment>
     </>
