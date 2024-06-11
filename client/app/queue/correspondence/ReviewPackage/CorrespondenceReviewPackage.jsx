@@ -48,7 +48,6 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
-  const [corrTypeSaved, setCorrTypeSaved] = useState(-1);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
     taskId: [],
@@ -279,8 +278,6 @@ export const CorrespondenceReviewPackage = (props) => {
               errorMessage,
               setErrorMessage,
               isReadOnly,
-              corrTypeSaved,
-              setCorrTypeSaved,
               corrTypeSelected,
               setCorrTypeSelected
             }}
@@ -318,7 +315,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={!corrTypeSelected}
+                disabled={corrTypeSelected}
               />
             </a>
           </div>

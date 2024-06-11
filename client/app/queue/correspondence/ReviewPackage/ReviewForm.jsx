@@ -17,7 +17,7 @@ import moment from 'moment';
 export const ReviewForm = (props) => {
   const correspondenceTypes = props.veteranInformation.correspondence_types;
   // eslint-disable-next-line max-len
-  const [correspondenceTypeID, setCorrespondenceTypeID] = useState(props.editableData.default_select_value);
+  const [correspondenceTypeID, setCorrespondenceTypeID] = useState(props.correspondence.correspondence_type_id);
   // eslint-disable-next-line max-len
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
@@ -26,10 +26,6 @@ export const ReviewForm = (props) => {
     (state) => state.reviewPackage.correspondence
   );
 
-  useEffect(() => {
-    setCorrespondenceTypeID(props.correspondence.correspondence_type_id);
-    setCreateRecordIsReadOnly('Select...');
-  }, []);
 
   useEffect(() => {
     props.setCorrTypeSelected(correspondenceTypeID < 0);
@@ -43,21 +39,13 @@ export const ReviewForm = (props) => {
     return correspondenceTypes[correspondenceTypeID].name;
   };
 
-  const isCorrTypeSelected = () => {
-    if (props.createRecordIsReadOnly === 'Select...') {
-      props.setCorrTypeSelected(true);
-    // eslint-disable-next-line no-negated-condition
-    } else if (props.createRecordIsReadOnly === '' && props.corrTypeSaved !== -1) {
-      props.setCorrTypeSelected(false);
-    } else {
-      props.setCorrTypeSelected(true);
-    }
+  const saveButtonDisabled = () => {
+    return !props.disableButton || props.isReadOnly || dateError || saveChanges;
   };
 
   const handleFileNumber = (value) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
-    isCorrTypeSelected();
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
     if (isNumeric) {
@@ -108,7 +96,6 @@ export const ReviewForm = (props) => {
     };
 
     props.setCreateRecordIsReadOnly(handleCorrespondenceTypeEmpty());
-    props.setCorrTypeSaved(updatedSelectedValue.default_select_value);
     props.setEditableData(updatedSelectedValue);
   };
 
@@ -143,7 +130,6 @@ export const ReviewForm = (props) => {
 
   const handleSubmit = async () => {
     props.setCreateRecordIsReadOnly('');
-    isCorrTypeSelected();
     const correspondence = props;
     const payloadData = {
       data: {
@@ -180,9 +166,6 @@ export const ReviewForm = (props) => {
   };
   // Tracking the Correspondence type value changing for the Create record button
 
-  useEffect(() => {
-    isCorrTypeSelected();
-  }, [handleSubmit]);
 
   // Prevents save action in case of errorMessage
   useEffect(() => {
@@ -192,6 +175,10 @@ export const ReviewForm = (props) => {
     }
     setSaveChanges(true);
   }, []);
+
+  useEffect(() => {
+    props.setCorrTypeSelected(!saveButtonDisabled());
+  }, [saveButtonDisabled()]);
 
   const veteranFileNumStyle = () => {
     if (props.errorMessage) {
@@ -258,7 +245,7 @@ export const ReviewForm = (props) => {
           name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
-          disabled={!props.disableButton || props.isReadOnly || dateError || saveChanges}
+          disabled={saveButtonDisabled()}
           onClick={handleSubmit}
         />
       </div>
@@ -361,11 +348,8 @@ ReviewForm.propTypes = {
   setIsReturnToQueue: PropTypes.bool,
   setEditableData: PropTypes.func,
   setCreateRecordIsReadOnly: PropTypes.func,
-  createRecordIsReadOnly: PropTypes.string,
-  setCorrTypeSaved: PropTypes.func,
   setDisableButton: PropTypes.func,
   setErrorMessage: PropTypes.func,
-  corrTypeSaved: PropTypes.number,
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
