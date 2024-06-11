@@ -33,18 +33,14 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def build_lever_item(docket_type, priority_status)
-    "disable_ama_#{priority_status}_#{docket_type.downcase}"
-  end
-
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
     appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
-    lever_item = build_lever_item(docket_type, priority_status)
-    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    lever_value = lever&.value
+    lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
+    item = CaseDistributionLever.find_by_item(lever_item)
+    value = item ? CaseDistributionLever.public_send(lever_item) : nil
 
-    if lever_value == "true"
+    if value == "true"
       appeals.none
     elsif calculate_days_for_time_goal_with_prior_to_goal > 0
       appeals.where("appeals.receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
@@ -170,8 +166,8 @@ class Docket
 
   def docket_time_goal
     @docket_time_goal ||= begin
-      lever = CaseDistributionLever.find_by(item: "ama_#{docket_type}_docket_time_goals")
-      lever ? Integer(lever.value) : 0
+      does_lever_exist = CaseDistributionLever.exists?(item: "ama_#{docket_type}_docket_time_goals")
+      does_lever_exist ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : 0
     end
   end
 

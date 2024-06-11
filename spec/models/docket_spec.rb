@@ -346,8 +346,10 @@ describe Docket, :all_dbs do
       end
 
       it "correctly builds the lever item based on docket type" do
-        expect(docket).to receive(:docket_type).exactly(4).times.and_return("direct_review")
-        expect(docket).to receive(:build_lever_item).with("direct_review", "non_priority").and_call_original
+        expect(docket).to receive(:docket_type).exactly(3).times.and_return("direct_review")
+        lever_item_key = "disable_ama_non_priority_direct_review"
+        expect(CaseDistributionLever).to receive(:find_by_item).with(lever_item_key).and_return(double(value: "false"))
+        expect(CaseDistributionLever).to receive(:public_send).with(lever_item_key).and_return("false")
         docket.ready_priority_nonpriority_appeals(priority: false)
       end
     end
