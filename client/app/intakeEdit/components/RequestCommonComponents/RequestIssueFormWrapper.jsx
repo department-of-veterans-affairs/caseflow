@@ -61,7 +61,8 @@ export const RequestIssueFormWrapper = (props) => {
         requestType: props.type,
         ...issueModificationRequest,
         decisionDate,
-        identifier: uuid.v4()
+        identifier: uuid.v4(),
+        status: 'assigned'
       };
 
       // close modal and move the issue
@@ -70,7 +71,7 @@ export const RequestIssueFormWrapper = (props) => {
       if (props.type === 'addition') {
         props.addToPendingReviewSection(enhancedData);
       } else {
-        props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+        props.moveToPendingReviewSection(props.issueIndex, enhancedData);
       }
     }
   };
