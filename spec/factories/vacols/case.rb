@@ -201,6 +201,7 @@ FactoryBot.define do
               transient do
                 judge { nil }
                 attorney { nil }
+                aod { false }
               end
 
               bfmpro { "HIS" }
@@ -243,23 +244,46 @@ FactoryBot.define do
                   file_number: vacols_case.correspondent.ssn
                 )
 
-                create(
-                  :case,
-                  bfdpdcn: vacols_case.bfddec,
-                  bfac: "7",
-                  bfcurloc: "81",
-                  bfcorkey: vacols_case.bfcorkey,
-                  bfcorlid: vacols_case.bfcorlid,
-                  bfdnod: vacols_case.bfdnod,
-                  bfdsoc: vacols_case.bfdsoc,
-                  bfd19: vacols_case.bfd19,
-                  bfmpro: "ACT",
-                  correspondent: vacols_case.correspondent,
-                  folder_number_equal: true,
-                  original_case: vacols_case,
-                  case_issues_equal: true,
-                  original_case_issues: vacols_case.case_issues
-                )
+                if evaluator.aod
+                  create(
+                    :case,
+                    :aod,
+                    :tied_to_previous_judge,
+                    previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid),
+                    bfdpdcn: vacols_case.bfddec,
+                    bfac: "7",
+                    bfcurloc: "81",
+                    bfcorkey: vacols_case.bfcorkey,
+                    bfcorlid: vacols_case.bfcorlid,
+                    bfdnod: vacols_case.bfdnod,
+                    bfdsoc: vacols_case.bfdsoc,
+                    bfd19: vacols_case.bfd19,
+                    bfmpro: "ACT",
+                    correspondent: vacols_case.correspondent,
+                    folder_number_equal: true,
+                    original_case: vacols_case,
+                    case_issues_equal: true,
+                    original_case_issues: vacols_case.case_issues
+                  )
+                else
+                  create(
+                    :case,
+                    bfdpdcn: vacols_case.bfddec,
+                    bfac: "7",
+                    bfcurloc: "81",
+                    bfcorkey: vacols_case.bfcorkey,
+                    bfcorlid: vacols_case.bfcorlid,
+                    bfdnod: vacols_case.bfdnod,
+                    bfdsoc: vacols_case.bfdsoc,
+                    bfd19: vacols_case.bfd19,
+                    bfmpro: "ACT",
+                    correspondent: vacols_case.correspondent,
+                    folder_number_equal: true,
+                    original_case: vacols_case,
+                    case_issues_equal: true,
+                    original_case_issues: vacols_case.case_issues
+                  )
+                end
               end
             end
           end
@@ -291,6 +315,22 @@ FactoryBot.define do
           folder_nr: vacols_case.bfkey,
           hearing_date: 5.days.ago.to_date,
           user: evaluator.tied_judge
+        )
+      end
+    end
+
+    trait :tied_to_previous_judge do
+      transient do
+        previous_tied_judge { nil }
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          user: evaluator.previous_tied_judge
         )
       end
     end
