@@ -156,19 +156,17 @@ const CustomSeeds = () => {
   return (
     <div>
       <>
-      <div>
-        <div className="cf-left-side">
-          <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
-        </div>
+      <div className='cf-section-header'>
         <div className="cf-right-side">
           <a href="/appeals-ready-to-distribute?csv=1">
             <button className="usa-button-active usa-button">Download Appeals Ready to Distribute CSV</button>
           </a>
         </div>
       </div>
-        <div>
+      <div className='custom-seed-button-section' >
+        <div className='cf-btn-link upload-seed-csv-button'>
             <FileUpload
-              preUploadText="Select a file for upload"
+              preUploadText="Upload Test Cases CSV"
               postUploadText="Choose a different file"
               id="seed_file_upload"
               fileType=".csv"
@@ -179,6 +177,10 @@ const CustomSeeds = () => {
         <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
           <Button onClick={() => downloadTemplate()} name={`Download Template`} />
         </div>
+      </div>
+      <div className="cf-left-side">
+          <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
+      </div>
         <table className="seed-table-style">
           <thead>
             <tr>

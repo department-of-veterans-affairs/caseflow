@@ -52,6 +52,7 @@
 .custom-seeds-preview {
   border-bottom: 1px solid #d6d7d9;
   width: 100%;
+  overflow: auto;
   display: inline-block;
   margin-bottom: 20px;
 }
@@ -59,6 +60,7 @@
   max-height: 400px;
   overflow: auto;
   position: relative;
+  // min-width: 2000px; additional s
 }
 
 .preview-table {
@@ -81,8 +83,33 @@
 
 .preview-table tr th:last-child, .preview-table tr td:last-child {
   border-right: 1px solid #d6d7d9;
+  text-align: center;
 }
 
 .preview-table tr:last-child th, .preview-table tr:last-child td {
   border-bottom: 1px solid #d6d7d9;
+}
+
+.cf-section-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.upload-seed-csv-button {
+  margin-top: 18px;
+  margin-right: 10px;
+
+  a {
+    background: #0071bc;
+    padding: 12px;
+    color: #fff;
+    border-radius: 5px;
+  }
+}
+
+.custom-seed-button-section {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
 }
