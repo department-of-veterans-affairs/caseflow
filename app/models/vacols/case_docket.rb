@@ -585,8 +585,10 @@ class VACOLS::CaseDocket < VACOLS::Record
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
       if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
-        return false if ineligible_judges_sattyids&.include?(appeal["vlj"])
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
       end
+
+      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"])
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
         VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
