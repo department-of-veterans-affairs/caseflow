@@ -775,6 +775,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+      expect(page).to have_content("Intake system")
       expect(page).to have_content(request_issue.nonrating_issue_description)
       click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
     end
