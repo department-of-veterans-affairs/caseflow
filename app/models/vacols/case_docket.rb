@@ -564,7 +564,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.generate_priority_case_distribution_lever_aod_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
       # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
@@ -585,9 +585,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
       if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
-        return false if ineligible_judges_sattyids.include?(appeal["vlj"])
-
-        return true
+        return false if ineligible_judges_sattyids&.include?(appeal["vlj"])
       end
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
@@ -602,7 +600,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.ineligible_judges_sattyids
-    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
   end
 
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
