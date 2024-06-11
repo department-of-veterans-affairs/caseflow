@@ -32,7 +32,7 @@ class CorrespondenceController < ApplicationController
 
   def auto_assign_status
     batch = BatchAutoAssignmentAttempt.includes(:individual_auto_assignment_attempts)
-      .find_by!(user: current_user, id: batch_auto_assignment_attempt_id)
+      .find_by!(user: current_user, id: corr_controller_params[:batch_auto_assignment_attempt_id])
 
     num_assigned = batch.individual_auto_assignment_attempts
       .where(status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed).count
@@ -49,8 +49,8 @@ class CorrespondenceController < ApplicationController
 
   private
 
-  def batch_auto_assignment_attempt_id
-    params.permit[:batch_auto_assignment_attempt_id]["batch_auto_assignment_attempt_id"]
+  def corr_controller_params
+    params.permit[:batch_auto_assignment_attempt_id]
   end
 
   def verify_correspondence_access
