@@ -2126,10 +2126,6 @@ describe Appeal, :all_dbs do
     end
 
     context "when an appeal has with cavc remand" do
-      # The Appeal factory will set this to system_user if not already set and the checks after duplicating require the
-      # original appeal creator to be "regular_user" because it is being passed into the finalize_split_appeal method
-      before { RequestStore[:current_user] = regular_user }
-
       it "should duplicate the appeals and with cavc remand for the same veteran" do
         original_appeal = create(
           :appeal, :type_cavc_remand,

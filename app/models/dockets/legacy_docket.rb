@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 class LegacyDocket < Docket
-  def self.docket_type
-    "legacy"
-  end
-
   def docket_type
-    self.class.docket_type
+    "legacy"
   end
 
   # currently this is used for reporting needs
