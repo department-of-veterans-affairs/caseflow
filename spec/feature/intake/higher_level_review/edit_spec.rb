@@ -775,8 +775,33 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
-      expect(page).to have_content("Intake system")
-      expect(page).to have_content("Caseflow")
+      check_row("Intake system", "Caseflow")
+      expect(page).to have_content(request_issue.nonrating_issue_description)
+      click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
+    end
+  end
+
+  context "when the HLR has an epe" do
+    let(:benefit_type) { "education" }
+    let(:request_issues) { [request_issue] }
+    let!(:request_issue) do
+      create(
+        :request_issue,
+        decision_review: higher_level_review,
+        nonrating_issue_category: "Accrued",
+        decision_date: 1.month.ago,
+        nonrating_issue_description: "test description"
+      )
+    end
+
+    before do
+      higher_level_review.create_issues!(request_issues)
+      higher_level_review.establish!
+      higher_level_review.reload
+    end
+
+    it "does not mention VBMS when removing an issue" do
+      visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
       expect(page).to have_content(request_issue.nonrating_issue_description)
       click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
     end
@@ -992,7 +1017,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
         check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
         check_row("Benefit type", "Pension")
         check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
-        check_row("Intake system", "VBMS")
       end
     end
 

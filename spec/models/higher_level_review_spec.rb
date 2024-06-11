@@ -62,6 +62,27 @@ describe HigherLevelReview, :postgres do
 
         it { is_expected.to be_truthy }
       end
+
+      context "processed in vbms" do
+        it "checks processed_from_vbms and returns false" do
+          expect(higher_level_review.processed_from_vbms?).to eq(false)
+        end
+
+        let(:epe_ref_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
+        let(:epe) do
+          create(:end_product_establishment,
+                 source: higher_level_review,
+                 reference_id: epe_ref_id)
+        end
+
+        it "checks processed_from_vbms and returns true if hlr has epe" do
+          expect(higher_level_review.processed_from_vbms?).to eq(false)
+          higher_level_review.end_product_establishments << epe
+          higher_level_review.save
+          expect(higher_level_review.end_product_establishments.size).to eq(1)
+          expect(higher_level_review.processed_from_vbms?).to eq(true)
+        end
+      end
     end
 
     context "receipt_date" do

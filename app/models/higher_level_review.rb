@@ -46,6 +46,10 @@ class HigherLevelReview < ClaimReview
     false
   end
 
+  def processed_from_vbms?
+    end_product_establishments.any?
+  end
+
   def alerts
     @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
