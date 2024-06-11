@@ -572,6 +572,10 @@ FactoryBot.define do
           end
         end
 
+        trait :cavc_type do
+          appeal { create(:appeal, :type_cavc_remand) }
+        end
+
         trait :action_required do
           after(:create) do |task, evaluator|
             task.update(status: Constants.TASK_STATUSES.in_progress)
