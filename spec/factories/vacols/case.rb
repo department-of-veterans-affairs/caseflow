@@ -202,6 +202,8 @@ FactoryBot.define do
                 judge { nil }
                 attorney { nil }
                 aod { false }
+                appeal_affinity { true }
+                affinity_start_date { 1.month.ago }
               end
 
               bfmpro { "HIS" }
@@ -244,45 +246,49 @@ FactoryBot.define do
                   file_number: vacols_case.correspondent.ssn
                 )
 
-                if evaluator.aod
-                  create(
-                    :case,
-                    :aod,
-                    :tied_to_previous_judge,
-                    previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid),
-                    bfdpdcn: vacols_case.bfddec,
-                    bfac: "7",
-                    bfcurloc: "81",
-                    bfcorkey: vacols_case.bfcorkey,
-                    bfcorlid: vacols_case.bfcorlid,
-                    bfdnod: vacols_case.bfdnod,
-                    bfdsoc: vacols_case.bfdsoc,
-                    bfd19: vacols_case.bfd19,
-                    bfmpro: "ACT",
-                    correspondent: vacols_case.correspondent,
-                    folder_number_equal: true,
-                    original_case: vacols_case,
-                    case_issues_equal: true,
-                    original_case_issues: vacols_case.case_issues
-                  )
-                else
-                  create(
-                    :case,
-                    bfdpdcn: vacols_case.bfddec,
-                    bfac: "7",
-                    bfcurloc: "81",
-                    bfcorkey: vacols_case.bfcorkey,
-                    bfcorlid: vacols_case.bfcorlid,
-                    bfdnod: vacols_case.bfdnod,
-                    bfdsoc: vacols_case.bfdsoc,
-                    bfd19: vacols_case.bfd19,
-                    bfmpro: "ACT",
-                    correspondent: vacols_case.correspondent,
-                    folder_number_equal: true,
-                    original_case: vacols_case,
-                    case_issues_equal: true,
-                    original_case_issues: vacols_case.case_issues
-                  )
+                cavc_appeal = if evaluator.aod
+                                create(
+                                  :case,
+                                  :aod,
+                                  :tied_to_previous_judge,
+                                  previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid),
+                                  bfdpdcn: vacols_case.bfddec,
+                                  bfac: "7",
+                                  bfcurloc: "81",
+                                  bfcorkey: vacols_case.bfcorkey,
+                                  bfcorlid: vacols_case.bfcorlid,
+                                  bfdnod: vacols_case.bfdnod,
+                                  bfdsoc: vacols_case.bfdsoc,
+                                  bfd19: vacols_case.bfd19,
+                                  bfmpro: "ACT",
+                                  correspondent: vacols_case.correspondent,
+                                  folder_number_equal: true,
+                                  original_case: vacols_case,
+                                  case_issues_equal: true,
+                                  original_case_issues: vacols_case.case_issues
+                                )
+                              else
+                                create(
+                                  :case,
+                                  bfdpdcn: vacols_case.bfddec,
+                                  bfac: "7",
+                                  bfcurloc: "81",
+                                  bfcorkey: vacols_case.bfcorkey,
+                                  bfcorlid: vacols_case.bfcorlid,
+                                  bfdnod: vacols_case.bfdnod,
+                                  bfdsoc: vacols_case.bfdsoc,
+                                  bfd19: vacols_case.bfd19,
+                                  bfmpro: "ACT",
+                                  correspondent: vacols_case.correspondent,
+                                  folder_number_equal: true,
+                                  original_case: vacols_case,
+                                  case_issues_equal: true,
+                                  original_case_issues: vacols_case.case_issues
+                                )
+                end
+
+                if evaluator.appeal_affinity
+                  create(:appeal_affinity, appeal: cavc_appeal, affinity_start_date: evaluator.affinity_start_date)
                 end
               end
             end
