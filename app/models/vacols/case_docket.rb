@@ -577,9 +577,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.cavc_aod_affinity_filter(appeals, judge)
     appeals.reject! do |appeal|
-      next if (appeal["bfac"] != "7" || appeal["aod"] != 1) &&
-              ((appeal["vlj"] && appeal["vlj"] == appeal["prev_deciding_judge"] && appeal["vlj"] == judge.vacols_attorney_id) ||
-              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?))
+      next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
+              (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
+                !appeal["vlj"].blank? &&
+                appeal["vlj"] == appeal["prev_deciding_judge"] &&
+                appeal["vlj"] == judge.vacols_attorney_id) ||
+              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
       if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
         return false if ineligible_judges_sattyids.include?(appeal["vlj"])
