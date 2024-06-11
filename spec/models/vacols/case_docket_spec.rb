@@ -424,22 +424,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
       end
 
-      context "when the case has been made genpop" do
-        let(:hearing_judge) { "1111" }
-        let(:genpop) { "only_genpop" }
-
-        before do
-          nonpriority_ready_case.update(bfhines: "GP")
-        end
-
-        it "distributes the case" do
-          expect(subject.count).to eq(2)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
-        end
-      end
-
       context "when bust backlog is specified" do
         let(:limit) { 2 }
         let(:bust_backlog) { true }
@@ -600,21 +584,6 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
       end
-
-      context "when the case has been made genpop" do
-        let(:hearing_judge) { "1111" }
-        let(:genpop) { "only_genpop" }
-
-        before do
-          aod_ready_case.update(bfhines: "GP")
-        end
-
-        it "distributes the case" do
-          expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
-        end
-      end
     end
 
     context "when an aod case is tied to the same judge as last decided the case" do
@@ -718,6 +687,47 @@ describe VACOLS::CaseDocket, :all_dbs do
     it "sets the case location to 'CASEFLOW'" do
       VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+    end
+  end
+
+  context "removal of BFHINES check" do
+    let(:genpop) { "any" }
+    let(:limit) { 10 }
+
+    context "when BFHINES is nil" do
+      before do
+        aod_ready_case.update(bfhines: nil)
+        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
+      end
+
+      it "distributes the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+      end
+    end
+
+    context "when BFHINES is GP" do
+      before do
+        aod_ready_case.update(bfhines: "GP")
+        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
+      end
+
+      it "distributes the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+      end
+    end
+
+    context "when BFHINES is a value other than GP" do
+      before do
+        aod_ready_case.update(bfhines: "42")
+        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
+      end
+
+      it "distributes the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+      end
     end
   end
 end
