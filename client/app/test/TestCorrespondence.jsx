@@ -21,7 +21,6 @@ export default function TestCorrespondence(props) {
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
 
   const handleVeteranFileNumbers = (inputValue) => {
-    console.log(veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum)));
     // Allow only digits and commas
     const sanitizedValue = inputValue.replace(/[^0-9,]/g, '');
     // Split the input by commas and count the number of elements
@@ -37,30 +36,26 @@ export default function TestCorrespondence(props) {
   const handleCorrespondenceCountChange = (value) => {
     setCorrespondenceCount(value);
   };
-  const data = {
-    vet_file_numbers: veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum))
-  };
 
-  const checkIfInvalid = async () => {
-    ApiUtil.post(
-      '/test/correspondence/error_message', { data }
-    ).then(
-      (response) => {
-        console.log(response);
-      }
-    );
-
+  const generateCorrespondence = async () => {
+    let payload = {
+      file_numbers: veteranFileNumbers,
+      count: correspondenceCount
+    };
+    const res = await ApiUtil.post('/test/correspondence/generate_correspondence', { data: payload });
+    const data = res.body
+    if (data?.invalid_file_numbers){
+      setInvalidFileNumbers(data.invalid_file_numbers);
+      setShowInvalidVeteransBanner(true);
+    }
   };
 
   const handleSubmit = () => {
     // Submit the form values
     // Here you can add your logic to handle form submission (e.g., API call)
-    checkIfInvalid();
-    setShowInvalidVeteransBanner(false);
-    setShowInvalidVeteransBanner(true);
-    setInvalidFileNumbers('12345');
-    setValidFileNumbers('7890');
-    setCorrespondenceSize(15);
+    generateCorrespondence();
+    // setValidFileNumbers('7890');
+    // setCorrespondenceSize(15);
   };
 
   return <BrowserRouter>

@@ -3,36 +3,23 @@
 require "rake"
 
 class Test::CorrespondenceController < ApplicationController
-  # TODO: Uncomment
-  #before_action :verify_access
-  #before_action :verify_feature_toggle
-
+  before_action :verify_access, only: [:index]
+  before_action :verify_feature_toggle, only: [:index]
   def index
-    # TODO: Uncomment
-    #render_access_error unless verify_access && access_allowed?
-    # More code to come
+    render_access_error unless verify_access && access_allowed?
   end
 
-  def invalid_file_num_error_message
-    invalid_file_num = []
-
-    vet_file_number_params.each do |vet_file_num|
-      if valid_veteran?(vet_file_num) == false
-        invalid_file_num.push(vet_file_num)
-      end
-    end
-
-    if invalid_file_num.to_s.tr('[]', '') != ""
-      return COPY::CORRESPONDENCE_ADMIN["INVALID_ERROR"]["MESSAGE"] + invalid_file_num.to_s.tr('[]', '')
-    end
-
-    return
+  def generate_correspondence
+    nums = correspondence_params[:file_numbers].split(',').map(&:strip).reject(&:empty?)
+    invalid_nums = invalid_file_numbers(nums)
+    render json: { invalid_file_numbers: invalid_nums }, status: :created
   end
+
 
   private
 
-  def vet_file_number_params
-    params.permit(:vet_file_numbers)
+  def correspondence_params
+    params.permit(:file_numbers, :count)
   end
 
   def verify_access
@@ -85,7 +72,17 @@ class Test::CorrespondenceController < ApplicationController
     # end
   end
 
-  def generate_correspondence(file_number_arr)
+  def invalid_file_numbers(file_number_arr)
 
+    invalid_file_num = []
+
+      file_number_arr.map do |vet_file_num|
+        if valid_veteran?(vet_file_num) === false
+          invalid_file_num.push(vet_file_num)
+        end
+      end
+
+    invalid_file_num
   end
+
 end
