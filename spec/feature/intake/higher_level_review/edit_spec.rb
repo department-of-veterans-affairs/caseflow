@@ -992,7 +992,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
         check_row("Benefit type", "Pension")
         check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
-        check_row("Intake system", "Caseflow")
+        check_row("Intake system", "VBMS")
       end
     end
 
