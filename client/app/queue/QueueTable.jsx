@@ -639,7 +639,12 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        let preparedTasks = tasks;
+
+        // modify data from raw tasks if prepareTasks is true
+        if (this.props.prepareTasks) {
+          preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        }
 
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
@@ -844,6 +849,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  prepareTasks: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);

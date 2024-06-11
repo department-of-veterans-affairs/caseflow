@@ -7,10 +7,11 @@ import
   caseDetailsColumn,
   typesColumn,
   hearingDateColumn,
-  hearingTypeColumn,
-  statusColumn } from './TranscriptionFileDispatchTableColumns';
+  hearingTypeColumn
+} from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
-import { testTranscriptionFiles } from '../../../test/data/transcriptionFiles';
+import ApiUtil from '../../util/ApiUtil';
+import { encodeQueryParams } from '../../util/QueryParamsUtil';
 
 const styles = css({
   '& div *': {
@@ -42,18 +43,17 @@ const styles = css({
 export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
   const [transcriptionFiles, setTranscriptionFiles] = useState([]);
 
-  /**
-   * This filters the transcription files by its status before it renders
-   * @param {array} This is an array of the original transcription files list
-   * @returns A filtered list
-   * Note: This function is commented out for testing purposes and will be put back in after other tabs are made
-   */
-  // const filterTranscriptionFiles = (files) => files.filter((file) => file.status.includes(statusFilter));
+  const qs = encodeQueryParams({
+    tab: statusFilter
+  });
+
+  const getTranscriptionFiles = () =>
+    ApiUtil.get(`/hearings/transcription_files/unassigned${qs}`).then((response) => {
+      setTranscriptionFiles(response.body.tasks.data);
+    });
 
   useEffect(() => {
-    // const filteredFiles = filterTranscriptionFiles(testTranscriptionFiles);
-
-    setTranscriptionFiles(testTranscriptionFiles);
+    getTranscriptionFiles();
   }, []);
 
   /**
@@ -68,8 +68,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
       [columns.CASE_DETAILS.name]: caseDetailsColumn(transcriptionFiles),
       [columns.TYPES.name]: typesColumn(transcriptionFiles),
       [columns.HEARING_DATE.name]: hearingDateColumn(transcriptionFiles),
-      [columns.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles),
-      [columns.STATUS.name]: statusColumn(transcriptionFiles),
+      [columns.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles)
     };
 
     return functionForColumn[column.name];
@@ -84,18 +83,37 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
     return Object.values(cols).map((column) => createColumnObject(column));
   };
 
+  /*
+  const pageLoaded = (response, currentPage) => {
+    console.log('onPageLoaded');
+    console.log(response);
+    console.log(currentPage);
+    if (!response) {
+      return;
+    }
+  };
+
+  const tabPaginationOptions = {
+    onPageLoaded: pageLoaded
+  };
+  */
+
   return (
     <div {...styles} >
       <QueueTable
         columns={columnsFromConfig(columns)}
         rowObjects={transcriptionFiles}
         enablePagination
+        // tabPaginationOptions={tabPaginationOptions}
         casesPerPage={15}
+        useTaskPagesApi
+        taskPagesApiEndpoint={`/hearings/transcription_files/transcription_file_tasks${qs}`}
         defaultSort={{
           sortColName: 'hearingDateColumn',
           sortAscending: true
         }}
         anyFiltersAreSet
+        getKeyForRow={(_, row) => row.id}
       />
     </div>
   );

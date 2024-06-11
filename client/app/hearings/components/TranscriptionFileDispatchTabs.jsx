@@ -44,9 +44,9 @@ const styles = {
  * @returns An object for configuring the table
  */
 export const unassignedColumns = (columns) => {
-  const { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE, STATUS } = columns;
+  const { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE } = columns;
 
-  return { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE, STATUS };
+  return { SELECT_ALL, DOCKET_NUMBER, CASE_DETAILS, TYPES, HEARING_DATE, HEARING_TYPE };
 };
 
 /**
