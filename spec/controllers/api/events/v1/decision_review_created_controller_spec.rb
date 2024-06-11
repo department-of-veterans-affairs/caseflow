@@ -15,6 +15,14 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         post :decision_review_created, params: JSON.parse(payload)
         expect(response).to have_http_status(:created)
       end
+
+      it "returns ok response if record already exists and is completed" do
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
+        2.times { post :decision_review_created, params: JSON.parse(payload) }
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)["message"]).to eq("Record already exists in Caseflow")
+      end
     end
 
     context "when claim_id is already in Redis Cache" do

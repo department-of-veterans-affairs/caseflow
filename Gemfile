@@ -12,12 +12,12 @@ gem "acts_as_tree"
 gem "amoeba"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", branch: "caseflow/add-new-security-endpoint"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "725047a251a4bd1e7e48e9118016bb3b684c5a34"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "871f7034c502f8d7101bde74e58606716b601c70"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -66,8 +66,6 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
-gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "a2ecb0bf7f3d3aa8fd1429bfd78aa00e7270b0c8"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -83,7 +81,6 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
-gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
@@ -155,5 +152,3 @@ end
 # rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
-
-gem "rcredstash", "~> 1.1.0"

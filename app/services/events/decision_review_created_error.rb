@@ -28,14 +28,6 @@ class Events::DecisionReviewCreatedError
          is already in the Redis Cache"
       end
 
-      if errored_claim_id == 4
-        fail RedisMutex::LockError, "DRCE RedisMutex::LockError message"
-      elsif errored_claim_id == 5
-        fail Caseflow::Error::RedisLockFailed, "DRCE RedisLockFailed message"
-      elsif errored_claim_id == 6
-        fail StandardError, "DRCE StandardError message"
-      end
-
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do
           event&.update!(error: error_message, info: { "errored_claim_id" => errored_claim_id })

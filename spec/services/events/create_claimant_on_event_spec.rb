@@ -64,12 +64,39 @@ RSpec.describe Events::CreateClaimantOnEvent do
                     claimant_payee_code: "00")
   end
 
+  let(:veteran_is_not_claimant_and_person_does_not_existing_information) do
+    instance_double("ParserDouble",
+                    person_first_name: nil,
+                    person_last_name: nil,
+                    person_middle_name: nil,
+                    person_ssn: nil,
+                    person_date_of_birth: "",
+                    person_email_address: nil,
+                    claimant_name_suffix: "",
+                    claim_review_veteran_is_not_claimant: true,
+                    claimant_participant_id: "5382910292",
+                    claimant_type: "DependentClaimant",
+                    claimant_payee_code: "10")
+  end
+
   describe ".process!" do
     context "when the veteran is not the claimant and the person DOES NOT exist in Caseflow" do
       it "a new person record is created" do
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to eq(nil)
         described_class.process!(event: event, parser: veteran_is_not_claimant_and_person_does_not_exist_parser, decision_review: decision_review)
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to be_present
+      end
+
+      it "a new person record is created with nil values" do
+        described_class.process!(event: event, parser: veteran_is_not_claimant_and_person_does_not_existing_information, decision_review: decision_review)
+        no_name_person = Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_existing_information.claimant_participant_id)
+
+        expect(no_name_person.read_attribute(:first_name)).to be_nil
+        expect(no_name_person.read_attribute(:last_name)).to be_nil
+        expect(no_name_person.read_attribute(:middle_name)).to be_nil
+        expect(no_name_person.read_attribute(:ssn)).to be_nil
+        expect(no_name_person.read_attribute(:date_of_birth)).to be_nil
+        expect(no_name_person.read_attribute(:email_address)).to be_nil
       end
 
       it "a single new dependent claimant record is created" do
@@ -84,6 +111,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
         expect(described_class.process!(event: event, parser: veteran_is_not_claimant_and_person_does_not_exist_parser, decision_review: decision_review)).to eq(Claimant.last)
       end
 
+      # rubocop:disable Style/BlockDelimiters
       it "a new record of the new person that was created is added to the event_record table" do
         expect(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id)).to eq(nil)
         expect {
@@ -93,6 +121,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
         expect(EventRecord.last.evented_record_id).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).id)
         expect(EventRecord.last.evented_record_type).to eq(Person.find_by(participant_id: veteran_is_not_claimant_and_person_does_not_exist_parser.claimant_participant_id).class.to_s)
       end
+      # rubocop:enable Style/BlockDelimiters
     end
 
     context "when the veteran is not the claimant and the person DOES exist in Caseflow" do

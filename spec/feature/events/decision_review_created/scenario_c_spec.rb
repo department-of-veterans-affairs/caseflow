@@ -87,7 +87,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
             "contested_rating_issue_diagnostic_code": nil,
             "ramp_claim_id": nil,
             "rating_issue_associated_at": nil,
-            "nonrating_issue_bgs_id": "13"
+            "nonrating_issue_bgs_id": "13",
+            "nonrating_issue_bgs_source": "Test Source"
           }
         ]
       }
