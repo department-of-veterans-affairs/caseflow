@@ -148,15 +148,6 @@ describe ExplainController, :all_dbs, type: :controller do
   describe "GET explain/correspondence/:correspondence_uuid/" do
     let(:user_roles) { ["System Admin"] }
     let(:veteran) { create(:veteran) }
-    let(:package_document_type) do
-      PackageDocumentType.create(
-        id: 15,
-        active: true,
-        created_at: Time.zone.now,
-        name: "10182",
-        updated_at: Time.zone.now
-      )
-    end
     let(:correspondence) do
       create(
         :correspondence,
