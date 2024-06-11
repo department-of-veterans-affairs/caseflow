@@ -15,10 +15,8 @@ class VACOLS::Case < VACOLS::Record
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
   has_many   :priorloc,        foreign_key: :lockey
-  has_many   :mail,            foreign_key: :mlfolder
   has_many   :decision_quality_reviews, foreign_key: :qrfolder
-
-  has_one :appeal_affinity, as: :case
+  has_many   :mail,            foreign_key: :mlfolder
 
   class InvalidLocationError < StandardError; end
 

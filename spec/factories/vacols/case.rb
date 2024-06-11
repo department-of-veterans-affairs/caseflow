@@ -265,16 +265,6 @@ FactoryBot.define do
       bfd19 { 1.year.ago.to_date }
     end
 
-    trait :with_appeal_affinity do
-      transient do
-        affinity_start_date { Time.zone.now }
-      end
-
-      after(:create) do |appeal, evaluator|
-        create(:appeal_affinity, appeal: appeal, affinity_start_date: evaluator.affinity_start_date)
-      end
-    end
-
     trait :status_remand do
       bfmpro { "REM" }
       bfdc { "3" }
