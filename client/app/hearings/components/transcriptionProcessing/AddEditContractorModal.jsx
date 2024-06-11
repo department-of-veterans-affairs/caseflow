@@ -54,7 +54,7 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContr
       transcription_contractor: contractorFormData
     };
 
-    ApiUtil.patch('/hearings/find_by_contractor', { data }).
+    ApiUtil.patch(`/hearings/find_by_contractor/${formData.id}`, { data }).
       then((response) => {
 
         if (response.body.transcription_contractor) {
