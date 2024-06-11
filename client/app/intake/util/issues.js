@@ -8,7 +8,7 @@ const getClaimantField = (intakeData) => {
   const {
     claimantName,
     claimantRelationship,
-    payeeCode
+    payeeCode,
   } = intakeData;
 
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
@@ -299,6 +299,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
   const selectedForm = _.find(FORM_TYPES, { key: formType });
 
+  console.log(intakeData)
   switch (formType) {
   case 'higher_level_review':
     fields = [
@@ -317,7 +318,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
       { field: 'Intake system',
-        content: intakeData.processedInVBMS ? 'VBMS' : 'Caseflow' },
+        content: intakeData.processedInVbms ? 'VBMS' : 'Caseflow' },
     ];
     break;
   case 'supplemental_claim':

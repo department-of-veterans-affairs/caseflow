@@ -15,4 +15,8 @@ class Intake::HigherLevelReviewIntakeSerializer < Intake::ClaimReviewIntakeSeria
   attribute :informal_conference do |object|
     object.detail.informal_conference
   end
+
+  attribute :intake_status do |object|
+    object.detail&.processed_from_vbms? ? "VBMS" : "Caseflow"
+  end
 end

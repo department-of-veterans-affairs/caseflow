@@ -159,7 +159,6 @@ class SaveButtonUnconnected extends React.Component {
       requestStatus,
       veteranValid,
       processedInCaseflow,
-      processedInVBMS,
       withdrawalDate,
       receiptDate,
       benefitType

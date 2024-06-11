@@ -32,10 +32,6 @@ class Intake::IntakeSerializer
     object.detail&.try(:processed_in_caseflow?)
   end
 
-  attribute :processedInVBMS do |object|
-    object.detail&.processed_from_vbms?
-  end
-
   attribute :claimantType do |object|
     object.detail&.try(:claimant_type)
   end
