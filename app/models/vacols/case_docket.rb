@@ -365,7 +365,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
-    appeals.first(num) unless num.nil? # {Reestablishes the limit}
+    appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
@@ -537,7 +537,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.generate_priority_case_distribution_lever_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
     end
@@ -561,7 +561,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
-        appeals.first(num) unless num.nil? # {Reestablishes the limit}
+        appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
@@ -578,15 +578,18 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.cavc_affinity_filter(appeals, judge)
     appeals.reject! do |appeal|
-      next if (appeal["bfac"] != "7" || appeal["aod"] != 0) &&
-              ((appeal["vlj"] && appeal["vlj"] == appeal["prev_deciding_judge"] && appeal["vlj"] == judge.vacols_attorney_id) ||
-              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?))
+      next if (appeal["bfac"] != "7" || appeal["aod"] != 0) ||
+              (appeal["bfac"] == "7" && appeal["aod"] == 0 &&
+                !appeal["vlj"].blank? &&
+                appeal["vlj"] == appeal["prev_deciding_judge"] &&
+                appeal["vlj"] == judge.vacols_attorney_id) ||
+              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
       if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
-        return false if ineligible_judges_sattyids.include?(appeal["vlj"])
-
-        return true
+        next if ineligible_judges_sattyids.include?(appeal["vlj"])
       end
+
+      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"])
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
         VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
@@ -600,7 +603,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.ineligible_judges_sattyids
-    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
   end
 
   def self.use_by_docket_date?
