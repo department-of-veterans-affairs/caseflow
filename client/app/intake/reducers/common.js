@@ -250,6 +250,57 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  // TODO: this probably needs to come from Jonathan's PR
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
+
+    const modifiedPendingModificationRequest = pendingIssueModificationRequests.
+      map((pri) => modifiedIssueModificationRequest.
+        find((imr) => imr.id = pri.id) || pri);
+
+    return {
+      ...state,
+      pendingIssueModificationRequests: modifiedPendingModificationRequest
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
+    listOfIssues[action.payload.requestIssueId].withdrawalPending =
+      action.payload.issueModificationRequest.status === 'approve';
+
+    listOfIssues[action.payload.requestIssueId].pendingWithdrawalDate =
+      action.payload.issueModificationRequest.status === 'approve' ? action.payload.issueModificationRequest.withdrawalDate : '';
+
+    // // there should be a better way to do this.
+    // const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
+
+    // const modifiedPendingModificationRequest = pendingIssueModificationRequests.
+    //   map((pri) => modifiedIssueModificationRequest.
+    //     find((imr) => imr.id = pri.id) || pri);
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE] = () => {
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_ADD_REQUESTED_ISSUE] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
+    };
+  };
+
   return actionsMap;
 };
 

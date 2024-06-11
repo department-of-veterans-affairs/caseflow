@@ -7,6 +7,7 @@ import PriorDecisionDateAlert from 'app/intakeEdit/components/RequestCommonCompo
 import PriorDecisionDateSelector from 'app/intakeEdit/components/RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from 'app/intakeEdit/components/RequestCommonComponents/IssueDescription';
 import IssueTypeSelector from 'app/intakeEdit/components/RequestCommonComponents/IssueTypeSelector';
+import IssueApprovalDenialSection from 'app/intakeEdit/components/RequestCommonComponents/IssueApprovalDenialSection';
 import * as yup from 'yup';
 
 const modificationSchema = yup.object({
@@ -28,6 +29,7 @@ const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificatio
       <PriorDecisionDateSelector />
       <IssueDescription />
       <RequestReason label="modification" />
+      <IssueApprovalDenialSection displayCheckbox />
     </div>
   );
 };

@@ -154,6 +154,34 @@ export const removeFromPendingReviewSection = (index) => (
   }
 );
 
+export const adminWithdrawRequestIssue = (issueModificationRequest, requestIssueId) => (
+  {
+    type: ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE,
+    payload: { issueModificationRequest, requestIssueId }
+  }
+);
+
+export const adminRemoveRequestIssue = (issueModificationRequest, requestIssueId) => (
+  {
+    type: ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE,
+    payload: { issueModificationRequest, requestIssueId }
+  }
+);
+
+export const adminAddRequestIssue = (issueModificationRequest) => (
+  {
+    type: ACTIONS.ADMIN_ADD_REQUESTED_ISSUE,
+    payload: { issueModificationRequest }
+  }
+);
+
+export const updatePendingReview = (issueModificationRequest, requestIssueId) => (
+  {
+    type: ACTIONS.UPDATE_PENDING_REVIEW,
+    payload: { issueModificationRequest, requestIssueId }
+  }
+);
+
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
@@ -210,4 +238,3 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
     }
   });
 };
-

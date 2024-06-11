@@ -1486,6 +1486,7 @@
   "CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE": "Previous Value",
   "CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE": "Updated Value",
   "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
+  "VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE": "This is a new issue based on a requested issue addition.",
   "ISSUE_MODIFICATION_REQUESTS": {
     "ADDITION": {
       "REQUEST_TYPE": "addition",

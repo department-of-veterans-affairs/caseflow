@@ -134,6 +134,8 @@ export default class IssuesList extends React.Component {
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
             !issue.isUnidentified;
 
+          const showNewIssueBasedOnRequestIssueBanner = issue.id === 'undefined';
+
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
               className="issue"
@@ -179,6 +181,13 @@ export default class IssuesList extends React.Component {
                 messageStyling={messageStyling}
                 styling={alertStyling}
                 type="warning"
+              /> : null}
+            {showNewIssueBasedOnRequestIssueBanner ?
+              <Alert
+                message={COPY.VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE}
+                messageStyling={messageStyling}
+                styling={alertStyling}
+                type="info"
               /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}

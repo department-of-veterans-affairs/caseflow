@@ -120,8 +120,11 @@ class AddIssuesPage extends React.Component {
       this.props.toggleRequestIssueWithdrawalModal(identifier);
       break;
     case 'reviewIssueRemovalRequest':
+        const index = 1;
+
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
+        issueRemoveIndex: index
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
@@ -341,11 +344,15 @@ class AddIssuesPage extends React.Component {
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
+    const activePendingIssues = pendingIssueModificationRequests.
+      filter((issue) => issue.status === 'assigned');
+
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+    const issuesWithoutPendingModificationRequests = _.isEmpty(activePendingIssues) ?
       issues : issues.filter((issue) => {
-        return !pendingIssueModificationRequests.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id;
+        return !activePendingIssues.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id &&
+            !issue.withdrawalPending;
         });
       });
 
@@ -605,9 +612,9 @@ class AddIssuesPage extends React.Component {
       });
 
     // Pending modifications table section
-    if (!_.isEmpty(pendingIssueModificationRequests)) {
+    if (!_.isEmpty(activePendingIssues)) {
       rowObjects = rowObjects.concat(issueModificationRow({
-        issueModificationRequests: pendingIssueModificationRequests,
+        issueModificationRequests: activePendingIssues,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
@@ -653,6 +660,8 @@ class AddIssuesPage extends React.Component {
             removeIndex={this.state.issueRemoveIndex}
             intakeData={intakeData}
             closeHandler={this.props.toggleIssueRemoveModal}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
           />
         )}
         {intakeData.correctIssueModalVisible && (
