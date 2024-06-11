@@ -70,7 +70,7 @@ export const ConfirmPendingRequestIssueModal = (props) => {
       buttons={[
         { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
           name: 'Cancel',
-          onClick: toggleConfirmPendingRequestIssueModal
+          onClick: () => dispatch(toggleConfirmPendingRequestIssueModal())
         },
         {
           classNames: ['usa-button', 'usa-button-primary'],
@@ -78,7 +78,7 @@ export const ConfirmPendingRequestIssueModal = (props) => {
           onClick: onSubmit
         }
       ]}
-      closeHandler={toggleConfirmPendingRequestIssueModal}
+      closeHandler={() => dispatch(toggleConfirmPendingRequestIssueModal())}
     >
       {modalInfo[pendingIssueModificationRequest.requestType]}
     </Modal>
