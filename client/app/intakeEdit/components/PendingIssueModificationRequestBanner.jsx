@@ -3,7 +3,7 @@ import COPY from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import { useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { getOpenPendingIssueModificationRequests } from '../selectors';
+import { getOpenPendingIssueModificationRequests } from '../../intake/selectors';
 
 const PendingIssueModificationBanner = () => {
   const pendingIssueModificationRequests = useSelector(getOpenPendingIssueModificationRequests);

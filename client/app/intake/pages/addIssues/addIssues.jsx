@@ -66,6 +66,7 @@ import { RequestIssueRemovalModal } from 'app/intakeEdit/components/RequestIssue
 import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIssueWithdrawalModal';
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
+import { getOpenPendingIssueModificationRequests } from '../../selectors';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -866,7 +867,7 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
-    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    pendingIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
