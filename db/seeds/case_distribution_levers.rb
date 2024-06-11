@@ -472,7 +472,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -484,7 +484,7 @@ module Seeds
             title: "AMA Direct Review Start Distribution Prior to Goals",
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.combination,
-            value: 365,
+            value: 60,
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -496,7 +496,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -520,7 +520,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -533,7 +533,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 730,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -559,7 +559,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 550,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
