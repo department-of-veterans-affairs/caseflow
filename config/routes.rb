@@ -464,7 +464,7 @@ Rails.application.routes.draw do
 
     resources :users, only: [:index, :show]
     resources :correspondence, only: [:index]
-    post "/correspondence/error_message", to: "correspondence_controller#invalid_file_num_error_message"
+    post "/correspondence/error_message", to: "correspondence#invalid_file_num_error_message"
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'

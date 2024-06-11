@@ -37,7 +37,9 @@ export default function TestCorrespondence(props) {
   const handleCorrespondenceCountChange = (value) => {
     setCorrespondenceCount(value);
   };
-  const data = veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum));
+  const data = {
+    vet_file_numbers: veteranFileNumbers.split(',').map((fileNum) => parseInt(fileNum))
+  };
 
   const checkIfInvalid = async () => {
     ApiUtil.post(
