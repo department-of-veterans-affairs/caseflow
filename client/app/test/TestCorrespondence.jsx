@@ -52,7 +52,7 @@ export default function TestCorrespondence(props) {
     }
     if (data?.valid_file_nums) {
       setValidFileNumbers(data.valid_file_nums);
-      setCorrespondenceSize(data.correspondence_size);
+      setCorrespondenceSize(correspondenceCount);
       setShowSuccessBanner(true);
     }
   };

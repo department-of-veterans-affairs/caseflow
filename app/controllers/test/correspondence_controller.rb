@@ -13,13 +13,11 @@ class Test::CorrespondenceController < ApplicationController
     nums = correspondence_params[:file_numbers].split(',').map(&:strip).reject(&:empty?)
     invalid_nums = invalid_file_numbers(nums)
 
-    valid_file_nums = ''
-    correspondence_size = ''
+    valid_file_nums = '78907'
     # once after generating correspondence for these file numbers we have to send the response
     render json: {
       invalid_file_numbers: invalid_nums,
-      valid_file_nums: valid_file_nums,
-      correspondence_size: correspondence_size
+      valid_file_nums: valid_file_nums
     }, status: :created
   end
 
