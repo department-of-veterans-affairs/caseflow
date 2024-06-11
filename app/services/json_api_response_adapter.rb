@@ -5,6 +5,9 @@
 class JsonApiResponseAdapter
   def adapt_fetch_document_series_for(json_response)
     documents = []
+
+    return documents unless valid_json_response?(json_response)
+
     json_response.body["files"].each do |file_resp|
       documents.push(fetch_document_series_for_response(file_resp))
     end
@@ -13,6 +16,12 @@ class JsonApiResponseAdapter
   end
 
   private
+
+  def valid_json_response?(json_response)
+    return false if json_response&.body.blank?
+
+    json_response.body.key?("files")
+  end
 
   def fetch_document_series_for_response(file_json)
     system_data = file_json["currentVersion"]["systemData"]
