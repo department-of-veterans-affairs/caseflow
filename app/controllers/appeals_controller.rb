@@ -42,7 +42,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_ids: veteran_ids[:veteran_ids]&.split(","), user: current_user
+          caseflow_veteran_ids: appeals_controller_params[:veteran_ids]&.split(","), user: current_user
         ).search_call
 
         render_search_results_as_json(result)
@@ -52,7 +52,7 @@ class AppealsController < ApplicationController
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
-    appeals_id = appeals_id_from_param[:appeals_id]
+    appeals_id = appeals_controller_params[:appeals_id]
     respond_to do |format|
       format.json do
         results = find_notifications_by_appeals_id(appeals_id)
@@ -194,12 +194,18 @@ class AppealsController < ApplicationController
 
   private
 
-  def veteran_ids
-    params.permit(:veteran_ids)
-  end
-
-  def appeals_id_from_param
-    params.permit(:appeals_id)
+  def appeals_controller_params
+    params.permit(
+      :veteran_ids,
+      :appeals_id,
+      request_issues:
+      %w[
+        request_issue_id
+        mst_status
+        mst_status_update_reason_notes
+        pact_status_update_reason_notes
+      ]
+    )
   end
 
   def request_issues
@@ -233,7 +239,7 @@ class AppealsController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: appeal,
-      request_issues_data: params[:request_issues]
+      request_issues_data: appeals_controller_params[:request_issues]
     )
   end
 
@@ -301,7 +307,7 @@ class AppealsController < ApplicationController
     pact_removed = 0
     # get edited issues from params and reject new issues without id
     if !appeal.is_a?(LegacyAppeal)
-      existing_issues = params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
+      existing_issues = appeals_controller_params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
 
       # get added issues
       new_issues = request_issues_update.after_issues - request_issues_update.before_issues
