@@ -20,6 +20,9 @@ class IssueModificationRequests::NonAdminUpdater
     new_modifications_process!(issue_modifications_data[:new])
     edited_modifications_process!(issue_modifications_data[:edited])
     cancelled_modifications_process!(issue_modifications_data[:cancelled])
+
+    # approval_process!(issue_modifications_data[:approval])
+    # process_denial!(issue_modifications_data[:denial])
   end
 
   private

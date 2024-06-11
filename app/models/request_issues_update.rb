@@ -22,7 +22,8 @@ class RequestIssuesUpdate < CaseflowRecord
     return false if processed?
 
     transaction do
-      #processe_issue_modification_responses!
+      # TODO: Can probably move this out into the claim review controller
+      process_issue_modification_responses!
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
@@ -155,7 +156,17 @@ class RequestIssuesUpdate < CaseflowRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.find_or_build_request_issue_from_intake_data(issue_data)
+      request_issue = review.find_or_build_request_issue_from_intake_data(issue_data)
+
+      # If the data has a issue modification request id here then add it in as an association
+      issue_modification_request_id = issue_data[:issue_modification_request_id]
+      if issue_modification_request_id
+        # TODO: Not safe
+        issue_modification_request = IssueModificationRequest.find(issue_modification_request_id)
+        request_issue.issue_modification_requests << issue_modification_request
+      end
+
+      request_issue
     end
   end
 
@@ -273,7 +284,7 @@ class RequestIssuesUpdate < CaseflowRecord
     withdrawal.call
   end
 
-  def processe_issue_modification_responses!
+  def process_issue_modification_responses!
     IssueModificationRequests::AdminUpdater.new(
       current_user: user,
       review: review,
