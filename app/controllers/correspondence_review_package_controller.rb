@@ -59,12 +59,13 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
+
     # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
-    document = Document.limit(200)[params[:pdf_id].to_i]
+    document = Document.limit(200)[correspondence_params[:pdf_id].to_i]
 
     document_disposition = "inline"
-    if params[:download]
-      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    if correspondence_params[:download]
+      document_disposition = "attachment; filename='#{correspondence_params[:type]}-#{correspondence_params[:id]}.pdf'"
     end
 
     # The line below enables document caching for a month.
@@ -78,16 +79,23 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   private
 
+  def correspondence_params
+    params.require(:correspondence).permit(:notes, :correspondence_type_id, :va_date_of_receipt)
+      .merge(params.require(:veteran).permit(:file_number))
+      .merge(params.permit(:pdf_id, :type, :id, :download))
+  end
+
   def display_intake_appeal
     !(current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?)
   end
 
   def update_veteran_on_correspondence
-    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    veteran = Veteran.find_by(file_number: correspondence_params["file_number"])
     veteran && correspondence.update!(
-      correspondence_params.merge(
-        veteran_id: veteran.id
-      )
+        veteran_id: veteran.id,
+
+        notes: correspondence_params[:notes],
+        correspondence_type_id: correspondence_params[:correspondence_type_id]
     )
   end
 
