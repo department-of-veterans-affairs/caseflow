@@ -85,7 +85,17 @@ class CorrespondenceTasksController < TasksController
   private
 
   def correspondence_tasks_params
-    params.permit(:correspondence_id, :id, :decision, :task_id, :new_assignee, :decision_reason, :action_type, :type, instructions: [])
+    params.permit(
+      :correspondence_id,
+      :id,
+      :decision,
+      :task_id,
+      :new_assignee,
+      :decision_reason,
+      :action_type,
+      :type,
+      instructions: []
+    )
   end
 
   def process_package_action_decision(decision)
