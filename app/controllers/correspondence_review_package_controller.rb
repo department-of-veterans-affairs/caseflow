@@ -109,7 +109,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def demo_data
-    json_file_path = "vbms doc types.json"
+    json_file_path = "./lib/fakes/constants/VBMS_DOC_TYPES.json"
     JSON.parse(File.read(json_file_path))
   end
 end
