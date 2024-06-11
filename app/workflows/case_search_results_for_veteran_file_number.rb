@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
-  validate :file_number_or_ssn_presence
-  validate :veterans_exist, if: :current_user_is_vso_employee?
-
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
     # Ensure we have a string made of solely numeric characters
@@ -14,7 +11,12 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
 
   attr_reader :file_number_or_ssn
 
-  def file_number_or_ssn_presence
+  def validation_hook
+    validate_file_number_or_ssn_presence
+    validate_veterans_exist if current_user_is_vso_employee?
+  end
+
+  def validate_file_number_or_ssn_presence
     return if file_number_or_ssn
 
     errors.add(:workflow, missing_veteran_file_number_or_ssn_error)
