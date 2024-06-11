@@ -208,6 +208,7 @@ FactoryBot.define do
                 aod { false }
                 appeal_affinity { true }
                 affinity_start_date { 1.month.ago }
+                tied_to { true }
               end
 
               bfmpro { "HIS" }
@@ -267,10 +268,22 @@ FactoryBot.define do
                   original_case_issues: vacols_case.case_issues
                 }
 
-                cavc_appeal = if evaluator.aod
+                cavc_appeal = if evaluator.aod && evaluator.tied_to
                                 create(
                                   :case,
                                   :aod,
+                                  :tied_to_previous_judge,
+                                  params.merge!({ previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid) })
+                                )
+                              elsif evaluator.aod
+                                create(
+                                  :case,
+                                  :aod,
+                                  params
+                                )
+                              elsif evaluator.tied_to
+                                create(
+                                  :case,
                                   :tied_to_previous_judge,
                                   params.merge!({ previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid) })
                                 )
