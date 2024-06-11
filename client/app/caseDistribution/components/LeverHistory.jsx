@@ -16,7 +16,7 @@ const LeverHistory = () => {
       return `${value}`;
     }
 
-    return `${value} ${entry.units[idx]}`;
+    return `${value} ${entry.units[idx] === 'null' ? '' : entry.units[idx]}`;
   };
 
   return (
