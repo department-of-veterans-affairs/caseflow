@@ -16,6 +16,7 @@ export default function TestCorrespondence(props) {
   const [correspondenceCount, setCorrespondenceCount] = useState(0);
   const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
   const [showInvalidVeteransBanner, setShowInvalidVeteransBanner] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [invalidFileNumbers, setInvalidFileNumbers] = useState('000');
   const [validFileNumbers, setValidFileNumbers] = useState('000');
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
@@ -43,10 +44,16 @@ export default function TestCorrespondence(props) {
       count: correspondenceCount
     };
     const res = await ApiUtil.post('/test/correspondence/generate_correspondence', { data: payload });
-    const data = res.body
-    if (data?.invalid_file_numbers){
+    const data = res.body;
+
+    if (data?.invalid_file_numbers) {
       setInvalidFileNumbers(data.invalid_file_numbers);
       setShowInvalidVeteransBanner(true);
+    }
+    if (data?.valid_file_nums) {
+      setValidFileNumbers(data.valid_file_nums);
+      setCorrespondenceSize(data.correspondence_size);
+      setShowSuccessBanner(true);
     }
   };
 
@@ -54,8 +61,6 @@ export default function TestCorrespondence(props) {
     // Submit the form values
     // Here you can add your logic to handle form submission (e.g., API call)
     generateCorrespondence();
-    // setValidFileNumbers('7890');
-    // setCorrespondenceSize(15);
   };
 
   return <BrowserRouter>
@@ -72,7 +77,7 @@ export default function TestCorrespondence(props) {
         }} />
       <AppFrame>
         {
-          showInvalidVeteransBanner &&
+          showSuccessBanner &&
             <div style={{ padding: '10px' }}>
               <Alert
                 type="success"

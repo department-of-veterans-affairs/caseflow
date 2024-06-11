@@ -12,7 +12,15 @@ class Test::CorrespondenceController < ApplicationController
   def generate_correspondence
     nums = correspondence_params[:file_numbers].split(',').map(&:strip).reject(&:empty?)
     invalid_nums = invalid_file_numbers(nums)
-    render json: { invalid_file_numbers: invalid_nums }, status: :created
+
+    valid_file_nums = ''
+    correspondence_size = ''
+    # once after generating correspondence for these file numbers we have to send the response
+    render json: {
+      invalid_file_numbers: invalid_nums,
+      valid_file_nums: valid_file_nums,
+      correspondence_size: correspondence_size
+    }, status: :created
   end
 
 
