@@ -4,7 +4,6 @@ require "paper_trail"
 
 class CorrespondenceDocumentController < ApplicationController
   def update_document
-    binding.pry
     document = CorrespondenceDocument.find(corr_document_params[:id])
     document.update!(update_params)
     render json: { correspondence: document.correspondence }

@@ -19,10 +19,9 @@ class CorrespondenceIntakeController < CorrespondenceController
   def current_step
     intake = CorrespondenceIntake.find_by(task: correspondence&.open_intake_task) ||
              CorrespondenceIntake.new(task: correspondence&.open_intake_task)
-
     intake.update(
-      current_step: current_step_from_params,
-      redux_store: redux_store
+      current_step: corr_intake_params[:current_step],
+      redux_store: corr_intake_params[:redux_store]
     )
 
     if intake.valid?
@@ -75,12 +74,8 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   private
 
-  def current_step_from_params
-    params.permit(:current_step)[:current_step]
-  end
-
-  def redux_store
-    params.permit(:redux_store)[:redux_store]
+  def corr_intake_params
+    params.permit(:current_step, :redux_store, :correspondence_uuid)
   end
 
   def correspondence_uuid
@@ -88,7 +83,7 @@ class CorrespondenceIntakeController < CorrespondenceController
   end
 
   def prior_mail
-    Correspondence.prior_mail(veteran_by_correspondence.id, params[:correspondence_uuid])
+    Correspondence.prior_mail(veteran_by_correspondence.id, corr_intake_params[:correspondence_uuid])
   end
 
   def verify_correspondence_intake_access
