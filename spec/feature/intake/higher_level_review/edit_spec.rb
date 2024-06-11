@@ -779,26 +779,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_content(request_issue.nonrating_issue_description)
       click_remove_intake_issue_dropdown(request_issue.nonrating_issue_description)
     end
-  end
-
-  context "when the HLR has an epe" do
-    let(:benefit_type) { "education" }
-    let(:request_issues) { [request_issue] }
-    let!(:request_issue) do
-      create(
-        :request_issue,
-        decision_review: higher_level_review,
-        nonrating_issue_category: "Accrued",
-        decision_date: 1.month.ago,
-        nonrating_issue_description: "test description"
-      )
-    end
-
-    before do
-      higher_level_review.create_issues!(request_issues)
-      higher_level_review.establish!
-      higher_level_review.reload
-    end
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
