@@ -272,8 +272,7 @@ FactoryBot.define do
                                   :case,
                                   :aod,
                                   :tied_to_previous_judge,
-                                  params,
-                                  previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid)
+                                  params.merge!({ previous_tied_judge: User.find_by_css_id(evaluator.judge.sdomainid) })
                                 )
                               else
                                 create(
