@@ -350,7 +350,7 @@ class AddIssuesPage extends React.Component {
     const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
       issues : issues.filter((issue) => {
         return !pendingIssueModificationRequests.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id;
+          return request?.requestIssue && request?.requestIssue?.id === issue.id && request?.status === 'assigned';
         });
       });
 

@@ -27,10 +27,10 @@ export const toggleConfirmPendingRequestIssueModal = () => ({
   type: ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL
 });
 
-export const moveToPendingReviewSection = (issueModificationRequest, index) => (
+export const moveToPendingReviewSection = (index, issueModificationRequest) => (
   {
     type: ACTIONS.MOVE_TO_PENDING_REVIEW,
-    payload: { issueModificationRequest, index }
+    payload: { index, issueModificationRequest }
   });
 
 export const addToPendingReviewSection = (issueModificationRequest) => (
