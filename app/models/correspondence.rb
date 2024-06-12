@@ -36,7 +36,7 @@ class Correspondence < CaseflowRecord
   end
 
   def review_package_task
-    ReviewPackageTask.find_by(appeal_id: id, appeal_type: type,)
+    ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
   end
 
   def open_intake_task
@@ -44,7 +44,7 @@ class Correspondence < CaseflowRecord
   end
 
   def root_task
-    CorrespondenceRootTask.find_by(appeal_id: id, appeal_type: type,)
+    CorrespondenceRootTask.find_by(appeal_id: id, appeal_type: type)
   end
 
   def cancel_task_tree_for_appeal_intake
