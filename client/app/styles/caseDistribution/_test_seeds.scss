@@ -48,3 +48,68 @@
     width: 110px;
   }
 }
+
+.custom-seeds-preview {
+  border-bottom: 1px solid #d6d7d9;
+  width: 100%;
+  overflow: auto;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+.preview-table-scroll {
+  max-height: 400px;
+  overflow: auto;
+  position: relative;
+  // min-width: 2000px; additional s
+}
+
+.preview-table {
+  margin: 0;
+}
+
+.preview-table tr th {
+  background-color: #f1f1f1;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+}
+
+.preview-table tr th, .preview-table tr td {
+  border: 1px solid #d6d7d9;
+  border-bottom: 0;
+  border-right: 0;
+  padding: 10px;
+}
+
+.preview-table tr th:last-child, .preview-table tr td:last-child {
+  border-right: 1px solid #d6d7d9;
+  text-align: center;
+}
+
+.preview-table tr:last-child th, .preview-table tr:last-child td {
+  border-bottom: 1px solid #d6d7d9;
+}
+
+.cf-section-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.upload-seed-csv-button {
+  margin-top: 18px;
+  margin-right: 10px;
+
+  a {
+    background: #0071bc;
+    padding: 12px;
+    color: #fff;
+    border-radius: 5px;
+  }
+}
+
+.custom-seed-button-section {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
