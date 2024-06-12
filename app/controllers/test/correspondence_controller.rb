@@ -92,26 +92,6 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def connect_corr_with_vet(valid_veterans, count)
-
-    # Once we move to rails 6 use this piece of code
-    # records = []
-    # count.times do
-    #   valid_veterans.each do |file|
-    #     veteran = Veteran.find_by_file_number(file)
-    #     records << {
-    #       uuid: SecureRandom.uuid,
-    #       correspondence_type_id: rand(1..8),
-    #       va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-    #       notes: "This is a test note",
-    #       veteran: veteran
-    #     }
-    #   end
-    # end
-    #
-    # records.each_slice(batch_size) do |batch|
-    #   Correspondence.insert_all(batch)
-    # end
-
     count.times do
       valid_veterans.each do |file|
         veteran = Veteran.find_by_file_number(file)
