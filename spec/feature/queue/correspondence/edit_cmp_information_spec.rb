@@ -3,7 +3,6 @@
 # rubocop:disable Layout/LineLength
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
-  let(:package_document_type) { PackageDocumentType.create!(id: 15, active: true, created_at: Time.zone.now, name: "10_182", updated_at: Time.zone.now) }
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
   let(:inbound_ops_team_user) { create(:user) }
   let(:mail_team_org) { InboundOpsTeam.singleton }
@@ -13,8 +12,7 @@ RSpec.feature("The Correspondence Review Package page") do
     create(
       :correspondence,
       veteran_id: veteran.id,
-      uuid: SecureRandom.uuid,
-      package_document_type: package_document_type
+      uuid: SecureRandom.uuid
     )
   end
 
