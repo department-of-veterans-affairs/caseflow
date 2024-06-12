@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
-import { issueCountSelector } from '../../intake/selectors';
+import { getOpenPendingIssueModificationRequests, issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
@@ -163,7 +163,8 @@ class SaveButtonUnconnected extends React.Component {
       receiptDate,
       benefitType,
       pendingIssueModificationRequests,
-      originalPendingIssueModificationRequests
+      originalPendingIssueModificationRequests,
+      openIssueModificationRequests
     } = this.props;
 
     const invalidVeteran = !veteranValid && (_.some(
@@ -191,7 +192,7 @@ class SaveButtonUnconnected extends React.Component {
 
     if (benefitType === 'vha' && _.every(addedIssues, (issue) => (
       issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-    ) && _.isEmpty(pendingIssueModificationRequests)) {
+    ) && _.isEmpty(openIssueModificationRequests)) {
       saveButtonText = COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
     } else {
       saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
@@ -299,6 +300,7 @@ SaveButtonUnconnected.propTypes = {
   specialtyCaseTeamDistribution: PropTypes.bool,
   pendingIssueModificationRequests: PropTypes.array,
   originalPendingIssueModificationRequests: PropTypes.array,
+  openIssueModificationRequests: PropTypes.array,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -321,6 +323,7 @@ const SaveButton = connect(
     hasSpecialtyCaseTeamAssignTask: state.hasSpecialtyCaseTeamAssignTask,
     specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
     pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    openIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
     originalPendingIssueModificationRequests: state.originalPendingIssueModificationRequests,
     state
   }),

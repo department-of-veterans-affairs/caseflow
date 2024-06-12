@@ -72,6 +72,7 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
   };
 
   (state.pendingIssueModificationRequests || []).
+    // TODO: Remove this filter probably
     filter((modificationRequest) => Boolean(modificationRequest)).
     forEach((modificationRequest) => {
       const formattedRequest = {
@@ -94,7 +95,7 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
         groupedRequests.new.push(formattedRequest);
       } else {
         // Placeholder for now. If it was edited somehow we gotta figure that out
-        // Approved will likely check for a variable that is set just like all the others
+        // Approved/denied will likely check for a variable that is set just like all the others
         // groupedRequests.approved.push(formattedRequest);
       }
     });
