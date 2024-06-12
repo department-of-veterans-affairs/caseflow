@@ -54,6 +54,13 @@ export const updatePendingReview = (identifier, data) => (
   }
 );
 
+export const enhancedPendingReview = (identifier, data) => (
+  {
+    type: ACTIONS.ENHANCED_PENDING_REVIEW,
+    payload: { identifier, data }
+  }
+);
+
 export const moveToPendingReviewSection = (issueModificationRequest, index) => (
   {
     type: ACTIONS.MOVE_TO_PENDING_REVIEW,

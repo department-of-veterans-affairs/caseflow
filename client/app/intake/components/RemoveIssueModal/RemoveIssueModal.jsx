@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { removeIssue } from '../../actions/addIssues';
+import { updatePendingReview } from 'app/intake/actions/issueModificationRequest';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
 
@@ -39,8 +40,16 @@ class RemoveIssueModal extends React.PureComponent {
 
     const removePendingIndex = intakeData.addedIssues.
       findIndex((issue) => issue?.id === pendingIssueModificationRequest?.requestIssue?.id);
+    const enhancedData = intakeData.enhancedPendingIssueModification.find((pi) => pi.id === pendingIssueModificationRequest.id);
 
-    const index = (userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) ? removePendingIndex : removeIndex;
+    const onSubmit = () => {
+      if (userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) {
+        this.props.updatePendingReview(enhancedData?.identifier, enhancedData);
+        this.props.removeIssue(removePendingIndex);
+      } else {
+        this.props.removeIssue(removeIndex);
+      }
+    };
 
     return <div className="intake-remove-issue">
       <Modal
@@ -53,7 +62,7 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Remove',
             onClick: () => {
               this.props.closeHandler();
-              this.props.removeIssue(index);
+              onSubmit();
             }
           }
         ]}
@@ -74,6 +83,7 @@ RemoveIssueModal.propTypes = {
   intakeData: PropTypes.object.isRequired,
   removeIndex: PropTypes.number.isRequired,
   removeIssue: PropTypes.func.isRequired,
+  updatePendingReview: PropTypes.func.isRequired,
   pendingIssueModificationRequest: PropTypes.object,
   userIsVhaAdmin: PropTypes.bool
 };
@@ -81,6 +91,7 @@ RemoveIssueModal.propTypes = {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    removeIssue
+    removeIssue,
+    updatePendingReview
   }, dispatch)
 )(RemoveIssueModal);

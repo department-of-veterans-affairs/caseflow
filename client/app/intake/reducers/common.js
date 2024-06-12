@@ -10,6 +10,8 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
   const pendingIssueModificationRequests = state.pendingIssueModificationRequests || [];
+  const enhancedPendingIssueModification = state.enhancedPendingIssueModification || [];
+
 
   actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
     return update(state, {
@@ -240,6 +242,13 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.ENHANCED_PENDING_REVIEW] = () => {
+    return {
+      ...state,
+      enhancedPendingIssueModification: [...enhancedPendingIssueModification, action.payload.data]
+    };
+  };
+
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,
@@ -275,20 +284,6 @@ export const commonReducers = (state, action) => {
       addedIssues: listOfIssues
     };
   };
-
-  // TODO: this probably needs to come from Jonathan's PR
-  // actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
-  //   const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
-
-  //   const modifiedPendingModificationRequest = pendingIssueModificationRequests.
-  //     map((pri) => modifiedIssueModificationRequest.
-  //       find((imr) => imr.id = pri.id) || pri);
-
-  //   return {
-  //     ...state,
-  //     pendingIssueModificationRequests: modifiedPendingModificationRequest
-  //   };
-  // };
 
   actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
     const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);

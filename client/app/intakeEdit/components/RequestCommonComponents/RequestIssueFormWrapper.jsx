@@ -9,7 +9,8 @@ import uuid from 'uuid';
 import {
   adminWithdrawRequestIssue,
   updatePendingReview,
-  adminAddRequestIssue
+  adminAddRequestIssue,
+  enhancedPendingReview
 } from 'app/intake/actions/issueModificationRequest';
 import {
   toggleIssueRemoveModal
@@ -44,22 +45,25 @@ export const RequestIssueFormWrapper = (props) => {
   const whenAdminApproves = (enhancedData, removeOriginalIssue) => {
     switch (props.type) {
     case 'withdrawal':
+      dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
       dispatch(adminWithdrawRequestIssue(enhancedData?.identifier, enhancedData));
       break;
     case 'removal':
       dispatch(toggleIssueRemoveModal());
       break;
     case 'addition':
+      dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
       dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(enhancedData)));
       break;
     case 'modification':
       if (removeOriginalIssue) {
-        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+        // dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
         props.toggleConfirmPendingRequestIssueModal();
       } else {
         const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
 
         dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
       }
       break;
     default:
@@ -111,7 +115,7 @@ export const RequestIssueFormWrapper = (props) => {
 
     if (userIsVhaAdmin) {
       if (status === 'approve') {
-        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+        dispatch(enhancedPendingReview(enhancedData?.identifier, enhancedData));
         whenAdminApproves(enhancedData, removeOriginalIssue);
       } else {
         dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));

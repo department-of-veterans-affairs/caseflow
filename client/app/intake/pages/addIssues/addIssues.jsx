@@ -125,11 +125,8 @@ class AddIssuesPage extends React.Component {
       this.props.toggleRequestIssueWithdrawalModal(identifier);
       break;
     case 'reviewIssueRemovalRequest':
-        const index = 1;
-
       this.setState({
         pendingIssueModification: issueModificationRequest,
-        issueRemoveIndex: index
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
@@ -667,6 +664,7 @@ class AddIssuesPage extends React.Component {
             closeHandler={this.props.toggleIssueRemoveModal}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
             userIsVhaAdmin={this.props.userIsVhaAdmin}
+            enhancedPendingIssueModification={this.state.enhancedPendingIssueModification}
           />
         )}
         {intakeData.correctIssueModalVisible && (
