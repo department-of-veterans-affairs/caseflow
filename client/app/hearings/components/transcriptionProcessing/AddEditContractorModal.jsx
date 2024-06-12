@@ -123,7 +123,8 @@ export const AddEditContractorModal = ({ onCancel, onConfirm, transcriptionContr
         <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
           message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
 
-      {!edit && <p>{COPY.TRANSCRIPTION_SETTINGS_FORM_DESCRIPTION}</p>}
+      {!edit && <p>{COPY.TRANSCRIPTION_SETTINGS_ADD_FORM_DESCRIPTION}</p>}
+      {edit && <p>{COPY.TRANSCRIPTION_SETTINGS_EDIT_FORM_DESCRIPTION}</p>}
 
       <TextField
         label={COPY.TRANSCRIPTION_SETTINGS_LABEL_NAME}

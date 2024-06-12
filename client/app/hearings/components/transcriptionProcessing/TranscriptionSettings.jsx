@@ -14,6 +14,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
 import { RemoveContractorModal } from './RemoveContractorModal';
 import { AddEditContractorModal } from './AddEditContractorModal';
+import { head } from 'lodash';
 
 const buttonStyle = css({
   float: 'left',
@@ -41,7 +42,7 @@ const contactAlign = css({
 });
 
 const returnLinkStyle = css({
-  padding: '1.5rem 0 2rem 0rem',
+  paddingTop: '3rem',
 });
 
 const toggleStyle = css({
@@ -55,6 +56,11 @@ const userListItemStyle = css({
   padding: '4rem 0 2rem',
   clear: 'both'
 });
+
+const editlinkStyle = css({
+  display: 'flex',
+  flexWrap: 'wrap'
+})
 
 const contractorDetailStyle = css({
   flex: '1'
@@ -234,7 +240,7 @@ export default class TranscriptionSettings extends React.PureComponent {
           <div {...userListItemStyle}>
             <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
-                <h2>
+                <h2 {...editlinkStyle}>
                   {contractor.name}
                   {this.editContractorLink(contractor.id)}
                 </h2>
