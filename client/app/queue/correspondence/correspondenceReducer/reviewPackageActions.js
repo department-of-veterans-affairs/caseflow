@@ -20,16 +20,6 @@ export const setCorrespondenceDocuments = (correspondenceDocuments) =>
     });
   };
 
-export const setPackageDocumentType = (packageDocumentType) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_PACKAGE_DOCUMENT_TYPE,
-      payload: {
-        packageDocumentType
-      }
-    });
-  };
-
 export const setVeteranInformation = (veteranInfo) =>
   (dispatch) => {
     dispatch({

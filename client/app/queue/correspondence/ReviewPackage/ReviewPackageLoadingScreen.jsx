@@ -10,7 +10,6 @@ import ApiUtil from '../../../util/ApiUtil';
 import {
   setCorrespondence,
   setCorrespondenceDocuments,
-  setPackageDocumentType,
   setVeteranInformation,
   setTaskInstructions
 } from '../correspondenceReducer/reviewPackageActions';
@@ -26,14 +25,12 @@ class ReviewPackageLoadingScreen extends React.PureComponent {
         const {
           correspondence,
           correspondence_documents,
-          package_document_type,
           general_information,
           taskInstructions
         } = response.body;
 
         this.props.setCorrespondence(correspondence);
         this.props.setCorrespondenceDocuments(correspondence_documents);
-        this.props.setPackageDocumentType(package_document_type);
         this.props.setVeteranInformation(general_information);
         this.props.setTaskInstructions(taskInstructions);
       }
@@ -70,7 +67,6 @@ ReviewPackageLoadingScreen.propTypes = {
   children: PropTypes.node,
   setCorrespondence: PropTypes.func,
   setCorrespondenceDocuments: PropTypes.func,
-  setPackageDocumentType: PropTypes.func,
   setVeteranInformation: PropTypes.func,
   setTaskInstructions: PropTypes.func
 };
@@ -78,7 +74,6 @@ ReviewPackageLoadingScreen.propTypes = {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCorrespondence,
   setCorrespondenceDocuments,
-  setPackageDocumentType,
   setVeteranInformation,
   setTaskInstructions
 }, dispatch);
