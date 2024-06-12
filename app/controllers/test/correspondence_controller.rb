@@ -5,6 +5,7 @@ require "rake"
 class Test::CorrespondenceController < ApplicationController
   before_action :verify_access, only: [:index]
   before_action :verify_feature_toggle, only: [:index]
+
   def index
     render_access_error unless verify_access && access_allowed?
   end
@@ -24,8 +25,6 @@ class Test::CorrespondenceController < ApplicationController
     rescue StandardError => error
       log_error(error)
     end
-
-    # once after generating correspondence for these file numbers we have to send the response
   end
 
   private
