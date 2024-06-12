@@ -16,7 +16,7 @@ class Test::CorrespondenceController < ApplicationController
     valid_file_nums = result[:valid]
 
     begin
-      connect_corr_with_vet(valid_file_nums, correspondence_params[:count])
+      connect_corr_with_vet(valid_file_nums, correspondence_params[:count].to_i)
       return render json: {
         invalid_file_numbers: invalid_nums,
         valid_file_nums: valid_file_nums

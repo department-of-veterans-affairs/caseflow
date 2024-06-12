@@ -5,6 +5,11 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
 
   before do
     User.authenticate!(user: user)
+
+    (1..15).each do |i|
+      create(:correspondence_type, id: i, name: "Type #{i}")
+      create(:package_document_type, id: i, name: "Type #{i}")
+    end
   end
   describe "GET #index" do
     context "when user has access" do
@@ -64,6 +69,38 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
     end
   end
 
+  describe 'POST #generate_correspondence' do
+    let(:params) { { file_numbers: '123456789,987654321', count: 2 } }
+    let(:valid_veterans) { ['123456789'] }
+    let(:invalid_veterans) { ['987654321'] }
+
+    before do
+      allow(controller).to receive(:classify_file_numbers).and_return({ valid: valid_veterans, invalid: invalid_veterans })
+      allow(controller).to receive(:connect_corr_with_vet)
+    end
+
+    it 'classifies file numbers' do
+      post :generate_correspondence, params: params
+
+      expect(controller).to have_received(:classify_file_numbers).with(['123456789', '987654321'])
+    end
+
+    it 'connects correspondences with valid veterans' do
+      post :generate_correspondence, params: params
+
+      expect(controller).to have_received(:connect_corr_with_vet).with(valid_veterans, 2)
+    end
+
+    it 'returns valid and invalid file numbers in response' do
+      post :generate_correspondence, params: params
+
+      expect(response).to have_http_status(:created)
+      json_response = JSON.parse(response.body)
+      expect(json_response['valid_file_nums']).to eq(valid_veterans)
+      expect(json_response['invalid_file_numbers']).to eq(invalid_veterans)
+    end
+  end
+
   describe "private methods" do
     describe "#verify_access" do
       context "when user is an admin" do
@@ -104,6 +141,73 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
 
         it "returns true" do
           expect(controller.send(:access_allowed?)).to be true
+        end
+      end
+    end
+
+    describe '#connect_corr_with_vet' do
+      let(:valid_veterans) { ['123456789'] }
+      let(:count) { 3 }
+      let(:veteran) { create(:veteran, file_number: '123456789') }
+
+      before do
+        allow(Veteran).to receive(:find_by_file_number).with('123456789').and_return(veteran)
+      end
+
+      it 'creates correspondences for valid veterans' do
+        expect {
+          controller.send(:connect_corr_with_vet, valid_veterans, count)
+        }.to change { Correspondence.count }.by(3)
+      end
+
+      it 'increments cmp_packet_number for each correspondence' do
+        controller.send(:connect_corr_with_vet, valid_veterans, count)
+        expect(Correspondence.last.cmp_packet_number).to eq(3000000002)
+      end
+    end
+
+    describe '#classify_file_numbers' do
+      let(:file_numbers) { ['123456789', '987654321', '111222333'] }
+
+      before do
+        allow(controller).to receive(:valid_veteran?).with('123456789').and_return(true)
+        allow(controller).to receive(:valid_veteran?).with('987654321').and_return(false)
+        allow(controller).to receive(:valid_veteran?).with('111222333').and_return(true)
+      end
+
+      it 'classifies file numbers into valid and invalid arrays' do
+        result = controller.send(:classify_file_numbers, file_numbers)
+        expect(result[:valid]).to contain_exactly('123456789', '111222333')
+        expect(result[:invalid]).to contain_exactly('987654321')
+      end
+    end
+
+    describe '#valid_veteran?' do
+      let(:file_number) { '123456789' }
+      let(:veteran) { create(:veteran, file_number: file_number) }
+
+      context 'when in UAT environment' do
+        before do
+          allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+        end
+
+        it 'returns true if veteran is found in UAT' do
+          allow(VeteranFinder).to receive(:find_best_match).with(file_number).and_return(veteran)
+          allow(veteran).to receive(:fetch_bgs_record).and_return(true)
+
+          expect(controller.send(:valid_veteran?, file_number)).to be_truthy
+        end
+      end
+
+      context 'when in other environments' do
+        before do
+          allow(Rails).to receive(:deploy_env?).with(:uat).and_return(false)
+        end
+
+        it 'returns true if veteran is found in database' do
+          allow(Veteran).to receive(:find_by).with(file_number: file_number).and_return(veteran)
+
+          expect(controller.send(:valid_veteran?, file_number)).to be_truthy
         end
       end
     end
