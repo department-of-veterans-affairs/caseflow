@@ -181,6 +181,7 @@ paths:
       parameters:
         - in: path
           name: appeal_id
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type: string
           required: true
@@ -632,6 +633,7 @@ paths:
       parameters:
         - in: path
           name: appeal_id
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type: string
           required: true
@@ -893,6 +895,7 @@ paths:
       parameters:
         - in: path
           name: distribution_id
+          example: 1234
           schema:
             type: string
           required: true
