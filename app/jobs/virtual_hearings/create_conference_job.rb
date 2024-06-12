@@ -31,16 +31,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     )
   end
 
-  retry_on(IncompleteError, attempts: 5, wait: :exponentially_longer) do |job, exception|
+  retry_on(IncompleteError, attempts: 10, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
-  retry_on(VirtualHearingNotCreatedError, attempts: 5, wait: :exponentially_longer) do |job, exception|
+  retry_on(VirtualHearingNotCreatedError, attempts: 10, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
   # Retry if Pexip returns an invalid response.
-  retry_on(Caseflow::Error::PexipApiError, attempts: 5, wait: :exponentially_longer) do |job, exception|
+  retry_on(Caseflow::Error::PexipApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     kwargs = job.arguments.first
