@@ -35,7 +35,7 @@ info:
 security:
   - bearerAuth: []
 servers:
-- url: /
+- url: /api/v3/decision_reviews/
 paths:
   /higher_level_reviews:
     post:
@@ -474,6 +474,7 @@ paths:
           in: path
           required: true
           description: Decision Review UUID
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             $ref: "#/components/schemas/Uuid"
       summary: Check a Decision Review's (Higher-Level Review, Supplemental Claim, Board Appeal) intake status.
@@ -591,6 +592,7 @@ paths:
           in: path
           required: true
           description: UUID of a Higher-Level Review
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type : string
             format: uuid
@@ -927,9 +929,14 @@ paths:
           in: header
           required: true
           description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
+          example: '2000-01-01'
           schema:
             type: string
             format: date
+      servers:
+        - url: /api/v3/decision_reviews/higher_level_reviews/
+        - url: /api/v3/decision_reviews/supplemental_claims/
+        - url: /api/v3/decision_reviews/appeals/
       summary: Returns all contestable issues for a specific veteran.
       description: >-
         Returns all issues a Veteran could contest in a Decision Review
