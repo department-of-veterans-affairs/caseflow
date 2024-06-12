@@ -29,6 +29,16 @@ class Correspondence < CaseflowRecord
     "Correspondence"
   end
 
+  # Alias for cmp_packet_number
+  def docket_number
+    nil
+  end
+
+  # Alias for package_document_type.name
+  def docket_name
+    nil
+  end
+
   # Cannot use has_many :tasks - Task model does not contain a correspondence_id column
   def tasks
     Task.where(appeal_id: id, appeal_type: type)
