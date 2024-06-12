@@ -226,14 +226,15 @@
       }
     }
 
-    .issues {
+    .issues,
+    .issue-modifications {
       display: table;
       width: 100%;
 
       .issue {
         display: table-row;
 
-        div {
+        > div {
           display: table-cell;
           padding: 1em 0;
         }
@@ -297,7 +298,7 @@
 
         .issue-action {
           padding: 0;
-          width: 140px;
+          width: 150px;
           display: block;
 
           button {

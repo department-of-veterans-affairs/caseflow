@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
     return;
@@ -51,6 +53,20 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),
       decider: formatUserForPendingRequest(modificationRequest.decider),
+      identifier: String(modificationRequest.id) || v4()
     };
   });
+};
+
+export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  return {
+    id: String(issueModificationRequest.requestIssue.id),
+    benefitType: issueModificationRequest.benefitType,
+    description: `${issueModificationRequest.nonratingIssueCategory} -
+      ${issueModificationRequest.nonratingIssueDescription}`,
+    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    decisionDate: issueModificationRequest.decisionDate,
+    category: issueModificationRequest.nonratingIssueCategory,
+    editable: true,
+  };
 };
