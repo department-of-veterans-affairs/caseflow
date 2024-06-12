@@ -5,6 +5,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
   end
 
   after do
