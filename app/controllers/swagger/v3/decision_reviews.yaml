@@ -33,10 +33,7 @@ info:
 
   version: 3.0.0
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /
 paths:
   /higher_level_reviews:
     post:
@@ -583,7 +580,6 @@ paths:
                       status: 500,
                       code: unknown_error
                       title: "Unknown error"
-
   /higher_level_reviews/{uuid}:
     get:
       tags:

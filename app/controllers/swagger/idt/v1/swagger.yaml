@@ -12,12 +12,9 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /idt/api/v1/
 paths:
-  /idt/api/v1/addresses/validate:
+  /addresses/validate:
     post:
       tags:
         - Address Validation
@@ -171,7 +168,7 @@ paths:
                     type: string
                 example:
                   message: 'Lighthouse API Error ID: 322483ae-7953-4d3c-9738-e108506d52c2 An unexpected error occurred, please try again.'
-  /idt/api/v1/appeals/{appeal_id}/upload_document:
+  /appeals/{appeal_id}/upload_document:
     post:
       tags:
         - Document Posting
@@ -396,7 +393,7 @@ paths:
                       message:
                         type: string
                         example: "Unexpected error: job error"
-  /idt/api/v1/upload_document:
+  /upload_document:
     post:
       tags:
         - Document Posting

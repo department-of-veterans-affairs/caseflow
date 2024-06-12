@@ -6,12 +6,9 @@ info:
 security:
   - bearer-key: []
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /api/v1/
 paths:
-  "/api/v1/cmp":
+  "/cmp":
     $ref: "./v1/upload.yml"
 components:
   securitySchemes:

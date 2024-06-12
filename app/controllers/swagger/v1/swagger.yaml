@@ -8,19 +8,7 @@ servers:
   description: Local Development server
 - url: https://appeals.cf.uat.ds.va.gov
   description: UAT/Staging server
-paths:
-  "/api/v1/jobs":
-    post:
-      summary: create job
-      responses:
-        '200':
-          description: successful
-  "/api/v1/mpi":
-    post:
-      summary: veteran_updates mpi
-      responses:
-        '200':
-          description: successful
+paths: {}
 components:
   securitySchemes:
     ApiKeyAuth:

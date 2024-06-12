@@ -34,12 +34,9 @@ info:
 
   version: 3.0.0
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /api/v3/
 paths:
-  /api/v3/issues/vacols/find_by_veteran:
+  /issues/vacols/find_by_veteran:
     get:
       tags:
         - VACOLS Issues
