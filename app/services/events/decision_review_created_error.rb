@@ -26,8 +26,9 @@ class Events::DecisionReviewCreatedError
       if redis.exists("RedisMutex:EndProductEstablishment:#{errored_claim_id}")
         fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id}
          is already in the Redis Cache"
-      end      # Throws error for specific Consumer Claim IDs to test Consumer error handling
-      
+      end
+
+      # Throws error for specific Consumer Claim IDs to test Consumer error handling
       if errored_claim_id == 225588774
         fail RedisMutex::LockError, "DRCE RedisLockFailed message"
       elsif errored_claim_id == 336655228
