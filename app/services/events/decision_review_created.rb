@@ -29,6 +29,11 @@ class Events::DecisionReviewCreated
         # Use the consumer_event_id to retrieve/create the Event object
         event = find_or_create_event(consumer_event_id)
 
+        # Throws error for specific Consumer Claim ID to test Consumer error handling
+        if reference_id == 885544332
+          fail StandardError, "DRC StandardError message"
+        end
+
         ActiveRecord::Base.transaction do
           # Initialize the Parser object that will be passed around as an argument
           parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
