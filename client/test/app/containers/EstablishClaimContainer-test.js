@@ -1,42 +1,48 @@
-import React from 'react';
-import { mount } from 'enzyme';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
-import { WrappingComponent } from '../establishClaim/WrappingComponent';
-import EstablishClaimContainer from '../../../app/containers/EstablishClaimPage/EstablishClaimContainer';
+import { WrappingComponent } from "../establishClaim/WrappingComponent";
+import EstablishClaimContainer from "../../../app/containers/EstablishClaimPage/EstablishClaimContainer";
 
-describe('EstablishClaimContainer', () => {
-  let wrapper;
+describe("EstablishClaimContainer", () => {
+  const setup = () => {
+    render(<EstablishClaimContainer page="TestPage" otherProp="foo" />, {
+      wrapper: WrappingComponent,
+    });
+  };
 
-  beforeEach(() => {
-    wrapper = mount(<EstablishClaimContainer page="TestPage" otherProp="foo" />, {
-      wrappingComponent: WrappingComponent
+  describe("sub-page", () => {
+    it("renders", () => {
+      setup();
+      expect(screen.getByText("Test Page")).toBeInTheDocument();
     });
   });
 
-  describe('sub-page', () => {
-    it('renders', () => {
-      expect(wrapper.find('.sub-page')).toHaveLength(1);
-    });
-  });
-
-  describe('renders alerts', () => {
-    it('hides alert if none in state', () => {
-      expect(wrapper.state().alert).toBeNull();
-      expect(wrapper.find('.usa-alert')).toHaveLength(0);
+  describe("renders alerts", () => {
+    it("hides alert if none in state", () => {
+      setup();
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
 
-    it('shows alert if alert in state', () => {
-      expect(wrapper.state().alert).toBeNull();
-      wrapper.find('.handleAlert').simulate('click');
-      expect(wrapper.state().alert).not.toBeNull();
-      expect(wrapper.find('.usa-alert')).toHaveLength(1);
+    it("shows alert if alert in state", () => {
+      setup();
+      const alert = screen.queryByRole("alert");
+      const handleAlert = screen.getByTestId("test-page-handle-alert");
+
+      expect(alert).not.toBeInTheDocument();
+      fireEvent.click(handleAlert);
+      expect(screen.getByRole("alert")).toBeInTheDocument();
     });
 
-    it('clears alert when triggered', () => {
-      wrapper.find('.handleAlert').simulate('click');
-      expect(wrapper.state().alert).not.toBeNull();
-      wrapper.find('.handleAlertClear').simulate('click');
-      expect(wrapper.state().alert).toBeNull();
+    it("clears alert when triggered", () => {
+      setup();
+      const handleAlert = screen.getByTestId("test-page-handle-alert");
+      const handleAlertClear = screen.getByTestId("test-page-handle-alert-clear");
+
+      fireEvent.click(handleAlert);
+      expect(screen.getByRole("alert")).toBeInTheDocument();
+      fireEvent.click(handleAlertClear);
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 });
