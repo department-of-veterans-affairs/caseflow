@@ -28,10 +28,10 @@ module QueueHelpers
       uuid: SecureRandom.uuid,
       correspondence_type_id: corr_type&.id,
       va_date_of_receipt: receipt_date,
-      notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
+      notes: generate_notes([corr_type, receipt_date, user]),
       veteran_id: vet.id,
       nod: [true, false].sample,
-    ).tap
+    )
   end
 
   # randomly generates notes for the correspondence
