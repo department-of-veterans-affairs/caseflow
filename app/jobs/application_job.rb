@@ -4,7 +4,8 @@ require_relative "../exceptions/standard_error"
 
 class ApplicationJob < ActiveJob::Base
   class InvalidJobPriority < StandardError; end
-  DELETE_SQS_MESSAGE_BEFORE_START = true
+  DELETE_SQS_MESSAGE_BEFORE_START = false
+  IGNORE_JOB_EXECUTION_TIME = false
 
   class << self
     def queue_with_priority(priority)
@@ -17,12 +18,6 @@ class ApplicationJob < ActiveJob::Base
 
     def application_attr(app_name)
       @app_name = app_name
-    end
-
-    # For jobs that run multiple times in a short time span, we do not want to continually update
-    # the JobsExecutionTime table. This boolean will help us ignore those jobs
-    def ignore_job_execution_time?
-      false
     end
 
     attr_reader :app_name
@@ -57,7 +52,7 @@ class ApplicationJob < ActiveJob::Base
     end
 
     # Check whether Job execution time should be tracked
-    unless self.class.ignore_job_execution_time?
+    unless self.class::IGNORE_JOB_EXECUTION_TIME
       # Add Record to JobExecutionTimes to track the current job execution time
       JobExecutionTime.upsert(
         { job_name: self.class.to_s,
