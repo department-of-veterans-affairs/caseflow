@@ -11,6 +11,7 @@ class Intake::DecisionReviewSerializer
   end
   attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
+  # attribute :processed_in_vbms, &:processed_from_vbms?
   attribute :legacy_opt_in_approved
   attribute :legacy_appeals, &:serialized_legacy_appeals
   attribute :ratings, &:serialized_ratings
@@ -19,16 +20,14 @@ class Intake::DecisionReviewSerializer
   attribute :veteran_invalid_fields
   attribute :request_issues, &:request_issues_ui_hash
 
-  attribute :decision_issues do |object|
-    object.decision_issues.map(&:serialize)
+  attribute :active_nonrating_request_issues do |object|
+    object.active_nonrating_request_issues.map(&:serialize)
   end
 
   attribute :processed_in_vbms do |object|
-    object.processed_from_vbms?
-  end
-
-  attribute :active_nonrating_request_issues do |object|
-    object.active_nonrating_request_issues.map(&:serialize)
+    if object.is_a?(HigherLevelReview)
+      object&.processed_from_vbms?
+    end
   end
 
   attribute :contestable_issues_by_date do |object|
