@@ -35,7 +35,7 @@ RSpec.configure do |config|
       },
       security: SECURITY,
       servers: [
-        url: '/api/v1'
+        url: "/api/v1"
       ],
       paths: {},
       components: {
@@ -50,7 +50,7 @@ RSpec.configure do |config|
       },
       security: SECURITY,
       servers: [
-        url: '/api/v2'
+        url: "/api/v2"
       ],
       paths: {},
       components: {
@@ -65,7 +65,7 @@ RSpec.configure do |config|
       },
       security: SECURITY,
       servers: [
-        url: '/api/v3'
+        url: "/api/v3"
       ],
       paths: {},
       components: {
