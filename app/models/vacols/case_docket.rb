@@ -592,9 +592,10 @@ class VACOLS::CaseDocket < VACOLS::Record
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
       end
 
-      # {if deciding_judge is ineligible or excluded, we will skip}
+      # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}
       next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
-              excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"])
+              (appeal["vlj"] != appeal["prev_deciding_judge"] &&
+                excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"]))
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
         next if appeal["prev_deciding_judge"] == judge.vacols_attorney_id
