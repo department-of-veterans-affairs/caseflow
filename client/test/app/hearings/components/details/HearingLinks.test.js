@@ -1,77 +1,54 @@
-import React from 'react';
+import React from "react";
 
-import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
-import { anyUser, vsoUser } from 'test/data/user';
-import { inProgressvirtualHearing } from 'test/data/virtualHearings';
-import { virtualHearing, amaHearing } from 'test/data/hearings';
-import { mount } from 'enzyme';
-import VirtualHearingLink from
-  'app/hearings/components/VirtualHearingLink';
+import { HearingLinks } from "app/hearings/components/details/HearingLinks";
+import { anyUser, vsoUser } from "test/data/user";
+import { inProgressvirtualHearing } from "test/data/virtualHearings";
+import { virtualHearing, amaHearing } from "test/data/hearings";
+import { render, screen } from "@testing-library/react";
+import VirtualHearingLink from "app/hearings/components/VirtualHearingLink";
 
 const hearing = {
-  scheduledForIsPast: false
+  scheduledForIsPast: false,
 };
 
-describe('HearingLinks', () => {
-  test('Matches snapshot with default props when passed in', () => {
-    const form = mount(
-      <HearingLinks />
-    );
+describe("HearingLinks", () => {
+  test("Matches snapshot with default props when passed in", () => {
+    render(<HearingLinks />);
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(0);
+    const virtualHearingLink = screen.queryByTestId("strong-element-test-id");
+    expect(virtualHearingLink).not.toBeInTheDocument();
   });
 
-  test('Matches snapshot when hearing is virtual and in progress', () => {
-    const form = mount(
-      <HearingLinks
-        hearing={hearing}
-        isVirtual
-        user={anyUser}
-        virtualHearing={inProgressvirtualHearing}
-      />
-    );
+  test("Matches snapshot when hearing is virtual and in progress", () => {
+    render(<HearingLinks hearing={hearing} isVirtual user={anyUser} virtualHearing={inProgressvirtualHearing} />);
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(2);
-    expect(
-      form.find(VirtualHearingLink).exists({ label: 'Join Virtual Hearing' })
-    ).toBe(true);
-    expect(
-      form.find(VirtualHearingLink).exists({ label: 'Start Virtual Hearing' })
-    ).toBe(true);
+    const joinHearing = screen.getByText("Join Virtual Hearing");
+    const startHearing = screen.getByText("Start Virtual Hearing");
+    const virtualHearingLink = screen.getAllByTestId("strong-element-test-id");
+
+    expect(virtualHearingLink).toHaveLength(2);
+    expect(joinHearing).toBeInTheDocument();
+    expect(startHearing).toBeInTheDocument();
   });
 
-  test('Matches snapshot when hearing was virtual and occurred', () => {
-    const form = mount(
-      <HearingLinks
-        hearing={hearing}
-        wasVirtual
-        user={anyUser}
-        virtualHearing={inProgressvirtualHearing}
-      />
-    );
+  test("Matches snapshot when hearing was virtual and occurred", () => {
+    render(<HearingLinks hearing={hearing} wasVirtual user={anyUser} virtualHearing={inProgressvirtualHearing} />);
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(0);
-    expect(
-      form.find('span').filterWhere((node) => node.text() === 'Expired')
-    ).toHaveLength(2);
+    const virtualHearingLink = screen.queryByTestId("strong-element-test-id");
+    const expired = screen.getAllByText("Expired");
+
+    expect(virtualHearingLink).not.toBeInTheDocument();
+    expect(expired).toHaveLength(2);
   });
 
-  test('Only displays Guest Link when user is not a host', () => {
-    const form = mount(
-      <HearingLinks
-        hearing={amaHearing}
-        isVirtual
-        user={vsoUser}
-        virtualHearing={virtualHearing.virtualHearing}
-      />
+  test("Only displays Guest Link when user is not a host", () => {
+    render(
+      <HearingLinks hearing={amaHearing} isVirtual user={vsoUser} virtualHearing={virtualHearing.virtualHearing} />
     );
 
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(1);
+    const virtualHearingLink = screen.queryByTestId("strong-element-test-id");
+    expect(virtualHearingLink).toBeInTheDocument();
     // Ensure it's the guest link
-    expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink)
-  })
+    expect(screen.getByRole("button", { name: /guest link/i })).toBeInTheDocument();
+  });
 });

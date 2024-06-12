@@ -1,27 +1,21 @@
-import { css } from 'glamor';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { css } from "glamor";
+import Link from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link";
+import PropTypes from "prop-types";
+import React from "react";
 
-import { COLORS } from '../../constants/AppConstants';
-import { ExternalLinkIcon } from '../../components/icons/ExternalLinkIcon';
+import { COLORS } from "../../constants/AppConstants";
+import { ExternalLinkIcon } from "../../components/icons/ExternalLinkIcon";
 
-const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
+const ICON_POSITION_FIX = css({ position: "relative", top: 1 });
 
-const VirtualHearingLink = ({
-  isVirtual,
-  newWindow,
-  link,
-  virtualHearing,
-  label
-}) => {
+const VirtualHearingLink = ({ isVirtual, newWindow, link, virtualHearing, label }) => {
   if (!isVirtual) {
     return null;
   }
 
   return (
-    <Link href={link} target={newWindow ? '_blank' : '_self'}>
-      <strong>{label}</strong>
+    <Link href={link} target={newWindow ? "_blank" : "_self"}>
+      <strong data-testid="strong-element-test-id">{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
         <ExternalLinkIcon color={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
@@ -36,24 +30,18 @@ VirtualHearingLink.propTypes = {
   newWindow: PropTypes.bool,
   virtualHearing: PropTypes.shape({
     status: PropTypes.string,
-    guestPin: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string
-    ]),
-    hostPin: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string
-    ]),
+    guestPin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    hostPin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     aliasWithHost: PropTypes.string,
-    jobCompleted: PropTypes.bool
+    jobCompleted: PropTypes.bool,
   }).isRequired,
-  label: PropTypes.string
+  label: PropTypes.string,
 };
 
 VirtualHearingLink.defaultProps = {
   isVirtual: false,
   newWindow: true,
-  showFullLink: false
+  showFullLink: false,
 };
 
 export default VirtualHearingLink;
