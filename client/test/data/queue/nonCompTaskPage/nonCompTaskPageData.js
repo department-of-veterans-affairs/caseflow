@@ -88,7 +88,6 @@ const completedHLRTaskData = {
     claimantName: 'Bob Smithgreen',
     veteranIsNotClaimant: false,
     processedInCaseflow: true,
-    processedInVbms: false,
     legacyOptInApproved: false,
     legacyAppeals: [],
     ratings: null,
@@ -398,6 +397,7 @@ const completedHLRTaskData = {
     hasClearedNonratingEp: false,
     informalConference: false,
     sameOffice: null,
+    processedInVbms: false,
     formType: 'higher_level_review'
   },
   selectedTask: null,

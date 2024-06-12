@@ -239,9 +239,6 @@ export const commonStateFromServerIntake = (serverIntake) => {
     processedInCaseflow: {
       $set: serverIntake.processedInCaseflow
     },
-    processedInVbms: {
-      $set: serverIntake.processedInVbms
-    },
     legacyOptInApproved: {
       $set: serverIntake.legacyOptInApproved
     },
