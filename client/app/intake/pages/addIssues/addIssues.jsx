@@ -232,7 +232,8 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
-      isLegacy
+      isLegacy,
+      intakeFromVbms
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
@@ -440,6 +441,13 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const intakeSystemLabelRow = () => {
+      return {
+        field: 'Intake System',
+        content: intakeFromVbms ? 'VBMS' : 'Caseflow'
+      };
+    };
+
     let rowObjects = fieldsForFormType;
 
     Object.keys(issuesBySection).sort().
@@ -459,6 +467,7 @@ class AddIssuesPage extends React.Component {
         };
 
         if (key === 'requestedIssues') {
+          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
@@ -466,6 +475,7 @@ class AddIssuesPage extends React.Component {
             }),
           );
         } else if (key === 'withdrawnIssues') {
+          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
@@ -474,6 +484,7 @@ class AddIssuesPage extends React.Component {
           );
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
+          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
@@ -692,7 +703,8 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
-    isLegacy: state.isLegacy
+    isLegacy: state.isLegacy,
+    intakeFromVbms: state.intakeFromVbms
   }),
   (dispatch) =>
     bindActionCreators(
