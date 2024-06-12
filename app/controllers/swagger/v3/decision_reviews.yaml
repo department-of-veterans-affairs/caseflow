@@ -32,6 +32,8 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
 - url: /
 paths:
@@ -1414,7 +1416,7 @@ components:
                     * `canceled` - The DecisionReview has been successfully canceled.
                     * `processed` - The DecisionReview has been processed and transmitted to the appropriate government agency.
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

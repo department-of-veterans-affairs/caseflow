@@ -4,7 +4,7 @@ info:
   title: API V1
   version: v1
 security:
-  - bearer-key: []
+  - bearerAuth: []
 servers:
 - url: /api/v1/
 paths:
@@ -12,10 +12,10 @@ paths:
     $ref: "./v1/upload.yml"
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow
   schemas:
     payload:
       $ref: "./v1/payload.yml"

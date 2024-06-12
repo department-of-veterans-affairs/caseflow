@@ -3,6 +3,8 @@ openapi: 3.0.2
 info:
   title: API V2
   version: V2
+security:
+  bearerAuth: []
 servers:
 - url: "/api/v2"
 paths:
@@ -14,7 +16,7 @@ paths:
           description: successful
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

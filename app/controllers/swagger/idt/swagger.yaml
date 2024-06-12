@@ -11,6 +11,8 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
+security:
+  - bearerAuth: []
 servers:
 - url: /
 paths:
@@ -1374,7 +1376,7 @@ components:
           type: number
           format: double
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

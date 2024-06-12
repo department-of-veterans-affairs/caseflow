@@ -33,6 +33,8 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
 - url: /api/v3/
 paths:
@@ -273,7 +275,7 @@ components:
               type: string
               description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow
