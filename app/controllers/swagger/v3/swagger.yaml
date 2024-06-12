@@ -4,10 +4,7 @@ info:
   title: API V3
   version: V3
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: "/api/v3"
 paths: {}
 components:
   securitySchemes:
