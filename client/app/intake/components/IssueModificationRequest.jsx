@@ -41,10 +41,11 @@ const IssueModificationRequest = ({
 
   const generateActionOptions = (type) => {
     let options = [];
-    const label = userIsVhaAdmin ? 'Review issue' : 'Edit';
+    const isAddition = type === 'addition' ? 'issue' : '';
+    const action = userIsVhaAdmin ? 'Review issue' : `Edit ${isAddition}`;
 
     options.push({
-      label: `${label} ${requestType} request`,
+      label: `${action} ${requestType} request`,
       value: `reviewIssue${capitalize(requestType)}Request`
     });
 
