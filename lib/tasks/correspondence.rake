@@ -166,6 +166,7 @@ def create_correspondence_types
     CorrespondenceType.find_or_create_by(name: type)
   end
 end
+
 # rubocop:enable Metrics/MethodLength
 # generate the doctype and description from VBMS doc type list
 def generate_vbms_doc_type(nod)

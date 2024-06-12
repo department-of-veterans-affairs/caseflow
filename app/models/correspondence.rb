@@ -54,8 +54,6 @@ class Correspondence < CaseflowRecord
   end
 
   # Methods below are included to allow Correspondences to render in explain page
-
-
   def veteran_full_name
     veteran.name
   end
