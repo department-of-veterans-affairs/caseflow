@@ -175,6 +175,12 @@ export const adminAddRequestIssue = (issueModificationRequest) => (
   }
 );
 
+export const adminModifyRequestIssueKeepOriginal = (issueModificationRequest) => (
+  {
+    type: ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL,
+    payload: { issueModificationRequest }
+  }
+);
 export const updatePendingReview = (issueModificationRequest, requestIssueId) => (
   {
     type: ACTIONS.UPDATE_PENDING_REVIEW,

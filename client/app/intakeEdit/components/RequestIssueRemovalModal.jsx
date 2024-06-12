@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import CurrentIssue from './RequestCommonComponents/CurrentIssue';
 import RequestReason from './RequestCommonComponents/RequestReason';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
-import IssueApprovalDenialSection from 'app/intakeEdit/components/RequestCommonComponents/IssueApprovalDenialSection';
+import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const removalSchema = yup.object({
@@ -26,7 +26,7 @@ const RequestIssueRemovalContent = ({
       <CurrentIssue currentIssue={originalIssue} title={currentIssueTitle} />
 
       <RequestReason label="removal" />
-      {userIsVhaAdmin ? <IssueApprovalDenialSection /> : null}
+      {userIsVhaAdmin ? <RequestIssueStatus /> : null}
     </div>
   );
 };

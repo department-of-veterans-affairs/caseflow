@@ -301,6 +301,16 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
+    };
+  };
+
   return actionsMap;
 };
 

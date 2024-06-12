@@ -6,7 +6,7 @@ import RequestReason from './RequestCommonComponents/RequestReason';
 import { useFormContext } from 'react-hook-form';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
 import DateSelector from 'app/components/DateSelector';
-import IssueApprovalDenialSection from 'app/intakeEdit/components/RequestCommonComponents/IssueApprovalDenialSection';
+import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 
@@ -38,7 +38,7 @@ const RequestIssueWithdrawalContent = ({ currentIssue, pendingIssueModificationR
         type="date" />
       <RequestReason
         label="withdrawal" />
-      {userIsVhaAdmin ? <IssueApprovalDenialSection /> : null}
+      {userIsVhaAdmin ? <RequestIssueStatus /> : null}
     </div>
   );
 };

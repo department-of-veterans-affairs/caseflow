@@ -7,7 +7,7 @@ import IssueTypeSelector from './RequestCommonComponents/IssueTypeSelector';
 import PriorDecisionDateAlert from './RequestCommonComponents/PriorDecisionDateAlert';
 import PriorDecisionDateSelector from './RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from './RequestCommonComponents/IssueDescription';
-import IssueApprovalDenialSection from 'app/intakeEdit/components/RequestCommonComponents/IssueApprovalDenialSection';
+import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const additionSchema = yup.object({
@@ -28,7 +28,7 @@ const RequestIssueAdditionContent = () => {
       <PriorDecisionDateSelector />
       <IssueDescription />
       <RequestReason label="addition" />
-      {userIsVhaAdmin ? <IssueApprovalDenialSection /> : null}
+      {userIsVhaAdmin ? <RequestIssueStatus /> : null}
     </div>
   );
 };

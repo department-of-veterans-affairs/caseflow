@@ -102,10 +102,16 @@ export const RequestIssueFormWrapper = (props) => {
           dispatch(updatePendingReview(enhancedData));
         }
         dispatch(updatePendingReview(enhancedData));
-      break;
+        break;
       case 'modification':
         if (issueModificationRequest.status === 'approve') {
-          debugger;
+          if (issueModificationRequest.removeOriginalIssue) {
+            console.log('here comes the validation section');
+          } else {
+            const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
+
+            dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
+          }
         }
         dispatch(updatePendingReview(enhancedData));
         break;
