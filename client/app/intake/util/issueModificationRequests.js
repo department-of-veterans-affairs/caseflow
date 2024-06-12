@@ -101,3 +101,16 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
 
   return groupedRequests;
 };
+
+export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  return {
+    id: String(issueModificationRequest.requestIssue.id),
+    benefitType: issueModificationRequest.benefitType,
+    description: `${issueModificationRequest.nonratingIssueCategory} -
+      ${issueModificationRequest.nonratingIssueDescription}`,
+    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    decisionDate: issueModificationRequest.decisionDate,
+    category: issueModificationRequest.nonratingIssueCategory,
+    editable: true,
+  };
+};

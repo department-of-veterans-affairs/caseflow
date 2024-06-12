@@ -57,7 +57,7 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def edit_from_params!(attributes, current_user)
-    unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
+    unless allowed_to_update?(attributes, current_user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
@@ -75,7 +75,7 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def cancel_from_params!(attributes, current_user)
-    unless attributes[:status].casecmp("assigned").zero? && requestor == current_user
+    unless allowed_to_update?(attributes, current_user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
@@ -106,5 +106,9 @@ class IssueModificationRequest < CaseflowRecord
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
+  end
+
+  def allowed_to_update?(attributes, user)
+    attributes[:status].casecmp("assigned").zero? && requestor == user
   end
 end
