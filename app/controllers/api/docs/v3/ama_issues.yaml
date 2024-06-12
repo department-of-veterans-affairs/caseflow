@@ -35,10 +35,7 @@ info:
 
   version: 3.0.0
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+  - url: '{{CaseflowInstance}}/api/v3/ama_issues'
 paths:
   /api/v3/issues/ama/find_by_veteran/{veteran_participant_id}:
     get:
@@ -534,8 +531,3 @@ components:
             updated_at:
               type: string
               description: "The date and time the record was updated"
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN

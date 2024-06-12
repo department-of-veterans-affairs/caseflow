@@ -2,7 +2,7 @@
 
 context "api/docs/v3/ama_issues.yaml" do
   let(:spec) do
-    YAML.safe_load(File.read(File.join(Rails.root, "app/controllers/swagger/v3/ama_issues.yaml")))
+    YAML.safe_load(File.read(File.join(Rails.root, "app/controllers/api/docs/v3/ama_issues.yaml")))
   end
 
   it "exists and is valid yaml" do

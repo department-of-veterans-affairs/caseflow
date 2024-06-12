@@ -74,7 +74,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       )
     end
 
-    scenario "submits draft decision", skip: "Flaky test" do
+    scenario "submits draft decision" do
       FeatureToggle.enable!(:additional_remand_reasons)
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
