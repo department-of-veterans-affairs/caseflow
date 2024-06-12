@@ -8,6 +8,10 @@ class TaskTreeController < ApplicationController
 
     no_cache
 
+    if FeatureToggle.enabled?(:eager_task_loading)
+      @tasks = Task.where(appeal_id: appeal.id).load
+    end
+
     respond_to do |format|
       format.html { render layout: "plain_application" }
       format.text { render plain: appeal.structure_render(tasks, *Task.column_names) }
