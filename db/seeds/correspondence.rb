@@ -22,6 +22,9 @@ module Seeds
         @file_number += 100
         @participant_id += 100
       end
+
+      @cmp_packet_number ||= 1_000_000_000
+      @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
     def create_veteran(options = {})
@@ -46,19 +49,30 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: 8,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
           veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
+        @cmp_packet_number += 1
       end
 
-      (1..77).each do
+      (1..77).each do |package_doc_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: package_doc_id,
           correspondence_type_id: 8,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id,
@@ -71,13 +85,19 @@ module Seeds
           pages: 30,
           correspondence_id: corres.id
         )
+        @cmp_packet_number += 1
       end
 
       (1..24).each do |corres_type_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id,
@@ -90,13 +110,19 @@ module Seeds
           pages: 30,
           correspondence_id: corres.id
         )
+        @cmp_packet_number += 1
       end
 
-      (1..17).each do
+      (1..17).each do |cmp_queue_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: 8,
+          cmp_queue_id: cmp_queue_id,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id,
@@ -109,6 +135,7 @@ module Seeds
           pages: 30,
           correspondence_id: corres.id
         )
+        @cmp_packet_number += 1
       end
     end
 
@@ -118,21 +145,32 @@ module Seeds
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: 8,
+          cmp_queue_id: 1,
           nod: true,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
+        @cmp_packet_number += 1
       end
 
       (1..24).each do |corres_type_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: corres_type_id,
+          cmp_queue_id: 1,
           nod: true,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id,
@@ -145,14 +183,20 @@ module Seeds
           pages: 30,
           correspondence_id: corres.id
         )
+        @cmp_packet_number += 1
       end
 
-      (1..17).each do
+      (1..17).each do |cmp_queue_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
           correspondence_type_id: 8,
+          cmp_queue_id: cmp_queue_id,
           nod: true,
+          cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note.",
           veteran_id: veteran.id,
@@ -165,6 +209,7 @@ module Seeds
           pages: 30,
           correspondence_id: corres.id
         )
+        @cmp_packet_number += 1
       end
     end
 

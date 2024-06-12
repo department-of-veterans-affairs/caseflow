@@ -7,7 +7,7 @@ class CorrespondenceQueueTab < QueueTab
 
   def task_includes
     [
-      { appeal: [:veteran] },
+      { appeal: [:package_document_type, :veteran] },
       :assigned_by,
       :assigned_to,
       :children,

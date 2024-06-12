@@ -11,6 +11,7 @@ RSpec.describe CorrespondenceIntake, type: :model do
       CorrespondenceType.create!(
         name: "a correspondence type"
       )
+      PackageDocumentType.create!
 
       FactoryBot.create(:veteran)
 

@@ -42,6 +42,9 @@ module Seeds
         @file_number += 100
         @participant_id += 100
       end
+
+      @cmp_packet_number ||= 2_000_000_000
+      @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
     # rubocop:disable Metrics/MethodLength
