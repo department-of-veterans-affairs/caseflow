@@ -55,7 +55,6 @@ describe Appeal, :all_dbs do
   context "includes PrintsTaskTree concern" do
     context "#structure" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:root_task) { create(:root_task, appeal: appeal, parent_id: nil) }
       let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
       subject { appeal.structure([root_task, child_task], :id) }
@@ -68,14 +67,18 @@ describe Appeal, :all_dbs do
 
     context "#structure_as_json" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:root_task) { create(:root_task, appeal: appeal, parent_id: nil) }
       let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
       subject { appeal.structure_as_json([root_task, child_task], :id) }
 
       it "returns the task tree as a hash" do
         expect(subject).to(
-          eq(Appeal: { id: appeal.id, tasks: [{ RootTask: { id: root_task.id, tasks: [root_task, child_task] } }] })
+          eq(
+            Appeal: {
+              id: appeal.id,
+              tasks: [{ RootTask: { id: root_task.id, tasks: [{ Task: { id: child_task.id, tasks: [] } }] } }]
+            }
+          )
         )
       end
     end
