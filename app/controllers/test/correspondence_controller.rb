@@ -10,17 +10,16 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def generate_correspondence
-    nums = correspondence_params[:file_numbers].split(',').map(&:strip).reject(&:empty?)
+    nums = correspondence_params[:file_numbers].split(",").map(&:strip).reject(&:empty?)
     invalid_nums = invalid_file_numbers(nums)
 
-    valid_file_nums = '78907'
+    valid_file_nums = "78907"
     # once after generating correspondence for these file numbers we have to send the response
     render json: {
       invalid_file_numbers: invalid_nums,
       valid_file_nums: valid_file_nums
     }, status: :created
   end
-
 
   private
 
@@ -62,33 +61,28 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def valid_veteran?(file_number)
-
     # if Rails.deploy_env?(:uat)
     # veteran = VeteranFinder.find_best_match(file_number)
 
     # return veteran&.fetch_bgs_record.present?
 
     # elsif Rails.deploy_env?(:demo)
-    veterans = Veteran.all.map do |veteran|
-      veteran.file_number
-    end
+    veterans = Veteran.all.map(&:file_number)
 
-    return veterans.any?(file_number.to_s)
+    veterans.any?(file_number.to_s)
 
     # end
   end
 
   def invalid_file_numbers(file_number_arr)
-
     invalid_file_num = []
 
-      file_number_arr.map do |vet_file_num|
-        if valid_veteran?(vet_file_num) === false
-          invalid_file_num.push(vet_file_num)
-        end
+    file_number_arr.map do |vet_file_num|
+      if valid_veteran?(vet_file_num) == false
+        invalid_file_num.push(vet_file_num)
       end
+    end
 
     invalid_file_num
   end
-
 end
