@@ -95,6 +95,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['confirmPendingRequestIssueModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;
@@ -206,12 +212,32 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_FROM_PENDING_REVIEW] = () => {
-    pendingIssueModificationRequests.splice(action.payload.index, 1);
+    if (action.payload.issueModificationRequest === null) {
+      pendingIssueModificationRequests.splice(action.payload.index, 1);
+
+      return {
+        ...state,
+        pendingIssueModificationRequests
+      };
+    }
 
     return {
       ...state,
-      pendingIssueModificationRequests
+      pendingIssueModificationRequests: pendingIssueModificationRequests.find(
+        (issue) => (issue.identifier !== action.payload.issueModificationRequest.identifier))
     };
+  };
+
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    return update(state, {
+      pendingIssueModificationRequests: {
+        [index]: {
+          $merge: action.payload.data
+        }
+      }
+    });
   };
 
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
@@ -251,32 +277,28 @@ export const commonReducers = (state, action) => {
   };
 
   // TODO: this probably needs to come from Jonathan's PR
-  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
-    const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
+  // actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+  //   const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
 
-    const modifiedPendingModificationRequest = pendingIssueModificationRequests.
-      map((pri) => modifiedIssueModificationRequest.
-        find((imr) => imr.id = pri.id) || pri);
+  //   const modifiedPendingModificationRequest = pendingIssueModificationRequests.
+  //     map((pri) => modifiedIssueModificationRequest.
+  //       find((imr) => imr.id = pri.id) || pri);
 
-    return {
-      ...state,
-      pendingIssueModificationRequests: modifiedPendingModificationRequest
-    };
-  };
+  //   return {
+  //     ...state,
+  //     pendingIssueModificationRequests: modifiedPendingModificationRequest
+  //   };
+  // };
 
   actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
-    listOfIssues[action.payload.requestIssueId].withdrawalPending =
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    listOfIssues[index].withdrawalPending =
       action.payload.issueModificationRequest.status === 'approve';
 
-    listOfIssues[action.payload.requestIssueId].pendingWithdrawalDate =
-      action.payload.issueModificationRequest.status === 'approve' ? action.payload.issueModificationRequest.withdrawalDate : '';
-
-    // // there should be a better way to do this.
-    // const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
-
-    // const modifiedPendingModificationRequest = pendingIssueModificationRequests.
-    //   map((pri) => modifiedIssueModificationRequest.
-    //     find((imr) => imr.id = pri.id) || pri);
+    listOfIssues[index].pendingWithdrawalDate =
+      action.payload.issueModificationRequest.status === 'approve' ?
+        action.payload.issueModificationRequest.withdrawalDate : '';
 
     return {
       ...state,

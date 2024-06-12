@@ -67,7 +67,6 @@ export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
     nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,
     category: issueModificationRequest.nonratingIssueCategory,
-    editable: true,
-    fromPendingIssues: issueModificationRequest?.fromPendingIssues
+    editable: true
   };
 };

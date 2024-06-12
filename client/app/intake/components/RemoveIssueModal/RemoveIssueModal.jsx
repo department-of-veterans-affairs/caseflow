@@ -13,7 +13,6 @@ const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
       <p>The contention you selected will be removed from the decision review.</p>
-      <p>Are you sure you want to remove this issue?</p>
     </div>;
   }
 
@@ -41,6 +40,8 @@ class RemoveIssueModal extends React.PureComponent {
     const removePendingIndex = intakeData.addedIssues.
       findIndex((issue) => issue?.id === pendingIssueModificationRequest?.requestIssue?.id);
 
+    const index = (userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) ? removePendingIndex : removeIndex;
+
     return <div className="intake-remove-issue">
       <Modal
         buttons={[
@@ -52,8 +53,7 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Remove',
             onClick: () => {
               this.props.closeHandler();
-              // dispatch(updatePendingReview(enhancedData));
-              this.props.removeIssue((userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) ? removePendingIndex : removeIndex);
+              this.props.removeIssue(index);
             }
           }
         ]}

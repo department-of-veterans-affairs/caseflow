@@ -52,29 +52,6 @@ export const toggleEditIntakeIssueModal = (index) => ({
   payload: { index }
 });
 
-export const toggleRequestIssueModificationModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_MODIFICATION_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueRemovalModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_REMOVAL_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueWithdrawalModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_WITHDRAWAL_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueAdditionModal = () => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
-});
-
-export const toggleCancelPendingRequestIssueModal = () => ({
-  type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL
-});
-
 export const setMstPactDetails = (editIssuesDetails) => ({
   type: ACTIONS.SET_MST_PACT_DETAILS,
   payload: { editIssuesDetails }
@@ -133,60 +110,6 @@ export const addIssue = (currentIssue) => (dispatch) => {
     }
   });
 };
-
-export const moveToPendingReviewSection = (issueModificationRequest, index) => (
-  {
-    type: ACTIONS.MOVE_TO_PENDING_REVIEW,
-    payload: { issueModificationRequest, index }
-  });
-
-export const addToPendingReviewSection = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADD_TO_PENDING_REVIEW,
-    payload: { issueModificationRequest }
-  }
-);
-
-export const removeFromPendingReviewSection = (index) => (
-  {
-    type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
-    payload: { index }
-  }
-);
-
-export const adminWithdrawRequestIssue = (issueModificationRequest, requestIssueId) => (
-  {
-    type: ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE,
-    payload: { issueModificationRequest, requestIssueId }
-  }
-);
-
-export const adminRemoveRequestIssue = (issueModificationRequest, requestIssueId) => (
-  {
-    type: ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE,
-    payload: { issueModificationRequest, requestIssueId }
-  }
-);
-
-export const adminAddRequestIssue = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADMIN_ADD_REQUESTED_ISSUE,
-    payload: { issueModificationRequest }
-  }
-);
-
-export const adminModifyRequestIssueKeepOriginal = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL,
-    payload: { issueModificationRequest }
-  }
-);
-export const updatePendingReview = (issueModificationRequest, requestIssueId) => (
-  {
-    type: ACTIONS.UPDATE_PENDING_REVIEW,
-    payload: { issueModificationRequest, requestIssueId }
-  }
-);
 
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
