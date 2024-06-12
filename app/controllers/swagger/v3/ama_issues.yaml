@@ -37,9 +37,9 @@ info:
 security:
   - bearerAuth: []
 servers:
-- url: /api/v3/
+- url: /api/v3/issues/ama/
 paths:
-  /issues/ama/find_by_veteran/{veteran_participant_id}:
+  /find_by_veteran/{veteran_participant_id}:
     get:
       tags:
         - Request Issues
@@ -48,6 +48,7 @@ paths:
           in: path
           required: true
           description: Veteran Participant ID
+          example: 123456789
           schema:
             $ref: "#/components/schemas/VeteranParticipantId"
         - in: query
