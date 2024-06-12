@@ -35,7 +35,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def update_cmp
     correspondence.update(
-      va_date_of_receipt: params["VADORDate"].in_time_zone,
+      va_date_of_receipt: params["VADORDate"].in_time_zone
     )
     correspondence.tasks.map do |task|
       if task.type == "ReviewPackageTask"
