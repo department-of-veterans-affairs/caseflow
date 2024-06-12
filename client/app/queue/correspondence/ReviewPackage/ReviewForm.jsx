@@ -35,7 +35,7 @@ export const ReviewForm = (props) => {
   };
 
   const saveButtonDisabled = () => {
-    return !props.disableButton || props.isReadOnly || dateError || saveChanges;
+    return props.isReadOnly || dateError || saveChanges;
   };
 
   const handleFileNumber = (value) => {
@@ -124,6 +124,7 @@ export const ReviewForm = (props) => {
   };
 
   const handleSubmit = async () => {
+    setSaveChanges(true);
     props.setCreateRecordIsReadOnly('');
     const correspondence = props;
     const payloadData = {
@@ -169,9 +170,10 @@ export const ReviewForm = (props) => {
     setSaveChanges(true);
   }, []);
 
-  // disable the contine button if the save button is active
+  // disable the create record button if the save button is active
+  // or there is no correspondence type
   useEffect(() => {
-    props.setCorrTypeSelected(!saveButtonDisabled());
+    props.setCorrTypeSelected(!saveButtonDisabled() || correspondenceTypeID === null);
   }, [saveButtonDisabled()]);
 
   const veteranFileNumStyle = () => {
