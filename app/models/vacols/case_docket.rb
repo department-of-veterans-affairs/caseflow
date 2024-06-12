@@ -577,6 +577,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.cavc_aod_affinity_filter(appeals, judge)
     appeals.reject! do |appeal|
+      # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
       next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
               (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
                 !appeal["vlj"].blank? &&
@@ -584,15 +585,20 @@ class VACOLS::CaseDocket < VACOLS::Record
                 appeal["vlj"] == judge.vacols_attorney_id) ||
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
+      # {if tied_to judge != judge being distributed to, we will skip if the judge is ineligible }
       if !appeal["vlj"].blank? &&
          (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
          (appeal["vlj"] != judge.vacols_attorney_id)
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
       end
 
-      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"])
+      # {if deciding_judge is ineligible or excluded, we will skip}
+      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
+              excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"])
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+        next if appeal["prev_deciding_judge"] == judge.vacols_attorney_id
+
         VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
           (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
             .appeal_affinity
@@ -605,6 +611,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.ineligible_judges_sattyids
     Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
+  end
+
+  def self.excluded_judges_sattyids
+    VACOLS::Staff.where(sdomainid: JudgeTeam.active
+        .where(exclude_appeals_from_affinity: true)
+        .flat_map(&:judge).compact.pluck(:css_id))&.pluck(:sattyid)
   end
 
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
@@ -648,9 +660,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.vacols_judges_with_exclude_appeals_from_affinity
     return "PREV_DECIDING_JUDGE = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
-    satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
-        .where(exclude_appeals_from_affinity: true)
-        .flat_map(&:judge).compact.pluck(:css_id)).pluck(:sattyid)
+    satty_ids = excluded_judges_sattyids
 
     if satty_ids.blank?
       "PREV_DECIDING_JUDGE = 'false'"
