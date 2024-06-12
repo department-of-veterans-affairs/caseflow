@@ -9,7 +9,7 @@ class CorrespondenceTasksController < TasksController
   ].freeze
 
   def create_package_action_task
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id], type: ReviewPackageTask.name)
+    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id])
     if review_package_task.children.present?
       render json:
       { message: "Existing package action request. Only one package action request may be made at a time" },
@@ -61,20 +61,19 @@ class CorrespondenceTasksController < TasksController
       appeal_id: params[:id],
       assigned_to: InboundOpsTeam.singleton,
       appeal_type: "Correspondence",
-      type: "CorrespondenceRootTask"
     )
     root_task.cancel_task_and_child_subtasks
   end
 
   def completed_package
-    remove_package_task = RemovePackageTask.find_by(appeal_id: params[:id], type: RemovePackageTask.name)
+    remove_package_task = RemovePackageTask.find_by(appeal_id: params[:id])
     remove_package_task.update!(
       assigned_to: current_user,
       status: Constants.TASK_STATUSES.completed,
       instructions: params[:instructions]
     )
 
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id], type: ReviewPackageTask.name)
+    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id])
     review_package_task.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 

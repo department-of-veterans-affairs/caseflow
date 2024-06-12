@@ -162,14 +162,14 @@ module Seeds
     def create_correspondence_with_review_package_and_failed_upload_task(user, veteran = {})
       corres = create_correspondence(user, veteran)
       assign_review_package_task(corres, user)
-      parent_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+      parent_task = ReviewPackageTask.find_by(appeal_id: corres.id)
       create_efolderupload_failed_task(corres, parent_task)
     end
 
     def create_correspondence_with_completed_root_task(user = {}, veteran = {})
       corres = create_correspondence(user, veteran)
       assign_review_package_task(corres, user)
-      rpt = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+      rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
       rpt.update!(status: Constants.TASK_STATUSES.completed)
       corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
       corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
