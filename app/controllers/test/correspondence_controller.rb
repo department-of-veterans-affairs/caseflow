@@ -11,17 +11,17 @@ class Test::CorrespondenceController < ApplicationController
 
   def generate_correspondence
     nums = correspondence_params[:file_numbers].split(",").map(&:strip).reject(&:empty?)
-    invalid_nums = invalid_file_numbers(nums)
-    valid_file_nums = valid_file_numbers(nums)
+    result = classify_file_numbers(nums)
+    invalid_nums = result[:invalid]
+    valid_file_nums = result[:valid]
 
     begin
       connect_corr_with_vet(valid_file_nums, correspondence_params[:count])
       return render json: {
         invalid_file_numbers: invalid_nums,
-        valid_file_nums: valid_file_nums,
-        # correspondence_size: correspondence_size
+        valid_file_nums: valid_file_nums
       }, status: :created
-      rescue StandardError => error
+    rescue StandardError => error
       log_error(error)
     end
 
@@ -68,51 +68,60 @@ class Test::CorrespondenceController < ApplicationController
   end
 
   def valid_veteran?(file_number)
-
     if Rails.deploy_env?(:uat)
-    veteran = VeteranFinder.find_best_match(file_number)
-    return veteran&.fetch_bgs_record.present?
-
+      veteran = VeteranFinder.find_best_match(file_number)
+      veteran&.fetch_bgs_record.present?
     else
-      veteran = Veteran.find_by(file_number: vet_file_num)
-      return veteran if veteran.present?
+      veteran = Veteran.find_by(file_number: file_number)
+      veteran.present?
+    end
+  end
+
+  def classify_file_numbers(file_number_arr)
+    valid_file_nums = []
+    invalid_file_nums = []
+
+    file_number_arr.each do |file_number|
+      if valid_veteran?(file_number)
+        valid_file_nums << file_number
+      else
+        invalid_file_nums << file_number
+      end
     end
 
-  end
-
-  def invalid_file_numbers(file_number_arr)
-
-    invalid_file_num = []
-
-      file_number_arr.map do |vet_file_num|
-        if valid_veteran?(vet_file_num) === false
-          invalid_file_num.push(vet_file_num)
-        end
-      end
-
-    return invalid_file_num
-  end
-
-  def valid_file_numbers(file_number_arr)
-
-    valid_file_num = []
-
-      file_number_arr.map do |vet_file_num|
-        if valid_veteran?(vet_file_num) === true
-          valid_file_num.push(vet_file_num)
-        end
-      end
-
-    return valid_file_num
-  end
-
-  def initial_values
-    @cmp_packet_number = 3000000000
+    { valid: valid_file_nums, invalid: invalid_file_nums }
   end
 
   def connect_corr_with_vet(valid_veterans, count)
+
+    # Once we move to rails 6 use this piece of code
+    # records = []
+    # count.times do
+    #   valid_veterans.each do |file|
+    #     veteran = Veteran.find_by_file_number(file)
+    #     records << {
+    #       uuid: SecureRandom.uuid,
+    #       portal_entry_date: Time.zone.now,
+    #       source_type: "Mail",
+    #       package_document_type_id: rand(1..15),
+    #       correspondence_type_id: rand(1..8),
+    #       cmp_queue_id: 1,
+    #       cmp_packet_number: cmp_packet_number,
+    #       va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
+    #       notes: "This is a test note",
+    #       veteran: veteran
+    #     }
+    #   end
+    # end
+    #
+    # records.each_slice(batch_size) do |batch|
+    #   Correspondence.insert_all(batch)
+    # end
+
+    cmp_packet_number = 3000000000
     count.times do
-      valid_veterans.each do |veterans|
+      valid_veterans.each do |file|
+        veteran = Veteran.find_by_file_number(file)
         Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
@@ -120,12 +129,12 @@ class Test::CorrespondenceController < ApplicationController
           package_document_type_id: rand(1..15),
           correspondence_type_id: rand(1..8),
           cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
+          cmp_packet_number: cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
-          veteran_id: veteran.id
+          veteran: veteran
         )
-        @cmp_packet_number = @cmp_packet_number += 1
+        cmp_packet_number += 1
       end
     end
   end

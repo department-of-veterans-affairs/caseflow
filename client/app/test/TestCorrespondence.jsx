@@ -17,8 +17,8 @@ export default function TestCorrespondence(props) {
   const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
   const [showInvalidVeteransBanner, setShowInvalidVeteransBanner] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
-  const [invalidFileNumbers, setInvalidFileNumbers] = useState('000');
-  const [validFileNumbers, setValidFileNumbers] = useState('000');
+  const [invalidFileNumbers, setInvalidFileNumbers] = useState('');
+  const [validFileNumbers, setValidFileNumbers] = useState('');
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
 
   const handleVeteranFileNumbers = (inputValue) => {
@@ -46,20 +46,28 @@ export default function TestCorrespondence(props) {
     const res = await ApiUtil.post('/test/correspondence/generate_correspondence', { data: payload });
     const data = res.body;
 
-    if (data?.invalid_file_numbers) {
+    if (data?.invalid_file_numbers.length) {
       setInvalidFileNumbers(data.invalid_file_numbers);
       setShowInvalidVeteransBanner(true);
+    } else {
+      setInvalidFileNumbers('');
+      setShowInvalidVeteransBanner(false);
     }
-    if (data?.valid_file_nums) {
+
+    if (data?.valid_file_nums.length) {
       setValidFileNumbers(data.valid_file_nums);
-      setCorrespondenceSize(correspondenceCount);
       setShowSuccessBanner(true);
+      setCorrespondenceSize(correspondenceCount);
+
+      setCorrespondenceCount(0);
+      setVeteranFileNumbers('');
+    } else {
+      setValidFileNumbers('');
+      setShowSuccessBanner(false);
     }
   };
 
   const handleSubmit = () => {
-    // Submit the form values
-    // Here you can add your logic to handle form submission (e.g., API call)
     generateCorrespondence();
   };
 
