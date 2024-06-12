@@ -2,9 +2,16 @@
 
 # Create Users/Organizations used by other seed classes.
 
+# Users that already exist in the VACOLS::Staff table need to be "created" by the
+# Users.rb model. This is because the model will make calls to the table to connect
+# the user and the VACOLS::staff entries, which affects things like displayed names and
+# permissions. New users should be created with the user factory and traits
+
 module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/ClassLength
+
   class Users < Base
     DEVELOPMENT_JUDGE_TEAMS = {
       "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
@@ -33,13 +40,13 @@ module Seeds
 
     def create_users
       create_batch_1_users
-      create_bvaebecker #Judge_CaseToAssign
-      create_bvakkeeling #Judge_CaseToAssign_NoTeam
+      create_bvaebecker # Judge_CaseToAssign
+      create_bvakkeeling # Judge_CaseToAssign_NoTeam
       create_batch_2_users
       create_dispatch_admin
       create_case_review_admin
       create_special_case_movement_user
-      create_bvadwise #Intake Admin
+      create_bvadwise # Intake Admin
       create_bva_intake_user
 
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
@@ -58,6 +65,7 @@ module Seeds
       create_lit_support_user
       create_oai_team_user
       create_occ_team_user
+      create_inbound_ops_team_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -79,26 +87,44 @@ module Seeds
       User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
       User.find_or_create_by(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
-      User.find_or_create_by(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
+      User.find_or_create_by(css_id: "BVARERDMAN",
+                             station_id: 101,
+                             full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
     end
 
     def create_bvaebecker
-      bvaebecker = User.find_or_create_by(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
+      bvaebecker = User.find_or_create_by(css_id: "BVAEBECKER",
+                                          station_id: 101,
+                                          full_name: "Elizabeth Judge_CaseToAssign Becker")
       CDAControlGroup.singleton.add_user(bvaebecker)
     end
 
     def create_bvakkeeling
-      bvakkeeling = User.find_or_create_by(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      bvakkeeling = User.find_or_create_by(css_id: "BVAKKEELING",
+                                           station_id: 101,
+                                           full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
       CDAControlGroup.singleton.add_user(bvakkeeling)
     end
 
     def create_batch_2_users
-      User.find_or_create_by(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      User.find_or_create_by(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      User.find_or_create_by(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
-      User.find_or_create_by(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
-      User.find_or_create_by(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
-      User.find_or_create_by(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
+      User.find_or_create_by(css_id: "BVAAWAKEFIELD",
+                             station_id: 101,
+                             full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.find_or_create_by(css_id: "BVAABELANGER",
+                             station_id: 101,
+                             full_name: "Andy Attorney_CaseAtDispatch Belanger")
+      User.find_or_create_by(css_id: "BVATWARNER",
+                             station_id: 101,
+                             full_name: "Theresa BuildHearingSchedule Warner")
+      User.find_or_create_by(css_id: "BVAGWHITE",
+                             station_id: 101,
+                             full_name: "George BVADispatchUser_Cases White")
+      User.find_or_create_by(css_id: "BVAGGREY",
+                             station_id: 101,
+                             full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.find_or_create_by(css_id: "BVATCOLLIER",
+                             station_id: 101,
+                             full_name: "Tonja DVCTeam Collier")
     end
 
     def create_dispatch_admin
@@ -111,7 +137,10 @@ module Seeds
     end
 
     def create_case_review_admin
-      case_review_admin = User.find_or_create_by(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
+      case_review_admin = User.find_or_create_by(css_id: "BVAKBLUE",
+                                                 station_id: 101,
+
+                                                 full_name: "Kim CaseReviewAdmin Blue")
       OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
     end
 
@@ -127,19 +156,23 @@ module Seeds
 
     def special_case_movement_admin
       special_case_movement_admin = User.find_or_create_by(css_id: "BVAGBEEKMAN",
-                                                station_id: 101,
-                                                full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+                                                           station_id: 101,
+                                                           full_name: "Bryan SpecialCaseMovementAdmin Beekman")
       FactoryBot.create(:staff, user: special_case_movement_admin)
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
     end
 
     def create_bva_intake_user
-      bva_intake_user = User.find_or_create_by(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
+      bva_intake_user = User.find_or_create_by(css_id: "BVAISHAW",
+                                               station_id: 101,
+                                               full_name: "Ignacio BvaIntakeUser Shaw")
       BvaIntake.singleton.add_user(bva_intake_user)
     end
 
     def create_bvadwise
-      bva_intake_admin = User.find_or_create_by(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
+      bva_intake_admin = User.find_or_create_by(css_id: "BVADWISE",
+                                                station_id: 101,
+                                                full_name: "Deborah BvaIntakeAdmin Wise")
       OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
       OrganizationsUser.make_user_admin(bva_intake_admin, CDAControlGroup.singleton)
     end
@@ -206,35 +239,35 @@ module Seeds
         vso.add_user(u)
 
         # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
-        if u.tasks.nil?
-          [true, false].each do |assign_to_user|
-            a = create(:appeal)
-            root_task = create(:root_task, appeal: a)
-            create(
-              :hearing,
-              appeal: a
-            )
-            ihp_task = create(
-              :informal_hearing_presentation_task,
-              parent: root_task,
-              appeal: a,
-              assigned_to: vso
-            )
-            create(
-              :track_veteran_task,
-              parent: root_task,
-              appeal: a,
-              assigned_to: vso
-            )
+        next unless u.tasks.nil?
 
-            next unless assign_to_user
+        [true, false].each do |assign_to_user|
+          a = create(:appeal)
+          root_task = create(:root_task, appeal: a)
+          create(
+            :hearing,
+            appeal: a
+          )
+          ihp_task = create(
+            :informal_hearing_presentation_task,
+            parent: root_task,
+            appeal: a,
+            assigned_to: vso
+          )
+          create(
+            :track_veteran_task,
+            parent: root_task,
+            appeal: a,
+            assigned_to: vso
+          )
 
-            InformalHearingPresentationTask.create_many_from_params([{
-                                                                      parent_id: ihp_task.id,
-                                                                      assigned_to_id: u.id,
-                                                                      assigned_to_type: User.name
-                                                                    }], u)
-          end
+          next unless assign_to_user
+
+          InformalHearingPresentationTask.create_many_from_params([{
+                                                                    parent_id: ihp_task.id,
+                                                                    assigned_to_id: u.id,
+                                                                    assigned_to_type: User.name
+                                                                  }], u)
         end
       end
     end
@@ -346,12 +379,16 @@ module Seeds
     def create_org_queue_users
       nca = BusinessLine.find_or_create_by!(name: "National Cemetery Administration", url: "nca")
       %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
-        u = User.find_or_create_by!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name.upcase}", full_name: "#{name} NCAUser Carter")
+        u = User.find_or_create_by!(station_id: 101,
+                                    css_id: "NCA_QUEUE_USER_#{name.upcase}",
+                                    full_name: "#{name} NCAUser Carter")
         nca.add_user(u)
       end
 
       %w[Kun Casey Ariel Naomi Kelly].each do |name|
-        u = User.find_or_create_by!(station_id: 101, css_id: "ORG_QUEUE_USER_#{name.upcase}", full_name: "#{name} TranslationUser Cullen")
+        u = User.find_or_create_by!(station_id: 101,
+                                    css_id: "ORG_QUEUE_USER_#{name.upcase}",
+                                    full_name: "#{name} TranslationUser Cullen")
         Translation.singleton.add_user(u)
       end
     end
@@ -379,12 +416,16 @@ module Seeds
     end
 
     def create_privacy_user
-      u = User.find_or_create_by!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov")
+      u = User.find_or_create_by!(station_id: 101,
+                                  css_id: "PRIVACY_TEAM_USER",
+                                  full_name: "Leighton PrivacyAndFOIAUser Naumov")
       PrivacyTeam.singleton.add_user(u)
     end
 
     def create_lit_support_user
-      u = User.find_or_create_by!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
+      u = User.find_or_create_by!(station_id: 101,
+                                  css_id: "LIT_SUPPORT_USER",
+                                  full_name: "Kiran LitigationSupportUser Rider")
       LitigationSupport.singleton.add_user(u)
     end
 
@@ -403,6 +444,16 @@ module Seeds
       OaiTeam.singleton.add_user(u)
     end
 
+    def create_inbound_ops_team_user
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
+      InboundOpsTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
+
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER",
+        full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
+      InboundOpsTeam.singleton.add_user(u)
+    end
+
     def create_cavc_lit_support_user
       users_info = [
         { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
@@ -419,8 +470,8 @@ module Seeds
 
       users = users_info.map do |user_info|
         User.find_or_create_by!(station_id: 101,
-                     css_id: user_info[:css_id],
-                     full_name: user_info[:full_name])
+                                css_id: user_info[:css_id],
+                                full_name: user_info[:full_name])
       end
 
       users.each { |u| CavcLitigationSupport.singleton.add_user(u) }
@@ -434,7 +485,9 @@ module Seeds
     end
 
     def create_mail_team_user
-      u = User.find_or_create_by!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
+      u = User.find_or_create_by!(station_id: 101,
+                                  css_id: "JOLLY_POSTMAN",
+                                  full_name: "Huan MailUser Tiryaki")
       MailTeam.singleton.add_user(u)
     end
 
@@ -466,30 +519,32 @@ module Seeds
     end
 
     def create_case_search_only_user
-      User.find_or_create_by!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
+      User.find_or_create_by!(station_id: 101,
+                              css_id: "CASE_SEARCHER_ONLY",
+                              full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
     end
 
     def create_split_appeals_test_users
       ussc = User.find_or_create_by!(station_id: 101,
-                          css_id: "SPLTAPPLSNOW",
-                          full_name: "Jon SupervisorySeniorCouncilUser Snow",
-                          roles: ["Hearing Prep"])
+                                     css_id: "SPLTAPPLSNOW",
+                                     full_name: "Jon SupervisorySeniorCouncilUser Snow",
+                                     roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussc)
       ussc2 = User.find_or_create_by!(station_id: 101,
-                           css_id: "SPLTAPPLTARGARYEN",
-                           full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen",
-                           roles: ["Hearing Prep"])
+                                      css_id: "SPLTAPPLTARGARYEN",
+                                      full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen",
+                                      roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussc2)
       ussccr = User.find_or_create_by!(station_id: 101,
-                            css_id: "SPLTAPPLLANNISTER",
-                            full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister",
-                            roles: ["Hearing Prep"])
+                                       css_id: "SPLTAPPLLANNISTER",
+                                       full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister",
+                                       roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr)
       CaseReview.singleton.add_user(ussccr)
       ussccr2 = User.find_or_create_by!(station_id: 101,
-                             css_id: "SPLTAPPLSTARK",
-                             full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark",
-                             roles: ["Hearing Prep"])
+                                        css_id: "SPLTAPPLSTARK",
+                                        full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark",
+                                        roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
     end
@@ -508,21 +563,21 @@ module Seeds
 
     def create_cda_control_group_users
       bvaebeckser = User.find_or_create_by!(station_id: 101,
-                                  css_id: "BVAEBECKSER",
-                                  full_name: "Elizabeth Judge_VaseToAssign Becker",
-                                  roles: ["Mail Intake"])
+                                            css_id: "BVAEBECKSER",
+                                            full_name: "Elizabeth Judge_VaseToAssign Becker",
+                                            roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(bvaebeckser)
 
       leo = User.find_or_create_by!(station_id: 101,
-                          css_id: "CDAADMINLEO",
-                          full_name: "Leonardo CDAC_Admin Turtur",
-                          roles: ["Mail Intake"])
+                                    css_id: "CDAADMINLEO",
+                                    full_name: "Leonardo CDAC_Admin Turtur",
+                                    roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(leo)
       OrganizationsUser.make_user_admin(leo, CDAControlGroup.singleton)
       casey = User.find_or_create_by!(station_id: 101,
-                            css_id: "CDAUSERCASEY",
-                            full_name: "Casey CDAC_User Jones",
-                            roles: ["Mail Intake"])
+                                      css_id: "CDAUSERCASEY",
+                                      full_name: "Casey CDAC_User Jones",
+                                      roles: ["Mail Intake"])
       CDAControlGroup.singleton.add_user(casey)
 
       create_qa_admin_for_cda_control_group
@@ -530,25 +585,25 @@ module Seeds
 
     def create_qa_admin_for_cda_control_group
       qa_admin = User.find_or_create_by!(station_id: 101,
-                            css_id: "QAACDPLUS",
-                            full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
-                            roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
+                                         css_id: "QAACDPLUS",
+                                         full_name: "QA_Admin ACD_CF TM_Mgmt_Intake",
+                                         roles: ["Mail Intake", "Admin Intake", "Hearing Prep"])
 
-      #{CDA Control Group Admin}
+      # {CDA Control Group Admin}
       CDAControlGroup.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, CDAControlGroup.singleton)
 
-      #{BVA Intake Admin}
+      # {BVA Intake Admin}
       BvaIntake.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, BvaIntake.singleton)
 
-      #{BVA Org Admin}
+      # {BVA Org Admin}
       existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
       Functions.grant!("System Admin", users: existing_sysadmins + [qa_admin.css_id])
       Bva.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, Bva.singleton)
 
-      #{Adds attorney so judge team can be targeted by Ama_affinity_cases.rb seed script}
+      # {Adds attorney so judge team can be targeted by Ama_affinity_cases.rb seed script}
       judge_team = JudgeTeam.for_judge(qa_admin) || JudgeTeam.create_for_judge(qa_admin)
       judge_team.add_user(User.find_by_css_id("BVASCASPER1"))
     end
@@ -572,6 +627,38 @@ module Seeds
       create_qa_judge_team_2
     end
 
+    def create_qa_ineligible_judge
+      User.find_by_css_id("QINELIGVLJ") ||
+        create(
+          :user,
+          :inactive,
+          :judge,
+          css_id: "QINELIGVLJ",
+          station_id: 101,
+          full_name: "QA Ineligible Judge",
+          status: nil
+        )
+    end
+
+    def create_qa_solo_active_judge
+      solo_active_judge = User.find_by_css_id("QACTVLJNOTM") ||
+        create(
+          :user,
+          :with_vacols_judge_record,
+          :judge,
+          css_id: "QACTVLJNOTM",
+          station_id: 101,
+          full_name: "QA_Active_Judge With No_Team"
+        )
+        create(
+        :staff,
+        :judge_role,
+        slogid: solo_active_judge.css_id,
+        user: solo_active_judge
+      )
+
+    end
+
     def create_qa_active_judge3
       User.find_or_create_by(
         css_id: "QACTIVEVLJ3",
@@ -585,35 +672,6 @@ module Seeds
         css_id: "QACTIVEVLJ2",
         station_id: 101,
         full_name: "QA_Active_Judge With Team_of_2"
-      )
-    end
-
-    def create_qa_ineligible_judge
-      ineligible_judge = User.find_or_create_by(
-        css_id: "QINELIGVLJ",
-        station_id: 101,
-        full_name: "QA Ineligible Judge",
-        status: nil
-      )
-      create(
-        :staff,
-        :inactive_judge,
-        slogid: ineligible_judge.css_id,
-        user: ineligible_judge
-      )
-    end
-
-    def create_qa_solo_active_judge
-      solo_active_judge = User.find_or_create_by(
-        css_id: "QACTVLJNOTM",
-        station_id: 101,
-        full_name: "QA_Active_Judge With No_Team"
-      )
-      create(
-        :staff,
-        :judge_role,
-        slogid: solo_active_judge.css_id,
-        user: solo_active_judge
       )
     end
 
@@ -701,6 +759,62 @@ module Seeds
       OrganizationsUser.make_user_admin(qa_case_movement_user, SpecialCaseMovementTeam.singleton)
     end
 
+    def create_qa_judge_team(judge, team_array)
+      judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      team_array.each do |team_member|
+        judge_team.add_user(
+          User.find_by_css_id(team_member[:css_id]) ||
+              create(
+                :user,
+                :with_vacols_titled_attorney_record,
+                css_id: team_member[:css_id],
+                full_name: team_member[:full_name],
+                station_id: 101
+              )
+        )
+      end
+    end
+
+    def create_qa_judge_team_3
+      judge = User.find_by_css_id("QACTIVEVLJ3") ||
+              create(
+                :user,
+                :judge,
+                :with_vacols_judge_record,
+                css_id: "QACTIVEVLJ3",
+                full_name: "QA_ACTIVE_JUDGE WITH TEAM_OF_3",
+                station_id: 101,
+                roles: ["Hearing Prep", "Mail Intake"]
+              )
+      team_array = [
+        { "css_id": "QATTY1", "full_name": "QA Attorney_1" },
+        { "css_id": "QATTY2", "full_name": "QA Attorney_2" },
+        { "css_id": "QATTY3", "full_name": "QA Attorney_3" }
+      ]
+      CDAControlGroup.singleton.add_user(judge)
+      create_qa_judge_team(judge, team_array)
+    end
+
+    def create_qa_judge_team_2
+      judge = User.find_by_css_id("QACTIVEVLJ2") ||
+              create(
+                :user,
+                :judge,
+                :with_vacols_judge_record,
+                css_id: "QACTIVEVLJ2",
+                full_name: "QA_ACTIVE_JUDGE WITH TEAM_OF_2",
+                station_id: 101,
+                roles: ["Hearing Prep", "Mail Intake"]
+              )
+      team_array = [
+        { "css_id": "QATTY1", "full_name": "QA Attorney_1" },
+        { "css_id": "QATTY2", "full_name": "QA Attorney_2" }
+      ]
+      CDAControlGroup.singleton.add_user(judge)
+      OrganizationsUser.make_user_admin(judge, CDAControlGroup.singleton)
+      create_qa_judge_team(judge, team_array)
+    end
+
     def create_qa_attny_1
       User.find_or_create_by(
         css_id: "QATTY1",
@@ -725,22 +839,8 @@ module Seeds
       )
     end
 
-    def create_qa_judge_team_3
-      qa_judge_3 = User.find_by(css_id: "QACTIVEVLJ3")
-      qa_judge_team_3 = JudgeTeam.for_judge(qa_judge_3) || JudgeTeam.create_for_judge(qa_judge_3)
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY1"))
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY2"))
-      qa_judge_team_3.add_user(User.find_by(css_id: "QATTY3"))
-    end
-
-    def create_qa_judge_team_2
-      qa_judge_2 = User.find_by(css_id: "QACTIVEVLJ2")
-      qa_judge_team_2 = JudgeTeam.for_judge(qa_judge_2) || JudgeTeam.create_for_judge(qa_judge_2)
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY1"))
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY2"))
-    end
-
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/ClassLength
   end
 end

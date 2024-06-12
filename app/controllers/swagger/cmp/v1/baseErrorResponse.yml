@@ -1,0 +1,15 @@
+type: object
+title: Vefs Error Response
+description: The root schema comprises generic File Store Errors.
+examples:
+  - uuid: d1abad83-5468-4031-b42a-c487e19f46c7
+    code: VEFSERR0000
+    message: Unable to create valid response.
+properties:
+  uuid:
+    type: string
+    format: uuid
+    title: Error UUID
+    description: UUID used to trace the error response
+    examples:
+      - d1abad83-5468-4031-b42a-c487e19f46c7

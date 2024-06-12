@@ -24,6 +24,11 @@ class Events::DecisionReviewCreated
              message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
       end
 
+      # Throws error for specific Consumer Claim ID to test Consumer error handling
+      if reference_id == 885544332
+        fail StandardError, "DRC StandardError message"
+      end
+
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
         # key => "EndProductEstablishment:reference_id" aka "claim ID"
         # Use the consumer_event_id to retrieve/create the Event object
