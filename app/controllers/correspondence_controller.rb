@@ -23,10 +23,10 @@ class CorrespondenceController < ApplicationController
 
     begin
       perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+      render json: { batch_auto_assignment_attempt_id: batch&.id }, status: :ok
     rescue StandardError => error
       Rails.logger.error(error.full_message)
-    ensure
-      render json: { batch_auto_assignment_attempt_id: batch&.id }, status: :ok
+      render json: { success: false, error: error }
     end
   end
 
