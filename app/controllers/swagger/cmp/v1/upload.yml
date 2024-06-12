@@ -4,7 +4,7 @@ post:
   summary: Upload a file with associated provider data
   description: |-
     ### Upload a file.
-     This endpoint when given a file and associated data returns a UUID which can be used to retrieve back the latest data provided. Information on how to properly create a payload object for this endpoint is available in the schema section <a href="#model-payload">here</a>. (Upload Payload)
+     This endpoint when given a file and associated data returns a UUID which is a reference to the created object within Caseflow. Information on how to properly create a payload object for this endpoint is available in the schema section <a href="#model-payload">here</a>. (Upload Payload)
   operationId: upload
   parameters:
     - name: X-Folder-URI
