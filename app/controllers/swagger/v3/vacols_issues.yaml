@@ -36,9 +36,9 @@ info:
 security:
   - bearerAuth: []
 servers:
-- url: /api/v3/
+- url: /api/v3/issues/vacols/
 paths:
-  /issues/vacols/find_by_veteran:
+  /find_by_veteran:
     get:
       tags:
         - VACOLS Issues
