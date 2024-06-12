@@ -26,11 +26,6 @@ export const ReviewForm = (props) => {
     (state) => state.reviewPackage.correspondence
   );
 
-
-  useEffect(() => {
-    props.setCorrTypeSelected(correspondenceTypeID < 0);
-  }, [correspondenceTypeID]);
-
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeID < 0) {
       return 'Select...';
@@ -164,8 +159,6 @@ export const ReviewForm = (props) => {
       props.setErrorMessage(body.error);
     }
   };
-  // Tracking the Correspondence type value changing for the Create record button
-
 
   // Prevents save action in case of errorMessage
   useEffect(() => {
@@ -176,6 +169,7 @@ export const ReviewForm = (props) => {
     setSaveChanges(true);
   }, []);
 
+  // disable the contine button if the save button is active
   useEffect(() => {
     props.setCorrTypeSelected(!saveButtonDisabled());
   }, [saveButtonDisabled()]);
