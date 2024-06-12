@@ -100,12 +100,7 @@ class Test::CorrespondenceController < ApplicationController
     #     veteran = Veteran.find_by_file_number(file)
     #     records << {
     #       uuid: SecureRandom.uuid,
-    #       portal_entry_date: Time.zone.now,
-    #       source_type: "Mail",
-    #       package_document_type_id: rand(1..15),
     #       correspondence_type_id: rand(1..8),
-    #       cmp_queue_id: 1,
-    #       cmp_packet_number: cmp_packet_number,
     #       va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
     #       notes: "This is a test note",
     #       veteran: veteran
@@ -117,23 +112,16 @@ class Test::CorrespondenceController < ApplicationController
     #   Correspondence.insert_all(batch)
     # end
 
-    cmp_packet_number = 3000000000
     count.times do
       valid_veterans.each do |file|
         veteran = Veteran.find_by_file_number(file)
         Correspondence.create!(
           uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: rand(1..15),
           correspondence_type_id: rand(1..8),
-          cmp_queue_id: 1,
-          cmp_packet_number: cmp_packet_number,
           va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a test note",
           veteran: veteran
         )
-        cmp_packet_number += 1
       end
     end
   end

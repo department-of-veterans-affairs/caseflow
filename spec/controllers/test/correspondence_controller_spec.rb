@@ -8,7 +8,6 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
 
     (1..15).each do |i|
       create(:correspondence_type, id: i, name: "Type #{i}")
-      create(:package_document_type, id: i, name: "Type #{i}")
     end
   end
   describe "GET #index" do
@@ -158,11 +157,6 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
         expect {
           controller.send(:connect_corr_with_vet, valid_veterans, count)
         }.to change { Correspondence.count }.by(3)
-      end
-
-      it 'increments cmp_packet_number for each correspondence' do
-        controller.send(:connect_corr_with_vet, valid_veterans, count)
-        expect(Correspondence.last.cmp_packet_number).to eq(3000000002)
       end
     end
 
