@@ -9,27 +9,23 @@ class CorrespondenceTasksController < TasksController
   ].freeze
 
   def create_package_action_task
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id], type: ReviewPackageTask.name)
-    if review_package_task.children.present?
-      render json:
-      { message: "Existing package action request. Only one package action request may be made at a time" },
-             status: :bad_request
-    else
-      task = task_to_create
-      task_params = {
-        parent_id: review_package_task.id,
-        instructions: params[:instructions],
-        assigned_to: InboundOpsTeam.singleton,
-        appeal_id: params[:correspondence_id],
-        appeal_type: "Correspondence",
-        status: Constants.TASK_STATUSES.assigned,
-        type: task.name
-      }
+    correspondence_id = Correspondence.select(:id).find_by(uuid: params[:correspondence_uuid]).id
+    rpt = ReviewPackageTask.open.find_by(appeal_id: correspondence_id)
+    task_klass = task_to_create
+    package_action_task = Task.new(
+      parent_id: rpt.id,
+      instructions: params[:instructions],
+      assigned_to: InboundOpsTeam.singleton,
+      appeal_id: correspondence_id,
+      appeal_type: Correspondence.name,
+      assigned_by_id: current_user.id,
+      status: Constants.TASK_STATUSES.assigned,
+      type: task_klass.name
+    )
 
-      ReviewPackageTask.create_from_params(task_params, current_user)
-      review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
-      render json: { status: :ok }
-    end
+    package_action_task.save!
+    rpt.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
+    render json: { status: :ok }
   end
 
   def create_correspondence_intake_task
