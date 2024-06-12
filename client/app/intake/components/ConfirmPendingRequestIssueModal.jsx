@@ -19,7 +19,8 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   const enhancedPendingIssueModification = useSelector((state) => state.enhancedPendingIssueModification);
 
   // is this right way to find this?
-  const modifiedPendingModificationRequest = enhancedPendingIssueModification.find((pi) => pi.id === pendingIssueModificationRequest.id);
+  const modifiedPendingModificationRequest = enhancedPendingIssueModification.
+    find((pi) => pi.id === pendingIssueModificationRequest.id);
   const requestIssue = pendingIssueModificationRequest.requestIssue;
   const indexOfOriginalIssue = useSelector(
     (state) => state.addedIssues.findIndex((issue) => issue.id === modifiedPendingModificationRequest.requestIssue.id));

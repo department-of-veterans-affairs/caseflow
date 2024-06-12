@@ -34,7 +34,8 @@ export const RequestIssueFormWrapper = (props) => {
       nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
       removeOriginalIssue: false,
       withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
-        'MM/DD/YYYY', 'YYYY-MM-DD') || ''
+        'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+      status: 'assigned'
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -76,7 +77,7 @@ export const RequestIssueFormWrapper = (props) => {
     if (props.type === 'addition') {
       props.addToPendingReviewSection(enhancedData);
     } else {
-      props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+      props.moveToPendingReviewSection(enhancedData);
     }
   };
 
@@ -95,7 +96,7 @@ export const RequestIssueFormWrapper = (props) => {
       formatDateStr(props.currentIssue.decisionDate);
 
     const enhancedData = {
-      // ...currentIssueFields,
+      ...currentIssueFields,
       ...props.pendingIssueModificationRequest,
       requestIssue: props.pendingIssueModificationRequest?.requestIssue || props.currentIssue,
       ...(props.type === 'addition') && { benefitType },
@@ -104,10 +105,11 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       decisionDate,
-      identifier: props.pendingIssueModificationRequest?.id || uuid.v4()
+      identifier: props.pendingIssueModificationRequest?.id || uuid.v4(),
+      status: issueModificationRequest?.status || 'assigned'
     };
 
-    const status = issueModificationRequest.status;
+    const status = enhancedData.status;
     const removeOriginalIssue = issueModificationRequest.removeOriginalIssue;
 
     // close modal and move the issue

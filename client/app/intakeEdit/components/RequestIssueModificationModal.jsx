@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import CurrentIssue from './RequestCommonComponents/CurrentIssue';
 import RequestReason from './RequestCommonComponents/RequestReason';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
@@ -20,6 +21,7 @@ const modificationSchema = yup.object({
 
 const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificationRequest }) => {
   const originalIssue = pendingIssueModificationRequest?.requestIssue || currentIssue;
+  const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
 
   return (
     <div>
@@ -29,7 +31,7 @@ const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificatio
       <PriorDecisionDateSelector />
       <IssueDescription />
       <RequestReason label="modification" />
-      <RequestIssueStatus displayCheckbox />
+      {userIsVhaAdmin ? <RequestIssueStatus displayCheckbox /> : null }
     </div>
   );
 };
