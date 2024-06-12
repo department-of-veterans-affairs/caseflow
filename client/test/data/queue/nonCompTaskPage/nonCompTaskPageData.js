@@ -88,6 +88,7 @@ const completedHLRTaskData = {
     claimantName: 'Bob Smithgreen',
     veteranIsNotClaimant: false,
     processedInCaseflow: true,
+    processedInVbms: false,
     legacyOptInApproved: false,
     legacyAppeals: [],
     ratings: null,

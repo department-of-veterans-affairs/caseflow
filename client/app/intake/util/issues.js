@@ -8,7 +8,7 @@ const getClaimantField = (intakeData) => {
   const {
     claimantName,
     claimantRelationship,
-    payeeCode,
+    payeeCode
   } = intakeData;
 
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');

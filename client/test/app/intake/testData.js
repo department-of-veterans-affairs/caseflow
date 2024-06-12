@@ -693,6 +693,7 @@ export const sample1 = {
       veteranDateOfBirthInvalid: false
     },
     processedInCaseflow: false,
+    processedInVbms: false,
     benefitType: 'compensation',
     payeeCode: null,
     hasClearedRatingEp: true,

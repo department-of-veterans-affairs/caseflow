@@ -6,6 +6,7 @@ export const mockedIssueListProps = {
     claimantName: 'Bob Smithkeebler',
     veteranIsNotClaimant: false,
     processedInCaseflow: true,
+    processedInVbms: false,
     legacyOptInApproved: false,
     legacyAppeals: [],
     ratings: null,
