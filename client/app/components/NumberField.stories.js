@@ -33,12 +33,5 @@ const Template = (args) => {
   return <NumberField {...args} onChange={handleChange} />;
 };
 
-export const IntegerOnly = Template.bind({});
 export const ReadOnly = Template.bind({});
 ReadOnly.args = { readOnly: true };
-
-// This functionality doesn't seem to be used anywhere, or work correctly,
-// including here for completeness.
-export const DeprecatedAllowDecimal = Template.bind({});
-DeprecatedAllowDecimal.args = { isInteger: false };
-

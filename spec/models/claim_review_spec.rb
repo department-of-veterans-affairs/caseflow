@@ -75,17 +75,6 @@ describe ClaimReview, :postgres do
     )
   end
 
-  let(:second_non_rating_request_issue) do
-    build(
-      :request_issue,
-      decision_review: claim_review,
-      nonrating_issue_description: "some other issue",
-      nonrating_issue_category: "something",
-      decision_date: 3.days.ago.to_date,
-      benefit_type: benefit_type
-    )
-  end
-
   let(:rating_request_issue_with_rating_decision) do
     create(
       :request_issue,

@@ -24,17 +24,6 @@ describe LegacyHearing, :all_dbs do
     )
   end
 
-  let(:hearing2) do
-    create(
-      :legacy_hearing,
-      scheduled_for: scheduled_for,
-      disposition: disposition,
-      hold_open: hold_open,
-      request_type: request_type,
-      regional_office: regional_office
-    )
-  end
-
   let(:scheduled_for) do
     now = Time.zone.now
     yesterday = Time.zone.yesterday

@@ -127,12 +127,14 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
             class="tabPanel"
             id="tasks-organization-queue-tabpanel-0"
             role="tabpanel"
+            tabindex="-1"
           />
           <div
             aria-hidden="false"
             class="tabPanel active"
             id="tasks-organization-queue-tabpanel-1"
             role="tabpanel"
+            tabindex="0"
           >
             <div
               class="non-comp-queue-table-wrapper"
@@ -219,6 +221,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
             class="tabPanel"
             id="tasks-organization-queue-tabpanel-2"
             role="tabpanel"
+            tabindex="-1"
           />
         </div>
       </div>
@@ -345,12 +348,14 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
             class="tabPanel"
             id="tasks-organization-queue-tabpanel-0"
             role="tabpanel"
+            tabindex="-1"
           />
           <div
             aria-hidden="false"
             class="tabPanel active"
             id="tasks-organization-queue-tabpanel-1"
             role="tabpanel"
+            tabindex="0"
           >
             <div
               class="non-comp-queue-table-wrapper"
@@ -437,6 +442,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
             class="tabPanel"
             id="tasks-organization-queue-tabpanel-2"
             role="tabpanel"
+            tabindex="-1"
           />
         </div>
       </div>

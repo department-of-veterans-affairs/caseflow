@@ -476,7 +476,6 @@ describe RampElectionIntake, :all_dbs do
              notice_date: 6.days.ago,
              established_at: established_at)
     end
-    let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
 
     context "the ramp election is complete" do
       let(:established_at) { Time.zone.now }

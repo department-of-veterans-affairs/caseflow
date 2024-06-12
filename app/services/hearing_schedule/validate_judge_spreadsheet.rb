@@ -4,7 +4,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   SPREADSHEET_HEADERS = ["ID", "CSS ID", "VLJ"].freeze
 
   TEMPLATE_ERROR = "The template was not followed. Please redownload the template and try again."
-  WRONG_DATE_FORMAT_ERROR = "These dates are in the wrong format: "
 
   class JudgeTemplateNotFollowed < StandardError; end
   class JudgeNotInDatabase < StandardError; end

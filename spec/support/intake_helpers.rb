@@ -498,10 +498,6 @@ module IntakeHelpers
     expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
   end
 
-  def expect_eligible_issue(number)
-    expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
-  end
-
   def setup_active_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(

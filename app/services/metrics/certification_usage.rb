@@ -46,9 +46,4 @@ class Metrics::CertificationUsage < Metrics::Base
   def certified_with_caseflow
     @certified_with_caseflow ||= certifications.count(&:certified_with_caseflow?)
   end
-
-  # currently unused, but leaving here in case we need/want to report by RO.
-  def regional_office_codes
-    RegionalOffice::ROS.select { |ro| ro =~ /^RO/ }
-  end
 end

@@ -17,13 +17,6 @@ export const markStyles = css({
   }
 });
 
-export const pageStyles = ({ width, height, scale }) => ({
-  marginBottom: `${PAGE_MARGIN * scale}px`,
-  width: `${width}px`,
-  height: `${height}px`,
-  verticalAlign: 'top',
-});
-
 export const pdfStyles = {
   position: 'absolute',
   top: '40%',

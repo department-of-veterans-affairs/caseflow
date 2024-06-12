@@ -398,7 +398,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     context "denial" do
       let(:atty_disposition) { "denied" }
-      let(:atty_hyperlink) { "https://efolder.link/file" }
 
       it "judge denies motion to vacate" do
         address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
@@ -442,7 +441,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     context "dismissal" do
       let(:atty_disposition) { "dismissed" }
-      let(:atty_hyperlink) { "https://efolder.link/file" }
 
       it "judge dismisses motion to vacate" do
         address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
@@ -1046,10 +1044,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
 
-    let(:orig_atty_task) do
-      create(:ama_attorney_task, :completed,
-             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
-    end
     let(:judge_review_task) do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
@@ -1132,17 +1126,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "cf-select__option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
-  end
-
-  def judge_send_to_dispatch(user:, appeal:)
-    User.authenticate!(user: user)
-    visit "/queue/appeals/#{appeal.uuid}"
-
-    check_cavc_alert
-    verify_cavc_conflict_action
-
-    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "cf-select__option", text: "Ready for Dispatch").click
   end
 
   # rubocop:disable Metrics/AbcSize

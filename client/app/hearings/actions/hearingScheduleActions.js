@@ -21,13 +21,6 @@ export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
   }
 });
 
-export const onReceiveAppealsReadyForHearing = (appeals) => ({
-  type: ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING,
-  payload: {
-    appeals
-  }
-});
-
 export const onSelectedHearingDayChange = (selectedHearingDay) => ({
   type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
   payload: {

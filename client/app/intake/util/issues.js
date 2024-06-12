@@ -69,30 +69,6 @@ export const validateDateNotInFuture = (date) => {
   return true;
 };
 
-export const validNonratingRequestIssue = (issue) => {
-  if (!issue.description) {
-    return false;
-  }
-  // If there isn't any nonRatingRequest category, return 0
-  if (!issue.category) {
-    return false;
-  }
-  // If category is unknown issue category, no decision date is necessary.
-  if (issue.category === 'Unknown issue category') {
-    return true;
-  }
-  // If category isn't unknown or there's no valid decisionDate, return 0
-  if (!issue.decisionDate) {
-    return false;
-  }
-  if (!issue.benefitType) {
-    return false;
-  }
-
-  // If we've gotten to here, that means we've got all necessary parts for a nonRatingRequestIssue to count
-  return true;
-};
-
 const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIssue) => {
   const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
     return foundIssue || _.find(contestableIssues, {

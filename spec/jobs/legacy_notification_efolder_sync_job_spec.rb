@@ -48,9 +48,6 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     let(:first_run_outcoded_appeals) { [appeals[6]] }
     let(:second_run_outcoded_appeals) { [] }
     let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
-    let(:second_run_never_synced_appeals) { appeals.last(2) }
-    let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
-    let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
     before(:all) { ensure_notification_events_exist }
     before(:each) { stub_const("LegacyNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
