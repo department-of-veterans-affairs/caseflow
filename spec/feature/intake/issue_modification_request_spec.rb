@@ -64,7 +64,8 @@ feature "Issue Modification Request", :postgres do
            benefit_type: "vha",
            nonrating_issue_category: "Caregiver | Eligibility",
            nonrating_issue_description: "A description of a newly added issue",
-           decision_date: Time.zone.now - 5.days)
+           decision_date: Time.zone.now - 5.days,
+           requestor: current_user)
   end
 
   let!(:removal_modification_request) do
@@ -74,7 +75,8 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_category: removal_request_issue.nonrating_issue_category,
            nonrating_issue_description: removal_request_issue.nonrating_issue_description,
            decision_date: removal_request_issue.decision_date,
-           request_issue: removal_request_issue)
+           request_issue: removal_request_issue,
+           requestor: current_user)
   end
 
   let!(:withdrawal_modification_request) do
@@ -95,7 +97,8 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_category: "Camp Lejune Family Member",
            nonrating_issue_description: "Newly modified issue description",
            decision_date: modified_request_issue.decision_date,
-           request_issue: modified_request_issue)
+           request_issue: modified_request_issue,
+           requestor: current_user)
   end
 
   let(:current_user) do
@@ -270,22 +273,53 @@ feature "Issue Modification Request", :postgres do
 
       step "request type Addition" do
         expect(page).to have_text("Requested Additional Issues")
-        verify_admin_select_action_dropdown("addition")
+        verify_select_action_dropdown("addition")
       end
 
       step "request type modification" do
         expect(page).to have_text("Requested Changes")
-        verify_admin_select_action_dropdown("modification")
+        verify_select_action_dropdown("modification")
       end
 
       step "request type removal" do
         expect(page).to have_text("Requested Issue Removal")
-        verify_admin_select_action_dropdown("removal")
+        verify_select_action_dropdown("removal")
       end
 
       step "request type withdrawal" do
         expect(page).to have_text("Requested Issue Withdrawal")
-        verify_admin_select_action_dropdown("withdrawal")
+        verify_select_action_dropdown("withdrawal")
+      end
+    end
+  end
+
+  context "non admin user" do
+    it "should have a dropdown with specific option for each request type" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Pending admin review")
+
+      step "request type Addition" do
+        expect(page).to have_text("Requested Additional Issues")
+        verify_select_action_dropdown("addition", false)
+      end
+
+      step "request type modification" do
+        expect(page).to have_text("Requested Changes")
+        verify_select_action_dropdown("modification", false)
+      end
+
+      step "request type removal" do
+        expect(page).to have_text("Requested Issue Removal")
+        verify_select_action_dropdown("removal", false)
+      end
+
+      step "request type withdrawal" do
+        expect(page).to have_text("Requested Issue Withdrawal")
+
+        within "div[data-key=issue-withdrawal]" do
+          select_action = find("input", visible: false)
+          expect(select_action[:disabled]).to eq "true"
+        end
       end
     end
   end
@@ -366,9 +400,14 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_content(issue_modification_request.request_reason)
   end
 
-  def verify_admin_select_action_dropdown(request_type)
+  def verify_select_action_dropdown(request_type, admin = true)
     data_key = "div[data-key=issue-#{request_type}]"
-    option = "Review issue #{request_type} request"
+    option =
+      if admin
+        "Review issue #{request_type} request"
+      else
+        "Edit #{request_type} request"
+      end
     modal_title = "Edit pending request"
     selector = page.find(data_key)
     dropdown_div = selector.find("div.cf-form-dropdown")
