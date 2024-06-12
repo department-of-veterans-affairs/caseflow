@@ -36,9 +36,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "user is a dispatch user" do
       let(:role) { :dispatch_role }
 
-      it "should not process the request succesfully" do
+      it "should not process the request succesfully, and redirect" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 400
+        expect(response.status).to eq 302
       end
     end
 
@@ -46,9 +46,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { nil }
       let(:caseflow_only_user) { create(:user) }
 
-      it "should return an invalid role error" do
+      it "should return if an invalid role error" do
         get :index, params: { user_id: caseflow_only_user.id }
-        expect(response.status).to eq(400)
+        expect(response.status).to eq(302)
       end
 
       it "should return status 308 and redirect when we explicitly pass the role as a parameter" do

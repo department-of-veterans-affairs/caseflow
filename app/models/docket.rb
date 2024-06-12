@@ -33,19 +33,20 @@ class Docket
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def build_lever_item(docket_type, priority_status)
-    "disable_ama_#{priority_status}_#{docket_type.downcase}"
-  end
-
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
-    lever_item = build_lever_item(docket_type, priority_status)
-    lever = CaseDistributionLever.find_by_item(Constants::DISTRIBUTION[lever_item])
-    lever_value = lever&.value
+    appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
+    lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
+    item = CaseDistributionLever.find_by_item(lever_item)
+    value = item ? CaseDistributionLever.public_send(lever_item) : nil
 
-    return [] if lever_value == "true"
-
-    appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
+    if value == "true"
+      appeals.none
+    elsif calculate_days_for_time_goal_with_prior_to_goal > 0
+      appeals.where("appeals.receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
+    else
+      appeals
+    end
   end
 
   def count(priority: nil, ready: nil)
@@ -88,7 +89,7 @@ class Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    ready_priority_nonpriority_appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+    ready_priority_nonpriority_appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
@@ -155,6 +156,29 @@ class Docket
       .joins(:decision_documents)
       .where("decision_date > ?", 1.year.ago)
       .pluck(:id).size
+  end
+
+  def calculate_days_for_time_goal_with_prior_to_goal
+    return 0 unless docket_time_goal > 0
+
+    docket_time_goal - start_distribution_prior_to_goal
+  end
+
+  def docket_time_goal
+    @docket_time_goal ||= begin
+      does_lever_exist = CaseDistributionLever.exists?(item: "ama_#{docket_type}_docket_time_goals")
+      does_lever_exist ? CaseDistributionLever.public_send("ama_#{docket_type}_docket_time_goals") : 0
+    end
+  end
+
+  def start_distribution_prior_to_goal
+    @start_distribution_prior_to_goal ||= begin
+      lever = CaseDistributionLever.find_by(
+        item: "ama_#{docket_type}_start_distribution_prior_to_goals",
+        is_toggle_active: true
+      )
+      lever ? Integer(lever.value) : 0
+    end
   end
 
   private

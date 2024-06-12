@@ -42,7 +42,7 @@ module Seeds
     end
 
     def find_or_create_demo_seed_judge(judge_ccs_id)
-      unless judge_ccs_id.empty?
+      unless judge_ccs_id.blank?
         User.find_by_css_id(judge_ccs_id) ||
           create(:user, :judge, :with_vacols_judge_record, css_id: judge_ccs_id, full_name: "Demo Judge " + judge_ccs_id)
       else

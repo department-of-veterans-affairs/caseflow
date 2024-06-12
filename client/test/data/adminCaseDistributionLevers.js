@@ -305,7 +305,7 @@ export const unknownDataTypeStaticLevers = [
 
 export const mockDocketDistributionPriorLevers = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -437,7 +437,7 @@ export const testingBatchLeversUpdatedToSave = [
 
 export const mockDocketTimeGoalsLevers = [
   {
-    item: 'ama_hearings_docket_time_goals',
+    item: 'ama_hearing_docket_time_goals',
     title: 'AMA Hearings Docket Time Goals',
     data_type: 'number',
     value: 365,
@@ -671,7 +671,7 @@ export const mockHistoryPayload = [
 
 export const mockDocketDistributionPriorLeversReturn = [
   {
-    item: 'ama_hearings_start_distribution_prior_to_goals',
+    item: 'ama_hearing_start_distribution_prior_to_goals',
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
@@ -720,7 +720,7 @@ export const mockDocketDistributionPriorLeversReturn = [
   }
 ];
 export const mockCombinationReturn = {
-  item: 'ama_hearings_start_distribution_prior_to_goals',
+  item: 'ama_hearing_start_distribution_prior_to_goals',
   title: 'AMA Hearings Start Distribution Prior to Goals',
   description: '',
   data_type: 'combination',
@@ -1006,7 +1006,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 104,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1033,7 +1033,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 105,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1060,7 +1060,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 106,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',
@@ -1087,7 +1087,7 @@ export const mockDocketLevers = [
     algorithms_used: ['proportion', 'docket'],
     lever_group: 'docket_levers',
     lever_group_order: 107,
-    control_group: 'non_priority',
+    control_group: 'non-priority',
     options: [
       {
         displayText: 'On',

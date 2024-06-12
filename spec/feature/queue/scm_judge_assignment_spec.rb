@@ -21,6 +21,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney, stitle: "DF")
       judge_one_team.add_user(attorney)
+      Seeds::CaseDistributionLevers.new.seed!
     end
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
@@ -116,6 +117,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
+        allow_any_instance_of(Docket).to receive(:calculate_days_for_time_goal_with_prior_to_goal).and_return(0)
       end
 
       scenario "on ama appeals" do
