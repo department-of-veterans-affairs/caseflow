@@ -4,6 +4,7 @@ require_relative "../exceptions/standard_error"
 
 class ApplicationJob < ActiveJob::Base
   class InvalidJobPriority < StandardError; end
+  DELETE_SQS_MESSAGE_BEFORE_START = true
 
   class << self
     def queue_with_priority(priority)
@@ -16,15 +17,6 @@ class ApplicationJob < ActiveJob::Base
 
     def application_attr(app_name)
       @app_name = app_name
-    end
-
-    # Override in job classes if you anticipate that the job will take longer than the SQS visibility
-    # timeout value (ex: currently 5 hours for our low priority queue at the time of writing this)
-    # to prevent multiple instances of the job from being executed.
-    #
-    # See https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
-    def delete_sqs_message_before_start?
-      false
     end
 
     # For jobs that run multiple times in a short time span, we do not want to continually update

@@ -8,7 +8,7 @@
 class JobMessageDeletionMiddleware
   # :reek:LongParameterList
   def call(_worker, _queue, msg, body)
-    if body["job_class"].constantize.send(:delete_sqs_message_before_start?)
+    if body["job_class"].constantize.send(:DELETE_SQS_MESSAGE_BEFORE_START)
       msg.client.delete_message(queue_url: msg.queue_url, receipt_handle: msg.data.receipt_handle)
     end
 
