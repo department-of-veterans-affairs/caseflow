@@ -154,6 +154,7 @@ class AppealsController < ApplicationController
   end
 
   def edit
+    binding.pry
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
     return not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
@@ -195,21 +196,18 @@ class AppealsController < ApplicationController
   private
 
   def appeals_controller_params
-    params.permit(
-      :veteran_ids,
-      :appeals_id,
-      request_issues:
+    params.permit(:appeal_id, :appeals_id, :veteran_ids, request_issues:
       %w[
-        request_issue_id
+        benefit_type
+        nonrating_issue_category
+        decision_text", "decision_date
+        ineligible_due_to_id
+        ineligible_reason
+        withdrawal_date
+        is_predocket_needed
         mst_status
-        mst_status_update_reason_notes
-        pact_status_update_reason_notes
-      ]
-    )
-  end
-
-  def request_issues
-    params.permit(:request_issues)
+        pact_status
+      ])
   end
 
   def create_subtasks!
