@@ -24,6 +24,10 @@ class Intake::DecisionReviewSerializer
     object.active_nonrating_request_issues.map(&:serialize)
   end
 
+  attribute :decision_issues do |object|
+    object.decision_issues.map(&:serialize)
+  end
+
   attribute :processed_in_vbms do |object|
     object&.processed_from_vbms?
   end
