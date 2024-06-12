@@ -48,7 +48,7 @@ const CustomSeeds = () => {
   const [file, setFile] = useState(null);
 
   const theState = useSelector((state) => state);
-  console.log(theState.testSeeds.seeds);
+  // console.log(theState.testSeeds.seeds);
   const dispatch = useDispatch();
 
   const onChangeCaseType = (type, inputKey, value) => {
@@ -177,6 +177,10 @@ const CustomSeeds = () => {
         <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
           <Button onClick={() => downloadTemplate()} name={`Download Template`} />
         </div>
+        {/* wiki Link to be implemented */}
+        {/* <div className='cf-right-side'>
+          <a href='#'>wiki</a>
+        </div> */}
       </div>
       <div className="cf-left-side">
           <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
