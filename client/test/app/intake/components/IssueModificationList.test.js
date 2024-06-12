@@ -17,6 +17,11 @@ import {
 } from 'test/app/queue/components/modalUtils';
 
 describe('IssueModificationList', () => {
+  const adminStoreValues = { userIsVhaAdmin: true };
+  const nonAdminStoreValues = { userIsVhaAdmin: false };
+  const dropdownClass = '.cf-select__control';
+  const menuClass = '.cf-select__menu';
+
   const setup = (storeValues, testProps) => {
     const queueReducer = createQueueReducer(storeValues);
     const store = createStore(
@@ -33,66 +38,60 @@ describe('IssueModificationList', () => {
     );
   };
 
-  const adminStoreValues = { userIsVhaAdmin: true };
-  const nonAdminStoreValues = { userIsVhaAdmin: false };
-
   describe('renders section titles and action options for non admin users', () => {
     const storeValues = { ...nonAdminStoreValues };
 
     it('Addition request type', () => {
       setup(storeValues, additionProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      expect(document.querySelector('.cf-select__menu')).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit addition request')).toBeInTheDocument();
       expect(screen.getByText('Cancel addition request')).toBeInTheDocument();
     });
 
     it('Modification request type', () => {
       setup(storeValues, modificationProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      expect(document.querySelector('.cf-select__menu')).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit modification request')).toBeInTheDocument();
       expect(screen.getByText('Cancel modification request')).toBeInTheDocument();
     });
 
     it('Removal request type', () => {
       setup(storeValues, removalProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE)).toBeInTheDocument();
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      expect(document.querySelector('.cf-select__menu')).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit removal request')).toBeInTheDocument();
       expect(screen.getByText('Cancel removal request')).toBeInTheDocument();
     });
 
     it('Withdrawal request type', () => {
       setup(storeValues, withdrawalProps);
-
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      const menu = document.querySelector('.cf-select__menu');
-
-      expect(menu).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Edit withdrawal request')).toBeInTheDocument();
       expect(screen.getByText('Cancel withdrawal request')).toBeInTheDocument();
     });
@@ -103,57 +102,49 @@ describe('IssueModificationList', () => {
 
     it('Addition request type', () => {
       setup(storeValues, additionProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      const menu = document.querySelector('.cf-select__menu');
-
-      expect(menu).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue addition request')).toBeInTheDocument();
     });
 
     it('Modification request type', () => {
       setup(storeValues, modificationProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      const menu = document.querySelector('.cf-select__menu');
-
-      expect(menu).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue modification request')).toBeInTheDocument();
     });
 
     it('Removal request type', () => {
       setup(storeValues, removalProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      const menu = document.querySelector('.cf-select__menu');
-
-      expect(menu).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue removal request')).toBeInTheDocument();
     });
 
     it('Withdrawal request type', () => {
       setup(storeValues, withdrawalProps);
-      const dropdown = document.querySelector('.cf-select__control');
+      const dropdown = document.querySelector(dropdownClass);
 
       expect(dropdown).toBeInTheDocument();
 
       userEvent.click(dropdown);
 
-      const menu = document.querySelector('.cf-select__menu');
-
-      expect(menu).toBeInTheDocument();
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
       expect(screen.getByText('Review issue withdrawal request')).toBeInTheDocument();
     });
   });
