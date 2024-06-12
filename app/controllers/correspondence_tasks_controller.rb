@@ -60,7 +60,7 @@ class CorrespondenceTasksController < TasksController
     root_task = CorrespondenceRootTask.find_by!(
       appeal_id: params[:id],
       assigned_to: InboundOpsTeam.singleton,
-      appeal_type: "Correspondence",
+      appeal_type: "Correspondence"
     )
     root_task.cancel_task_and_child_subtasks
   end
