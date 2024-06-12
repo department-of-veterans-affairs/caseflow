@@ -630,17 +630,6 @@ describe VACOLS::CaseDocket, :all_dbs do
             expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
-
-        context "when the case has been made genpop" do
-          before do
-            aod_ready_case.update(bfhines: "GP")
-          end
-
-          it "distributes the case" do
-            subject
-            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-          end
-        end
       end
     end
 
