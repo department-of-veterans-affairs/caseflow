@@ -28,7 +28,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    binding.pry
+    # binding.pry
     if issues_modification_request_updater.process!
       render_success
     elsif request_issues_update.perform!
