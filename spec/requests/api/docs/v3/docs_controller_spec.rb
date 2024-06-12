@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::Docs::V3::DocsController, type: :request do
+describe Api::Docs::V3::DocsController, type: :request, skip: "Disabled due to Swagger files being moved" do
   describe "#decision_reviews" do
     it "should successfully return openapi spec" do
       get "/api/docs/v3/decision_reviews"

@@ -9,6 +9,7 @@ class Veteran < CaseflowRecord
   include AssociatedBgsRecord
   include EventConcern
 
+  has_many :correspondences
   has_many :available_hearing_locations,
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
