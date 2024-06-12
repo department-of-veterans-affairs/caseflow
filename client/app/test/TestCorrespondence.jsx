@@ -46,6 +46,7 @@ export default function TestCorrespondence(props) {
     const res = await ApiUtil.post('/test/correspondence/generate_correspondence', { data: payload });
     const data = res.body;
 
+    // eslint-disable-next-line camelcase
     if (data?.invalid_file_numbers.length) {
       setInvalidFileNumbers(data.invalid_file_numbers);
       setShowInvalidVeteransBanner(true);
@@ -54,6 +55,7 @@ export default function TestCorrespondence(props) {
       setShowInvalidVeteransBanner(false);
     }
 
+    // eslint-disable-next-line camelcase
     if (data?.valid_file_nums.length) {
       setValidFileNumbers(data.valid_file_nums);
       setShowSuccessBanner(true);

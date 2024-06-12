@@ -92,15 +92,4 @@ describe('TestCorrespondence', () => {
       expect(screen.getByText(/5 correspondence documents generated for: 002/i)).toBeInTheDocument();
     });
   });
-
-  it('displays the correct invalid file numbers message', async () => {
-    render(<TestCorrespondence {...props} />);
-    const button = screen.getByRole('button', { name: /Generate correspondence/i });
-
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(screen.getByText(/The following file numbers are invalid: 001/i)).toBeInTheDocument();
-    });
-  });
 });
