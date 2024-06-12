@@ -87,7 +87,7 @@ class CorrespondenceIntakeProcessor
     intake_params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
 
-      class_for_data(data).create_from_params(
+      task_class_for_task_related(data).create_from_params(
         {
           appeal: appeal,
           parent_id: appeal.root_task&.id,
@@ -113,7 +113,7 @@ class CorrespondenceIntakeProcessor
     return if unrelated_task_data.blank? || !unrelated_task_data.length
 
     unrelated_task_data.map do |data|
-      class_for_data(data).create_from_params(
+      task_class_for_task_unrelated(data).create_from_params(
         {
           parent_id: correspondence.root_task.id,
           assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
@@ -141,8 +141,14 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def class_for_data(data)
-    task_class_for_type(data[:klass])
+  def task_class_for_task_related(data)
+    task_type = data[:klass]
+    TASKS_RELATED_TO_APPEAL_TASK_TYPES[task_type]&.constantize
+  end
+
+  def task_class_for_task_unrelated(data)
+    task_type = data[:klass]
+    TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES[task_type]&.constantize
   end
 
   def correspondence_documents_efolder_uploader
@@ -160,55 +166,54 @@ class CorrespondenceIntakeProcessor
     mail_task_types[task_type]&.constantize
   end
 
-  TASK_TYPE_MAPPINGS = {
-    "AddressChangeMailTask": AddressChangeMailTask.name,
-    "AodMotionMailTask": AodMotionMailTask.name,
-    "AppealWithdrawalMailTask": AppealWithdrawalMailTask.name,
-    "CavcCorrespondenceMailTask": CavcCorrespondenceMailTask.name,
-    "ClearAndUnmistakeableErrorMailTask": ClearAndUnmistakeableErrorMailTask.name,
-    "CongressionalInterestMailTask": CongressionalInterestMailTask.name,
-    "ControlledCorrespondenceMailTask": ControlledCorrespondenceMailTask.name,
-    "DeathCertificateMailTask": DeathCertificateMailTask.name,
-    "DocketSwitchMailTask": DocketSwitchMailTask.name,
-    "EvidenceOrArgumentMailTask": EvidenceOrArgumentMailTask.name,
-    "ExtensionRequestMailTask": ExtensionRequestMailTask.name,
-    "FoiaRequestMailTask": FoiaRequestMailTask.name,
-    "HearingPostponementRequestMailTask": HearingPostponementRequestMailTask.name,
-    "HearingRelatedMailTask": HearingRelatedMailTask.name,
-    "HearingWithdrawalRequestMailTask": HearingWithdrawalRequestMailTask.name,
-    "OtherMotionMailTask": OtherMotionMailTask.name,
-    "PowerOfAttorneyRelatedMailTask": PowerOfAttorneyRelatedMailTask.name,
-    "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
-    "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
-    "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
-    "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
-    "StatusInquiryMailTask": StatusInquiryMailTask.name,
-    "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
-    "FoiaRequestCorrespondenceTask": FoiaRequestCorrespondenceTask.name,
-    "StatusInquiryCorrespondenceTask": StatusInquiryCorrespondenceTask.name,
-    "OtherMotionCorrespondenceTask": OtherMotionCorrespondenceTask.name,
-    "PrivacyComplaintCorrespondenceTask": PrivacyComplaintCorrespondenceTask.name,
-    "PowerOfAttorneyRelatedCorrespondenceTask": PowerOfAttorneyRelatedCorrespondenceTask.name,
-    "CavcCorrespondenceCorrespondenceTask": CavcCorrespondenceCorrespondenceTask.name,
-    "CongressionalInterestCorrespondenceTask": CongressionalInterestCorrespondenceTask.name,
-    "PrivacyActRequestCorrespondenceTask": PrivacyActRequestCorrespondenceTask.name
+  TASKS_NOT_RELATED_TO_APPEAL_TASK_TYPES = {
+    CavcCorrespondenceCorrespondenceTask.name => CavcCorrespondenceCorrespondenceTask.name,
+    CongressionalInterestCorrespondenceTask.name => CongressionalInterestCorrespondenceTask.name,
+    DeathCertificateCorrespondenceTask.name => DeathCertificateCorrespondenceTask.name,
+    FoiaRequestCorrespondenceTask.name => FoiaRequestCorrespondenceTask.name,
+    OtherMotionCorrespondenceTask.name => OtherMotionCorrespondenceTask.name,
+    PrivacyActRequestCorrespondenceTask.name => PrivacyActRequestCorrespondenceTask.name,
+    PrivacyComplaintCorrespondenceTask.name => PrivacyComplaintCorrespondenceTask.name,
+    StatusInquiryCorrespondenceTask.name => StatusInquiryCorrespondenceTask.name,
+    PowerOfAttorneyRelatedCorrespondenceTask.name => PowerOfAttorneyRelatedCorrespondenceTask.name
   }.with_indifferent_access
 
-  def task_class_for_type(task_type)
-    TASK_TYPE_MAPPINGS[task_type]&.constantize
-  end
+  TASKS_RELATED_TO_APPEAL_TASK_TYPES = {
+    CavcCorrespondenceMailTask.name => CavcCorrespondenceMailTask.name,
+    ClearAndUnmistakeableErrorMailTask.name => ClearAndUnmistakeableErrorMailTask.name,
+    AddressChangeMailTask.name => AddressChangeMailTask.name,
+    CongressionalInterestMailTask.name => CongressionalInterestMailTask.name,
+    ControlledCorrespondenceMailTask.name => ControlledCorrespondenceMailTask.name,
+    DeathCertificateMailTask.name => DeathCertificateMailTask.name,
+    DocketSwitchMailTask.name => DocketSwitchMailTask.name,
+    EvidenceOrArgumentMailTask.name => EvidenceOrArgumentMailTask.name,
+    ExtensionRequestMailTask.name => ExtensionRequestMailTask.name,
+    FoiaRequestMailTask.name => FoiaRequestMailTask.name,
+    HearingPostponementRequestMailTask.name => HearingPostponementRequestMailTask.name,
+    HearingRelatedMailTask.name => HearingRelatedMailTask.name,
+    HearingWithdrawalRequestMailTask.name => HearingWithdrawalRequestMailTask.name,
+    ReconsiderationMotionMailTask.name => ReconsiderationMotionMailTask.name,
+    AodMotionMailTask.name => AodMotionMailTask.name,
+    OtherMotionMailTask.name => OtherMotionMailTask.name,
+    PowerOfAttorneyRelatedMailTask.name => PowerOfAttorneyRelatedMailTask.name,
+    PrivacyActRequestMailTask.name => PrivacyActRequestMailTask.name,
+    PrivacyComplaintMailTask.name => PrivacyComplaintMailTask.name,
+    ReturnedUndeliverableCorrespondenceMailTask.name => ReturnedUndeliverableCorrespondenceMailTask.name,
+    StatusInquiryMailTask.name => StatusInquiryMailTask.name,
+    AppealWithdrawalMailTask.name => AppealWithdrawalMailTask.name
+  }.with_indifferent_access
 
   def class_for_assigned_to(assigned_to)
     available_assignees = {
-      "AodTeam": AodTeam.name,
-      "BvaDispatch": BvaDispatch.name,
-      "CaseReview": CaseReview.name,
-      "CavcLitigationSupport": CavcLitigationSupport.name,
-      "ClerkOfTheBoard": ClerkOfTheBoard.name,
-      "Colocated": Colocated.name,
-      "HearingAdmin": HearingAdmin.name,
-      "LitigationSupport": LitigationSupport.name,
-      "PrivacyTeam": PrivacyTeam.name
+      AodTeam.name => AodTeam.name,
+      BvaDispatch.name => BvaDispatch.name,
+      CaseReview.name => CaseReview.name,
+      CavcLitigationSupport.name => CavcLitigationSupport.name,
+      ClerkOfTheBoard.name => ClerkOfTheBoard.name,
+      Colocated.name => Colocated.name,
+      HearingAdmin.name => HearingAdmin.name,
+      LitigationSupport.name => LitigationSupport.name,
+      PrivacyTeam.name => PrivacyTeam.name
     }.with_indifferent_access
 
     available_assignees[assigned_to]&.constantize
