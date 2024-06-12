@@ -11,7 +11,7 @@ class Intake::DecisionReviewSerializer
   end
   attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
-  # attribute :processed_in_vbms, &:processed_from_vbms?
+  attribute :processed_in_vbms, if: :higher_level_review?
   attribute :legacy_opt_in_approved
   attribute :legacy_appeals, &:serialized_legacy_appeals
   attribute :ratings, &:serialized_ratings
@@ -25,9 +25,7 @@ class Intake::DecisionReviewSerializer
   end
 
   attribute :processed_in_vbms do |object|
-    if object.is_a?(HigherLevelReview)
-      object&.processed_from_vbms?
-    end
+    object&.processed_from_vbms?
   end
 
   attribute :contestable_issues_by_date do |object|
@@ -65,5 +63,11 @@ class Intake::DecisionReviewSerializer
 
   attribute :claimant_relationship do |object|
     object.claimant&.relationship&.titleize
+  end
+
+  private
+
+  def higher_level_review?
+    object.is_a?(HigherLevelReview)
   end
 end
