@@ -125,7 +125,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          VLJ_HEARINGS.VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
@@ -139,7 +139,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFD19, BFDLOOUT,
-          VLJ_HEARINGS.VLJ,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
           PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
@@ -156,7 +156,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        VLJ_HEARINGS.VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
@@ -170,7 +170,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        VLJ_HEARINGS.VLJ,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
@@ -192,7 +192,7 @@ class VACOLS::CaseDocket < VACOLS::Record
          PREV_DECIDING_JUDGE
     from (
       select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
-        VLJ_HEARINGS.VLJ,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
       from (
