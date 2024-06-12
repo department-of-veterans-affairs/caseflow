@@ -207,6 +207,7 @@ export class PdfPage extends React.PureComponent {
   // and PDFJS page object.
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
+
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
 
       const pageMetricData = {
