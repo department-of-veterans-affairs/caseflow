@@ -12,7 +12,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
 servers:
-- url: /idt/api/v1/
+- url: /
 paths:
   /addresses/validate:
     post:
@@ -91,7 +91,8 @@ paths:
         <ul>
           <li>country</li>
         </ul>
-
+      servers:
+        - url: /idt/api/v1/
       requestBody:
         content:
           application/json:
@@ -173,6 +174,8 @@ paths:
       tags:
         - Document Posting
       summary: Used for uploading documents to eFolder for specific appeals/veterans
+      servers:
+        - url: /idt/api/v1/
       parameters:
         - in: path
           name: appeal_id
@@ -398,6 +401,8 @@ paths:
       tags:
         - Document Posting
       summary: Used for uploading documents to eFolder for specific appeals/veterans
+      servers:
+        - url: /idt/api/v1/
       requestBody:
         content:
           application/json:
@@ -615,11 +620,13 @@ paths:
                     errors:
                       "distribution 1": "Address line 3 can't be blank"
 
-  /idt/api/v2/appeals/{appeal_id}/outcode:
+  /appeals/{appeal_id}/outcode:
     post:
       tags:
         - Document Posting
       summary: Route used for outcoding decision reviews
+      servers:
+        - url: /idt/api/v2/
       parameters:
         - in: path
           name: appeal_id
@@ -874,11 +881,13 @@ paths:
                         detail:
                           type: string
                           example: "The veteran file number does not match the file number in VBMS"
-  /idt/api/v2/distributions/{distribution_id}:
+  /distributions/{distribution_id}:
     get:
       tags:
         - Distribution Tracking
       summary: Queries Package Manager for information on a specified distribution.
+      servers:
+        - url: /idt/api/v2/
       parameters:
         - in: path
           name: distribution_id
