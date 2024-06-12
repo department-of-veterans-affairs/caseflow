@@ -13,6 +13,9 @@ class IssueModificationRequest < CaseflowRecord
   validate :open_issue_modification_request, if: proc { |imr| !imr.addition? }
 
   before_save :set_decided_at
+  # TODO: Do we always want this to happen? This always set the edited at time to the same as the updated at time which
+  # seems a bit redundant. Either versions + updated_at time is good enough or edited at should only be set when the
+  # issue modification request was edited by the person who created it
   after_update :set_edited_at
 
   enum status: {
