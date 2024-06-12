@@ -46,7 +46,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     Rails.logger.info("Found #{vacols_ids.count} legacy appeals that have been recently docketed and have not gotten docketed notifications")
     vacols_ids.each do |vacols_id|
       begin
-        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), Constants.EVENT_TYPE_FILTERS.appeal_docketed)
+        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
       rescue Exception => ex
         Rails.logger.error("#{ex.class}: #{ex.message} for vacols id:#{vacols_id} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{ex.backtrace.join("\n")}")
         next

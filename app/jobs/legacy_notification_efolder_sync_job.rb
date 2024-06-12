@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class LegacyNotificationEfolderSyncJob < CaseflowJob
-  include MessageConfigurations::DeleteMessageBeforeStart
-
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["LEGACY_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
