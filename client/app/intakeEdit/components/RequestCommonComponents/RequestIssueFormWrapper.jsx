@@ -4,13 +4,15 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import { useSelector, useDispatch } from 'react-redux';
-import { formatDateStr, formatDate, getDisplayTime } from '../../../util/DateUtil';
+import { formatDateStr, formatDate } from '../../../util/DateUtil';
 import uuid from 'uuid';
 import {
   adminWithdrawRequestIssue,
-  toggleIssueRemoveModal,
   updatePendingReview,
   adminAddRequestIssue
+} from 'app/intake/actions/issueModificationRequest';
+import {
+  toggleIssueRemoveModal
 } from 'app/intake/actions/addIssues';
 import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
@@ -20,7 +22,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
-  const addedIssues = useSelector((state) => state.addedIssues);
+
   const dispatch = useDispatch();
 
   const methods = useForm({
@@ -39,9 +41,40 @@ export const RequestIssueFormWrapper = (props) => {
 
   const { handleSubmit, formState } = methods;
 
-  // const onVhaAdminSubmit = (args) => {
-  //   dispatch(adminWithdrawRequestIssue(args));
-  // };
+  const whenAdminApproves = (enhancedData, removeOriginalIssue) => {
+    switch (props.type) {
+    case 'withdrawal':
+      dispatch(adminWithdrawRequestIssue(enhancedData?.identifier, enhancedData));
+      break;
+    case 'removal':
+      dispatch(toggleIssueRemoveModal());
+      break;
+    case 'addition':
+      dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(enhancedData)));
+      break;
+    case 'modification':
+      if (removeOriginalIssue) {
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+        props.toggleConfirmPendingRequestIssueModal();
+      } else {
+        const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
+
+        dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
+      }
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
+    }
+  };
+
+  const vhaNonAdmin = (enhancedData) => {
+    if (props.type === 'addition') {
+      props.addToPendingReviewSection(enhancedData);
+    } else {
+      props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+    }
+  };
 
   const onSubmit = (issueModificationRequest) => {
     const currentIssueFields = props.currentIssue ?
@@ -54,8 +87,8 @@ export const RequestIssueFormWrapper = (props) => {
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
-    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
-       formatDateStr(props.currentIssue.decisionDate);
+    const decisionDate = issueModificationRequest.decisionDate ||
+      formatDateStr(props.currentIssue.decisionDate);
 
     const enhancedData = {
       // ...currentIssueFields,
@@ -67,64 +100,24 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       decisionDate,
-      identifier: issueModificationRequest?.identifier || uuid.v4(),
-      fromPendingIssues: true
+      identifier: props.pendingIssueModificationRequest?.id || uuid.v4()
     };
+
+    const status = issueModificationRequest.status;
+    const removeOriginalIssue = issueModificationRequest.removeOriginalIssue;
 
     // close modal and move the issue
     props.onCancel();
 
     if (userIsVhaAdmin) {
-      // TODO:  instead of props.pendingIssueModificationRequest probably we can use something else here
-      // TODO: also think about index.
-
-      const index = addedIssues.findIndex(
-        (child) => child.id === props.pendingIssueModificationRequest?.requestIssue?.id);
-
-      // dispatch(updatePendingReview(enhancedData));
-
-      switch (props.type) {
-      case 'withdrawal':
-        dispatch(updatePendingReview(enhancedData));
-        dispatch(adminWithdrawRequestIssue(enhancedData, index));
-        break;
-      case 'removal':
-        if (issueModificationRequest.status === 'approve') {
-          dispatch(toggleIssueRemoveModal());
-          dispatch(updatePendingReview(enhancedData));
-        } else {
-          dispatch(updatePendingReview(enhancedData));
-        }
-        break;
-      case 'addition':
-        if (issueModificationRequest.status === 'approve') {
-          dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(enhancedData)));
-          dispatch(updatePendingReview(enhancedData));
-        }
-        dispatch(updatePendingReview(enhancedData));
-        break;
-      case 'modification':
-        if (issueModificationRequest.status === 'approve') {
-          if (issueModificationRequest.removeOriginalIssue) {
-            console.log('here comes the validation section');
-          } else {
-            const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
-
-            dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
-          }
-        }
-        dispatch(updatePendingReview(enhancedData));
-        break;
-      default:
-        // Do nothing if the dropdown option was not set or implemented.
-        break;
+      if (status === 'approve') {
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+        whenAdminApproves(enhancedData, removeOriginalIssue);
+      } else {
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
       }
     } else {
-      if (props.type === 'addition') {
-        props.addToPendingReviewSection(enhancedData);
-      } else {
-        props.moveToPendingReviewSection(enhancedData, props.issueIndex);
-      }
+      vhaNonAdmin(enhancedData);
     }
   };
 
@@ -165,7 +158,8 @@ RequestIssueFormWrapper.propTypes = {
   type: PropTypes.string,
   moveToPendingReviewSection: PropTypes.func,
   addToPendingReviewSection: PropTypes.func,
-  pendingIssueModificationRequest: PropTypes.object
+  pendingIssueModificationRequest: PropTypes.object,
+  toggleConfirmPendingRequestIssueModal: PropTypes.func
 };
 
 export default RequestIssueFormWrapper;
