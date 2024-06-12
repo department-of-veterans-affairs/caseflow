@@ -122,12 +122,11 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
-          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
-          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+          BFMEMID as PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
@@ -138,11 +137,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, VLJ, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFD19, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
-          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
@@ -561,7 +559,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
-        appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
+        appeals = appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
@@ -650,7 +648,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/MethodLength
 
   def self.vacols_judges_with_exclude_appeals_from_affinity
-    return "PREV_DECIDING_JUDGE in = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+    return "PREV_DECIDING_JUDGE = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
     satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
         .where(exclude_appeals_from_affinity: true)
@@ -659,7 +657,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     if satty_ids.blank?
       "PREV_DECIDING_JUDGE = 'false'"
     else
-      "PREV_DECIDING_JUDGE = '(#{satty_ids.join(', ')})'"
+      "PREV_DECIDING_JUDGE in '(#{satty_ids.join(', ')})'"
     end
   end
 

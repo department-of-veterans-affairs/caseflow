@@ -20,6 +20,7 @@ describe ByDocketDateDistribution, :all_dbs do
     create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :cavc_affinity_days)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution
