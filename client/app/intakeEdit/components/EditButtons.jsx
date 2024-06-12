@@ -159,7 +159,6 @@ class SaveButtonUnconnected extends React.Component {
       requestStatus,
       veteranValid,
       processedInCaseflow,
-      processedInVbms,
       withdrawalDate,
       receiptDate,
       benefitType
@@ -285,7 +284,6 @@ SaveButtonUnconnected.propTypes = {
   requestStatus: PropTypes.object,
   veteranValid: PropTypes.bool,
   processedInCaseflow: PropTypes.bool,
-  processedInVbms: PropTypes.bool,
   withdrawalDate: PropTypes.string,
   receiptDate: PropTypes.string,
   requestIssuesUpdate: PropTypes.func,
@@ -312,7 +310,6 @@ const SaveButton = connect(
     issueCount: issueCountSelector(state),
     veteranValid: state.veteranValid,
     processedInCaseflow: state.processedInCaseflow,
-    processedInVbms: state.processedInVbms,
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
     hasDistributionTask: state.hasDistributionTask,
