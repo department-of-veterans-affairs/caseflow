@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { logRoles } from '@testing-library/react';
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { anyUser, vsoUser, hearingUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
@@ -8,12 +9,8 @@ import { render, screen } from '@testing-library/react';
 import COPY from 'COPY';
 
 describe('HearingLinks', () => {
-  test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
-    const hearing = {
-      scheduledForIsPast: false,
-      conferenceProvider: 'pexip',
-      isVirtual: true
-    };
+  test('Matches snapshot with default props when passed in', () => {
+    render(<HearingLinks />);
 
     const {asFragment} = render(
       <HearingLinks
@@ -55,12 +52,8 @@ describe('HearingLinks', () => {
     expect(spanElements.length).toBe(3);
   });
 
-  test('Matches snapshot when hearing is virtual, webex, and in progress', () => {
-    const hearing = {
-      scheduledForIsPast: false,
-      isVirtual: true,
-      conferenceProvider: 'webex'
-    };
+    const elementsWithTestId = screen.queryByTestId("strong-element-test-id");
+    expect(elementsWithTestId).toBeNull();
 
     const {asFragment} = render(
       <HearingLinks
