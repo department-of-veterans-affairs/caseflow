@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { logRoles } from '@testing-library/react';
 
 import AddIssuesModal from '../../../app/intake/components/AddIssuesModal';
 import { sample1 } from './testData';
@@ -10,51 +12,88 @@ describe('AddIssuesModal', () => {
   const intakeData = sample1.intakeData;
   const featureToggles = { mstIdentification: true };
 
+  const defaultProps = {
+    formType: formType,
+    intakeData: intakeData,
+    onSkip: () => null,
+    featureToggles: featureToggles,
+  };
+
+  const setup = (props) => {
+    return render(
+      <AddIssuesModal
+        {...defaultProps} {...props}
+      />
+    );
+  }
+
   describe('renders', () => {
     it('renders button text', () => {
-      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} onSkip={() => null} />);
+      setup();
+      expect(screen.getByText('Cancel adding this issue')).toBeInTheDocument();
+      expect(screen.getByText('None of these match, see more options')).toBeInTheDocument();
+      expect(screen.getByText('Next')).toBeInTheDocument();
+    });
 
-      const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
-      const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
-
-      expect(cancelBtn.text()).toBe('Cancel adding this issue');
-      expect(skipBtn.text()).toBe('None of these match, see more options');
-      expect(submitBtn.text()).toBe('Next');
-
-      wrapper.setProps({
+    it('renders with new props', async () => {
+      const newProps = {
         cancelText: 'cancel',
         skipText: 'skip',
-        submitText: 'submit',
-      });
+        submitText: 'submit'
+      };
 
-      expect(cancelBtn.text()).toBe('cancel');
-      expect(skipBtn.text()).toBe('skip');
-      expect(submitBtn.text()).toBe('submit');
+      setup(newProps);
+
+      const cancelBtn = await screen.findByText('cancel');
+      const skipBtn = await screen.findByText('skip');
+      const submitBtn = await screen.findByText('submit');
+
+      expect(cancelBtn.textContent).toBe('cancel');
+      expect(skipBtn.textContent).toBe('skip');
+      expect(submitBtn.textContent).toBe('submit');
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} />);
+      const {container, rerender} = render(<AddIssuesModal
+        featureToggles={featureToggles}
+        formType={formType}
+        intakeData={intakeData}
+        />);
 
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).not.toBeInTheDocument();
 
-      wrapper.setProps({ onSkip: () => null });
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
+      rerender(<AddIssuesModal
+        featureToggles={featureToggles}
+        formType={formType}
+        intakeData={intakeData}
+        onSkip={() => null}
+        />);
+
+      expect(container.querySelector('.cf-modal-controls .no-matching-issues')).toBeInTheDocument();
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} />);
+      const { rerender, container } = render(<AddIssuesModal
+        featureToggles={featureToggles}
+        formType={formType}
+        intakeData={intakeData}
+        />);
 
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+        let submitBtn = screen.getByRole('button', { name: /Next/i });
+        expect(submitBtn).toBeDisabled();
 
-      expect(submitBtn.prop('disabled')).toBe(true);
-
-      wrapper.setState({
-        selectedContestableIssueIndex: '2'
-      });
+      rerender(<AddIssuesModal
+        featureToggles={featureToggles}
+        formType={formType}
+        intakeData={intakeData}
+        selectedContestableIssueIndex={'2'}
+        />);
 
       // We need to find element again, or it won't appear updated
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+      submitBtn = screen.getByRole('button', { name: /Next/i });
+      const ptsdRadioButton = screen.getByRole('radio', { name: 'PTSD' });
+      userEvent.click(ptsdRadioButton);
+      expect(submitBtn).not.toBeDisabled();
     });
   });
 });
