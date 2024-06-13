@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -15,7 +15,7 @@ describe('ContestedClaimBadge', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const setupContestedClaimBadge = (store) => {
-    return mount(
+    return (
       <Provider store={store}>
         <ContestedClaimBadge
           appeal={defaultAppeal}
@@ -26,8 +26,7 @@ describe('ContestedClaimBadge', () => {
 
   it('renders correctly', () => {
     const store = getStore();
-    const component = setupContestedClaimBadge(store);
-
-    expect(component).toMatchSnapshot();
+    const { asFragment } = render(setupContestedClaimBadge(store));
+    expect(asFragment()).toMatchSnapshot();
   });
 });
