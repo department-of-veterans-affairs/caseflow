@@ -1752,7 +1752,7 @@ GEM
     paper_trail (12.3.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
-    parallel (1.23.0)
+    parallel (1.25.1)
     paranoia (2.4.2)
       activerecord (>= 4.0, < 6.1)
     parser (2.7.2.0)
@@ -1854,7 +1854,8 @@ GEM
       rack (>= 1.4)
     reverse_markdown (1.4.0)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.3.0)
+      strscan
     roo (2.8.2)
       nokogiri (~> 1)
       rubyzip (>= 1.2.1, < 2.0.0)
@@ -1977,6 +1978,7 @@ GEM
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
+    strscan (3.1.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     test-prof (0.10.1)

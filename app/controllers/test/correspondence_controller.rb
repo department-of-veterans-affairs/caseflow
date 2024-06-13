@@ -18,7 +18,7 @@ class Test::CorrespondenceController < ApplicationController
 
     begin
       connect_corr_with_vet(valid_file_nums, correspondence_params[:count].to_i)
-      return render json: {
+      render json: {
         invalid_file_numbers: invalid_nums,
         valid_file_nums: valid_file_nums
       }, status: :created
@@ -105,5 +105,4 @@ class Test::CorrespondenceController < ApplicationController
       end
     end
   end
-
 end
