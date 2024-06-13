@@ -122,25 +122,28 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_DECIDING_JUDGE
+    select BFKEY, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
-          BFMEMID as PREV_DECIDING_JUDGE
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
       )
     "
 
   SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, BFAC, VLJ, PREV_DECIDING_JUDGE
+    select BFKEY, BFD19, BFDLOOUT, BFAC, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
         select BFKEY, BFD19, BFDLOOUT, BFAC,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
           PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
@@ -579,17 +582,28 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if (appeal["bfac"] != "7" || appeal["aod"] != 0) ||
               (appeal["bfac"] == "7" && appeal["aod"] == 0 &&
                 !appeal["vlj"].blank? &&
-                appeal["vlj"] == appeal["prev_deciding_judge"] &&
+                (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
                 appeal["vlj"] == judge.vacols_attorney_id) ||
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
-      if (appeal["vlj"] == appeal["prev_deciding_judge"]) && (appeal["vlj"] != judge.vacols_attorney_id)
-        next if ineligible_judges_sattyids.include?(appeal["vlj"])
+      if !appeal["vlj"].blank? &&
+        (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
+        (appeal["vlj"] != judge.vacols_attorney_id)
+
+        if ineligible_judges_sattyids.include?(appeal["vlj"])
+          next
+        end
+
+        (appeal["vlj"] != judge.vacols_attorney_id)
       end
 
-      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"])
+      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
+              (appeal["vlj"] != appeal["prev_deciding_judge"] &&
+                excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"]))
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
+        next if appeal["prev_deciding_judge"] == judge.vacols_attorney_id
+
         VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
           (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
             .appeal_affinity
@@ -602,6 +616,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.ineligible_judges_sattyids
     Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?) || []
+  end
+
+  def self.excluded_judges_sattyids
+    VACOLS::Staff.where(sdomainid: JudgeTeam.active
+        .where(exclude_appeals_from_affinity: true)
+        .flat_map(&:judge).compact.pluck(:css_id))&.pluck(:sattyid)
   end
 
   def self.use_by_docket_date?
@@ -625,7 +645,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       vljs_strings = split_lists.flat_map do |k, v|
         base = "(#{v.join(', ')})"
-        base += " or VLJ in " unless k == split_lists.keys.last
         if prev_deciding_judge
           base += " or PREV_DECIDING_JUDGE in " unless k == split_lists.keys.last
         else
@@ -650,14 +669,12 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.vacols_judges_with_exclude_appeals_from_affinity
     return "PREV_DECIDING_JUDGE = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
-    satty_ids = VACOLS::Staff.where(sdomainid: JudgeTeam.active
-        .where(exclude_appeals_from_affinity: true)
-        .flat_map(&:judge).compact.pluck(:css_id)).pluck(:sattyid)
+    satty_ids = excluded_judges_sattyids
 
     if satty_ids.blank?
       "PREV_DECIDING_JUDGE = 'false'"
     else
-      "PREV_DECIDING_JUDGE in '(#{satty_ids.join(', ')})'"
+      "PREV_DECIDING_JUDGE = '(#{satty_ids.join(', ')})'"
     end
   end
 
