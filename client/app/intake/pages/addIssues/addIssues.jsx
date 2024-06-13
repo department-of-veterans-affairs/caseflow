@@ -450,6 +450,8 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
+    rowObjects = rowObjects.concat(intakeSystemLabelRow());
+
     Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
@@ -467,7 +469,6 @@ class AddIssuesPage extends React.Component {
         };
 
         if (key === 'requestedIssues') {
-          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
@@ -475,7 +476,6 @@ class AddIssuesPage extends React.Component {
             }),
           );
         } else if (key === 'withdrawnIssues') {
-          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
@@ -484,7 +484,6 @@ class AddIssuesPage extends React.Component {
           );
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
-          rowObjects = rowObjects.concat(intakeSystemLabelRow());
           rowObjects = rowObjects.concat(
             issueSectionRow({
               ...issueSectionRowProps,
