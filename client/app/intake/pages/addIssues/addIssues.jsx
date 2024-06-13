@@ -58,7 +58,8 @@ import {
   toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection
+  removeFromPendingReviewSection,
+  updatePendingReview
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';

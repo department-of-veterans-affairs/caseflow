@@ -69,14 +69,15 @@ export const RequestIssueFormWrapper = (props) => {
       // close modal and move the issue
       props.onCancel();
 
-    if (pendingIssueModificationRequestsEmpty) {
-      if (props.type === 'addition') {
-        props.addToPendingReviewSection(enhancedData);
+      if (pendingIssueModificationRequestsEmpty) {
+        if (props.type === 'addition') {
+          props.addToPendingReviewSection(enhancedData);
+        } else {
+          props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+        }
       } else {
-        props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+        props.updatePendingReview(enhancedData.identifier, enhancedData);
       }
-    } else {
-      props.updatePendingReview(enhancedData.identifier, enhancedData);
     }
   };
 
