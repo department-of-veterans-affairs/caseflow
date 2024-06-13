@@ -105,31 +105,31 @@ class AddIssuesPage extends React.Component {
     this.props.toggleRequestIssueAdditionModal();
   }
 
-  onClickIssueRequestModificationAction = (issueModificationRequest, requestType, modificationRequestIndex) => {
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
     case 'reviewIssueModificationRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest,
+        pendingIssueModification: issueModificationRequest
       });
       this.props.toggleRequestIssueModificationModal(identifier);
       break;
     case 'reviewIssueAdditionRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest,
+        pendingIssueModification: issueModificationRequest
       });
       this.props.toggleRequestIssueAdditionModal(identifier);
       break;
     case 'reviewIssueWithdrawalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest,
+        pendingIssueModification: issueModificationRequest
       });
       this.props.toggleRequestIssueWithdrawalModal(identifier);
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest,
+        pendingIssueModification: issueModificationRequest
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
