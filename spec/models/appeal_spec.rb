@@ -53,7 +53,7 @@ describe Appeal, :all_dbs do
   end
 
   context "includes PrintsTaskTree concern" do
-    context "#structure" do
+    context "#structure with tasks" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
 
@@ -62,6 +62,17 @@ describe Appeal, :all_dbs do
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with([root_task, child_task], :id)
         expect(subject.key?(:"Appeal #{appeal.id} [#{root_task}, #{child_task}, id]")).to be_truthy
+      end
+    end
+
+    # this should still pass but doesn't
+    # We always want to keep existing tests and functionallity intact
+    context "#structure without tasks" do
+      subject { appeal.structure(:id) }
+
+      it "returns the task structure" do
+        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+        expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
       end
     end
 
