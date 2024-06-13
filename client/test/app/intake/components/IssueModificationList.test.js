@@ -51,7 +51,7 @@ describe('IssueModificationList', () => {
       userEvent.click(dropdown);
 
       expect(document.querySelector(menuClass)).toBeInTheDocument();
-      expect(screen.getByText('Edit addition request')).toBeInTheDocument();
+      expect(screen.getByText('Edit issue addition request')).toBeInTheDocument();
       expect(screen.getByText('Cancel addition request')).toBeInTheDocument();
     });
 
