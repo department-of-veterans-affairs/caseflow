@@ -31,7 +31,6 @@ module QueueHelpers
       portal_entry_date: Time.zone.now,
       source_type: "Mail",
       package_document_type_id: package_doc_type&.id,
-      correspondence_type_id: corr_type&.id,
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: receipt_date,
