@@ -368,207 +368,210 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                         </svg>
                       </CloseIcon>
                     </button>
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                        }
-                      }
-                    >
+                    <div>
                       <div
-                        data-css-1gs0ko2=""
+                        style={
+                          Object {
+                            "display": "flex",
+                          }
+                        }
                       >
                         <h1
                           id="modal_id-title"
+                          style={
+                            Object {
+                              "margin-bottom": "0px",
+                            }
+                          }
                         >
                           Add Court dates
                         </h1>
-                        <div
-                          data-css-o98ubo=""
+                      </div>
+                      <div
+                        data-css-o98ubo=""
+                      >
+                        <p>
+                          Complete the details below to intake this Court remand for further processing
+                        </p>
+                        <DateSelector
+                          errorMessage={null}
+                          label="What is the Court's judgement date?"
+                          name="judgement-date"
+                          onChange={[Function]}
+                          strongLabel={true}
+                          type="date"
+                          value={null}
                         >
-                          <p>
-                            Complete the details below to intake this Court remand for further processing
-                          </p>
-                          <DateSelector
+                          <TextField
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
                             errorMessage={null}
                             label="What is the Court's judgement date?"
+                            max="9999-12-31"
                             name="judgement-date"
                             onChange={[Function]}
-                            strongLabel={true}
-                            type="date"
-                            value={null}
-                          >
-                            <TextField
-                              className={
-                                Array [
-                                  "cf-form-textinput",
-                                ]
-                              }
-                              errorMessage={null}
-                              label="What is the Court's judgement date?"
-                              max="9999-12-31"
-                              name="judgement-date"
-                              onChange={[Function]}
-                              optional={false}
-                              placeholder="mm/dd/yyyy"
-                              required={false}
-                              strongLabel={true}
-                              type="date"
-                              useAriaLabel={false}
-                              validationError={null}
-                              value={null}
-                            >
-                              <div
-                                className="cf-form-textinput   "
-                              >
-                                <label
-                                  htmlFor="judgement-date"
-                                >
-                                  <strong>
-                                    <FormLabel
-                                      label="What is the Court's judgement date?"
-                                      name="judgement-date"
-                                      optional={false}
-                                      required={false}
-                                    >
-                                      <span>
-                                        What is the Court's judgement date?
-                                      </span>
-                                    </FormLabel>
-                                  </strong>
-                                </label>
-                                <div
-                                  className="input-container"
-                                >
-                                  <input
-                                    className={
-                                      Array [
-                                        "cf-form-textinput",
-                                      ]
-                                    }
-                                    id="judgement-date"
-                                    max="9999-12-31"
-                                    name="judgement-date"
-                                    onBlur={[Function]}
-                                    onChange={[Function]}
-                                    placeholder="mm/dd/yyyy"
-                                    type="date"
-                                    value=""
-                                  />
-                                </div>
-                              </div>
-                            </TextField>
-                          </DateSelector>
-                          <DateSelector
-                            errorMessage={null}
-                            label="What is the Court's mandate date?"
-                            name="mandate-date"
-                            onChange={[Function]}
-                            strongLabel={true}
-                            type="date"
-                            value={null}
-                          >
-                            <TextField
-                              className={
-                                Array [
-                                  "cf-form-textinput",
-                                ]
-                              }
-                              errorMessage={null}
-                              label="What is the Court's mandate date?"
-                              max="9999-12-31"
-                              name="mandate-date"
-                              onChange={[Function]}
-                              optional={false}
-                              placeholder="mm/dd/yyyy"
-                              required={false}
-                              strongLabel={true}
-                              type="date"
-                              useAriaLabel={false}
-                              validationError={null}
-                              value={null}
-                            >
-                              <div
-                                className="cf-form-textinput   "
-                              >
-                                <label
-                                  htmlFor="mandate-date"
-                                >
-                                  <strong>
-                                    <FormLabel
-                                      label="What is the Court's mandate date?"
-                                      name="mandate-date"
-                                      optional={false}
-                                      required={false}
-                                    >
-                                      <span>
-                                        What is the Court's mandate date?
-                                      </span>
-                                    </FormLabel>
-                                  </strong>
-                                </label>
-                                <div
-                                  className="input-container"
-                                >
-                                  <input
-                                    className={
-                                      Array [
-                                        "cf-form-textinput",
-                                      ]
-                                    }
-                                    id="mandate-date"
-                                    max="9999-12-31"
-                                    name="mandate-date"
-                                    onBlur={[Function]}
-                                    onChange={[Function]}
-                                    placeholder="mm/dd/yyyy"
-                                    type="date"
-                                    value=""
-                                  />
-                                </div>
-                              </div>
-                            </TextField>
-                          </DateSelector>
-                          <TextareaField
-                            characterLimitTopRight={false}
-                            disabled={false}
-                            errorMessage={null}
-                            label="Provide instructions and context for this action"
-                            name="context-and-instructions-textBox"
-                            onChange={[Function]}
                             optional={false}
+                            placeholder="mm/dd/yyyy"
                             required={false}
                             strongLabel={true}
+                            type="date"
+                            useAriaLabel={false}
+                            validationError={null}
+                            value={null}
                           >
                             <div
-                              className="cf-form-textarea"
+                              className="cf-form-textinput   "
                             >
                               <label
-                                className="question-label"
-                                htmlFor="context-and-instructions-textBox"
+                                htmlFor="judgement-date"
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide instructions and context for this action"
-                                    name="context-and-instructions-textBox"
+                                    label="What is the Court's judgement date?"
+                                    name="judgement-date"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide instructions and context for this action
+                                      What is the Court's judgement date?
                                     </span>
                                   </FormLabel>
                                 </strong>
                               </label>
-                              <textarea
-                                disabled={false}
-                                id="context-and-instructions-textBox"
-                                name="context-and-instructions-textBox"
-                                onChange={[Function]}
-                              />
+                              <div
+                                className="input-container"
+                              >
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="judgement-date"
+                                  max="9999-12-31"
+                                  name="judgement-date"
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value=""
+                                />
+                              </div>
                             </div>
-                          </TextareaField>
-                        </div>
+                          </TextField>
+                        </DateSelector>
+                        <DateSelector
+                          errorMessage={null}
+                          label="What is the Court's mandate date?"
+                          name="mandate-date"
+                          onChange={[Function]}
+                          strongLabel={true}
+                          type="date"
+                          value={null}
+                        >
+                          <TextField
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
+                            errorMessage={null}
+                            label="What is the Court's mandate date?"
+                            max="9999-12-31"
+                            name="mandate-date"
+                            onChange={[Function]}
+                            optional={false}
+                            placeholder="mm/dd/yyyy"
+                            required={false}
+                            strongLabel={true}
+                            type="date"
+                            useAriaLabel={false}
+                            validationError={null}
+                            value={null}
+                          >
+                            <div
+                              className="cf-form-textinput   "
+                            >
+                              <label
+                                htmlFor="mandate-date"
+                              >
+                                <strong>
+                                  <FormLabel
+                                    label="What is the Court's mandate date?"
+                                    name="mandate-date"
+                                    optional={false}
+                                    required={false}
+                                  >
+                                    <span>
+                                      What is the Court's mandate date?
+                                    </span>
+                                  </FormLabel>
+                                </strong>
+                              </label>
+                              <div
+                                className="input-container"
+                              >
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="mandate-date"
+                                  max="9999-12-31"
+                                  name="mandate-date"
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value=""
+                                />
+                              </div>
+                            </div>
+                          </TextField>
+                        </DateSelector>
+                        <TextareaField
+                          characterLimitTopRight={false}
+                          disabled={false}
+                          errorMessage={null}
+                          label="Provide instructions and context for this action"
+                          name="context-and-instructions-textBox"
+                          onChange={[Function]}
+                          optional={false}
+                          required={false}
+                          strongLabel={true}
+                        >
+                          <div
+                            className="cf-form-textarea"
+                          >
+                            <label
+                              className="question-label"
+                              htmlFor="context-and-instructions-textBox"
+                            >
+                              <strong>
+                                <FormLabel
+                                  label="Provide instructions and context for this action"
+                                  name="context-and-instructions-textBox"
+                                  optional={false}
+                                  required={false}
+                                >
+                                  <span>
+                                    Provide instructions and context for this action
+                                  </span>
+                                </FormLabel>
+                              </strong>
+                            </label>
+                            <textarea
+                              disabled={false}
+                              id="context-and-instructions-textBox"
+                              name="context-and-instructions-textBox"
+                              onChange={[Function]}
+                            />
+                          </div>
+                        </TextareaField>
                       </div>
                     </div>
                     <div
@@ -1017,223 +1020,226 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                         </svg>
                       </CloseIcon>
                     </button>
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                        }
-                      }
-                    >
+                    <div>
                       <div
-                        data-css-1gs0ko2=""
+                        style={
+                          Object {
+                            "display": "flex",
+                          }
+                        }
                       >
                         <h1
                           id="modal_id-title"
+                          style={
+                            Object {
+                              "margin-bottom": "0px",
+                            }
+                          }
                         >
                           Add Court dates
                         </h1>
-                        <div
-                          data-css-o98ubo=""
+                      </div>
+                      <div
+                        data-css-o98ubo=""
+                      >
+                        <p>
+                          Complete the details below to intake this Court remand for further processing
+                        </p>
+                        <DateSelector
+                          errorMessage={null}
+                          label="What is the Court's judgement date?"
+                          name="judgement-date"
+                          onChange={[Function]}
+                          strongLabel={true}
+                          type="date"
+                          value="03/27/2020"
                         >
-                          <p>
-                            Complete the details below to intake this Court remand for further processing
-                          </p>
-                          <DateSelector
+                          <TextField
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
                             errorMessage={null}
                             label="What is the Court's judgement date?"
+                            max="9999-12-31"
                             name="judgement-date"
                             onChange={[Function]}
-                            strongLabel={true}
-                            type="date"
-                            value="03/27/2020"
-                          >
-                            <TextField
-                              className={
-                                Array [
-                                  "cf-form-textinput",
-                                ]
-                              }
-                              errorMessage={null}
-                              label="What is the Court's judgement date?"
-                              max="9999-12-31"
-                              name="judgement-date"
-                              onChange={[Function]}
-                              optional={false}
-                              placeholder="mm/dd/yyyy"
-                              required={false}
-                              strongLabel={true}
-                              type="date"
-                              useAriaLabel={false}
-                              validationError="Please select a valid date"
-                              value="03/27/2020"
-                            >
-                              <div
-                                className="cf-form-textinput   "
-                              >
-                                <label
-                                  htmlFor="judgement-date"
-                                >
-                                  <strong>
-                                    <FormLabel
-                                      label="What is the Court's judgement date?"
-                                      name="judgement-date"
-                                      optional={false}
-                                      required={false}
-                                    >
-                                      <span>
-                                        What is the Court's judgement date?
-                                      </span>
-                                    </FormLabel>
-                                  </strong>
-                                </label>
-                                <div
-                                  className="input-container"
-                                >
-                                  <input
-                                    className={
-                                      Array [
-                                        "cf-form-textinput",
-                                      ]
-                                    }
-                                    id="judgement-date"
-                                    max="9999-12-31"
-                                    name="judgement-date"
-                                    onBlur={[Function]}
-                                    onChange={[Function]}
-                                    placeholder="mm/dd/yyyy"
-                                    type="date"
-                                    value="03/27/2020"
-                                  />
-                                </div>
-                                <div
-                                  className="cf-validation"
-                                >
-                                  <span>
-                                    Please select a valid date
-                                  </span>
-                                </div>
-                              </div>
-                            </TextField>
-                          </DateSelector>
-                          <DateSelector
-                            errorMessage={null}
-                            label="What is the Court's mandate date?"
-                            name="mandate-date"
-                            onChange={[Function]}
-                            strongLabel={true}
-                            type="date"
-                            value="03/31/2019"
-                          >
-                            <TextField
-                              className={
-                                Array [
-                                  "cf-form-textinput",
-                                ]
-                              }
-                              errorMessage={null}
-                              label="What is the Court's mandate date?"
-                              max="9999-12-31"
-                              name="mandate-date"
-                              onChange={[Function]}
-                              optional={false}
-                              placeholder="mm/dd/yyyy"
-                              required={false}
-                              strongLabel={true}
-                              type="date"
-                              useAriaLabel={false}
-                              validationError="Please select a valid date"
-                              value="03/31/2019"
-                            >
-                              <div
-                                className="cf-form-textinput   "
-                              >
-                                <label
-                                  htmlFor="mandate-date"
-                                >
-                                  <strong>
-                                    <FormLabel
-                                      label="What is the Court's mandate date?"
-                                      name="mandate-date"
-                                      optional={false}
-                                      required={false}
-                                    >
-                                      <span>
-                                        What is the Court's mandate date?
-                                      </span>
-                                    </FormLabel>
-                                  </strong>
-                                </label>
-                                <div
-                                  className="input-container"
-                                >
-                                  <input
-                                    className={
-                                      Array [
-                                        "cf-form-textinput",
-                                      ]
-                                    }
-                                    id="mandate-date"
-                                    max="9999-12-31"
-                                    name="mandate-date"
-                                    onBlur={[Function]}
-                                    onChange={[Function]}
-                                    placeholder="mm/dd/yyyy"
-                                    type="date"
-                                    value="03/31/2019"
-                                  />
-                                </div>
-                                <div
-                                  className="cf-validation"
-                                >
-                                  <span>
-                                    Please select a valid date
-                                  </span>
-                                </div>
-                              </div>
-                            </TextField>
-                          </DateSelector>
-                          <TextareaField
-                            characterLimitTopRight={false}
-                            disabled={false}
-                            errorMessage={null}
-                            label="Provide instructions and context for this action"
-                            name="context-and-instructions-textBox"
-                            onChange={[Function]}
                             optional={false}
+                            placeholder="mm/dd/yyyy"
                             required={false}
                             strongLabel={true}
-                            value="test instructions"
+                            type="date"
+                            useAriaLabel={false}
+                            validationError="Please select a valid date"
+                            value="03/27/2020"
                           >
                             <div
-                              className="cf-form-textarea"
+                              className="cf-form-textinput   "
                             >
                               <label
-                                className="question-label"
-                                htmlFor="context-and-instructions-textBox"
+                                htmlFor="judgement-date"
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide instructions and context for this action"
-                                    name="context-and-instructions-textBox"
+                                    label="What is the Court's judgement date?"
+                                    name="judgement-date"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide instructions and context for this action
+                                      What is the Court's judgement date?
                                     </span>
                                   </FormLabel>
                                 </strong>
                               </label>
-                              <textarea
-                                disabled={false}
-                                id="context-and-instructions-textBox"
-                                name="context-and-instructions-textBox"
-                                onChange={[Function]}
-                                value="test instructions"
-                              />
+                              <div
+                                className="input-container"
+                              >
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="judgement-date"
+                                  max="9999-12-31"
+                                  name="judgement-date"
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value="03/27/2020"
+                                />
+                              </div>
+                              <div
+                                className="cf-validation"
+                              >
+                                <span>
+                                  Please select a valid date
+                                </span>
+                              </div>
                             </div>
-                          </TextareaField>
-                        </div>
+                          </TextField>
+                        </DateSelector>
+                        <DateSelector
+                          errorMessage={null}
+                          label="What is the Court's mandate date?"
+                          name="mandate-date"
+                          onChange={[Function]}
+                          strongLabel={true}
+                          type="date"
+                          value="03/31/2019"
+                        >
+                          <TextField
+                            className={
+                              Array [
+                                "cf-form-textinput",
+                              ]
+                            }
+                            errorMessage={null}
+                            label="What is the Court's mandate date?"
+                            max="9999-12-31"
+                            name="mandate-date"
+                            onChange={[Function]}
+                            optional={false}
+                            placeholder="mm/dd/yyyy"
+                            required={false}
+                            strongLabel={true}
+                            type="date"
+                            useAriaLabel={false}
+                            validationError="Please select a valid date"
+                            value="03/31/2019"
+                          >
+                            <div
+                              className="cf-form-textinput   "
+                            >
+                              <label
+                                htmlFor="mandate-date"
+                              >
+                                <strong>
+                                  <FormLabel
+                                    label="What is the Court's mandate date?"
+                                    name="mandate-date"
+                                    optional={false}
+                                    required={false}
+                                  >
+                                    <span>
+                                      What is the Court's mandate date?
+                                    </span>
+                                  </FormLabel>
+                                </strong>
+                              </label>
+                              <div
+                                className="input-container"
+                              >
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="mandate-date"
+                                  max="9999-12-31"
+                                  name="mandate-date"
+                                  onBlur={[Function]}
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value="03/31/2019"
+                                />
+                              </div>
+                              <div
+                                className="cf-validation"
+                              >
+                                <span>
+                                  Please select a valid date
+                                </span>
+                              </div>
+                            </div>
+                          </TextField>
+                        </DateSelector>
+                        <TextareaField
+                          characterLimitTopRight={false}
+                          disabled={false}
+                          errorMessage={null}
+                          label="Provide instructions and context for this action"
+                          name="context-and-instructions-textBox"
+                          onChange={[Function]}
+                          optional={false}
+                          required={false}
+                          strongLabel={true}
+                          value="test instructions"
+                        >
+                          <div
+                            className="cf-form-textarea"
+                          >
+                            <label
+                              className="question-label"
+                              htmlFor="context-and-instructions-textBox"
+                            >
+                              <strong>
+                                <FormLabel
+                                  label="Provide instructions and context for this action"
+                                  name="context-and-instructions-textBox"
+                                  optional={false}
+                                  required={false}
+                                >
+                                  <span>
+                                    Provide instructions and context for this action
+                                  </span>
+                                </FormLabel>
+                              </strong>
+                            </label>
+                            <textarea
+                              disabled={false}
+                              id="context-and-instructions-textBox"
+                              name="context-and-instructions-textBox"
+                              onChange={[Function]}
+                              value="test instructions"
+                            />
+                          </div>
+                        </TextareaField>
                       </div>
                     </div>
                     <div

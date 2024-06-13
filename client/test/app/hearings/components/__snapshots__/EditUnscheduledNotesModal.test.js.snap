@@ -42,42 +42,41 @@ exports[`EditUnscheduledNotesModal renders correctly 1`] = `
           </g>
         </svg>
       </button>
-      <div
-        style="display: flex;"
-      >
+      <div>
         <div
-          data-css-1gs0ko2=""
+          style="display: flex;"
         >
           <h1
             id="modal_id-title"
+            style="margin-bottom: 0px;"
           >
             Edit Notes
           </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <div>
-              <div
-                class="cf-form-textarea"
-                data-css-1tc952m=""
+        </div>
+        <div
+          data-css-o98ubo=""
+        >
+          <div>
+            <div
+              class="cf-form-textarea"
+              data-css-1tc952m=""
+            >
+              <label
+                class="question-label"
+                data-css-42cjjw=""
+                for="null-unscheduled-notes"
               >
-                <label
-                  class="question-label"
-                  data-css-42cjjw=""
-                  for="null-unscheduled-notes"
-                >
-                  <strong>
-                    <span>
-                      Notes
-                    </span>
-                  </strong>
-                </label>
-                <textarea
-                  id="null-unscheduled-notes"
-                  maxlength="1000"
-                  name="null-unscheduled-notes"
-                />
-              </div>
+                <strong>
+                  <span>
+                    Notes
+                  </span>
+                </strong>
+              </label>
+              <textarea
+                id="null-unscheduled-notes"
+                maxlength="1000"
+                name="null-unscheduled-notes"
+              />
             </div>
           </div>
         </div>

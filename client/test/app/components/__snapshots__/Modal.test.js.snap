@@ -42,24 +42,23 @@ exports[`Modal renders correctly 1`] = `
           </g>
         </svg>
       </button>
-      <div
-        style="display: flex;"
-      >
+      <div>
         <div
-          data-css-1gs0ko2=""
+          style="display: flex;"
         >
           <h1
             id="modal_id-title"
+            style="margin-bottom: 0px;"
           >
             Test Modal Title
           </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              This is text content
-            </p>
-          </div>
+        </div>
+        <div
+          data-css-o98ubo=""
+        >
+          <p>
+            This is text content
+          </p>
         </div>
       </div>
       <div
