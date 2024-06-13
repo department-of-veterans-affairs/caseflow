@@ -67,6 +67,23 @@ export default class IssuesList extends React.Component {
         );
       }
     }
+    if (this.props.showRequestIssueUpdateOptions && this.props.intakeData.benefitType === 'vha') {
+      options = [];
+      options.push(
+        { displayText: 'Request modification',
+          value: 'requestModification' }
+      );
+
+      options.push(
+        { displayText: 'Request removal',
+          value: 'requestRemoval' }
+      );
+
+      options.push(
+        { displayText: 'Request withdrawal',
+          value: 'requestWithdrawal' }
+      );
+    }
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
 
@@ -93,7 +110,8 @@ export default class IssuesList extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       editPage,
-      featureToggles
+      featureToggles,
+      disableIssueActions
     } = this.props;
 
     return <div className="issues">
@@ -116,6 +134,8 @@ export default class IssuesList extends React.Component {
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
             !issue.isUnidentified;
 
+          const showNewIssueBasedOnRequestIssueBanner = issue.id === 'undefined';
+
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
               className="issue"
@@ -127,7 +147,7 @@ export default class IssuesList extends React.Component {
                 issue={issue}
                 issueIdx={issue.index}
                 requestIssues={intakeData.requestIssues}
-                legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
                 legacyAppeals={intakeData.legacyAppeals}
                 featureToggles={featureToggles}
                 formType={formType} />
@@ -143,6 +163,7 @@ export default class IssuesList extends React.Component {
                   hideLabel
                   options={issueActionOptions}
                   defaultText="Select action"
+                  readOnly={disableIssueActions}
                   onChange={(option) => onClickIssueAction(issue.index, option)}
                 /> }
                 {!editPage && <Button
@@ -160,6 +181,13 @@ export default class IssuesList extends React.Component {
                 messageStyling={messageStyling}
                 styling={alertStyling}
                 type="warning"
+              /> : null}
+            {showNewIssueBasedOnRequestIssueBanner ?
+              <Alert
+                message={COPY.VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE}
+                messageStyling={messageStyling}
+                styling={alertStyling}
+                type="info"
               /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
@@ -179,6 +207,9 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
+  userCanRequestIssueUpdates: PropTypes.bool,
+  showRequestIssueUpdateOptions: PropTypes.bool,
   editPage: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  disableIssueActions: PropTypes.bool
 };

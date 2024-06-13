@@ -7,11 +7,12 @@ import { removeIssue } from '../../actions/addIssues';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
 
+import { isEmpty } from 'lodash';
+
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
       <p>The contention you selected will be removed from the decision review.</p>
-      <p>Are you sure you want to remove this issue?</p>
     </div>;
   }
 
@@ -31,8 +32,15 @@ class RemoveIssueModal extends React.PureComponent {
   render() {
     const {
       intakeData,
-      removeIndex
+      removeIndex,
+      pendingIssueModificationRequest,
+      userIsVhaAdmin
     } = this.props;
+
+    const removePendingIndex = intakeData.addedIssues.
+      findIndex((issue) => issue?.id === pendingIssueModificationRequest?.requestIssue?.id);
+
+    const index = (userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) ? removePendingIndex : removeIndex;
 
     return <div className="intake-remove-issue">
       <Modal
@@ -41,11 +49,11 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Cancel',
             onClick: this.props.closeHandler
           },
-          { classNames: ['usa-button-red', 'remove-issue'],
-            name: 'Yes, remove issue',
+          { classNames: ['remove-issue'],
+            name: 'Remove',
             onClick: () => {
               this.props.closeHandler();
-              this.props.removeIssue(removeIndex);
+              this.props.removeIssue(index);
             }
           }
         ]}
@@ -66,6 +74,8 @@ RemoveIssueModal.propTypes = {
   intakeData: PropTypes.object.isRequired,
   removeIndex: PropTypes.number.isRequired,
   removeIssue: PropTypes.func.isRequired,
+  pendingIssueModificationRequest: PropTypes.object,
+  userIsVhaAdmin: PropTypes.bool
 };
 
 export default connect(

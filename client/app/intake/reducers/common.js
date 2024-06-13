@@ -2,11 +2,14 @@
 import { ACTIONS } from '../constants';
 import { formatRelationships } from '../util';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { formatIssueModificationRequests } from '../util/issueModificationRequests';
+
 import { update } from '../../util/ReducerUtil';
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
+  const pendingIssueModificationRequests = state.pendingIssueModificationRequests || [];
 
   actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
     return update(state, {
@@ -59,6 +62,42 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.TOGGLE_EDIT_INTAKE_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['editIntakeIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_MODIFICATION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueModificationModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_REMOVAL_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueRemovalModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_WITHDRAWAL_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueWithdrawalModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['requestIssueAdditionModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['cancelPendingRequestIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['confirmPendingRequestIssueModalVisible']
     });
   };
 
@@ -157,6 +196,50 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.MOVE_TO_PENDING_REVIEW] = () => {
+    return {
+      ...state,
+      addedIssues: listOfIssues,
+      pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
+    };
+  };
+
+  actionsMap[ACTIONS.ADD_TO_PENDING_REVIEW] = () => {
+    return {
+      ...state,
+      pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
+    };
+  };
+
+  actionsMap[ACTIONS.REMOVE_FROM_PENDING_REVIEW] = () => {
+    if (action.payload.issueModificationRequest === null) {
+      pendingIssueModificationRequests.splice(action.payload.index, 1);
+
+      return {
+        ...state,
+        pendingIssueModificationRequests
+      };
+    }
+
+    return {
+      ...state,
+      pendingIssueModificationRequests: pendingIssueModificationRequests.find(
+        (issue) => (issue.identifier !== action.payload.issueModificationRequest.identifier))
+    };
+  };
+
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    return update(state, {
+      pendingIssueModificationRequests: {
+        [index]: {
+          $merge: action.payload.data
+        }
+      }
+    });
+  };
+
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,
@@ -190,6 +273,63 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       addedIssues: listOfIssues
+    };
+  };
+
+  // TODO: this probably needs to come from Jonathan's PR
+  // actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+  //   const modifiedIssueModificationRequest = [action.payload.issueModificationRequest];
+
+  //   const modifiedPendingModificationRequest = pendingIssueModificationRequests.
+  //     map((pri) => modifiedIssueModificationRequest.
+  //       find((imr) => imr.id = pri.id) || pri);
+
+  //   return {
+  //     ...state,
+  //     pendingIssueModificationRequests: modifiedPendingModificationRequest
+  //   };
+  // };
+
+  actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    listOfIssues[index].withdrawalPending =
+      action.payload.issueModificationRequest.status === 'approve';
+
+    listOfIssues[index].pendingWithdrawalDate =
+      action.payload.issueModificationRequest.status === 'approve' ?
+        action.payload.issueModificationRequest.withdrawalDate : '';
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE] = () => {
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_ADD_REQUESTED_ISSUE] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 
@@ -256,6 +396,9 @@ export const commonStateFromServerIntake = (serverIntake) => {
     },
     requestIssues: {
       $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
+    },
+    pendingIssueModificationRequests: {
+      $set: formatIssueModificationRequests(serverIntake.pendingIssueModificationRequests)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
