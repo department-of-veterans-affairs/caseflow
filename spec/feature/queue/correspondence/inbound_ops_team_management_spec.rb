@@ -22,7 +22,7 @@ RSpec.feature "InboundOpsTeamManagement" do
       scenario "link does not appear in dropdown menu" do
         visit("/queue")
         find("#menu-trigger").click
-        expect(page).to_not have_content("Inbound Ops Team team management")
+        expect(page).to_not have_content("Inbound Ops Team management")
       end
 
       scenario "user is denied access to team management page" do
@@ -81,8 +81,8 @@ RSpec.feature "InboundOpsTeamManagement" do
     visit("/queue")
 
     find("#menu-trigger").click
-    expect(page).to have_content("Inbound Ops Team team management")
-    click_on("Inbound Ops Team team management")
+    expect(page).to have_content("Inbound Ops Team management")
+    click_on("Inbound Ops Team management")
     expect(current_path).to eq("/organizations/inbound-ops-team/users")
   end
 end

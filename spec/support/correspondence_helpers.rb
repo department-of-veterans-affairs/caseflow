@@ -142,7 +142,7 @@ module CorrespondenceHelpers
   def seed_autotext_table
     require Rails.root.join("db/seeds/base.rb").to_s
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-    Seeds::CorrespondenceAutoTexts.new.seed!
+    Seeds::Correspondence.new.create_auto_text_data
   end
 
   def find_and_route_to_intake
