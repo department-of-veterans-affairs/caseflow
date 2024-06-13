@@ -584,15 +584,20 @@ class VACOLS::CaseDocket < VACOLS::Record
       next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
               (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
                 !appeal["vlj"].blank? &&
-                (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
+                (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
                 appeal["vlj"] == judge.vacols_attorney_id) ||
               (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
 
       # {if tied_to judge != judge being distributed to, we will skip if the judge is ineligible }
       if !appeal["vlj"].blank? &&
-         (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
+         (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
          (appeal["vlj"] != judge.vacols_attorney_id)
-        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+
+        if ineligible_judges_sattyids&.include?(appeal["vlj"])
+          next
+        else
+          return true
+        end
       end
 
       # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}

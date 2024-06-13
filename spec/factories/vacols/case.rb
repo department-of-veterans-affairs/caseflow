@@ -251,6 +251,17 @@ FactoryBot.define do
                   file_number: vacols_case.correspondent.ssn
                 )
 
+                if evaluator.tied_to
+
+                  create(
+                    :case_hearing,
+                    :disposition_held,
+                    folder_nr: vacols_case.bfkey,
+                    hearing_date: 5.days.ago.to_date,
+                    user: User.find_by_css_id(evaluator.judge.sdomainid)
+                  )
+                end
+
                 params = {
                   bfdpdcn: vacols_case.bfddec,
                   bfac: "7",
