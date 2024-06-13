@@ -13,7 +13,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
-  const pendingIssueModificationRequestsEmpty = Object.entries(props.pendingIssueModificationRequest).length === 0;
+  const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
 
   const methods = useForm({
     defaultValues: {
@@ -69,7 +69,7 @@ export const RequestIssueFormWrapper = (props) => {
       // close modal and move the issue
       props.onCancel();
 
-      if (pendingIssueModificationRequestsEmpty) {
+      if (isNewModificationRequest) {
         if (props.type === 'addition') {
           props.addToPendingReviewSection(enhancedData);
         } else {
@@ -86,7 +86,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={pendingIssueModificationRequestsEmpty ? `Request issue ${props.type}` : 'Edit pending request'}
+            title={isNewModificationRequest ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
