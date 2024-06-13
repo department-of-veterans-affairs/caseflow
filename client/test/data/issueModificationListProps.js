@@ -89,31 +89,23 @@ export const mockedWithdrawalRequestTypeProps = [
 export const additionProps = {
   sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
   issueModificationRequests: mockedAdditionRequestTypeProps,
-  lastSection: true,
-  allPendingIssues: [{}],
   onClickPendingIssueAction: jest.fn()
 };
 
 export const modificationProps = {
   sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
   issueModificationRequests: mockedModificationRequestProps,
-  lastSection: true,
-  allPendingIssues: [{}],
   onClickPendingIssueAction: jest.fn()
 };
 
 export const removalProps = {
   sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
   issueModificationRequests: mockedRemovalRequestTypeProps,
-  lastSection: true,
-  allPendingIssues: [{}],
   onClickPendingIssueAction: jest.fn()
 };
 
 export const withdrawalProps = {
   sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
   issueModificationRequests: mockedWithdrawalRequestTypeProps,
-  lastSection: true,
-  allPendingIssues: [{}],
   onClickPendingIssueAction: jest.fn()
 };
