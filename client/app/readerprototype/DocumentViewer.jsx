@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import PdfDocument from './components/PdfDocument';
 import ReaderFooter from './components/ReaderFooter';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
+import ReaderSearchBar from './components/ReaderSearchBar';
 
-import { getNextDocId, getPrevDocId, selectedDoc, selectedDocIndex, getRotationDeg } from './util/documentUtil';
-import { docViewerStyles, pdfDocumentStyles } from './util/layoutUtil';
+import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
+import { docViewerStyles } from './util/layoutUtil';
 
 const ZOOM_LEVEL_MIN = 20;
 const ZOOM_LEVEL_MAX = 300;
@@ -16,6 +17,25 @@ const ZOOM_INCREMENT = 20;
 const DocumentViewer = (props) => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const [rotateDeg, setRotateDeg] = useState('0deg');
+  const [showSearchBar, setShowSearchBar] = useState(false);
+
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setShowSearchBar(false);
+      }
+
+      if (event.metaKey && event.code === 'KeyF') {
+        event.preventDefault();
+        setShowSearchBar(true);
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, []);
 
   const doc = selectedDoc(props);
 
@@ -25,9 +45,7 @@ const DocumentViewer = (props) => {
     <div>
       <div className="cf-pdf-page-container-prototype">
         <div className="sidebarContainer" {...docViewerStyles.sidebarContainer}>
-          <ReaderSidebar
-            doc={doc}
-          />
+          <ReaderSidebar doc={doc} />
         </div>
         <div className="cf-pdf-container" {...docViewerStyles.documentContainer}>
           <div className="cf-pdf-toolbar-prototype">
@@ -43,9 +61,11 @@ const DocumentViewer = (props) => {
               zoomLevel={zoomLevel}
               rotateDocument={() => setRotateDeg(getRotationDeg(rotateDeg))}
               rotateDeg={`${rotateDeg}`}
+              toggleSearchBar={setShowSearchBar}
+              showSearchBar={showSearchBar}
             />
           </div>
-          <div className="cf-search-bar hidden"></div>
+          {showSearchBar && <ReaderSearchBar />}
           <div className="cf-pdf-scroll-view">
             <PdfDocument
               key={`${doc.content_url}`}
@@ -72,7 +92,7 @@ const DocumentViewer = (props) => {
 DocumentViewer.propTypes = {
   allDocuments: PropTypes.array.isRequired,
   showPdf: PropTypes.func,
-  documentPathBase: PropTypes.string
+  documentPathBase: PropTypes.string,
 };
 
 export default DocumentViewer;
