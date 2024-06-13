@@ -2,16 +2,12 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { logRoles } from '@testing-library/react';
 
 import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
-import exp from 'constants';
-import { on } from 'events';
-import { ge } from 'faker/lib/locales';
-import { get } from 'lodash';
-
-import { act } from 'react-dom/test-utils';
+import { log } from 'console';
 
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
@@ -45,6 +41,10 @@ describe('NonratingRequestIssueModal', () => {
 
   describe('renders', () => {
 
+    const MockNonratingRequestIssueModal = (props) => {
+      console.log('PROPS:', props);
+      return <NonratingRequestIssueModal {...props} />;
+    };
 
     const defaultProps = {
       benefitType: 'compensation',
@@ -61,13 +61,6 @@ describe('NonratingRequestIssueModal', () => {
         />
       );
     }
-    // const cancelBtn = screen.getByRole('button', { name: 'Cancel adding this issue' });
-
-    // const {container} = setup();
-    // const cancelBtn = container.querySelector('.cf-modal-controls .close-modal');
-    // const skipBtn = container.querySelector('.cf-modal-controls .no-matching-issues');
-    // const submitBtn = container.querySelector('.cf-modal-controls .add-issue');
-
 
     it('renders button text', () => {
       setup();
@@ -117,79 +110,64 @@ describe('NonratingRequestIssueModal', () => {
       // expect(submitBtn.prop('disabled')).toBe(true);
       expect(submitBtn).toBeDisabled();
 
-      //   Lots of things required for button to be enabled...
-      // wrapper.setState({
-      //   benefitType: 'compensation',
-      //   category: {
-      //     label: 'Apportionment',
-      //     value: 'Apportionment'
-      //   },
-      //   decisionDate: '06/01/2019',
-      //   dateError: false,
-      //   description: 'thing'
-      // });
 
       // expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
 
     it.only('enables the button when all required fields are filled in', async () => {
-      // Define new props
-      const newProps = {
-        benefitType: 'compensation',
-        category: {
-          label: 'Apportionment',
-          value: 'Apportionment'
-        },
-        decisionDate: '06/01/2019',
-        dateError: false,
-        description: 'thing',
-        formType: 'someFormType', // Ensure this matches the expected form type
-        intakeData: {
-          benefitType: 'compensation',
-          activeNonratingRequestIssues: [
-            {
-              category: 'Apportionment',
-              // other properties if needed
-            }
-          ]
-        },
-        onSkip: () => null,
-        featureToggles: {
-          featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
-          eduPreDocketAppeals: false,
-          mstIdentification: false,
-          pactIdentification: false,
-        }
-      };
+      // const {container, rerender} = render(<NonratingRequestIssueModal
+      //   {...defaultProps}/>);
+      const { container, rerender } = render(<MockNonratingRequestIssueModal {...defaultProps} />);
+
+        let submitBtn = container.querySelector('.cf-modal-controls .add-issue');
+
+        expect(submitBtn).toBeDisabled();
+
+      rerender(
+        <NonratingRequestIssueModal
+          {...defaultProps}
+          category={{
+            label: 'Apportionment',
+            value: 'Apportionment'
+          }}
+          decisionDate={'2019-06-01'}
+          dateError={false}
+          description={'thing'}
+          benefitType={'education'}
+          // isPreDocketNeeded={true}
+          // featureToggles={{
+            // featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
+            // eduPreDocketAppeals: false,
+            // mstIdentification: false,
+            // pactIdentification: false,
+          // }}
+        />
+      );
+
+      let inputElement = container.querySelector('input[id="Issue description"]');
+      fireEvent.change(inputElement, { target: { value: 'blah blah' } });
+      console.log('INPUT ELEMENT:', inputElement.value);
 
 
-      // Pass the initial state as props when you render the component
-      render(<NonratingRequestIssueModal {...newProps} />);
+      let decisionDateInput = container.querySelector('input[id="decision-date"]');
+      fireEvent.change(decisionDateInput, { target: { value: '2019-06-01' } });
+      console.log('DECISION DATE:', decisionDateInput.value);
 
-      const categoryInput = screen.getByLabelText('Issue category');
-      userEvent.type(categoryInput, 'Apportionment');
+      let issueCategoryInput = container.querySelector('input[id="issue-category"]');
+      fireEvent.change(issueCategoryInput, { target: { value: 'Apportionment' } });
+      let hiddenInputElement = container.querySelector('input[name="issue-category"]');
+      fireEvent.change(hiddenInputElement, { target: { value: 'Apportionment' } });
+      console.log('ISSUE CATEGORY:', issueCategoryInput.value);
+      console.log('HIDDEN INPUT ELEMENT:', hiddenInputElement.value);
 
-      const decisionDateInput = screen.getByLabelText('Decision date');
-      userEvent.type(decisionDateInput, '2019-06-01');
 
-      const descriptionInput = screen.getByLabelText('Issue description');
-      userEvent.type(descriptionInput, 'thing');
-      // fireEvent.change(descriptionInput, { target: { value: 'thing' } });
-
-      const addIssueButton = await waitFor(() => screen.getByRole('button', { name: 'Add this issue', disabled: false }));
-
-      // Log the button and its parent elements to understand their state
-
-      // console.log(screen.getByRole('button', {name: 'Add this issue'}));
-      // Wait for the 'add-issue' button to be enabled
-      // let addIssueButton;
       await waitFor(() => {
-        console.log('Button Enabled:', addIssueButton);
-        // addIssueButton = container.querySelector('.cf-modal-controls .add-issue');
-        // console.log('Button Disabled:', addIssueButton);
-        // expect(addIssueButton).not.toBeNull();
-        // expect(addIssueButton.disabled).toBe(false);
+
+        submitBtn = container.querySelector('.cf-modal-controls .add-issue');
+        console.log('SUBMIT BUTTON:', submitBtn.disabled);
+        // expect(submitBtn).not.toBeDisabled();
       });
+      screen.debug();
     });
 
   });
@@ -256,18 +234,7 @@ describe('NonratingRequestIssueModal', () => {
       description: 'test'
     });
 
-    console.log("WRAPPERSKIP!!",wrapperNoSkip.benefitType);
-
-    // let benefitTypeInput = wrapperNoSkip.getByLabelText('Benefit Type');
-    // let categoryInput = wrapperNoSkip.getByLabelText('Category');
-    // let descriptionInput = wrapperNoSkip.getByLabelText('Description');
-
-    // fireEvent.change(benefitTypeInput, { target: { value: 'vha' } });
-    // fireEvent.change(categoryInput, { target: { value: 'Beneficiary Travel' } });
-    // fireEvent.change(descriptionInput, { target: { value: 'test' } });
-
-    const optionalLabel = wrapperNoSkip.getByLabelText('.decision-date .cf-optional');
-    console.log("OPTIONAL LABEL!!",optionalLabel);
+    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
     const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
 
     it('renders modal with decision date field being optional', () => {
@@ -331,3 +298,33 @@ describe('NonratingRequestIssueModal', () => {
     });
   });
 });
+
+
+
+// const newProps = {
+//   benefitType: 'compensation',
+//   category: {
+//     label: 'Apportionment',
+//     value: 'Apportionment'
+//   },
+//   decisionDate: '06/01/2019',
+//   dateError: false,
+//   description: 'thing',
+//   formType: 'someFormType', // Ensure this matches the expected form type
+//   intakeData: {
+//     benefitType: 'compensation',
+//     activeNonratingRequestIssues: [
+//       {
+//         category: 'Apportionment',
+//         // other properties if needed
+//       }
+//     ]
+//   },
+//   onSkip: () => null,
+  // featureToggles: {
+  //   featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
+  //   eduPreDocketAppeals: false,
+  //   mstIdentification: false,
+  //   pactIdentification: false,
+  // }
+// };
