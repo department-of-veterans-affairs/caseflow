@@ -21,7 +21,6 @@ module QueueHelpers
   def create_correspondence(user = {}, veteran = {})
     vet = veteran
     user = user.blank? ? InboundOpsTeam.singleton.users.first : user
-    package_doc_type = PackageDocumentType.all.sample
     corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
 
