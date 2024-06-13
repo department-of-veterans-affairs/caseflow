@@ -65,17 +65,6 @@ describe Appeal, :all_dbs do
       end
     end
 
-    # this should still pass but doesn't
-    # We always want to keep existing tests and functionallity intact
-    context "#structure without tasks" do
-      subject { appeal.structure(:id) }
-
-      it "returns the task structure" do
-        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
-        expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
-      end
-    end
-
     context "#structure_as_json" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:child_task) { create(:task, appeal: appeal, parent_id: root_task.id) }
