@@ -85,8 +85,10 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
-        expect("issue-action-0").to_not have_content("Withdraw Issue")
-        first("select").select("Add decision date")
+        click_dropdown(text: "Add decision date") do
+          visible_options = page.find_all(".cf-select__option")
+          expect(visible_options).not_to have_content("Withdraw Issue")
+        end
       end
 
       # Check modal text
@@ -118,7 +120,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Open the modal again
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
-        first("select").select("Add decision date")
+        click_dropdown(text: "Add decision date")
       end
 
       expect(page).to have_content("Add Decision Date")
@@ -133,7 +135,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Test functionality for editing a decision date once one has been selected
       # Click the first issue actions button and select Edit decision date
       within "#issue-#{issue_id}" do
-        select("Edit decision date", from: "issue-action-0")
+        click_dropdown(text: "Edit decision date")
       end
 
       formatted_past_date = (Time.zone.now - 1.week).strftime("%Y-%m-%d")
@@ -175,7 +177,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       within "#issue-undefined" do
         # newly made issue should not have withdraw issue as its not yet saved into the database
         expect("issue-action-1").to_not have_content("Withdraw Issue")
-        select("Add decision date", from: "issue-action-1")
+        click_dropdown(text: "Add decision date")
       end
 
       fill_in "decision-date", with: past_date
@@ -265,7 +267,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       third_issue_id = new_issues.third.id
 
       within "#issue-#{request_issue_id}" do
-        first("select").select("Add decision date")
+        click_dropdown(text: "Add decision date")
       end
 
       fill_in "decision-date", with: (Time.zone.now - 1.week).strftime("%m/%d/%Y")
@@ -290,7 +292,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       within "#issue-#{second_issue_id}" do
-        first("select").select("Remove issue")
+        click_dropdown(text: "Remove issue")
       end
 
       click_on("Yes, remove issue")
@@ -299,7 +301,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       within "#issue-#{third_issue_id}" do
-        first("select").select("Withdraw issue")
+        click_dropdown(text: "Withdraw issue")
       end
 
       expect(page).to have_content(changed_issue_banner_establish_text)
