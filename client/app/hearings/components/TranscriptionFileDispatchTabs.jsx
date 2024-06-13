@@ -34,7 +34,7 @@ const styles = {
     display: 'inline-block'
   },
   tableStyles: {
-    marginTop: '5em'
+    marginTop: '1em'
   },
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
 import
@@ -10,7 +10,6 @@ import
   hearingTypeColumn
 } from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
-import ApiUtil from '../../util/ApiUtil';
 import { encodeQueryParams } from '../../util/QueryParamsUtil';
 
 const styles = css({
@@ -33,28 +32,26 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
-    top: '2em'
+    top: '4em'
   },
   '& .cf-pagination-pages': {
     position: 'relative',
+  },
+  '& th:last-child .cf-dropdown-filter': {
+    left: '-200px'
   }
 });
 
 export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
-  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
+  const [transcriptionFiles] = useState([]);
 
+  /**
+   * Adds custom url params to the params used for pagenatation
+   * @returns The url params needed to handle pagenation
+   */
   const qs = encodeQueryParams({
     tab: statusFilter
   });
-
-  const getTranscriptionFiles = () =>
-    ApiUtil.get(`/hearings/transcription_files/unassigned${qs}`).then((response) => {
-      setTranscriptionFiles(response.body.tasks.data);
-    });
-
-  useEffect(() => {
-    getTranscriptionFiles();
-  }, []);
 
   /**
    * A map for the column to determine which function to use
@@ -63,12 +60,12 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
    */
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [columns.SELECT_ALL.name]: selectColumn(transcriptionFiles),
-      [columns.DOCKET_NUMBER.name]: docketNumberColumn(transcriptionFiles),
-      [columns.CASE_DETAILS.name]: caseDetailsColumn(transcriptionFiles),
-      [columns.TYPES.name]: typesColumn(transcriptionFiles),
-      [columns.HEARING_DATE.name]: hearingDateColumn(transcriptionFiles),
-      [columns.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles)
+      [columns.SELECT_ALL.name]: selectColumn(),
+      [columns.DOCKET_NUMBER.name]: docketNumberColumn(),
+      [columns.CASE_DETAILS.name]: caseDetailsColumn(),
+      [columns.TYPES.name]: typesColumn(),
+      [columns.HEARING_DATE.name]: hearingDateColumn(),
+      [columns.HEARING_TYPE.name]: hearingTypeColumn()
     };
 
     return functionForColumn[column.name];
@@ -83,20 +80,16 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
     return Object.values(cols).map((column) => createColumnObject(column));
   };
 
-  /*
-  const pageLoaded = (response, currentPage) => {
-    console.log('onPageLoaded');
-    console.log(response);
-    console.log(currentPage);
-    if (!response) {
-      return;
-    }
-  };
-
-  const tabPaginationOptions = {
-    onPageLoaded: pageLoaded
-  };
-  */
+  /**
+   * Restores any URL params as defaults in the QueryTable
+   * @returns The restored params object
+   */
+  const getUrlParams = (query) =>
+    Array.from(new URLSearchParams(query)).reduce((pValue, [kValue, vValue]) =>
+      Object.assign({}, pValue, {
+        [kValue]: pValue[kValue] ? (Array.isArray(pValue[kValue]) ?
+          pValue[kValue] : [pValue[kValue]]).concat(vValue) : vValue
+      }), {});
 
   return (
     <div {...styles} >
@@ -104,15 +97,11 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
         columns={columnsFromConfig(columns)}
         rowObjects={transcriptionFiles}
         enablePagination
-        // tabPaginationOptions={tabPaginationOptions}
         casesPerPage={15}
         useTaskPagesApi
         taskPagesApiEndpoint={`/hearings/transcription_files/transcription_file_tasks${qs}`}
-        defaultSort={{
-          sortColName: 'hearingDateColumn',
-          sortAscending: true
-        }}
         anyFiltersAreSet
+        tabPaginationOptions={getUrlParams(window.location.search)}
         getKeyForRow={(_, row) => row.id}
       />
     </div>
