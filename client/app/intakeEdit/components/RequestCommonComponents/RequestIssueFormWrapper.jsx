@@ -73,7 +73,7 @@ export const RequestIssueFormWrapper = (props) => {
         if (props.type === 'addition') {
           props.addToPendingReviewSection(enhancedData);
         } else {
-          props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+          props.moveToPendingReviewSection(props.issueIndex, enhancedData);
         }
       } else {
         props.updatePendingReview(enhancedData.identifier, enhancedData);
