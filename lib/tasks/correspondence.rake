@@ -3,9 +3,6 @@
 require_relative "../../db/seeds/base"
 require_relative "../../db/seeds/correspondence"
 require_relative "../../db/seeds/vbms_document_types"
-require_relative "../../db/seeds/correspondence_types"
-require_relative "../../db/seeds/multi_correspondences"
-require_relative "../../db/seeds/queue_correspondences"
 
 namespace :correspondence do
   desc "setup data for intake correspondence (autotext and correspondence type)in UAT/PROD"

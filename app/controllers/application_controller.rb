@@ -188,7 +188,7 @@ class ApplicationController < ApplicationBaseController
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
-        title: "#{team.name} team management",
+        title: (team.type == InboundOpsTeam.singleton.type) ? "#{team.name} management" : "#{team.name} team management",
         link: team.user_admin_path
       }
     end
