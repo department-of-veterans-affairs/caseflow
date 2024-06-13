@@ -158,11 +158,11 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
 
       # Shows issues not on end products (single row)
-      row = find("#table-row-12")
+      row = find("#table-row-13")
       expect(row).to have_content(/Requested issues\n3. #{ineligible_request_issue.description}/i)
 
       # Shows withdrawn issues last (single row)
-      row = find("#table-row-13")
+      row = find("#table-row-14")
       expect(row).to have_content(
         /Withdrawn issues\n4. #{withdrawn_request_issue.description}/i
       )
