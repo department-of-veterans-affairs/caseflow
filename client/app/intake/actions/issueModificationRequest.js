@@ -27,10 +27,44 @@ export const toggleConfirmPendingRequestIssueModal = () => ({
   type: ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL
 });
 
-export const moveToPendingReviewSection = (index, issueModificationRequest) => (
+// export const moveToPendingReviewSection = (index, issueModificationRequest) => (
+//   {
+//     type: ACTIONS.MOVE_TO_PENDING_REVIEW,
+//     payload: { index, issueModificationRequest }
+//   });
+
+// export const addToPendingReviewSection = (issueModificationRequest) => (
+//   {
+//     type: ACTIONS.ADD_TO_PENDING_REVIEW,
+//     payload: { issueModificationRequest }
+//   }
+// );
+
+// export const removeFromPendingReviewSection = (index, issueModificationRequest = null) => (
+//   {
+//     type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
+//     payload: { index, issueModificationRequest }
+//   }
+// );
+
+export const updatePendingReview = (identifier, data) => (
+  {
+    type: ACTIONS.UPDATE_PENDING_REVIEW,
+    payload: { identifier, data }
+  }
+);
+
+export const enhancedPendingReview = (identifier, data) => (
+  {
+    type: ACTIONS.ENHANCED_PENDING_REVIEW,
+    payload: { identifier, data }
+  }
+);
+
+export const moveToPendingReviewSection = (issueModificationRequest) => (
   {
     type: ACTIONS.MOVE_TO_PENDING_REVIEW,
-    payload: { index, issueModificationRequest }
+    payload: { issueModificationRequest }
   });
 
 export const addToPendingReviewSection = (issueModificationRequest) => (
@@ -40,16 +74,37 @@ export const addToPendingReviewSection = (issueModificationRequest) => (
   }
 );
 
-export const removeFromPendingReviewSection = (index, issueModificationRequest = null) => (
+export const removeFromPendingReviewSection = (index) => (
   {
     type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
-    payload: { index, issueModificationRequest }
+    payload: { index }
   }
 );
 
-export const updatePendingReview = (identifier, data) => (
+export const adminWithdrawRequestIssue = (identifier, issueModificationRequest) => (
   {
-    type: ACTIONS.UPDATE_PENDING_REVIEW,
-    payload: { identifier, data }
+    type: ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE,
+    payload: { identifier, issueModificationRequest }
+  }
+);
+
+export const adminRemoveRequestIssue = (identifier, issueModificationRequest) => (
+  {
+    type: ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE,
+    payload: { identifier, issueModificationRequest }
+  }
+);
+
+export const adminAddRequestIssue = (issueModificationRequest) => (
+  {
+    type: ACTIONS.ADMIN_ADD_REQUESTED_ISSUE,
+    payload: { issueModificationRequest }
+  }
+);
+
+export const adminModifyRequestIssueKeepOriginal = (issueModificationRequest) => (
+  {
+    type: ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL,
+    payload: { issueModificationRequest }
   }
 );

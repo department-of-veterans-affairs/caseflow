@@ -82,7 +82,7 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx, legacyAppeals, featureToggles } = this.props;
+    const { issue, legacyAppeals, featureToggles } = this.props;
 
     let eligibleState = {
       errorMsg: '',
@@ -126,7 +126,6 @@ class AddedIssue extends React.PureComponent {
 
     return (
       <div className={eligibleState.cssKlasses.join(' ')}>
-        <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
         {issue.editedDescription ? issue.editedDescription : issue.text} {eligibleState.errorMsg}
         {issue.editedDescription && (
           <div>

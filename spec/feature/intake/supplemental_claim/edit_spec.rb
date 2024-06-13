@@ -285,13 +285,13 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
-      expect(page).to_not have_content("2. Left knee granted")
+      expect(page).to_not have_content("Left knee granted")
 
       # adding an issue should show the issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
-      expect(page).to have_content("2. Left knee granted")
+      expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("Notes:")
       click_remove_intake_issue_dropdown("PTSD denied")
 
@@ -301,7 +301,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       # re-add to proceed
       click_intake_add_issue
       add_intake_rating_issue("PTSD denied", "I am an issue note")
-      expect(page).to have_content("2. PTSD denied")
+      expect(page).to have_content("PTSD denied")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
@@ -639,7 +639,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+          /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 

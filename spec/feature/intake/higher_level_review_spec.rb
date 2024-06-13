@@ -226,7 +226,7 @@ feature "Higher-Level Review", :all_dbs do
     add_intake_rating_issue("Left knee granted")
     expect(page).to have_content("2 issues")
 
-    click_remove_intake_issue(2)
+    click_remove_intake_issue("Left knee granted")
     expect(page).to have_content("1 issue")
 
     click_intake_add_issue
@@ -775,17 +775,17 @@ feature "Higher-Level Review", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted 2")
 
-      expect(page).to have_content("1. Left knee granted")
+      expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("Notes:")
 
       # removing an issue
-      click_remove_intake_issue("1")
+      click_remove_intake_issue("Left knee granted 2")
       expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted 2", "I am an issue note")
-      expect(page).to have_content("1. Left knee granted 2")
+      expect(page).to have_content("Left knee granted 2")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
@@ -818,7 +818,7 @@ feature "Higher-Level Review", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Old injury")
       expect(page).to have_content("4 issues")
-      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+      expect(page).to have_content("Old injury is ineligible because it's already under review as a Appeal")
 
       # add untimely rating request issue
       click_intake_add_issue
@@ -827,15 +827,15 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(page).to have_content("5 issues")
       expect(page).to have_content("I am an exemption note")
-      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page).to_not have_content("Really old injury #{ineligible_constants.untimely}")
 
       # remove and re-add with different answer to exemption
-      click_remove_intake_issue("5")
+      click_remove_intake_issue("Really old injury")
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page).to have_content("Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
       click_intake_add_issue
@@ -856,7 +856,7 @@ feature "Higher-Level Review", :all_dbs do
       add_intake_rating_issue("Already reviewed injury")
       expect(page).to have_content("7 issues")
       expect(page).to have_content(
-        "7. Already reviewed injury #{ineligible_constants.higher_level_review_to_higher_level_review}"
+        "Already reviewed injury #{ineligible_constants.higher_level_review_to_higher_level_review}"
       )
 
       # add before_ama ratings
@@ -864,7 +864,7 @@ feature "Higher-Level Review", :all_dbs do
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       add_untimely_exemption_response("Yes")
       expect(page).to have_content(
-        "8. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+        "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
@@ -872,13 +872,13 @@ feature "Higher-Level Review", :all_dbs do
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       add_untimely_exemption_response("Yes")
       expect(page).to have_content(
-        "9. Issue before AMA Activation from RAMP\nDecision date:"
+        "Issue before AMA Activation from RAMP\nDecision date:"
       )
 
       # Add decision issue
       click_intake_add_issue
       add_intake_rating_issue("supplemental claim decision issue", "decision issue with note")
-      expect(page).to have_content("10. supplemental claim decision issue")
+      expect(page).to have_content("supplemental claim decision issue")
 
       click_intake_add_issue
       click_intake_no_matching_issues

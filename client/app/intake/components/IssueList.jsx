@@ -117,74 +117,87 @@ export default class IssuesList extends React.Component {
     return <div className="issues">
       <div>
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
-        { issues.map((issue) => {
-          // Issues from rating issues or decision issues have editable contention text. New non-rating issues do not.
-          const editableIssueType = Boolean(issue.decisionIssueId || issue.ratingIssueReferenceId ||
-            issue.ratingDecisionReferenceId);
-          const editableIssueProperties = Boolean(!issue.ineligibleReason && !issue.endProductCleared &&
-            !issue.isUnidentified);
-          const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
-            editableIssueProperties);
+        <ol>
+          {issues.map((issue) => {
+            // Issues from rating issues or decision issues have editable contention text. New non-rating issues do not.
+            const editableIssueType = Boolean(issue.decisionIssueId || issue.ratingIssueReferenceId ||
+              issue.ratingDecisionReferenceId);
+            const editableIssueProperties = Boolean(!issue.ineligibleReason && !issue.endProductCleared &&
+              !issue.isUnidentified);
+            const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
+              editableIssueProperties);
 
-          const issueActionOptions = this.generateIssueActionOptions(
-            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
-          );
+            const issueActionOptions = this.generateIssueActionOptions(
+              issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
+            );
 
-          const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
-          const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
-            !issue.isUnidentified;
+            const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
+            const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
+              !issue.isUnidentified;
 
-          return <div className="issue-container" key={`issue-container-${issue.index}`}>
-            <div
-              className="issue"
-              data-key={`issue-${issue.index}`}
-              key={`issue-${issue.index}`}
-              id={`issue-${issue.id}`}>
+            const showNewIssueBasedOnRequestIssueBanner = issue.id === 'undefined';
 
-              <AddedIssue
-                issue={issue}
-                issueIdx={issue.index}
-                requestIssues={intakeData.requestIssues}
-                legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
-                legacyAppeals={intakeData.legacyAppeals}
-                featureToggles={featureToggles}
-                formType={formType} />
+            return <li>
+              <div className="issue-container" key={`issue-container-${issue.index}`}>
+                <div
+                  className="issue"
+                  data-key={`issue-${issue.index}`}
+                  key={`issue-${issue.index}`}
+                  id={`issue-${issue.id}`}>
 
-              { !issue.editable && <div className="issue-action">
-                <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
-              </div> }
+                  <AddedIssue
+                    issue={issue}
+                    issueIdx={issue.index}
+                    requestIssues={intakeData.requestIssues}
+                    legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
+                    legacyAppeals={intakeData.legacyAppeals}
+                    featureToggles={featureToggles}
+                    formType={formType} />
 
-              <div className="issue-action">
-                {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
-                  name={`issue-action-${issue.index}`}
-                  label="Actions"
-                  hideLabel
-                  options={issueActionOptions}
-                  defaultText="Select action"
-                  readOnly={disableIssueActions}
-                  onChange={(option) => onClickIssueAction(issue.index, option)}
-                /> }
-                {!editPage && <Button
-                  onClick={() => onClickIssueAction(issue.index)}
-                  classNames={['cf-btn-link', 'remove-issue']}
-                >
-                  <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                </Button>}
+                  { !issue.editable && <div className="issue-action">
+                    <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
+                  </div> }
 
+                  <div className="issue-action">
+                    {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
+                      name={`issue-action-${issue.index}`}
+                      label="Actions"
+                      hideLabel
+                      options={issueActionOptions}
+                      defaultText="Select action"
+                      readOnly={disableIssueActions}
+                      onChange={(option) => onClickIssueAction(issue.index, option)}
+                    /> }
+                    {!editPage && <Button
+                      onClick={() => onClickIssueAction(issue.index)}
+                      classNames={['cf-btn-link', 'remove-issue']}
+                    >
+                      <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
+                    </Button>}
+
+                  </div>
+                </div>
+                {showNoDecisionDateBanner ?
+                  <Alert
+                    message={COPY.VHA_NO_DECISION_DATE_BANNER}
+                    messageStyling={messageStyling}
+                    styling={alertStyling}
+                    type="warning"
+                  /> : null}
+                {showNewIssueBasedOnRequestIssueBanner ?
+                  <Alert
+                    message={COPY.VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE}
+                    messageStyling={messageStyling}
+                    styling={alertStyling}
+                    type="info"
+                  /> : null}
+                {editableContentionText && <EditContentionTitle
+                  issue= {issue}
+                  issueIdx={issue.index} />}
               </div>
-            </div>
-            {showNoDecisionDateBanner ?
-              <Alert
-                message={COPY.VHA_NO_DECISION_DATE_BANNER}
-                messageStyling={messageStyling}
-                styling={alertStyling}
-                type="warning"
-              /> : null}
-            {editableContentionText && <EditContentionTitle
-              issue= {issue}
-              issueIdx={issue.index} />}
-          </div>;
-        })}
+            </li>;
+          })}
+        </ol>
       </div>
     </div>;
   }

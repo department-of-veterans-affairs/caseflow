@@ -10,6 +10,8 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
   const pendingIssueModificationRequests = state.pendingIssueModificationRequests || [];
+  const enhancedPendingIssueModification = state.enhancedPendingIssueModification || [];
+
 
   actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
     return update(state, {
@@ -240,6 +242,13 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.ENHANCED_PENDING_REVIEW] = () => {
+    return {
+      ...state,
+      enhancedPendingIssueModification: [...enhancedPendingIssueModification, action.payload.data]
+    };
+  };
+
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,
@@ -273,6 +282,49 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    listOfIssues[index].withdrawalPending =
+      action.payload.issueModificationRequest.status === 'approve';
+
+    listOfIssues[index].pendingWithdrawalDate =
+      action.payload.issueModificationRequest.status === 'approve' ?
+        action.payload.issueModificationRequest.withdrawalDate : '';
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE] = () => {
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_ADD_REQUESTED_ISSUE] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
+    };
+  };
+
+  actionsMap[ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL] = () => {
+    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 

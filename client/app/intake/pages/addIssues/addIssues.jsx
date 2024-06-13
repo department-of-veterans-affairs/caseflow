@@ -126,7 +126,7 @@ class AddIssuesPage extends React.Component {
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
@@ -346,19 +346,21 @@ class AddIssuesPage extends React.Component {
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
+    const activePendingIssues = pendingIssueModificationRequests?.
+      filter((issue) => issue.status === 'assigned');
+
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+    const issuesWithoutPendingModificationRequests = _.isEmpty(activePendingIssues) ?
       issues : issues.filter((issue) => {
-        return !pendingIssueModificationRequests.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id && request?.status === 'assigned';
+        return !activePendingIssues.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id &&
+            !issue.withdrawalPending;
         });
       });
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
-
-    const activePendingIssues = pendingIssueModificationRequests?.filter((issue) => issue?.status === 'assigned');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -660,6 +662,9 @@ class AddIssuesPage extends React.Component {
             removeIndex={this.state.issueRemoveIndex}
             intakeData={intakeData}
             closeHandler={this.props.toggleIssueRemoveModal}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
+            enhancedPendingIssueModification={this.state.enhancedPendingIssueModification}
           />
         )}
         {intakeData.correctIssueModalVisible && (

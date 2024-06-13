@@ -112,7 +112,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         within "#issue-2" do
           select("Remove issue", from: "issue-action-0")
         end
-        click_on("Yes, remove issue")
+        click_on("Remove")
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)
@@ -149,22 +149,22 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
       expect(nr_row).to have_button("Edit claim label")
       nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
-      expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
+      expect(nr_next_row).to have_content(/Requested issues\n#{nonrating_request_issue.description}/i)
 
       r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
       r_row = page.find("tr", text: r_label, match: :prefer_exact)
       expect(r_row).to have_button("Edit claim label")
       r_next_row = r_row.first(:xpath, "./following-sibling::tr")
-      expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
+      expect(r_next_row).to have_content(/Requested issues\n#{rating_request_issue.description}/i)
 
       # Shows issues not on end products (single row)
       row = find("#table-row-12")
-      expect(row).to have_content(/Requested issues\n3. #{ineligible_request_issue.description}/i)
+      expect(row).to have_content(/Requested issues\n#{ineligible_request_issue.description}/i)
 
       # Shows withdrawn issues last (single row)
       row = find("#table-row-13")
       expect(row).to have_content(
-        /Withdrawn issues\n4. #{withdrawn_request_issue.description}/i
+        /Withdrawn issues\n#{withdrawn_request_issue.description}/i
       )
 
       # Edit nonrating label to rating

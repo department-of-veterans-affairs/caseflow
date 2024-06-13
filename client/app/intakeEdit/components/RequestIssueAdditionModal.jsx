@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import RequestReason from './RequestCommonComponents/RequestReason';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
 import IssueTypeSelector from './RequestCommonComponents/IssueTypeSelector';
 import PriorDecisionDateAlert from './RequestCommonComponents/PriorDecisionDateAlert';
 import PriorDecisionDateSelector from './RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from './RequestCommonComponents/IssueDescription';
+import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const additionSchema = yup.object({
@@ -17,6 +19,8 @@ const additionSchema = yup.object({
 });
 
 const RequestIssueAdditionContent = () => {
+  const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+
   return (
     <div>
       <IssueTypeSelector />
@@ -24,6 +28,7 @@ const RequestIssueAdditionContent = () => {
       <PriorDecisionDateSelector />
       <IssueDescription />
       <RequestReason label="addition" />
+      {userIsVhaAdmin ? <RequestIssueStatus /> : null}
     </div>
   );
 };

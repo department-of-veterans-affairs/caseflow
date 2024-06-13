@@ -399,11 +399,11 @@ feature "Appeal Intake", :all_dbs do
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted 2")
 
-    expect(page).to have_content("1. Left knee granted 2")
+    expect(page).to have_content("Left knee granted 2")
     expect(page).to_not have_content("Notes:")
 
     # removing the issue should hide the issue
-    click_remove_intake_issue("1")
+    click_remove_intake_issue("Left knee granted 2")
 
     expect(page).to_not have_content("Left knee granted 2")
 
@@ -411,7 +411,7 @@ feature "Appeal Intake", :all_dbs do
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted 2", "I am an issue note")
 
-    expect(page).to have_content("1. Left knee granted 2")
+    expect(page).to have_content("Left knee granted 2")
     expect(page).to have_content("I am an issue note")
 
     # clicking add issue again should show a disabled radio button for that same rating
@@ -442,14 +442,19 @@ feature "Appeal Intake", :all_dbs do
     add_intake_unidentified_issue("This is an unidentified issue")
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
-    expect(find_intake_issue_by_number(3)).to have_css(".issue-unidentified")
+    unidentified = page.find(".issue-unidentified")
+    expect(unidentified)
+      .to have_content(
+        "Unidentified issue: no issue matched for \"This is an unidentified issue\"\nDecision date: No date entered"
+      )
 
     # add ineligible issue
     click_intake_add_issue
     add_intake_rating_issue("Old injury")
     expect(page).to have_content("4 issues")
-    expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
-    expect_ineligible_issue(4)
+    text = "Old injury is ineligible because it's already under review as a Appeal"
+    expect(page).to have_content(text)
+    expect(find_intake_issue_by_text(text)).to have_css(".not-eligible")
 
     # add untimely rating request issue
     click_intake_add_issue
@@ -457,16 +462,16 @@ feature "Appeal Intake", :all_dbs do
     add_untimely_exemption_response("Yes")
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
-    expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect(page).to_not have_content("Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
     # remove and re-add with different answer to exemption
-    click_remove_intake_issue("5")
+    click_remove_intake_issue("Really old injury")
     click_intake_add_issue
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
-    expect_ineligible_issue(5)
+    expect(page).to have_content("Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect(find_intake_issue_by_text("Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")).to have_css(".not-eligible")
 
     # add untimely nonrating request issue
     click_intake_add_issue
@@ -478,25 +483,23 @@ feature "Appeal Intake", :all_dbs do
     )
     add_untimely_exemption_response("No")
     expect(page).to have_content("6 issues")
-    expect(page).to have_content(
-      "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
-    )
-    expect_ineligible_issue(6)
+    issue_text_content = "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+    expect(page).to have_content(issue_text_content)
+    expect(find_intake_issue_by_text(issue_text_content)).to have_css(".not-eligible")
 
     # add before_ama ratings
     click_intake_add_issue
     add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
     add_untimely_exemption_response("Yes")
-    expect(page).to have_content(
-      "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
-    )
-    expect_ineligible_issue(7)
+    newly_added_issue_text = "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+    expect(page).to have_content(newly_added_issue_text)
+    expect(find_intake_issue_by_text(newly_added_issue_text)).to have_css(".not-eligible")
 
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
     add_untimely_exemption_response("Yes")
-    expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
+    expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
     click_intake_add_issue
@@ -507,10 +510,9 @@ feature "Appeal Intake", :all_dbs do
       date: pre_ramp_start_date.to_date.mdY
     )
     add_untimely_exemption_response("Yes")
-    expect(page).to have_content(
-      "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
-    )
-    expect_ineligible_issue(9)
+    issue_text_content_2="A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+    expect(page).to have_content(issue_text_content_2)
+    expect(find_intake_issue_by_text(issue_text_content_2)).to have_css(".not-eligible")
 
     click_intake_finish
 

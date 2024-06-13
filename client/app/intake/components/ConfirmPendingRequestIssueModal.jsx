@@ -17,9 +17,16 @@ export const ConfirmPendingRequestIssueModal = (props) => {
     pendingIssueModificationRequest,
   } = props;
 
+  const enhancedPendingIssueModification = useSelector((state) => state.enhancedPendingIssueModification.
+    find((issue) => issue.id === pendingIssueModificationRequest.id));
+
+  // is this right way to find this
+  // const modifiedPendingModificationRequest = enhancedPendingIssueModification?.
+  //   find((pi) => pi.id === pendingIssueModificationRequest.id);
+
   const requestIssue = pendingIssueModificationRequest.requestIssue;
   const indexOfOriginalIssue = useSelector(
-    (state) => state.addedIssues.findIndex((issue) => issue.id === pendingIssueModificationRequest.requestIssue.id));
+    (state) => state.addedIssues.findIndex((issue) => issue.id === enhancedPendingIssueModification.requestIssue.id));
 
   const dispatch = useDispatch();
 
@@ -36,9 +43,9 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   const newIssue = (
     <div>
       <h2 style={{ marginBottom: '0px' }}>Create new issue</h2>
-      <strong>Issue type: </strong>{pendingIssueModificationRequest?.nonratingIssueCategory}<br />
-      <strong>Decision date: </strong>{formatDateStr(pendingIssueModificationRequest?.decisionDate)}<br />
-      <strong>Issue description: </strong>{pendingIssueModificationRequest?.nonratingIssueDescription}<br />
+      <strong>Issue type: </strong>{enhancedPendingIssueModification?.nonratingIssueCategory}<br />
+      <strong>Decision date: </strong>{formatDateStr(enhancedPendingIssueModification?.decisionDate)}<br />
+      <strong>Issue description: </strong>{enhancedPendingIssueModification?.nonratingIssueDescription}<br />
     </div>
   );
 
@@ -53,14 +60,15 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   };
 
   const onSubmit = () => {
-    const newRequestIssue = convertPendingIssueToRequestIssue(pendingIssueModificationRequest);
+    const newRequestIssue = convertPendingIssueToRequestIssue(enhancedPendingIssueModification);
 
     // Remove the original issue from addedIssues
     dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues
     dispatch(addIssue(newRequestIssue));
     // Update the pending issue status
-    dispatch(updatePendingReview(pendingIssueModificationRequest.identifier, { status: 'approved' }));
+    dispatch(updatePendingReview(enhancedPendingIssueModification.identifier,
+      { status: enhancedPendingIssueModification.status }));
     dispatch(toggleConfirmPendingRequestIssueModal());
   };
 
