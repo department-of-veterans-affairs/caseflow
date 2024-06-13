@@ -3,6 +3,9 @@ import COPY from '../../../COPY';
 import TRANSCRIPTION_DISPATCH_CONFIG from '../../../constants/TRANSCRIPTION_FILE_DISPATCH_CONFIG';
 import Checkbox from '../../components/Checkbox';
 import { css } from 'glamor';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
+import LinkToAppeal from '../components/assignHearings/LinkToAppeal';
+import { renderLegacyAppealType } from '../../queue/utils';
 
 const styles = {
   checkBoxHeaderStyles: css({
@@ -58,7 +61,13 @@ export const docketNumberColumn = () => {
     label: 'filter by docket number',
     columnName: 'docketNumber',
     valueName: 'Docket Number',
-    valueFunction: (transcriptionFile) => transcriptionFile.docketNumber
+    valueFunction: (transcriptionFile) => (
+      <div>
+        <DocketTypeBadge name={transcriptionFile.hearingType} />
+        &nbsp;
+        {transcriptionFile.docketNumber}
+      </div>
+    )
   };
 };
 
@@ -71,7 +80,21 @@ export const caseDetailsColumn = () => {
     label: 'filter by case details',
     columnName: 'caseDetails',
     valueName: 'Case Details',
-    valueFunction: (transcriptionFile) => transcriptionFile.caseDetails
+    valueFunction: (transcriptionFile) => (
+      <div>
+        {transcriptionFile.externalAppealId && (
+          <LinkToAppeal
+            appealExternalId={transcriptionFile.externalAppealId}
+            hearingDay=""
+            regionalOffice="">
+            {transcriptionFile.caseDetails}
+          </LinkToAppeal>
+        )}
+        {!transcriptionFile.externalAppealId && (
+          <div>{transcriptionFile.caseDetails}</div>
+        )}
+      </div>
+    )
   };
 };
 
@@ -84,7 +107,14 @@ export const typesColumn = () => {
     label: 'filter by types',
     columnName: 'Types',
     valueName: 'Types',
-    valueFunction: (transcriptionFile) => transcriptionFile.types.join(', '),
+    valueFunction: (transcriptionFile) => (
+      <div>
+        {renderLegacyAppealType({
+          aod: transcriptionFile.isAdvancedOnDocket,
+          type: transcriptionFile.caseType
+        })}
+      </div>
+    ),
     getSortValue: (transcriptionFile) => transcriptionFile.types.join(', '),
     filterOptions: [
       { value: 'Original', displayText: 'Original' },
@@ -118,7 +148,11 @@ export const hearingTypeColumn = () => {
     label: 'filter by hearing type',
     columnName: 'Hearing Type',
     valueName: 'Hearing Type',
-    valueFunction: (transcriptionFile) => transcriptionFile.hearingType,
+    valueFunction: (transcriptionFile) => (
+      <div>
+        {transcriptionFile.hearingType === 'LegacyHearing' ? 'Legacy' : 'AMA'}
+      </div>
+    ),
     filterOptions: [
       { value: 'Hearing', displayText: 'Hearing' },
       { value: 'LegacyHearing', displayText: 'Legacy' }

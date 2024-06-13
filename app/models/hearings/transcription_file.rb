@@ -84,14 +84,6 @@ class TranscriptionFile < CaseflowRecord
     transcription_file.hearing.hearing_day.scheduled_for.to_formatted_s(:short_date)
   end
 
-  def self.hearing_type(transcription_file)
-    if transcription_file.hearing_type == "LegacyHearing"
-      "Legacy"
-    else
-      "AMA"
-    end
-  end
-
   def self.transcription_file_types(transcription_file)
     types = []
     appeal = transcription_file.try(:hearing).try(:appeal)
@@ -108,6 +100,14 @@ class TranscriptionFile < CaseflowRecord
     types
   end
 
+  def self.advanced_on_docket(transcription_file)
+    transcription_file.try(:hearing).try(:appeal).try(:hearing).try(:appeal) || false
+  end
+
+  def self.case_type(transcription_file)
+    (transcription_file.try(:hearing).try(:appeal).try(:stream_type) || "Original").capitalize
+  end
+
   def self.file_status(tab)
     case tab
     when "Unassigned"
@@ -115,19 +115,28 @@ class TranscriptionFile < CaseflowRecord
     end
   end
 
+  def self.external_appeal_id(transcription_file)
+    transcription_file.hearing.try(:appeal).try(:uuid) || ""
+  end
+
+  def self.case_details(transcription_file)
+    appellant_name = transcription_file.hearing.appeal.appellant_or_veteran_name
+    file_number = transcription_file.hearing.appeal.veteran_file_number
+    "#{appellant_name} (#{file_number})"
+  end
+
   def self.build_transcription_files(transcription_files)
     tasks = []
     transcription_files.each do |transcription_file|
-      appellant_name = transcription_file.hearing.appeal.appellant_or_veteran_name
-      file_number = transcription_file.hearing.appeal.veteran_file_number
       tasks << {
         id: transcription_file.id,
+        externalAppealId: external_appeal_id(transcription_file),
         docketNumber: transcription_file.docket_number,
-        caseDetails: "#{appellant_name} (#{file_number})",
-        types: transcription_file_types(transcription_file),
+        caseDetails: case_details(transcription_file),
+        isAdvancedOnDocket: advanced_on_docket(transcription_file),
+        caseType: case_type(transcription_file),
         hearingDate: hearing_date(transcription_file),
-        hearingType: hearing_type(transcription_file),
-        status: "Status"
+        hearingType: transcription_file.hearing_type
       }
     end
     tasks

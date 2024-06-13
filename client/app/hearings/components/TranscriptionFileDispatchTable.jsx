@@ -32,7 +32,10 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
-    top: '4em'
+    top: '4em',
+  },
+  '& .cf-pagination:last-child .cf-pagination-summary': {
+    top: '2em'
   },
   '& .cf-pagination-pages': {
     position: 'relative',
