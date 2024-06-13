@@ -12,6 +12,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
+  const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
 
   const methods = useForm({
     defaultValues: {
@@ -28,38 +29,50 @@ export const RequestIssueFormWrapper = (props) => {
 
   const { handleSubmit, formState } = methods;
 
-  const onSubmit = (issueModificationRequest) => {
-    const currentIssueFields = props.currentIssue ?
-      {
-        requestIssueId: props.currentIssue.id,
-        nonratingIssueCategory: props.currentIssue.category,
-        nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
-        benefitType: props.currentIssue.benefitType,
-      } : {};
-
-    // The decision date will come from the current issue for removal and withdrawal requests.
-    // Ensure date is in a serializable format for redux
-    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
-       formatDateStr(props.currentIssue.decisionDate);
-
-    const enhancedData = {
-      ...currentIssueFields,
-      requestIssue: props.currentIssue,
-      ...(props.type === 'addition') && { benefitType },
-      requestor: { fullName: userFullName, cssId: userCssId },
-      requestType: props.type,
-      ...issueModificationRequest,
-      decisionDate,
-      identifier: uuid.v4()
-    };
-
-    // close modal and move the issue
+  const vhaAdminOnSubmit = () => {
     props.onCancel();
+    if (props.type === 'modification') {
+      props.toggleConfirmPendingRequestIssueModal();
+    }
+  };
 
-    if (props.type === 'addition') {
-      props.addToPendingReviewSection(enhancedData);
+  const onSubmit = (issueModificationRequest) => {
+    if (userIsVhaAdmin) {
+      vhaAdminOnSubmit();
     } else {
-      props.moveToPendingReviewSection(enhancedData, props.issueIndex);
+      const currentIssueFields = props.currentIssue ?
+        {
+          requestIssueId: props.currentIssue.id,
+          nonratingIssueCategory: props.currentIssue.category,
+          nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
+          benefitType: props.currentIssue.benefitType,
+        } : {};
+
+      // The decision date will come from the current issue for removal and withdrawal requests.
+      // Ensure date is in a serializable format for redux
+      const decisionDate = issueModificationRequest.decisionDate ||
+        formatDateStr(props.currentIssue.decisionDate);
+
+      const enhancedData = {
+        ...currentIssueFields,
+        requestIssue: props.currentIssue,
+        ...(props.type === 'addition') && { benefitType },
+        requestor: { fullName: userFullName, cssId: userCssId },
+        requestType: props.type,
+        ...issueModificationRequest,
+        decisionDate,
+        identifier: uuid.v4(),
+        status: 'assigned'
+      };
+
+      // close modal and move the issue
+      props.onCancel();
+
+      if (props.type === 'addition') {
+        props.addToPendingReviewSection(enhancedData);
+      } else {
+        props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+      }
     }
   };
 
@@ -100,7 +113,8 @@ RequestIssueFormWrapper.propTypes = {
   type: PropTypes.string,
   moveToPendingReviewSection: PropTypes.func,
   addToPendingReviewSection: PropTypes.func,
-  pendingIssueModificationRequest: PropTypes.object
+  pendingIssueModificationRequest: PropTypes.object,
+  toggleConfirmPendingRequestIssueModal: PropTypes.func
 };
 
 export default RequestIssueFormWrapper;
