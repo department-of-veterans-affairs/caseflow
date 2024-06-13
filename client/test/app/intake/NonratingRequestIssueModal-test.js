@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { logRoles } from '@testing-library/react';
 
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
@@ -258,3 +259,33 @@ describe('NonratingRequestIssueModal', () => {
     });
   });
 });
+
+
+
+// const newProps = {
+//   benefitType: 'compensation',
+//   category: {
+//     label: 'Apportionment',
+//     value: 'Apportionment'
+//   },
+//   decisionDate: '06/01/2019',
+//   dateError: false,
+//   description: 'thing',
+//   formType: 'someFormType', // Ensure this matches the expected form type
+//   intakeData: {
+//     benefitType: 'compensation',
+//     activeNonratingRequestIssues: [
+//       {
+//         category: 'Apportionment',
+//         // other properties if needed
+//       }
+//     ]
+//   },
+//   onSkip: () => null,
+  // featureToggles: {
+  //   featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
+  //   eduPreDocketAppeals: false,
+  //   mstIdentification: false,
+  //   pactIdentification: false,
+  // }
+// };
