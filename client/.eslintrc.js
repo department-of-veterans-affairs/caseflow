@@ -3,10 +3,7 @@ module.exports = {
     browser: true,
     mocha: true,
   },
-  extends: [
-    '@department-of-veterans-affairs/eslint-config-appeals',
-    'plugin:jest/recommended',
-  ],
+  extends: ['@department-of-veterans-affairs/eslint-config-appeals', 'plugin:jest/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -42,7 +39,7 @@ module.exports = {
     },
     'import/resolver': {
       webpack: {
-        config: './webpack.config.js'
+        config: './webpack.config.js',
       },
       node: {
         extensions: ['.js', '.jsx', '.json'],

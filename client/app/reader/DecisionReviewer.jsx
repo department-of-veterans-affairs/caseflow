@@ -1,26 +1,28 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import _ from 'lodash';
 import AppFrame from '../components/AppFrame';
+import CaseSearchLink from '../components/CaseSearchLink';
+import NavigationBar from '../components/NavigationBar';
 import PageRoute from '../components/PageRoute';
-import PdfViewer from './PdfViewer';
-import PdfListView from './PdfListView';
-import ReaderLoadingScreen from './ReaderLoadingScreen';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
-import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
+import { LOGO_COLORS } from '../constants/AppConstants';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
+import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
+import { formatNameShort } from '../util/FormatUtil';
+import PdfListView from './PdfListView';
+import PdfViewer from './PdfViewer';
+import ReaderLoadingScreen from './ReaderLoadingScreen';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
-import _ from 'lodash';
-import NavigationBar from '../components/NavigationBar';
-import CaseSearchLink from '../components/CaseSearchLink';
-import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import { LOGO_COLORS } from '../constants/AppConstants';
-import { formatNameShort } from '../util/FormatUtil';
+
+import DocumentViewer from '../readerprototype/DocumentViewer';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -43,7 +45,11 @@ export class DecisionReviewer extends React.PureComponent {
       return;
     }
 
-    history.push(`/${vacolsId}/documents/${docId}`);
+    if (window.location.pathname.includes('prototype')) {
+      history.push(`/${vacolsId}/documents/${docId}/prototype`);
+    } else {
+      history.push(`/${vacolsId}/documents/${docId}`);
+    }
   }
 
   clearPlacingAnnotationState = () => {
@@ -110,18 +116,37 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfViewer = (props) => {
     const { vacolsId } = props.match.params;
 
+    return (
+      <ReaderLoadingScreen
+        appealDocuments={this.props.appealDocuments}
+        annotations={this.props.annotations}
+        vacolsId={vacolsId}
+        featureToggles={this.props.featureToggles}>
+        <PdfViewer
+          allDocuments={_.values(this.props.storeDocuments)}
+          showPdf={this.showPdf(props.history, vacolsId)}
+          history={props.history}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          documentPathBase={`/${vacolsId}/documents`}
+          featureToggles={this.props.featureToggles}
+          {...props}
+        />
+      </ReaderLoadingScreen>
+    );
+  }
+
+  routedPdfViewerPrototype = (props) => {
+    const { vacolsId } = props.match.params;
+
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
       featureToggles={this.props.featureToggles}>
-      <PdfViewer
+      <DocumentViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
-        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -146,6 +171,12 @@ export class DecisionReviewer extends React.PureComponent {
       rightNavElement={<CaseSearchLink />}
       defaultUrl="/queue"
       outsideCurrentRouter>
+      <PageRoute
+        exact
+        title="Document Viewer | Caseflow Reader"
+        breadcrumb="Document Viewer Prototype"
+        path="/:vacolsId/documents/:docId/prototype"
+        render={this.routedPdfViewerPrototype} /> :
       <PageRoute
         exact
         title="Document Viewer | Caseflow Reader"

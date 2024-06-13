@@ -89,6 +89,7 @@
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
 
+
   &.hidden-sidebar {
     width: 0;
     min-width: 0;
@@ -584,4 +585,71 @@ input[type="search"].cf-search-input-with-close {
 
 .editable-field-btn-link {
   padding: 0 0.5rem 0.5rem 0.75rem;
+}
+
+.cf-pdf-page-container-prototype {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: -moz-calc(100% -68px);
+  height: -webkit-calc(100% - 68px);
+  height: calc(100% - 68px);
+}
+
+.cf-sidebar-wrapper-prototype {
+  flex-direction: column;
+  text-align: left;
+  background: $caseflow-background;
+  border-top: 1px solid $color-gray-lighter;
+  z-index: 5;
+
+  &.hidden-sidebar {
+    width: 0;
+    min-width: 0;
+  }
+
+  .usa-accordion-content {
+    background-color: $caseflow-background;
+  }
+
+  .usa-alert {
+    margin-top: 15px;
+  }
+}
+
+.canvas-wrapper-prototype {
+  margin: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+.canvas-container-prototype {
+  background-color: white;
+}
+
+.cf-pdf-spaced-buttons-left {
+  margin: 0 0 0 18px;
+}
+
+.cf-pdf-toolbar-prototype {
+  background: $color-gray-dark;
+  width: 100%;
+  height: 50px;
+  color: $color-white;
+  font-size: 15px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  opacity: 1;
+  padding: 15px 23px 15px 15px;
+  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
+  z-index: 7;
+
+  .category-icons-and-doc-type {
+    display: flex;
+    justify-content: center;
+  }
 }
