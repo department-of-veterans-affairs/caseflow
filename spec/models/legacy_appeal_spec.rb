@@ -34,7 +34,7 @@ describe LegacyAppeal, :all_dbs do
 
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with([root_task, child_task], :id)
-        expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
+        expect(subject.key?(:"LegacyAppeal #{appeal.id} [#{root_task}, #{child_task}, id]")).to be_truthy
       end
 
       context "the appeal has more than one parentless task" do
@@ -47,8 +47,8 @@ describe LegacyAppeal, :all_dbs do
         it "returns all parentless tasks" do
           expect_any_instance_of(RootTask).to receive(:structure).with([root_task, colocated_task], :id)
           expect_any_instance_of(ColocatedTask).to receive(:structure).with([root_task, colocated_task], :id)
-          expect(subject.key?(:"LegacyAppeal #{appeal.id} [id]")).to be_truthy
-          expect(subject[:"LegacyAppeal #{appeal.id} [id]"].count).to eq 2
+          expect(subject.key?(:"LegacyAppeal #{appeal.id} [#{root_task}, #{colocated_task}, id]")).to be_truthy
+          expect(subject[:"LegacyAppeal #{appeal.id} [#{root_task}, #{colocated_task}, id]"].count).to eq 2
         end
       end
     end
