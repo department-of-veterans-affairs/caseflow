@@ -112,28 +112,24 @@ class AddIssuesPage extends React.Component {
     case 'reviewIssueModificationRequest':
       this.setState({
         pendingIssueModification: issueModificationRequest,
-        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueModificationModal(identifier);
       break;
     case 'reviewIssueAdditionRequest':
       this.setState({
         pendingIssueModification: issueModificationRequest,
-        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueAdditionModal(identifier);
       break;
     case 'reviewIssueWithdrawalRequest':
       this.setState({
         pendingIssueModification: issueModificationRequest,
-        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueWithdrawalModal(identifier);
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
         pendingIssueModification: issueModificationRequest,
-        issueIndex: modificationRequestIndex
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
