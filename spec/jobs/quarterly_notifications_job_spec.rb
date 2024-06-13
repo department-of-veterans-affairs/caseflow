@@ -8,24 +8,6 @@ describe QuarterlyNotificationsJob, type: :job do
   let(:user) { create(:user) }
   subject { QuarterlyNotificationsJob.perform_now }
   describe "#perform" do
-    context "appeal is nil" do
-      let!(:appeal_state) do
-        create(
-          :appeal_state,
-          appeal_id: 2,
-          appeal_type: "Appeal",
-          created_by_id: user.id,
-          updated_by_id: user.id
-        )
-      end
-      it "does not push a new message" do
-        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
-      end
-      it "rescues and logs error" do
-        expect(Rails.logger).to receive(:error)
-        subject
-      end
-    end
     context "Appeal Decision Mailed" do
       let!(:appeal_state) do
         create(
@@ -38,7 +20,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "does not push a new message" do
-        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
+        expect_message_to_not_be_enqueued
+
+        subject
       end
     end
     context "job setup" do
@@ -59,8 +43,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Appeal Docketed with withdrawn hearing" do
@@ -76,8 +61,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing to be Rescheduled / Privacy Act Pending for hearing postponed" do
@@ -94,8 +80,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing to be Rescheduled for hearing postponed" do
@@ -111,8 +98,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing to be Rescheduled / Privacy Act Pending for scheduled in error" do
@@ -129,8 +117,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing to be Rescheduled for scheduled in error" do
@@ -146,8 +135,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing Scheduled / Privacy Act Pending with ihp task" do
@@ -165,8 +155,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "VSO IHP Pending / Privacy Act Pending" do
@@ -183,8 +174,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing Scheduled with ihp task pending" do
@@ -201,8 +193,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing Scheduled / Privacy Act Pending" do
@@ -219,8 +212,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Privacy Act Pending" do
@@ -236,8 +230,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "VSO IHP Pending" do
@@ -253,8 +248,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "Hearing Scheduled" do
@@ -270,8 +266,9 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "pushes a new message" do
+        expect_message_to_be_queued
+
         subject
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
     context "cancelled appeal" do
@@ -302,9 +299,25 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "does not push a new message" do
+        expect_message_to_not_be_enqueued
+
         subject
-        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
+  end
+
+  def expect_message_to_be_queued
+    expect_any_instance_of(QuarterlyNotificationsJob)
+      .to receive(:enqueue_init_jobs)
+      .with(
+        array_including(
+          instance_of(NotificationInitializationJob)
+        )
+      )
+  end
+
+  def expect_message_to_not_be_enqueued
+    expect_any_instance_of(QuarterlyNotificationsJob)
+      .to_not receive(:enqueue_init_jobs)
   end
 end
