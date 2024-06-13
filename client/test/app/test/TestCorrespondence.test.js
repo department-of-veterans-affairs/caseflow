@@ -25,7 +25,7 @@ jest.mock('app/components/Alert', () => ({ type, title, message }) => (
   </div>
 ));
 
-// Mock the ApiUtil.post method
+// Mock the ApiUtil.post method.
 jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve({
   body: {
     invalid_file_numbers: '001',
