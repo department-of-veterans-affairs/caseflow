@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -16,7 +16,7 @@ describe('FnodBadge', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const setupFnodBadge = (store) => {
-    return mount(
+    return (
       <Provider store={store}>
         <FnodBadge
           appeal={defaultAppeal}
@@ -27,8 +27,8 @@ describe('FnodBadge', () => {
 
   it('renders correctly', () => {
     const store = getStore();
-    const component = setupFnodBadge(store);
-
-    expect(component).toMatchSnapshot();
+    const { asFragment } = render(setupFnodBadge(store));
+    console.log(asFragment());
+    expect(asFragment()).toMatchSnapshot();
   });
 });
