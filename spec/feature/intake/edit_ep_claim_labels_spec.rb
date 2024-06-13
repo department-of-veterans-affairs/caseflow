@@ -142,6 +142,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
     it "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
+      expect(page).to have_content("Intake System")
+
       # First shows issues on end products, in ascending order by EP code (nonrating before rating)
       # Note for these, there's a row for the EP label, and a subsequent row for the issues
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
