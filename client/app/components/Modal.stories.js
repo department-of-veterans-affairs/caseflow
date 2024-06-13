@@ -60,38 +60,7 @@ const Template = (args) => {
 
 export const Basic = Template.bind({});
 
-const TemplateWithIcon = (args) => {
-  const buttons = [
-    {
-      classNames: ['cf-modal-link', 'cf-btn-link'],
-      name: 'Cancel',
-      onClick: (e) => {
-        action('close')(e.target);
-      },
-    },
-    {
-      classNames: ['usa-button', 'usa-button-secondary'],
-      name: 'Proceed with action',
-      onClick: (e) => {
-        action('submit')(e.target);
-      },
-    },
-  ];
-
-  return (
-    <Modal {...args} buttons={buttons} icon="warning">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </p>
-      <TextField
-        onChange={() => {}}
-        label="This is a text box for the modal."
-        name="Text Box"
-        placeholder="Enter something related to this modal!"
-      />
-    </Modal>
-  );
+export const Icon = Template.bind({});
+Icon.args = {
+  icon: 'warning'
 };
-
-export const Icon = TemplateWithIcon.bind({});
