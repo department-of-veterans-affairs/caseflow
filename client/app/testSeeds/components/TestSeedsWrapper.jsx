@@ -6,7 +6,7 @@ const TestSeedsWrapper = () => {
   return (
     <div>
       <CustomSeeds />
-      <ScenarioSeeds />
+      {/* <ScenarioSeeds /> */}
     </div>
   );
 };
