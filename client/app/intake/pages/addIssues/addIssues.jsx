@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import issueModificationRow from 'app/intake/components/IssueModificationRow';
+import IssueModificationRow from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -626,7 +626,7 @@ class AddIssuesPage extends React.Component {
 
     // Pending modifications table section
     if (!_.isEmpty(activePendingIssues)) {
-      rowObjects = rowObjects.concat(issueModificationRow({
+      rowObjects = rowObjects.concat(IssueModificationRow({
         issueModificationRequests: activePendingIssues,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
