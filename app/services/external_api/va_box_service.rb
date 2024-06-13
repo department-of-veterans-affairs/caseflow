@@ -3,9 +3,12 @@ require 'json'
 require 'jwt'
 require 'openssl'
 require 'securerandom'
+require 'net/http/post/multipart'
+require 'mime/types'
 
 class ExternalApi::VaBoxService
   BASE_URL = "https://api.box.com"
+  FILES_URI = "#{BASE_URL}/2.0/files"
 
   def initialize(config:)
     @config = config
@@ -26,27 +29,41 @@ class ExternalApi::VaBoxService
     end
   end
 
-  def get_current_user
-    url = "#{BASE_URL}/2.0/users/me"
-    uri = URI.parse(url)
-
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request["Authorization"] = "Bearer #{@access_token}"
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    response = http.request(request)
-
-    if response.code == "200"
-      body = JSON.parse(response.body)
-      body
-    else
-      raise "Error: #{response.body}"
-    end
+  def public_upload_file(file_path, folder_id)
+    upload_file(file_path, folder_id)
   end
 
-  private
+  def public_get_current_user
+    get_current_user
+  end
+
+  def public_folder_details(folder_id)
+    get_folder_collaborations(folder_id)
+  end
+
+
+  def get_current_user
+    uri = URI('https://api.box.com/2.0/users/me')
+    req = Net::HTTP::Get.new(uri)
+    req['Authorization'] = "Bearer #{@access_token}"
+
+    req_options = {
+      use_ssl: uri.scheme == 'https'
+    }
+
+    res = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(req)
+    end
+
+    if res.code == "200"
+      body = JSON.parse(res.body)
+      puts "Role: #{body['role']}"
+      puts "Status: #{body['status']}"
+      body
+    else
+      raise "Error: #{res.body}"
+    end
+  end
 
   def fetch_jwt_access_token
     url = "#{BASE_URL}/oauth2/token"
@@ -87,41 +104,35 @@ class ExternalApi::VaBoxService
     end
   end
 
-  def upload_file(file_path, folder_id, max_size, chunk_size = 1024*1024) # default chunk size is 1MB
-    file = File.open(file_path)
-
-    # Perform preflight check
-    preflight_check(file, File.basename(file_path), folder_id, max_size)
-
+  def upload_file(file_path, folder_id)
     url = "https://upload.box.com/api/2.0/files/content"
     uri = URI.parse(url)
 
-    request = Net::HTTP::Post.new(uri.request_uri)
+    request = Net::HTTP::Post::Multipart.new(uri.path,
+      "file" => UploadIO.new(File.new(file_path), "application/zip", File.basename(file_path)),
+      "attributes" => { name: File.basename(file_path), parent: { id: folder_id } }.to_json
+    )
     request["Authorization"] = "Bearer #{@access_token}"
+    request["As-User"] = @config[:as_user] if @config[:as_user]
 
-    # Read and upload the file in chunks
-    while chunk = file.read(chunk_size)
-      request.set_form_data({
-        attributes: { name: File.basename(file_path), parent: { id: folder_id } }.to_json,
-        file: chunk
-      })
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
 
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+    response = http.request(request)
 
-      response = http.request(request)
-
-      if response.code == "201"
-        body = JSON.parse(response.body)
-        body
-      else
-        raise "Error: #{response.body}"
-      end
+    if response.code == "201"
+      body = JSON.parse(response.body)
+      body
+    else
+      puts "As-User: #{@config[:as_user]}"
+      puts "Response code: #{response.code}"
+      puts "Response body: #{response.body}"
+      raise "Error: #{response.body}"
     end
   end
 
-  def get_folder_details(folder_id)
-  url = "#{BASE_URL}/2.0/folders/#{folder_id}"
+  def get_folder_collaborations(folder_id)
+  url = "#{BASE_URL}/2.0/folders/#{folder_id}/collaborations"
   uri = URI.parse(url)
 
   request = Net::HTTP::Get.new(uri.request_uri)
@@ -134,60 +145,17 @@ class ExternalApi::VaBoxService
 
     if response.code == "200"
       body = JSON.parse(response.body)
-      body
+      body['entries'].each do |collaboration|
+      puts "Collaboration ID: #{collaboration['id']}"
+      puts "Access level: #{collaboration['accessible_by']['type']}"
+      puts "Role: #{collaboration['role']}"
+    end
+    body
     else
       raise "Error: #{response.body}"
     end
   end
-
-  def preflight_check(io, filename, parent_id, max_size)
-    size = io.size
-
-    # Check if the file size exceeds the max_size
-    if size > max_size
-      raise "File size exceeds the maximum limit of #{max_size} bytes"
-    end
-
-    #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
-    attributes = {name: filename, parent: {id: "#{parent_id}"}, size: size}
-    body_json, res = options("#{FILES_URI}/content", attributes)
-  end
 end
-
-
-# {
-#   "boxAppSettings": {
-#     "clientID": "em2hg82aw4cgee9bwjii96humn99n813",
-#     "clientSecret": "sCHkWIqw2H6ewrYjzObSXTtxMDPZpH2o",
-#     "appAuth": {
-#       "publicKeyID": "3awcj163",
-#       "privateKey": "-----BEGIN ENCRYPTED PRIVATE KEY-----\nMIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIoz61tzppMpUCAggA\nMAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECMJdArOHrtfGBIIEyMAUJ5NTd6ZS\nvt+hiiQ9FzSCsBsBgBcKaxJvJI+2LYYqiJuZy06NgrSadPTEXruOfAXUfMmIY4vL\nd9RqrizzsOgUPRbG6oAiwuHlCPSeK84mX3PfR4Xglh033HO1yVclcyR/2O6rMS6I\ntkDivRzPIdN/SMKPTP91ZV1k1jQFNkmneW2MyNuBESFSg6aG3Z1fQmJFk7/ACR6n\nzFe8gYjcohK7T/RQhkNDelQir0xHmWIBA55N1+cOWasNUZClrbbj7gobPakTXXin\n3qo/YvE1GYo1sgiucyBx9S4lhsFRmsGeygi5vuukDreOmzCZ5M306oXzKuD7Gj+8\nAGbFs5n+8fRSdb3ZN9EaQF1bDwaZbkMViC+I8c5Ce+7+Q0vB55w47880JZCPTQke\nXOAwGSE6y2ylGl1a26lkNt/4W4dJk6JKF3Mp0MvzTwbAOMEUP5i0UBDWxGEVHf7L\nn6wKpkLLZQnRhSYO24MWuK6n17FLX0eobT7Ih6X1gAgg5BEtsdpMGatrS9uNUb5K\n+GDjGuf134J7wa4tKb+1pE+NTx5C0fRYu6zveEhMCgBOnUUrYVKfnEy/sgcjrOJN\nA8cS34w5ZJ/MqKz0CH8Yd5VnDSHKGxRnumxWwY/eSIvs5yaL0z3aO5qebImzDsOI\niKT6TK+1KXuq5lZyVqATOsMJ6+eLaAHlbhHEGeoRalJXIs2c/7AEoa3EY3nQawsP\nJIvZImffjZM1ESirrnECfq+/QW3fIr3WKXS+yV4xV4/1AVhi4WPvd/xd6KOL/jn3\nuPh4rciaGc0tMODUa36LTKOCUGMVBfVVhtAY/Z2fgwNmXPJXS+Po5W11W1obBu5f\nuOJf2qQ5wOZVK3XFyrXWobmTud7aQDIcMlebfSLyj+BaFsacEWke/nj1BpOygYB7\nY3g827qp0S+4bcDwrwPBQswBBG0bqaUbxXgJc7bfqh9sTAFK7TBOkCgxic17I2d4\ncUMj8C3J4t/IjLgfLRUW7IhddqcctPDEIcpxyqH1L1ZN+UvDb0KC9JnGaBrCotUY\ncsK49cB1AL6VNNf6b08zLJflI3AuQMqjB1kmpa+tlqfGJyc8KuNRFwujdeLEM0aV\n6s3rs7G2GIk9fCPSFBoX3mLBIQvR6fhsXTgAtr4rhKHYuHigMGa2JWHravnyhFUQ\n1+9iAWgNo3esy4CTpYD6+I13fdldBOt4vS+hoepTL+z+xOEMC2JYSDcT9vg5/W25\nma/ku1xGFFLh51tGn4+kdiEF6meYzzrCi1PBs4qv/GMRPwY6theyVsQHu1wEcN7B\n4xlthFMUXdHyvqc6gxmIKthvtCpxCW+5BWJJlIAvqMD/Dpwq2pSmjEJfeJmALSHm\nVS57d4rwGI2gXDwXBqxfWMdh7EGlREobup/ljEQrlbt3TH7yjACnQgGwCnCrLlHl\nTzhVGrONPF1Kagg8oj9SOrjQgIJ7IbjK/QLQEWwNMz3Ywnhmc8ogrG2UuzJLhG3e\n/dLQwmpSnAXCGFPir6ZEz+mdUYHW3g3sYg38U6yetU+RaZ9DWsqVs74w5jS53vG0\nCy/IlVqL4M1wrUVorQyXOux4CI58O9ArbZ/xUEvVloKfD8CzqQdmO9erqyrrDhkL\n04CXKrboQ8djWpNk5MWWuQ==\n-----END ENCRYPTED PRIVATE KEY-----\n",
-#       "passphrase": "320c004d1e36338160c91daf78695309"
-#     }
-#   },
-#   "enterpriseID": "828720650"
-# }
-
-
-#1. Instantiate the service
-# service = ExternalApi::VaBoxService.new(config: {
-#   client_secret: "sCHkWIqw2H6ewrYjzObSXTtxMDPZpH2o",
-#   client_id: "em2hg82aw4cgee9bwjii96humn99n813",
-#   enterprise_id: "828720650",
-#   private_key: "-----BEGIN ENCRYPTED PRIVATE KEY-----\nMIIFHDBOBgkqhkiG9w0BBQ0wQTApBgkqhkiG9w0BBQwwHAQIoz61tzppMpUCAggA\nMAwGCCqGSIb3DQIJBQAwFAYIKoZIhvcNAwcECMJdArOHrtfGBIIEyMAUJ5NTd6ZS\nvt+hiiQ9FzSCsBsBgBcKaxJvJI+2LYYqiJuZy06NgrSadPTEXruOfAXUfMmIY4vL\nd9RqrizzsOgUPRbG6oAiwuHlCPSeK84mX3PfR4Xglh033HO1yVclcyR/2O6rMS6I\ntkDivRzPIdN/SMKPTP91ZV1k1jQFNkmneW2MyNuBESFSg6aG3Z1fQmJFk7/ACR6n\nzFe8gYjcohK7T/RQhkNDelQir0xHmWIBA55N1+cOWasNUZClrbbj7gobPakTXXin\n3qo/YvE1GYo1sgiucyBx9S4lhsFRmsGeygi5vuukDreOmzCZ5M306oXzKuD7Gj+8\nAGbFs5n+8fRSdb3ZN9EaQF1bDwaZbkMViC+I8c5Ce+7+Q0vB55w47880JZCPTQke\nXOAwGSE6y2ylGl1a26lkNt/4W4dJk6JKF3Mp0MvzTwbAOMEUP5i0UBDWxGEVHf7L\nn6wKpkLLZQnRhSYO24MWuK6n17FLX0eobT7Ih6X1gAgg5BEtsdpMGatrS9uNUb5K\n+GDjGuf134J7wa4tKb+1pE+NTx5C0fRYu6zveEhMCgBOnUUrYVKfnEy/sgcjrOJN\nA8cS34w5ZJ/MqKz0CH8Yd5VnDSHKGxRnumxWwY/eSIvs5yaL0z3aO5qebImzDsOI\niKT6TK+1KXuq5lZyVqATOsMJ6+eLaAHlbhHEGeoRalJXIs2c/7AEoa3EY3nQawsP\nJIvZImffjZM1ESirrnECfq+/QW3fIr3WKXS+yV4xV4/1AVhi4WPvd/xd6KOL/jn3\nuPh4rciaGc0tMODUa36LTKOCUGMVBfVVhtAY/Z2fgwNmXPJXS+Po5W11W1obBu5f\nuOJf2qQ5wOZVK3XFyrXWobmTud7aQDIcMlebfSLyj+BaFsacEWke/nj1BpOygYB7\nY3g827qp0S+4bcDwrwPBQswBBG0bqaUbxXgJc7bfqh9sTAFK7TBOkCgxic17I2d4\ncUMj8C3J4t/IjLgfLRUW7IhddqcctPDEIcpxyqH1L1ZN+UvDb0KC9JnGaBrCotUY\ncsK49cB1AL6VNNf6b08zLJflI3AuQMqjB1kmpa+tlqfGJyc8KuNRFwujdeLEM0aV\n6s3rs7G2GIk9fCPSFBoX3mLBIQvR6fhsXTgAtr4rhKHYuHigMGa2JWHravnyhFUQ\n1+9iAWgNo3esy4CTpYD6+I13fdldBOt4vS+hoepTL+z+xOEMC2JYSDcT9vg5/W25\nma/ku1xGFFLh51tGn4+kdiEF6meYzzrCi1PBs4qv/GMRPwY6theyVsQHu1wEcN7B\n4xlthFMUXdHyvqc6gxmIKthvtCpxCW+5BWJJlIAvqMD/Dpwq2pSmjEJfeJmALSHm\nVS57d4rwGI2gXDwXBqxfWMdh7EGlREobup/ljEQrlbt3TH7yjACnQgGwCnCrLlHl\nTzhVGrONPF1Kagg8oj9SOrjQgIJ7IbjK/QLQEWwNMz3Ywnhmc8ogrG2UuzJLhG3e\n/dLQwmpSnAXCGFPir6ZEz+mdUYHW3g3sYg38U6yetU+RaZ9DWsqVs74w5jS53vG0\nCy/IlVqL4M1wrUVorQyXOux4CI58O9ArbZ/xUEvVloKfD8CzqQdmO9erqyrrDhkL\n04CXKrboQ8djWpNk5MWWuQ==\n-----END ENCRYPTED PRIVATE KEY-----\n",
-#   passphrase: "320c004d1e36338160c91daf78695309"
-# })
-
-#2. fetching the access token
-# service.fetch_access_token
-
-#3. getting the current application user within box.com
-# service.get_current_user
-
-#4. Upload file to box.xom
-# file_path = '/path/to/your/file'
-# folder_id = 'your_folder_id'
-# service.upload_file(file_path, folder_id)
 
 
 
