@@ -1,7 +1,6 @@
 import * as actions from 'app/testSeeds/reducers/seeds/seedsActions';
 import { ACTIONS } from 'app/testSeeds/reducers/seeds/seedsActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
-// import { alternativeBatchSize, levers, historyList } from '../../../../data/adminCaseDistributionLevers';
 
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),
@@ -53,5 +52,16 @@ describe('seeds actions', () => {
     actions.resetCustomSeeds()(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
+  it('should save action to set the custom seed', () => {
+    ApiUtil.post.mockResolvedValueOnce({ data: 'Success' });
+
+    const dispatch = jest.fn();
+
+    actions.saveCustomSeeds([seed])(dispatch);
+    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo`, {
+      data: [seed]
+    });
   });
 });
