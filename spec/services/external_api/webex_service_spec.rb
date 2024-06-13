@@ -201,7 +201,7 @@ describe ExternalApi::WebexService do
         let(:room_id) do
           "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS85YTZjZTRjMC0xNmM5LTExZWYtYjIxOC1iMWE5YTQ2"
         end
-        let(:room_title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1" }
+        let(:room_title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426" }
 
         it "gets a list of room objects with ids and titles" do
           expect(subject.code).to eq(200)

@@ -69,9 +69,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def create_file_name(topic, extension, meeting_title)
-    title = meeting_title.scan(/\d*-*\d+_\d+_[A-Za-z]*Hearing+(?=-)/).first
     counter = topic.split("-").last
-    "#{title}-#{counter}.#{extension}"
+    "#{meeting_title}-#{counter}.#{extension}"
   end
 
   def send_file(topic, extension, link, meeting_title)
