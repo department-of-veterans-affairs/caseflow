@@ -310,7 +310,8 @@ feature "Attorney checkout flow", :all_dbs do
       radio_choices[1].click
       click_on "Add this issue"
 
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
+
       find("label[for='Military Sexual Trauma (MST)']").click
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
@@ -330,7 +331,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "+ Add issue"
       check("PACT Act", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: issue_date)
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("#Edit-issue-button-id-1").click
       click_on "Save"
@@ -349,7 +350,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "+ Add issue"
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: issue_date)
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
@@ -367,7 +368,7 @@ feature "Attorney checkout flow", :all_dbs do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       add_intake_nonrating_issue(date: issue_date)
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
@@ -385,11 +386,11 @@ feature "Attorney checkout flow", :all_dbs do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       add_intake_nonrating_issue(date: issue_date)
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
-      find("#issue-action-3").find(:xpath, "option[3]").select_option
+      click_edit_intake_issue_dropdown_by_number(4)
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
@@ -413,8 +414,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "+ Add issue"
       add_intake_nonrating_issue(date: issue_date)
       3.times do
-        find("#issue-action-0").find(:xpath, "option[2]").select_option
-        click_on "Remove"
+        click_remove_intake_issue_dropdown_by_number(1)
       end
       click_on "Save"
       click_on "Yes, save"
