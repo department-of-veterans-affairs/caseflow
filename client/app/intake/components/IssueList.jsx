@@ -115,10 +115,10 @@ export default class IssuesList extends React.Component {
     } = this.props;
 
     return <div className="issues">
-      <ol>
-        <div>
-          { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
-          { issues.map((issue) => {
+      <div>
+        { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
+        <ol>
+          {issues.map((issue) => {
             // Issues from rating issues or decision issues have editable contention text. New non-rating issues do not.
             const editableIssueType = Boolean(issue.decisionIssueId || issue.ratingIssueReferenceId ||
               issue.ratingDecisionReferenceId);
@@ -137,67 +137,68 @@ export default class IssuesList extends React.Component {
 
             const showNewIssueBasedOnRequestIssueBanner = issue.id === 'undefined';
 
-            return <div className="issue-container" key={`issue-container-${issue.index}`}>
-              <div
-                className="issue"
-                data-key={`issue-${issue.index}`}
-                key={`issue-${issue.index}`}
-                id={`issue-${issue.id}`}>
+            return <li>
+              <div className="issue-container" key={`issue-container-${issue.index}`}>
+                <div
+                  className="issue"
+                  data-key={`issue-${issue.index}`}
+                  key={`issue-${issue.index}`}
+                  id={`issue-${issue.id}`}>
 
-                <AddedIssue
-                  issue={issue}
-                  issueIdx={issue.index}
-                  requestIssues={intakeData.requestIssues}
-                  legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
-                  legacyAppeals={intakeData.legacyAppeals}
-                  featureToggles={featureToggles}
-                  formType={formType} />
+                  <AddedIssue
+                    issue={issue}
+                    issueIdx={issue.index}
+                    requestIssues={intakeData.requestIssues}
+                    legacyOptInApproved={intakeData.legacyOptInApproved ?? false}
+                    legacyAppeals={intakeData.legacyAppeals}
+                    featureToggles={featureToggles}
+                    formType={formType} />
 
-                { !issue.editable && <div className="issue-action">
-                  <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
-                </div> }
+                  { !issue.editable && <div className="issue-action">
+                    <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
+                  </div> }
 
-                <div className="issue-action">
-                  {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
-                    name={`issue-action-${issue.index}`}
-                    label="Actions"
-                    hideLabel
-                    options={issueActionOptions}
-                    defaultText="Select action"
-                    readOnly={disableIssueActions}
-                    onChange={(option) => onClickIssueAction(issue.index, option)}
-                  /> }
-                  {!editPage && <Button
-                    onClick={() => onClickIssueAction(issue.index)}
-                    classNames={['cf-btn-link', 'remove-issue']}
-                  >
-                    <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                  </Button>}
+                  <div className="issue-action">
+                    {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
+                      name={`issue-action-${issue.index}`}
+                      label="Actions"
+                      hideLabel
+                      options={issueActionOptions}
+                      defaultText="Select action"
+                      readOnly={disableIssueActions}
+                      onChange={(option) => onClickIssueAction(issue.index, option)}
+                    /> }
+                    {!editPage && <Button
+                      onClick={() => onClickIssueAction(issue.index)}
+                      classNames={['cf-btn-link', 'remove-issue']}
+                    >
+                      <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
+                    </Button>}
 
+                  </div>
                 </div>
+                {showNoDecisionDateBanner ?
+                  <Alert
+                    message={COPY.VHA_NO_DECISION_DATE_BANNER}
+                    messageStyling={messageStyling}
+                    styling={alertStyling}
+                    type="warning"
+                  /> : null}
+                {showNewIssueBasedOnRequestIssueBanner ?
+                  <Alert
+                    message={COPY.VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE}
+                    messageStyling={messageStyling}
+                    styling={alertStyling}
+                    type="info"
+                  /> : null}
+                {editableContentionText && <EditContentionTitle
+                  issue= {issue}
+                  issueIdx={issue.index} />}
               </div>
-              {showNoDecisionDateBanner ?
-                <Alert
-                  message={COPY.VHA_NO_DECISION_DATE_BANNER}
-                  messageStyling={messageStyling}
-                  styling={alertStyling}
-                  type="warning"
-                /> : null}
-              {showNewIssueBasedOnRequestIssueBanner ?
-                <Alert
-                  message={COPY.VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE}
-                  messageStyling={messageStyling}
-                  styling={alertStyling}
-                  type="info"
-                /> : null}
-              {editableContentionText && <EditContentionTitle
-                issue= {issue}
-                issueIdx={issue.index} />}
-            </div>;
+            </li>;
           })}
-        </div>
-      </ol>
-
+        </ol>
+      </div>
     </div>;
   }
 }

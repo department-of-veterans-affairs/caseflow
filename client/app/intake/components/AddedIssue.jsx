@@ -126,38 +126,36 @@ class AddedIssue extends React.PureComponent {
 
     return (
       <div className={eligibleState.cssKlasses.join(' ')}>
-        <li key={issueIdx}>
-          {issue.editedDescription ? issue.editedDescription : issue.text} {eligibleState.errorMsg}
-          {issue.editedDescription && (
-            <div>
-              <em>(Originally: {issue.text})</em>
-            </div>
-          )}
-          {issue.benefitType && <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
-          <span className="issue-date">
-            Decision date: {issue.date ? formatDateStr(issue.date) : COPY.NO_DATE_ENTERED }
-          </span>
-          {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
-          { (mstFeatureToggle || pactFeatureToggle || legacyMstPactFeatureToggle) &&
-            // eslint-disable-next-line max-len
-            <span className="special-issue-notes">{COPY.INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL}{specialIssuesMessage}</span>}
-          {issue.untimelyExemptionNotes && (
-            <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
-          )}
-          {vacolsIssue && !eligibleState.errorMsg && (
-            <div className="issue-vacols">
-              <span className="msg">
-                {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
-              </span>
-              <span className="desc">{vacolsIssue.description}</span>
-            </div>
-          )}
-          {issue.withdrawalPending && <p>Withdrawal pending</p>}
-          {issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p>}
-          {issue.endProductCleared && <p>Status: Cleared, waiting for decision</p>}
-          {issue.correctionType && <p className="correction-pending">{this.getCorrectionType(issue)}</p>}
-          {issue.examRequested && <p className="added-issue-note">{COPY.INTAKE_CONTENTION_HAS_EXAM_REQUESTED}</p>}
-        </li>
+        {issue.editedDescription ? issue.editedDescription : issue.text} {eligibleState.errorMsg}
+        {issue.editedDescription && (
+          <div>
+            <em>(Originally: {issue.text})</em>
+          </div>
+        )}
+        {issue.benefitType && <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
+        <span className="issue-date">
+          Decision date: {issue.date ? formatDateStr(issue.date) : COPY.NO_DATE_ENTERED }
+        </span>
+        {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
+        { (mstFeatureToggle || pactFeatureToggle || legacyMstPactFeatureToggle) &&
+          // eslint-disable-next-line max-len
+          <span className="special-issue-notes">{COPY.INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL}{specialIssuesMessage}</span>}
+        {issue.untimelyExemptionNotes && (
+          <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
+        )}
+        {vacolsIssue && !eligibleState.errorMsg && (
+          <div className="issue-vacols">
+            <span className="msg">
+              {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
+            </span>
+            <span className="desc">{vacolsIssue.description}</span>
+          </div>
+        )}
+        {issue.withdrawalPending && <p>Withdrawal pending</p>}
+        {issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p>}
+        {issue.endProductCleared && <p>Status: Cleared, waiting for decision</p>}
+        {issue.correctionType && <p className="correction-pending">{this.getCorrectionType(issue)}</p>}
+        {issue.examRequested && <p className="added-issue-note">{COPY.INTAKE_CONTENTION_HAS_EXAM_REQUESTED}</p>}
       </div>
     );
   }

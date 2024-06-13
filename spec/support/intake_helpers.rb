@@ -474,7 +474,7 @@ module IntakeHelpers
   end
 
   def find_intake_issue_by_text(text)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/ol/*/div[@class="issue-container"]').each do |node|
       if node.text.match?(/#{text}/)
         return node.find(".issue")
       end

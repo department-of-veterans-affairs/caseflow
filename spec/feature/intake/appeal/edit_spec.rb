@@ -1048,7 +1048,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1088,7 +1088,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1132,7 +1132,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
+        /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 

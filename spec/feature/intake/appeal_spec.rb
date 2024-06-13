@@ -399,7 +399,7 @@ feature "Appeal Intake", :all_dbs do
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted 2")
 
-    expect(page).to have_content("1. Left knee granted 2")
+    expect(page).to have_content("Left knee granted 2")
     expect(page).to_not have_content("Notes:")
 
     # removing the issue should hide the issue
@@ -411,7 +411,7 @@ feature "Appeal Intake", :all_dbs do
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted 2", "I am an issue note")
 
-    expect(page).to have_content("1. Left knee granted 2")
+    expect(page).to have_content("Left knee granted 2")
     expect(page).to have_content("I am an issue note")
 
     # clicking add issue again should show a disabled radio button for that same rating
