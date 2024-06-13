@@ -8,7 +8,8 @@ import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util
 import uuid from 'uuid';
 
 export const RequestIssueFormWrapper = (props) => {
-
+  const pendingIssueModificationRequest = props.pendingIssueModificationRequest ?
+    { ...props.pendingIssueModificationRequest } : {};
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
@@ -17,11 +18,11 @@ export const RequestIssueFormWrapper = (props) => {
 
   const methods = useForm({
     defaultValues: {
-      requestReason: props.pendingIssueModificationRequest?.requestReason || '',
-      nonratingIssueCategory: props.pendingIssueModificationRequest?.nonratingIssueCategory || '',
-      decisionDate: props.pendingIssueModificationRequest?.decisionDate || '',
-      nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
-      withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
+      requestReason: pendingIssueModificationRequest.requestReason || '',
+      nonratingIssueCategory: pendingIssueModificationRequest.nonratingIssueCategory || '',
+      decisionDate: pendingIssueModificationRequest.decisionDate || '',
+      nonratingIssueDescription: pendingIssueModificationRequest.nonratingIssueDescription || '',
+      withdrawalDate: formatDateStr(formatDate(pendingIssueModificationRequest.withdrawalDate),
         'MM/DD/YYYY', 'YYYY-MM-DD') || ''
     },
     mode: 'onChange',
