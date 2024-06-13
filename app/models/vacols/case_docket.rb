@@ -595,9 +595,9 @@ class VACOLS::CaseDocket < VACOLS::Record
 
         if ineligible_judges_sattyids&.include?(appeal["vlj"])
           next
-        else
-          return true
         end
+
+        (appeal["vlj"] != judge.vacols_attorney_id)
       end
 
       # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}
