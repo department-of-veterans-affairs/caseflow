@@ -75,7 +75,7 @@ class CorrespondenceIntakeController < CorrespondenceController
   private
 
   def corr_intake_params
-    params.permit(:current_step, :correspondence_uuid, :redux_store)
+    params.permit(:current_step, :correspondence_uuid, redux_store: [:taskRelatedAppealIds, :newAppealRelatedTasks, :fetchedAppeals, :radioValue, :relatedCorrespondences, :selectedTasks, :mailTasks, :unrelatedTasks, :veteranInformation, :waivedEvidenceTasks, :responseLetters, :correspondenceInformation, :selectedVeteranDetails, :showReassignPackageModal, :showRemovePackageModal, :showErrorBanner])
   end
 
   def correspondence_uuid
