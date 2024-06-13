@@ -656,7 +656,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
         expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
@@ -705,7 +705,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
         click_intake_add_issue
         click_intake_no_matching_issues
-        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
+        click_dropdown(prompt: "Select or enter...", text: active_nonrating_request_issue.nonrating_issue_category)
 
         expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
         expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
@@ -1604,11 +1604,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
         end
 
         expect(page).to have_field(type: "textarea", match: :first, text: "PTSD")
-        fill_in(with: "")
+        find("textarea").fill_in(with: "")
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
         expect(page).to have_button("Submit", disabled: true)
 
-        fill_in(with: "Right Knee")
+        find("textarea").fill_in(with: "Right Knee")
         expect(page).to have_button("Submit", disabled: false)
         click_button("Submit")
         expect(page).to have_content("Right Knee")
