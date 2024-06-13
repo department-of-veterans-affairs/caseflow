@@ -262,7 +262,6 @@ export const veteranDetails = () => {
         return <a
           href="#"
           onClick={() => handleReassignClick(task)}
-          aria-label={`${task.label } Link`}
           id="task-link"
         >
           {task.veteranDetails}
@@ -271,7 +270,6 @@ export const veteranDetails = () => {
         return <a
           href="#"
           onClick={() => handleRemoveClick(task)}
-          aria-label={`${task.label } Link`}
           id="task-link"
         >
           {task.veteranDetails}
@@ -280,7 +278,6 @@ export const veteranDetails = () => {
         return <a
           href="/under_construction"
           onContextMenu={() => handleExplainPageInConSoleLog(task)}
-          aria-label={`${task.label } Link`}
           id="task-link"
         >
           {task.veteranDetails}
@@ -290,7 +287,6 @@ export const veteranDetails = () => {
       return <a
         href={task.taskUrl}
         id="task-link"
-        aria-label={`${task.label } Link`}
       >
         {task.veteranDetails}
       </a>;
