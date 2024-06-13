@@ -18,7 +18,12 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    if FeatureToggle.enabled?(:use_ce_api)
+      response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
+      JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+    else
+      ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    end
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
