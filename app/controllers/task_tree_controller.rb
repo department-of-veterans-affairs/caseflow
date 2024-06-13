@@ -8,13 +8,9 @@ class TaskTreeController < ApplicationController
 
     no_cache
 
-    if FeatureToggle.enabled?(:eager_task_loading)
-      @tasks = Task.where(appeal_id: appeal.id).load
-    end
-
     respond_to do |format|
       format.html { render layout: "plain_application" }
-      format.text { render plain: appeal.structure_render(tasks, *Task.column_names) }
+      format.text { render plain: appeal.structure_render(tasks) }
       format.json { render json: { task_tree: task_tree_as_json } }
     end
   end
@@ -24,7 +20,7 @@ class TaskTreeController < ApplicationController
   helper_method :appeal, :task_tree_as_json
 
   def task_tree_as_json
-    @task_tree_as_json ||= appeal.structure_as_json(tasks, *Task.column_names)
+    @task_tree_as_json ||= appeal.structure_as_json(tasks)
   end
 
   def appeal
@@ -32,7 +28,11 @@ class TaskTreeController < ApplicationController
   end
 
   def tasks
-    @tasks = Task.where(appeal_id: appeal.id).to_a
+    @tasks ||= FeatureToggle.enabled?(:eager_task_loading) ? tasks_by_appeal.load : tasks_by_appeal.to_a
+  end
+
+  def tasks_by_appeal
+    @tasks_by_appeal ||= Task.where(appeal_id: appeal.id)
   end
 
   def fetch_appeal
