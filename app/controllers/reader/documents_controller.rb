@@ -26,10 +26,6 @@ class Reader::DocumentsController < Reader::ApplicationController
     render "reader/appeal/index"
   end
 
-  def show_prototype
-    render "reader/appeal/index"
-  end
-
   private
 
   def appeal

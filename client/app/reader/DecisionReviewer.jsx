@@ -44,12 +44,7 @@ export class DecisionReviewer extends React.PureComponent {
     if (!this.props.storeDocuments[docId]) {
       return;
     }
-
-    if (window.location.pathname.includes('prototype')) {
-      history.push(`/${vacolsId}/documents/${docId}/prototype`);
-    } else {
-      history.push(`/${vacolsId}/documents/${docId}`);
-    }
+    history.push(`/${vacolsId}/documents/${docId}`);
   }
 
   clearPlacingAnnotationState = () => {
@@ -116,28 +111,6 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfViewer = (props) => {
     const { vacolsId } = props.match.params;
 
-    return (
-      <ReaderLoadingScreen
-        appealDocuments={this.props.appealDocuments}
-        annotations={this.props.annotations}
-        vacolsId={vacolsId}
-        featureToggles={this.props.featureToggles}>
-        <PdfViewer
-          allDocuments={_.values(this.props.storeDocuments)}
-          showPdf={this.showPdf(props.history, vacolsId)}
-          history={props.history}
-          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-          documentPathBase={`/${vacolsId}/documents`}
-          featureToggles={this.props.featureToggles}
-          {...props}
-        />
-      </ReaderLoadingScreen>
-    );
-  }
-
-  routedPdfViewerPrototype = (props) => {
-    const { vacolsId } = props.match.params;
-
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
@@ -149,8 +122,7 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
-    </ReaderLoadingScreen>
-    ;
+    </ReaderLoadingScreen>;
   }
 
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
@@ -174,13 +146,7 @@ export class DecisionReviewer extends React.PureComponent {
       <PageRoute
         exact
         title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer Prototype"
-        path="/:vacolsId/documents/:docId/prototype"
-        render={this.routedPdfViewerPrototype} /> :
-      <PageRoute
-        exact
-        title="Document Viewer | Caseflow Reader"
-        breadcrumb="Document Viewer"
+        breadcrumb="Document Viewer PROTOTYPE"
         path="/:vacolsId/documents/:docId"
         render={this.routedPdfViewer} />
       <AppFrame wideApp>
