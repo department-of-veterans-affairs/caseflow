@@ -39,25 +39,19 @@ const IssueModificationRequest = ({
 
   const requestDetails = requestDetailsMapping[requestType];
 
-  const generateActionOptions = (type) => {
-    let options = [];
-    const isAddition = type === 'addition' ? 'issue' : '';
-    const action = userIsVhaAdmin ? 'Review issue' : `Edit ${isAddition}`;
-
-    options.push({
-      label: `${action} ${requestType} request`,
+  const options = userIsVhaAdmin ?
+    [{
+      label: `Review issue ${requestType} request`,
       value: `reviewIssue${capitalize(requestType)}Request`
-    });
-
-    if (!userIsVhaAdmin) {
-      options.push({
-        label: `Cancel ${type} request`,
-        value: 'cancelReviewIssueRequest'
-      });
-    }
-
-    return options;
-  };
+    }] :
+    [{
+      label: `Edit ${requestType === 'addition' ? 'issue' : ''} ${requestType} request`,
+      value: `reviewIssue${capitalize(requestType)}Request`
+    },
+    {
+      label: `Cancel ${requestType} request`,
+      value: 'cancelReviewIssueRequest'
+    }];
 
   const requestReasonSection = (
     <>
@@ -139,7 +133,7 @@ const IssueModificationRequest = ({
           <SearchableDropdown
             name={`select-action-${requestType}`}
             label="Actions"
-            options={generateActionOptions(requestType)}
+            options={options}
             placeholder="Select action"
             hideLabel
             onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
