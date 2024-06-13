@@ -122,16 +122,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ
+    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
       from (
-        select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        select BFKEY, BFDLOOUT, BFAC, AOD,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
       )
     "
 
