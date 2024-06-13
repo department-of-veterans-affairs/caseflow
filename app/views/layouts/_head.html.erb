@@ -19,12 +19,9 @@
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
 
-<% if !Rails.env.development? && !browser.ie? %>
+
+<% if !browser.ie? %>
   <%= env_javascript_include_tag(static: ['webpack-bundle'],
-                                 hot: ['http://localhost:3500/webpack-bundle.js']) %>
-<% else %>
-  <%= env_javascript_include_tag(crossorigin: 'anonymous',
-                                 static: ['webpack-bundle'],
                                  hot: ['http://localhost:3500/webpack-bundle.js']) %>
 <% end %>
 

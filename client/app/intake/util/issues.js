@@ -442,7 +442,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vbmsMstChecked: issue.vbmsMstChecked,
         vbmsPactChecked: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
-        pact_status_update_reason_notes: issue?.pactJustification
+        pact_status_update_reason_notes: issue?.pactJustification,
+        pendingWithdrawalDate: issue?.pendingWithdrawalDate
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -489,7 +490,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vbmsMstChecked: issue.vbmsMstChecked,
         vbmsPactChecked: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
-        pact_status_update_reason_notes: issue?.pactJustification
+        pact_status_update_reason_notes: issue?.pactJustification,
+        pendingWithdrawalDate: issue?.pendingWithdrawalDate
       };
     }
 
@@ -531,7 +533,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       vbmsMstChecked: issue.vbmsMstChecked,
       vbmsPactChecked: issue.vbmsPactChecked,
       mst_status_update_reason_notes: issue?.mstJustification,
-      pact_status_update_reason_notes: issue?.pactJustification
+      pact_status_update_reason_notes: issue?.pactJustification,
+      pendingWithdrawalDate: issue?.pendingWithdrawalDate
     };
   });
 };

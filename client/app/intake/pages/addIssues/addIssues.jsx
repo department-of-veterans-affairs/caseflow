@@ -71,6 +71,7 @@ import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIs
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
+import { formatDateStr, formatDate } from '../../../util/DateUtil';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -361,6 +362,13 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
+
+    const pendingWithdrawalDate = issuesPendingWithdrawal?.sort(
+      (ipw1, ipw2) => ipw2.pendingWithdrawalDate - ipw1.pendingWithdrawalDate)[0]?.
+      pendingWithdrawalDate
+
+    const pendingWithdrawalDateFormated = formatDateStr(formatDate(pendingWithdrawalDate),
+        'MM/DD/YYYY', 'YYYY-MM-DD')
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -797,7 +805,7 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                value={intakeData.withdrawalDate}
+                value={pendingWithdrawalDateFormated || intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"
