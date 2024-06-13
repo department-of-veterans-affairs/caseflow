@@ -75,7 +75,7 @@ class CorrespondenceIntakeController < CorrespondenceController
   private
 
   def corr_intake_params
-    params.permit(:current_step, :correspondence_uuid, redux_store: {})
+    params.permit(:current_step, :correspondence_uuid, :redux_store)
   end
 
   def correspondence_uuid
