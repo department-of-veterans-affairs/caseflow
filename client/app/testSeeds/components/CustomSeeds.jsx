@@ -186,7 +186,7 @@ const CustomSeeds = () => {
                 </td>
                 <td>
                   <div className="cf-add-comment-button">
-                    <Button onClick={() => reseedByCaseType(type)}>
+                    <Button id={`btn-${type}`} dataTestid={`btn-${type}`} onClick={() => reseedByCaseType(type)}>
                       <span>
                         <PlusIcon size={24} />
                       </span>
@@ -225,7 +225,7 @@ const CustomSeeds = () => {
                   <td>{obj.judge_css_id}</td>
                   <td>
                     <div>
-                      <span onClick={() => removePreviewSeed(obj, index)}>
+                      <span id={`del-preview-row-${index}`} onClick={() => removePreviewSeed(obj, index)}>
                         <TrashcanIcon size={24} />
                       </span>
                     </div>
