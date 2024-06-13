@@ -13,6 +13,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
 
   const methods = useForm({
     defaultValues: {
@@ -55,7 +56,7 @@ export const RequestIssueFormWrapper = (props) => {
 
       const enhancedData = {
         ...currentIssueFields,
-        requestIssue: props.currentIssue,
+        requestIssue: props.pendingIssueModificationRequest?.requestIssue || props.currentIssue,
         ...(props.type === 'addition') && { benefitType },
         requestor: { fullName: userFullName, cssId: userCssId },
         requestType: props.type,
@@ -68,10 +69,14 @@ export const RequestIssueFormWrapper = (props) => {
       // close modal and move the issue
       props.onCancel();
 
-      if (props.type === 'addition') {
-        props.addToPendingReviewSection(enhancedData);
+      if (isNewModificationRequest) {
+        if (props.type === 'addition') {
+          props.addToPendingReviewSection(enhancedData);
+        } else {
+          props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+        }
       } else {
-        props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+        props.updatePendingReview(enhancedData.identifier, enhancedData);
       }
     }
   };
@@ -81,7 +86,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={`Request issue ${props.type}`}
+            title={isNewModificationRequest ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
@@ -114,7 +119,8 @@ RequestIssueFormWrapper.propTypes = {
   moveToPendingReviewSection: PropTypes.func,
   addToPendingReviewSection: PropTypes.func,
   pendingIssueModificationRequest: PropTypes.object,
-  toggleConfirmPendingRequestIssueModal: PropTypes.func
+  toggleConfirmPendingRequestIssueModal: PropTypes.func,
+  updatePendingReview: PropTypes.func,
 };
 
 export default RequestIssueFormWrapper;

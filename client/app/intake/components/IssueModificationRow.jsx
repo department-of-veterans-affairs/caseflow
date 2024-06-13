@@ -56,7 +56,7 @@ const IssueModificationRow = (
 export default IssueModificationRow;
 
 IssueModificationRow.propTypes = {
-  fieldTitle: PropTypes.string,
-  issueModificationRequests: PropTypes.object,
-  onClickIssueRequestModificationAction: PropTypes.func
+  fieldTitle: PropTypes.string.isRequired,
+  issueModificationRequests: PropTypes.object.isRequired,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired
 };
