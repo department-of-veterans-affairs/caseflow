@@ -39,14 +39,15 @@ const ScenarioSeeds = () => {
   const [seedCounts, setSeedCounts] = useState({});
 
   const handleChange = (event, type) => {
-    setSeedCounts(prevState => ({
+    setSeedCounts((prevState) => ({
       ...prevState,
       [type]: event.target.value
     }));
   };
 
   const formatSeedName = (name) => {
-    return name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return name.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).
+      join(' ');
   };
 
   const reseed = (type) => {
@@ -54,25 +55,25 @@ const ScenarioSeeds = () => {
 
     setSeedRunningStatus(true);
     setSeedRunningMsg('');
-    setReseedingStatus(prevState => ({
+    setReseedingStatus((prevState) => ({
       ...prevState,
       [type]: true
     }));
 
     const endpoint = `/seeds/run-demo?seed_type=${type}&seed_count=${seedCount}`;
 
-    ApiUtil.post(endpoint)
-      .then(() => {
+    ApiUtil.post(endpoint).
+      then(() => {
         setSeedRunningStatus(false);
-        setReseedingStatus(prevState => ({
+        setReseedingStatus((prevState) => ({
           ...prevState,
           [type]: false
         }));
-      })
-      .catch(err => {
+      }).
+      catch((err) => {
         console.warn(err);
         setSeedRunningStatus(false);
-        setReseedingStatus(prevState => ({
+        setReseedingStatus((prevState) => ({
           ...prevState,
           [type]: false
         }));
@@ -86,14 +87,14 @@ const ScenarioSeeds = () => {
       <>
         <h2 id="run_seeds">{COPY.TEST_SEEDS_RUN_SEEDS}</h2>
         <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-          {seedTypes.map(type => (
+          {seedTypes.map((type) => (
             <li key={type}>
               <div className={cx('lever-right', 'test-seeds-num-field')}>
                 <input
                   aria-label={`count-${type}`}
                   type="text"
                   id={`count-${type}`}
-                  onChange={event => handleChange(event, type)}
+                  onChange={(event) => handleChange(event, type)}
                 />
               </div>
               <div className="cf-btn-link test-seed-button-style">
