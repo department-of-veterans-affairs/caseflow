@@ -36,7 +36,7 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
     end
   end
 
-  # The third and fourth titles returned have an invalid format
+  # The third & fourth titles returned have an invalid format
   context "filter test" do
     it "does not send an invalid title and id to the fetch room details job" do
       expect(subject.third.title).to eq("Virtual Visit - 221218-977_933_AMA-20240508 1426")
