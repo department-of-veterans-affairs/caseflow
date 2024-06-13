@@ -54,4 +54,32 @@ context "api/docs/v3/decision_reviews.yaml" do
 
     expect(hlr_errors_in_spec).to match_array(hlr_errors)
   end
+
+  describe "#decision_reviews" do
+    describe "/higher_level_reviews documentation" do
+
+      let(:hlr_doc) do
+        spec.dig("paths", "/higher_level_reviews", "post")
+      end
+      it "should have POST" do
+        expect(hlr_doc).to be_present
+      end
+    end
+    describe "/intake_statuses/{uuid} documentation" do
+      let(:hlr_intake_status_doc) do
+        spec.dig("paths", "/intake_statuses/{uuid}", "get")
+      end
+      it "should have GET" do
+        expect(hlr_intake_status_doc).to be_present
+      end
+    end
+    describe "/higher_level_reviews/{uuid} documentation" do
+      let(:hlr_intake_status_doc) do
+        spec.dig("paths", "/higher_level_reviews/{uuid}", "get")
+      end
+      it "should have GET" do
+        expect(hlr_intake_status_doc).to be_present
+      end
+    end
+  end
 end
