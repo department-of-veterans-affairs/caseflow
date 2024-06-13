@@ -74,8 +74,9 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
     let(:invalid_veterans) { ["987654321"] }
 
     before do
-      allow(controller).to receive(:classify_file_numbers).and_return({ valid: valid_veterans,
-                                                                        invalid: invalid_veterans })
+      allow(controller).to receive(:classify_file_numbers).and_return(
+        { valid: valid_veterans, invalid: invalid_veterans }
+      )
       allow(controller).to receive(:connect_corr_with_vet)
     end
 
