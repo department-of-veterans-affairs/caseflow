@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import { useSelector } from 'react-redux';
-import { formatDateStr, formatDate } from '../../../util/DateUtil';
+import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util/DateUtil';
 import uuid from 'uuid';
 
 export const RequestIssueFormWrapper = (props) => {
@@ -51,8 +51,8 @@ export const RequestIssueFormWrapper = (props) => {
 
       // The decision date will come from the current issue for removal and withdrawal requests.
       // Ensure date is in a serializable format for redux
-      const decisionDate = issueModificationRequest.decisionDate ||
-        formatDateStr(props.currentIssue?.decisionDate);
+      const decisionDate = formatDateStringForApi(issueModificationRequest.decisionDate) ||
+        formatDateStringForApi(props.currentIssue?.decisionDate);
 
       const enhancedData = {
         ...currentIssueFields,
