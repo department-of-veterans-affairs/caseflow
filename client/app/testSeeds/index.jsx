@@ -23,52 +23,52 @@ class TestSeeds extends React.PureComponent {
 
     return (
       <ReduxBase reducer={rootReducer}>
-      <Router {...this.props.routerTestProps}>
-        <div>
-          <NavigationBar
-            wideApp
-            defaultUrl={
-              this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
-                '/search' :
-                '/queue'
-            }
-            userDisplayName={this.props.userDisplayName}
-            dropdownUrls={this.props.dropdownUrls}
-            applicationUrls={this.props.applicationUrls}
-            logoProps={{
-              overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
-              accentColor: LOGO_COLORS.QUEUE.ACCENT,
-            }}
-            rightNavElement={<CaseSearchLink />}
-            appName="Caseflow Admin"
-          >
-            <AppFrame>
-              <SeedsBannerDisplay />
-              <AppSegment filledBackground>
-                <div>
-                  <PageRoute
-                    exact
-                    path="/test/seeds"
-                    title="Test Seeds | Caseflow"
-                    component={() => {
-                      return (
-                        <TestSeedsApp
-                          user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              </AppSegment>
-            </AppFrame>
-          </NavigationBar>
-          <Footer
-            appName={appName}
-            feedbackUrl={this.props.feedbackUrl}
-            buildDate={this.props.buildDate}
-          />
-        </div>
-      </Router>
+        <Router {...this.props.routerTestProps}>
+          <div>
+            <NavigationBar
+              wideApp
+              defaultUrl={
+                this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
+                  '/search' :
+                  '/queue'
+              }
+              userDisplayName={this.props.userDisplayName}
+              dropdownUrls={this.props.dropdownUrls}
+              applicationUrls={this.props.applicationUrls}
+              logoProps={{
+                overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
+                accentColor: LOGO_COLORS.QUEUE.ACCENT,
+              }}
+              rightNavElement={<CaseSearchLink />}
+              appName="Caseflow Admin"
+            >
+              <AppFrame>
+                <SeedsBannerDisplay />
+                <AppSegment filledBackground>
+                  <div>
+                    <PageRoute
+                      exact
+                      path="/test/seeds"
+                      title="Test Seeds | Caseflow"
+                      component={() => {
+                        return (
+                          <TestSeedsApp
+                            user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                </AppSegment>
+              </AppFrame>
+            </NavigationBar>
+            <Footer
+              appName={appName}
+              feedbackUrl={this.props.feedbackUrl}
+              buildDate={this.props.buildDate}
+            />
+          </div>
+        </Router>
       </ReduxBase>
     );
   }
