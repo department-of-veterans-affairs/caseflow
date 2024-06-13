@@ -16,8 +16,8 @@ class SaveAlertConfirmModal extends React.PureComponent {
             name: 'Cancel',
             onClick: this.props.onClose
           },
-          { classNames: buttonClassNames ? buttonClassNames : ['usa-button-red', 'confirm'],
-            name: this.props.buttonText ? this.props.buttonText : 'Yes, save',
+          { classNames: buttonClassNames ? buttonClassNames : ['usa-button', 'confirm'],
+            name: this.props.buttonText ? this.props.buttonText : 'Confirm',
             onClick: this.props.onConfirm
           }
         ]}

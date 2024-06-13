@@ -11,7 +11,6 @@ const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
       <p>The contention you selected will be removed from the decision review.</p>
-      <p>Are you sure you want to remove this issue?</p>
     </div>;
   }
 
@@ -41,8 +40,8 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Cancel',
             onClick: this.props.closeHandler
           },
-          { classNames: ['usa-button-red', 'remove-issue'],
-            name: 'Yes, remove issue',
+          { classNames: ['usa-button', 'remove-issue'],
+            name: 'Remove',
             onClick: () => {
               this.props.closeHandler();
               this.props.removeIssue(removeIndex);
