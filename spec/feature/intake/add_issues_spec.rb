@@ -68,7 +68,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue(rating_decision_text)
-      expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
+      expect(page).to have_content("#{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
     end
 
     scenario "MST and PACT checkboxes DO NOT appear after selecting decision in higher level review" do
@@ -92,7 +92,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       expect(page.has_no_content?("When you finish making changes, click \"Save\" to continue")).to eq(true)
-      expect(page).to have_content("1. Left knee granted\nDecision date: #{promulgation_date.mdY}")
+      expect(page).to have_content("Left knee granted\nDecision date: #{promulgation_date.mdY}")
     end
   end
 

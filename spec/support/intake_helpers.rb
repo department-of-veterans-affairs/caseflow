@@ -398,7 +398,7 @@ module IntakeHelpers
 
   def click_remove_intake_issue(number)
     number = number.strip if number.is_a?(String)
-    issue_el = find_intake_issue_by_number(number)
+    issue_el = find_intake_issue_by_text(number)
     issue_el.find(".remove-issue").click
   end
 
@@ -446,7 +446,7 @@ module IntakeHelpers
   end
 
   def edit_contention_text(old_text, new_text)
-    issue_to_edit = find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]')
+    issue_to_edit = find_all(:xpath, './/div[@class="issues"]/*/ol/*/div[@class="issue-container"]')
       .select { |issue| issue.text.match?(/#{old_text}/) }.find(".issue-edit-text").first
 
     within issue_to_edit do
@@ -466,7 +466,7 @@ module IntakeHelpers
   end
 
   def find_intake_issue_by_number(number)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/ol/*/div[@class="issue-container"]').each do |node|
       if node.find(".issue-num").text.match?(/^#{number}\./)
         return node.find(".issue")
       end

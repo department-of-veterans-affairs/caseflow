@@ -1107,7 +1107,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
+        "Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawn on"
       )
     end
 

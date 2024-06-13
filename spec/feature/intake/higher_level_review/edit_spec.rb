@@ -442,10 +442,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # excludes ineligible legacy opt in issue because it requires the HLR to have that option selected
 
       # 1
-      ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
-        ri_legacy_issue_not_withdrawn.contention_text
-      )
-      expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
+      expect(
+        find_intake_issue_by_text(ri_legacy_issue_not_withdrawn.contention_text)
+      ).to have_css(".not-eligible")
+
       click_remove_intake_issue_dropdown(ri_legacy_issue_not_withdrawn.contention_text)
 
       expect(page).to_not have_content(
@@ -456,15 +456,16 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
       add_intake_rating_issue("ankylosis of hip")
 
-      expect_ineligible_issue(number_of_issues)
+      expect(find_intake_issue_by_text(ri_legacy_issue_not_withdrawn.contention_text)).to have_css(".not-eligible")
 
       expect(page).to have_content(
         "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
       )
 
       # 4
-      ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
-      expect_ineligible_issue(ri_with_previous_hlr_issue_num)
+      expect(
+        find_intake_issue_by_text(ri_with_previous_hlr.contention_text)
+      ).to have_css(".not-eligible")
       click_remove_intake_issue_dropdown(ri_with_previous_hlr.contention_text)
       expect(page).to_not have_content(
         "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
@@ -474,14 +475,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_with_previous_hlr.contention_text)
       select_intake_no_match
 
-      expect_ineligible_issue(number_of_issues)
+      expect(find_intake_issue_by_text(ri_with_previous_hlr.contention_text)).to have_css(".not-eligible")
       expect(page).to have_content(
         "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
       )
 
       # 5
-      ri_in_review_issue_num = find_intake_issue_number_by_text(ri_in_review.contention_text)
-      expect_ineligible_issue(ri_in_review_issue_num)
+
+      expect(
+        find_intake_issue_by_text(ri_in_review.contention_text)
+      ).to have_css(".not-eligible")
+
       click_remove_intake_issue_dropdown(ri_in_review.contention_text)
 
       expect(page).to_not have_content(
@@ -492,14 +496,17 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_in_review.contention_text)
       select_intake_no_match
 
-      expect_ineligible_issue(number_of_issues)
+      ri_with_previous_hlr
       expect(page).to have_content(
         "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
       )
 
       # 6
-      untimely_request_issue_num = find_intake_issue_number_by_text(untimely_request_issue.contention_text)
-      expect_ineligible_issue(untimely_request_issue_num)
+
+      expect(
+        find_intake_issue_by_text(untimely_request_issue.contention_text)
+      ).to have_css(".not-eligible")
+
       click_remove_intake_issue_dropdown(untimely_request_issue.contention_text)
 
       expect(page).to_not have_content(
@@ -517,14 +524,16 @@ feature "Higher Level Review Edit issues", :all_dbs do
       select_intake_no_match
       add_untimely_exemption_response("No")
 
-      expect_ineligible_issue(number_of_issues)
+      expect(find_intake_issue_by_text(untimely_request_issue.contention_text)).to have_css(".not-eligible")
       expect(page).to have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
       )
 
       # 7
-      ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
-      expect_ineligible_issue(ri_before_ama_num)
+      expect(
+        find_intake_issue_by_text(ri_before_ama.contention_text)
+      ).to have_css(".not-eligible")
+
       click_remove_intake_issue_dropdown(ri_before_ama.contention_text)
 
       expect(page).to_not have_content(
@@ -535,7 +544,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_before_ama.contention_text)
       select_intake_no_match
       add_untimely_exemption_response("Yes")
-      expect_ineligible_issue(number_of_issues)
+      expect(find_intake_issue_by_text(ri_before_ama.contention_text)).to have_css(".not-eligible")
       expect(page).to have_content(
         "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
       )
@@ -1032,11 +1041,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
       # adding an issue should show the issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("2. Left knee granted")
+      expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("Notes:")
 
       # remove existing issue
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("PTSD denied")
       expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
@@ -1079,16 +1088,15 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_unidentified_issue("This is an unidentified issue")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("This is an unidentified issue")
-      expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
+      expect(find_intake_issue_by_text("This is an unidentified issue")).to have_css(".issue-unidentified")
 
       # add issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       add_untimely_exemption_response("Yes")
-      expect(page).to have_content(
-        "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
-      )
-      expect_ineligible_issue(6)
+      ama_text = "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      expect(page).to have_content(ama_text)
+      expect(find_intake_issue_by_text(ama_text)).to have_css(".not-eligible")
 
       # add RAMP issue before AMA
       click_intake_add_issue
@@ -1335,12 +1343,12 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         expect(page).to_not have_content("Withdrawn issues")
         expect(page).to_not have_content("Please include the date the withdrawal was requested")
-        expect(page).to have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
+        expect(page).to have_content(/Requested issues\nPTSD denied/i)
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
-        expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
+        expect(page).to_not have_content(/Requested issues\s*\ PTSD denied/i)
         expect(page).to have_content(
-          /[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
+          /PTSD denied\nDecision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1387,9 +1395,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
-        expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
+        expect(page).to have_content(/Requested issues\nLeft knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
+          /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1411,7 +1419,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
+          /Withdrawn issues\nPTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawn on/i
         )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end

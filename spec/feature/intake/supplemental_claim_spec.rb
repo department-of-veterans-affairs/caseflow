@@ -180,7 +180,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     add_intake_rating_issue("Left knee granted")
     expect(page).to have_content("2 issues")
 
-    click_remove_intake_issue(2)
+    click_remove_intake_issue("Left knee granted")
     expect(page).to have_content("1 issue")
     expect(page).to_not have_content("Left knee granted")
 
@@ -503,16 +503,16 @@ feature "Supplemental Claim Intake", :all_dbs do
       # adding an issue should show the issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted 2")
-      expect(page).to have_content("1. Left knee granted 2")
+      expect(page).to have_content("Left knee granted 2")
       expect(page).to_not have_content("Notes:")
 
-      click_remove_intake_issue("1")
+      click_remove_intake_issue("Left knee granted 2")
       expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted 2", "I am an issue note")
-      expect(page).to have_content("1. Left knee granted 2")
+      expect(page).to have_content("Left knee granted 2")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
@@ -543,13 +543,13 @@ feature "Supplemental Claim Intake", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Old injury")
       expect(page).to have_content("4 issues")
-      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+      expect(page).to have_content("Old injury is ineligible because it's already under review as a Appeal")
 
       # add untimely issue (OK on Supplemental Claim)
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("5. Really old injury")
+      expect(page).to have_content("Really old injury")
       expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add before_ama ratings
@@ -558,16 +558,16 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to_not have_content(
         "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
-      expect(page).to have_content("6. Non-RAMP Issue before AMA Activation")
+      expect(page).to have_content("Non-RAMP Issue before AMA Activation")
 
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "7. Issue before AMA Activation from RAMP\nDecision date:"
+        "Issue before AMA Activation from RAMP\nDecision date:"
       )
       expect(page).to_not have_content(
-        "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
+        "Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
       )
 
       click_intake_add_issue

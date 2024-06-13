@@ -82,7 +82,7 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx, legacyAppeals, featureToggles } = this.props;
+    const { issue, legacyAppeals, featureToggles } = this.props;
 
     let eligibleState = {
       errorMsg: '',
