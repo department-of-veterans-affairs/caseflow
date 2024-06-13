@@ -405,6 +405,8 @@ feature "Issue Modification Request", :postgres do
     option =
       if admin
         "Review issue #{request_type} request"
+      elsif request_type == "addition"
+        "Edit issue #{request_type} request"
       else
         "Edit #{request_type} request"
       end
