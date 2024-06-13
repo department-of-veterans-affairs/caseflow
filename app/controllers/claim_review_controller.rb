@@ -28,6 +28,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
+    # binding.pry
     if issues_modification_request_updater.process!
       render_success
     elsif request_issues_update.perform!
@@ -70,7 +71,8 @@ class ClaimReviewController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: claim_review,
-      request_issues_data: params[:request_issues]
+      request_issues_data: params[:request_issues],
+      issue_modification_responses_data: params[:issue_modification_responses]
     )
   end
 

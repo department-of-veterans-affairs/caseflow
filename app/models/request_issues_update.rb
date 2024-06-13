@@ -9,7 +9,7 @@ class RequestIssuesUpdate < CaseflowRecord
   belongs_to :user
   belongs_to :review, polymorphic: true
 
-  attr_writer :request_issues_data
+  attr_writer :request_issues_data, :issue_modification_responses_data
   attr_reader :error_code
 
   delegate :veteran, :cancel_active_tasks, :create_business_line_tasks!, to: :review
@@ -22,6 +22,8 @@ class RequestIssuesUpdate < CaseflowRecord
     return false if processed?
 
     transaction do
+      # TODO: Can probably move this out into the claim review controller
+      process_issue_modification_responses!
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
@@ -154,7 +156,17 @@ class RequestIssuesUpdate < CaseflowRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.find_or_build_request_issue_from_intake_data(issue_data)
+      request_issue = review.find_or_build_request_issue_from_intake_data(issue_data)
+
+      # If the data has a issue modification request id here then add it in as an association
+      issue_modification_request_id = issue_data[:issue_modification_request_id]
+      if issue_modification_request_id
+        # TODO: Not safe
+        issue_modification_request = IssueModificationRequest.find(issue_modification_request_id)
+        request_issue.issue_modification_requests << issue_modification_request
+      end
+
+      request_issue
     end
   end
 
@@ -270,6 +282,15 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def process_withdrawn_issues!
     withdrawal.call
+  end
+
+  def process_issue_modification_responses!
+    IssueModificationRequests::AdminUpdater.new(
+      current_user: user,
+      review: review,
+      request_issues_update: self,
+      issue_modification_responses_data: @issue_modification_responses_data
+    ).perform!
   end
 
   def withdrawal
