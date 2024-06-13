@@ -24,7 +24,6 @@ module Seeds
 
     def seed!
       create_correspondence_types
-      perform_seeding_correspondence_types
       create_auto_text_data
       create_queue_correspondences(inbound_ops_team_user)
       create_queue_correspondences(inbound_ops_team_superuser)
