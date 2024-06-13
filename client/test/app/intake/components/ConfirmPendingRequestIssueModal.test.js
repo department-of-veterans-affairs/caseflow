@@ -23,17 +23,12 @@ describe('ConfirmPendingRequestIssueModal', () => {
 
   const propsForConfirmModification = {
     pendingIssueModificationRequest: mockedModificationRequestProps[1],
-    toggleConfirmPendingRequestIssueModal: jest.fn(),
-    addIssue: jest.fn(),
-    removeIssue: jest.fn(),
-    removeFromPendingReviewSection: jest.fn()
   };
 
   it('renders the confirm pending issue modal for modification', () => {
+    useSelector.mockReturnValueOnce(mockedModificationRequestProps[1]);
     setup(propsForConfirmModification);
     // The modal uses a useSelector hook on load so we will mock its return value since we are not connecting to redux.
-    useSelector.mockReturnValueOnce(0);
-
     expect(screen.getByText(/Confirm changes/)).toBeInTheDocument();
 
     // Original Request Issue
