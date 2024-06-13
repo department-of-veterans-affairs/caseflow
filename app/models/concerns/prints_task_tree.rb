@@ -4,19 +4,22 @@ module PrintsTaskTree
   extend ActiveSupport::Concern
   include TaskTreeRenderModule
 
-  def structure_render(tasks, *atts)
-    TTY::Tree.new(structure(tasks, *atts)).render
+  def structure_render(*atts)
+    tasks = atts[0]
+    TTY::Tree.new(structure(tasks, atts[1])).render
   end
 
-  def structure(tasks, *atts)
-    leaf_name = "#{self.class.name} #{task_tree_attributes(*atts)}"
-    { "#{leaf_name}": task_tree_children(tasks).map { |child| child.structure(tasks, *atts) } }
+  def structure(*atts)
+    tasks = atts[0]
+    leaf_name = "#{self.class.name} #{task_tree_attributes(atts[1])}"
+    { "#{leaf_name}": task_tree_children(tasks).map { |child| child.structure(tasks, atts[1]) } }
   end
 
-  def structure_as_json(tasks, *atts)
+  def structure_as_json(*atts)
+    tasks = atts[0]
     leaf_name = self.class.name
-    child_tree = task_tree_children(tasks).map { |child| child.structure_as_json(tasks, *atts) }
-    { "#{leaf_name}": task_tree_attributes_as_json(*atts).merge(tasks: child_tree) }
+    child_tree = task_tree_children(tasks).map { |child| child.structure_as_json(tasks, atts[1]) }
+    { "#{leaf_name}": task_tree_attributes_as_json(atts[1]).merge(tasks: child_tree) }
   end
 
   private
