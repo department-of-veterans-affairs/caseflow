@@ -13,46 +13,14 @@ import { addCustomSeed, removeCustomSeed, saveCustomSeeds, resetCustomSeeds } fr
 import FileUpload from '../../components/FileUpload';
 
 const CustomSeeds = () => {
-  const [reseedingStatus, setReseedingStatus] = useState({
-    Aod: false,
-    NonAod: false,
-    Tasks: false,
-    Hearings: false,
-    Intake: false,
-    Dispatch: false,
-    Jobs: false,
-    Substitutions: false,
-    DecisionIssues: false,
-    CavcAmaAppeals: false,
-    SanitizedJsonSeeds: false,
-    VeteransHealthAdministration: false,
-    MTV: false,
-    Education: false,
-    PriorityDistributions: false,
-    TestCaseData: false,
-    CaseDistributionAuditLeverEntries: false,
-    Notifications: false,
-    CavcDashboardData: false,
-    VbmsExtClaim: false,
-    CasesTiedToJudgesNoLongerWithBoard: false,
-    StaticTestCaseData: false,
-    StaticDispatchedAppealsTestData: false,
-    RemandedAmaAppeals: false,
-    RemandedLegacyAppeals: false,
-    PopulateCaseflowFromVacols: false
-  });
-
-  // const [seedRunningStatus, setSeedRunningStatus] = useState(false);
-  // const [seedRunningMsg, setSeedRunningMsg] = useState('Seeds running');
   const [seedByType, setSeedByType] = useState({});
-  const [file, setFile] = useState(null);
+  const [inputFile, setFile] = useState(null);
 
   const theState = useSelector((state) => state);
-  // console.log(theState.testSeeds.seeds);
   const dispatch = useDispatch();
 
   const onChangeCaseType = (type, inputKey, value) => {
-    setSeedByType(prevState => ({
+    setSeedByType((prevState) => ({
       ...prevState,
       [type]: {
         ...(prevState[type] || {}),
@@ -61,90 +29,77 @@ const CustomSeeds = () => {
     }));
   };
 
-  //file upload component
+  // file upload component
+
+  const parseCSV = (file) => {
+    const base64Content = file.split(',')[1];
+    const csvText = atob(base64Content);
+    const rows = csvText.split('\n').map((row) => row.trim().split(','));
+    const headers = rows[0].map((header) => header.trim());
+
+    rows.slice(1).map((row) => {
+      const obj = {};
+
+      headers.forEach((header, index) => {
+        const colValue = row[index] ? row[index].trim() : '';
+
+        switch (header) {
+        case 'Case(s) Type':
+          obj.seed_type = colValue;
+          break;
+
+        case 'Amount':
+          obj.seed_count = Number(colValue);
+          break;
+
+        case 'Days Ago':
+          obj.days_ago = Number(colValue);
+          break;
+
+        case 'Associated Judge':
+          obj.judge_css_id = colValue;
+          break;
+
+        default:
+          break;
+        }
+      });
+      dispatch(addCustomSeed(obj));
+
+      return obj;
+    });
+  };
 
   const handleFileChange = (fileData) => {
-    const { file, fileName } = fileData;
-    console.log( "fileData", fileData);
-    console.log( "file", file);
+    const { file } = fileData;
+
     setFile(fileData);
     parseCSV(file);
   };
 
-  const parseCSV = (file) => {
-    const base64Content = file.split(",")[1];
-    const csvText = atob(base64Content);
-    const rows = csvText.split('\n').map(row => row.trim().split(','));
-    const headers = rows[0].map(header => header.trim());
-    const jsonData = rows.slice(1).map(row => {
-      const obj = {};
-      headers.forEach((header, index) => {
-        // obj[header] = row[index] ? row[index].trim() : '';
-        const col_value = row[index] ? row[index].trim() : '';
-        switch (header) {
-          case 'Case(s) Type':
-            obj['seed_type'] = col_value;
-          case 'Amount':
-            obj['seed_count'] = parseInt(col_value);
-          case 'Days Ago':
-            obj['days_ago'] = parseInt(col_value);
-          case 'Associated Judge':
-            obj['judge_css_id'] = col_value;
-        }
-
-      });
-      dispatch(addCustomSeed(obj));
-      return obj;
-    });
-    console.log(jsonData);
-  };
-
   const downloadTemplate = () => {
     window.location.href = `${window.location.origin}/sample_custom_seeds.csv`;
-  }
+  };
 
   const resetPreviewSeeds = () => {
     dispatch(resetCustomSeeds());
-  }
+  };
 
   const removePreviewSeed = (seed, index) => {
     dispatch(removeCustomSeed(seed, index));
-  }
+  };
 
   const resetAllAppeals = () => {
-
-    ApiUtil.get('/seeds/reset_all_appeals')
-      .then(() => {
-        console.log('Reset all appeals')
-      })
-      .catch(err => {
-        console.warn(err);
-      });
+    ApiUtil.get('/seeds/reset_all_appeals');
   };
 
   const reseedByCaseType = (type) => {
 
     const caseType = seedByType[type];
+
     caseType.seed_type = type;
 
     dispatch(addCustomSeed(caseType));
-
-    // ApiUtil.post('/seeds/run-demo', { data: caseType })
-    //   .then(() => {
-    //     setSeedRunningStatus(false);
-    //     setReseedingStatus(prevState => ({
-    //       ...prevState,
-    //       [type]: false
-    //     }));
-    //   })
-    //   .catch(err => {
-    //     console.warn(err);
-    //     setSeedRunningStatus(false);
-    //     setReseedingStatus(prevState => ({
-    //       ...prevState,
-    //       [type]: false
-    //     }));
-    //   });
   };
 
   const saveSeeds = () => {
@@ -156,35 +111,35 @@ const CustomSeeds = () => {
   return (
     <div>
       <>
-      <div className='cf-section-header'>
-        <div className="cf-right-side">
-          <a href="/appeals-ready-to-distribute?csv=1">
-            <button className="usa-button-active usa-button">Download Appeals Ready to Distribute CSV</button>
-          </a>
+        <div className="cf-section-header">
+          <div className="cf-right-side">
+            <a href="/appeals-ready-to-distribute?csv=1">
+              <button className="usa-button-active usa-button">Download Appeals Ready to Distribute CSV</button>
+            </a>
+          </div>
         </div>
-      </div>
-      <div className='custom-seed-button-section' >
-        <div className='cf-btn-link upload-seed-csv-button'>
+        <div className="custom-seed-button-section" >
+          <div className="cf-btn-link upload-seed-csv-button">
             <FileUpload
               preUploadText="Upload Test Cases CSV"
               postUploadText="Choose a different file"
               id="seed_file_upload"
               fileType=".csv"
               onChange={handleFileChange}
-              value={file}
+              value={inputFile}
             />
-        </div>
-        <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
-          <Button onClick={() => downloadTemplate()} name={`Download Template`} />
-        </div>
-        {/* wiki Link to be implemented */}
-        {/* <div className='cf-right-side'>
+          </div>
+          <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
+            <Button onClick={() => downloadTemplate()} name="Download Template" />
+          </div>
+          {/* wiki Link to be implemented */}
+          {/* <div className='cf-right-side'>
           <a href='#'>wiki</a>
         </div> */}
-      </div>
-      <div className="cf-left-side">
+        </div>
+        <div className="cf-left-side">
           <h2 id="run_custom_seeds">{COPY.TEST_SEEDS_CUSTOM_SEEDS}</h2>
-      </div>
+        </div>
         <table className="seed-table-style">
           <thead>
             <tr>
@@ -196,7 +151,7 @@ const CustomSeeds = () => {
             </tr>
           </thead>
           <tbody>
-            {seedTypes.map(type => (
+            {seedTypes.map((type) => (
               <tr key={type}>
                 <td>{CUSTOM_SEEDS[type]}</td>
                 <td>
@@ -205,7 +160,7 @@ const CustomSeeds = () => {
                       ariaLabelText={`seed-count-${type}`}
                       useAriaLabel
                       inputID={`seed-count-${type}`}
-                      onChange={value => onChangeCaseType(type, 'seed_count', value)}
+                      onChange={(value) => onChangeCaseType(type, 'seed_count', value)}
                     />
                   </div>
                 </td>
@@ -215,7 +170,7 @@ const CustomSeeds = () => {
                       ariaLabelText={`days-ago-${type}`}
                       useAriaLabel
                       inputID={`days-ago-${type}`}
-                      onChange={value => onChangeCaseType(type, 'days_ago', value)}
+                      onChange={(value) => onChangeCaseType(type, 'days_ago', value)}
                     />
                   </div>
                 </td>
@@ -225,13 +180,13 @@ const CustomSeeds = () => {
                       ariaLabelText={`css-id-${type}`}
                       useAriaLabel
                       inputID={`css-id-${type}`}
-                      onChange={value => onChangeCaseType(type, 'judge_css_id', value)}
+                      onChange={(value) => onChangeCaseType(type, 'judge_css_id', value)}
                     />
                   </div>
                 </td>
                 <td>
                   <div className="cf-add-comment-button">
-                    <Button onClick={() => reseedByCaseType(type)}>
+                    <Button id={`btn-${type}`} dataTestid={`btn-${type}`} onClick={() => reseedByCaseType(type)}>
                       <span>
                         <PlusIcon size={24} />
                       </span>
@@ -256,9 +211,9 @@ const CustomSeeds = () => {
                 <th className={cx('table-header-styling')}>Associated Judge</th>
                 <th className={cx('table-header-styling')}>
                   <div>
-                    <Button onClick={() => resetPreviewSeeds()} name={`reset form`} />
+                    <Button onClick={() => resetPreviewSeeds()} name="reset form" />
                   </div>
-              </th>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -270,7 +225,7 @@ const CustomSeeds = () => {
                   <td>{obj.judge_css_id}</td>
                   <td>
                     <div>
-                      <span onClick={() => removePreviewSeed(obj, index)}>
+                      <span id={`del-preview-row-${index}`} onClick={() => removePreviewSeed(obj, index)}>
                         <TrashcanIcon size={24} />
                       </span>
                     </div>
@@ -281,7 +236,7 @@ const CustomSeeds = () => {
           </table>
         </div>
         <div className="cf-btn-link lever-left test-seed-button-style cf-left-side">
-          <Button onClick={() => resetAllAppeals()} name={`Reset all appeals`} />
+          <Button onClick={() => resetAllAppeals()} name="Reset all appeals" />
         </div>
         <div className="cf-btn-link lever-right test-seed-button-style cf-right-side">
           <Button onClick={() => saveSeeds()} name={`Create ${theState.testSeeds.seeds.length} test cases`} />
