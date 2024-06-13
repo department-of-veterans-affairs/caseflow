@@ -8,7 +8,7 @@ class CorrespondenceIntakeProcessor
 
     fail "Correspondence not found" if correspondence.blank?
 
-    parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id, type: CorrespondenceIntakeTask.name)
+    parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id)
 
     return false if !correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
       correspondence,

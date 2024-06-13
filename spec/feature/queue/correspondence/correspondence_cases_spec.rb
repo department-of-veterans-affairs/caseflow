@@ -1242,7 +1242,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "approve request to reassign" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Reassign Package Task Link']")[0].click
+      all("tr")[1].find("a#task-link").click
       find('[for="vertical-radio_approve"]').click
       find("#react-select-2-input").find(:xpath, "..").find(:xpath, "..").find(:xpath, "..").click
       find("#react-select-2-option-0").click
@@ -1254,7 +1254,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "deny request to reassign" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Reassign Package Task Link']")[0].click
+      all("tr")[1].find("a#task-link").click
       find('[for="vertical-radio_reject"]').click
       all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
@@ -1265,7 +1265,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "approve request to reassign in review_package view" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Reassign Package Task Link']")[0].click
+      all("tr")[1].find("a#task-link").click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
       find('[for="reassign-package_approve"]').click
@@ -1279,7 +1279,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "deny request to reassign in review_package view" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Reassign Package Task Link']")[0].click
+      all("tr")[1].find("a#task-link").click
       find("#Review-request-button-id-2").click
       find("#button-Review-reassign-request").click
       find('[for="reassign-package_reject"]').click
@@ -1292,7 +1292,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "approve request to remove" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Remove Package Task Link']")[0].click
+      all("tr")[2].find("a#task-link").click
       find('[for="vertical-radio_approve"]').click
       find("#Review-request-button-id-1").click
       using_wait_time(30) do
@@ -1302,7 +1302,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "deny request to remove" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Remove Package Task Link']")[0].click
+      all("tr")[2].find("a#task-link").click
       find('[for="vertical-radio_reject"]').click
       all("textarea")[0].fill_in with: "this is a rejection reason"
       find("#Review-request-button-id-1").click
@@ -1313,7 +1313,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "goes to Task Package" do
       visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-      all("[aria-label='Reassign Package Task Link']")[0].click
+      all("tr")[1].find("a#task-link").click
       find("[id='Review-request-button-id-2']").click
       expect(page).to have_content("Review the mail package details below.")
     end
