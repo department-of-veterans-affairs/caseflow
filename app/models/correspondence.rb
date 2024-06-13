@@ -17,7 +17,6 @@ class Correspondence < CaseflowRecord
   has_many :correspondence_relations, dependent: :destroy
   has_many :related_correspondences, through: :correspondence_relations, dependent: :destroy
   belongs_to :correspondence_type
-  belongs_to :package_document_type
   belongs_to :veteran
 
   after_create :initialize_correspondence_tasks
@@ -28,6 +27,16 @@ class Correspondence < CaseflowRecord
 
   def type
     "Correspondence"
+  end
+
+  # Alias for cmp_packet_number
+  def docket_number
+    nil
+  end
+
+  # Alias for package_document_type.name
+  def docket_name
+    nil
   end
 
   # Cannot use has_many :tasks - Task model does not contain a correspondence_id column
@@ -55,23 +64,12 @@ class Correspondence < CaseflowRecord
   end
 
   # Methods below are included to allow Correspondences to render in explain page
-
-  # Alias for cmp_packet_number
-  def docket_number
-    cmp_packet_number
-  end
-
-  # Alias for package_document_type.name
-  def docket_name
-    package_document_type.name
-  end
-
   def veteran_full_name
     veteran.name
   end
 
   def self.prior_mail(veteran_id, uuid)
-    includes([:veteran, :package_document_type, :correspondence_type])
+    includes([:veteran, :correspondence_type])
       .where(veteran_id: veteran_id).where.not(uuid: uuid)
   end
 end
