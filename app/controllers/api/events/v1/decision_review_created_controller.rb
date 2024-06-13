@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
+  # rubocop:disable Layout/LineLength
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
+
+    return render json: { message: "Record already exists in Caseflow" }, status: :ok if Event.exists_and_is_completed?(consumer_event_id)
+
     claim_id = drc_params[:claim_id]
     headers = request.headers
     ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, drc_params)
@@ -10,13 +14,9 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
-    # check if error.message about record already exists in Caseflow
-    if error.message.include?("already exists")
-      render json: { message: "Record already exists in Caseflow" }, status: :ok
-    else
-      render json: { message: error.message }, status: :unprocessable_entity
-    end
+    render json: { message: error.message }, status: :unprocessable_entity
   end
+  # rubocop:enable Layout/LineLength
 
   def decision_review_created_error
     event_id = drc_error_params[:event_id]

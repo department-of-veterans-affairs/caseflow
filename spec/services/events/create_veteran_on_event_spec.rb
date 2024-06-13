@@ -49,6 +49,28 @@ describe Events::CreateVeteranOnEvent do
 
         expect(event_record.evented_record).to eq(backfilled_veteran)
       end
+
+      it "should create veteran without middle name" do
+        headers = retrieve_headers
+        parser.headers["X-VA-Vet-Middle-Name"] = ""
+        backfilled_veteran = subject.handle_veteran_creation_on_event(event: event, parser: parser)
+
+        expect(backfilled_veteran.ssn).to eq headers["X-VA-Vet-SSN"]
+        expect(backfilled_veteran.file_number).to eq headers["X-VA-File-Number"]
+        expect(backfilled_veteran.first_name).to eq headers["X-VA-Vet-First-Name"]
+        expect(backfilled_veteran.last_name).to eq headers["X-VA-Vet-Last-Name"]
+        expect(backfilled_veteran.middle_name).to eq nil
+
+        expect(backfilled_veteran.participant_id).to eq non_cf_veteran.participant_id
+        expect(backfilled_veteran.bgs_last_synced_at).to eq parser.convert_milliseconds_to_datetime(non_cf_veteran.bgs_last_synced_at)
+        expect(backfilled_veteran.name_suffix).to eq nil
+        expect(backfilled_veteran.date_of_death).to eq nil
+
+        expect(EventRecord.count).to eq 1
+        event_record = EventRecord.first
+
+        expect(event_record.evented_record).to eq(backfilled_veteran)
+      end
     end
 
     def retrieve_headers

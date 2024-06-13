@@ -10,7 +10,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
     # are referring to the backfill objects being created from other sub service
     # class. claim_review can be either a supplemental claim or higher level review
     # rubocop:disable Metrics/MethodLength
-    def process!(parser:, claim_review:, user:, event:)
+    def process!(parser:, claim_review:, user:)
       end_product_establishment = EndProductEstablishment.create!(
         payee_code: parser.epe_payee_code,
         source: claim_review,
@@ -31,7 +31,6 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
         user_id: user.id,
         claimant_participant_id: parser.claimant_participant_id
       )
-      EventRecord.create!(event: event, evented_record: end_product_establishment)
       end_product_establishment
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedEpEstablishmentError, error.message

@@ -10,24 +10,16 @@ describe Events::DecisionReviewCreated do
   let!(:headers) { sample_headers }
   let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
 
-  describe "#event_exists_and_is_completed?" do
-    subject { described_class.event_exists_and_is_completed?(consumer_event_id) }
-
-    context "When there is no previous Event" do
-      it "should return false" do
-        expect(subject).to be_falsey
-      end
-    end
-
-    context "Where there is a previous Event that was completed" do
-      it "should return true" do
-        expect(Events::DecisionReviewCreated.event_exists_and_is_completed?("999")).to be_truthy
-      end
-    end
-  end
-
   describe "#create!" do
     subject { described_class.create!(consumer_event_id, reference_id, headers, read_json_payload) }
+
+    context "When event is completed info field returns to default state" do
+      it "event field is an empty json object" do
+        subject # runs and completes the process
+        completed = DecisionReviewCreatedEvent.find_by(reference_id: consumer_event_id)
+        expect(completed.info).to eq({})
+      end
+    end
 
     context "when lock acquisition fails" do
       before do

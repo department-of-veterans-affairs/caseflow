@@ -39,6 +39,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri1.decision_review_id).to eq(higher_level_review.id)
         expect(ri1.decision_review_type).to eq("HigherLevelReview")
         expect(ri1.veteran_participant_id).to eq(parser.veteran_participant_id)
+        expect(ri1.rating_issue_associated_at).to eq(nil)
 
         expect(ri2.benefit_type).to eq("pension")
         expect(ri2.contested_issue_description).to eq("PTSD")
@@ -51,6 +52,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
         expect(ri2.decision_review_id).to eq(higher_level_review.id)
         expect(ri2.decision_review_type).to eq("HigherLevelReview")
         expect(ri2.veteran_participant_id).to eq(parser.veteran_participant_id)
+        expect(ri2.rating_issue_associated_at).to eq("2024-05-22 13:13:30.000000000 -0400".to_datetime)
       end
     end
 
@@ -154,7 +156,7 @@ describe Events::DecisionReviewCreated::CreateRequestIssues do
             "closed_status": nil,
             "contested_rating_issue_diagnostic_code": nil,
             "ramp_claim_id": nil,
-            "rating_issue_associated_at": nil,
+            "rating_issue_associated_at": 1_716_398_010_000,
             "nonrating_issue_bgs_id": nil
           }
         ]

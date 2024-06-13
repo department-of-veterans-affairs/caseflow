@@ -33,9 +33,25 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def initialize(headers, payload_json)
+    process_nonrating(payload_json) if payload_json[:request_issues].present?
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
     @veteran = @payload.dig(:veteran)
+  end
+
+  # Checking for nonrating_issue_category is "Disposition" and processing such issues.
+  def process_nonrating(payload_json)
+    payload_json[:request_issues].each do |issue|
+      next unless issue[:nonrating_issue_category] == "Disposition"
+
+      contested_id = issue[:contested_decision_issue_id]
+      ri = RequestIssue.where(contested_decision_issue_id: contested_id)
+      issue[:nonrating_issue_category] = if contested_id.present? && ri.length == 1
+                                           ri.first.nonrating_issue_category
+                                         else
+                                           "Unknown Issue Category"
+                                         end
+    end
   end
 
   # Generic/universal methods
@@ -128,32 +144,32 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def veteran_middle_name
-    @headers["X-VA-Vet-Middle-Name"]
+    @headers["X-VA-Vet-Middle-Name"].presence
   end
 
   def person_date_of_birth
-    dob = @headers["X-VA-Claimant-DOB"]
+    dob = @headers["X-VA-Claimant-DOB"].presence
     convert_milliseconds_to_datetime(dob)
   end
 
   def person_email_address
-    @headers["X-VA-Claimant-Email"]
+    @headers["X-VA-Claimant-Email"].presence
   end
 
   def person_first_name
-    @headers["X-VA-Claimant-First-Name"]
+    @headers["X-VA-Claimant-First-Name"].presence
   end
 
   def person_last_name
-    @headers["X-VA-Claimant-Last-Name"]
+    @headers["X-VA-Claimant-Last-Name"].presence
   end
 
   def person_middle_name
-    @headers["X-VA-Claimant-Middle-Name"]
+    @headers["X-VA-Claimant-Middle-Name"].presence
   end
 
   def person_ssn
-    @headers["X-VA-Claimant-SSN"]
+    @headers["X-VA-Claimant-SSN"].presence
   end
 
   def veteran_participant_id
@@ -408,7 +424,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def ri_rating_issue_associated_at(issue)
-    issue.dig(:rating_issue_associated_at)
+    ri_rating_issue_associated_at_in_ms = issue.dig(:rating_issue_associated_at)
+    convert_milliseconds_to_datetime(ri_rating_issue_associated_at_in_ms)
   end
 
   def ri_nonrating_issue_bgs_id(issue)
