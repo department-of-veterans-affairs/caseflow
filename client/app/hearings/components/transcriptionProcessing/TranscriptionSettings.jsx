@@ -14,7 +14,6 @@ import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
 import { RemoveContractorModal } from './RemoveContractorModal';
 import { AddEditContractorModal } from './AddEditContractorModal';
-import { head } from 'lodash';
 
 const buttonStyle = css({
   float: 'left',
@@ -60,7 +59,7 @@ const userListItemStyle = css({
 const editlinkStyle = css({
   display: 'flex',
   flexWrap: 'wrap'
-})
+});
 
 const contractorDetailStyle = css({
   flex: '1'
@@ -189,7 +188,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         </span>
       </Button>
     </div>
-  )
+  );
 
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
@@ -204,15 +203,15 @@ export default class TranscriptionSettings extends React.PureComponent {
 
     this.setState({ currentContractor: {
       transcriptionContractor: currentContractor
-    }})
+    }});
 
     this.toggleAddEditModal();
-  }
+  };
 
   addContractor = () => {
     this.setState({ currentContractor: null });
     this.toggleAddEditModal();
-  }
+  };
 
   sortedContractors = () => {
     const group = this.state.contractors.sort((aString, bString) => {
@@ -231,7 +230,7 @@ export default class TranscriptionSettings extends React.PureComponent {
     });
 
     return group;
-  }
+  };
 
   mainContent = () => {
     const listOfContractors = this.sortedContractors().map((contractor) => {
