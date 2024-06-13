@@ -87,7 +87,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={isNewModificationRequest ? `Request issue ${props.type}` : 'Edit pending request'}
+            title={isNewModificationRequest || userIsVhaAdmin ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
