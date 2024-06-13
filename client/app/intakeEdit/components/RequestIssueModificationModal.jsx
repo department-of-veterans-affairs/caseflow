@@ -22,10 +22,12 @@ const modificationSchema = yup.object({
 const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificationRequest }) => {
   const originalIssue = pendingIssueModificationRequest?.requestIssue || currentIssue;
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const currentIssueTitle = (userIsVhaAdmin) ?
+    'Original issue' : 'Current issue';
 
   return (
     <div>
-      <CurrentIssue currentIssue={originalIssue} />
+      <CurrentIssue currentIssue={originalIssue} title={currentIssueTitle} />
       <IssueTypeSelector />
       <PriorDecisionDateAlert />
       <PriorDecisionDateSelector />
