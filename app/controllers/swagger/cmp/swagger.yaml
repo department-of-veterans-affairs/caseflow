@@ -4,21 +4,18 @@ info:
   title: API V1
   version: v1
 security:
-  - bearer-key: []
+  - bearerAuth: []
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /api/v1/
 paths:
-  "/api/v1/cmp":
+  "/cmp":
     $ref: "./v1/upload.yml"
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow
   schemas:
     payload:
       $ref: "./v1/payload.yml"

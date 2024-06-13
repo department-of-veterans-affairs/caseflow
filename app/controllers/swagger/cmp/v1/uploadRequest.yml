@@ -3,7 +3,7 @@ title: Upload Request
 description: Upload request containing the file binary and upload payload data
 required:
   - payload
-  - file
+  - file[]
 properties:
   payload:
     $ref: './payload.yml'

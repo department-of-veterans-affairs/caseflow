@@ -1,13 +1,12 @@
 ---
 openapi: 3.0.2
 info:
-  title: API V1
-  version: v1
+  title: API V2
+  version: V2
+security:
+  bearerAuth: []
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: "/api/v2"
 paths:
   "/api/v2/appeals":
     get:
@@ -17,7 +16,7 @@ paths:
           description: successful
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

@@ -12,7 +12,7 @@ context "api/docs/v3/ama_issues.yaml" do
   it "has veteran participant id mentioned in parameters" do
     parameters = spec.dig(
       "paths",
-      "/api/v3/issues/ama/find_by_veteran/{veteran_participant_id}",
+      "/find_by_veteran/{veteran_participant_id}",
       "get",
       "parameters"
     )
@@ -22,7 +22,7 @@ context "api/docs/v3/ama_issues.yaml" do
   it "has page mentioned in parameters" do
     parameters = spec.dig(
       "paths",
-      "/api/v3/issues/ama/find_by_veteran/{veteran_participant_id}",
+      "/find_by_veteran/{veteran_participant_id}",
       "get",
       "parameters"
     )
@@ -33,7 +33,7 @@ context "api/docs/v3/ama_issues.yaml" do
   it "has the status codes accounted for" do
     responzez = spec.dig(
       "paths",
-      "/api/v3/issues/ama/find_by_veteran/{veteran_participant_id}",
+      "/find_by_veteran/{veteran_participant_id}",
       "get",
       "responses"
     )

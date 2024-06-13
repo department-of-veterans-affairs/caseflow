@@ -3,27 +3,14 @@ openapi: 3.0.2
 info:
   title: API V1
   version: v1
+security:
+  bearerAuth: []
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
-paths:
-  "/api/v1/jobs":
-    post:
-      summary: create job
-      responses:
-        '200':
-          description: successful
-  "/api/v1/mpi":
-    post:
-      summary: veteran_updates mpi
-      responses:
-        '200':
-          description: successful
+- url: "/api/v1"
+paths: {}
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

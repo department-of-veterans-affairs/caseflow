@@ -33,13 +33,12 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
-- url: http://localhost:3000
-  description: Local Development server
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
+- url: /api/v3/issues/vacols/
 paths:
-  /api/v3/issues/vacols/find_by_veteran:
+  /find_by_veteran:
     get:
       tags:
         - VACOLS Issues
@@ -276,7 +275,7 @@ components:
               type: string
               description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

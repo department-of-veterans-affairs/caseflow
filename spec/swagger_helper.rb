@@ -3,21 +3,14 @@
 require "rails_helper"
 
 OPENAPI = "3.0.2"
-SERVERS = [
-  {
-    url: "http://localhost:3000",
-    description: "Local Development server"
-  },
-  {
-    url: "https://appeals.cf.uat.ds.va.gov",
-    description: "UAT/Staging server"
-  }
-].freeze
+SECURITY = {
+  bearerAuth: []
+}.freeze
 SECURITY_SCHEMES = {
-  ApiKeyAuth: {
-    type: "apiKey",
-    in: "header",
-    name: "TOKEN"
+  bearerAuth: {
+    type: "http",
+    scheme: "bearer",
+    description: "API Key provided by Caseflow"
   }
 }.freeze
 
@@ -40,7 +33,10 @@ RSpec.configure do |config|
         title: "API V1",
         version: "v1"
       },
-      servers: SERVERS,
+      security: SECURITY,
+      servers: [
+        url: "/api/v1"
+      ],
       paths: {},
       components: {
         securitySchemes: SECURITY_SCHEMES
@@ -52,7 +48,10 @@ RSpec.configure do |config|
         title: "API V2",
         version: "V2"
       },
-      servers: SERVERS,
+      security: SECURITY,
+      servers: [
+        url: "/api/v2"
+      ],
       paths: {},
       components: {
         securitySchemes: SECURITY_SCHEMES
@@ -64,7 +63,10 @@ RSpec.configure do |config|
         title: "API V3",
         version: "V3"
       },
-      servers: SERVERS,
+      security: SECURITY,
+      servers: [
+        url: "/api/v3"
+      ],
       paths: {},
       components: {
         securitySchemes: SECURITY_SCHEMES
