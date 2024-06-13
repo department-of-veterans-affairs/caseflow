@@ -8,14 +8,13 @@ class IssueModificationRequests::AdminUpdater
   def initialize(user:, review:, issue_modification_requests_data:)
     @user = user
     @review = review
-    # @request_issues_update = request_issues_update
     @issue_modification_requests_data = issue_modification_requests_data
   end
 
   # TODO: See if we can combine the two updater classes into one since they aren't that different.
   # TODO: Adjust this based on the key that is coming in from the UI
   def perform!
-    issue_modification_requests_data.each_value do |issue_modification_request_data|
+    issue_modification_requests_data.each do |issue_modification_request_data|
       # TODO: This isn't safe since it could fail if the id is not correct
       issue_modification_request = IssueModificationRequest.find(issue_modification_request_data[:id])
       update_request(issue_modification_request, issue_modification_request_data)
