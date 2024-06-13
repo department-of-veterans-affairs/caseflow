@@ -40,10 +40,12 @@ class RemoveIssueModal extends React.PureComponent {
 
     const removePendingIndex = intakeData.addedIssues.
       findIndex((issue) => issue?.id === pendingIssueModificationRequest?.requestIssue?.id);
-    const enhancedData = intakeData.enhancedPendingIssueModification.find((pi) => pi.id === pendingIssueModificationRequest.id);
 
     const onSubmit = () => {
       if (userIsVhaAdmin && !isEmpty(pendingIssueModificationRequest)) {
+        const enhancedData = intakeData.enhancedPendingIssueModification?.
+          find((pi) => pi.id === pendingIssueModificationRequest.id);
+
         this.props.updatePendingReview(enhancedData?.identifier, enhancedData);
         this.props.removeIssue(removePendingIndex);
       } else {

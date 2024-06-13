@@ -112,7 +112,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         within "#issue-2" do
           select("Remove issue", from: "issue-action-0")
         end
-        click_on("Yes, remove issue")
+        click_on("Remove")
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)

@@ -9,7 +9,6 @@ import DateSelector from 'app/components/DateSelector';
 import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
-
 const withdrawalSchema = yup.object({
   requestReason: yup.string().required(),
   withdrawalDate: yup.date().required().
