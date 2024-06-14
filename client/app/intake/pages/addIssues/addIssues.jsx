@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import IssueModificationRow from 'app/intake/components/IssueModificationRow';
+import issueModificationRow from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -58,8 +58,8 @@ import {
   toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection,
-  updatePendingReview
+  updatePendingReview,
+  cancelOrRemovePendingReview
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -106,7 +106,7 @@ class AddIssuesPage extends React.Component {
     this.props.toggleRequestIssueAdditionModal();
   }
 
-  onClickIssueRequestModificationAction = (issueModificationRequest, requestType, modificationRequestIndex) => {
+  onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
@@ -623,7 +623,7 @@ class AddIssuesPage extends React.Component {
 
     // Pending modifications table section
     if (!_.isEmpty(activePendingIssues)) {
-      rowObjects = rowObjects.concat(IssueModificationRow({
+      rowObjects = rowObjects.concat(issueModificationRow({
         issueModificationRequests: activePendingIssues,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
@@ -772,10 +772,9 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
           <CancelPendingRequestIssueModal
-            pendingIssue={this.props.pendingIssueModificationRequests[this.state.issueRemoveIndex]}
-            removeIndex={this.state.issueRemoveIndex}
+            pendingIssueModificationRequest={this.props.pendingIssueModificationRequests[this.state.issueRemoveIndex]}
             onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
-            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
+            removeFromPendingReviewSection={this.props.cancelOrRemovePendingReview}
             toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
           />
         )}
@@ -921,7 +920,7 @@ export const EditAddIssuesPage = connect(
         withdrawIssue,
         moveToPendingReviewSection,
         addToPendingReviewSection,
-        removeFromPendingReviewSection,
+        cancelOrRemovePendingReview,
         updatePendingReview,
         setIssueWithdrawalDate,
         setMstPactDetails,

@@ -6,6 +6,7 @@ import Modal from 'app/components/Modal';
 import { useSelector } from 'react-redux';
 import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util/DateUtil';
 import uuid from 'uuid';
+import { isEmpty } from 'lodash';
 
 export const RequestIssueFormWrapper = (props) => {
 
@@ -13,7 +14,7 @@ export const RequestIssueFormWrapper = (props) => {
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
-  const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
+  const isNewModificationRequest = isEmpty(props.pendingIssueModificationRequest);
 
   const methods = useForm({
     defaultValues: {
@@ -63,7 +64,8 @@ export const RequestIssueFormWrapper = (props) => {
         ...issueModificationRequestFormData,
         decisionDate,
         status: props.pendingIssueModificationRequest?.status || 'assigned',
-        identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4()
+        identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
+        ...(props.type === 'modification') && { edited: true }
       };
 
       // close modal and move the issue

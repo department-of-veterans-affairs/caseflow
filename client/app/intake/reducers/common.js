@@ -199,7 +199,6 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.MOVE_TO_PENDING_REVIEW] = () => {
     return {
       ...state,
-      addedIssues: listOfIssues,
       pendingIssueModificationRequests: [...pendingIssueModificationRequests, action.payload.issueModificationRequest]
     };
   };
@@ -212,19 +211,36 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_FROM_PENDING_REVIEW] = () => {
-    if (action.payload.issueModificationRequest === null) {
-      pendingIssueModificationRequests.splice(action.payload.index, 1);
+    const updatedPendingModificationRequests = action.payload.issueModificationRequest ?
+      pendingIssueModificationRequests.splice(action.payload.index, 1) :
+      state.pendingIssueModificationRequests.filter(
+        (issue) => issue.identifier !== action.payload.issueModificationRequest.identifier
+      );
 
-      return {
-        ...state,
-        pendingIssueModificationRequests
-      };
+    return {
+      ...state,
+      pendingIssueModificationRequests: updatedPendingModificationRequests
+    };
+  };
+
+  actionsMap[ACTIONS.CANCEL_OR_REMOVE_PENDING_REVIEW] = () => {
+    let updatedPendingModificationRequests;
+
+    if (action.payload.issueModificationRequest?.id) {
+      updatedPendingModificationRequests = pendingIssueModificationRequests.map((issue) =>
+        issue.id === action.payload.issueModificationRequest.id ?
+          { ...issue, status: 'cancelled' } :
+          issue
+      );
+    } else {
+      updatedPendingModificationRequests = pendingIssueModificationRequests.filter(
+        (issueRequest) => issueRequest.identifier !== action.payload.issueModificationRequest.identifier
+      );
     }
 
     return {
       ...state,
-      pendingIssueModificationRequests: pendingIssueModificationRequests.find(
-        (issue) => (issue.identifier !== action.payload.issueModificationRequest.identifier))
+      pendingIssueModificationRequests: updatedPendingModificationRequests
     };
   };
 

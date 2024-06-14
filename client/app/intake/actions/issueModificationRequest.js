@@ -47,6 +47,13 @@ export const removeFromPendingReviewSection = (index, issueModificationRequest =
   }
 );
 
+export const cancelOrRemovePendingReview = (issueModificationRequest) => (
+  {
+    type: ACTIONS.CANCEL_OR_REMOVE_PENDING_REVIEW,
+    payload: { issueModificationRequest }
+  }
+);
+
 export const updatePendingReview = (identifier, data) => (
   {
     type: ACTIONS.UPDATE_PENDING_REVIEW,
