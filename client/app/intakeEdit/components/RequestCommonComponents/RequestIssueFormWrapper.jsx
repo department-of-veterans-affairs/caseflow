@@ -62,7 +62,8 @@ export const RequestIssueFormWrapper = (props) => {
         ...issueModificationRequestFormData,
         decisionDate,
         status: props.pendingIssueModificationRequest?.status || 'assigned',
-        identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4()
+        identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
+        ...(props.type === 'modification' && !userIsVhaAdmin) && { edited: true }
       };
 
       // close modal and move the issue
