@@ -263,7 +263,7 @@ class Fakes::WebexService
       "items": [
         {
           "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS85YTZjZTRjMC0xNmM5LTExZWYtYjIxOC1iMWE5YTQ2",
-          "title": "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1",
+          "title": "Virtual Visit - 221218-977_933_Hearing-20240508 1426",
           "type": "group",
           "isLocked": false,
           "lastActivity": "2024-05-20T16:58:49.551Z",
@@ -275,7 +275,7 @@ class Fakes::WebexService
         },
         {
           "id": "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS8zYTlhMzdiMC0wZWNiLTExZWYtYTNhZS02MTJkMjlj",
-          "title": "Virtual Visit - 180000304_1_LegacyHearing-20240213 1712-1",
+          "title": "Virtual Visit - 180000304_1_LegacyHearing-20240213 1712",
           "type": "group",
           "isLocked": false,
           "lastActivity": "2024-05-10T12:45:49.611Z",
@@ -286,7 +286,7 @@ class Fakes::WebexService
         },
         {
           "id": "1234",
-          "title": "Virtual Visit - 221218-977_933_AMA-20240508 1426-1",
+          "title": "Virtual Visit - 221218-977_933_AMA-20240508 1426",
           "type": "group",
           "isLocked": false,
           "lastActivity": "2024-05-11T12:45:49.611Z",
@@ -297,7 +297,7 @@ class Fakes::WebexService
         },
         {
           "id": "5678",
-          "title": "Virtual Visit - PatientLast Problem Hearing-20240213 3123-1",
+          "title": "Virtual Visit - PatientLast Problem Hearing-20240213 3123",
           "type": "group",
           "isLocked": false,
           "lastActivity": "2024-05-11T12:45:49.611Z",

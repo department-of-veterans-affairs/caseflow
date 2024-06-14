@@ -28,9 +28,10 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
     fetch_rooms_list.rooms.each do |room|
-      next if filter_title(room.title)
+      title = filter_title(room.title).first
+      next if title.blank?
 
-      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: room.id, meeting_title: room.title)
+      Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: room.id, meeting_title: title)
     end
   end
 
@@ -41,7 +42,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   private
 
   def filter_title(title)
-    title.scan(/\d*-*\d+_\d+_[A-Za-z]*Hearing+(?=-)/).blank?
+    title.scan(/\d*-*\d+_\d+_[A-Za-z]*Hearing/)
   end
 
   def fetch_rooms_list

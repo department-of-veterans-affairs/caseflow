@@ -4,7 +4,7 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   include ActiveJob::TestHelper
   let(:id) { "4f914b1dfe3c4d11a61730f18c0f5387" }
   let(:email) { "john.andersen@example.com" }
-  let(:meeting_title) { "Virtual Visit - 180000304_1_LegacyHearing-20240213 1712-1" }
+  let(:meeting_title) { "180000304_1_LegacyHearing" }
   let(:mp4_link) { "https://www.learningcontainer.com/mp4-sample-video-files-download/#" }
   let(:mp3_link) { "https://freetestdata.com/audio-files/mp3/" }
   let(:vtt_link) { "https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt" }
