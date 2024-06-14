@@ -82,10 +82,6 @@ class SendNotificationJob < CaseflowJob
     Rails.deploy_env?(:prodtest) ? yield : ActiveRecord::Base.transaction { yield }
   end
 
-  def wrap_transaction
-    Rails.deploy_env ? ActiveRecord::Base.transaction : yield
-  end
-
   def event_type
     message.template_name
   end
