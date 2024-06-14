@@ -25,13 +25,17 @@ class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
 
-    @vbms_client ||= init_vbms_client
+    if FeatureToggle.enabled?(:use_ce_api)
+      VeteranFileFetcher.get_document_content(doc_series_id: document.series_id)
+    else
+      @vbms_client ||= init_vbms_client
 
-    vbms_id = document.vbms_document_id
-    request = VBMS::Requests::GetDocumentContent.new(vbms_id)
+      vbms_id = document.vbms_document_id
+      request = VBMS::Requests::GetDocumentContent.new(vbms_id)
 
-    result = send_and_log_request(vbms_id, request)
-    result&.content
+      result = send_and_log_request(vbms_id, request)
+      result&.content
+    end
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
