@@ -21,7 +21,7 @@ class CorrespondenceIntakeController < CorrespondenceController
              CorrespondenceIntake.new(task: correspondence&.open_intake_task)
     intake.update(
       current_step: corr_intake_params[:current_step],
-      redux_store: corr_intake_params[:redux_store]
+      redux_store: redux_store
     )
 
     if intake.valid?
@@ -75,7 +75,12 @@ class CorrespondenceIntakeController < CorrespondenceController
   private
 
   def corr_intake_params
-    params.permit(:current_step, :correspondence_uuid ,:redux_store["redux_store"])
+    params.permit(:current_step, :correspondence_uuid)
+  end
+
+  def redux_store
+    params.require(:redux_store)
+    # .permit(:taskRelatedAppealIds, :newAppealRelatedTasks, :radioValue, :relatedCorrespondences, :selectedTasks, :mailTasks, :unrelatedTasks, :veteranInformation, :waivedEvidenceTasks, :responseLetters, :correspondenceInformation, :selectedVeteranDetails, :showReassignPackageModal, :showRemovePackageModal, :showErrorBanner)
   end
 
   def correspondence_uuid
