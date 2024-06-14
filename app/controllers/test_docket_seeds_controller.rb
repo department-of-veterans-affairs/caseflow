@@ -2,6 +2,7 @@
 
 class TestDocketSeedsController < ApplicationController
   before_action :check_environment # , :verify_access
+  # before_action :current_user, only: [:reset_all_appeals]
 
   def seed_dockets
     JSON.parse(request.body.read).each do |row_entry|
@@ -17,6 +18,14 @@ class TestDocketSeedsController < ApplicationController
       ENV.delete("DAYS_AGO")
       ENV.delete("JUDGE_CSS_ID")
     end
+
+    head :ok
+  end
+
+  def reset_all_appeals
+    RequestStore[:current_user] = current_user
+    DistributionTask.where(status: "assigned").map { |t| t.update!(status: "on_hold") }
+    VACOLS::Case.where(bfcurloc: %w[81 83]).map { |c| c.update!(bfcurloc: "testing") }
 
     head :ok
   end

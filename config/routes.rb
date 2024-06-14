@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
@@ -425,6 +426,7 @@ Rails.application.routes.draw do
 
   scope path: 'seeds', as: 'seeds' do
     post 'run-demo', to: 'test_docket_seeds#seed_dockets'
+    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
   end
 
   # :nocov:

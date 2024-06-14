@@ -1,8 +1,17 @@
 import React from 'react';
 import TestSeedsApp from 'app/testSeeds/pages/TestSeedsApp';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/testSeeds/reducers/root';
+import thunk from 'redux-thunk';
 
 describe('render Test Seeds Application', () => {
+
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk)
+  );
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -10,14 +19,15 @@ describe('render Test Seeds Application', () => {
 
   it('renders Test Seeds App', () => {
 
-    let wrapper = mount(
-      <TestSeedsApp />
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        <TestSeedsApp />
+      </Provider>
     );
 
-    wrapper.update();
-
-    expect(wrapper.find('#run_custom_seeds').exists()).toBeTruthy();
-    expect(wrapper.find('#run_seeds').exists()).toBeTruthy();
+    expect(screen.getByText('Custom Seeds')).toBeInTheDocument();
   });
 });
 

@@ -12,21 +12,26 @@ export const addCustomSeed = (seed) =>
     });
   };
 
-export const removeCustomSeed = (seed) =>
+export const removeCustomSeed = (seed, index) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.REMOVE_CUSTOM_SEED,
       payload: {
-        seed
+        seed,
+        index
       }
     });
   };
 
-export const saveCustomSeeds = (seeds) =>
+export const resetCustomSeeds = () =>
   (dispatch) => {
+    dispatch({
+      type: ACTIONS.RESET_CUSTOM_SEEDS
+    });
+  };
 
-    console.log('saveCustomSeeds');
-    console.log(seeds);
+export const saveCustomSeeds = (seeds) =>
+  () => {
     return ApiUtil.post('/seeds/run-demo', { data: seeds }).then(() => {
       console.log("saved custom seed");
     }).

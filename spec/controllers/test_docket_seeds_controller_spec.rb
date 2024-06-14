@@ -4,7 +4,7 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
   unless Rake::Task.task_defined?("assets:precompile")
     Rails.application.load_tasks
   end
-  let!(:authenticated_user) { User.authenticate!(roles: ["System Admin"]) }
+  let!(:authenticated_user) { User.authenticate!(css_id: "RSPEC", roles: ["System Admin"]) }
 
   describe "POST run-demo" do
     context "seed_ama_aod_hearings" do

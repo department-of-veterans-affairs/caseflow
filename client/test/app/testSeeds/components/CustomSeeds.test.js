@@ -1,19 +1,24 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import CustomSeeds from 'app/testSeeds/components/CustomSeeds';
 import CUSTOM_SEEDS from '../../../../constants/CUSTOM_SEEDS';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/testSeeds/reducers/root';
+import { addCustomSeed } from 'app/testSeeds/reducers/seeds/seedsActions';
+import thunk from 'redux-thunk';
 import ApiUtil from 'app/util/ApiUtil';
 
 jest.mock('app/util/ApiUtil', () => ({
-  post: jest.fn()
+  get: jest.fn()
 }));
 
 describe('Custom Seeds', () => {
 
-  beforeEach(() => {
-    // Reset mock implementation before each test
-    ApiUtil.post.mockReset();
-  });
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk)
+  );
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -21,15 +26,36 @@ describe('Custom Seeds', () => {
 
   const seedTypes = Object.keys(CUSTOM_SEEDS);
 
+  it('renders Custom Seeds correctly and check the buttons within the page', () => {
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
+    expect(screen.getByText('Download Appeals Ready to Distribute CSV')).toBeInTheDocument();
+    expect(screen.getByText('Upload Test Cases CSV')).toBeInTheDocument();
+    expect(screen.getByText('Download Template')).toBeInTheDocument();
+    expect(screen.getByText('Reset all appeals')).toBeInTheDocument();
+    expect(screen.getByText('reset form')).toBeInTheDocument();
+  });
+
   it('should render input fields and buttons for each seed type', () => {
-    const { getByLabelText, container } = render(<CustomSeeds />);
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
 
     // Check if input fields and buttons are rendered for each seed type
-    seedTypes.forEach((type) => {
-      const caseCountInput = getByLabelText(`seed-count-${type}`);
-      const daysAgoInput = getByLabelText(`days-ago-${type}`);
-      const cssIdInput = getByLabelText(`css-id-${type}`);
-      const button = container.querySelector(`#btn-${type}`);
+    seedTypes.forEach((type,index) => {
+      const caseCountInput = screen.getByLabelText(`seed-count-${type}`);
+      const daysAgoInput = screen.getByLabelText(`days-ago-${type}`);
+      const cssIdInput = screen.getByLabelText(`css-id-${type}`);
+      const button = screen.getAllByRole('button')[index];
 
       expect(caseCountInput).toBeInTheDocument();
       expect(daysAgoInput).toBeInTheDocument();
@@ -39,11 +65,17 @@ describe('Custom Seeds', () => {
   });
 
   it('should update state when input values change', () => {
-    const { getByLabelText } = render(<CustomSeeds />);
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
-    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
-    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
+    const caseCountInput = screen.getByLabelText(`seed-count-${first_seed}`);
+    const daysAgoInput = screen.getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = screen.getByLabelText(`css-id-${first_seed}`);
 
     fireEvent.change(caseCountInput, { target: { value: '10' } });
     fireEvent.change(daysAgoInput, { target: { value: '5' } });
@@ -54,63 +86,79 @@ describe('Custom Seeds', () => {
     expect(cssIdInput.value).toBe('12345');
   });
 
-  it('should make API call when button is clicked', async () => {
-    ApiUtil.post.mockResolvedValueOnce({ data: 'Success' });
+  it('should show the preview for input entries and reset form', () => {
+    const store = getStore();
 
-    const { container, getByLabelText } = render(<CustomSeeds />);
+    const { container } = render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
+
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
-    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
-    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
+    const caseCountInput = screen.getByLabelText(`seed-count-${first_seed}`);
+    const daysAgoInput = screen.getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = screen.getByLabelText(`css-id-${first_seed}`);
     const button = container.querySelector(`#btn-${first_seed}`);
 
     fireEvent.change(caseCountInput, { target: { value: '10' } });
     fireEvent.change(daysAgoInput, { target: { value: '5' } });
-    fireEvent.change(cssIdInput, { target: { value: 'BVADWISE' } });
-
-    // Find the button in the same row as the input fields
-    const row = button.closest('tr');
-    // const createButton = within(row).getByText('Create');
-
+    fireEvent.change(cssIdInput, { target: { value: '12345' } });
+    expect(screen.getByText('Create 0 test cases')).toBeInTheDocument();
     fireEvent.click(button);
+    expect(screen.getByText('Create 1 test cases')).toBeInTheDocument();
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo`, {
-      data: { seed_type: first_seed, seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
-    });
+    // coverage for reset button
 
-    // Wait for API call to resolve
-    await waitFor(() => {
-      expect(ApiUtil.post).toHaveBeenCalledTimes(1);
-    });
+    const resetButton = container.querySelector('#button-reset-form');
+    fireEvent.click(resetButton);
+    expect(screen.getByText('Create 0 test cases')).toBeInTheDocument();
   });
 
-  it('should handle API call error', async () => {
-    const consoleWarnSpy = jest.spyOn(console, 'warn');
+  it('should remove the row from preview table on click of trash icon', () => {
+    const store = getStore();
 
-    ApiUtil.post.mockRejectedValueOnce(new Error('API Error'));
-    const { container, getByLabelText } = render(<CustomSeeds />);
+    const { container } = render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
+
     const first_seed = seedTypes[0];
-    const caseCountInput = getByLabelText(`seed-count-${first_seed}`);
-    const daysAgoInput = getByLabelText(`days-ago-${first_seed}`);
-    const cssIdInput = getByLabelText(`css-id-${first_seed}`);
+    const caseCountInput = screen.getByLabelText(`seed-count-${first_seed}`);
+    const daysAgoInput = screen.getByLabelText(`days-ago-${first_seed}`);
+    const cssIdInput = screen.getByLabelText(`css-id-${first_seed}`);
     const button = container.querySelector(`#btn-${first_seed}`);
 
     fireEvent.change(caseCountInput, { target: { value: '10' } });
     fireEvent.change(daysAgoInput, { target: { value: '5' } });
-    fireEvent.change(cssIdInput, { target: { value: 'BVADWISE' } });
+    fireEvent.change(cssIdInput, { target: { value: '12345' } });
+    expect(screen.getByText('Create 0 test cases')).toBeInTheDocument();
+    fireEvent.click(button);
+    fireEvent.click(button);
+    expect(screen.getByText('Create 2 test cases')).toBeInTheDocument();
+
+    // coverage for trash button
+
+    const trashButton = container.querySelector('#del-preview-row-0');
+    fireEvent.click(trashButton);
+    expect(screen.getByText('Create 1 test cases')).toBeInTheDocument();
+  });
+
+  it('should run reset all appeals query', () => {
+    const store = getStore();
+
+    const { container } = render(
+      <Provider store={store}>
+        <CustomSeeds />
+      </Provider>
+    );
+
+    const button = container.querySelector('#button-Reset-all-appeals');
+
+    ApiUtil.get.mockResolvedValueOnce({ data: 'Success' });
     fireEvent.click(button);
 
-    expect(ApiUtil.post).toHaveBeenCalledWith(`/seeds/run-demo`, {
-      data: { seed_type: first_seed, seed_count: 10, days_ago: 5, judge_css_id: 'BVADWISE' }
-    });
-
-    // Wait for API call to reject
-    await waitFor(() => {
-      expect(ApiUtil.post).toHaveBeenCalledTimes(1);
-    });
-
-    // Check if error message is displayed
-    expect(consoleWarnSpy).toHaveBeenCalledWith(new Error('API Error'));
+    expect(ApiUtil.get).toHaveBeenCalledWith(`/seeds/reset_all_appeals`);
   });
 });
-

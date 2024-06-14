@@ -9,6 +9,19 @@ describe Distribution, :all_dbs do
 
   before do
     Timecop.freeze(Time.zone.now)
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+    create(:case_distribution_lever, :alternative_batch_size)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
+    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
+    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
+    create(:case_distribution_lever, :disable_legacy_non_priority)
+    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   context "validations" do
@@ -163,8 +176,9 @@ describe Distribution, :all_dbs do
       new_distribution.distribute!
     end
 
-    it "updates status to error if an error is thrown" do
+    it "updates status to error if an error is thrown and sends slack notification" do
       allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
+      expect_any_instance_of(SlackService).to receive(:send_notification).exactly(1).times
 
       expect { new_distribution.distribute! }.to raise_error(StandardError)
 
