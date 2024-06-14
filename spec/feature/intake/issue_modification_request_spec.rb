@@ -400,15 +400,13 @@ feature "Issue Modification Request", :postgres do
 
   def verify_select_action_dropdown(request_type, admin = true)
     data_key = "div[data-key=issue-#{request_type}]"
-    option =
-      if admin
-        "Review issue #{request_type} request"
-      elsif request_type == "addition"
-        "Edit issue #{request_type} request"
-      else
-        "Edit #{request_type} request"
-      end
-    modal_title = "Edit pending request"
+    if admin
+      option = "Review issue #{request_type} request"
+      modal_title = "Request issue #{request_type}"
+    else
+      option = "Edit #{request_type} request"
+      modal_title = "Edit pending request"
+    end
     selector = page.find(data_key)
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
