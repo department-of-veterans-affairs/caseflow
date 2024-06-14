@@ -365,10 +365,10 @@ class AddIssuesPage extends React.Component {
 
     const pendingWithdrawalDate = issuesPendingWithdrawal?.sort(
       (ipw1, ipw2) => ipw2.pendingWithdrawalDate - ipw1.pendingWithdrawalDate)[0]?.
-      pendingWithdrawalDate
+      pendingWithdrawalDate;
 
     const pendingWithdrawalDateFormated = formatDateStr(formatDate(pendingWithdrawalDate),
-        'MM/DD/YYYY', 'YYYY-MM-DD')
+      'MM/DD/YYYY', 'YYYY-MM-DD');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);

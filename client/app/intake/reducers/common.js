@@ -286,7 +286,8 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
-    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+    const index = listOfIssues.findIndex(
+      (requestIssue) => requestIssue.id === action.payload.issueModificationRequest.requestIssue.id);
 
     listOfIssues[index].withdrawalPending =
       action.payload.issueModificationRequest.status === 'approve';

@@ -27,26 +27,6 @@ export const toggleConfirmPendingRequestIssueModal = () => ({
   type: ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL
 });
 
-// export const moveToPendingReviewSection = (index, issueModificationRequest) => (
-//   {
-//     type: ACTIONS.MOVE_TO_PENDING_REVIEW,
-//     payload: { index, issueModificationRequest }
-//   });
-
-// export const addToPendingReviewSection = (issueModificationRequest) => (
-//   {
-//     type: ACTIONS.ADD_TO_PENDING_REVIEW,
-//     payload: { issueModificationRequest }
-//   }
-// );
-
-// export const removeFromPendingReviewSection = (index, issueModificationRequest = null) => (
-//   {
-//     type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
-//     payload: { index, issueModificationRequest }
-//   }
-// );
-
 export const updatePendingReview = (identifier, data) => (
   {
     type: ACTIONS.UPDATE_PENDING_REVIEW,
