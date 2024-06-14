@@ -62,8 +62,8 @@ class AppealsReadyForDistribution
         cavc: appeal["cavc"] == 1,
         receipt_date: appeal["bfd19"],
         ready_for_distribution_at: appeal["bfdloout"],
-        target_distro_date: docket.docket_time_goal,
-        days_before_goal_date: docket.start_distribution_prior_to_goal,
+        target_distro_date: target_distro_date(appeal["bfd19"], docket),
+        days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
         hearing_judge: hearing_judge,
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
         veteran_name: veteran_name
@@ -84,8 +84,8 @@ class AppealsReadyForDistribution
         cavc: appeal.cavc,
         receipt_date: appeal.receipt_date,
         ready_for_distribution_at: ready_for_distribution_at,
-        target_distro_date: docket.docket_time_goal,
-        days_before_goal_date: docket.start_distribution_prior_to_goal,
+        target_distro_date: target_distro_date(appeal.receipt_date, docket),
+        days_before_goal_date: days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s
@@ -104,5 +104,22 @@ class AppealsReadyForDistribution
     appeal.hearings
       .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
       .first&.judge&.full_name
+  end
+
+  def self.target_distro_date(receipt_date, docket)
+    if receipt_date.is_a?(String)
+      receipt_date = Time.zone.parse(receipt_date).to_date
+    elsif receipt_date.is_a?(Date) || receipt_date.is_a?(DateTime) || receipt_date.is_a?(Time)
+      receipt_date = receipt_date.to_date
+    else
+      return nil
+    end
+    receipt_date + (docket.docket_time_goal.to_i).days
+  end
+
+  def self.days_before_goal_date(receipt_date, docket)
+    target_date = target_distro_date(receipt_date, docket)
+    return nil if target_date.nil?
+    target_date - (docket.start_distribution_prior_to_goal.to_i).days
   end
 end
