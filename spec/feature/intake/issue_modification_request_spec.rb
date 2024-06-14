@@ -121,7 +121,7 @@ feature "Issue Modification Request", :postgres do
 
       step "for modification" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
-          first("select").select("Request modification")
+          click_dropdown(text: "Request modification")
         end
 
         expect(page).to have_button("Submit request", disabled: true)
@@ -161,7 +161,7 @@ feature "Issue Modification Request", :postgres do
 
       step "for withdrawal" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
-          first("select").select("Request withdrawal")
+          click_dropdown(text: "Request withdrawal")
         end
 
         expect(page).to have_button("Submit request", disabled: true)
@@ -178,7 +178,7 @@ feature "Issue Modification Request", :postgres do
 
       step "for removal" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
-          first("select").select("Request removal")
+          click_dropdown(text: "Request removal")
         end
 
         expect(page).to have_button("Submit request", disabled: true)
@@ -199,7 +199,7 @@ feature "Issue Modification Request", :postgres do
       expect(page).not_to have_text("Pending admin review")
 
       within "#issue-#{in_progress_hlr.request_issues.first.id}" do
-        first("select").select("Request modification")
+        click_dropdown(text: "Request modification")
       end
 
       fill_in "Issue type", with: "Beneficiary Travel"
@@ -240,8 +240,7 @@ feature "Issue Modification Request", :postgres do
       expect(page).not_to have_text("Pending admin review")
 
       within "#issue-#{in_progress_hlr.request_issues.first.id}" do
-        select_action = find("select", text: "Select action")
-        expect(select_action[:disabled]).to eq "false"
+        expect(page).not_to have_css(".cf-select__control--is-disabled")
       end
     end
 
@@ -262,8 +261,7 @@ feature "Issue Modification Request", :postgres do
       expect(page).to have_text("Pending admin review")
 
       within "#issue-#{in_pending_hlr.request_issues.first.id}" do
-        select_action = find("select", text: "Select action")
-        expect(select_action[:disabled]).to eq "true"
+        expect(page).to have_css(".cf-select__control--is-disabled")
       end
     end
 
