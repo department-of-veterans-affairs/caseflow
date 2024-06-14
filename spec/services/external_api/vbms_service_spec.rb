@@ -37,4 +37,25 @@ describe ExternalApi::VBMSService do
       end
     end
   end
+
+  describe ".fetch_document_for" do
+    let(:mock_json_adapter) { instance_double(JsonApiResponseAdapter) }
+    let!(:appeal) { create(:appeal) }
+
+    before do
+      allow(JsonApiResponseAdapter).to receive(:new).and_return(mock_json_adapter)
+    end
+
+    context "with use_ce_api feature toggle enabled" do
+      before { FeatureToggle.enable!(:use_ce_api) }
+      after { FeatureToggle.disable!(:use_ce_api) }
+
+      it "calls the CE API" do
+        expect(VeteranFileFetcher).to receive(:fetch_veteran_file_list)
+          .with(veteran_file_number: appeal.veteran_file_number)
+        expect(mock_json_adapter).to receive(:adapt_fetch_document_series_for).and_return([])
+        described.fetch_document_series_for(appeal)
+      end
+    end
+  end
 end
