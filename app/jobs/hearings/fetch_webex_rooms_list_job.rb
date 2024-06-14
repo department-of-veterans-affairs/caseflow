@@ -28,9 +28,9 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
     fetch_rooms_list.rooms.each do |room|
-      next if filter_title(room.title).blank?
-
       title = filter_title(room.title).first
+      next if title.blank?
+
       Hearings::FetchWebexRoomMeetingDetailsJob.perform_later(room_id: room.id, meeting_title: title)
     end
   end
