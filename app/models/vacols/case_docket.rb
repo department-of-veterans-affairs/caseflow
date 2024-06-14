@@ -571,6 +571,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
+    else
+      "VLJ = ?"
     end
   end
 
@@ -597,7 +599,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           next
         end
 
-        (appeal["vlj"] != judge.vacols_attorney_id)
+        next (appeal["vlj"] != judge.vacols_attorney_id)
       end
 
       # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}
