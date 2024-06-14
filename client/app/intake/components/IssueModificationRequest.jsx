@@ -45,7 +45,7 @@ const IssueModificationRequest = ({
       value: `reviewIssue${capitalize(requestType)}Request`
     }] :
     [{
-      label: `Edit ${requestType === 'addition' ? 'issue' : ''} ${requestType} request`,
+      label: `Edit ${requestType} request`,
       value: `reviewIssue${capitalize(requestType)}Request`
     },
     {
