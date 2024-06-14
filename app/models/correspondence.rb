@@ -3,7 +3,6 @@
 # Correspondence is a top level object similar to Appeals.
 # Serves as a collection of all data related to Correspondence workflow
 class Correspondence < CaseflowRecord
-  validates :correspondence_type_id, presence: true
   validates :veteran_id, presence: true
 
   has_paper_trail

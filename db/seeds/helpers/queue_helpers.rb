@@ -26,7 +26,6 @@ module QueueHelpers
 
     correspondence = ::Correspondence.create!(
       uuid: SecureRandom.uuid,
-      correspondence_type_id: corr_type&.id,
       va_date_of_receipt: receipt_date,
       notes: generate_notes([corr_type, receipt_date, user]),
       veteran_id: vet.id,
