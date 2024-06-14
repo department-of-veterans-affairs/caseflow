@@ -114,12 +114,13 @@ class AppealsReadyForDistribution
     else
       return nil
     end
-    receipt_date + (docket.docket_time_goal.to_i).days
+    receipt_date + docket.docket_time_goal.to_i.days
   end
 
   def self.days_before_goal_date(receipt_date, docket)
     target_date = target_distro_date(receipt_date, docket)
     return nil if target_date.nil?
-    target_date - (docket.start_distribution_prior_to_goal.to_i).days
+
+    target_date - docket.start_distribution_prior_to_goal.to_i.days
   end
 end
