@@ -841,7 +841,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         click_button("Schedule")
 
-        expect(page).to have_content(expected_alert, wait: 30)
+        expect(page).to have_content(expected_alert)
         expect(VirtualHearing.count).to eq(1)
         expect(LegacyHearing.where(hearing_day_id: hearing_day.id).count).to eq 1
 
