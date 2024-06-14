@@ -43,5 +43,5 @@ module Generators::Base
     build(attrs).tap(&:save!)
   end
 
-  RANDOM = Random.new(0)
+  RANDOM = Random.new()
 end

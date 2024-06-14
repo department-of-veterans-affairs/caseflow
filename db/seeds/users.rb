@@ -79,6 +79,7 @@ module Seeds
       add_mail_intake_to_all_bva_intake_users
       create_cda_control_group_users
       create_qa_test_users
+      CachedUser.sync_from_vacols
     end
 
     def create_batch_1_users
@@ -805,27 +806,36 @@ module Seeds
     end
 
     def create_qa_attny_1
-      User.find_or_create_by(
-        css_id: "QATTY1",
-        station_id: 101,
-        full_name: "QA Attorney_1"
-      )
+      User.find_by_css_id("QATTY1") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY1",
+          full_name: "QA Attorney_1",
+          station_id: 101,
+        )
     end
 
     def create_qa_attny_2
-      User.find_or_create_by(
-        css_id: "QATTY2",
-        station_id: 101,
-        full_name: "QA Attorney_2"
-      )
+      User.find_by_css_id("QATTY2") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY2",
+          full_name: "QA Attorney_2",
+          station_id: 101,
+        )
     end
 
     def create_qa_attny_3
-      User.find_or_create_by(
-        css_id: "QATTY3",
-        station_id: 101,
-        full_name: "QA Attorney_3"
-      )
+      User.find_by_css_id("QATTY3") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY3",
+          full_name: "QA Attorney_3",
+          station_id: 101,
+        )
     end
 
     # rubocop:enable Metrics/AbcSize
