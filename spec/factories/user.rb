@@ -56,6 +56,11 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :judge_with_appeals_excluded_from_affinity do
+      with_appeals_excluded_from_affinity_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
     trait :ama_only_judge do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge)&.update(ama_only_push: true, ama_only_request: true) ||
@@ -92,6 +97,13 @@ FactoryBot.define do
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      end
+    end
+
+    trait :with_appeals_excluded_from_affinity_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.update!(exclude_appeals_from_affinity: true)
       end
     end
 
