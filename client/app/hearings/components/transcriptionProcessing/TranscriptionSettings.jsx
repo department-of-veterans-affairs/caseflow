@@ -203,7 +203,7 @@ export default class TranscriptionSettings extends React.PureComponent {
 
     this.setState({ currentContractor: {
       transcriptionContractor: currentContractor
-    }});
+    } });
 
     this.toggleAddEditModal();
   };
