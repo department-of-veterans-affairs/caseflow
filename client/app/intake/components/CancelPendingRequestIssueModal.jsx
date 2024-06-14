@@ -8,30 +8,34 @@ import COPY from '../../../COPY';
 export const CancelPendingRequestIssueModal = (props) => {
 
   const {
-    pendingIssue,
-    removeIndex,
+    pendingIssueModificationRequest,
     onCancel,
     removeFromPendingReviewSection,
     toggleCancelPendingRequestIssueModal
   } = props;
 
-  const requestIssue = pendingIssue.requestIssue;
+  const requestIssue = pendingIssueModificationRequest.requestIssue;
 
   const withdrawalDate = (
-    <div><strong>Request date for withdrawal: </strong>{formatDateStr(pendingIssue?.withdrawalDate)}</div>
+    <div>
+      <strong>Request date for withdrawal: </strong>{formatDateStr(pendingIssueModificationRequest?.withdrawalDate)}
+    </div>
   );
 
   const requestReason = (
-    <div><strong>{capitalize(pendingIssue.requestType)} request reason: </strong>{pendingIssue.requestReason}</div>
+    <div>
+      <strong> {capitalize(pendingIssueModificationRequest.requestType)} request reason:</strong>
+      {pendingIssueModificationRequest.requestReason}
+    </div>
   );
 
   const baseIssueInformation = (
     <div>
       <h2 style={{ marginBottom: '0px' }}>Pending issue request</h2>
-      <strong>Issue type: </strong>{pendingIssue.nonratingIssueCategory}<br />
-      <strong>Decision date: </strong>{formatDateStr(pendingIssue.decisionDate)}<br />
-      <strong>Issue description: </strong>{pendingIssue.nonratingIssueDescription ||
-        pendingIssue.nonRatingIssueDescription}<br />
+      <strong>Issue type: </strong>{pendingIssueModificationRequest.nonratingIssueCategory}<br />
+      <strong>Decision date: </strong>{formatDateStr(pendingIssueModificationRequest.decisionDate)}<br />
+      <strong>Issue description: </strong>{pendingIssueModificationRequest.nonratingIssueDescription ||
+        pendingIssueModificationRequest.nonRatingIssueDescription}<br />
     </div>
   );
 
@@ -76,7 +80,7 @@ export const CancelPendingRequestIssueModal = (props) => {
   };
 
   const handleSubmit = () => {
-    removeFromPendingReviewSection(removeIndex);
+    removeFromPendingReviewSection(pendingIssueModificationRequest);
     toggleCancelPendingRequestIssueModal();
   };
 
@@ -96,14 +100,13 @@ export const CancelPendingRequestIssueModal = (props) => {
       ]}
       closeHandler={onCancel}
     >
-      {modalInfo[pendingIssue.requestType]}
+      {modalInfo[pendingIssueModificationRequest.requestType]}
     </Modal>
   );
 };
 
 CancelPendingRequestIssueModal.propTypes = {
-  pendingIssue: PropTypes.object,
-  removeIndex: PropTypes.number,
+  pendingIssueModificationRequest: PropTypes.object,
   onCancel: PropTypes.func,
   removeFromPendingReviewSection: PropTypes.func,
   toggleCancelPendingRequestIssueModal: PropTypes.func

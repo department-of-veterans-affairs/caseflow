@@ -53,3 +53,10 @@ export const updatePendingReview = (identifier, data) => (
     payload: { identifier, data }
   }
 );
+
+export const cancelOrRemovePendingReview = (issueModificationRequest) => (
+  {
+    type: ACTIONS.CANCEL_OR_REMOVE_PENDING_REVIEW,
+    payload: { issueModificationRequest }
+  }
+);

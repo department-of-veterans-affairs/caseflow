@@ -84,7 +84,6 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
         nonrating_issue_description: modificationRequest.nonratingIssueDescription,
         decision_date: modificationRequest.decisionDate,
         withdrawal_date: modificationRequest.withdrawalDate,
-        requestIssueId: modificationRequest.requestIssueId,
         request_reason: modificationRequest.requestReason,
         decision_reason: modificationRequest.decisionReason,
         request_issue_id: modificationRequest.requestIssueId,
@@ -93,8 +92,12 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
 
       if (isEmpty(modificationRequest.id)) {
         groupedRequests.new.push(formattedRequest);
+      } else if (modificationRequest.edited) {
+        groupedRequests.edited.push(formattedRequest);
+      } else if (modificationRequest.status === 'cancelled') {
+        groupedRequests.cancelled.push(formattedRequest);
       } else {
-        // Placeholder for now. If it was edited somehow we gotta figure that out
+        // ADMIN STUFF
         // Approved/denied will likely check for a variable that is set just like all the others
         // groupedRequests.approved.push(formattedRequest);
       }

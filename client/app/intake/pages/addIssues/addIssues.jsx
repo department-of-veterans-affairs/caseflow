@@ -58,7 +58,8 @@ import {
   toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection
+  removeFromPendingReviewSection,
+  cancelOrRemovePendingReview
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -759,10 +760,9 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
           <CancelPendingRequestIssueModal
-            pendingIssue={this.props.pendingIssueModificationRequests[this.state.issueRemoveIndex]}
-            removeIndex={this.state.issueRemoveIndex}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
             onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
-            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
+            removeFromPendingReviewSection={this.props.cancelOrRemovePendingReview}
             toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
           />
         )}
@@ -909,7 +909,7 @@ export const EditAddIssuesPage = connect(
         withdrawIssue,
         moveToPendingReviewSection,
         addToPendingReviewSection,
-        removeFromPendingReviewSection,
+        cancelOrRemovePendingReview,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,

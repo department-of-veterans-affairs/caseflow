@@ -228,6 +228,28 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.CANCEL_OR_REMOVE_PENDING_REVIEW] = () => {
+    let updatedPendingModificationRequests;
+
+    if (action.payload.issueModificationRequest.id) {
+      updatedPendingModificationRequests = pendingIssueModificationRequests.map((issue) =>
+        issue.id === action.payload.issueModificationRequest.id ?
+          { ...issue, status: 'cancelled' } :
+          issue
+      );
+    } else {
+      // There is no ID so it's a brand new issue modfication request so it can just be removed
+      updatedPendingModificationRequests = pendingIssueModificationRequests.filter(
+        (issueRequest) => issueRequest.identifier !== action.payload.issueModificationRequest.identifier
+      );
+    }
+
+    return {
+      ...state,
+      pendingIssueModificationRequests: updatedPendingModificationRequests
+    };
+  };
+
   actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
     const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
 
