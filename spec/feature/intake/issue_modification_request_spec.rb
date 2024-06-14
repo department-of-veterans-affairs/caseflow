@@ -411,7 +411,6 @@ feature "Issue Modification Request", :postgres do
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
     expect(page).to have_text(option)
-    # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
     click_on "Cancel"
