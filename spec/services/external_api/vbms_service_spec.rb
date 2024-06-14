@@ -58,4 +58,24 @@ describe ExternalApi::VBMSService do
       end
     end
   end
+
+  describe ".fetch_document_file" do
+    context "with use_ce_api feature toggle enabled" do
+      before { FeatureToggle.enable!(:use_ce_api) }
+      after { FeatureToggle.disable!(:use_ce_api) }
+
+      let(:fake_document) do
+        Generators::Document.build(id: 201, type: "NOD", series_id: "{ABC-123}")
+      end
+
+      it "calls the CE API" do
+        expect(VeteranFileFetcher)
+          .to receive(:get_document_content)
+          .with(doc_series_id: fake_document.series_id)
+          .and_return("Pdf Byte String")
+
+        described.fetch_document_file(fake_document)
+      end
+    end
+  end
 end
