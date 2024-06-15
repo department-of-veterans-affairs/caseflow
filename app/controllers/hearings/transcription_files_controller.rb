@@ -7,11 +7,10 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   def transcription_file_tasks
     @transcription_files = TranscriptionFile.filterable_values
-
     select_based_on_tab
     apply_filters
     setup_pagination
-
+    apply_sorting
     render json: {
       task_page_count: @total_pages,
       tasks: { data: build_transcription_json(@transcription_files) },
@@ -52,6 +51,22 @@ class Hearings::TranscriptionFilesController < ApplicationController
     end
   end
 
+  def apply_sorting
+    sort_by = params[:sort_by] || "id"
+    order = params[:order] == "asc" ? "ASC" : "DESC"
+    @transcription_files =
+      case sort_by
+      when "hearingDateColumn"
+        @transcription_files.order_by_hearing_date(order)
+      when "hearingTypeColumn"
+        @transcription_files.order_by_hearing_type(order)
+      when "typesColumn"
+        @transcription_files.order_by_case_type(order)
+      else
+        @transcription_files.order_by_id(order)
+      end
+  end
+
   def setup_pagination
     current_page = (params[:page] || 1).to_i
     @page_size = 15
@@ -62,7 +77,6 @@ class Hearings::TranscriptionFilesController < ApplicationController
     @transcription_files = @transcription_files
       .limit(@page_size)
       .offset(@page_start)
-      .order(id: :asc)
       .preload(hearing: [:hearing_day, appeal: [:advance_on_docket_motion]])
   end
 

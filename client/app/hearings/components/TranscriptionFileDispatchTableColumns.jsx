@@ -115,11 +115,12 @@ export const typesColumn = () => {
         })}
       </div>
     ),
-    getSortValue: (transcriptionFile) => transcriptionFile.types.join(', '),
     filterOptions: [
       { value: 'original', displayText: 'Original' },
       { value: 'AOD', displayText: 'AOD' }
-    ]
+    ],
+    backendCanSort: true,
+    getSortValue: (transcriptionFile) => transcriptionFile.types.join(', '),
   };
 };
 

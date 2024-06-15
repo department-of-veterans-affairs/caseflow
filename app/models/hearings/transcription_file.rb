@@ -11,7 +11,7 @@ class TranscriptionFile < CaseflowRecord
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
   scope :filterable_values, lambda {
-    select('
+    select("
       transcription_files.id AS id,
       transcription_files.docket_number,
       transcription_files.hearing_type AS hearing_type,
@@ -19,12 +19,15 @@ class TranscriptionFile < CaseflowRecord
       transcription_files.file_status,
       aod_based_on_age,
       aodm.granted AS aod_motion_granted,
-      transcription_files.hearing_type AS zeek
-    ')
+      scheduled_for,
+      concat_ws(' ',
+        CASE WHEN aodm.granted OR aod_based_on_age THEN 'AOD' END, appeals.stream_type) AS sortable_case_type
+      ")
       .joins("LEFT OUTER JOIN hearings ON hearings.id = transcription_files.hearing_id")
       .joins("LEFT OUTER JOIN appeals ON hearings.appeal_id = appeals.id")
       .joins("LEFT OUTER JOIN advance_on_docket_motions AS aodm ON aodm.appeal_id = appeals.id
         AND aodm.granted = true")
+      .joins("LEFT OUTER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
   }
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
@@ -46,6 +49,11 @@ class TranscriptionFile < CaseflowRecord
     end
     where(filter_parts.join(" OR "), stream_types)
   }
+
+  scope :order_by_id, ->(direction) { order(Arel.sql("id " + direction)) }
+  scope :order_by_hearing_date, ->(direction) { order(Arel.sql("scheduled_for " + direction)) }
+  scope :order_by_hearing_type, ->(direction) { order(Arel.sql("hearing_type " + direction)) }
+  scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
 
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
@@ -121,7 +129,7 @@ class TranscriptionFile < CaseflowRecord
   #
   # Returns: string, a date formated like mm/dd/yyyy
   def hearing_date
-    hearing.hearing_day.scheduled_for.to_formatted_s(:short_date)
+    scheduled_for.to_formatted_s(:short_date)
   end
 
   # Purpose: Returns advance on docket status from associated advance_on_docket_motion
