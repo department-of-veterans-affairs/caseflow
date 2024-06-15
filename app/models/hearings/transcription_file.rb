@@ -10,6 +10,43 @@ class TranscriptionFile < CaseflowRecord
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
+  scope :filterable_values, lambda {
+    select('
+      transcription_files.id AS id,
+      transcription_files.docket_number,
+      transcription_files.hearing_type AS hearing_type,
+      hearings.id AS hearing_id,
+      transcription_files.file_status,
+      aod_based_on_age,
+      aodm.granted AS aod_motion_granted,
+      transcription_files.hearing_type AS zeek
+    ')
+      .joins("LEFT OUTER JOIN hearings ON hearings.id = transcription_files.hearing_id")
+      .joins("LEFT OUTER JOIN appeals ON hearings.appeal_id = appeals.id")
+      .joins("LEFT OUTER JOIN advance_on_docket_motions AS aodm ON aodm.appeal_id = appeals.id
+        AND aodm.granted = true")
+  }
+
+  scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
+
+  scope :filter_by_hearing_type, ->(values) { where("hearing_type IN (?)", values) }
+
+  scope :filter_by_types, lambda { |values|
+    filter_parts = []
+    stream_types = []
+    values.each do |value|
+      if value == "AOD"
+        filter_parts <<
+          "(aod_based_on_age = true OR aodm.granted = true)"
+      else
+        stream_types << value
+        filter_parts <<
+          "((hearing_type = 'Hearing' AND stream_type IN (?)) OR hearing_type = 'LegacyHearing')"
+      end
+    end
+    where(filter_parts.join(" OR "), stream_types)
+  }
+
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
@@ -80,82 +117,44 @@ class TranscriptionFile < CaseflowRecord
     File.delete(tmp_location) if File.exist?(tmp_location)
   end
 
-  def self.hearing_date(transcription_file)
-    transcription_file.hearing.hearing_day.scheduled_for.to_formatted_s(:short_date)
+  # Purpose: Get hearing date from associated hearing_day
+  #
+  # Returns: string, a date formated like mm/dd/yyyy
+  def hearing_date
+    hearing.hearing_day.scheduled_for.to_formatted_s(:short_date)
   end
 
-  def self.transcription_file_types(transcription_file)
-    types = []
-    appeal = transcription_file.try(:hearing).try(:appeal)
-    if appeal
-      aod = appeal.try(:advance_on_docket_motion).try(:granted)
-      if aod
-        types << "AOD"
-      end
-      stream_type = appeal.try(:stream_type)
-      if stream_type
-        types << stream_type.capitalize
-      end
+  # Purpose: Returns advance on docket status from associated advance_on_docket_motion
+  #
+  # Returns: boolean, true if granted or default to false if no association record exists
+  def advanced_on_docket?
+    advanced_on_docket = false
+    if aod_based_on_age || aod_motion_granted
+      advanced_on_docket = true
     end
-    types
+    advanced_on_docket
   end
 
-  def self.advanced_on_docket(transcription_file)
-    transcription_file.try(:hearing).try(:appeal).try(:hearing).try(:appeal) || false
+  # Purpose: Returns a formatted stream_type from an AMA appeal
+  #
+  # Returns: string, defaults to Original if not AMA
+  def case_type
+    (hearing.appeal.try(:stream_type) || "Original").capitalize
   end
 
-  def self.case_type(transcription_file)
-    (transcription_file.try(:hearing).try(:appeal).try(:stream_type) || "Original").capitalize
+  # Purpose: Returns the external appeal id from an AMA appeal
+  #
+  # Returns: string, defaults to blank of not AMA
+  def external_appeal_id
+    hearing.appeal.try(:uuid) || ""
   end
 
-  def self.file_status(tab)
-    case tab
-    when "Unassigned"
-      Constants.TRANSCRIPTION_FILE_STATUSES.upload.success
-    end
-  end
-
-  def self.external_appeal_id(transcription_file)
-    transcription_file.hearing.try(:appeal).try(:uuid) || ""
-  end
-
-  def self.case_details(transcription_file)
-    appellant_name = transcription_file.hearing.appeal.appellant_or_veteran_name
-    file_number = transcription_file.hearing.appeal.veteran_file_number
+  # Purpose: Returns a formatted value containing the veteral name and file number
+  #
+  # Returns: string
+  def case_details
+    appellant_name = hearing.appeal.appellant_or_veteran_name
+    file_number = hearing.appeal.veteran_file_number
     "#{appellant_name} (#{file_number})"
-  end
-
-  def self.build_transcription_files(transcription_files)
-    tasks = []
-    transcription_files.each do |transcription_file|
-      tasks << {
-        id: transcription_file.id,
-        externalAppealId: external_appeal_id(transcription_file),
-        docketNumber: transcription_file.docket_number,
-        caseDetails: case_details(transcription_file),
-        isAdvancedOnDocket: advanced_on_docket(transcription_file),
-        caseType: case_type(transcription_file),
-        hearingDate: hearing_date(transcription_file),
-        hearingType: transcription_file.hearing_type
-      }
-    end
-    tasks
-  end
-
-  def self.build_filters(filter_params)
-    filters = []
-    if filter_params.present?
-      filter_params.each do |filter|
-        filter_hash = Rack::Utils.parse_query(filter)
-        if filter_hash["col"] == "hearingTypeColumn"
-          filters << filter_hearing_type(filter_hash)
-        end
-      end
-    end
-    filters.join(" AND ")
-  end
-
-  def self.filter_hearing_type(filter_hash)
-    "hearing_type IN ('" + filter_hash["val"].gsub("|", "','") + "')"
   end
 end

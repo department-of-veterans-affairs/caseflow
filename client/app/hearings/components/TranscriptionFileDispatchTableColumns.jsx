@@ -117,7 +117,7 @@ export const typesColumn = () => {
     ),
     getSortValue: (transcriptionFile) => transcriptionFile.types.join(', '),
     filterOptions: [
-      { value: 'Original', displayText: 'Original' },
+      { value: 'original', displayText: 'Original' },
       { value: 'AOD', displayText: 'AOD' }
     ]
   };
