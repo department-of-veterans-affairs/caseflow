@@ -23,7 +23,6 @@ OpenTelemetry::SDK.configure do |config|
       config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
     rescue StandardError => error
       Rails.logger.error("OpenTelemetry config error for #{name}: #{error.full_message}")
-      raise error.full_message
     end
   end
   config.add_span_processor(
