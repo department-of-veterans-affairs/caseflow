@@ -146,7 +146,7 @@ export default class Modal extends React.Component {
           </button>
           <div>
             <div style={{ display: 'flex' }}>
-              {icon && <i className={`fa fa-2x fa-${icon} text-info`} {...iconStyling} />}
+              {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
               <h1 style={{ 'margin-bottom': '0px' }} id="modal_id-title">{title}</h1>
             </div>
             <div {...modalTextStyling}>{children}</div>
