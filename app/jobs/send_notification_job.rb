@@ -63,7 +63,6 @@ class SendNotificationJob < CaseflowJob
         send_to_va_notify if message_status_valid?
       end
     rescue StandardError => error
-
       if Rails.deploy_env?(:prodtest) && error.in?(DISCARD_ERRORS)
         transaction_wrapper do
           @notification_audit = find_or_create_notification_audit
