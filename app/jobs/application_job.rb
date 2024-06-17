@@ -4,7 +4,16 @@ require_relative "../exceptions/standard_error"
 
 class ApplicationJob < ActiveJob::Base
   class InvalidJobPriority < StandardError; end
+
+  # Override in job classes if you anticipate that the job will take longer than the SQS visibility
+  # timeout value (ex: currently 5 hours for our low priority queue at the time of writing this)
+  # to prevent multiple instances of the job from being executed.
+  #
+  # See https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
   DELETE_SQS_MESSAGE_BEFORE_START = false
+
+  # For jobs that run multiple times in a short time span, we do not want to continually update
+  # the JobsExecutionTime table. This boolean will help us ignore those jobs
   IGNORE_JOB_EXECUTION_TIME = false
 
   class << self
