@@ -4,12 +4,16 @@ import { PdfFile } from '../../../app/reader/PdfFile';
 import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
+import networkUtil from '../../../app/util/NetworkUtil';
 
 jest.mock('../../../app/util/ApiUtil', () => ({
   get: jest.fn().mockResolvedValue({
     body: {},
     header: { 'x-document-source': 'VBMS' }
   }),
+}));
+jest.mock('../../../app/util/NetworkUtil', () => ({
+  connectionInfo: jest.fn(),
 }));
 jest.mock('../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockResolvedValue(),
@@ -79,7 +83,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
+            isVisible
             scale="test"
             documentType="test"
             featureToggles={{
@@ -100,18 +104,19 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics but will not save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
+        expect(recordAsyncMetrics).toHaveBeenLastCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
       });
 
       it('does not call storeMetrics in catch block', () => {
-        expect(storeMetrics).not.toBeCalled();
+        expect(storeMetrics).not.toHaveBeenCalled();
       });
 
     });
 
     describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
 
-      beforeAll(() => {
+      beforeEach(() => {
+        networkUtil.connectionInfo.mockResolvedValueOnce('Speed: 5 Mbits/s');
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         wrapper = shallow(
@@ -120,7 +125,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
+            isVisible
             scale="test"
             documentType="test"
             featureToggles={{
@@ -136,18 +141,39 @@ describe('PdfFile', () => {
         wrapper.instance().componentDidMount();
       });
 
-      afterAll(() => {
+      afterEach(() => {
         jest.clearAllMocks();
       });
 
       it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
+        ApiUtil.get.mockResolvedValue({
+          body: {},
+          header: { 'x-document-source': 'VBMS' }
+        });
 
         return wrapper.instance().componentDidMount().
           then(() => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricArgs()[1],
+            expect(recordAsyncMetrics).toHaveBeenCalledWith(
+              undefined,
+              {
+                data:
+                {
+                  documentId: 1,
+                  numPagesInDoc: null,
+                  pageIndex: null,
+                  file: '/document/1/pdf',
+                  documentType: 'test',
+                  prefetchDisabled: undefined,
+                  overscan: undefined
+                },
+                // eslint-disable-next-line no-useless-escape
+                message: 'Getting PDF document: \"/document/1/pdf\"',
+                product: 'reader',
+                additionalInfo: JSON.stringify({ source: 'VBMS' }),
+                type: 'performance',
+                eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+              },
               metricArgs(true)[2]
             );
           });
@@ -155,31 +181,41 @@ describe('PdfFile', () => {
 
       it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
 
-        ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
+        ApiUtil.get.mockResolvedValue({
+          body: {},
+          header: {}
+        });
 
         return wrapper.instance().componentDidMount().
           then(() => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricArgs()[1],
+            expect(recordAsyncMetrics).toHaveBeenCalledWith(
+              undefined,
+              {
+                data:
+                {
+                  documentId: 1,
+                  numPagesInDoc: null,
+                  pageIndex: null,
+                  file: '/document/1/pdf',
+                  documentType: 'test',
+                  prefetchDisabled: undefined,
+                  overscan: undefined
+                },
+                // eslint-disable-next-line no-useless-escape
+                message: 'Getting PDF document: \"/document/1/pdf\"',
+                product: 'reader',
+                type: 'performance',
+                eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+              },
               metricArgs(true)[2]
             );
           });
       });
 
-      it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
-          storeMetricsError.data,
-          storeMetricsError.info,
-          storeMetricsError.eventId);
-      });
-
       it('clears measureTimeStartMs after unmount', () => {
         // Mock the ApiUtil.get function to return a Promise that resolves immediately
-        jest.mock('../../../app/util/ApiUtil', () => ({
-          get: jest.fn().mockResolvedValue({}),
-        }));
+        ApiUtil.get.mockResolvedValue({});
         const subject = wrapper.instance();
 
         // Trigger the ApiUtil.get function call
@@ -187,6 +223,146 @@ describe('PdfFile', () => {
 
         // Assert that measureTimeStartMs is counting
         expect(subject.props.renderStartTime).not.toBeNull();
+      });
+      // This test was for a storemetric call that was creating a duplicate and has been removed
+      // eslint-disable-next-line jest/no-disabled-tests
+      it.skip('calls storeMetrics in catch block', () => {
+        expect(storeMetrics).toHaveBeenCalledWith(storeMetricsError.uuid,
+          storeMetricsError.data,
+          storeMetricsError.info,
+          storeMetricsError.eventId);
+      });
+
+      it('calls sotoreMetrics when getDocument fails', async () => {
+
+        const timeoutError = new Error('Timeout error');
+
+        // Mock ApiUtil.get to simulate a timeout error
+        ApiUtil.get.mockRejectedValueOnce(timeoutError);
+
+        // Trigger the getDocument method which initiates the API call
+        await wrapper.instance().getDocument();
+        // Only metric should be created per error event
+        expect(storeMetrics).toHaveBeenCalledTimes(1);
+
+        // Verify that storeMetrics is called with the correct error metric arguments
+        expect(storeMetrics).toHaveBeenCalledWith(
+          expect.any(String),
+          {
+            documentId: documents[0].id,
+            documentType: 'test',
+            file: documents[0].content_url,
+            step: 'getDocument',
+            reason: timeoutError,
+            prefetchDisabled: undefined,
+
+          },
+          {
+            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}" Speed: 5 Mbits/s`),
+            type: 'error',
+            product: 'reader'
+          },
+          expect.any(String)
+        );
+
+        jest.clearAllMocks();
+      });
+
+      it('calls storeMetrics when getPage fails', async () => {
+        ApiUtil.get.mockResolvedValue({
+          body: {},
+          header: { 'x-document-source': 'VBMS' }
+        });
+
+        const error = new Error('Failed to get pages');
+
+        jest.spyOn(wrapper.instance(), 'getPages').mockImplementation(() => {
+          return Promise.reject(error);
+        });
+
+        await wrapper.instance().getDocument();
+
+        expect(storeMetrics).toHaveBeenCalledTimes(1);
+        expect(storeMetrics).toHaveBeenLastCalledWith(
+          expect.any(String),
+          {
+            documentId: documents[0].id,
+            documentType: 'test',
+            file: documents[0].content_url,
+            step: 'setPageDimensions',
+            reason: error,
+            prefetchDisabled: undefined,
+
+          },
+          {
+            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}" Speed: 5 Mbits/s`),
+            type: 'error',
+            product: 'reader'
+          },
+          expect.any(String)
+        );
+      });
+    });
+    describe('when internet speed is not available', () => {
+
+      beforeEach(() => {
+        networkUtil.connectionInfo.mockResolvedValueOnce('Speed: Not available');
+        // This component throws an error about halfway through getDocument at destroy
+        // giving it access to both recordAsyncMetrics and storeMetrics
+        wrapper = shallow(
+          <PdfFile
+            documentId={documents[0].id}
+            key={`${documents[0].content_url}`}
+            file={documents[0].content_url}
+            onPageChange= {jest.fn()}
+            isVisible
+            scale="test"
+            documentType="test"
+            featureToggles={{
+              metricsRecordPDFJSGetDocument: true,
+            }}
+            clearDocumentLoadError={jest.fn()}
+            setDocumentLoadError={jest.fn()}
+            setPageDimensions={jest.fn()}
+            setPdfDocument={jest.fn()}
+          />
+        );
+
+        wrapper.instance().componentDidMount();
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('handles Speed: Not Available from NetworkUtil', async () => {
+        const timeoutError = new Error('Timeout error');
+
+        jest.clearAllMocks();
+
+        // Mock ApiUtil.get to simulate a timeout error
+        ApiUtil.get.mockRejectedValueOnce(timeoutError);
+        await wrapper.instance().getDocument();
+
+        expect(storeMetrics).toHaveBeenLastCalledWith(
+          expect.any(String),
+          {
+            documentId: documents[0].id,
+            documentType: 'test',
+            file: documents[0].content_url,
+            step: 'getDocument',
+            reason: timeoutError,
+            prefetchDisabled: undefined,
+
+          },
+          {
+            message: expect.stringContaining(
+              `Getting PDF document: "${documents[0].content_url}" Speed: Not available`),
+            type: 'error',
+            product: 'reader'
+          },
+          expect.any(String)
+        );
       });
     });
   });
