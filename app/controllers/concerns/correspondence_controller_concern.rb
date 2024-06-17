@@ -99,7 +99,7 @@ module CorrespondenceControllerConcern
     success_header = "You have successfully #{action_prefix}"\
     "assigned #{task_count} Correspondences to #{user.css_id}."
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
-    failure_header = "Not all correspondence was #{action_prefix}assignment to #{user.css_id}"
+    failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
 
     failure_message = []
 
