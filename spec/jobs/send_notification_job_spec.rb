@@ -251,7 +251,7 @@ describe SendNotificationJob, type: :job do
       it "notification audit record is recreated when error is in DISCARD ERRORS" do
         expect(Rails.logger).to receive(:send).with(:error, /Message argument of value nil supplied to job/)
         perform_enqueued_jobs do
-          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient, error_received|
+          expect_any_instance_of(SendNotificationJob).to receive(:log_error) do |_recipient|
             expect(SendNotificationJob).to receive(:find_or_create_notification_audit)
           end
 
