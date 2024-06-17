@@ -210,8 +210,7 @@ class SaveButtonUnconnected extends React.Component {
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
         title={COPY.CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE}
         onClose={() => this.closeModal('issueChangeModal')}
-        onConfirm={() => this.confirmModal('issueChangeModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
           {originalIssueNumberCopy}
         </p>
@@ -223,7 +222,6 @@ class SaveButtonUnconnected extends React.Component {
           COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE :
           COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE}
         buttonText={COPY.CORRECT_REQUEST_ISSUES_REMOVE_MODAL_BUTTON}
-        buttonClassNames={['usa-button', 'confirm']}
         onClose={() => this.closeModal('reviewRemovedModal')}
         onConfirm={() => this.confirmModal('reviewRemovedModal')}
         icon="warning">
@@ -251,8 +249,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_SCT_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToSctModal')}
-        onConfirm={() => this.confirmModal('moveToSctModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToSctModal')} >
         <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
@@ -260,8 +257,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_DISTRIBUTION_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToDistributionModal')}
-        onConfirm={() => this.confirmModal('moveToDistributionModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToDistributionModal')} >
         <p>{COPY.MOVE_TO_DISTRIBUTION_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
