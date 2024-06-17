@@ -97,7 +97,12 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def request_issue_exists_unless_addition
-    if (!addition? || (addition? && approved?)) && request_issue.nil?
+    # This might be too strict since the way it's going to work is by letting request issue updates
+    # add the association later.
+    # TODO: Either this has to be removed for addition or the requests have to updated but saved
+    # after the request issue updates
+    # if (!addition? || (addition? && approved?)) && request_issue.nil?
+    if !addition? && request_issue.nil?
       errors.add(:request_issue, "must exist if request_type is not addition")
     end
   end
@@ -110,5 +115,14 @@ class IssueModificationRequest < CaseflowRecord
 
   def allowed_to_update?(attributes, user)
     attributes[:status].casecmp("assigned").zero? && requestor == user
+  end
+
+  # temp method needs to be removed
+  def reset_decision
+    update!(
+      decider: nil,
+      decided_at: nil,
+      status: "assigned"
+    )
   end
 end

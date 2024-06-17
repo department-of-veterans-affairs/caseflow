@@ -112,6 +112,7 @@ export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
     nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,
     category: issueModificationRequest.nonratingIssueCategory,
-    editable: true
+    editable: true,
+    issueModificationRequestId: issueModificationRequest.id
   };
 };

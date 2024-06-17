@@ -4,32 +4,53 @@
 
 # :reek:TooManyInstanceVariables
 class IssueModificationRequests::NonAdminUpdater
-  attr_accessor :current_user,
+  attr_accessor :user,
                 :review,
                 :issue_modifications_data
 
-  def initialize(current_user:, review:, issue_modifications_data:)
-    @current_user = current_user
+  def initialize(user:, review:, issue_modifications_data:)
+    @user = user
     @review = review
     @issue_modifications_data = issue_modifications_data
   end
 
   def process!
-    return false if !process_modification?
+    return false if !non_admin_actions?
 
     # TODO: Redo this a bit since the two updaters are combined and need to work with the same controller logic
     new_modifications_process!(issue_modifications_data[:new])
     edited_modifications_process!(issue_modifications_data[:edited])
     cancelled_modifications_process!(issue_modifications_data[:cancelled])
 
+    # process_admin_decisions(issue_modifications_data[:decided])
+  end
+
+  def perform!
+    puts "gets in my stupid block"
+    return unless admin_actions?
+
+    puts "gets after my guard clause"
+
     process_admin_decisions(issue_modifications_data[:decided])
+  end
+
+  def non_admin_actions?
+    issue_modifications_data.present? && (
+      issue_modifications_data[:cancelled].any? ||
+      issue_modifications_data[:edited].any? ||
+      issue_modifications_data[:new].any?
+    )
+  end
+
+  def admin_actions?
+    issue_modifications_data.present? && issue_modifications_data[:decided].any?
   end
 
   private
 
   def new_modifications_process!(new_issues)
     new_issues.each do |new_issue|
-      IssueModificationRequest.create_from_params!(new_issue, review, current_user)
+      IssueModificationRequest.create_from_params!(new_issue, review, user)
     end
     true
   end
@@ -38,7 +59,7 @@ class IssueModificationRequests::NonAdminUpdater
     edited_issues.each do |edited_issue|
       issue_modification_request = IssueModificationRequest.find(edited_issue[:id])
 
-      issue_modification_request.edit_from_params!(edited_issue, current_user)
+      issue_modification_request.edit_from_params!(edited_issue, user)
     end
 
     true
@@ -48,20 +69,25 @@ class IssueModificationRequests::NonAdminUpdater
     cancelled_issues.each do |cancelled_issue|
       issue_modification_request = IssueModificationRequest.find(cancelled_issue[:id])
 
-      issue_modification_request.cancel_from_params!(cancelled_issue, current_user)
+      issue_modification_request.cancel_from_params!(cancelled_issue, user)
     end
     true
   end
 
-  def process_admin_decisions(decided_issue_modification_requests)
-    decided_issue_modification_requests.each do |decided_request|
+  def process_admin_decisions(decided_issue_modification_requests_data)
+    decided_issue_modification_requests_data.each do |decided_request_data|
       # TODO: Unsafe, but should exist
-      issue_modification_request = IssueModificationRequest.find(decided_request[:id])
-      update_request(issue_modification_request, issue_modification_request_data)
+      issue_modification_request = IssueModificationRequest.find(decided_request_data[:id])
+      puts "processing this issue modification request"
+      puts issue_modification_request.inspect
+      puts "with this data"
+      puts decided_request_data
+      update_request(issue_modification_request, decided_request_data)
     end
   end
 
   def update_request(issue_modification_request, data)
+    puts "updating request with this status: #{data[:status].to_sym}"
     case data[:status].to_sym
     when :denied
       update_denied_request(issue_modification_request, data)
@@ -100,14 +126,5 @@ class IssueModificationRequests::NonAdminUpdater
                        end
 
     issue_modification_request.update!(common_updates.merge(specific_updates))
-  end
-
-  def process_modification?
-    issue_modifications_data.present? && (
-      issue_modifications_data[:cancelled].any? ||
-      issue_modifications_data[:edited].any? ||
-      issue_modifications_data[:new].any? ||
-      issue_modifications_data[:decided].any?
-    )
   end
 end

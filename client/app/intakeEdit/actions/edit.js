@@ -22,9 +22,11 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
 
   const issueModificationData = { issue_modification_requests: formatIssueModificationRequestSubmissionData(state) };
 
-  const data = { ...issueData, ...issueModificationData };
+  // const data = { ...issueData, ...issueModificationData };
+  const data = {};
 
-  console.log('request issues:', data);
+  // console.log('request issues:', data);
+  console.log('issue data', issueData);
   console.log('pending issue modficiation requests:', issueModificationData);
 
   return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).

@@ -275,8 +275,9 @@ const formatNonratingRequestIssues = (state) => {
         vbms_mst_status: issue.vbmsMstChecked,
         pact_status: issue.pactChecked,
         vbms_pact_status: issue.vbmsPactChecked,
-        mst_status_update_reason_notes: issue?.mstJustification,
-        pact_status_update_reason_notes: issue?.pactJustification
+        mst_status_update_reason_notes: issue.mstJustification,
+        pact_status_update_reason_notes: issue.pactJustification,
+        issue_modification_request_id: issue.issueModificationRequestId
       };
     });
 };

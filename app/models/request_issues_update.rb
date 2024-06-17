@@ -23,7 +23,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     transaction do
       # TODO: Can probably move this out into the claim review controller
-      process_issue_modification_responses!
+      # process_issue_modification_responses!
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(

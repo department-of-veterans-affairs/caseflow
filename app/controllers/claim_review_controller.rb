@@ -28,8 +28,13 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    # binding.pry
-    if issues_modification_request_updater.process!
+    if issues_modification_request_updater.non_admin_actions?
+      issues_modification_request_updater.process!
+      render_success
+    elsif issues_modification_request_updater.admin_actions?
+      issues_modification_request_updater.perform!
+      puts "made it past the issue modification updater"
+      request_issues_update.perform!
       render_success
     elsif request_issues_update.perform!
       render_success
@@ -61,7 +66,7 @@ class ClaimReviewController < ApplicationController
 
   def issues_modification_request_updater
     @issues_modification_request_updater ||= IssueModificationRequests::NonAdminUpdater.new(
-      current_user: current_user,
+      user: current_user,
       review: claim_review,
       issue_modifications_data: params[:issue_modification_requests]
     )
