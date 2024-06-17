@@ -10,6 +10,7 @@ gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
+gem "aws-sdk"
 # BGS
 
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
@@ -17,7 +18,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "871f7034c502f8d7101bde74e58606716b601c70"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "716b58caf2116da5fca21c3b3aeea6c9712f3b9d"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -59,6 +60,7 @@ gem "rack", "~> 2.2.6.2"
 gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rcredstash", "~> 1.1.0"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
@@ -154,5 +156,3 @@ end
 # rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
-
-gem "rcredstash", "~> 1.1.0"
