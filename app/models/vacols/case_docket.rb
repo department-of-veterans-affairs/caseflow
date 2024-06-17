@@ -615,6 +615,8 @@ class VACOLS::CaseDocket < VACOLS::Record
             .appeal_affinity
             .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
       elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+
         appeal["prev_deciding_judge"] != judge.vacols_attorney_id
       end
     end
