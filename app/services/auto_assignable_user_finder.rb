@@ -11,7 +11,7 @@ class AutoAssignableUserFinder
 
   def initialize(current_user)
     self.current_user = current_user
-    self.unassignable_reason = ""
+    self.unassignable_reason = []
   end
 
   def assignable_users_exist?
@@ -40,7 +40,7 @@ class AutoAssignableUserFinder
   def run_auto_assign_algorithm(correspondence, users)
     users.each do |user|
       if correspondence.nod && !user.nod?
-        self.unassignable_reason = "NOD permission is currently disabled for this user."
+        self.unassignable_reason << "NOD permission is currently disabled for this user."
         next
       end
 
@@ -49,7 +49,7 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        self.unassignable_reason = "User does not meet the sensitivity level required."
+        self.unassignable_reason << "User does not meet the sensitivity level required."
       end
     end
 
@@ -58,7 +58,7 @@ class AutoAssignableUserFinder
 
   def user_is_at_max_capacity?(user)
     if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
-      self.unassignable_reason = "Queue volume has reached maximum capacity for this user."
+      self.unassignable_reason << "Queue volume has reached maximum capacity for this user."
       true
     else
       false
