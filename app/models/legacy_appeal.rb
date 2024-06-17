@@ -42,7 +42,6 @@ class LegacyAppeal < CaseflowRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
   has_one :appeal_state, as: :appeal
   has_many :vbms_uploaded_documents, as: :appeal
-  has_one :advance_on_docket_motion, foreign_key: :appeal_id
 
   class UnknownLocationError < StandardError; end
 

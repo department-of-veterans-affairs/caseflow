@@ -15,19 +15,30 @@ class TranscriptionFile < CaseflowRecord
       transcription_files.id AS id,
       transcription_files.docket_number,
       transcription_files.hearing_type AS hearing_type,
-      hearings.id AS hearing_id,
+      transcription_files.hearing_id AS hearing_id,
       transcription_files.file_status,
-      aod_based_on_age,
-      aodm.granted AS aod_motion_granted,
+      (CASE WHEN aod_based_on_age IS NOT NULL THEN aod_based_on_age ELSE false END) AS aod_based_on_age,
+      (CASE WHEN aodm.granted IS NOT NULL THEN aodm.granted ELSE false END) AS aod_motion_granted,
       scheduled_for,
       concat_ws(' ',
-        CASE WHEN aodm.granted OR aod_based_on_age THEN 'AOD' END, appeals.stream_type) AS sortable_case_type
-      ")
-      .joins("LEFT OUTER JOIN hearings ON hearings.id = transcription_files.hearing_id")
-      .joins("LEFT OUTER JOIN appeals ON hearings.appeal_id = appeals.id")
-      .joins("LEFT OUTER JOIN advance_on_docket_motions AS aodm ON aodm.appeal_id = appeals.id
+        CASE WHEN aodm.granted OR aod_based_on_age THEN 'AOD' END,
+        CASE WHEN appeals.stream_type IS NOT NULL THEN appeals.stream_type ELSE 'original' END
+        ) AS sortable_case_type
+    ")
+      .joins("LEFT OUTER JOIN hearings ON hearings.id = transcription_files.hearing_id AND
+        transcription_files.hearing_type = 'Hearing'")
+      .joins("LEFT OUTER JOIN legacy_hearings ON legacy_hearings.id = transcription_files.hearing_id AND
+        transcription_files.hearing_type = 'LegacyHearing'")
+      .joins("LEFT OUTER JOIN appeals ON hearings.appeal_id = appeals.id AND
+        transcription_files.hearing_type = 'Hearing'")
+      .joins("LEFT OUTER JOIN legacy_appeals ON hearings.appeal_id = legacy_appeals.id AND
+        transcription_files.hearing_type = 'LegacyHearing'")
+      .joins("LEFT OUTER JOIN advance_on_docket_motions AS aodm ON
+        ((aodm.appeal_id = appeals.id AND aodm.appeal_type = 'Appeal') OR
+        (aodm.appeal_id = legacy_appeals.id AND aodm.appeal_type = 'LegacyAppeal'))
         AND aodm.granted = true")
-      .joins("LEFT OUTER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
+      .joins("LEFT OUTER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id OR
+        hearing_days.id = legacy_hearings.hearing_day_id")
   }
 
   scope :unassigned, -> { where(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success) }
@@ -58,7 +69,7 @@ class TranscriptionFile < CaseflowRecord
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
-    S3Service.fetch_file(aws_link, tmp_location)
+    # S3Service.fetch_file(aws_link, tmp_location)
     tmp_location
   end
 
@@ -134,13 +145,9 @@ class TranscriptionFile < CaseflowRecord
 
   # Purpose: Returns advance on docket status from associated advance_on_docket_motion
   #
-  # Returns: boolean, true if granted or default to false if no association record exists
+  # Returns: boolean, true of either age based is true or motion granted
   def advanced_on_docket?
-    advanced_on_docket = false
-    if aod_based_on_age || aod_motion_granted
-      advanced_on_docket = true
-    end
-    advanced_on_docket
+    aod_based_on_age || aod_motion_granted
   end
 
   # Purpose: Returns a formatted stream_type from an AMA appeal

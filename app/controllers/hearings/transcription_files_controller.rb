@@ -5,6 +5,12 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
 
+  def download_transcription_file
+    tmp_location = file.fetch_file_from_s3!
+    File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
+    file.clean_up_tmp_location
+  end
+
   def transcription_file_tasks
     @transcription_files = TranscriptionFile.filterable_values
     select_based_on_tab
@@ -17,12 +23,6 @@ class Hearings::TranscriptionFilesController < ApplicationController
       tasks_per_page: @page_size,
       total_task_count: @total_count
     }
-  end
-
-  def download_transcription_file
-    tmp_location = file.fetch_file_from_s3!
-    File.open(tmp_location, "r") { |stream| send_data stream.read, filename: file.file_name }
-    file.clean_up_tmp_location
   end
 
   private
@@ -69,7 +69,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   def setup_pagination
     current_page = (params[:page] || 1).to_i
-    @page_size = 15
+    @page_size = (params[:page_size] || 15).to_i
     @page_start = (current_page - 1) * @page_size
     filtered_count = @transcription_files.reselect("COUNT(transcription_files.id) AS count_all")
     @total_count = filtered_count[0].count_all
@@ -77,7 +77,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
     @transcription_files = @transcription_files
       .limit(@page_size)
       .offset(@page_start)
-      .preload(hearing: [:hearing_day, appeal: [:advance_on_docket_motion]])
+      .preload(hearing: [:hearing_day, :appeal])
   end
 
   def build_transcription_json(transcription_files)
