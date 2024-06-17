@@ -52,6 +52,6 @@ SCHEDULED_JOBS = {
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
     "fetch_webex_rooms_list_job" => Hearings::FetchWebexRoomsListJob,
-    "refresh_webex_access_tokens_job" => Hearings::RefreshWebexAccessTokenJob,
+    "refresh_webex_access_token_job" => Hearings::RefreshWebexAccessTokenJob,
     "ineligible_judges_job" => IneligibleJudgesJob
 }.freeze
