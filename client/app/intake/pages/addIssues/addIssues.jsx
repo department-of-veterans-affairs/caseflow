@@ -671,7 +671,6 @@ class AddIssuesPage extends React.Component {
             closeHandler={this.props.toggleIssueRemoveModal}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
             userIsVhaAdmin={this.props.userIsVhaAdmin}
-            enhancedPendingIssueModification={this.state.enhancedPendingIssueModification}
           />
         )}
         {intakeData.correctIssueModalVisible && (

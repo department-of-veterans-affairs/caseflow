@@ -8,8 +8,6 @@ import { updatePendingReview } from 'app/intake/actions/issueModificationRequest
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
 
-import { isEmpty } from 'lodash';
-
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
