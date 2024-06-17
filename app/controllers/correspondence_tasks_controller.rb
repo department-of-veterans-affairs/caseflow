@@ -73,7 +73,6 @@ class CorrespondenceTasksController < TasksController
       instructions: correspondence_tasks_params[:instructions]
     )
 
-
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id])
     review_package_task.update!(status: Constants.TASK_STATUSES.in_progress)
   end

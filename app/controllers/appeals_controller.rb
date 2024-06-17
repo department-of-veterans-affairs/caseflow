@@ -171,9 +171,7 @@ class AppealsController < ApplicationController
 
   def update
     if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
-
       legacy_mst_pact_updates
-      #here is the issue ?
     elsif request_issues_update.perform!
       set_flash_success_message
       create_subtasks!

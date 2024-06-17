@@ -59,7 +59,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf
-
     # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
     document = Document.limit(200)[correspondence_params[:pdf_id].to_i]
 
@@ -92,10 +91,9 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   def update_veteran_on_correspondence
     veteran = Veteran.find_by(file_number: correspondence_params["file_number"])
     veteran && correspondence.update!(
-        veteran_id: veteran.id,
-
-        notes: correspondence_params[:notes],
-        correspondence_type_id: correspondence_params[:correspondence_type_id]
+      veteran_id: veteran.id,
+      notes: correspondence_params[:notes],
+      correspondence_type_id: correspondence_params[:correspondence_type_id]
     )
   end
 

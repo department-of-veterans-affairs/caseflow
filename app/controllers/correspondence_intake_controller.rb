@@ -80,7 +80,6 @@ class CorrespondenceIntakeController < CorrespondenceController
 
   def redux_store
     params.require(:redux_store)
-    # .permit(:taskRelatedAppealIds, :newAppealRelatedTasks, :radioValue, :relatedCorrespondences, :selectedTasks, :mailTasks, :unrelatedTasks, :veteranInformation, :waivedEvidenceTasks, :responseLetters, :correspondenceInformation, :selectedVeteranDetails, :showReassignPackageModal, :showRemovePackageModal, :showErrorBanner)
   end
 
   def correspondence_uuid
