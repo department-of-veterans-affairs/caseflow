@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { removeIssue } from '../../actions/addIssues';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
+import COPY from 'app/../COPY';
 
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
@@ -41,7 +42,7 @@ class RemoveIssueModal extends React.PureComponent {
             onClick: this.props.closeHandler
           },
           { classNames: ['usa-button', 'remove-issue'],
-            name: 'Remove',
+            name: COPY.MODAL_REMOVE_BUTTON,
             onClick: () => {
               this.props.closeHandler();
               this.props.removeIssue(removeIndex);

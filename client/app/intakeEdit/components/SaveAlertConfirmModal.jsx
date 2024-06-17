@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
+import COPY from 'app/../COPY';
 
 class SaveAlertConfirmModal extends React.PureComponent {
   render() {
@@ -17,7 +18,7 @@ class SaveAlertConfirmModal extends React.PureComponent {
             onClick: this.props.onClose
           },
           { classNames: buttonClassNames ? buttonClassNames : ['usa-button', 'confirm'],
-            name: this.props.buttonText ? this.props.buttonText : 'Confirm',
+            name: this.props.buttonText ? this.props.buttonText : COPY.MODAL_CONFIRM_BUTTON,
             onClick: this.props.onConfirm
           }
         ]}
