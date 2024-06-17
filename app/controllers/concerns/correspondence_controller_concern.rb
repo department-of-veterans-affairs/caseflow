@@ -19,21 +19,35 @@ module CorrespondenceControllerConcern
     permission_checker = AutoAssignableUserFinder.new(mail_team_user)
     errors = []
 
-    task_ids.each do |id|
-      correspondence_task = Task.find(id)&.correspondence
-      check_result = permission_checker.can_user_work_this_correspondence?(
-        user: mail_team_user,
-        correspondence: correspondence_task
-      )
-
-      if check_result
-        update_task(mail_team_user, id)
-      else
-        errors << permission_checker.unassignable_reason
-      end
+    # Check if single or multiple assignments
+    if task_ids.count == 1
+      process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
+    else
+      process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
     end
 
     set_banner_params(mail_team_user, errors, task_ids.count, tab)
+  end
+
+  def process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
+    task_id = task_ids.first
+    correspondence_task = Task.find(task_id)&.correspondence
+    check_result = permission_checker.can_user_work_this_correspondence?(
+      user: mail_team_user,
+      correspondence: correspondence_task
+    )
+
+    if check_result
+      update_task(mail_team_user, task_id)
+    else
+      errors << permission_checker.unassignable_reason
+    end
+  end
+
+  def process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
+    task_ids.each do |id|
+      process_single_assignment([id], permission_checker, errors, mail_team_user)
+    end
   end
 
   def update_task(mail_team_user, task_id)
@@ -55,9 +69,17 @@ module CorrespondenceControllerConcern
   def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      single_assignment_banner_text(user, errors, task_count)
+      if task_count == 1
+        single_assignment_banner_text(user, errors, task_count)
+      else
+        multiple_assignment_banner_text(user, errors, task_count)
+      end
     when "correspondence_team_assigned"
-      single_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      if task_count == 1
+        single_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      else
+        multiple_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      end
     end
   end
 
@@ -82,9 +104,9 @@ module CorrespondenceControllerConcern
     failure_message = []
 
     # get error counts
-    nod_failures = error.select { |error| error == NOD_ERROR }
-    sensitivity_failures = error.select { |error| error == SENSITIVITY_ERROR }
-    cap_failures = error.select { |error| error == CAPACITY_ERROR }
+    nod_failures = errors.select { |error| error == NOD_ERROR }
+    sensitivity_failures = errors.select { |error| error == SENSITIVITY_ERROR }
+    cap_failures = errors.select { |error| error == CAPACITY_ERROR }
 
     # build message
     failure_message << "#{nod_failures.count} cases were not #{action_prefix}assigned because"\
@@ -96,7 +118,7 @@ module CorrespondenceControllerConcern
 
     # return JSON message
     {
-      header: errors.blank? ? success_header : failure_header
+      header: errors.blank? ? success_header : failure_header,
       message: errors.blank? ? success_message : failure_message.join("\n")
     }
   end
