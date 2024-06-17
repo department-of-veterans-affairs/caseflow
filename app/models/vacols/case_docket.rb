@@ -537,7 +537,11 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     conn.transaction do
       if dry_run
-        conn.exec_query(query).to_a
+        appeals = conn.exec_query(query).to_a
+
+        cavc_aod_affinity_filter(appeals, judge)
+
+        appeals
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
@@ -565,12 +569,12 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
 
   def self.generate_priority_case_distribution_lever_aod_query
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days) || CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
       # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
-      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
       # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )" # rubocop:disable Layout/LineLength
+      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
     else
       "VLJ = ?"
     end
@@ -618,6 +622,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
         appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+      elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+        appeal["prev_deciding_judge"] == appeal["vlj"]
       end
     end
   end
@@ -678,7 +684,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     if satty_ids.blank?
       "PREV_DECIDING_JUDGE = 'false'"
     else
-      "PREV_DECIDING_JUDGE = '(#{satty_ids.join(', ')})'"
+      "PREV_DECIDING_JUDGE in (#{satty_ids.join(', ')})"
     end
   end
 
