@@ -14,6 +14,14 @@ class VACOLS::Staff < VACOLS::Record
   scope :judge,                 ->          { pure_judge.or(acting_judge) }
   scope :attorney,              ->          { pure_attorney.or(acting_judge) }
 
+  NON_SSC_AVLJS = "
+    select sattyid
+    from staff
+    where sattyid <> smemgrp
+    and svlj = 'A'
+    and sactive = 'A'
+  "
+
   def self.find_by_css_id(css_id)
     find_by(sdomainid: css_id)
   end
