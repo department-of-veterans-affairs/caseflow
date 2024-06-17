@@ -10,6 +10,8 @@ class TranscriptionFile < CaseflowRecord
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
+  # test change
+
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
   def fetch_file_from_s3!
