@@ -542,6 +542,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
         #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
+    else
+      "VLJ = ?"
     end
   end
 
@@ -600,7 +602,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           next
         end
 
-        (appeal["vlj"] != judge.vacols_attorney_id)
+        next (appeal["vlj"] != judge.vacols_attorney_id)
       end
 
       next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
