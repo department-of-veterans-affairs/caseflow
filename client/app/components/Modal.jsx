@@ -7,10 +7,9 @@ import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-const modalTextStyling = css({ width: '100%', fontFamily: 'Source Sans Pro' });
+const modalTextStyling = css({ width: '100%', fontFamily: 'Source Sans Pro', flexGrow: 1 });
 
 const iconStyling = css({
-  float: 'left',
   marginRight: '2rem',
   color: '#323a45',
 });
@@ -144,11 +143,9 @@ export default class Modal extends React.Component {
             <span className="usa-sr-only">Close</span>
             <CloseIcon />
           </button>
-          <div>
-            <div style={{ display: 'flex' }}>
-              {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
-              <h1 style={{ 'margin-bottom': '0px' }} id="modal_id-title">{title}</h1>
-            </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
+            <h1 style={{ flex: 1 }} id="modal_id-title">{title}</h1>
             <div {...modalTextStyling}>{children}</div>
           </div>
           {noDivider ? '' : <div className="cf-modal-divider" />}
