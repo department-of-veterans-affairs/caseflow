@@ -955,7 +955,7 @@ class Appeal < DecisionReview
   end
 
   def appeal_state
-    super || AppealState.find_or_create_by(appeal: self)
+    super || AppealState.create(appeal: self, created_by: User.system_user)
   end
 
   private
