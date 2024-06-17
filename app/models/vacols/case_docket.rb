@@ -536,8 +536,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
 
   def self.generate_priority_case_distribution_lever_query
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
-      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days) || CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or
         #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
@@ -551,7 +551,11 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     conn.transaction do
       if dry_run
-        conn.exec_query(query).to_a
+        appeals = conn.exec_query(query).to_a
+
+        cavc_affinity_filter(appeals, judge)
+
+        appeals
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
@@ -559,7 +563,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         # Priority Cavc Appeals
-        appeals = cavc_affinity_filter(appeals, judge)
+        cavc_affinity_filter(appeals, judge)
 
         appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
 
@@ -606,14 +610,18 @@ class VACOLS::CaseDocket < VACOLS::Record
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days)
         next if appeal["prev_deciding_judge"] == judge.vacols_attorney_id
 
-        vacols_case = VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-        vacols_case&.appeal_affinity&.affinity_start_date.nil? ||
-          (vacols_case.appeal_affinity.affinity_start_date > CaseDistributionLever.cavc_affinity_days.to_i.days.ago)
+        VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
+          (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+            .appeal_affinity
+            .affinity_start_date > CaseDistributionLever.cavc_affinity_days.to_i.days.ago)
       elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.infinite
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
+
         appeal["prev_deciding_judge"] != judge.vacols_attorney_id
+      elsif CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
+        appeal["prev_deciding_judge"] == appeal["vlj"]
       end
     end
-    appeals
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
@@ -677,7 +685,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     if satty_ids.blank?
       "PREV_DECIDING_JUDGE = 'false'"
     else
-      "PREV_DECIDING_JUDGE = '(#{satty_ids.join(', ')})'"
+      "PREV_DECIDING_JUDGE in (#{satty_ids.join(', ')})"
     end
   end
 
