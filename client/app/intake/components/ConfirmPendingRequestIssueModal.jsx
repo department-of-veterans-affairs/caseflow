@@ -11,22 +11,13 @@ import {
   toggleConfirmPendingRequestIssueModal
 } from '../actions/issueModificationRequest';
 
-export const ConfirmPendingRequestIssueModal = (props) => {
-
-  const {
-    pendingIssueModificationRequest,
-  } = props;
-
-  const enhancedPendingIssueModification = useSelector((state) => state.enhancedPendingIssueModification.
-    find((issue) => issue.id === pendingIssueModificationRequest.id));
-
-  // is this right way to find this
-  // const modifiedPendingModificationRequest = enhancedPendingIssueModification?.
-  //   find((pi) => pi.id === pendingIssueModificationRequest.id);
+export const ConfirmPendingRequestIssueModal = () => {
+  const pendingIssueModificationRequest = useSelector((state) => state.pendingIssueModificationRequest);
 
   const requestIssue = pendingIssueModificationRequest.requestIssue;
+
   const indexOfOriginalIssue = useSelector(
-    (state) => state.addedIssues.findIndex((issue) => issue.id === enhancedPendingIssueModification.requestIssue.id));
+    (state) => state.addedIssues.findIndex((issue) => issue.id === pendingIssueModificationRequest.requestIssue.id));
 
   const dispatch = useDispatch();
 
@@ -43,9 +34,9 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   const newIssue = (
     <div>
       <h2 style={{ marginBottom: '0px' }}>Create new issue</h2>
-      <strong>Issue type: </strong>{enhancedPendingIssueModification?.nonratingIssueCategory}<br />
-      <strong>Decision date: </strong>{formatDateStr(enhancedPendingIssueModification?.decisionDate)}<br />
-      <strong>Issue description: </strong>{enhancedPendingIssueModification?.nonratingIssueDescription}<br />
+      <strong>Issue type: </strong>{pendingIssueModificationRequest.nonratingIssueCategory}<br />
+      <strong>Decision date: </strong>{formatDateStr(pendingIssueModificationRequest.decisionDate)}<br />
+      <strong>Issue description: </strong>{pendingIssueModificationRequest.nonratingIssueDescription}<br />
     </div>
   );
 
@@ -60,15 +51,14 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   };
 
   const onSubmit = () => {
-    const newRequestIssue = convertPendingIssueToRequestIssue(enhancedPendingIssueModification);
+    const newRequestIssue = convertPendingIssueToRequestIssue(pendingIssueModificationRequest);
 
-    // Remove the original issue from addedIssues
     dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues
     dispatch(addIssue(newRequestIssue));
     // Update the pending issue status
-    dispatch(updatePendingReview(enhancedPendingIssueModification.identifier,
-      { status: enhancedPendingIssueModification.status }));
+    dispatch(updatePendingReview(pendingIssueModificationRequest.identifier,
+      { status: 'approved' }));
     dispatch(toggleConfirmPendingRequestIssueModal());
   };
 

@@ -323,7 +323,7 @@
       }
 
       .issue-container:not(:last-child) {
-        border-bottom: 0 solid $color-gray-lighter;
+        border-bottom: 1px solid $color-gray-lighter;
       }
 
       .issue-container {

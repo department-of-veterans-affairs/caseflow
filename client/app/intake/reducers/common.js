@@ -10,8 +10,6 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
   const pendingIssueModificationRequests = state.pendingIssueModificationRequests || [];
-  const enhancedPendingIssueModification = state.enhancedPendingIssueModification || [];
-
 
   actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
     return update(state, {
@@ -99,7 +97,10 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['confirmPendingRequestIssueModalVisible']
+      $toggle: ['confirmPendingRequestIssueModalVisible'],
+      pendingIssueModificationRequest: {
+        $set: action.payload.data
+      }
     });
   };
 
@@ -242,13 +243,6 @@ export const commonReducers = (state, action) => {
     });
   };
 
-  actionsMap[ACTIONS.ENHANCED_PENDING_REVIEW] = () => {
-    return {
-      ...state,
-      enhancedPendingIssueModification: [...enhancedPendingIssueModification, action.payload.data]
-    };
-  };
-
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
     return {
       ...state,
@@ -285,16 +279,16 @@ export const commonReducers = (state, action) => {
     };
   };
 
-  actionsMap[ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE] = () => {
-    const index = listOfIssues.findIndex(
-      (requestIssue) => requestIssue.id === action.payload.issueModificationRequest.requestIssue.id);
+  actionsMap[ACTIONS.ISSUE_WITHDRAW_REQUEST_APPROVED] = () => {
+    const { withdrawalDate, requestIssue } = action.payload.issueModificationRequest;
 
-    listOfIssues[index].withdrawalPending =
-      action.payload.issueModificationRequest.status === 'approve';
+    const index = listOfIssues.findIndex((issue) => issue.id === requestIssue.id);
 
-    listOfIssues[index].pendingWithdrawalDate =
-      action.payload.issueModificationRequest.status === 'approve' ?
-        action.payload.issueModificationRequest.withdrawalDate : '';
+    listOfIssues[index] = {
+      ...listOfIssues[index],
+      withdrawalPending: true,
+      pendingWithdrawalDate: withdrawalDate
+    };
 
     return {
       ...state,
@@ -302,25 +296,12 @@ export const commonReducers = (state, action) => {
     };
   };
 
-  actionsMap[ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE] = () => {
-    return {
-      ...state,
-      addedIssues: listOfIssues
-    };
-  };
+  actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
+    let issueModificatioNRequest = action.payload.issueModificationRequest;
 
-  actionsMap[ACTIONS.ADMIN_ADD_REQUESTED_ISSUE] = () => {
-    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+    issueModificatioNRequest.addedFromApprovedRequest = true;
 
-    return {
-      ...state,
-      addedIssues,
-      issueCount: addedIssues.length
-    };
-  };
-
-  actionsMap[ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL] = () => {
-    let addedIssues = [...listOfIssues, action.payload.issueModificationRequest];
+    let addedIssues = [...listOfIssues, issueModificatioNRequest];
 
     return {
       ...state,

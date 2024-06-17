@@ -7,10 +7,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { formatDateStr, formatDate } from '../../../util/DateUtil';
 import uuid from 'uuid';
 import {
-  adminWithdrawRequestIssue,
+  issueWithdrawalRequestApproved,
   updatePendingReview,
-  adminAddRequestIssue,
-  enhancedPendingReview
+  issueAdditionRequestApproved
 } from 'app/intake/actions/issueModificationRequest';
 import {
   toggleIssueRemoveModal
@@ -35,7 +34,8 @@ export const RequestIssueFormWrapper = (props) => {
       removeOriginalIssue: false,
       withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
         'MM/DD/YYYY', 'YYYY-MM-DD') || '',
-      status: 'assigned'
+      status: 'assigned',
+      addedFromApprovedRequest: false
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -46,24 +46,26 @@ export const RequestIssueFormWrapper = (props) => {
   const whenAdminApproves = (enhancedData, removeOriginalIssue) => {
     switch (props.type) {
     case 'withdrawal':
+      enhancedData.status = 'approved';
       dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
-      dispatch(adminWithdrawRequestIssue(enhancedData?.identifier, enhancedData));
+      dispatch(issueWithdrawalRequestApproved(enhancedData?.identifier, enhancedData));
       break;
     case 'removal':
       dispatch(toggleIssueRemoveModal());
       break;
     case 'addition':
+      enhancedData.status = 'approved';
       dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
-      dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(enhancedData)));
+      dispatch(issueAdditionRequestApproved(convertPendingIssueToRequestIssue(enhancedData)));
       break;
     case 'modification':
       if (removeOriginalIssue) {
-        // dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
-        props.toggleConfirmPendingRequestIssueModal();
+        props.toggleConfirmPendingRequestIssueModal(enhancedData);
       } else {
         const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
 
-        dispatch(adminAddRequestIssue(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
+        enhancedData.status = 'approved';
+        dispatch(issueAdditionRequestApproved(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
         dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
       }
       break;
@@ -92,7 +94,7 @@ export const RequestIssueFormWrapper = (props) => {
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
-    const decisionDate = issueModificationRequest.decisionDate ||
+    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
       formatDateStr(props.currentIssue.decisionDate);
 
     const enhancedData = {
@@ -106,18 +108,20 @@ export const RequestIssueFormWrapper = (props) => {
       ...issueModificationRequest,
       decisionDate,
       identifier: props.pendingIssueModificationRequest?.id || uuid.v4(),
-      status: issueModificationRequest?.status || 'assigned'
+      status: issueModificationRequest?.status === 'rejected' ? issueModificationRequest?.status : 'assigned',
+      // status: 'assigned',
+      addedFromApprovedRequest: false
     };
 
-    const status = enhancedData.status;
+    const status = issueModificationRequest.status;
     const removeOriginalIssue = issueModificationRequest.removeOriginalIssue;
 
     // close modal and move the issue
     props.onCancel();
 
     if (userIsVhaAdmin) {
-      if (status === 'approve') {
-        dispatch(enhancedPendingReview(enhancedData?.identifier, enhancedData));
+      if (status === 'approved') {
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
         whenAdminApproves(enhancedData, removeOriginalIssue);
       } else {
         dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));

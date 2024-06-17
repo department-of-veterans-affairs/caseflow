@@ -23,20 +23,14 @@ export const toggleCancelPendingRequestIssueModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL
 });
 
-export const toggleConfirmPendingRequestIssueModal = () => ({
-  type: ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL
+export const toggleConfirmPendingRequestIssueModal = (data) => ({
+  type: ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL,
+  payload: { data }
 });
 
 export const updatePendingReview = (identifier, data) => (
   {
     type: ACTIONS.UPDATE_PENDING_REVIEW,
-    payload: { identifier, data }
-  }
-);
-
-export const enhancedPendingReview = (identifier, data) => (
-  {
-    type: ACTIONS.ENHANCED_PENDING_REVIEW,
     payload: { identifier, data }
   }
 );
@@ -61,30 +55,16 @@ export const removeFromPendingReviewSection = (index) => (
   }
 );
 
-export const adminWithdrawRequestIssue = (identifier, issueModificationRequest) => (
+export const issueWithdrawalRequestApproved = (identifier, issueModificationRequest) => (
   {
-    type: ACTIONS.ADMIN_WITHDRAW_REQUESTED_ISSUE,
+    type: ACTIONS.ISSUE_WITHDRAW_REQUEST_APPROVED,
     payload: { identifier, issueModificationRequest }
   }
 );
 
-export const adminRemoveRequestIssue = (identifier, issueModificationRequest) => (
+export const issueAdditionRequestApproved = (issueModificationRequest) => (
   {
-    type: ACTIONS.ADMIN_REMOVE_REQUESTED_ISSUE,
-    payload: { identifier, issueModificationRequest }
-  }
-);
-
-export const adminAddRequestIssue = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADMIN_ADD_REQUESTED_ISSUE,
-    payload: { issueModificationRequest }
-  }
-);
-
-export const adminModifyRequestIssueKeepOriginal = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADMIN_MODIFY_REQUESTED_ISSUE_KEEP_ORIGINAL,
+    type: ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED,
     payload: { issueModificationRequest }
   }
 );

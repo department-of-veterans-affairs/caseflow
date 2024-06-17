@@ -490,7 +490,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vbmsPactChecked: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification,
-        pendingWithdrawalDate: issue?.pendingWithdrawalDate
+        pendingWithdrawalDate: issue.pendingWithdrawalDate,
+        addedFromApprovedRequest: issue.addedFromApprovedRequest
       };
     }
 
@@ -533,7 +534,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       vbmsPactChecked: issue.vbmsPactChecked,
       mst_status_update_reason_notes: issue?.mstJustification,
       pact_status_update_reason_notes: issue?.pactJustification,
-      pendingWithdrawalDate: issue?.pendingWithdrawalDate
+      pendingWithdrawalDate: issue.pendingWithdrawalDate,
+      addedFromApprovedRequest: issue.addedFromApprovedRequest
     };
   });
 };

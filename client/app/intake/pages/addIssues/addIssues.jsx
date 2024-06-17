@@ -363,11 +363,10 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
-    const pendingWithdrawalDate = issuesPendingWithdrawal?.sort(
-      (ipw1, ipw2) => ipw2.pendingWithdrawalDate - ipw1.pendingWithdrawalDate)[0]?.
-      pendingWithdrawalDate;
+    const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
+      latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
 
-    const pendingWithdrawalDateFormated = formatDateStr(formatDate(pendingWithdrawalDate),
+    const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
       'MM/DD/YYYY', 'YYYY-MM-DD');
 
     const withdrawReview =
@@ -805,7 +804,7 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                value={pendingWithdrawalDateFormated || intakeData.withdrawalDate}
+                value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"

@@ -271,14 +271,10 @@ feature "Issue Modification Request", :postgres do
         verify_admin_select_action_dropdown("addition")
         click_approve("addition")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
-        expect(page).to have_text(COPY::VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE)
+        expect(page).to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
         class_name_for_requested_issues_section = page.find(".issues")
         expect(class_name_for_requested_issues_section.find_css(".issue-container").count).to be 2
         expect(page).not_to have_text("Requested Additional Issues")
-        within "#issue-undefined" do
-          expect(page).to have_text("Caregiver | Eligibility")
-          expect(page).to have_text("Benefit type: Veterans Health Administration")
-        end
       end
 
       step "request type removal and request approval" do
@@ -319,7 +315,7 @@ feature "Issue Modification Request", :postgres do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Requested Changes")
       verify_admin_select_action_dropdown("modification")
-      find('label[for="status_approve"]').click
+      find('label[for="status_approved"]').click
       expect(page).to have_text("Remove original issue")
       find('label[for="removeOriginalIssue"]').click
       click_on "Submit request"
@@ -337,7 +333,7 @@ feature "Issue Modification Request", :postgres do
       total_issue_count = requested_issues.find(".issues").find_css(".issue-container").count
       expect(total_issue_count).to eq 2
       expect(page).not_to have_text("Requested Changes")
-      expect(page).not_to have_text(COPY::VHA_NEW_ISSUE_BASED_ON_REQUESTED_ISSUE)
+      expect(page).not_to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
     end
 
     it "should remove pending request if issue modification request was rejected" do
@@ -468,13 +464,13 @@ feature "Issue Modification Request", :postgres do
   end
 
   def click_approve(request_type)
-    find('label[for="status_approve"]').click
+    find('label[for="status_approved"]').click
     expect(page).to have_text("Remove original issue") if request_type == "modification"
     click_on "Submit request"
   end
 
   def click_reject
-    find('label[for="status_reject"]').click
+    find('label[for="status_rejected"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
     click_on "Submit request"

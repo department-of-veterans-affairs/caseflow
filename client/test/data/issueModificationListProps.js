@@ -465,7 +465,7 @@ export const mockedEnhancedPendingIssueModificationProps = {
       nonratingIssueDescription: 'adadad',
       benefitType: 'vha',
       id: '42',
-      status: 'approve',
+      status: 'approved',
       requestType: 'modification',
       removeOriginalIssue: true,
       decisionDate: '2024-05-19T06:00:00.000Z',

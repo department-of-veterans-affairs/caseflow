@@ -8,13 +8,13 @@ import TextareaField from 'app/components/TextareaField';
 const DECISION_APPROVE = [
   {
     displayText: 'Approve request',
-    value: 'approve'
+    value: 'approved'
   }
 ];
 const DECISION_REJECT = [
   {
     displayText: 'Reject request',
-    value: 'reject'
+    value: 'rejected'
   }
 ];
 
@@ -23,7 +23,7 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
   const { setValue } = useForm();
 
   const watchStatus = watch('status');
-  const [status, setStatus] = React.useState({});
+  // const [status, setStatus] = React.useState({});
 
   return (
     <>
@@ -33,15 +33,16 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         label=""
         vertical
         options={DECISION_APPROVE}
-        value={status}
+        // value={status}
+        // value={field.value}
         hideLabel
         onChange={(val) => {
-          setStatus(val);
+          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}
       />
-      {(watchStatus === 'approve' && displayCheckbox) ?
+      {(watchStatus === 'approved' && displayCheckbox) ?
         <RemoveOriginalIssueCheckbox option="removeOriginalIssue" name="removeOriginalIssue" methods={methods} /> :
         null}
       <RadioField
@@ -51,14 +52,14 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         vertical
         options={DECISION_REJECT}
         hideLabel
-        value={status}
+        // value={status}
         onChange={(val) => {
-          setStatus(val);
+          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}
       />
-      {watchStatus === 'reject' ? <TextareaField
+      {watchStatus === 'rejected' ? <TextareaField
         label="Provide a reason for rejection"
         name="decisionReason"
         inputRef={register}
@@ -73,8 +74,6 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
     name
   });
 
-  const [value, setValue] = React.useState({});
-
   let fieldClasses = 'checkbox';
 
   return (
@@ -85,7 +84,6 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
         label="Remove original issue"
         stronglabel
         onChange={(val) => {
-          setValue(value);
           field.onChange(val);
         }}
         unpadded
