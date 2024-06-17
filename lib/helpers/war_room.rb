@@ -1,10 +1,16 @@
 # frozen_string_literal: true
+
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.freeze
 
 module WarRoom
   def self.user
     # rubocop:disable Style/ClassVars
-    @@user ||= OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+    @@user ||= OpenStruct.new(
+      ip_address: "127.0.0.1",
+      station_id: "283",
+      css_id: "CSFLOW",
+      regional_office: "DSUSER"
+    )
     # rubocop:enable Style/ClassVars
   end
 
@@ -95,7 +101,7 @@ module WarRoom
 
     def run_remediation_by_vacols_id(vacols_id)
       dvc = DuplicateVeteranChecker.new
-
       dvc.run_remediation_by_vacols_id(vacols_id)
     end
   end
+end
