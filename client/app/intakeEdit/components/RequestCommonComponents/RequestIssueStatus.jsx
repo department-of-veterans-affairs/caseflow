@@ -23,7 +23,6 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
   const { setValue } = useForm();
 
   const watchStatus = watch('status');
-  // const [status, setStatus] = React.useState({});
 
   return (
     <>
@@ -33,11 +32,8 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         label=""
         vertical
         options={DECISION_APPROVE}
-        // value={status}
-        // value={field.value}
         hideLabel
         onChange={(val) => {
-          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}
@@ -52,9 +48,7 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         vertical
         options={DECISION_REJECT}
         hideLabel
-        // value={status}
         onChange={(val) => {
-          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}

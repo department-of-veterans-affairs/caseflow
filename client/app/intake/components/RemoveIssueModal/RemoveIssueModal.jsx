@@ -7,6 +7,7 @@ import { removeIssue } from '../../actions/addIssues';
 import { updatePendingReview } from 'app/intake/actions/issueModificationRequest';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
+import { isEmpty } from 'lodash';
 
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
@@ -32,23 +33,22 @@ class RemoveIssueModal extends React.PureComponent {
     const {
       intakeData,
       removeIndex,
-      pendingIssueModificationRequest,
       userIsVhaAdmin
     } = this.props;
 
-    const removePendingIndex = intakeData.addedIssues.
-      findIndex((issue) => issue?.id === pendingIssueModificationRequest?.requestIssue?.id);
+    const activeIssueModificationRequest = intakeData.activeIssueModificationRequest;
+    let removePendingIndex;
 
     const onSubmit = () => {
-      if (userIsVhaAdmin) {
-        const enhancedData = pendingIssueModificationRequest;
+      if (userIsVhaAdmin && !isEmpty(activeIssueModificationRequest)) {
+        removePendingIndex = intakeData.addedIssues.
+          findIndex((issue) => issue?.id === activeIssueModificationRequest.requestIssue?.id);
 
-        enhancedData.status = 'approved';
-        this.props.updatePendingReview(enhancedData?.identifier, enhancedData);
-        this.props.removeIssue(removePendingIndex);
+        this.props.updatePendingReview(activeIssueModificationRequest.identifier, activeIssueModificationRequest);
       } else {
-        this.props.removeIssue(removeIndex);
+        removePendingIndex = removeIndex;
       }
+      this.props.removeIssue(removePendingIndex);
     };
 
     return <div className="intake-remove-issue">
