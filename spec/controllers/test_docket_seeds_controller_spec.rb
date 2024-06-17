@@ -25,14 +25,14 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
       context "single seed" do
         context "with judge CSS ID given" do
           it "creates a 30 day old AMA AOD Hearing case" do
-              data = [
-                {
-                  seed_type:"ama-aod-hearing-seeds",
-                  seed_count:"1",
-                  days_ago: "30",
-                  judge_css_id: "TEST30JUDGE"
-                }
-              ]
+            data = [
+              {
+                seed_type: "ama-aod-hearing-seeds",
+                seed_count: "1",
+                days_ago: "30",
+                judge_css_id: "TEST30JUDGE"
+              }
+            ]
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -51,13 +51,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 365 day old AMA AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "365",
                 judge_css_id: "TEST365JUDGE"
               }
             ]
-
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -78,8 +77,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 90 day old AMA AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "90",
                 judge_css_id: ""
               }
@@ -102,13 +101,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 730 day old AMA AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "730",
                 judge_css_id: ""
               }
             ]
-
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -129,13 +127,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple AMA AOD Hearing cases with a single judge" do
           data = [
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "300",
               judge_css_id: "TEST300JUDGE"
             }
           ]
-
 
           post :seed_dockets, body: data.to_json, as: :json
 
@@ -146,19 +143,18 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple AMA AOD Hearing cases with a different judges" do
           data = [
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "300",
               judge_css_id: "TEST300JUDGE"
             },
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "200",
               judge_css_id: "TEST200JUDGE"
             }
           ]
-
 
           post :seed_dockets, body: data.to_json, as: :json
 
@@ -174,13 +170,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 30 day old AMA non-AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-non-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-non-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "30",
                 judge_css_id: "TEST30JUDGE"
               }
             ]
-
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -199,13 +194,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 365 day old AMA non-AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-non-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-non-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "365",
                 judge_css_id: "TEST365JUDGE"
               }
             ]
-
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -226,8 +220,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 90 day old AMA non-AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-non-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-non-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "90",
                 judge_css_id: ""
               }
@@ -250,13 +244,12 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 730 day old AMA non-AOD Hearing case" do
             data = [
               {
-                seed_type:"ama-non-aod-hearing-seeds",
-                seed_count:"1",
+                seed_type: "ama-non-aod-hearing-seeds",
+                seed_count: "1",
                 days_ago: "730",
                 judge_css_id: ""
               }
             ]
-
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -277,8 +270,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple AMA non-AOD Hearing cases" do
           data = [
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "180",
               judge_css_id: ""
             }
@@ -293,14 +286,14 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple AMA non-AOD Hearing cases with different judges" do
           data = [
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "180",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"5",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "5",
               days_ago: "270",
               judge_css_id: "TEST270JUDGE"
             }
@@ -319,13 +312,13 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         context "with judge CSS ID given" do
           it "creates a 30 day old Legacy case" do
             data = [
-                {
-                  seed_type:"legacy-case-seeds",
-                  seed_count:"1",
-                  days_ago: "30",
-                  judge_css_id: "TEST30JUDGE"
-                }
-              ]
+              {
+                seed_type: "legacy-case-seeds",
+                seed_count: "1",
+                days_ago: "30",
+                judge_css_id: "TEST30JUDGE"
+              }
+            ]
 
             post :seed_dockets, body: data.to_json, as: :json
 
@@ -336,8 +329,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 365 day old Legacy case" do
             data = [
               {
-                seed_type:"legacy-case-seeds",
-                seed_count:"1",
+                seed_type: "legacy-case-seeds",
+                seed_count: "1",
                 days_ago: "365",
                 judge_css_id: "TEST365JUDGE"
               }
@@ -354,8 +347,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 90 day old Legacy case" do
             data = [
               {
-                seed_type:"legacy-case-seeds",
-                seed_count:"1",
+                seed_type: "legacy-case-seeds",
+                seed_count: "1",
                 days_ago: "90",
                 judge_css_id: ""
               }
@@ -370,8 +363,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 730 day old Legacy case" do
             data = [
               {
-                seed_type:"legacy-case-seeds",
-                seed_count:"1",
+                seed_type: "legacy-case-seeds",
+                seed_count: "1",
                 days_ago: "730",
                 judge_css_id: ""
               }
@@ -388,8 +381,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple Legacy cases" do
           data = [
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"5",
+              seed_type: "legacy-case-seeds",
+              seed_count: "5",
               days_ago: "30",
               judge_css_id: ""
             }
@@ -404,17 +397,17 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple Legacy cases with multiple judges" do
           data = [
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"5",
+              seed_type: "legacy-case-seeds",
+              seed_count: "5",
               days_ago: "30",
               judge_css_id: ""
             },
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"5",
+              seed_type: "legacy-case-seeds",
+              seed_count: "5",
               days_ago: "60",
               judge_css_id: "TEST60JUDGE"
-            },
+            }
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
@@ -431,8 +424,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 30 day old Direct Review case" do
             data = [
               {
-                seed_type:"ama-direct-review-seeds",
-                seed_count:"1",
+                seed_type: "ama-direct-review-seeds",
+                seed_count: "1",
                 days_ago: "30",
                 judge_css_id: ""
               }
@@ -452,8 +445,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           it "creates a 365 day old Direct Review case" do
             data = [
               {
-                seed_type:"ama-direct-review-seeds",
-                seed_count:"1",
+                seed_type: "ama-direct-review-seeds",
+                seed_count: "1",
                 days_ago: "365",
                 judge_css_id: ""
               }
@@ -476,8 +469,8 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple Direct Review cases" do
           data = [
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"5",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "5",
               days_ago: "30",
               judge_css_id: ""
             }
@@ -493,14 +486,14 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "creates multiple Direct Review cases with multiple lines" do
           data = [
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"5",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "5",
               days_ago: "60",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"5",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "5",
               days_ago: "90",
               judge_css_id: ""
             }
@@ -520,26 +513,26 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "makes all seeds" do
           data = [
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"1",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "1",
               days_ago: "10",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"1",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "1",
               days_ago: "15",
               judge_css_id: ""
             },
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"1",
+              seed_type: "legacy-case-seeds",
+              seed_count: "1",
               days_ago: "20",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"1",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "1",
               days_ago: "25",
               judge_css_id: ""
             }
@@ -560,26 +553,26 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "makes all seeds" do
           data = [
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"2",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "2",
               days_ago: "10",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"3",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "3",
               days_ago: "15",
               judge_css_id: ""
             },
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"4",
+              seed_type: "legacy-case-seeds",
+              seed_count: "4",
               days_ago: "20",
               judge_css_id: ""
             },
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"5",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "5",
               days_ago: "25",
               judge_css_id: ""
             }
@@ -600,26 +593,26 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
         it "makes all seeds" do
           data = [
             {
-              seed_type:"ama-aod-hearing-seeds",
-              seed_count:"1",
+              seed_type: "ama-aod-hearing-seeds",
+              seed_count: "1",
               days_ago: "10",
               judge_css_id: "TEST10JUDGE"
             },
             {
-              seed_type:"ama-non-aod-hearing-seeds",
-              seed_count:"1",
+              seed_type: "ama-non-aod-hearing-seeds",
+              seed_count: "1",
               days_ago: "15",
               judge_css_id: "TEST15JUDGE"
             },
             {
-              seed_type:"legacy-case-seeds",
-              seed_count:"1",
+              seed_type: "legacy-case-seeds",
+              seed_count: "1",
               days_ago: "20",
               judge_css_id: "TEST20JUDGE"
             },
             {
-              seed_type:"ama-direct-review-seeds",
-              seed_count:"1",
+              seed_type: "ama-direct-review-seeds",
+              seed_count: "1",
               days_ago: "25",
               judge_css_id: ""
             }
