@@ -9,11 +9,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 725047a251a4bd1e7e48e9118016bb3b684c5a34
-  ref: 725047a251a4bd1e7e48e9118016bb3b684c5a34
+  revision: 871f7034c502f8d7101bde74e58606716b601c70
+  ref: 871f7034c502f8d7101bde74e58606716b601c70
   specs:
     caseflow (0.4.8)
-      aws-sdk (~> 3.1)
+      aws-sdk (~> 3.2)
       bourbon (= 4.2.7)
       d3-rails
       jquery-rails
@@ -57,10 +57,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 5f47e7b2656ef347d314ef43c93d38a9f20816ec
-  ref: 5f47e7b2656ef347d314ef43c93d38a9f20816ec
+  revision: a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d
+  ref: a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d
   specs:
-    bgs (0.3)
+    bgs (0.4)
       httpclient
       nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
@@ -159,7 +159,7 @@ GEM
     ast (2.4.2)
     aws-eventstream (1.2.0)
     aws-partitions (1.843.0)
-    aws-sdk (3.1.0)
+    aws-sdk (3.2.0)
       aws-sdk-resources (~> 3)
     aws-sdk-accessanalyzer (1.41.0)
       aws-sdk-core (~> 3, >= 3.184.0)
