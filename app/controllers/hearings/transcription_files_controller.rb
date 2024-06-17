@@ -3,7 +3,7 @@
 class Hearings::TranscriptionFilesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_access_to_hearings, only: [:download_transcription_file]
+  before_action :verify_transcription_user
 
   def download_transcription_file
     tmp_location = file.fetch_file_from_s3!

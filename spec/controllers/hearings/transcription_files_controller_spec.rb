@@ -3,7 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Hearings::TranscriptionFilesController do
-  let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
+  let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
+  before { TranscriptionTeam.singleton.add_user(user) }
 
   describe "GET download_transcription_file" do
     let!(:hearing) { create(:hearing, :with_transcription_files) }
