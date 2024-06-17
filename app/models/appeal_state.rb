@@ -22,8 +22,6 @@ class AppealState < CaseflowRecord
                                                                hearing_scheduled: false,
                                                                vso_ihp_pending: false,
                                                                vso_ihp_complete: false,
-                                                               privacy_act_pending: false,
-                                                               privacy_act_complete: false,
                                                                scheduled_in_error: false,
                                                                appeal_cancelled: false).freeze
 
@@ -185,7 +183,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def decision_mailed_appeal_state_update_action!
-    update_appeal_state_action!(:decision_mailed)
+    update_appeal_state_action!(:decision_mailed, true)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -195,7 +193,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def appeal_cancelled_appeal_state_update_action!
-    update_appeal_state_action!(:appeal_cancelled)
+    update_appeal_state_action!(:appeal_cancelled, true)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -219,8 +217,8 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_complete_appeal_state_update_action!
-    if !appeal.active_foia_task?
-      update_appeal_state_action!(:privacy_act_complete)
+    unless appeal.active_foia_task?
+      update!(privacy_act_pending: false, privacy_act_complete: true)
     end
   end
 
@@ -232,7 +230,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_cancelled_appeal_state_update_action!
-    if !appeal.active_foia_task?
+    unless appeal.active_foia_task?
       update!(privacy_act_pending: false)
     end
   end
@@ -317,12 +315,21 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_pending_appeal_state_update_action!
-    update_appeal_state_action!(:privacy_act_pending)
+    update!(privacy_act_pending: true, privacy_act_complete: false)
   end
 
   private
 
-  def update_appeal_state_action!(new_state)
-    update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
+  def update_appeal_state_action!(status_to_update, reset_privacy_tasks = false)
+    update!({}.merge(DEFAULT_STATE).tap do |existing_statuses|
+      existing_statuses[status_to_update] = true
+
+      if reset_privacy_tasks
+        existing_statuses.merge({
+                                  privacy_act_complete: false,
+                                  privacy_act_pending: false
+                                })
+      end
+    end)
   end
 end
