@@ -9,7 +9,6 @@ import uuid from 'uuid';
 import { isEmpty } from 'lodash';
 
 export const RequestIssueFormWrapper = (props) => {
-
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);

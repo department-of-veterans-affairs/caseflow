@@ -67,8 +67,7 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
     new: [],
     cancelled: [],
     edited: [],
-    approved: [],
-    denied: []
+    decided: []
   };
 
   (state.pendingIssueModificationRequests || []).
@@ -96,10 +95,8 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
         groupedRequests.edited.push(formattedRequest);
       } else if (modificationRequest.status === 'cancelled') {
         groupedRequests.cancelled.push(formattedRequest);
-      } else {
-        // ADMIN STUFF
-        // Approved/denied will likely check for a variable that is set just like all the others
-        // groupedRequests.approved.push(formattedRequest);
+      } else if (modificationRequest.status === 'approved' || modificationRequest.status === 'denied') {
+        groupedRequests.decided.push(formattedRequest);
       }
     });
 
