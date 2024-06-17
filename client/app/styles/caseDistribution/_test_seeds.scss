@@ -1,3 +1,8 @@
+$seed-table-border-color: #d6d7d9;
+$seed-button-background-color: #0071bc;
+$seed-button-font-color: #fff;
+$seed-table-preview-bg-color: #f1f1f1;
+
 .test-seeds-num-field {
   // width: auto;
 
@@ -50,12 +55,13 @@
 }
 
 .custom-seeds-preview {
-  border-bottom: 1px solid #d6d7d9;
+  border-bottom: 1px solid $seed-table-border-color;
   width: 100%;
   overflow: auto;
   display: inline-block;
   margin-bottom: 20px;
 }
+
 .preview-table-scroll {
   max-height: 400px;
   overflow: auto;
@@ -65,29 +71,32 @@
 
 .preview-table {
   margin: 0;
+
+  tr th {
+    background-color: $seed-table-preview-bg-color;
+    position: sticky;
+    top: 0;
+    z-index: 9;
+  }
 }
 
-.preview-table tr th {
-  background-color: #f1f1f1;
-  position: sticky;
-  top: 0;
-  z-index: 9;
-}
-
-.preview-table tr th, .preview-table tr td {
-  border: 1px solid #d6d7d9;
+.preview-table tr th,
+.preview-table tr td {
+  border: 1px solid $seed-table-border-color;
   border-bottom: 0;
   border-right: 0;
   padding: 10px;
 }
 
-.preview-table tr th:last-child, .preview-table tr td:last-child {
-  border-right: 1px solid #d6d7d9;
+.preview-table tr th:last-child,
+.preview-table tr td:last-child {
+  border-right: 1px solid $seed-table-border-color;
   text-align: center;
 }
 
-.preview-table tr:last-child th, .preview-table tr:last-child td {
-  border-bottom: 1px solid #d6d7d9;
+.preview-table tr:last-child th,
+.preview-table tr:last-child td {
+  border-bottom: 1px solid $seed-table-border-color;
 }
 
 .cf-section-header {
@@ -101,9 +110,9 @@
   margin-right: 10px;
 
   a {
-    background: #0071bc;
+    background: $seed-button-background-color;
     padding: 12px;
-    color: #fff;
+    color: $seed-button-font-color;
     border-radius: 5px;
   }
 }
