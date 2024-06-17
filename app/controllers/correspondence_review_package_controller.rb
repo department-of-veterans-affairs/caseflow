@@ -5,18 +5,12 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
   end
 
-  def package_documents
-    packages = PackageDocumentType.all
-    render json: { package_document_types: packages }
-  end
-
   def show
     corres_docs = correspondence.correspondence_documents
     task_instructions = CorrespondenceTask.package_action_tasks.open
       .find_by(appeal_id: correspondence.id)&.instructions || ""
     response_json = {
       correspondence: correspondence,
-      package_document_type: correspondence&.package_document_type,
       general_information: general_information,
       user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
       correspondence_documents: corres_docs.map do |doc|
@@ -41,8 +35,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def update_cmp
     correspondence.update(
-      va_date_of_receipt: params["VADORDate"].in_time_zone,
-      package_document_type_id: params["packageDocument"]["value"].to_i
+      va_date_of_receipt: params["VADORDate"].in_time_zone
     )
     correspondence.tasks.map do |task|
       if task.type == "ReviewPackageTask"

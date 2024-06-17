@@ -1226,3 +1226,30 @@ $color-black: #323a45;
   }
 }
 
+.correspondence-admin-container {
+  .textarea-div-styling-test-correspondence {
+    margin-top: 45px;
+
+  }
+
+  #textarea-styling-test-correspondence {
+    width: 50rem;
+    height: 12rem;
+    resize: none;
+    max-width: 96%;
+    margin-bottom: 15px;
+  }
+
+  .correspondence-number {
+    input {
+      width: 75px;
+      max-width: 300%;
+      margin-bottom: 15px;
+    }
+  }
+  button {
+    margin-top: 10px;
+  }
+
+}
+
