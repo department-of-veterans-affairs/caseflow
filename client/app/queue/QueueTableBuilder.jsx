@@ -304,3 +304,4 @@ QueueTableBuilder.propTypes = {
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
+
