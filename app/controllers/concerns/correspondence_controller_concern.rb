@@ -6,6 +6,11 @@
 module CorrespondenceControllerConcern
   private
 
+  # Error message constants
+  NOD_ERROR = "NOD permission is currently disabled for this user."
+  SENSITIVITY_ERROR = "User does not meet the sensitivity level required."
+  CAPACITY_ERROR = "Queue volume has reached maximum capacity for this user."
+
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
@@ -50,13 +55,13 @@ module CorrespondenceControllerConcern
   def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      bulk_assignment_banner_text(user, errors, task_count)
+      single_assignment_banner_text(user, errors, task_count)
     when "correspondence_team_assigned"
-      bulk_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      single_assignment_banner_text(user, errors, task_count, action_prefix: "re")
     end
   end
 
-  def bulk_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
       "assigned #{task_count} Correspondence to #{user.css_id}."
     failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed"
@@ -65,6 +70,34 @@ module CorrespondenceControllerConcern
     {
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
       message: errors.empty? ? success_message : failure_message
+    }
+  end
+
+  def multiple_assignment_banner_text(user, errors, task_count, action_prefix: "")
+    success_header = "You have successfully #{action_prefix}"\
+    "assigned #{task_count} Correspondences to #{user.css_id}."
+    success_message = "Please go to your individual queue to see any self-assigned correspondences."
+    failure_header = "Not all correspondence was #{action_prefix}assignment to #{user.css_id}"
+
+    failure_message = []
+
+    # get error counts
+    nod_failures = error.select { |error| error == NOD_ERROR }
+    sensitivity_failures = error.select { |error| error == SENSITIVITY_ERROR }
+    cap_failures = error.select { |error| error == CAPACITY_ERROR }
+
+    # build message
+    failure_message << "#{nod_failures.count} cases were not #{action_prefix}assigned because"\
+     "of NOD permissions settings." unless nod_failures.blank?
+    failure_message << "#{sensitivity_failures.count} cases were not #{action_prefix}assigned because"\
+     "of sensitivity level mismatch." unless sensitivity_failures.blank?
+    failure_message << "#{cap_failures.count} cases were not #{action_prefix}assigned to user because"\
+     "maximum capacity has been reached for user's queue" unless cap_failures.blank?
+
+    # return JSON message
+    {
+      header: errors.blank? ? success_header : failure_header
+      message: errors.blank? ? success_message : failure_message.join("\n")
     }
   end
 
