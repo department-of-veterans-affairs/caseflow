@@ -194,7 +194,7 @@ class AppealsController < ApplicationController
   private
 
   def appeals_controller_params
-    params.permit(:appeal_id, :action, :controller, :any, :appeals_id, :veteran_ids, request_issues:
+    params.permit(:appeal_id, :any, :appeals_id, :veteran_ids, request_issues:
       %w[
         request_issue_id
         rating_issue_reference_id
