@@ -368,27 +368,26 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                         </svg>
                       </CloseIcon>
                     </button>
-                    <div>
-                      <div
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                          "flexWrap": "wrap",
+                        }
+                      }
+                    >
+                      <h1
+                        id="modal_id-title"
                         style={
                           Object {
-                            "display": "flex",
+                            "flex": 1,
                           }
                         }
                       >
-                        <h1
-                          id="modal_id-title"
-                          style={
-                            Object {
-                              "margin-bottom": "0px",
-                            }
-                          }
-                        >
-                          Add Court dates
-                        </h1>
-                      </div>
+                        Add Court dates
+                      </h1>
                       <div
-                        data-css-o98ubo=""
+                        data-css-2flkvz=""
                       >
                         <p>
                           Complete the details below to intake this Court remand for further processing
@@ -1020,27 +1019,26 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                         </svg>
                       </CloseIcon>
                     </button>
-                    <div>
-                      <div
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                          "flexWrap": "wrap",
+                        }
+                      }
+                    >
+                      <h1
+                        id="modal_id-title"
                         style={
                           Object {
-                            "display": "flex",
+                            "flex": 1,
                           }
                         }
                       >
-                        <h1
-                          id="modal_id-title"
-                          style={
-                            Object {
-                              "margin-bottom": "0px",
-                            }
-                          }
-                        >
-                          Add Court dates
-                        </h1>
-                      </div>
+                        Add Court dates
+                      </h1>
                       <div
-                        data-css-o98ubo=""
+                        data-css-2flkvz=""
                       >
                         <p>
                           Complete the details below to intake this Court remand for further processing

@@ -42,19 +42,17 @@ exports[`ConfirmClaimLabelModal renders correctly 1`] = `
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Confirm new claim label
-          </h1>
-        </div>
+          Confirm new claim label
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <div
             style="margin-bottom: 24px;"

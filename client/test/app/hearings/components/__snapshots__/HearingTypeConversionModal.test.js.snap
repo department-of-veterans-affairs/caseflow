@@ -375,27 +375,26 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                 </svg>
               </CloseIcon>
             </button>
-            <div>
-              <div
+            <div
+              style={
+                Object {
+                  "display": "flex",
+                  "flexWrap": "wrap",
+                }
+              }
+            >
+              <h1
+                id="modal_id-title"
                 style={
                   Object {
-                    "display": "flex",
+                    "flex": 1,
                   }
                 }
               >
-                <h1
-                  id="modal_id-title"
-                  style={
-                    Object {
-                      "margin-bottom": "0px",
-                    }
-                  }
-                >
-                  Convert Hearing To Central
-                </h1>
-              </div>
+                Convert Hearing To Central
+              </h1>
               <div
-                data-css-o98ubo=""
+                data-css-2flkvz=""
               >
                 <p
                   dangerouslySetInnerHTML={
@@ -855,27 +854,26 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                 </svg>
               </CloseIcon>
             </button>
-            <div>
-              <div
+            <div
+              style={
+                Object {
+                  "display": "flex",
+                  "flexWrap": "wrap",
+                }
+              }
+            >
+              <h1
+                id="modal_id-title"
                 style={
                   Object {
-                    "display": "flex",
+                    "flex": 1,
                   }
                 }
               >
-                <h1
-                  id="modal_id-title"
-                  style={
-                    Object {
-                      "margin-bottom": "0px",
-                    }
-                  }
-                >
-                  Convert Hearing To Video
-                </h1>
-              </div>
+                Convert Hearing To Video
+              </h1>
               <div
-                data-css-o98ubo=""
+                data-css-2flkvz=""
               >
                 <p
                   dangerouslySetInnerHTML={

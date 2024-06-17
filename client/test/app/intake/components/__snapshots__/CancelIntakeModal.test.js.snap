@@ -48,19 +48,17 @@ Object {
                 </g>
               </svg>
             </button>
-            <div>
-              <div
-                style="display: flex;"
+            <div
+              style="display: flex; flex-wrap: wrap;"
+            >
+              <h1
+                id="modal_id-title"
+                style="flex: 1;"
               >
-                <h1
-                  id="modal_id-title"
-                  style="margin-bottom: 0px;"
-                >
-                  Cancel Intake?
-                </h1>
-              </div>
+                Cancel Intake?
+              </h1>
               <div
-                data-css-o98ubo=""
+                data-css-2flkvz=""
               >
                 <fieldset
                   class="usa-fieldset-inputs cf-form-radio "
@@ -238,19 +236,17 @@ Object {
               </g>
             </svg>
           </button>
-          <div>
-            <div
-              style="display: flex;"
+          <div
+            style="display: flex; flex-wrap: wrap;"
+          >
+            <h1
+              id="modal_id-title"
+              style="flex: 1;"
             >
-              <h1
-                id="modal_id-title"
-                style="margin-bottom: 0px;"
-              >
-                Cancel Intake?
-              </h1>
-            </div>
+              Cancel Intake?
+            </h1>
             <div
-              data-css-o98ubo=""
+              data-css-2flkvz=""
             >
               <fieldset
                 class="usa-fieldset-inputs cf-form-radio "

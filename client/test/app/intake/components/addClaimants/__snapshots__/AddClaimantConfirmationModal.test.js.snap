@@ -42,19 +42,17 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
@@ -179,19 +177,17 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
@@ -316,19 +312,17 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
@@ -436,19 +430,17 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
@@ -556,19 +548,17 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
@@ -687,19 +677,17 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
           </g>
         </svg>
       </button>
-      <div>
-        <div
-          style="display: flex;"
+      <div
+        style="display: flex; flex-wrap: wrap;"
+      >
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-            style="margin-bottom: 0px;"
-          >
-            Review and confirm claimant information
-          </h1>
-        </div>
+          Review and confirm claimant information
+        </h1>
         <div
-          data-css-o98ubo=""
+          data-css-2flkvz=""
         >
           <p>
             Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.

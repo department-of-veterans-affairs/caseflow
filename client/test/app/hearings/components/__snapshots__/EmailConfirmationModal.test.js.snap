@@ -3917,27 +3917,26 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
               </svg>
             </CloseIcon>
           </button>
-          <div>
-            <div
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "flexWrap": "wrap",
+              }
+            }
+          >
+            <h1
+              id="modal_id-title"
               style={
                 Object {
-                  "display": "flex",
+                  "flex": 1,
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "margin-bottom": "0px",
-                  }
-                }
-              >
-                Update Timezone
-              </h1>
-            </div>
+              Update Timezone
+            </h1>
             <div
-              data-css-o98ubo=""
+              data-css-2flkvz=""
             >
               <p
                 dangerouslySetInnerHTML={
@@ -4532,27 +4531,26 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
               </svg>
             </CloseIcon>
           </button>
-          <div>
-            <div
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "flexWrap": "wrap",
+              }
+            }
+          >
+            <h1
+              id="modal_id-title"
               style={
                 Object {
-                  "display": "flex",
+                  "flex": 1,
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "margin-bottom": "0px",
-                  }
-                }
-              >
-                Change to Video Hearing
-              </h1>
-            </div>
+              Change to Video Hearing
+            </h1>
             <div
-              data-css-o98ubo=""
+              data-css-2flkvz=""
             >
               <p
                 dangerouslySetInnerHTML={
@@ -5361,27 +5359,26 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
               </svg>
             </CloseIcon>
           </button>
-          <div>
-            <div
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "flexWrap": "wrap",
+              }
+            }
+          >
+            <h1
+              id="modal_id-title"
               style={
                 Object {
-                  "display": "flex",
+                  "flex": 1,
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "margin-bottom": "0px",
-                  }
-                }
-              >
-                Update Hearing Time
-              </h1>
-            </div>
+              Update Hearing Time
+            </h1>
             <div
-              data-css-o98ubo=""
+              data-css-2flkvz=""
             >
               <p
                 dangerouslySetInnerHTML={
@@ -6190,27 +6187,26 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
               </svg>
             </CloseIcon>
           </button>
-          <div>
-            <div
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "flexWrap": "wrap",
+              }
+            }
+          >
+            <h1
+              id="modal_id-title"
               style={
                 Object {
-                  "display": "flex",
+                  "flex": 1,
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "margin-bottom": "0px",
-                  }
-                }
-              >
-                Change to Virtual Hearing
-              </h1>
-            </div>
+              Change to Virtual Hearing
+            </h1>
             <div
-              data-css-o98ubo=""
+              data-css-2flkvz=""
             >
               <p
                 dangerouslySetInnerHTML={
