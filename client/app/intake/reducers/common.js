@@ -97,7 +97,10 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['confirmPendingRequestIssueModalVisible']
+      $toggle: ['confirmPendingRequestIssueModalVisible'],
+      pendingIssueModificationRequest: {
+        $set: action.payload.data
+      }
     });
   };
 
@@ -289,6 +292,37 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_WITHDRAW_REQUEST_APPROVED] = () => {
+    const { withdrawalDate, requestIssue } = action.payload.issueModificationRequest;
+
+    const index = listOfIssues.findIndex((issue) => issue.id === requestIssue.id);
+
+    listOfIssues[index] = {
+      ...listOfIssues[index],
+      withdrawalPending: true,
+      pendingWithdrawalDate: withdrawalDate
+    };
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
+    let issueModificatioNRequest = action.payload.issueModificationRequest;
+
+    issueModificatioNRequest.addedFromApprovedRequest = true;
+
+    let addedIssues = [...listOfIssues, issueModificatioNRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 

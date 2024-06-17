@@ -295,7 +295,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         click_dropdown(text: "Remove issue")
       end
 
-      click_on("Yes, remove issue")
+      click_on("Remove")
 
       expect(page).to have_content(changed_issue_banner_save_text)
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)

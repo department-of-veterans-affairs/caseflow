@@ -301,26 +301,103 @@ feature "Issue Modification Request", :postgres do
       end
     end
 
-    it "should have a dropdown with specific option for each request type" do
+    it "should have a dropdown with specific option for each request type and approval flow" do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Pending admin review")
 
-      step "request type Addition" do
+      step "request type Addition and request approval" do
         expect(page).to have_text("Requested Additional Issues")
         verify_select_action_dropdown("addition")
+        verify_admin_select_action_dropdown("addition")
+        click_approve("addition")
+        expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+        expect(page).to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
+        class_name_for_requested_issues_section = page.find(".issues")
+        expect(class_name_for_requested_issues_section.find_css(".issue-container").count).to be 2
+        expect(page).not_to have_text("Requested Additional Issues")
       end
 
-      step "request type modification" do
+      step "request type removal and request approval" do
+        expect(page).to have_text("Requested Issue Removal")
+        verify_admin_select_action_dropdown("removal")
+        click_approve("removal")
+        expect(page).to have_text("Remove issue")
+        expect(page).to have_text("The contention you selected will be removed from the decision review.")
+        click_button "Remove"
+        expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+        expect(page).not_to have_text("Requested Issue Removal")
+      end
+
+      step "request type withdrawal and request approval" do
+        expect(page).not_to have_text("Withdrawn issues")
+        expect(page).to have_text("Requested Issue Withdrawal")
+        verify_admin_select_action_dropdown("withdrawal")
+        click_approve("withdrawal")
+        expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+        expect(page).to have_text("Withdrawn issues")
+        expect(page).to have_text("Withdrawal pending")
+        expect(page).not_to have_text("Requested Issue Withdrawal")
+      end
+
+      step "request type modification when remove original issue is not selected" do
         expect(page).to have_text("Requested Changes")
         verify_select_action_dropdown("modification")
+        verify_admin_select_action_dropdown("modification")
+        click_approve("modification")
+        expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+        requested_issues = page.find("tr", text: "Requested issues")
+        total_issue_count = requested_issues.find(".issues").find_css(".issue-container").count
+        expect(total_issue_count).to eq 4
+        expect(page).not_to have_text("Requested Changes")
+      end
+    end
+
+    it "should create remove original issue and create only 1 new issue when issue modification request is approved" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Requested Changes")
+      verify_admin_select_action_dropdown("modification")
+      find('label[for="status_approved"]').click
+      expect(page).to have_text("Remove original issue")
+      find('label[for="removeOriginalIssue"]').click
+      click_on "Submit request"
+      expect(page).to have_text("Confirm changes")
+      expect(page).to have_text("Delete original issue")
+      expect(page).to have_text("Issue type: CHAMPVA")
+      expect(page).to have_text("Issue description: A description of the newly added issue")
+      expect(page).to have_text("Create new issue")
+      expect(page).to have_text("Issue type: Camp Lejune Family Member")
+      expect(page).to have_text("Issue description: Newly modified issue description")
+      click_on "Confirm"
+
+      expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+      requested_issues = page.find("tr", text: "Requested issues")
+      total_issue_count = requested_issues.find(".issues").find_css(".issue-container").count
+      expect(total_issue_count).to eq 2
+      expect(page).not_to have_text("Requested Changes")
+      expect(page).not_to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
+    end
+
+    it "should remove pending request if issue modification request was rejected" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Pending admin review")
+
+      step "request type Addition and request rejected" do
+        expect(page).to have_text("Requested Additional Issues")
+        verify_admin_select_action_dropdown("addition")
+        click_reject
+        verify_rejection_count(1, "Requested Additional Issues")
       end
 
-      step "request type removal" do
+      step "request type removal and request rejected" do
         expect(page).to have_text("Requested Issue Removal")
         verify_select_action_dropdown("removal")
+        verify_admin_select_action_dropdown("removal")
+        click_reject
+        verify_rejection_count(2, "Requested Issue Removal")
       end
 
-      step "request type withdrawal" do
+      step "request type withdrawal and request approval" do
+        expect(page).not_to have_text("Withdrawn issues")
         expect(page).to have_text("Requested Issue Withdrawal")
         verify_select_action_dropdown("withdrawal")
       end
@@ -354,6 +431,16 @@ feature "Issue Modification Request", :postgres do
           select_action = find("input", visible: false)
           expect(select_action[:disabled]).to eq "true"
         end
+        verify_admin_select_action_dropdown("withdrawal")
+        click_reject
+        verify_rejection_count(3, "Requested Issue Withdrawal")
+      end
+
+      step "request type modification when remove original issue is not selected" do
+        expect(page).to have_text("Requested Changes")
+        verify_admin_select_action_dropdown("modification")
+        click_reject
+        verify_rejection_count(4, "Requested Changes")
       end
     end
   end
@@ -452,6 +539,28 @@ feature "Issue Modification Request", :postgres do
     # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
-    click_on "Cancel"
+    expect(page).to have_text("Original issue") unless request_type == "addition"
+    expect(page).to have_text("Approve request")
+    expect(page).to have_text("Reject request")
+  end
+
+  def click_approve(request_type)
+    find('label[for="status_approved"]').click
+    expect(page).to have_text("Remove original issue") if request_type == "modification"
+    click_on "Submit request"
+  end
+
+  def click_reject
+    find('label[for="status_rejected"]').click
+    expect(page).to have_text("Provide a reason for rejection")
+    fill_in "decisionReason", with: "Because i do not agree with you."
+    click_on "Submit request"
+    expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
+  end
+
+  def verify_rejection_count(issue_count, section_title)
+    class_name_for_requested_issues_section = page.find(".issues")
+    expect(class_name_for_requested_issues_section.find_css(".issue-container").count).to be issue_count
+    expect(page).not_to have_text(section_title)
   end
 end
