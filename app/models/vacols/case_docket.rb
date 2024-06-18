@@ -538,10 +538,10 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.generate_priority_case_distribution_lever_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days) || CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
       "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or
-        #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
+        #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD= '0' and BFAC = '7')"
     elsif CaseDistributionLever.cavc_affinity_days == "infinite"
       "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
-        #{vacols_judges_with_exclude_appeals_from_affinity}) and BFAC = '7')"
+        #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '0' and BFAC = '7')"
     else
       "VLJ = ?"
     end

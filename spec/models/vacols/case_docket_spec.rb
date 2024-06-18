@@ -751,10 +751,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     # cavc affinity cases:
     # no hearing held but has previous decision
     let!(:c1) do
-      create(:legacy_cavc_appeal, :type_cavc_remand, judge: aff_judge, attorney: attorney, tied_to: false)
+      create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney, tied_to: false)
     end
     let!(:c2) do
-      create(:legacy_cavc_appeal, :type_cavc_remand, judge: aff_judge, attorney: attorney, 
+      create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney,
                                                      tied_to: false, affinity_start_date: 3.days.ago)
     end
     let!(:c3) do
@@ -763,7 +763,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
     # hearing held with previous decision where judge is not the same
     let!(:c4) do
-      ca4 = create(:legacy_cavc_appeal, :type_cavc_remand, judge: other_judge, attorney: attorney)
+      ca4 = create(:legacy_cavc_appeal, judge: other_judge, attorney: attorney)
       ca4.update!(bfmemid: aff_judge.sattyid)
       ca4
     end
@@ -786,13 +786,13 @@ describe VACOLS::CaseDocket, :all_dbs do
     let!(:c9) { create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney,  appeal_affinity: false) }
     # hearing held but no previous deciding judge
     let!(:c10) do
-      ca10 = create(:legacy_cavc_appeal, :type_cavc_remand, judge: tied_judge, attorney: attorney)
+      ca10 = create(:legacy_cavc_appeal, judge: tied_judge, attorney: attorney)
       ca10.update!(bfmemid: nil)
       ca10
     end
     # no hearing held, no previous deciding judge
     let!(:c11) do
-      ca11 = create(:legacy_cavc_appeal, :type_cavc_remand, judge: aff_judge, attorney: attorney, 
+      ca11 = create(:legacy_cavc_appeal, judge: aff_judge, attorney: attorney,
                                                             tied_to: false)
       ca11.update!(bfmemid: nil)
       ca11
@@ -831,7 +831,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney,  affinity_start_date: 3.days.ago)
     end
     let!(:c20) do
-      create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, aod: true, appeal_affinity: false)
+      create(:legacy_cavc_appeal, judge: excl_judge, attorney: attorney, appeal_affinity: false)
     end
     # ineligible judge cases:
     # no hearing held but has previous decision
