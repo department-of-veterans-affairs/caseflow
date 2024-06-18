@@ -67,40 +67,49 @@ RSpec.feature "Reader", :all_dbs do
           FeatureToggle.enable!(:metrics_get_pdfjs_doc)
           FeatureToggle.enable!(:prefetch_disabled)
         end
+
         after do
           FeatureToggle.disable!(:metrics_get_pdfjs_doc)
           FeatureToggle.disable!(:prefetch_disabled)
         end
-        context "Get Document Success" do
-          # TODO
-        end
-        context "Get Document Error" do
-          context "Internet Speed available" do
-            it "create an error Metric including internet speed" do
-              allow_any_instance_of(::DocumentController).to receive(:pdf) do
-                large_document = "a" * (50 * 1024 * 1024) # 50MB document
-                send_data large_document, type: "application/pdf", disposition: "inline"
-              end
-              expect(Metric.any?).to be false
 
-              visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+        context "Get Document Success" do
+          it 'creates a metric for getting PDF' do
+            visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+            expect(page).to have_content("BOARD OF VETERANS' APPEALS")
+            metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
+            expect(metric.metric_type).to eq "performance"
+          end
+        end
+
+        context "Get Document Error" do
+          before do
+            Capybara.current_driver = :selenium_chrome
+
+            allow_any_instance_of(::DocumentController).to receive(:pdf) do
+              large_document = "a" * (50 * 1024 * 1024) # 50MB document
+              send_data large_document, type: "application/pdf", disposition: "inline"
+            end
+          end
+          after do
+            Capybara.reset_sessions!
+          end
+
+          context "Internet Speed available", js: true do
+            it "create an error Metric including internet speed" do
+              expect(Metric.any?).to be false
+              visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+              expect(page).to have_content("Unable to load document")
               metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
               expect(metric.metric_message).to end_with("Mbits/s")
               expect(metric.metric_attributes["step"]).to eq "getDocument"
+              expect(metric.metric_type).to eq "error"
             end
           end
 
           context "Internet Speed not available", js: true do
             it "creates an error Metric excluding internet speed" do
-              Capybara.current_driver = :selenium_chrome_headless
-
-              allow_any_instance_of(::DocumentController).to receive(:pdf) do
-                large_document = "a" * (50 * 1024 * 1024) # 50MB document
-                send_data large_document, type: "application/pdf", disposition: "inline"
-              end
-
-              visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-
+              visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
               page.execute_script(<<-JS)
               window.networkUtil = {
                 connectionInfo: async () => 'Speed: Not available'
@@ -108,10 +117,11 @@ RSpec.feature "Reader", :all_dbs do
               JS
 
               expect(page.evaluate_script("window.networkUtil.connectionInfo()")).to eq "Speed: Not available"
-
+              expect(page).to have_content("Unable to load document")
               metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
               expect(metric.metric_message).not_to end_with("Mbits/s")
               expect(metric.metric_attributes["step"]).to eq "getDocument"
+              expect(metric.metric_type).to eq "error"
             end
           end
         end

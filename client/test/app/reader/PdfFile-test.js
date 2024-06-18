@@ -156,24 +156,7 @@ describe('PdfFile', () => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toHaveBeenCalledWith(
               undefined,
-              {
-                data:
-                {
-                  documentId: 1,
-                  numPagesInDoc: null,
-                  pageIndex: null,
-                  file: '/document/1/pdf',
-                  documentType: 'test',
-                  prefetchDisabled: undefined,
-                  overscan: undefined
-                },
-                // eslint-disable-next-line no-useless-escape
-                message: 'Getting PDF document: \"/document/1/pdf\"',
-                product: 'reader',
-                additionalInfo: JSON.stringify({ source: 'VBMS' }),
-                type: 'performance',
-                eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
-              },
+              metricArgs()[1],
               metricArgs(true)[2]
             );
           });
@@ -191,23 +174,7 @@ describe('PdfFile', () => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toHaveBeenCalledWith(
               undefined,
-              {
-                data:
-                {
-                  documentId: 1,
-                  numPagesInDoc: null,
-                  pageIndex: null,
-                  file: '/document/1/pdf',
-                  documentType: 'test',
-                  prefetchDisabled: undefined,
-                  overscan: undefined
-                },
-                // eslint-disable-next-line no-useless-escape
-                message: 'Getting PDF document: \"/document/1/pdf\"',
-                product: 'reader',
-                type: 'performance',
-                eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
-              },
+              metricArgs()[1],
               metricArgs(true)[2]
             );
           });
