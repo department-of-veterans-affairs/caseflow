@@ -868,22 +868,22 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "change from Central hearing" do
+    shared_examples "change from Central hearing" do |time, slots = false|
       include_context "central_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "C", "11:00"
+      it_behaves_like "scheduling a virtual hearing", "C", time, slots
     end
 
-    shared_examples "change from Video hearing" do
+    shared_examples "change from Video hearing" do |time, slots = false|
       include_context "video_hearing"
       include_context "hearing subtree"
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
+      it_behaves_like "scheduling a virtual hearing", "RO39", time, slots
     end
 
     shared_examples "withdraw a hearing" do
@@ -1071,9 +1071,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         it_behaves_like "an appeal where there is an open hearing"
 
-        it_behaves_like "change from Central hearing"
+        it_behaves_like "change from Central hearing", "11:00"
 
-        it_behaves_like "change from Video hearing"
+        it_behaves_like "change from Video hearing", "10:30"
 
         it_behaves_like "withdraw a hearing"
       end
@@ -1106,9 +1106,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       it_behaves_like "an appeal where there is an open hearing"
 
-      it_behaves_like "change from Central hearing"
+      it_behaves_like "change from Central hearing", "11:00 AM", "slot"
 
-      it_behaves_like "change from Video hearing"
+      it_behaves_like "change from Video hearing", "10:30 AM", "slot"
 
       it_behaves_like "withdraw a hearing"
     end
