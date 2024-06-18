@@ -357,7 +357,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.string "control_group"
+    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
