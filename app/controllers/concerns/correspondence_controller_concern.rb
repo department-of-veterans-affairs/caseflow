@@ -116,7 +116,11 @@ module CorrespondenceControllerConcern
     # Get error counts
     nod_failures = errors.count(NOD_ERROR)
     sensitivity_failures = errors.count(SENSITIVITY_ERROR)
+
     cap_failures = errors.count(CAPACITY_ERROR)
+    sensitivity_failures = 2
+
+    nod_failures = 1
 
     # Build message based on error types
     failure_message << build_error_message(nod_failures, action_prefix, "NOD permissions settings") if nod_failures > 0
@@ -134,6 +138,8 @@ module CorrespondenceControllerConcern
         "maximum capacity reached for user's queue"
       )
     end
+
+    failure_message = failure_message.map { |msg| "•  " + msg} unless failure_message.length <= 1
 
     failure_message
   end
