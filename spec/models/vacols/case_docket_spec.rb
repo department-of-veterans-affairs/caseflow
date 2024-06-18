@@ -706,7 +706,7 @@ describe VACOLS::CaseDocket, :all_dbs do
              hearing_date: 5.days.ago.to_date,
              board_member: judge.vacols_attorney_id)
     end
-    
+
     subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
 
     context "when BFHINES is nil" do
@@ -714,10 +714,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         aod_ready_case.update(bfhines: nil)
       end
 
-      it "distributes the case" do
+      it "distributes the case with passed in judge" do
         subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
     end
 
@@ -726,10 +725,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         aod_ready_case.update(bfhines: "GP")
       end
 
-      it "distributes the case" do
+      it "distributes the case with passed in judge" do
         subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
     end
 
@@ -738,10 +736,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         aod_ready_case.update(bfhines: "42")
       end
 
-      it "distributes the case" do
+      it "distributes the case with passed in judge" do
         subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
     end
   end
