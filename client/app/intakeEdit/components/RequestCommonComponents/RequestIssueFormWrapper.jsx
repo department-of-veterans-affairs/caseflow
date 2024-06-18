@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
 import { useSelector, useDispatch } from 'react-redux';
-import { formatDateStr, formatDate } from '../../../util/DateUtil';
+import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util/DateUtil';
 import uuid from 'uuid';
 import {
   issueWithdrawalRequestApproved,
@@ -18,22 +18,24 @@ import {
 import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
 export const RequestIssueFormWrapper = (props) => {
-
+  const pendingIssueModificationRequest = props.pendingIssueModificationRequest ?
+    { ...props.pendingIssueModificationRequest } : {};
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
 
   const dispatch = useDispatch();
 
   const methods = useForm({
     defaultValues: {
-      requestReason: props.pendingIssueModificationRequest?.requestReason || '',
-      nonratingIssueCategory: props.pendingIssueModificationRequest?.nonratingIssueCategory || '',
-      decisionDate: props.pendingIssueModificationRequest?.decisionDate || '',
-      nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
+      requestReason: pendingIssueModificationRequest.requestReason || '',
+      nonratingIssueCategory: pendingIssueModificationRequest.nonratingIssueCategory || '',
+      decisionDate: pendingIssueModificationRequest.decisionDate || '',
+      nonratingIssueDescription: pendingIssueModificationRequest.nonratingIssueDescription || '',
       removeOriginalIssue: false,
-      withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
+      withdrawalDate: formatDateStr(formatDate(pendingIssueModificationRequest.withdrawalDate),
         'MM/DD/YYYY', 'YYYY-MM-DD') || '',
       status: 'assigned',
       addedFromApprovedRequest: false
@@ -78,10 +80,14 @@ export const RequestIssueFormWrapper = (props) => {
   };
 
   const vhaNonAdmin = (enhancedData) => {
-    if (props.type === 'addition') {
-      props.addToPendingReviewSection(enhancedData);
+    if (isNewModificationRequest) {
+      if (props.type === 'addition') {
+        props.addToPendingReviewSection(enhancedData);
+      } else {
+        props.moveToPendingReviewSection(enhancedData);
+      }
     } else {
-      props.moveToPendingReviewSection(enhancedData);
+      props.updatePendingReview(enhancedData.identifier, enhancedData);
     }
   };
 
@@ -96,8 +102,8 @@ export const RequestIssueFormWrapper = (props) => {
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
-    const decisionDate = formatDateStr(issueModificationRequest.decisionDate) ||
-      formatDateStr(props.currentIssue.decisionDate);
+    const decisionDate = formatDateStringForApi(issueModificationRequest.decisionDate) ||
+        formatDateStringForApi(props.currentIssue?.decisionDate);
 
     const enhancedData = {
       ...currentIssueFields,
@@ -109,7 +115,7 @@ export const RequestIssueFormWrapper = (props) => {
       requestType: props.type,
       ...issueModificationRequest,
       decisionDate,
-      identifier: props.pendingIssueModificationRequest?.id || uuid.v4(),
+      identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
       status: issueModificationRequest.status || 'assigned',
       addedFromApprovedRequest: false
     };
@@ -136,7 +142,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={`Request issue ${props.type} request`}
+            title={isNewModificationRequest || userIsVhaAdmin ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
@@ -144,7 +150,7 @@ export const RequestIssueFormWrapper = (props) => {
               },
               {
                 classNames: ['usa-button', 'usa-button-primary'],
-                name: 'Submit request',
+                name: userIsVhaAdmin ? 'Confirm' : 'Submit request',
                 onClick: handleSubmit(onSubmit),
                 disabled: !formState.isValid
               }
@@ -169,7 +175,8 @@ RequestIssueFormWrapper.propTypes = {
   moveToPendingReviewSection: PropTypes.func,
   addToPendingReviewSection: PropTypes.func,
   pendingIssueModificationRequest: PropTypes.object,
-  toggleConfirmPendingRequestIssueModal: PropTypes.func
+  toggleConfirmPendingRequestIssueModal: PropTypes.func,
+  updatePendingReview: PropTypes.func,
 };
 
 export default RequestIssueFormWrapper;

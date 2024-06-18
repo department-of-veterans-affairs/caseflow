@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import issueModificationRow from 'app/intake/components/IssueModificationRow';
+import { IssueModificationRow as issueModificationRow } from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,
@@ -58,7 +58,8 @@ import {
   toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection
+  removeFromPendingReviewSection,
+  updatePendingReview
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -99,11 +100,13 @@ class AddIssuesPage extends React.Component {
   };
 
   onClickRequestAdditionalIssue = () => {
+    this.setState({
+      pendingIssueModification: {}
+    });
     this.props.toggleRequestIssueAdditionModal();
   }
 
   onClickIssueRequestModificationAction = (issueModificationRequest, requestType) => {
-
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
@@ -130,6 +133,9 @@ class AddIssuesPage extends React.Component {
         pendingIssueModification: issueModificationRequest,
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    case 'cancelReviewIssueRequest':
+      this.props.toggleCancelPendingRequestIssueModal();
       break;
     default:
       // Do nothing if the dropdown option was not set or implemented.
@@ -171,19 +177,22 @@ class AddIssuesPage extends React.Component {
       break;
     case 'requestModification':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueModificationModal(index);
       break;
     case 'requestRemoval':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueRemovalModal(index);
       break;
     case 'requestWithdrawal':
       this.setState({
-        issueIndex: index
+        issueIndex: index,
+        pendingIssueModification: {}
       });
       this.props.toggleRequestIssueWithdrawalModal(index);
       break;
@@ -313,7 +322,7 @@ class AddIssuesPage extends React.Component {
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
       isLegacy,
-      pendingIssueModificationRequests
+      pendingIssueModificationRequests,
     } = this.props;
 
     const intakeData = intakeForms[formType];
@@ -736,6 +745,7 @@ class AddIssuesPage extends React.Component {
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
             toggleConfirmPendingRequestIssueModal={this.props.toggleConfirmPendingRequestIssueModal}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -746,6 +756,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueRemovalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -756,6 +767,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueWithdrawalModal()}
             moveToPendingReviewSection={this.props.moveToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -764,6 +776,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => this.props.toggleRequestIssueAdditionModal()}
             addToPendingReviewSection={this.props.addToPendingReviewSection}
             pendingIssueModificationRequest={this.state.pendingIssueModification}
+            updatePendingReview={this.props.updatePendingReview}
           />
         )}
 
@@ -899,7 +912,6 @@ export const EditAddIssuesPage = connect(
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy,
-    issueModificationRequests: state.issueModificationRequests
   }),
   (dispatch) =>
     bindActionCreators(
@@ -920,6 +932,7 @@ export const EditAddIssuesPage = connect(
         moveToPendingReviewSection,
         addToPendingReviewSection,
         removeFromPendingReviewSection,
+        updatePendingReview,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,

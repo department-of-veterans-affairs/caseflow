@@ -64,7 +64,8 @@ feature "Issue Modification Request", :postgres do
            benefit_type: "vha",
            nonrating_issue_category: "Caregiver | Eligibility",
            nonrating_issue_description: "A description of a newly added issue",
-           decision_date: Time.zone.now - 5.days)
+           decision_date: Time.zone.now - 5.days,
+           requestor: current_user)
   end
 
   let!(:removal_modification_request) do
@@ -74,7 +75,8 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_category: removal_request_issue.nonrating_issue_category,
            nonrating_issue_description: removal_request_issue.nonrating_issue_description,
            decision_date: removal_request_issue.decision_date,
-           request_issue: removal_request_issue)
+           request_issue: removal_request_issue,
+           requestor: current_user)
   end
 
   let!(:withdrawal_modification_request) do
@@ -85,7 +87,8 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
            decision_date: withdrawal_request_issue.decision_date,
            request_issue: withdrawal_request_issue,
-           withdrawal_date: Time.zone.now)
+           withdrawal_date: Time.zone.now,
+           requestor: current_user)
   end
 
   let!(:modify_existing_modification_request) do
@@ -268,7 +271,7 @@ feature "Issue Modification Request", :postgres do
 
       step "request type Addition and request approval" do
         expect(page).to have_text("Requested Additional Issues")
-        verify_admin_select_action_dropdown("addition")
+        verify_select_action_dropdown("addition")
         click_approve("addition")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         expect(page).to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
@@ -279,7 +282,7 @@ feature "Issue Modification Request", :postgres do
 
       step "request type removal and request approval" do
         expect(page).to have_text("Requested Issue Removal")
-        verify_admin_select_action_dropdown("removal")
+        verify_select_action_dropdown("removal")
         click_approve("removal")
         expect(page).to have_text("Remove issue")
         expect(page).to have_text("The contention you selected will be removed from the decision review.")
@@ -291,7 +294,7 @@ feature "Issue Modification Request", :postgres do
       step "request type withdrawal and request approval" do
         expect(page).not_to have_text("Withdrawn issues")
         expect(page).to have_text("Requested Issue Withdrawal")
-        verify_admin_select_action_dropdown("withdrawal")
+        verify_select_action_dropdown("withdrawal")
         click_approve("withdrawal")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         expect(page).to have_text("Withdrawn issues")
@@ -301,7 +304,7 @@ feature "Issue Modification Request", :postgres do
 
       step "request type modification when remove original issue is not selected" do
         expect(page).to have_text("Requested Changes")
-        verify_admin_select_action_dropdown("modification")
+        verify_select_action_dropdown("modification")
         click_approve("modification")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         requested_issues = page.find("tr", text: "Requested issues")
@@ -314,7 +317,7 @@ feature "Issue Modification Request", :postgres do
     it "should create remove original issue and create only 1 new issue when issue modification request is approved" do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Requested Changes")
-      verify_admin_select_action_dropdown("modification")
+      verify_select_action_dropdown("modification")
       find('label[for="status_approved"]').click
       expect(page).to have_text("Remove original issue")
       find('label[for="removeOriginalIssue"]').click
@@ -342,14 +345,14 @@ feature "Issue Modification Request", :postgres do
 
       step "request type Addition and request rejected" do
         expect(page).to have_text("Requested Additional Issues")
-        verify_admin_select_action_dropdown("addition")
+        verify_select_action_dropdown("addition")
         click_reject
         verify_rejection_count(1, "Requested Additional Issues")
       end
 
       step "request type removal and request rejected" do
         expect(page).to have_text("Requested Issue Removal")
-        verify_admin_select_action_dropdown("removal")
+        verify_select_action_dropdown("removal")
         click_reject
         verify_rejection_count(2, "Requested Issue Removal")
       end
@@ -357,16 +360,47 @@ feature "Issue Modification Request", :postgres do
       step "request type withdrawal and request approval" do
         expect(page).not_to have_text("Withdrawn issues")
         expect(page).to have_text("Requested Issue Withdrawal")
-        verify_admin_select_action_dropdown("withdrawal")
+        verify_select_action_dropdown("withdrawal")
         click_reject
         verify_rejection_count(3, "Requested Issue Withdrawal")
       end
 
       step "request type modification when remove original issue is not selected" do
         expect(page).to have_text("Requested Changes")
-        verify_admin_select_action_dropdown("modification")
+        verify_select_action_dropdown("modification")
         click_reject
         verify_rejection_count(4, "Requested Changes")
+      end
+    end
+  end
+
+  context "non admin user" do
+    it "should have a dropdown with specific option for each request type" do
+      visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
+      expect(page).to have_text("Pending admin review")
+
+      step "request type Addition" do
+        expect(page).to have_text("Requested Additional Issues")
+        verify_select_action_dropdown("addition", false)
+      end
+
+      step "request type modification" do
+        expect(page).to have_text("Requested Changes")
+        verify_select_action_dropdown("modification", false)
+      end
+
+      step "request type removal" do
+        expect(page).to have_text("Requested Issue Removal")
+        verify_select_action_dropdown("removal", false)
+      end
+
+      step "request type withdrawal" do
+        expect(page).to have_text("Requested Issue Withdrawal")
+
+        within "div[data-key=issue-withdrawal]" do
+          select_action = find("input", visible: false)
+          expect(select_action[:disabled]).to eq "true"
+        end
       end
     end
   end
@@ -447,10 +481,16 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_content(issue_modification_request.request_reason)
   end
 
-  def verify_admin_select_action_dropdown(request_type)
+  # rubocop:disable Metrics/AbcSize
+  def verify_select_action_dropdown(request_type, admin = true)
     data_key = "div[data-key=issue-#{request_type}]"
-    option = "Review issue #{request_type} request"
-    modal_title = "Request issue #{request_type}"
+    if admin
+      option = "Review issue #{request_type} request"
+      modal_title = "Request issue #{request_type}"
+    else
+      option = "Edit #{request_type} request"
+      modal_title = "Edit pending request"
+    end
     selector = page.find(data_key)
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
@@ -458,11 +498,12 @@ feature "Issue Modification Request", :postgres do
     # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
-    expect(page).to have_button("Submit request", disabled: true)
+    expect(page).to have_button("Confirm", disabled: true) if admin
     expect(page).to have_text("Original issue") unless request_type == "addition"
-    expect(page).to have_text("Approve request")
-    expect(page).to have_text("Reject request")
+    expect(page).to have_text("Approve request") if admin
+    expect(page).to have_text("Reject request") if admin
   end
+  # rubocop:enable Metrics/AbcSize
 
   def click_approve(request_type)
     find('label[for="status_approved"]').click

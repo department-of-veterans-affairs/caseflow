@@ -4,7 +4,7 @@ import COPY from '../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 import { groupBy } from 'lodash';
 
-const IssueModificationRow = (
+export const IssueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
@@ -53,10 +53,8 @@ const IssueModificationRow = (
   };
 };
 
-export default IssueModificationRow;
-
 IssueModificationRow.propTypes = {
-  fieldTitle: PropTypes.string,
-  issueModificationRequests: PropTypes.object,
-  onClickIssueRequestModificationAction: PropTypes.func
+  fieldTitle: PropTypes.string.isRequired,
+  issueModificationRequests: PropTypes.object.isRequired,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired
 };
