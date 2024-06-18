@@ -84,7 +84,7 @@ export const RequestIssueFormWrapper = (props) => {
       if (props.type === 'addition') {
         props.addToPendingReviewSection(enhancedData);
       } else {
-        props.moveToPendingReviewSection(props.issueIndex, enhancedData);
+        props.moveToPendingReviewSection(enhancedData);
       }
     } else {
       props.updatePendingReview(enhancedData.identifier, enhancedData);
@@ -98,12 +98,22 @@ export const RequestIssueFormWrapper = (props) => {
         nonratingIssueCategory: props.currentIssue.category,
         nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
         benefitType: props.currentIssue.benefitType,
+        decisionDate: props.currentIssue.decisionDate
       } : {};
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
-    const decisionDate = formatDateStringForApi(issueModificationRequestFormData.decisionDate) ||
-       formatDateStringForApi(props.currentIssue?.decisionDate);
+    // TODO: Make sure this works for all cases. Hopefully it does.
+    const decisionDate = issueModificationRequestFormData.decisionDate ?
+      formatDateStringForApi(issueModificationRequestFormData.decisionDate) :
+      currentIssueFields.decisionDate;
+
+    // console.log('in form wrapper');
+    // console.log('formatted decision date', decisionDate);
+    // console.log('form data decision date: ', issueModificationRequestFormData.decisionDate);
+    // console.log('when it is formatted:', formatDateStringForApi(issueModificationRequestFormData.decisionDate));
+    // console.log('currentIssue decision date', props.currentIssue?.decisionDate);
+    // console.log('when it is formatted:', formatDateStringForApi(currentIssueFields.decisionDate));
 
     const enhancedData = {
       ...currentIssueFields,

@@ -136,6 +136,9 @@ class AddIssuesPage extends React.Component {
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
     case 'cancelReviewIssueRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
       this.props.toggleCancelPendingRequestIssueModal();
       break;
     default:
@@ -783,7 +786,7 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
           <CancelPendingRequestIssueModal
-            pendingIssueModificationRequest={this.props.pendingIssueModificationRequests[this.state.issueRemoveIndex]}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
             onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
             removeFromPendingReviewSection={this.props.cancelOrRemovePendingReview}
             toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
