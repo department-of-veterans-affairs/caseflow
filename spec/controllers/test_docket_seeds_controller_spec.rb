@@ -1,12 +1,26 @@
 # frozen_string_literal: true
 
+TEST_SEEDS = JSON.parse(File.read("client/constants/TEST_SEEDS.json"))
+
 RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
   unless Rake::Task.task_defined?("assets:precompile")
     Rails.application.load_tasks
   end
   let!(:authenticated_user) { User.authenticate!(css_id: "RSPEC", roles: ["System Admin"]) }
 
-  describe "POST run-demo" do
+  describe "POST run-demo?seed_type=ii?seed_count=x&days_ago=y&judge_css_id=zzz" do
+    before(:all) do
+      Rake::Task.define_task(:environment)
+      ama_aod_hearing_seeds_task = TEST_SEEDS["ama-aod-hearing-seeds"]
+      ama_non_aod_hearing_seeds_task = TEST_SEEDS["ama-non-aod-hearing-seeds"]
+      legacy_case_seeds_task = TEST_SEEDS["legacy-case-seeds"]
+      ama_direct_review_seeds_task = TEST_SEEDS["ama-direct-review-seeds"]
+      Rake::Task[ama_aod_hearing_seeds_task].reenable
+      Rake::Task[ama_non_aod_hearing_seeds_task].reenable
+      Rake::Task[legacy_case_seeds_task].reenable
+      Rake::Task[ama_direct_review_seeds_task].reenable
+    end
+
     context "seed_ama_aod_hearings" do
       context "single seed" do
         context "with judge CSS ID given" do
@@ -297,8 +311,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             post :seed_dockets, body: data.to_json, as: :json
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            # legacy_appeal = LegacyAppeal.last
-            # TODO: Add expext statements
           end
 
           it "creates a 365 day old Legacy case" do
@@ -314,8 +326,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             post :seed_dockets, body: data.to_json, as: :json
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            # legacy_appeal = LegacyAppeal.last
-            # TODO: Add expext statements
           end
         end
 
@@ -333,8 +343,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             post :seed_dockets, body: data.to_json, as: :json
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            # legacy_appeal = LegacyAppeal.last
-            # TODO: Add expext statements
           end
 
           it "creates a 730 day old Legacy case" do
@@ -350,8 +358,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             post :seed_dockets, body: data.to_json, as: :json
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
-            # legacy_appeal = LegacyAppeal.last
-            # TODO: Add expext statements
           end
         end
       end
