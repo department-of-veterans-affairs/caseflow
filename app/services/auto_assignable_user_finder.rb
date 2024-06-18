@@ -25,7 +25,7 @@ class AutoAssignableUserFinder
   end
 
   def can_user_work_this_correspondence?(user:, correspondence:)
-    user_is_at_max_capacity?(user)
+    return false if user_is_at_max_capacity?(user)
 
     assignable = user_to_assignable_user(user)
 
