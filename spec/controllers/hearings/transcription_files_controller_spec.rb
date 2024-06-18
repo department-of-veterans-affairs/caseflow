@@ -3,10 +3,9 @@
 require "rails_helper"
 
 RSpec.describe Hearings::TranscriptionFilesController do
-  let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
-  before { TranscriptionTeam.singleton.add_user(user) }
-
   describe "GET download_transcription_file" do
+    let!(:user) { User.authenticate!(roles: ["Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched"]) }
+
     let!(:hearing) { create(:hearing, :with_transcription_files) }
     let(:transcription_file) { hearing.transcription_files.first }
     let(:options) { { format: :vtt, file_id: transcription_file.id } }
@@ -31,6 +30,9 @@ RSpec.describe Hearings::TranscriptionFilesController do
   end
 
   describe "GET transcription_file_tasks" do
+    let!(:user) { User.authenticate!(roles: ["Transcriptions"]) }
+    before { TranscriptionTeam.singleton.add_user(user) }
+
     let(:file_status_uploaded) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
     let(:file_status_retrieval) { Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success }
 
