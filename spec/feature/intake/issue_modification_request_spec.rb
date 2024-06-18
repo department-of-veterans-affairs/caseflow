@@ -458,6 +458,7 @@ feature "Issue Modification Request", :postgres do
     # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
+    expect(page).to have_button("Submit request", disabled: true)
     expect(page).to have_text("Original issue") unless request_type == "addition"
     expect(page).to have_text("Approve request")
     expect(page).to have_text("Reject request")

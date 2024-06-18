@@ -10,7 +10,7 @@ import {
   issueWithdrawalRequestApproved,
   updatePendingReview,
   issueAdditionRequestApproved,
-  activeIssueModificationRequest
+  updateActiveIssueModificationRequest
 } from 'app/intake/actions/issueModificationRequest';
 import {
   toggleIssueRemoveModal
@@ -48,7 +48,7 @@ export const RequestIssueFormWrapper = (props) => {
     if (['withdrawal', 'addition'].includes(props.type)) {
       dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
     } else {
-      dispatch(activeIssueModificationRequest(enhancedData));
+      dispatch(updateActiveIssueModificationRequest(enhancedData));
     }
 
     switch (props.type) {

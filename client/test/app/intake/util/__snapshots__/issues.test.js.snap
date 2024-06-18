@@ -3,7 +3,6 @@
 exports[`formatAddedIssues nonrating issues adding new returns correctly formatted issues 1`] = `
 Array [
   Object {
-    "addedFromApprovedRequest": undefined,
     "beforeAma": false,
     "correctionType": undefined,
     "date": "2020-05-07",
@@ -24,7 +23,6 @@ Array [
     "notes": null,
     "pactChecked": undefined,
     "pact_status_update_reason_notes": undefined,
-    "pendingWithdrawalDate": undefined,
     "rampClaimId": null,
     "ratingDecisionReferenceId": null,
     "ratingIssueReferenceId": "def456",
@@ -88,7 +86,6 @@ Array [
 exports[`formatAddedIssues nonrating issues editing existing returns correctly formatted issues 1`] = `
 Array [
   Object {
-    "addedFromApprovedRequest": undefined,
     "beforeAma": false,
     "correctionType": undefined,
     "date": "2020-05-07",
@@ -109,7 +106,6 @@ Array [
     "notes": null,
     "pactChecked": undefined,
     "pact_status_update_reason_notes": undefined,
-    "pendingWithdrawalDate": undefined,
     "rampClaimId": null,
     "ratingDecisionReferenceId": null,
     "ratingIssueReferenceId": "def456",
