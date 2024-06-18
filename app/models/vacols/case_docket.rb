@@ -335,7 +335,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where (VLJ is null or #{ineligible_judges_sattyid_cache}) and rownum <= ?
+      where (VLJ is null or #{ineligible_judges_sattyid_cache} or #{ineligible_judges_sattyid_cache(true)}) and rownum <= ?
     SQL
 
     fmtd_query = sanitize_sql_array([query, num])
