@@ -11,7 +11,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       Convert Hearing To Virtual
     </h1>
     <p>
-      The hearing request will appear in the scheduling queue for the 
+      The hearing request will appear in the scheduling queue for the
       <strong>
         Nashville Regional office
       </strong>
@@ -30,7 +30,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
     </h2>
     <div
       data-css-1a5irm0=""
-      data-testid="read-only-testid"
     >
       <strong>
         Veteran Name
@@ -48,7 +47,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       >
         <div
           data-css-1a5irm0=""
-          data-testid="read-only-testid"
         >
           <strong>
             Veteran Email (for these notifications only)
@@ -83,7 +81,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
     </h2>
     <div
       data-css-1a5irm0=""
-      data-testid="read-only-testid"
     >
       <strong>
         Attorney
@@ -101,7 +98,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       >
         <div
           data-css-1a5irm0=""
-          data-testid="read-only-testid"
         >
           <strong>
             POA/Representative Email (for these notifications only)
