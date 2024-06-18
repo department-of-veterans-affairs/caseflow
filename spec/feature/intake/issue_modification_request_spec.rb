@@ -87,8 +87,7 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
            decision_date: withdrawal_request_issue.decision_date,
            request_issue: withdrawal_request_issue,
-           withdrawal_date: Time.zone.now,
-           requestor: current_user)
+           withdrawal_date: Time.zone.now)
   end
 
   let!(:modify_existing_modification_request) do
@@ -98,7 +97,8 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_category: "Camp Lejune Family Member",
            nonrating_issue_description: "Newly modified issue description",
            decision_date: modified_request_issue.decision_date,
-           request_issue: modified_request_issue)
+           request_issue: modified_request_issue,
+           requestor: current_user)
   end
 
   let(:current_user) do
@@ -321,7 +321,7 @@ feature "Issue Modification Request", :postgres do
       find('label[for="status_approved"]').click
       expect(page).to have_text("Remove original issue")
       find('label[for="removeOriginalIssue"]').click
-      click_on "Submit request"
+      click_on "Confirm"
       expect(page).to have_text("Confirm changes")
       expect(page).to have_text("Delete original issue")
       expect(page).to have_text("Issue type: CHAMPVA")
@@ -398,6 +398,7 @@ feature "Issue Modification Request", :postgres do
         expect(page).to have_text("Requested Issue Withdrawal")
 
         within "div[data-key=issue-withdrawal]" do
+
           select_action = find("input", visible: false)
           expect(select_action[:disabled]).to eq "true"
         end
@@ -487,6 +488,7 @@ feature "Issue Modification Request", :postgres do
     if admin
       option = "Review issue #{request_type} request"
       modal_title = "Request issue #{request_type}"
+      expect(page).to have_text("Original issue") unless request_type == "addition"
     else
       option = "Edit #{request_type} request"
       modal_title = "Edit pending request"
@@ -495,27 +497,26 @@ feature "Issue Modification Request", :postgres do
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
     expect(page).to have_text(option)
-    # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
     expect(page).to have_button("Confirm", disabled: true) if admin
-    expect(page).to have_text("Original issue") unless request_type == "addition"
     expect(page).to have_text("Approve request") if admin
     expect(page).to have_text("Reject request") if admin
+    click_on "Cancel" unless admin
   end
   # rubocop:enable Metrics/AbcSize
 
   def click_approve(request_type)
     find('label[for="status_approved"]').click
     expect(page).to have_text("Remove original issue") if request_type == "modification"
-    click_on "Submit request"
+    click_on "Confirm"
   end
 
   def click_reject
     find('label[for="status_rejected"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
-    click_on "Submit request"
+    click_on "Confirm"
     expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
   end
 
