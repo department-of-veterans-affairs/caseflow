@@ -172,7 +172,8 @@ class Docket
   end
 
   def start_distribution_prior_to_goal
-    @start_distribution_prior_to_goal ||= CaseDistributionLever.find_by(item: "ama_#{docket_type}_start_distribution_prior_to_goals")
+    @start_distribution_prior_to_goal ||=
+      CaseDistributionLever.find_by(item: "ama_#{docket_type}_start_distribution_prior_to_goals")
   end
 
   private
