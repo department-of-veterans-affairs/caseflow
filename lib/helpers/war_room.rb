@@ -27,7 +27,7 @@ module WarRoom
       appeal = find_ama_appeal(identifier)
 
       if appeal.nil?
-        puts("No appeal was found for that identifier. Be sure you have either the appeal uuid or veteran file number. Aborting...")
+        puts("No appeal was found for that identifier. Aborting...")
         fail Interrupt
       end
 
