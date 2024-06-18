@@ -61,7 +61,7 @@ describe Appeal, :all_dbs do
 
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with([root_task, child_task], :id)
-        expect(subject.key?(:"Appeal #{appeal.id} [#{root_task}, #{child_task}, id]")).to be_truthy
+        expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
       end
     end
 
