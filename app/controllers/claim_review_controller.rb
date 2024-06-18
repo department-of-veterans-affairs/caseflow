@@ -181,7 +181,7 @@ class ClaimReviewController < ApplicationController
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if claim_review.pending_issue_modification_requests.any?
-      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
+      pending_issue_modification_requests_message
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }
     elsif request_issues_update.edited_issues.any?
@@ -209,6 +209,14 @@ class ClaimReviewController < ApplicationController
       { title: vha_edited_title, message: vha_message }
     else
       { title: "Edit Completed", message: default_message }
+    end
+  end
+
+  def pending_issue_modification_requests_message
+    if current_user.vha_business_line_admin_user?
+      decisions_message_hash_builder(vha_edited_message, review_edited_message)
+    else
+      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     end
   end
 
