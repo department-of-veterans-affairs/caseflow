@@ -398,7 +398,6 @@ feature "Issue Modification Request", :postgres do
         expect(page).to have_text("Requested Issue Withdrawal")
 
         within "div[data-key=issue-withdrawal]" do
-
           select_action = find("input", visible: false)
           expect(select_action[:disabled]).to eq "true"
         end
