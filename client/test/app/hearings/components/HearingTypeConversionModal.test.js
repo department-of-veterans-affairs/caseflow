@@ -1,15 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { logRoles } from '@testing-library/react';
-import { mount } from 'enzyme';
 
 import { appealData } from '../../../data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
 import HearingTypeConversionModal from '../../../../app/hearings/components/HearingTypeConversionModal';
 import Modal from '../../../../app/components/Modal';
 import COPY from 'COPY';
-import { log } from 'console';
-import exp from 'constants';
 
 const Wrapper = ({ children }) => {
   return queueWrapper({ children });
