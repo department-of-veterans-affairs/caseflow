@@ -23,7 +23,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedAod = () => {
     this.setState({ isReseedingAod: true });
-    ApiUtil.post('/run-demo-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-aod-seeds').then(() => {
       this.setState({
         isReseedingAod: false,
       });
@@ -37,7 +37,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedNonAod = () => {
     this.setState({ isReseedingNonAod: true });
-    ApiUtil.post('/run-demo-non-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-non-aod-seeds').then(() => {
       this.setState({
         isReseedingNonAod: false,
       });
@@ -202,19 +202,19 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="distribution_status">Distribution Status</h2>
                           <ul>
                             <li>
-                              <a href="/appeals-ready-to-distribute?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals-ready-to-distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download Appeals Ready to Distribute CSV
                                 </Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/appeals-distributed?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals-distributed?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV</Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/ineligible-judge-list?csv=1">
+                              <a href="/case_distribution_levers_tests/ineligible-judge-list?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
                               </a>
                             </li>
