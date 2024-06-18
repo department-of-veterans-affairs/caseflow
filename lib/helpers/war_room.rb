@@ -65,7 +65,7 @@ module WarRoom
     private
 
     def find_ama_appeal(identifier)
-      if identifier.match(UUID_REGEX)
+      if identifier.match?(UUID_REGEX)
         Appeal.find_by(uuid: identifier)
       else
         Appeal.find_by(veteran_file_number: identifier)
