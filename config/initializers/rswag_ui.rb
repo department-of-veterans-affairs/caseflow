@@ -10,16 +10,16 @@ Rswag::Ui.configure do |c|
 
   # The API V1, API V2, and API V3 swagger files are the rswag generated files
 
-  # c.openapi_endpoint '/api-docs/v1/swagger.yaml', 'API V1'
   unless Rails.in_upper_env?
+    # c.openapi_endpoint '/api-docs/v1/swagger.yaml', 'API V1'
     c.openapi_endpoint '/api-docs/cmp/swagger.yaml', 'API V1: Correspondence CMP Integration'
+    # c.openapi_endpoint '/api-docs/v2/swagger.yaml', 'API V2'
+    # c.openapi_endpoint '/api-docs/v3/swagger.yaml', 'API V3'
+    c.openapi_endpoint '/api-docs/v3/ama_issues.yaml', 'API V3: AMA Request Issues'
+    c.openapi_endpoint '/api-docs/v3/decision_reviews.yaml', 'API V3: Decision Reviews'
+    c.openapi_endpoint '/api-docs/v3/vacols_issues.yaml', 'API V3: VACOLS Issues'
+    c.openapi_endpoint '/api-docs/idt/swagger.yaml', 'IDT-Caseflow-Package Manager Bridge API'
   end
-  # c.openapi_endpoint '/api-docs/v2/swagger.yaml', 'API V2'
-  # c.openapi_endpoint '/api-docs/v3/swagger.yaml', 'API V3'
-  c.openapi_endpoint '/api-docs/v3/ama_issues.yaml', 'API V3: AMA Request Issues'
-  c.openapi_endpoint '/api-docs/v3/decision_reviews.yaml', 'API V3: Decision Reviews'
-  c.openapi_endpoint '/api-docs/v3/vacols_issues.yaml', 'API V3: VACOLS Issues'
-  c.openapi_endpoint '/api-docs/idt/swagger.yaml', 'IDT-Caseflow-Package Manager Bridge API'
 
   # Add Basic Auth in case your API is private
   # c.basic_auth_enabled = true
