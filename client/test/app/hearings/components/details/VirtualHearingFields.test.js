@@ -56,7 +56,6 @@ describe('VirtualHearingFields', () => {
       <VirtualHearingFields
         update={updateSpy}
         hearing={amaHearing}
-        virtualHearing={amaHearing.virtualHearing}
       />,
       {
         wrapper: Wrapper,
@@ -88,8 +87,6 @@ describe('VirtualHearingFields', () => {
         wrapperProps: { user: anyUser, hearing: amaHearing, store: detailsStore }
       }
     );
-
-    const hearingMeetingType = amaHearing.judge.meetingType;
 
     // Assertions
     const virtualHearingForm  = screen.getByRole('heading', { name: /Hearing Links/i });

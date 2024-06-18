@@ -11,7 +11,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       Convert Hearing To Virtual
     </h1>
     <p>
-      The hearing request will appear in the scheduling queue for the 
+      The hearing request will appear in the scheduling queue for the
       <strong>
         Nashville Regional office
       </strong>
