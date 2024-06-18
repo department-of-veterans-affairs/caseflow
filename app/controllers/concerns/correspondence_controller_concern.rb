@@ -114,38 +114,34 @@ module CorrespondenceControllerConcern
     failure_message = []
 
     # Get error counts
-    nod_failures = errors.count(NOD_ERROR)
-    sensitivity_failures = errors.count(SENSITIVITY_ERROR)
+    error_counts = {
+      NOD_ERROR => errors.count(NOD_ERROR),
+      SENSITIVITY_ERROR => errors.count(SENSITIVITY_ERROR),
+      CAPACITY_ERROR => errors.count(CAPACITY_ERROR)
+    }
 
-    cap_failures = errors.count(CAPACITY_ERROR)
-    sensitivity_failures = 2
-
-    nod_failures = 1
-
-    # Build message based on error types
-    failure_message << build_error_message(nod_failures, action_prefix, "NOD permissions settings") if nod_failures > 0
-    if sensitivity_failures > 0
-      failure_message << build_error_message(
-        sensitivity_failures,
-        action_prefix,
-        "sensitivity level mismatch"
-      )
+    error_counts.each do |error, count|
+      if count.positive?
+        multiple_errors = error_counts.values.count(&:positive?) > 1
+        failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
+      end
     end
-    if cap_failures > 0
-      failure_message << build_error_message(
-        cap_failures,
-        action_prefix,
-        "maximum capacity reached for user's queue"
-      )
-    end
-
-    failure_message = failure_message.map { |msg| "•  " + msg} unless failure_message.length <= 1
 
     failure_message
   end
 
-  def build_error_message(count, action_prefix, reason)
+  def error_reason(error)
+    case error
+    when NOD_ERROR then "NOD permissions settings"
+    when SENSITIVITY_ERROR then "sensitivity level mismatch"
+    when CAPACITY_ERROR then "maximum capacity reached for user's queue"
+    end
+  end
+
+  def build_error_message(count, action_prefix, reason, use_bullet)
+    # Build message based on error types
     message = "#{count} cases were not #{action_prefix}assigned"
+    message = "• #{message}" if use_bullet
     message += " because of #{reason}." unless count.zero?
     message
   end
