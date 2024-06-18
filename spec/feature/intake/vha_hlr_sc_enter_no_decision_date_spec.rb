@@ -194,7 +194,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       click_on("Establish")
       expect(page).to have_content("Number of issues has changed")
-      click_on("Yes, save")
+      click_on("Confirm")
 
       expect(page).to have_content(edit_establish_success_message_text)
       expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
@@ -246,7 +246,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE)
 
-      click_button "Yes, save"
+      click_button "Confirm"
 
       expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(current_url).to include("/decision_reviews/vha?tab=incomplete")
@@ -320,7 +320,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE)
 
-      click_button "Yes, save"
+      click_button "Confirm"
 
       expect(page).to have_content(edit_establish_success_message_text)
       expect(current_url).to include("/decision_reviews/vha?tab=in_progress")

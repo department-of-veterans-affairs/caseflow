@@ -8,6 +8,7 @@ import { updatePendingReview } from 'app/intake/actions/issueModificationRequest
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
 import { isEmpty } from 'lodash';
+import COPY from 'app/../COPY';
 
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
@@ -58,8 +59,8 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Cancel',
             onClick: this.props.closeHandler
           },
-          { classNames: ['remove-issue'],
-            name: 'Remove',
+          { classNames: ['usa-button', 'remove-issue'],
+            name: COPY.MODAL_REMOVE_BUTTON,
             onClick: () => {
               this.props.closeHandler();
               onSubmit();

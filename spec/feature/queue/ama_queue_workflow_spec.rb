@@ -182,7 +182,7 @@ feature "Attorney checkout flow", :all_dbs do
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -198,7 +198,7 @@ feature "Attorney checkout flow", :all_dbs do
       check("PACT Act", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -214,7 +214,7 @@ feature "Attorney checkout flow", :all_dbs do
       check("PACT Act", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -239,7 +239,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Add this issue"
 
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -263,7 +263,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Add this issue"
 
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -288,7 +288,7 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Add this issue"
 
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -316,7 +316,7 @@ feature "Attorney checkout flow", :all_dbs do
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       expect(page).to have_content("Special Issues: None")
@@ -335,7 +335,7 @@ feature "Attorney checkout flow", :all_dbs do
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("#Edit-issue-button-id-1").click
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -354,7 +354,7 @@ feature "Attorney checkout flow", :all_dbs do
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -373,7 +373,7 @@ feature "Attorney checkout flow", :all_dbs do
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -394,7 +394,7 @@ feature "Attorney checkout flow", :all_dbs do
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
       click_on "View task instructions"
@@ -417,7 +417,7 @@ feature "Attorney checkout flow", :all_dbs do
         click_remove_intake_issue_dropdown_by_number(1)
       end
       click_on "Save"
-      click_on "Yes, save"
+      click_on "Confirm"
       using_wait_time(10) do
         expect(page).to have_content("You have successfully added 1 issue and removed 3 issues.")
       end

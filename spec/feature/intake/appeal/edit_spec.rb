@@ -370,7 +370,7 @@ feature "Appeal Edit issues", :all_dbs do
     # click buttons
     click_on "Add this issue"
     click_on "Save"
-    click_on "Yes, save"
+    click_on "Confirm"
   end
 
   context "A contested claim is added to an evidence submission appeal" do
