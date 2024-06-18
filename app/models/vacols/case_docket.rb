@@ -343,7 +343,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
     conn = connection
@@ -369,7 +369,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals.map { |appeal| appeal["bfd19"] }
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable
 
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
@@ -569,12 +569,13 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
 
   def self.generate_priority_case_distribution_lever_aod_query
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days) || CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
-      # {Test to see if we need to add an "or PREV_DECIDING_JUDGE IS NULL" to the query}
-      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days) ||
+       CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.omit
+      "((PREV_DECIDING_JUDGE = ? or PREV_DECIDING_JUDGE is null or PREV_DECIDING_JUDGE is not null)
+      and AOD = '1' and BFAC = '7' )"
     elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
-      # {Need to make sure PREV_DECIDING_JUDGE is equal to the VLJ since it is infinite}
-      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
+      "((PREV_DECIDING_JUDGE = ? or #{ineligible_judges_sattyid_cache(true)} or
+      #{vacols_judges_with_exclude_appeals_from_affinity}) and AOD = '1' and BFAC = '7' )"
     else
       "VLJ = ?"
     end
@@ -584,40 +585,24 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.cavc_aod_affinity_filter(appeals, judge)
     appeals.reject! do |appeal|
       # {will skip if not CAVC AOD || if CAVC AOD being distributed to tied_to judge || if not tied to any judge}
-      next if (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
-              (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
-                !appeal["vlj"].blank? &&
-                (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
-                appeal["vlj"] == judge.vacols_attorney_id) ||
-              (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+      next if tied_to_or_not_cavc_aod?(appeal, judge)
 
-      # {if tied_to judge != judge being distributed to, we will skip if the judge is ineligible, reject if not}
-      if !appeal["vlj"].blank? &&
-         (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
-         (appeal["vlj"] != judge.vacols_attorney_id)
-
-        if ineligible_judges_sattyids&.include?(appeal["vlj"])
-          next
-        end
+      if not_distributing_to_tied_judge?(appeal, judge)
+        next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
         next (appeal["vlj"] != judge.vacols_attorney_id)
       end
 
-      # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}
-      next if ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
-              (appeal["vlj"] != appeal["prev_deciding_judge"] &&
-                excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"]))
+      next if ineligible_or_excluded_deciding_judge?(appeal)
 
       if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_aod_affinity_days)
         next if appeal["prev_deciding_judge"] == judge.vacols_attorney_id
 
-        VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
-          (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
-            .appeal_affinity
-            .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
+        reject_due_to_affinity?(appeal)
       elsif CaseDistributionLever.cavc_aod_affinity_days == Constants.ACD_LEVERS.infinite
         next if ineligible_judges_sattyids&.include?(appeal["vlj"])
 
@@ -626,6 +611,37 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeal["prev_deciding_judge"] == appeal["vlj"]
       end
     end
+  end
+
+  def self.tied_to_or_not_cavc_aod?(appeal, judge)
+    (appeal["bfac"] != "7" || appeal["aod"] != 1) ||
+      (appeal["bfac"] == "7" && appeal["aod"] == 1 &&
+        !appeal["vlj"].blank? &&
+        (appeal["vlj"] == appeal["prev_deciding_judge"] || appeal["prev_deciding_judge"].nil?) &&
+        appeal["vlj"] == judge.vacols_attorney_id) ||
+      (appeal["vlj"].nil? && appeal["prev_deciding_judge"].nil?)
+  end
+
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def self.not_distributing_to_tied_judge?(appeal, judge)
+    !appeal["vlj"].blank? &&
+      (appeal["vlj"] == appeal["prev_deciding_judge"]) &&
+      (appeal["vlj"] != judge.vacols_attorney_id)
+  end
+
+  def self.ineligible_or_excluded_deciding_judge?(appeal)
+    # {if deciding_judge is ineligible or excluded, we will skip, unless excluded deciding_judge = VLJ}
+    ineligible_judges_sattyids&.include?(appeal["prev_deciding_judge"]) ||
+      (appeal["vlj"] != appeal["prev_deciding_judge"] &&
+        excluded_judges_sattyids&.include?(appeal["prev_deciding_judge"]))
+  end
+
+  def self.reject_due_to_affinity?(appeal)
+    VACOLS::Case.find_by(bfkey: appeal["bfkey"])&.appeal_affinity&.affinity_start_date.nil? ||
+      (VACOLS::Case.find_by(bfkey: appeal["bfkey"])
+        .appeal_affinity
+        .affinity_start_date > CaseDistributionLever.cavc_aod_affinity_days.to_i.days.ago)
   end
 
   def self.ineligible_judges_sattyids
@@ -638,6 +654,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         .flat_map(&:judge).compact.pluck(:css_id))&.pluck(:sattyid)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def self.ineligible_judges_sattyid_cache(prev_deciding_judge = false)
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
        !ineligible_judges_sattyids.blank?
@@ -676,6 +693,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+
   def self.vacols_judges_with_exclude_appeals_from_affinity
     return "PREV_DECIDING_JUDGE = 'false'" unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
 
@@ -688,12 +707,10 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
   def self.case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
   end
 end
-# rubocop:enable Metrics/ClassLength
+# rubocop:enable Metrics/ClassLength, Metrics/AbcSize
