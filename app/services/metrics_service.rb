@@ -93,7 +93,8 @@ class MetricsService
         app_name: app,
         attrs: {
           service: service,
-          endpoint: name
+          endpoint: name,
+          uuid: uuid
         }
       }
       MetricsService.emit_gauge(sent_to_info)

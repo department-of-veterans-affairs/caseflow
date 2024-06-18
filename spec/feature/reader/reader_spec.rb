@@ -1346,22 +1346,6 @@ RSpec.feature "Reader", :all_dbs do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
       expect(page).to have_content("Unable to load document")
     end
-
-    scenario "a document that is not accessible by user displays error message" do
-      allow_any_instance_of(Reader::DocumentsController).to receive(:index)
-        .and_raise(Caseflow::Error::EfolderAccessForbidden.new(code: 403, message: "error"))
-
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-      expect(page).to have_content("Additional access")
-    end
-
-    scenario "a document that is not fouund displays error message" do
-      allow_any_instance_of(Reader::DocumentsController).to receive(:index)
-        .and_raise(ActiveRecord::RecordNotFound)
-
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-      expect(page).to have_content("Information cannot be found")
-    end
   end
 end
 

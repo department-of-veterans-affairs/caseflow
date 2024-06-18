@@ -43,13 +43,9 @@ class ScheduleHearingTask < Task
   end
 
   def create_parent_hearing_task
-    return true unless parent
-
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
-
-    true
   end
 
   def verify_vso_can_change_hearing_to_virtual!(params)

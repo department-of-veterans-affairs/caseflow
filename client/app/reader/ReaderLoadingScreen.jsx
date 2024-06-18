@@ -32,7 +32,8 @@ export class ReaderLoadingScreen extends React.Component {
         this.props.onReceiveAnnotations(annotations);
       }).
       catch((err) => {
-        throw err;
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json ${err}`));
       });
   }
 
