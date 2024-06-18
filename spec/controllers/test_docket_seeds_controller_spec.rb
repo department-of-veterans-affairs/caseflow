@@ -35,7 +35,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -59,7 +58,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -85,7 +83,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -109,7 +106,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -135,7 +131,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(5)
         end
@@ -157,7 +152,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(10)
         end
@@ -178,7 +172,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -202,7 +195,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -228,7 +220,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -252,7 +243,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             hearing_case = Appeal.last
@@ -278,7 +268,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(5)
         end
@@ -300,7 +289,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(10)
         end
@@ -321,7 +309,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
           end
@@ -337,7 +324,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
           end
@@ -355,7 +341,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
           end
@@ -371,7 +356,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(LegacyAppeal.count).to eq(1)
           end
@@ -389,7 +373,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(LegacyAppeal.count).to eq(5)
         end
@@ -411,7 +394,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(LegacyAppeal.count).to eq(10)
         end
@@ -432,7 +414,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             direct_review = Appeal.last
@@ -453,7 +434,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
             ]
 
             post :seed_dockets, body: data.to_json, as: :json
-
             expect(response.status).to eq 200
             expect(Appeal.count).to eq(1)
             direct_review = Appeal.last
@@ -477,7 +457,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.where(docket_type: "direct_review").count).to eq(5)
           expect(Appeal.count).to eq(5)
@@ -500,7 +479,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.where(docket_type: "direct_review").count).to eq(10)
           expect(Appeal.count).to eq(10)
@@ -539,7 +517,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(3)
           expect(Appeal.where(docket_type: "hearing", aod_based_on_age: true).count).to eq(1)
@@ -579,7 +556,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(10)
           expect(Appeal.where(docket_type: "hearing", aod_based_on_age: true).count).to eq(2)
@@ -619,7 +595,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
           ]
 
           post :seed_dockets, body: data.to_json, as: :json
-
           expect(response.status).to eq 200
           expect(Appeal.count).to eq(3)
           expect(Appeal.where(docket_type: "hearing", aod_based_on_age: true).count).to eq(1)
