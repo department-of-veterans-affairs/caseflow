@@ -83,7 +83,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def non_genpop_for_judge(judge)
     with_appeal_affinities
       .with_original_appeal_and_judge_task
-      .where("appeal_affinities.affinity_start_date > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+             CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
@@ -142,7 +143,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def affinitized_ama_affinity_cases(lever_days)
-    where("appeal_affinities.affinity_start_date > ?", lever_days.to_i.days.ago)
+    where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+          lever_days.to_i.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

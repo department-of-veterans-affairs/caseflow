@@ -18,7 +18,7 @@ class Docket
 
     # The `ready_for_distribution` scope will functionally add a filter for active appeals, and adding it here first
     # will cause that scope to always return zero appeals.
-    scope.active unless ready
+    scope = scope.active unless ready
 
     if ready
       scope = scope.ready_for_distribution
@@ -67,8 +67,6 @@ class Docket
     appeals(priority: true, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
-  # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     appeals(priority: false, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
