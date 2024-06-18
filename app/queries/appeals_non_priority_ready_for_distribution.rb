@@ -9,7 +9,6 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
     cavc: "CAVC",
     receipt_date: "Receipt Date",
     assigned_at: "Assigned at",
-    ready_for_distribution_at: "Ready for Distribution at",
     target_distro_date: "Target Distro Date",
     days_before_goal_date: "Days Before Goal Date",
     hearing_judge: "Hearing Judge",
@@ -44,7 +43,7 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
         if sym == :legacy
           []
         else
-          appeals = docket.ready_to_distribute_appeals.nonpriority
+          appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
           ama_rows(appeals, docket, sym)
         end
       end
@@ -62,8 +61,7 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
         aod: appeal.aod,
         cavc: appeal.cavc,
         receipt_date: appeal.receipt_date,
-        assigned_at: "assigned_at",
-        ready_for_distribution_at: ready_for_distribution_at,
+        assigned_at: ready_for_distribution_at,
         target_distro_date: target_distro_date(appeal.receipt_date, docket),
         days_before_goal_date: days_before_goal_date(appeal.receipt_date, docket),
         hearing_judge: hearing_judge,
