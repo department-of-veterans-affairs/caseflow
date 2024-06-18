@@ -38,9 +38,11 @@ class AutoAssignableUserFinder
   attr_writer :unassignable_reason
 
   def run_auto_assign_algorithm(correspondence, users)
+    nod_error = CorrespondenceControllerConcern::NOD_ERROR
+    sensitivity_error = CorrespondenceControllerConcern::SENSITIVITY_ERROR
     users.each do |user|
       if correspondence.nod && !user.nod?
-        self.unassignable_reason << "NOD permission is currently disabled for this user."
+        unassignable_reason << nod_error unless unassignable_reason.include?(nod_error)
         next
       end
 
@@ -49,7 +51,7 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        self.unassignable_reason << "User does not meet the sensitivity level required."
+        unassignable_reason << sensitivity_error unless unassignable_reason.include?(sensitivity_error)
       end
     end
 
@@ -57,8 +59,9 @@ class AutoAssignableUserFinder
   end
 
   def user_is_at_max_capacity?(user)
+    capacity_error = CorrespondenceControllerConcern::CAPACITY_ERROR
     if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
-      self.unassignable_reason << "Queue volume has reached maximum capacity for this user."
+      unassignable_reason << capacity_error unless unassignable_reason.include?(capacity_error)
       true
     else
       false

@@ -40,7 +40,7 @@ module CorrespondenceControllerConcern
     if check_result
       update_task(mail_team_user, task_id)
     else
-      errors << permission_checker.unassignable_reason
+      errors.concat(permission_checker.unassignable_reason)
     end
   end
 
@@ -101,26 +101,31 @@ module CorrespondenceControllerConcern
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
     failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
 
-    failure_message = []
-
-    # get error counts
-    nod_failures = errors.select { |error| error == NOD_ERROR }
-    sensitivity_failures = errors.select { |error| error == SENSITIVITY_ERROR }
-    cap_failures = errors.select { |error| error == CAPACITY_ERROR }
-
-    # build message
-    failure_message << "#{nod_failures.count} cases were not #{action_prefix}assigned because"\
-     "of NOD permissions settings." unless nod_failures.blank?
-    failure_message << "#{sensitivity_failures.count} cases were not #{action_prefix}assigned because"\
-     "of sensitivity level mismatch." unless sensitivity_failures.blank?
-    failure_message << "#{cap_failures.count} cases were not #{action_prefix}assigned to user because"\
-     "maximum capacity has been reached for user's queue" unless cap_failures.blank?
+    failure_message = build_failure_message(errors, action_prefix)
 
     # return JSON message
     {
       header: errors.blank? ? success_header : failure_header,
       message: errors.blank? ? success_message : failure_message.join("\n")
     }
+  end
+
+  def build_failure_message(errors, action_prefix)
+    failure_message = []
+
+    # get error counts
+    nod_failures = errors.count(NOD_ERROR)
+    sensitivity_failures = errors.count(SENSITIVITY_ERROR)
+    cap_failures = errors.count(CAPACITY_ERROR)
+
+    # build message
+    failure_message << "#{nod_failures} cases were not #{action_prefix}assigned\n" \
+                      "because of NOD permissions settings."
+    failure_message << "#{sensitivity_failures} cases were not #{action_prefix}assigned\n" \
+                      "because of sensitivity level mismatch."
+    failure_message << "#{cap_failures} cases were not #{action_prefix}assigned\n" \
+                      "to user because maximum capacity has been reached for user's queue."
+    failure_message
   end
 
   def set_flash_intake_success_message
