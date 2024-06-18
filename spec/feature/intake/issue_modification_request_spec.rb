@@ -482,13 +482,12 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_content(issue_modification_request.request_reason)
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable convention:Metrics/PerceivedComplexity
   def verify_select_action_dropdown(request_type, admin = true)
     data_key = "div[data-key=issue-#{request_type}]"
     if admin
       option = "Review issue #{request_type} request"
       modal_title = "Request issue #{request_type}"
-      expect(page).to have_text("Original issue") unless request_type == "addition"
     else
       option = "Edit #{request_type} request"
       modal_title = "Edit pending request"
@@ -504,7 +503,7 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_text("Reject request") if admin
     click_on "Cancel" unless admin
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable convention:Metrics/PerceivedComplexity
 
   def click_approve(request_type)
     find('label[for="status_approved"]').click

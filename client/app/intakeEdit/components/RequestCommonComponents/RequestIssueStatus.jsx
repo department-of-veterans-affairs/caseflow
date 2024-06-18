@@ -88,7 +88,7 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
   let fieldClasses = 'checkbox';
 
   return (
-    <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
+    <div className={fieldClasses} style={{ paddingLeft: '30px' }}>
       <Checkbox
         name={name}
         key={`${name}-${option}`}
@@ -99,7 +99,7 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
         }}
         unpadded
       />
-    </fieldset>
+    </div>
   );
 };
 
