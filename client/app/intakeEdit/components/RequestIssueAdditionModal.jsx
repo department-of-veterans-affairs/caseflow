@@ -7,15 +7,16 @@ import IssueTypeSelector from './RequestCommonComponents/IssueTypeSelector';
 import PriorDecisionDateAlert from './RequestCommonComponents/PriorDecisionDateAlert';
 import PriorDecisionDateSelector from './RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from './RequestCommonComponents/IssueDescription';
-import RequestIssueStatus from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
+import { RequestIssueStatus, statusSchema } from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
-const additionSchema = yup.object({
+const additionSchema = yup.object().shape({
   nonratingIssueCategory: yup.string().required(),
   decisionDate: yup.date().required().
     max(new Date(), 'Decision date cannot be in the future.'),
   nonratingIssueDescription: yup.string().required(),
-  requestReason: yup.string().required()
+  requestReason: yup.string().required(),
+  status: statusSchema
 });
 
 const RequestIssueAdditionContent = () => {

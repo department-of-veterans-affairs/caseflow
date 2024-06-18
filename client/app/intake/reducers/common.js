@@ -97,8 +97,13 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['confirmPendingRequestIssueModalVisible'],
-      pendingIssueModificationRequest: {
+      $toggle: ['confirmPendingRequestIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST] = () => {
+    return update(state, {
+      activeIssueModificationRequest: {
         $set: action.payload.data
       }
     });
@@ -313,11 +318,11 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
-    let issueModificatioNRequest = action.payload.issueModificationRequest;
+    let issueModificationRequest = action.payload.issueModificationRequest;
 
-    issueModificatioNRequest.addedFromApprovedRequest = true;
+    issueModificationRequest.addedFromApprovedRequest = true;
 
-    let addedIssues = [...listOfIssues, issueModificatioNRequest];
+    let addedIssues = [...listOfIssues, issueModificationRequest];
 
     return {
       ...state,

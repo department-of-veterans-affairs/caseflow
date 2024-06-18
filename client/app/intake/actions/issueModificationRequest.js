@@ -75,3 +75,10 @@ export const issueAdditionRequestApproved = (issueModificationRequest) => (
     payload: { issueModificationRequest }
   }
 );
+
+export const updateActiveIssueModificationRequest = (data) => ({
+  type: ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST,
+  payload: {
+    data
+  }
+});

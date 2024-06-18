@@ -4,6 +4,7 @@ import { useFormContext, useController, useForm } from 'react-hook-form';
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 import TextareaField from 'app/components/TextareaField';
+import * as yup from 'yup';
 
 const DECISION_APPROVE = [
   {
@@ -18,12 +19,20 @@ const DECISION_REJECT = [
   }
 ];
 
-const RequestIssueStatus = ({ displayCheckbox = false }) => {
+export const statusSchema = yup.lazy((value) => {
+  // eslint-disable-next-line no-undefined
+  if (value !== undefined) {
+    return yup.mixed().oneOf(['approved', 'rejected']);
+  }
+
+  return yup.mixed().notRequired();
+});
+
+export const RequestIssueStatus = ({ displayCheckbox = false }) => {
   const { register, methods, watch } = useFormContext();
   const { setValue } = useForm();
 
   const watchStatus = watch('status');
-  // const [status, setStatus] = React.useState({});
 
   return (
     <>
@@ -33,11 +42,8 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         label=""
         vertical
         options={DECISION_APPROVE}
-        // value={status}
-        // value={field.value}
         hideLabel
         onChange={(val) => {
-          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}
@@ -52,9 +58,7 @@ const RequestIssueStatus = ({ displayCheckbox = false }) => {
         vertical
         options={DECISION_REJECT}
         hideLabel
-        // value={status}
         onChange={(val) => {
-          // setStatus(val);
           setValue('status', val);
         }}
         inputRef={register}
