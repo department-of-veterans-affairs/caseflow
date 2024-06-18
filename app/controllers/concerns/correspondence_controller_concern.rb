@@ -120,11 +120,11 @@ module CorrespondenceControllerConcern
 
     # build message
     failure_message << "• #{nod_failures} cases were not #{action_prefix}assigned" \
-                      "because of NOD permissions settings."
+                      "because of NOD permissions settings." unless nod_failures == 0
     failure_message << "• #{sensitivity_failures} cases were not #{action_prefix}assigned" \
-                      "because of sensitivity level mismatch."
+                      "because of sensitivity level mismatch." unless sensitivity_failures == 0
     failure_message << "• #{cap_failures} cases were not #{action_prefix}assigned" \
-                      "to user because maximum capacity has been reached for user's queue."
+                      "to user because maximum capacity has been reached for user's queue." unless cap_failures == 0
     failure_message
   end
 
