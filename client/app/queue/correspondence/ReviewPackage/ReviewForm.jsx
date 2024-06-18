@@ -131,7 +131,7 @@ export const ReviewForm = (props) => {
       data: {
         correspondence: {
           notes: props.editableData.notes,
-          correspondence_type_id: props.editableData.default_select_value,
+          correspondence_type_id: correspondenceTypeID,
           va_date_of_receipt: vaDORDate
         },
         veteran: {
