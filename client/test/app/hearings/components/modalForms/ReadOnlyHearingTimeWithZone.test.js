@@ -59,6 +59,12 @@ describe('ReadOnlyHearingTimeWithZone', () => {
           expect(hearingTimeElements).not.toHaveLength(0);
           const dateTime = moment(startTimeInEasternTime).tz(timezone);
 
+        if (hearingStartTime === null) {
+          expect(screen.queryByText('Hearing Time')).toBeNull();
+        } else {
+          const hearingTimeElements = screen.queryAllByText('Hearing Time');
+          expect(hearingTimeElements).not.toHaveLength(0);
+          const dateTime = moment(hearingStartTime).tz(timezone, true);
           if (zoneName === 'Eastern') {
             const expectedText = `${dateTime.format('h:mm A')} ${zoneName}`;
             const textElements = screen.queryAllByText(expectedText);
