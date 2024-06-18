@@ -517,8 +517,6 @@ class VACOLS::CaseDocket < VACOLS::Record
               SQL
             end
 
-    # {Once we have the query we can run it through an affinity days filter, reorder then add limit}
-
     fmtd_query = sanitize_sql_array([
                                       query,
                                       judge.vacols_attorney_id,
@@ -537,11 +535,11 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     conn.transaction do
       if dry_run
-        appeals = conn.exec_query(query).to_a
+        dry_appeals = conn.exec_query(query).to_a
 
-        cavc_aod_affinity_filter(appeals, judge)
+        cavc_aod_affinity_filter(dry_appeals, judge)
 
-        appeals
+        dry_appeals
       else
         conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
 
