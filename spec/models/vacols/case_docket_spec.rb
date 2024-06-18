@@ -698,14 +698,24 @@ describe VACOLS::CaseDocket, :all_dbs do
   context "removal of BFHINES check" do
     let(:genpop) { "any" }
     let(:limit) { 10 }
+    let(:original_docket_number) { aod_ready_case_docket_number }
+    let!(:hearing) do
+      create(:case_hearing,
+             :disposition_held,
+             folder_nr: original.bfkey,
+             hearing_date: 5.days.ago.to_date,
+             board_member: judge.vacols_attorney_id)
+    end
+    
+    subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
 
     context "when BFHINES is nil" do
       before do
         aod_ready_case.update(bfhines: nil)
-        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
       end
 
       it "distributes the case" do
+        subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
@@ -714,10 +724,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when BFHINES is GP" do
       before do
         aod_ready_case.update(bfhines: "GP")
-        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
       end
 
       it "distributes the case" do
+        subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
@@ -726,10 +736,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when BFHINES is a value other than GP" do
       before do
         aod_ready_case.update(bfhines: "42")
-        subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
       end
 
       it "distributes the case" do
+        subject
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
