@@ -241,7 +241,8 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('submit button is enabled without a decision date entered', () => {
-      setup();
+      const {container}=setup();
+      logRoles(container);
       let submitBtn = screen.getByRole('button', { name: /Add this issue/i });
       expect(submitBtn).toBeDisabled();
 
@@ -259,33 +260,3 @@ describe('NonratingRequestIssueModal', () => {
     });
   });
 });
-
-
-
-// const newProps = {
-//   benefitType: 'compensation',
-//   category: {
-//     label: 'Apportionment',
-//     value: 'Apportionment'
-//   },
-//   decisionDate: '06/01/2019',
-//   dateError: false,
-//   description: 'thing',
-//   formType: 'someFormType', // Ensure this matches the expected form type
-//   intakeData: {
-//     benefitType: 'compensation',
-//     activeNonratingRequestIssues: [
-//       {
-//         category: 'Apportionment',
-//         // other properties if needed
-//       }
-//     ]
-//   },
-//   onSkip: () => null,
-  // featureToggles: {
-  //   featureTogglesEMOPreDocket: false, // Set any other required feature toggles here
-  //   eduPreDocketAppeals: false,
-  //   mstIdentification: false,
-  //   pactIdentification: false,
-  // }
-// };
