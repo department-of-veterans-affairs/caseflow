@@ -1558,5 +1558,20 @@
   "CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT": "Data Element Changed",
   "CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE": "Previous Value",
   "CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE": "Updated Value",
-  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values"
+  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
+  "CORRESPONDENCE_ADMIN": {
+    "HEADER": "Correspondence admin",
+    "SUB_HEADER": "Correspondence generation process",
+    "DESCRIPTION": "Unassigned correspondence can be created below by entering the veteran file number(s) and the number of correspondence needed. This number of correspondence will appear in the unassigned tab of the Correspondence Team Queue and will be associated to the specific veteran(s) listed below.",
+    "COUNT_LABEL": "Enter the number of correspondence to be generated:",
+    "SUBMIT_BUTTON_TEXT": "Generate correspondence",
+    "INVALID_ERROR": {
+      "TITLE": "Invalid file numbers",
+      "MESSAGE": "The following Veteran file number(s) were invalid. Please enter valid file number(s) and try again: "
+    },
+    "SUCCESS": {
+      "TITLE": "You have successfully generated correspondence for the unassigned tab",
+      "MESSAGE": " correspondence have been created for the following Veteran file number(s): "
+    }
+  }
 }

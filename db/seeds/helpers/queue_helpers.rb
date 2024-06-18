@@ -5,7 +5,6 @@ module QueueHelpers
   def create_veteran(options = {})
     @file_number += 1
     @participant_id += 1
-    @cmp_packet_number ||= 1_000_000_000
     params = {
       file_number: format("%<n>09d", n: @file_number),
       participant_id: format("%<n>09d", n: @participant_id)
@@ -22,25 +21,19 @@ module QueueHelpers
   def create_correspondence(user = {}, veteran = {})
     vet = veteran
     user = user.blank? ? InboundOpsTeam.singleton.users.first : user
-    package_doc_type = PackageDocumentType.all.sample
     corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
 
     correspondence = ::Correspondence.create!(
       uuid: SecureRandom.uuid,
-      portal_entry_date: Time.zone.now,
-      source_type: "Mail",
-      package_document_type_id: package_doc_type&.id,
-      correspondence_type_id: corr_type&.id,
-      cmp_queue_id: 1,
-      cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: receipt_date,
-      notes: generate_notes([package_doc_type, corr_type, receipt_date, user]),
+      notes: generate_notes([corr_type, receipt_date, user]),
       veteran_id: vet.id,
       nod: [true, false].sample,
     )
     create_correspondence_document(correspondence, vet)
-    correspondence.tap { @cmp_packet_number += 1 }
+
+    return correspondence
   end
 
   # randomly generates notes for the correspondence
@@ -50,8 +43,7 @@ module QueueHelpers
     note = ""
     # generate note from value pulled
     case note_type
-    when PackageDocumentType
-      note = "Package Document Type is #{note_type&.name}"
+
     when CorrespondenceType
       note = "Correspondence Type is #{note_type&.name}"
     when ActiveSupport::TimeWithZone

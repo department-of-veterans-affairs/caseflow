@@ -191,7 +191,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
     const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged || corrTypeSelected;
+    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
 
   const intakeAppeal = async () => {
