@@ -193,34 +193,48 @@ class AppealsController < ApplicationController
 
   private
 
+  def request_issue_names
+    %w[
+      request_issue_id
+      rating_issue_reference_id
+      rating_decision_reference_id
+      rating_issue_profile_date
+      notes
+      ramp_claim_id
+      vacols_id
+      vacols_sequence_id
+      contested_decision_issue_id
+      vbms_mst_status
+      vbms_pact_status
+      rating_issue_diagnostic_code
+    ]
+  end
+
+  def additional_request_issue_names
+    %w[
+      mst_status_update_reason_notes
+      pact_status_update_reason_notes
+      benefit_type
+      nonrating_issue_category
+      decision_text
+      decision_date
+      ineligible_due_to_id
+      ineligible_reason
+      withdrawal_date
+      is_predocket_needed
+      mst_status
+      pact_status
+    ]
+  end
+
   def appeals_controller_params
-    params.permit(:appeal_id, :any, :appeals_id, :veteran_ids, request_issues:
-      %w[
-        request_issue_id
-        rating_issue_reference_id
-        rating_decision_reference_id
-        rating_issue_profile_date
-        notes
-        ramp_claim_id
-        vacols_id
-        vacols_sequence_id
-        contested_decision_issue_id
-        vbms_mst_status
-        vbms_pact_status
-        rating_issue_diagnostic_code
-        mst_status_update_reason_notes
-        pact_status_update_reason_notes
-        benefit_type
-        nonrating_issue_category
-        decision_text
-        decision_date
-        ineligible_due_to_id
-        ineligible_reason
-        withdrawal_date
-        is_predocket_needed
-        mst_status
-        pact_status
-      ])
+    params.permit(
+      :appeal_id,
+      :any,
+      :appeals_id,
+      :veteran_ids,
+      request_issues: request_issue_names + additional_request_issue_names
+    )
   end
 
   def create_subtasks!
