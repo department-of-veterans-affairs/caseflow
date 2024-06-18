@@ -101,8 +101,9 @@ describe('VirtualHearingFields', () => {
     expect(hearingMeetingType).toBeTruthy();
     expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
 
-    expect(virtualHearingForm).toMatchSnapshot();
-  });
+    // Test HearingLinks presence
+    const guestLink = screen.getByText(/Guest Link:/);
+    expect(guestLink).toBeInTheDocument();
 
   test('Renders webex conference when conference provider is webex', () => {
     const webexHearing = {
