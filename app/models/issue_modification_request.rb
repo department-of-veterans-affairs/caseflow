@@ -85,6 +85,15 @@ class IssueModificationRequest < CaseflowRecord
     update!(status: "cancelled")
   end
 
+  # TODO: temp method needs to be removed
+  def reset_decision
+    update!(
+      decider: nil,
+      decided_at: nil,
+      status: "assigned"
+    )
+  end
+
   private
 
   def only_one_assigned_issue_modification_request
@@ -115,14 +124,5 @@ class IssueModificationRequest < CaseflowRecord
 
   def allowed_to_update?(attributes, user)
     attributes[:status].casecmp("assigned").zero? && requestor == user
-  end
-
-  # temp method needs to be removed
-  def reset_decision
-    update!(
-      decider: nil,
-      decided_at: nil,
-      status: "assigned"
-    )
   end
 end

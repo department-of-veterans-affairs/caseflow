@@ -22,8 +22,8 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
 
   const issueModificationData = { issue_modification_requests: formatIssueModificationRequestSubmissionData(state) };
 
-  // const data = { ...issueData, ...issueModificationData };
-  const data = {};
+  const data = { ...issueData, ...issueModificationData };
+  // const data = {};
 
   // console.log('request issues:', data);
   console.log('issue data', issueData);

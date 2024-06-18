@@ -104,14 +104,20 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
 };
 
 export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  const { nonratingIssueCategory, nonratingIssueDescription } = issueModificationRequest;
+
+  const requestIssueId = issueModificationRequest.requestIssue?.id ?
+    String(issueModificationRequest.requestIssue?.id) :
+    null;
+
   return {
-    id: String(issueModificationRequest?.requestIssue?.id),
+    id: requestIssueId,
     benefitType: issueModificationRequest.benefitType,
-    description: `${issueModificationRequest.nonratingIssueCategory} -
-      ${issueModificationRequest.nonratingIssueDescription}`,
-    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    // description: `${nonratingIssueCategory} - ${nonratingIssueDescription}`,
+    description: nonratingIssueDescription,
+    nonRatingIssueDescription: nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,
-    category: issueModificationRequest.nonratingIssueCategory,
+    category: nonratingIssueCategory,
     editable: true,
     issueModificationRequestId: issueModificationRequest.id
   };

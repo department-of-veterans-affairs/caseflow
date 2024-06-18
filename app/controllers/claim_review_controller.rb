@@ -33,9 +33,11 @@ class ClaimReviewController < ApplicationController
       render_success
     elsif issues_modification_request_updater.admin_actions?
       issues_modification_request_updater.perform!
-      puts "made it past the issue modification updater"
-      request_issues_update.perform!
-      render_success
+      if request_issues_update.perform!
+        render_success
+      else
+        render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+      end
     elsif request_issues_update.perform!
       render_success
     else
@@ -188,6 +190,7 @@ class ClaimReviewController < ApplicationController
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if claim_review.pending_issue_modification_requests.any?
+      # TODO: What about an admin that only edits a couple of pending requests?
       { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }

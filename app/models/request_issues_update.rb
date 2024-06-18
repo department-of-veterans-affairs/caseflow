@@ -160,7 +160,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # If the data has a issue modification request id here then add it in as an association
       issue_modification_request_id = issue_data[:issue_modification_request_id]
-      if issue_modification_request_id
+      if issue_modification_request_id && request_issue
         # TODO: Not safe
         issue_modification_request = IssueModificationRequest.find(issue_modification_request_id)
         request_issue.issue_modification_requests << issue_modification_request
