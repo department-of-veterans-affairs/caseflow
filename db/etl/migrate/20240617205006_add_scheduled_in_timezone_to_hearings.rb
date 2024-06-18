@@ -1,4 +1,4 @@
-class AddScheduledInTimezoneToHearings < ActiveRecord::Migration[6.0]
+class AddScheduledInTimezoneToHearings < Caseflow::Migration
   def up
     add_column :hearings, :scheduled_in_timezone, :string, comment: "Named TZ string that the hearing will have to provide accurate hearing times."
   end
