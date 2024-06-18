@@ -27,11 +27,11 @@ RSpec.feature "Test Docket Case Seeds" do
 
     scenario "visits page and creates AMA AOD Hearing Seeds" do
       login
-      fill_in 'seed-count-ama-aod-hearing-seeds', with: 2
-      fill_in 'days-ago-ama-aod-hearing-seeds', with: 10
-      fill_in 'css-id-ama-aod-hearing-seeds', with: current_user.css_id + "10"
+      fill_in "seed-count-ama-aod-hearing-seeds", with: 2
+      fill_in "days-ago-ama-aod-hearing-seeds", with: 10
+      fill_in "css-id-ama-aod-hearing-seeds", with: current_user.css_id + "10"
 
-      click_button 'button-add-ama-aod-hearing-seeds'
+      click_button "button-add-ama-aod-hearing-seeds"
 
       expect(find("#preview-table")).to have_content("ama-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -40,7 +40,7 @@ RSpec.feature "Test Docket Case Seeds" do
 
       click_button "button-Create-1-test-cases"
 
-      #TO BE REPLACED WITH CAPYBARA WAIT METHOD
+      # TO BE REPLACED WITH CAPYBARA WAIT METHOD
       sleep 5
       expect(Appeal.count).to eq(2)
       hearing_case = Appeal.last
@@ -55,11 +55,11 @@ RSpec.feature "Test Docket Case Seeds" do
 
     scenario "visits page and creates AMA Non-AOD Hearing Seeds" do
       login
-      fill_in 'seed-count-ama-non-aod-hearing-seeds', with: 2
-      fill_in 'days-ago-ama-non-aod-hearing-seeds', with: 10
-      fill_in 'css-id-ama-non-aod-hearing-seeds', with: current_user.css_id + "10"
+      fill_in "seed-count-ama-non-aod-hearing-seeds", with: 2
+      fill_in "days-ago-ama-non-aod-hearing-seeds", with: 10
+      fill_in "css-id-ama-non-aod-hearing-seeds", with: current_user.css_id + "10"
 
-      click_button 'button-add-ama-non-aod-hearing-seeds'
+      click_button "button-add-ama-non-aod-hearing-seeds"
 
       expect(find("#preview-table")).to have_content("ama-non-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -68,7 +68,7 @@ RSpec.feature "Test Docket Case Seeds" do
 
       click_button "button-Create-1-test-cases"
 
-      #TO BE REPLACED WITH CAPYBARA WAIT METHOD
+      # TO BE REPLACED WITH CAPYBARA WAIT METHOD
       sleep 5
       expect(Appeal.count).to eq(2)
       hearing_case = Appeal.last
@@ -83,11 +83,11 @@ RSpec.feature "Test Docket Case Seeds" do
 
     scenario "visits page and creates Legacy Case Seeds" do
       login
-      fill_in 'seed-count-legacy-case-seeds', with: 2
-      fill_in 'days-ago-legacy-case-seeds', with: 10
-      fill_in 'css-id-legacy-case-seeds', with: current_user.css_id + "10"
+      fill_in "seed-count-legacy-case-seeds", with: 2
+      fill_in "days-ago-legacy-case-seeds", with: 10
+      fill_in "css-id-legacy-case-seeds", with: current_user.css_id + "10"
 
-      click_button 'button-add-legacy-case-seeds'
+      click_button "button-add-legacy-case-seeds"
 
       expect(find("#preview-table")).to have_content("legacy-case-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -96,18 +96,18 @@ RSpec.feature "Test Docket Case Seeds" do
 
       click_button "button-Create-1-test-cases"
 
-      #TO BE REPLACED WITH CAPYBARA WAIT METHOD
+      # TO BE REPLACED WITH CAPYBARA WAIT METHOD
       sleep 5
       expect(LegacyAppeal.count).to eq(2)
     end
 
     scenario "visits page and creates Direct Review Hearing Seeds" do
       login
-      fill_in 'seed-count-ama-direct-review-seeds', with: 2
-      fill_in 'days-ago-ama-direct-review-seeds', with: 10
-      fill_in 'css-id-ama-direct-review-seeds', with: current_user.css_id + "10"
+      fill_in "seed-count-ama-direct-review-seeds", with: 2
+      fill_in "days-ago-ama-direct-review-seeds", with: 10
+      fill_in "css-id-ama-direct-review-seeds", with: current_user.css_id + "10"
 
-      click_button 'button-add-ama-direct-review-seeds'
+      click_button "button-add-ama-direct-review-seeds"
       expect(find("#preview-table")).to have_content("ama-direct-review-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
       expect(find("#preview-table")).to have_content("10 Days Ago")
@@ -115,7 +115,7 @@ RSpec.feature "Test Docket Case Seeds" do
 
       click_button "button-Create-1-test-cases"
 
-      #TO BE REPLACED WITH CAPYBARA WAIT METHOD
+      # TO BE REPLACED WITH CAPYBARA WAIT METHOD
       sleep 5
       expect(Appeal.count).to eq(2)
       direct_review = Appeal.last
@@ -127,23 +127,23 @@ RSpec.feature "Test Docket Case Seeds" do
 
     scenario "visits page and creates multiple of each seeds type" do
       login
-      fill_in 'seed-count-ama-aod-hearing-seeds', with: 2
-      fill_in 'days-ago-ama-aod-hearing-seeds', with: 10
-      fill_in 'css-id-ama-aod-hearing-seeds', with: current_user.css_id + "10"
-      fill_in 'seed-count-ama-non-aod-hearing-seeds', with: 3
-      fill_in 'days-ago-ama-non-aod-hearing-seeds', with: 11
-      fill_in 'css-id-ama-non-aod-hearing-seeds', with: current_user.css_id + "11"
-      fill_in 'seed-count-legacy-case-seeds', with: 4
-      fill_in 'days-ago-legacy-case-seeds', with: 12
-      fill_in 'css-id-legacy-case-seeds', with: current_user.css_id + "12"
-      fill_in 'seed-count-ama-direct-review-seeds', with: 5
-      fill_in 'days-ago-ama-direct-review-seeds', with: 13
-      fill_in 'css-id-ama-direct-review-seeds', with: current_user.css_id + "13"
+      fill_in "seed-count-ama-aod-hearing-seeds", with: 2
+      fill_in "days-ago-ama-aod-hearing-seeds", with: 10
+      fill_in "css-id-ama-aod-hearing-seeds", with: current_user.css_id + "10"
+      fill_in "seed-count-ama-non-aod-hearing-seeds", with: 3
+      fill_in "days-ago-ama-non-aod-hearing-seeds", with: 11
+      fill_in "css-id-ama-non-aod-hearing-seeds", with: current_user.css_id + "11"
+      fill_in "seed-count-legacy-case-seeds", with: 4
+      fill_in "days-ago-legacy-case-seeds", with: 12
+      fill_in "css-id-legacy-case-seeds", with: current_user.css_id + "12"
+      fill_in "seed-count-ama-direct-review-seeds", with: 5
+      fill_in "days-ago-ama-direct-review-seeds", with: 13
+      fill_in "css-id-ama-direct-review-seeds", with: current_user.css_id + "13"
 
-      click_button 'button-add-ama-aod-hearing-seeds'
-      click_button 'button-add-ama-non-aod-hearing-seeds'
-      click_button 'button-add-legacy-case-seeds'
-      click_button 'button-add-ama-direct-review-seeds'
+      click_button "button-add-ama-aod-hearing-seeds"
+      click_button "button-add-ama-non-aod-hearing-seeds"
+      click_button "button-add-legacy-case-seeds"
+      click_button "button-add-ama-direct-review-seeds"
 
       expect(find("#preview-table")).to have_content("ama-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -164,7 +164,7 @@ RSpec.feature "Test Docket Case Seeds" do
 
       click_button "button-Create-4-test-cases"
 
-      #TO BE REPLACED WITH CAPYBARA WAIT METHOD
+      # TO BE REPLACED WITH CAPYBARA WAIT METHOD
       sleep 10
       expect(Appeal.count).to eq(10)
       expect(Appeal.where(docket_type: "hearing", aod_based_on_age: true).count).to eq(2)
@@ -172,12 +172,10 @@ RSpec.feature "Test Docket Case Seeds" do
       expect(LegacyAppeal.count).to eq(4)
       expect(Appeal.where(docket_type: "direct_review").count).to eq(5)
     end
-
   end
 
   def login
-    visit 'test/seeds'
-    visit 'test/seeds'
+    visit "test/seeds"
+    visit "test/seeds"
   end
 end
-
