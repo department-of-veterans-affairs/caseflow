@@ -113,19 +113,35 @@ module CorrespondenceControllerConcern
   def build_failure_message(errors, action_prefix)
     failure_message = []
 
-    # get error counts
+    # Get error counts
     nod_failures = errors.count(NOD_ERROR)
     sensitivity_failures = errors.count(SENSITIVITY_ERROR)
     cap_failures = errors.count(CAPACITY_ERROR)
 
-    # build message
-    failure_message << "• #{nod_failures} cases were not #{action_prefix}assigned" \
-                      "because of NOD permissions settings." unless nod_failures == 0
-    failure_message << "• #{sensitivity_failures} cases were not #{action_prefix}assigned" \
-                      "because of sensitivity level mismatch." unless sensitivity_failures == 0
-    failure_message << "• #{cap_failures} cases were not #{action_prefix}assigned" \
-                      "to user because maximum capacity has been reached for user's queue." unless cap_failures == 0
+    # Build message based on error types
+    failure_message << build_error_message(nod_failures, action_prefix, "NOD permissions settings") if nod_failures > 0
+    if sensitivity_failures > 0
+      failure_message << build_error_message(
+        sensitivity_failures,
+        action_prefix,
+        "sensitivity level mismatch"
+      )
+    end
+    if cap_failures > 0
+      failure_message << build_error_message(
+        cap_failures,
+        action_prefix,
+        "maximum capacity reached for user's queue"
+      )
+    end
+
     failure_message
+  end
+
+  def build_error_message(count, action_prefix, reason)
+    message = "#{count} cases were not #{action_prefix}assigned"
+    message += " because of #{reason}." unless count.zero?
+    message
   end
 
   def set_flash_intake_success_message
