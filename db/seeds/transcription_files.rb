@@ -5,15 +5,15 @@ module Seeds
       transcription_files = [
         {
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
-          hearingType: 'AMA',
-          fileType: 'rtf',
-          fileName: 'transcript.rtf'
-        },
-        {
-          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
           hearingType: 'Legacy',
           fileType: 'vtt',
           fileName: 'transcript.vtt'
+        },
+        {
+          fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.upload.success,
+          hearingType: 'AMA',
+          fileType: 'rtf',
+          fileName: 'transcript.rtf'
         },
         {
           fileStatus: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success,
