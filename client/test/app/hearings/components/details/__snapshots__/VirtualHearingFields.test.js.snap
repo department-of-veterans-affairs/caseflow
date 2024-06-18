@@ -13,11 +13,6 @@ exports[`VirtualHearingFields Matches snapshot with default props 1`] = `
     <div
       data-css-1571z6o=""
     >
-      <h2
-        data-css-3rhuy2=""
-      >
-        Hearing Links
-      </h2>
       <div
         data-css-tx10g=""
       >
@@ -585,11 +580,156 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                   stroke="none"
                   stroke-width="1"
                 >
-                  <span>
-                    N/A
-                  </span>
-                  <div
-                    data-css-1abghdv=""
+                  <VirtualHearingLink
+                    hearing={
+                      Object {
+                        "advanceOnDocketMotion": null,
+                        "aod": false,
+                        "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                        "appealId": 4,
+                        "appellantAddressLine1": "9999 MISSION ST",
+                        "appellantCity": "SAN FRANCISCO",
+                        "appellantEmailAddress": "tom.brady@caseflow.gov",
+                        "appellantFirstName": "Bob",
+                        "appellantIsNotVeteran": false,
+                        "appellantLastName": "Smith",
+                        "appellantState": "CA",
+                        "appellantTz": "America/Los_Angeles",
+                        "appellantZip": "94103",
+                        "availableHearingLocations": Object {},
+                        "bvaPoc": null,
+                        "caseType": "Original",
+                        "centralOfficeTimeString": "03:30",
+                        "claimantId": 4,
+                        "closestRegionalOffice": null,
+                        "currentIssueCount": 1,
+                        "disposition": null,
+                        "dispositionEditable": true,
+                        "docketName": "hearing",
+                        "docketNumber": "200628-4",
+                        "emailEvents": Array [
+                          Object {
+                            "emailAddress": "tom.brady@caseflow.gov",
+                            "emailType": "confirmation",
+                            "sentAt": "2020-06-29T14:55:12.620-04:00",
+                            "sentBy": "BVASYELLOW",
+                            "sentTo": "POA/Representative Email",
+                          },
+                          Object {
+                            "emailAddress": "Bob.Smith@test.com",
+                            "emailType": "confirmation",
+                            "sentAt": "2020-06-29T14:55:12.501-04:00",
+                            "sentBy": "BVASYELLOW",
+                            "sentTo": "Appellant Email",
+                          },
+                        ],
+                        "evidenceWindowWaived": false,
+                        "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                        "hearingDayId": 4,
+                        "id": 4,
+                        "isVirtual": true,
+                        "judge": Object {
+                          "createdAt": "2020-06-25T11:00:43.257-04:00",
+                          "cssId": "BVAAABSHIRE",
+                          "displayName": "BVAAABSHIRE (VACO)",
+                          "efolderDocumentsFetchedAt": null,
+                          "email": null,
+                          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                          "id": 3,
+                          "lastLoginAt": null,
+                          "roles": Object {},
+                          "selectedRegionalOffice": null,
+                          "stationId": "101",
+                          "status": "active",
+                          "statusUpdatedAt": null,
+                          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                        },
+                        "judgeId": 3,
+                        "location": null,
+                        "militaryService": "",
+                        "notes": null,
+                        "paperCase": false,
+                        "poaName": "AMERICAN LEGION",
+                        "prepped": null,
+                        "readableLocation": "Washington, DC",
+                        "readableRequestType": "Central",
+                        "regionalOfficeKey": "C",
+                        "regionalOfficeName": "Central",
+                        "regionalOfficeTimezone": "America/New_York",
+                        "representative": "Clarence Darrow",
+                        "representativeEmailAddress": "tom.brady@caseflow.gov",
+                        "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeTz": "America/Denver",
+                        "room": "2",
+                        "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                        "scheduledForIsPast": false,
+                        "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                        "scheduledTimeString": "03:30",
+                        "summary": null,
+                        "transcriptRequested": null,
+                        "transcription": Object {},
+                        "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                        "veteranAge": 85,
+                        "veteranEmailAddress": "Bob.Smith@test.com",
+                        "veteranFileNumber": "500000003",
+                        "veteranFirstName": "Bob",
+                        "veteranGender": "M",
+                        "veteranLastName": "Smith",
+                        "virtualHearing": Object {
+                          "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                          "appellantEmail": "Bob.Smith@test.com",
+                          "appellantTz": "America/Denver",
+                          "clientHost": "care.evn.va.gov",
+                          "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                          "guestPin": "2684353125#",
+                          "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                          "hostPin": "8600030#",
+                          "jobCompleted": true,
+                          "representativeEmail": "tom.brady@caseflow.gov",
+                          "representativeTz": "America/Los_Angeles",
+                          "requestCancelled": false,
+                          "scheduledInTimezone": "America/Chicago",
+                          "scheduledTimeString": "03:30",
+                          "status": "active",
+                        },
+                        "wasVirtual": false,
+                        "witness": null,
+                        "worksheetIssues": Object {},
+                      }
+                    }
+                    isVirtual={true}
+                    label="Join Virtual Hearing"
+                    link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+                    newWindow={true}
+                    showFullLink={false}
+                    user={
+                      Object {
+                        "addressCity": "Washington",
+                        "addressLine1": "123 Fake St.",
+                        "addressState": "DC",
+                        "addressZip": "20001",
+                        "name": "John Smith",
+                      }
+                    }
+                    virtualHearing={
+                      Object {
+                        "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                        "appellantEmail": "Bob.Smith@test.com",
+                        "appellantTz": "America/Denver",
+                        "clientHost": "care.evn.va.gov",
+                        "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                        "guestPin": "2684353125#",
+                        "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                        "hostPin": "8600030#",
+                        "jobCompleted": true,
+                        "representativeEmail": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Los_Angeles",
+                        "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
+                        "status": "active",
+                      }
+                    }
                   >
                     <strong>
                       Conference Room:
