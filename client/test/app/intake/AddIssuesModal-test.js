@@ -2,7 +2,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { logRoles } from '@testing-library/react';
 
 import AddIssuesModal from '../../../app/intake/components/AddIssuesModal';
 import { sample1 } from './testData';
