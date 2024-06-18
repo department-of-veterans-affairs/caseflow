@@ -344,6 +344,19 @@ describe Docket, :all_dbs do
         result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
         expect(result).to match_array(expected_appeals)
       end
+
+      context "when start_distribution_prior_to_goal toggle is off" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals)
+            .update!(is_toggle_active: false)
+        end
+
+        it "returns the correct appeals" do
+          expected_appeals = docket.appeals(priority: true)
+          result = docket.ready_priority_nonpriority_appeals(priority: true, ready: true)
+          expect(result).to match_array(expected_appeals)
+        end
+      end
     end
 
     context "lever item construction" do
@@ -384,14 +397,15 @@ describe Docket, :all_dbs do
 
     context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
       let(:judge) { create(:user, :with_vacols_judge_record) }
+      let(:expected_result) do
+        [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
+      end
 
       subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
 
       it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
         expect(subject.length).to eq(3)
-        expect(subject).to eq(
-          [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
-        )
+        expect(subject).to eq(expected_result)
       end
 
       context "when calculated time goal days are 20" do
@@ -405,6 +419,18 @@ describe Docket, :all_dbs do
         it "returns only receipt_date with in the time goal" do
           expect(subject.length).to eq(2)
           expect(subject).to eq([appeal.receipt_date, denied_aod_motion_appeal.receipt_date])
+        end
+      end
+
+      context "when start_distribution_prior_to_goal toggle off" do
+        before do
+          CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals)
+            .update!(is_toggle_active: false)
+        end
+
+        it "returns only receipt_date with in the time goal" do
+          expect(subject.length).to eq(3)
+          expect(subject).to eq(expected_result)
         end
       end
     end
