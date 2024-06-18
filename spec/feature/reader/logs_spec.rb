@@ -74,7 +74,7 @@ RSpec.feature "Reader", :all_dbs do
         end
 
         context "Get Document Success" do
-          it 'creates a metric for getting PDF' do
+          it "creates a metric for getting PDF" do
             visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
             expect(page).to have_content("BOARD OF VETERANS' APPEALS")
             metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
