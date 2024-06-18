@@ -1,3 +1,5 @@
+import COPY from '../../COPY';
+
 export const mockedModificationRequestProps = [
   {
     requestIssue_Id: '3311',
@@ -83,3 +85,27 @@ export const mockedWithdrawalRequestTypeProps = [
     benefitType: 'vha'
   }
 ];
+
+export const additionProps = {
+  sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
+  issueModificationRequests: mockedAdditionRequestTypeProps,
+  onClickPendingIssueAction: jest.fn()
+};
+
+export const modificationProps = {
+  sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
+  issueModificationRequests: mockedModificationRequestProps,
+  onClickPendingIssueAction: jest.fn()
+};
+
+export const removalProps = {
+  sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
+  issueModificationRequests: mockedRemovalRequestTypeProps,
+  onClickPendingIssueAction: jest.fn()
+};
+
+export const withdrawalProps = {
+  sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
+  issueModificationRequests: mockedWithdrawalRequestTypeProps,
+  onClickPendingIssueAction: jest.fn()
+};

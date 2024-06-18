@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import issueModificationRow from 'app/intake/components/IssueModificationRow';
+import IssueModificationRow from 'app/intake/components/IssueModificationRow';
 import Table from 'app/components/Table';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
@@ -72,7 +72,7 @@ const PendingAdminReviewTemplate = (args) => {
     compose(applyMiddleware(thunk))
   );
 
-  const Component = issueModificationRow({
+  const Component = IssueModificationRow({
     issueModificationRequests: { issueRequestModification },
     fieldTitle: 'Pending admin review',
     onClickIssueAction: {}

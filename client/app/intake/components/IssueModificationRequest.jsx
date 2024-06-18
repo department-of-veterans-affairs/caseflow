@@ -25,6 +25,8 @@ const IssueModificationRequest = ({
 
   const formattedRequestorName = `${requestor.fullName} (${requestor.cssId})`;
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+  const currentUserCssId = useSelector((state) => state.userCssId);
+  const currentUserMadeRequestOrIsAdmin = userIsVhaAdmin || currentUserCssId === requestor.cssId;
 
   const readableBenefitType = BENEFIT_TYPES[benefitType];
 
@@ -37,14 +39,19 @@ const IssueModificationRequest = ({
 
   const requestDetails = requestDetailsMapping[requestType];
 
-  let options = [];
-
-  if (userIsVhaAdmin) {
-    options.push({
+  const options = userIsVhaAdmin ?
+    [{
       label: `Review issue ${requestType} request`,
-      value: `reviewIssue${capitalize(requestType)}Request` }
-    );
-  }
+      value: `reviewIssue${capitalize(requestType)}Request`
+    }] :
+    [{
+      label: `Edit ${requestType} request`,
+      value: `reviewIssue${capitalize(requestType)}Request`
+    },
+    {
+      label: `Cancel ${requestType} request`,
+      value: 'cancelReviewIssueRequest'
+    }];
 
   const requestReasonSection = (
     <>
@@ -132,6 +139,7 @@ const IssueModificationRequest = ({
             onChange={(option) => onClickIssueRequestModificationAction(issueModificationRequest, option.value)}
             doubleArrow
             searchable={false}
+            readOnly={!currentUserMadeRequestOrIsAdmin}
           />
         </div>
       </div>
@@ -143,5 +151,5 @@ export default IssueModificationRequest;
 
 IssueModificationRequest.propTypes = {
   issueModificationRequest: PropTypes.object,
-  onClickIssueRequestModificationAction: PropTypes.func
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired,
 };

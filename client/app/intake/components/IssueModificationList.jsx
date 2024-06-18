@@ -47,5 +47,5 @@ export default IssueModificationList;
 IssueModificationList.propTypes = {
   sectionTitle: PropTypes.string.isRequired,
   issueModificationRequests: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onClickIssueRequestModificationAction: PropTypes.func,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired
 };
