@@ -106,7 +106,7 @@ module CorrespondenceControllerConcern
     # return JSON message
     {
       header: errors.blank? ? success_header : failure_header,
-      message: errors.blank? ? success_message : failure_message.join("\n")
+      message: errors.blank? ? success_message : failure_message.join(" \n")
     }
   end
 
@@ -119,11 +119,11 @@ module CorrespondenceControllerConcern
     cap_failures = errors.count(CAPACITY_ERROR)
 
     # build message
-    failure_message << "#{nod_failures} cases were not #{action_prefix}assigned\n" \
+    failure_message << "• #{nod_failures} cases were not #{action_prefix}assigned" \
                       "because of NOD permissions settings."
-    failure_message << "#{sensitivity_failures} cases were not #{action_prefix}assigned\n" \
+    failure_message << "• #{sensitivity_failures} cases were not #{action_prefix}assigned" \
                       "because of sensitivity level mismatch."
-    failure_message << "#{cap_failures} cases were not #{action_prefix}assigned\n" \
+    failure_message << "• #{cap_failures} cases were not #{action_prefix}assigned" \
                       "to user because maximum capacity has been reached for user's queue."
     failure_message
   end
