@@ -4,7 +4,6 @@ exports[`HearingEmails Does not allow editing when ReadOnly 1`] = `
 <DocumentFragment>
   <div
     data-css-1a5irm0=""
-    data-testid="read-only-testid"
   >
     <strong>
       Appellant Email
