@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
+    get 'appeals-non-priority-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_non_priority_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
     get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
