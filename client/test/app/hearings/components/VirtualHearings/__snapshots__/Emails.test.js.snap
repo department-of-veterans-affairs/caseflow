@@ -1,186 +1,125 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HearingEmails Does not allow editing when ReadOnly 1`] = `
-<ReadOnly
-  label="Appellant Email"
-  text="123@gmail.com"
-/>
+<DocumentFragment>
+  <div
+    data-css-1a5irm0=""
+  >
+    <strong>
+      Appellant Email
+    </strong>
+    <pre>
+      123@gmail.com
+    </pre>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`HearingEmails Does not show required when ReadOnly 1`] = `
-<HearingEmail
-  disabled={true}
-  email="123@gmail.com"
-  emailType="appellantTz"
-  helperLabel="This email address will be used to send notifications for this hearing only."
-  label="Appellant Email"
-  required={true}
-  showHelper={true}
->
-  <TextField
-    className={
-      Array [
-        "cf-form-textinput cf-inline-field",
-      ]
-    }
-    name="Appellant Email"
-    onChange={[Function]}
-    optional={false}
-    readOnly={true}
-    required={false}
-    strongLabel={true}
-    type="text"
-    useAriaLabel={false}
-    value="123@gmail.com"
+<DocumentFragment>
+  <div
+    class="cf-form-textinput cf-inline-field   "
   >
-    <div
-      className="cf-form-textinput cf-inline-field   "
+    <label
+      for="Appellant Email"
     >
-      <label
-        htmlFor="Appellant Email"
-      >
-        <strong>
-          <FormLabel
-            name="Appellant Email"
-            optional={false}
-            required={false}
-          >
-            <span>
-              Appellant Email
-            </span>
-          </FormLabel>
-        </strong>
-      </label>
-      <div
-        className="input-container"
-      >
-        <input
-          aria-readonly={true}
-          className={
-            Array [
-              "cf-form-textinput cf-inline-field",
-            ]
-          }
-          id="Appellant Email"
-          name="Appellant Email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          readOnly={true}
-          type="text"
-          value="123@gmail.com"
-        />
-      </div>
+      <strong>
+        <span>
+          Appellant Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        aria-readonly="true"
+        class="cf-form-textinput cf-inline-field"
+        id="Appellant Email"
+        name="Appellant Email"
+        readonly=""
+        type="text"
+        value="123@gmail.com"
+      />
     </div>
-  </TextField>
-  <HelperText
-    label="This email address will be used to send notifications for this hearing only."
+  </div>
+  <div
+    class="helper-text"
   >
-    <div
-      className="helper-text"
-    >
-      This email address will be used to send notifications for this hearing only.
-    </div>
-  </HelperText>
-</HearingEmail>
+    This email address will be used to send notifications for this hearing only.
+  </div>
+</DocumentFragment>
 `;
 
 exports[`HearingEmails Matches snapshot with default props 1`] = `
-<Fragment>
-  <TextField
-    className={
-      Array [
-        "cf-form-textinput cf-inline-field",
-      ]
-    }
-    name="Appellant Email"
-    onChange={[Function]}
-    optional={false}
-    required={false}
-    strongLabel={true}
-    type="text"
-    useAriaLabel={false}
-    value="123@gmail.com"
-  />
-  <HelperText
-    label="This email address will be used to send notifications for this hearing only."
-  />
-</Fragment>
+<DocumentFragment>
+  <div
+    class="cf-form-textinput cf-inline-field   "
+  >
+    <label
+      for="Appellant Email"
+    >
+      <strong>
+        <span>
+          Appellant Email
+        </span>
+      </strong>
+    </label>
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput cf-inline-field"
+        id="Appellant Email"
+        name="Appellant Email"
+        type="text"
+        value="123@gmail.com"
+      />
+    </div>
+  </div>
+  <div
+    class="helper-text"
+  >
+    This email address will be used to send notifications for this hearing only.
+  </div>
+</DocumentFragment>
 `;
 
 exports[`HearingEmails Respects required prop 1`] = `
-<HearingEmail
-  email="123@gmail.com"
-  emailType="appellantTz"
-  helperLabel="This email address will be used to send notifications for this hearing only."
-  label="Appellant Email"
-  required={true}
-  showHelper={true}
->
-  <TextField
-    className={
-      Array [
-        "cf-form-textinput cf-inline-field",
-      ]
-    }
-    name="Appellant Email"
-    onChange={[Function]}
-    optional={false}
-    required={true}
-    strongLabel={true}
-    type="text"
-    useAriaLabel={false}
-    value="123@gmail.com"
+<DocumentFragment>
+  <div
+    class="cf-form-textinput cf-inline-field   "
   >
-    <div
-      className="cf-form-textinput cf-inline-field   "
+    <label
+      for="Appellant Email"
     >
-      <label
-        htmlFor="Appellant Email"
-      >
-        <strong>
-          <FormLabel
-            name="Appellant Email"
-            optional={false}
-            required={true}
+      <strong>
+        <span>
+          Appellant Email
+          <span
+            class="cf-required"
           >
-            <span>
-              Appellant Email
-              <span
-                className="cf-required"
-              >
-                Required
-              </span>
-            </span>
-          </FormLabel>
-        </strong>
-      </label>
-      <div
-        className="input-container"
-      >
-        <input
-          className={
-            Array [
-              "cf-form-textinput cf-inline-field",
-            ]
-          }
-          id="Appellant Email"
-          name="Appellant Email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          type="text"
-          value="123@gmail.com"
-        />
-      </div>
-    </div>
-  </TextField>
-  <HelperText
-    label="This email address will be used to send notifications for this hearing only."
-  >
+            Required
+          </span>
+        </span>
+      </strong>
+    </label>
     <div
-      className="helper-text"
+      class="input-container"
     >
-      This email address will be used to send notifications for this hearing only.
+      <input
+        class="cf-form-textinput cf-inline-field"
+        id="Appellant Email"
+        name="Appellant Email"
+        type="text"
+        value="123@gmail.com"
+      />
     </div>
-  </HelperText>
-</HearingEmail>
+  </div>
+  <div
+    class="helper-text"
+  >
+    This email address will be used to send notifications for this hearing only.
+  </div>
+</DocumentFragment>
 `;
