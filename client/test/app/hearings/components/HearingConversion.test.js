@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
-import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
+import { detailsStore } from 'test/data/stores/hearingsStore';
 
-import { render as rtlRender, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { userWithJudgeRole, amaHearing, vsoUser, anyUser } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
