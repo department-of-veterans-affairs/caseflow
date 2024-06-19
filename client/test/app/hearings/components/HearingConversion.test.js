@@ -141,7 +141,6 @@ describe('HearingConversion', () => {
           store: detailsStore,
           user: vsoUser,
           hearing: amaHearing,
-          // judge: userWithJudgeRole
         },
       }
     );
