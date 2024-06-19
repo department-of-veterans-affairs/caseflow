@@ -15,7 +15,7 @@ import {
 } from 'app/intake/actions/issueModificationRequest';
 import {
   toggleIssueRemoveModal
-} from 'app/intake/actions/addIssues';
+  , setIssueWithdrawalDate } from 'app/intake/actions/addIssues';
 import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
 export const RequestIssueFormWrapper = (props) => {
@@ -34,8 +34,8 @@ export const RequestIssueFormWrapper = (props) => {
       decisionDate: props.pendingIssueModificationRequest?.decisionDate || '',
       nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
       removeOriginalIssue: false,
-      withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate),
-        'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+      withdrawalDate: props.pendingIssueModificationRequest?.withdrawalDate || '',
+      // withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate), 'MM/DD/YYYY', 'YYYY-MM-DD') || '',
       status: 'assigned',
       // TODO: Do you need this since it's not a form field?
       addedFromApprovedRequest: false
@@ -56,6 +56,9 @@ export const RequestIssueFormWrapper = (props) => {
     switch (props.type) {
     case 'withdrawal':
       dispatch(issueWithdrawalRequestApproved(enhancedData?.identifier, enhancedData));
+      // TODO: This needs to somehow do the logic from add issues in here or in a reducer.
+      // So probably need a new action/reducer to do it
+      dispatch(setIssueWithdrawalDate(enhancedData.withdrawalDate));
       break;
     case 'removal':
       dispatch(toggleIssueRemoveModal());
@@ -108,6 +111,14 @@ export const RequestIssueFormWrapper = (props) => {
       formatDateStringForApi(issueModificationRequestFormData.decisionDate) :
       currentIssueFields.decisionDate;
 
+    const withdrawalDate = issueModificationRequestFormData.withdrawalDate ?
+      formatDateStringForApi(issueModificationRequestFormData.withdrawalDate) :
+      '';
+
+    // console.log('');
+    // console.log('form data withdrawal date: ', issueModificationRequestFormData.withdrawalDate);
+    // console.log('formatted withdrawal date:', withdrawalDate);
+
     // console.log('in form wrapper');
     // console.log('formatted decision date', decisionDate);
     // console.log('form data decision date: ', issueModificationRequestFormData.decisionDate);
@@ -118,15 +129,17 @@ export const RequestIssueFormWrapper = (props) => {
     const enhancedData = {
       ...currentIssueFields,
       ...props.pendingIssueModificationRequest,
+      ...issueModificationRequestFormData,
       requestIssue: props.pendingIssueModificationRequest?.requestIssue || props.currentIssue,
       ...(props.type === 'addition') && { benefitType },
       requestor: props.pendingIssueModificationRequest?.requestor || { fullName: userFullName, cssId: userCssId },
       decider: userIsVhaAdmin ? { fullName: userFullName, cssId: userCssId } : {},
       requestType: props.type,
-      ...issueModificationRequestFormData,
       decisionDate,
+      withdrawalDate,
       identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
-      ...(props.type === 'modification') && { edited: true },
+      // TODO: This isn't good enough.
+      ...(!isNewModificationRequest && !userIsVhaAdmin) && { edited: true },
       status: issueModificationRequestFormData.status || 'assigned',
       // TODO: Do you have to set this here?
       addedFromApprovedRequest: false

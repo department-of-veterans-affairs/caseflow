@@ -360,15 +360,11 @@ class AddIssuesPage extends React.Component {
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
-    const activePendingIssues = pendingIssueModificationRequests?.
-      filter((issue) => issue.status === 'assigned');
-
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = _.isEmpty(activePendingIssues) ?
+    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
       issues : issues.filter((issue) => {
-        return !activePendingIssues.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id &&
-            !issue.withdrawalPending;
+        return !pendingIssueModificationRequests.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id;
         });
       });
 
@@ -379,8 +375,8 @@ class AddIssuesPage extends React.Component {
     const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
       latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
 
-    const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
-      'MM/DD/YYYY', 'YYYY-MM-DD');
+    // const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
+    //   'MM/DD/YYYY', 'YYYY-MM-DD');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -634,9 +630,9 @@ class AddIssuesPage extends React.Component {
       });
 
     // Pending modifications table section
-    if (!_.isEmpty(activePendingIssues)) {
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
-        issueModificationRequests: activePendingIssues,
+        issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
@@ -819,7 +815,8 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
+                // value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
+                value={pendingWithdrawalDate || intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"

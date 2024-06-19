@@ -173,6 +173,7 @@ class SaveButtonUnconnected extends React.Component {
 
     const withdrawDateError = new Date(withdrawalDate) < new Date(receiptDate) || new Date(withdrawalDate) > new Date();
 
+    // I hate inverted/negated logic. This error is true if it is not an error/true.
     const validateWithdrawDateError = withdrawalDate && !withdrawDateError;
 
     const withdrawDateValid = _.every(
@@ -183,6 +184,14 @@ class SaveButtonUnconnected extends React.Component {
        _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
       invalidVeteran ||
       !withdrawDateValid;
+
+    // console.log('issuesEqual: ', _.isEqual(addedIssues, originalIssues));
+    // console.log('issueModificationsEqual:', _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests));
+    // console.log('invalid vet: ', invalidVeteran);
+    // console.log('!withdrawDateValid: ', !withdrawDateValid);
+    // console.log('withdraw date error: ', validateWithdrawDateError);
+    // console.log('withdrawalDate: ', withdrawalDate);
+    // console.log('receiptDate: ', receiptDate);
 
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate

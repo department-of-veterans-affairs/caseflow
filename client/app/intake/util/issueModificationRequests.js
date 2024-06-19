@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import { v4 } from 'uuid';
+import { formatDateStrUtc, formatDateStringForApi } from '../../util/DateUtil';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -49,7 +50,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       decisionReason: modificationRequest.decision_reason,
       requestReason: modificationRequest.request_reason,
       requestIssueId: modificationRequest.request_issue_id,
-      withdrawalDate: modificationRequest.withdrawal_date,
+      withdrawalDate: formatDateStrUtc(modificationRequest.withdrawal_date, 'YYYY-MM-DD'),
       // Serialized Object fields
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),

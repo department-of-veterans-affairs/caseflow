@@ -29,8 +29,7 @@ class ClaimReviewController < ApplicationController
 
   def update
     if issues_modification_request_updater.non_admin_actions?
-      issues_modification_request_updater.process!
-      render_success
+      process_and_render_issue_non_admin_issue_modification_requests
     elsif issues_modification_request_updater.admin_actions?
       issues_modification_request_updater.perform!
       if request_issues_update.perform!
@@ -253,5 +252,15 @@ class ClaimReviewController < ApplicationController
     )
     ep_update.perform!
     ep_update
+  end
+
+  def process_and_render_issue_non_admin_issue_modification_requests
+    if issues_modification_request_updater.process!
+      render_success
+    else
+      render json: { error_code: :default }, status: :unprocessable_entity
+    end
+  rescue StandardError => error
+    render_error(error)
   end
 end
