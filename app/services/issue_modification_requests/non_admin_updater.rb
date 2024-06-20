@@ -14,6 +14,7 @@ class IssueModificationRequests::NonAdminUpdater
     @issue_modifications_data = issue_modifications_data
   end
 
+  # TODO: Rename this to nonadmin
   def process!
     return false if !non_admin_actions?
 
@@ -21,10 +22,9 @@ class IssueModificationRequests::NonAdminUpdater
     new_modifications_process!(issue_modifications_data[:new])
     edited_modifications_process!(issue_modifications_data[:edited])
     cancelled_modifications_process!(issue_modifications_data[:cancelled])
-
-    # process_admin_decisions(issue_modifications_data[:decided])
   end
 
+  # TODO: Rename this to admin
   def perform!
     puts "gets in my stupid block"
     return unless admin_actions?
@@ -82,51 +82,55 @@ class IssueModificationRequests::NonAdminUpdater
       puts issue_modification_request.inspect
       puts "with this data"
       puts decided_request_data
-      update_request(issue_modification_request, decided_request_data)
+      update_admin_request(issue_modification_request, decided_request_data)
     end
   end
 
-  def update_request(issue_modification_request, data)
+  def update_admin_request(issue_modification_request, data)
     puts "updating request with this status: #{data[:status].to_sym}"
     case data[:status].to_sym
     when :denied
-      update_denied_request(issue_modification_request, data)
+      # update_denied_request(issue_modification_request, data)
+      puts "-------------------dening request-----------------------"
+      puts issue_modification_request.inspect
+      issue_modification_request.deny_request_from_params!(data, user)
     when :approved
-      update_approved_request(issue_modification_request, data)
+      # update_approved_request(issue_modification_request, data)
+      issue_modification_request.approve_request_from_params!(data, user)
     end
   end
 
   # TODO: Move this logic into the IssueModificationRequest model class
-  def update_denied_request(issue_modification_request, data)
-    # TODO: I think this can also update some of the fields in the models, but I don't know which ones maybe all
-    # issue_modification_request.update!(
-    #   decided_at: Time.zone.now,
-    #   decider: user,
-    #   status: :denied,
-    #   decision_reason: data[:decision_reason]
-    # )
-    issue_modification_request.deny_request_from_params!(data, user)
-  end
+  # def update_denied_request(issue_modification_request, data)
+  #   # TODO: I think this can also update some of the fields in the models, but I don't know which ones maybe all
+  #   # issue_modification_request.update!(
+  #   #   decided_at: Time.zone.now,
+  #   #   decider: user,
+  #   #   status: :denied,
+  #   #   decision_reason: data[:decision_reason]
+  #   # )
+  #   issue_modification_request.deny_request_from_params!(data, user)
+  # end
 
   # TODO: Move this logic into the IssueModificationRequest model class
-  def update_approved_request(issue_modification_request, data)
-    # common_updates = {
-    #   decider: user,
-    #   decided_at: Time.zone.now,
-    #   status: :approved
-    # }
+  # def update_approved_request(issue_modification_request, data)
+  #   # common_updates = {
+  #   #   decider: user,
+  #   #   decided_at: Time.zone.now,
+  #   #   status: :approved
+  #   # }
 
-    # TODO: Also update some of the other params that the admin can update here
-    # specific_updates = case data[:request_type]&.to_sym
-    #                    when :withdrawal, :removal, :addition
-    #                      {}
-    #                    when :modification
-    #                      { remove_original_issue: data[:remove_original_issue] }
-    #                    else
-    #                      fail "Unknown request type: #{issue_modification_request.request_type}"
-    #                    end
+  #   # TODO: Also update some of the other params that the admin can update here
+  #   # specific_updates = case data[:request_type]&.to_sym
+  #   #                    when :withdrawal, :removal, :addition
+  #   #                      {}
+  #   #                    when :modification
+  #   #                      { remove_original_issue: data[:remove_original_issue] }
+  #   #                    else
+  #   #                      fail "Unknown request type: #{issue_modification_request.request_type}"
+  #   #                    end
 
-    # issue_modification_request.update!(common_updates.merge(specific_updates))
-    issue_modification_request.approve_request_from_params!(data, user)
-  end
+  #   # issue_modification_request.update!(common_updates.merge(specific_updates))
+  #   issue_modification_request.approve_request_from_params!(data, user)
+  # end
 end

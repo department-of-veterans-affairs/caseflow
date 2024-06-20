@@ -114,7 +114,6 @@ export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
   return {
     id: requestIssueId,
     benefitType: issueModificationRequest.benefitType,
-    // description: `${nonratingIssueCategory} - ${nonratingIssueDescription}`,
     description: nonratingIssueDescription,
     nonRatingIssueDescription: nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,

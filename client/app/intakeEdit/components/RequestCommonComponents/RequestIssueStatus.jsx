@@ -15,14 +15,14 @@ const DECISION_APPROVE = [
 const DECISION_REJECT = [
   {
     displayText: 'Reject request',
-    value: 'rejected'
+    value: 'denied'
   }
 ];
 
 export const statusSchema = yup.lazy((value) => {
   // eslint-disable-next-line no-undefined
   if (value !== undefined) {
-    return yup.mixed().oneOf(['approved', 'rejected']);
+    return yup.mixed().oneOf(['approved', 'denied']);
   }
 
   return yup.mixed().notRequired();
@@ -63,7 +63,7 @@ export const RequestIssueStatus = ({ displayCheckbox = false }) => {
         }}
         inputRef={register}
       />
-      {watchStatus === 'rejected' ? <TextareaField
+      {watchStatus === 'denied' ? <TextareaField
         label="Provide a reason for rejection"
         name="decisionReason"
         inputRef={register}
