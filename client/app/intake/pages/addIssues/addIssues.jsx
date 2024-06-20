@@ -211,6 +211,7 @@ class AddIssuesPage extends React.Component {
 
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
+    // this.props.setIssueModificationsWithdrawalDate(value);
   };
 
   editingClaimReview() {

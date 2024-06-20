@@ -263,11 +263,12 @@ class ClaimReviewController < ApplicationController
       # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
       if issues_modification_request_updater.admin_approvals?
         if request_issues_update.perform!
-          render_success
+          return render_success
         else
-          render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+          return render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
         end
       end
+
       render_success
     else
       render json: { error_code: :default }, status: :unprocessable_entity

@@ -48,7 +48,7 @@ class IssueModificationRequests::NonAdminUpdater
   def admin_approvals?
     issue_modifications_data.present? &&
       issue_modifications_data[:decided].any? &&
-      issue_modifications_data[:decided].any? { |issue_mod_data|  issue_mod_data[:status] == :approved }
+      issue_modifications_data[:decided].any? { |issue_mod_data| issue_mod_data[:status].to_sym == :approved }
   end
 
   private
