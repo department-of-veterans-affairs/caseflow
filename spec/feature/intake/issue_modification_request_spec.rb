@@ -423,6 +423,89 @@ feature "Issue Modification Request", :postgres do
           expect(select_action[:disabled]).to eq "true"
         end
       end
+
+      step "change issue type for addition modification request and save" do
+        request_type = "addition"
+        option = "Edit #{request_type} request"
+        c
+        dropdown_div = selector.find("div.cf-form-dropdown")
+        dropdown_div.click
+        expect(page).to have_text(option)
+        click_dropdown(name: "select-action-#{request_type}", text: option)
+        expect(page).to have_text("Edit pending request")
+
+        fill_in "Issue type", with: "Beneficiary Travel"
+        find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+        fill_in "Decision date", with: "06/19/2024"
+        fill_in "Issue description", with: "An issue description"
+        fill_in "Please provide a reason for the issue addition request", with: "Test reason"
+
+        expect(page).to have_button("Submit request", disabled: false)
+
+        within ".cf-modal-body" do
+          click_on "Submit"
+        end
+
+        expect(page).to have_button("Save", disabled: false)
+        click_on "Save"
+
+        expect(page).to have_text("Reviews needing action")
+        expect(page).to have_text("You have successfully submitted a request.")
+      end
+    end
+
+    it "submits modification request" do
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
+      expect(page).to have_text("Requested issues")
+
+      click_on "Request additional issue"
+
+      expect(page).to have_button("Submit request", disabled: true)
+
+      fill_in "Issue type", with: "Beneficiary Travel"
+      find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+      fill_in "Decision date", with: "06/19/2024"
+      fill_in "Issue description", with: "An issue description"
+      fill_in "Please provide a reason for the issue addition request", with: "Test reason"
+
+      expect(page).to have_button("Submit request", disabled: false)
+
+      within ".cf-modal-body" do
+        click_on "Submit"
+      end
+
+      expect(page).to have_button("Save", disabled: false)
+      click_on "Save"
+
+      expect(page).to have_text("Reviews needing action")
+      expect(page).to have_text("You have successfully submitted a request.")
+      expect(page).to have_text("#{in_progress_hlr.veteran.first_name + " " + in_progress_hlr.veteran.last_name}'s Higher-Level Review was saved.")
+
+      step "remove modification request and return to in progress queue" do
+        visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
+
+        expect(page). to have_text("Requested Additional Issues")
+        request_type="addition"
+        data-key_div="div[data-key=issue-#{request_type}]"
+        within data-key_div do
+          select_action = find("input", visible: false)
+          expect(select_action[:disabled]).to eq "false"
+          selector = page.find("div[data-key=issue-#{request_type}]")
+          dropdown_div = selector.find("div.cf-form-dropdown")
+          click_dropdown(name: "select-action-#{request_type}", text: "Cancel addition request")
+        end
+
+        within ".cf-modal-body" do
+          click_on "Submit request"
+        end
+
+        expect(page).to have_button("Establish")
+        click_on "Establish"
+
+        expect(page).to have_text("Edit Completed")
+      end
     end
   end
 
