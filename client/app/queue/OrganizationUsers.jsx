@@ -3,6 +3,7 @@
 /* eslint-disable max-len */
 
 import React from 'react';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -19,6 +20,13 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 import OrganizationPermissions from './OrganizationPermissions';
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
+});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -258,24 +266,25 @@ getFilteredUsers = () => {
               }
 
             </div>
-            {this.state.organizationName === 'Hearings Management' &&
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
-              <div className="button-style">
-                <div>
-                  <SelectConferenceTypeRadioField
-                    key={`${user.id}-conference-selection`}
-                    name={user.id}
-                    conferenceProvider={
-                      user.attributes.conference_provider
-                    }
-                    organization={this.props.organization}
-                    user={user}
-                  />
+                <div className="button-style">
+                  <div>
+                    <SelectConferenceTypeRadioField
+                      key={`${user.id}-conference-selection`}
+                      name={user.id}
+                      conferenceProvider={
+                        user.attributes.conference_provider
+                      }
+                      organization={this.props.organization}
+                      user={user}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {(this.props.organizationPermissions.length > 0) &&
+              {(this.props.organizationPermissions.length > 0) &&
             <div className={['team-member-permission-toggles-container']}>
               <OrganizationPermissions
                 organization={this.props.organization}
@@ -284,8 +293,8 @@ getFilteredUsers = () => {
                 orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
                 orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
             </div>
-            }
-
+              }
+            </div>
           </li>
         </React.Fragment>
       );
