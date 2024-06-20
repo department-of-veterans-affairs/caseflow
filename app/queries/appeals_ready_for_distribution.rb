@@ -121,6 +121,6 @@ class AppealsReadyForDistribution
     target_date = target_distro_date(receipt_date, docket)
     return nil if target_date.nil?
 
-    target_date - docket.start_distribution_prior_to_goal.to_i.days
+    target_date - docket.start_distribution_prior_to_goal.try(:value).to_i.days
   end
 end
