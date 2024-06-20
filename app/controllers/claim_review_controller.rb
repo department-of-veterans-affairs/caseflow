@@ -31,13 +31,7 @@ class ClaimReviewController < ApplicationController
     if issues_modification_request_updater.non_admin_actions?
       process_and_render_issue_non_admin_issue_modification_requests
     elsif issues_modification_request_updater.admin_actions?
-      # issues_modification_request_updater.perform!
       process_and_render_issue_admin_issue_modification_requests
-      # if request_issues_update.perform!
-      #   render_success
-      # else
-      #   render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
-      # end
     elsif request_issues_update.perform!
       render_success
     else
@@ -266,11 +260,13 @@ class ClaimReviewController < ApplicationController
 
   def process_and_render_issue_admin_issue_modification_requests
     if issues_modification_request_updater.admin_process!
-      # TODO: If there are no approvals then we don't have to do request_issues updates
-      if request_issues_update.perform!
-        render_success
-      else
-        render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+      # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
+      if issues_modification_request_updater.admin_approvals?
+        if request_issues_update.perform!
+          render_success
+        else
+          render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+        end
       end
       render_success
     else

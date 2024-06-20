@@ -164,7 +164,7 @@ FactoryBot.define do
     trait :with_vha_issue do
       benefit_type { "vha" }
       after(:create) do |higher_level_review, evaluator|
-        create_list(:request_issue, 4,
+        create(:request_issue,
                benefit_type: "vha",
                nonrating_issue_category: "Caregiver | Other",
                nonrating_issue_description: "VHA - Caregiver ",

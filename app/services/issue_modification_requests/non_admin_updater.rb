@@ -2,7 +2,6 @@
 
 # has issue modification request business logic.
 
-# :reek:TooManyInstanceVariables
 class IssueModificationRequests::NonAdminUpdater
   attr_accessor :user,
                 :review,
@@ -44,6 +43,12 @@ class IssueModificationRequests::NonAdminUpdater
 
   def admin_actions?
     issue_modifications_data.present? && issue_modifications_data[:decided].any?
+  end
+
+  def admin_approvals?
+    issue_modifications_data.present? &&
+      issue_modifications_data[:decided].any? &&
+      issue_modifications_data[:decided].any? { |issue_mod_data|  issue_mod_data[:status] == :approved }
   end
 
   private
