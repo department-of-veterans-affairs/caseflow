@@ -1571,7 +1571,8 @@ QueueApp.propTypes = {
   autoTexts: PropTypes.array,
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
-  userPermissions: PropTypes.array
+  userPermissions: PropTypes.array,
+  configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

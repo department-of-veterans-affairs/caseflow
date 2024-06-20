@@ -22,9 +22,10 @@ import WindowUtil from '../../util/WindowUtil';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
-  const configUrl = props.configUrl;
+  const configUrl = props.configUrl || '/queue/correspondence?json';
 
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
+
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
   const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
@@ -247,6 +248,14 @@ const CorrespondenceCases = (props) => {
           <Alert
             type="success"
             title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
+            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
+            scrollOnAlert={false}
+          />
+        )}
+        {currentAction.action_type === 'removePackage' && (
+         <Alert
+            type="success"
+            title={sprintf('you have successfully submitted removal request for', vetName)}
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
             scrollOnAlert={false}
           />
