@@ -265,7 +265,7 @@ feature "Issue Modification Request", :postgres do
       end
     end
 
-    it "should have a dropdown with specific option for each request type and approval flow" do
+    it "should have a dropdown with specific option for each request type and admin approval flow" do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Pending admin review")
 
@@ -311,6 +311,27 @@ feature "Issue Modification Request", :postgres do
         total_issue_count = requested_issues.find(".issues").find_css(".issue-container").count
         expect(total_issue_count).to eq 4
         expect(page).not_to have_text("Requested Changes")
+      end
+
+      step "Establish claim" do
+        expect(page).to have_button("Establish", disabled: false)
+        click_on("Establish")
+        expect(page).to have_content("Number of issues has changed")
+        expect(page).to have_content("The review originally had 4 issues but now has 5")
+        expect(page).to have_content("Please check that this is the correct number.")
+        click_on("Confirm")
+        expect(page).to have_text("Edit Completed")
+        expect(page).to have_text("You have successfully established Ed Merica's Higher-Level Review")
+        expect(current_url).to have_content("tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc")
+      end
+
+      step "verify disposition page has 4 new issue created" do
+        expect(page).to have_text(veteran.name)
+        click_link veteran.name.to_s
+        expect(current_url).to have_content("/decision_reviews/vha/tasks/")
+        expect(page).to have_text "Veterans Health Administration"
+        decision_list = page.find(".cf-decision-list")
+        expect(decision_list.find_css(".cf-decision").count).to be 4
       end
     end
 
@@ -502,7 +523,6 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_text("Reject request") if admin
     click_on "Cancel" unless admin
   end
-  # rubocop:enable convention:Metrics/PerceivedComplexity
 
   def click_approve(request_type)
     find('label[for="status_approved"]').click
