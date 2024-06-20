@@ -324,11 +324,11 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
-    let issueModificationRequest = action.payload.issueModificationRequest;
+    let newRequestIssue = action.payload.issueModificationRequest;
 
-    issueModificationRequest.addedFromApprovedRequest = true;
+    newRequestIssue.addedFromApprovedRequest = true;
 
-    let addedIssues = [...listOfIssues, issueModificationRequest];
+    let addedIssues = [...listOfIssues, newRequestIssue];
 
     return {
       ...state,

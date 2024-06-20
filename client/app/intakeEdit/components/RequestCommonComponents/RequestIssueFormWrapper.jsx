@@ -41,9 +41,7 @@ export const RequestIssueFormWrapper = (props) => {
       nonratingIssueDescription: pendingIssueModificationRequest.nonratingIssueDescription || '',
       removeOriginalIssue: false,
       withdrawalDate: pendingIssueModificationRequest.withdrawalDate || '',
-      status: 'assigned',
-      // TODO: Do we need this since it's not a form field?
-      addedFromApprovedRequest: false
+      status: 'assigned'
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -131,9 +129,7 @@ export const RequestIssueFormWrapper = (props) => {
       withdrawalDate,
       identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
       status: issueModificationRequestFormData.status || 'assigned',
-      ...(!isNewModificationRequest && !userIsVhaAdmin) && { edited: true },
-      // TODO: Do we need this here?
-      addedFromApprovedRequest: false
+      ...(!isNewModificationRequest && !userIsVhaAdmin) && { edited: true }
     };
 
     const status = issueModificationRequestFormData.status;
