@@ -4,10 +4,11 @@ import COPY from '../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 import { groupBy } from 'lodash';
 
-const issueModificationRow = (
+export const IssueModificationRow = (
   {
     fieldTitle,
     issueModificationRequests,
+    onClickIssueRequestModificationAction
   }) => {
   const sectionTitleMapper = {
     [COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.REQUEST_TYPE]:
@@ -35,6 +36,7 @@ const issueModificationRow = (
             sectionTitle={sectionTitleMapper[key]}
             lastSection={lastSection}
             key={`${key}-${i}`}
+            onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
           />
           {lastSection ? null : <hr />}
         </React.Fragment>
@@ -51,9 +53,8 @@ const issueModificationRow = (
   };
 };
 
-export default issueModificationRow;
-
-issueModificationRow.propTypes = {
-  fieldTitle: PropTypes.string,
-  issueModificationRequests: PropTypes.object
+IssueModificationRow.propTypes = {
+  fieldTitle: PropTypes.string.isRequired,
+  issueModificationRequests: PropTypes.object.isRequired,
+  onClickIssueRequestModificationAction: PropTypes.func.isRequired
 };

@@ -203,7 +203,6 @@ class SaveButtonUnconnected extends React.Component {
     const removeReviewBody = processedInCaseflow ?
       <React.Fragment>
         <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT}</p>
-        <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM}</p>
       </React.Fragment> :
       <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>;
 
@@ -250,8 +249,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_SCT_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToSctModal')}
-        onConfirm={() => this.confirmModal('moveToSctModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToSctModal')} >
         <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
@@ -259,8 +257,7 @@ class SaveButtonUnconnected extends React.Component {
         title={COPY.MOVE_TO_DISTRIBUTION_MODAL_TITLE}
         buttonText={COPY.MODAL_MOVE_BUTTON}
         onClose={() => this.closeModal('moveToDistributionModal')}
-        onConfirm={() => this.confirmModal('moveToDistributionModal')}
-        buttonClassNames={['usa-button', 'confirm']}>
+        onConfirm={() => this.confirmModal('moveToDistributionModal')} >
         <p>{COPY.MOVE_TO_DISTRIBUTION_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 

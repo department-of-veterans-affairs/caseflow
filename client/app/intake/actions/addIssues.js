@@ -52,29 +52,6 @@ export const toggleEditIntakeIssueModal = (index) => ({
   payload: { index }
 });
 
-export const toggleRequestIssueModificationModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_MODIFICATION_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueRemovalModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_REMOVAL_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueWithdrawalModal = (index) => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_WITHDRAWAL_MODAL,
-  payload: { index }
-});
-
-export const toggleRequestIssueAdditionModal = () => ({
-  type: ACTIONS.TOGGLE_REQUEST_ISSUE_ADDITION_MODAL
-});
-
-export const toggleCancelPendingRequestIssueModal = () => ({
-  type: ACTIONS.TOGGLE_CANCEL_PENDING_REQUEST_ISSUE_MODAL
-});
-
 export const setMstPactDetails = (editIssuesDetails) => ({
   type: ACTIONS.SET_MST_PACT_DETAILS,
   payload: { editIssuesDetails }
@@ -134,26 +111,6 @@ export const addIssue = (currentIssue) => (dispatch) => {
   });
 };
 
-export const moveToPendingReviewSection = (issueModificationRequest, index) => (
-  {
-    type: ACTIONS.MOVE_TO_PENDING_REVIEW,
-    payload: { issueModificationRequest, index }
-  });
-
-export const addToPendingReviewSection = (issueModificationRequest) => (
-  {
-    type: ACTIONS.ADD_TO_PENDING_REVIEW,
-    payload: { issueModificationRequest }
-  }
-);
-
-export const removeFromPendingReviewSection = (index) => (
-  {
-    type: ACTIONS.REMOVE_FROM_PENDING_REVIEW,
-    payload: { index }
-  }
-);
-
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
@@ -210,4 +167,3 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
     }
   });
 };
-

@@ -95,6 +95,20 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_CONFIRM_PENDING_REQUEST_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['confirmPendingRequestIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST] = () => {
+    return update(state, {
+      activeIssueModificationRequest: {
+        $set: action.payload.data
+      }
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;
@@ -206,12 +220,32 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_FROM_PENDING_REVIEW] = () => {
-    pendingIssueModificationRequests.splice(action.payload.index, 1);
+    if (action.payload.issueModificationRequest === null) {
+      pendingIssueModificationRequests.splice(action.payload.index, 1);
+
+      return {
+        ...state,
+        pendingIssueModificationRequests
+      };
+    }
 
     return {
       ...state,
-      pendingIssueModificationRequests
+      pendingIssueModificationRequests: pendingIssueModificationRequests.find(
+        (issue) => (issue.identifier !== action.payload.issueModificationRequest.identifier))
     };
+  };
+
+  actionsMap[ACTIONS.UPDATE_PENDING_REVIEW] = () => {
+    const index = pendingIssueModificationRequests.findIndex((issue) => issue.identifier === action.payload.identifier);
+
+    return update(state, {
+      pendingIssueModificationRequests: {
+        [index]: {
+          $merge: action.payload.data
+        }
+      }
+    });
   };
 
   actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
@@ -247,6 +281,37 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_WITHDRAW_REQUEST_APPROVED] = () => {
+    const { withdrawalDate, requestIssue } = action.payload.issueModificationRequest;
+
+    const index = listOfIssues.findIndex((issue) => issue.id === requestIssue.id);
+
+    listOfIssues[index] = {
+      ...listOfIssues[index],
+      withdrawalPending: true,
+      pendingWithdrawalDate: withdrawalDate
+    };
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
+    let issueModificationRequest = action.payload.issueModificationRequest;
+
+    issueModificationRequest.addedFromApprovedRequest = true;
+
+    let addedIssues = [...listOfIssues, issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 

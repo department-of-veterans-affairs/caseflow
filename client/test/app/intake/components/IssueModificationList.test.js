@@ -1,76 +1,151 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import COPY from '../../../../COPY';
 import IssueModificationList from 'app/intake/components/IssueModificationList';
 import {
-  mockedModificationRequestProps,
-  mockedAdditionRequestTypeProps,
-  mockedRemovalRequestTypeProps,
-  mockedWithdrawalRequestTypeProps
+  additionProps,
+  modificationProps,
+  removalProps,
+  withdrawalProps,
 } from 'test/data/issueModificationListProps';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore, compose } from 'redux';
+import thunk from 'redux-thunk';
+import {
+  createQueueReducer
+} from 'test/app/queue/components/modalUtils';
 
 describe('IssueModificationList', () => {
-  const setup = (testProps) => {
+  const adminStoreValues = { userIsVhaAdmin: true };
+  const nonAdminStoreValues = { userIsVhaAdmin: false };
+  const dropdownClass = '.cf-select__control';
+  const menuClass = '.cf-select__menu';
+
+  const setup = (storeValues, testProps) => {
+    const queueReducer = createQueueReducer(storeValues);
+    const store = createStore(
+      queueReducer,
+      compose(applyMiddleware(thunk))
+    );
+
     render(
-      <IssueModificationList
-        {...testProps}
-      />
+      <Provider store={store}>
+        <IssueModificationList
+          {...testProps}
+        />
+      </Provider>
     );
   };
 
-  const additionalProps = {
-    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE,
-    issueModificationRequests: mockedAdditionRequestTypeProps,
-    lastSection: true,
-    allPendingIssues: [{}],
-    onClickPendingIssueAction: jest.fn()
-  };
+  describe('renders section titles and action options for non admin users', () => {
+    const storeValues = { ...nonAdminStoreValues };
 
-  const modificationProps = {
-    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE,
-    issueModificationRequests: mockedModificationRequestProps,
-    lastSection: true,
-    allPendingIssues: [{}],
-    onClickPendingIssueAction: jest.fn()
-  };
+    it('Addition request type', () => {
+      setup(storeValues, additionProps);
+      const dropdown = document.querySelector(dropdownClass);
 
-  const removalProps = {
-    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE,
-    issueModificationRequests: mockedRemovalRequestTypeProps,
-    lastSection: true,
-    allPendingIssues: [{}],
-    onClickPendingIssueAction: jest.fn()
-  };
+      expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE)).toBeInTheDocument();
+      expect(dropdown).toBeInTheDocument();
 
-  const withdrawalProps = {
-    sectionTitle: COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE,
-    issueModificationRequests: mockedWithdrawalRequestTypeProps,
-    lastSection: true,
-    allPendingIssues: [{}],
-    onClickPendingIssueAction: jest.fn()
-  };
+      userEvent.click(dropdown);
 
-  it('renders the section title for a "Addition" request type', () => {
-    setup(additionalProps);
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Edit addition request')).toBeInTheDocument();
+      expect(screen.getByText('Cancel addition request')).toBeInTheDocument();
+    });
 
-    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.ADDITION.SECTION_TITLE)).toBeInTheDocument();
+    it('Modification request type', () => {
+      setup(storeValues, modificationProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE)).toBeInTheDocument();
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Edit modification request')).toBeInTheDocument();
+      expect(screen.getByText('Cancel modification request')).toBeInTheDocument();
+    });
+
+    it('Removal request type', () => {
+      setup(storeValues, removalProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE)).toBeInTheDocument();
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Edit removal request')).toBeInTheDocument();
+      expect(screen.getByText('Cancel removal request')).toBeInTheDocument();
+    });
+
+    it('Withdrawal request type', () => {
+      setup(storeValues, withdrawalProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Edit withdrawal request')).toBeInTheDocument();
+      expect(screen.getByText('Cancel withdrawal request')).toBeInTheDocument();
+    });
   });
 
-  it('renders the section title for a "Modification" request type', () => {
-    setup(modificationProps);
+  describe('renders dropdown options for admin user', () => {
+    const storeValues = { ...adminStoreValues };
 
-    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.MODIFICATION.SECTION_TITLE)).toBeInTheDocument();
-  });
+    it('Addition request type', () => {
+      setup(storeValues, additionProps);
+      const dropdown = document.querySelector(dropdownClass);
 
-  it('renders the section title for a "Removal" request type', () => {
-    setup(removalProps);
+      expect(dropdown).toBeInTheDocument();
 
-    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.REMOVAL.SECTION_TITLE)).toBeInTheDocument();
-  });
+      userEvent.click(dropdown);
 
-  it('renders the section title for a "Withdrawal" request type', () => {
-    setup(withdrawalProps);
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Review issue addition request')).toBeInTheDocument();
+    });
 
-    expect(screen.getByText(COPY.ISSUE_MODIFICATION_REQUESTS.WITHDRAWAL.SECTION_TITLE)).toBeInTheDocument();
+    it('Modification request type', () => {
+      setup(storeValues, modificationProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Review issue modification request')).toBeInTheDocument();
+    });
+
+    it('Removal request type', () => {
+      setup(storeValues, removalProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Review issue removal request')).toBeInTheDocument();
+    });
+
+    it('Withdrawal request type', () => {
+      setup(storeValues, withdrawalProps);
+      const dropdown = document.querySelector(dropdownClass);
+
+      expect(dropdown).toBeInTheDocument();
+
+      userEvent.click(dropdown);
+
+      expect(document.querySelector(menuClass)).toBeInTheDocument();
+      expect(screen.getByText('Review issue withdrawal request')).toBeInTheDocument();
+    });
   });
 });
