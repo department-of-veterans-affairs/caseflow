@@ -43,122 +43,119 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Edit Claim Label
-          </h1>
+          Edit Claim Label
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <div>
+            <strong>
+              You are editing a 040 HLR DTA Error - Non-Rating claim
+            </strong>
+          </div>
+          <p>
+            Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.
+          </p>
           <div
-            data-css-o98ubo=""
+            class=""
           >
-            <div>
-              <strong>
-                You are editing a 040 HLR DTA Error - Non-Rating claim
-              </strong>
-            </div>
-            <p>
-              Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.
-            </p>
             <div
-              class=""
+              class="cf-form-dropdown dropdown-select-claim-label"
             >
-              <div
-                class="cf-form-dropdown dropdown-select-claim-label"
+              <label
+                class="question-label"
+                for="select-claim-label"
+                id="select-claim-label-label"
               >
-                <label
-                  class="question-label"
-                  for="select-claim-label"
-                  id="select-claim-label-label"
-                >
-                  <strong>
-                    <span>
-                      Select the correct EP claim label
-                    </span>
-                  </strong>
-                </label>
+                <strong>
+                  <span>
+                    Select the correct EP claim label
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
                 <div
-                  class="cf-select"
+                  class=" css-2b097c-container"
                 >
                   <div
-                    class=" css-2b097c-container"
+                    class="cf-select__control css-yk16xz-control"
                   >
                     <div
-                      class="cf-select__control css-yk16xz-control"
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                     >
                       <div
-                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                        class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        <div
-                          class="cf-select__single-value css-1uccc91-singleValue"
-                        >
-                          040HDENR
-                        </div>
-                        <div
-                          class="css-81nyic-Input"
-                        >
-                          <div
-                            class="cf-select__input"
-                            style="display: inline-block;"
-                          >
-                            <input
-                              aria-autocomplete="list"
-                              aria-expanded="false"
-                              aria-haspopup="true"
-                              aria-labelledby="select-claim-label-label"
-                              aria-owns="select-claim-label-listbox"
-                              autocapitalize="none"
-                              autocomplete="off"
-                              autocorrect="off"
-                              id="select-claim-label"
-                              role="combobox"
-                              spellcheck="false"
-                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                              tabindex="0"
-                              type="text"
-                              value=""
-                            />
-                            <div
-                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                            />
-                          </div>
-                        </div>
+                        040HDENR
                       </div>
                       <div
-                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                        class="css-81nyic-Input"
                       >
-                        <span
-                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                        />
                         <div
-                          aria-hidden="true"
-                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                          class="cf-select__input"
+                          style="display: inline-block;"
                         >
-                          <svg
-                            aria-hidden="true"
-                            class="css-6q0nyr-Svg"
-                            focusable="false"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            width="20"
-                          >
-                            <path
-                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                            />
-                          </svg>
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="select-claim-label-label"
+                            aria-owns="select-claim-label-listbox"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="select-claim-label"
+                            role="combobox"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
                         </div>
                       </div>
                     </div>
-                    <input
-                      name="select-claim-label"
-                      type="hidden"
-                      value="[object Object]"
-                    />
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
+                  <input
+                    name="select-claim-label"
+                    type="hidden"
+                    value="[object Object]"
+                  />
                 </div>
               </div>
             </div>
