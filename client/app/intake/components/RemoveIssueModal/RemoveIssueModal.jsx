@@ -4,8 +4,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { removeIssue } from '../../actions/addIssues';
+import { updatePendingReview } from 'app/intake/actions/issueModificationRequest';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
+import { isEmpty } from 'lodash';
 import COPY from 'app/../COPY';
 
 const removeIssueMessage = (intakeData) => {
@@ -31,8 +33,24 @@ class RemoveIssueModal extends React.PureComponent {
   render() {
     const {
       intakeData,
-      removeIndex
+      removeIndex,
+      userIsVhaAdmin
     } = this.props;
+
+    const activeIssueModificationRequest = intakeData.activeIssueModificationRequest;
+    let removePendingIndex;
+
+    const onSubmit = () => {
+      if (userIsVhaAdmin && !isEmpty(activeIssueModificationRequest)) {
+        removePendingIndex = intakeData.addedIssues.
+          findIndex((issue) => issue?.id === activeIssueModificationRequest.requestIssue?.id);
+
+        this.props.updatePendingReview(activeIssueModificationRequest.identifier, activeIssueModificationRequest);
+      } else {
+        removePendingIndex = removeIndex;
+      }
+      this.props.removeIssue(removePendingIndex);
+    };
 
     return <div className="intake-remove-issue">
       <Modal
@@ -45,7 +63,7 @@ class RemoveIssueModal extends React.PureComponent {
             name: COPY.MODAL_REMOVE_BUTTON,
             onClick: () => {
               this.props.closeHandler();
-              this.props.removeIssue(removeIndex);
+              onSubmit();
             }
           }
         ]}
@@ -66,11 +84,15 @@ RemoveIssueModal.propTypes = {
   intakeData: PropTypes.object.isRequired,
   removeIndex: PropTypes.number.isRequired,
   removeIssue: PropTypes.func.isRequired,
+  updatePendingReview: PropTypes.func.isRequired,
+  pendingIssueModificationRequest: PropTypes.object,
+  userIsVhaAdmin: PropTypes.bool
 };
 
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    removeIssue
+    removeIssue,
+    updatePendingReview
   }, dispatch)
 )(RemoveIssueModal);

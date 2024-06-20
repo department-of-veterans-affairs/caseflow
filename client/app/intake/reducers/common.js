@@ -101,6 +101,14 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST] = () => {
+    return update(state, {
+      activeIssueModificationRequest: {
+        $set: action.payload.data
+      }
+    });
+  };
+
   actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
     const { editIssuesDetails } = action.payload;
     const index = editIssuesDetails.issueProps.issueIndex;
@@ -273,6 +281,37 @@ export const commonReducers = (state, action) => {
     return {
       ...state,
       addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_WITHDRAW_REQUEST_APPROVED] = () => {
+    const { withdrawalDate, requestIssue } = action.payload.issueModificationRequest;
+
+    const index = listOfIssues.findIndex((issue) => issue.id === requestIssue.id);
+
+    listOfIssues[index] = {
+      ...listOfIssues[index],
+      withdrawalPending: true,
+      pendingWithdrawalDate: withdrawalDate
+    };
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED] = () => {
+    let issueModificationRequest = action.payload.issueModificationRequest;
+
+    issueModificationRequest.addedFromApprovedRequest = true;
+
+    let addedIssues = [...listOfIssues, issueModificationRequest];
+
+    return {
+      ...state,
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 

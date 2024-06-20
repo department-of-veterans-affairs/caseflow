@@ -72,6 +72,7 @@ import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIs
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
+import { formatDateStr, formatDate } from '../../../util/DateUtil';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -129,7 +130,7 @@ class AddIssuesPage extends React.Component {
       break;
     case 'reviewIssueRemovalRequest':
       this.setState({
-        pendingIssueModification: issueModificationRequest
+        pendingIssueModification: issueModificationRequest,
       });
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
@@ -355,11 +356,15 @@ class AddIssuesPage extends React.Component {
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
+    const activePendingIssues = pendingIssueModificationRequests?.
+      filter((issue) => issue.status === 'assigned');
+
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
+    const issuesWithoutPendingModificationRequests = _.isEmpty(activePendingIssues) ?
       issues : issues.filter((issue) => {
-        return !pendingIssueModificationRequests.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id && request?.status === 'assigned';
+        return !activePendingIssues.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id &&
+            !issue.withdrawalPending;
         });
       });
 
@@ -367,7 +372,11 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
-    const activePendingIssues = pendingIssueModificationRequests?.filter((issue) => issue?.status === 'assigned');
+    const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
+      latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
+
+    const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
+      'MM/DD/YYYY', 'YYYY-MM-DD');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -669,6 +678,8 @@ class AddIssuesPage extends React.Component {
             removeIndex={this.state.issueRemoveIndex}
             intakeData={intakeData}
             closeHandler={this.props.toggleIssueRemoveModal}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
+            userIsVhaAdmin={this.props.userIsVhaAdmin}
           />
         )}
         {intakeData.correctIssueModalVisible && (
@@ -805,7 +816,7 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                value={intakeData.withdrawalDate}
+                value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"
