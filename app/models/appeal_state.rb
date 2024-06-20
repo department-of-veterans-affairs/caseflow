@@ -341,7 +341,6 @@ class AppealState < CaseflowRecord
     task_join.hearing_scheduled_base.where(appeal_type: "Appeal").with_assigned_assign_hearing_disposition_task
   }
 
-
   # @return [AppealState::ActiveRecord_Relation]
   #   The base hearing scheduled status query scoped only to legacy appeals.
   scope :hearing_scheduled_legacy_base, lambda {

@@ -235,7 +235,6 @@ describe AppealState do
         let!(:legacy_state) { legacy_appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
 
         context "An AMA and legacy hearings are both pending" do
-
           it "both appeal states are returned by the query" do
             is_expected.to match_array([ama_state.id, legacy_state.id])
           end
