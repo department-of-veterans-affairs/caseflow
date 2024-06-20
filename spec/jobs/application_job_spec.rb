@@ -10,26 +10,50 @@ class JobThatIsGood < ApplicationJob
 end
 
 describe "ApplicationJob" do
+  let(:freeze_time_first_run) { Time.zone.local(2024, 8, 30, 19, 0, 20) }
+  let(:freeze_time_second_run) { Time.zone.local(2024, 8, 30, 20, 0, 20) }
+
   context ".application_attr" do
     it "sets application request store" do
       JobThatIsGood.perform_now
       expect(RequestStore[:application]).to eq("fake_job")
     end
+  end
 
-    it "sets extra context in middleware" do
-      allow(Raven).to receive(:extra_context)
+  context "JobExecutionTime" do
+    def job_execution_record_checks
+      expect(JobExecutionTime.count).to eq(1)
+      execution_time_record = JobExecutionTime.first
+      expect(execution_time_record.job_name).to eq("JobThatIsGood")
+      expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+    end
 
-      sqs_msg = double("sqs_msg")
-      allow(sqs_msg).to receive(:message_id).and_return("msgid")
+    it "adds record to JobExecutionTime if the IGNORE_JOB_EXECUTION_TIME constant is false" do
+      Timecop.freeze(freeze_time_first_run) do
+        expect(JobExecutionTime.count).to eq(0)
+        JobThatIsGood.perform_now
 
-      JobSentryScopeMiddleware.new.call(
-        double("worker"),
-        "high_priority",
-        sqs_msg,
-        ActiveSupport::HashWithIndifferentAccess.new(job_class: "JobThatIsGood", job_id: "jobid")
-      ) {}
+        job_execution_record_checks
+      end
+    end
 
-      expect(Raven).to have_received(:extra_context).with(hash_including(application: :fake))
+    it "update existing record in JobExecutionTime table when job is run multiple times" do
+      JobExecutionTime.create(job_name: JobThatIsGood.name, last_executed_at: 2.days.ago)
+
+      Timecop.freeze(freeze_time_first_run) do
+        expect(JobExecutionTime.count).to eq(1)
+        JobThatIsGood.perform_now
+
+        job_execution_record_checks
+      end
+
+      Timecop.freeze(freeze_time_second_run) do
+        JobThatIsGood.perform_now
+        expect(JobExecutionTime.count).to eq(1)
+        execution_time_record = JobExecutionTime.first
+        expect(execution_time_record.job_name).to eq("JobThatIsGood")
+        expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
+      end
     end
   end
 

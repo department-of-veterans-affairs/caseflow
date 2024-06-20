@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_01_180157) do
+ActiveRecord::Schema.define(version: 2024_05_25_120005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1154,6 +1154,12 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
+  create_table "job_execution_times", id: :serial, force: :cascade do |t|
+    t.string "job_name", comment: "Name of the Job whose Last Execution Time is being tracked"
+    t.datetime "last_executed_at", comment: "DateTime value when the Job was Last Executed"
+    t.index ["job_name"], name: "index_job_execution_times_on_job_name", unique: true
+  end
+
   create_table "job_notes", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
     t.bigint "job_id", null: false, comment: "The job to which the note applies"
@@ -1402,6 +1408,8 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
+    t.bigint "notifiable_id"
+    t.string "notifiable_type"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
     t.datetime "notified_at", comment: "Time Notification was created"
@@ -1411,10 +1419,13 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
     t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.string "sms_response_content", comment: "Message body of the sms notification response."
+    t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
     t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
     t.index ["participant_id"], name: "index_participant_id"
     t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
