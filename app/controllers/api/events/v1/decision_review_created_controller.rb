@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
+  include ApiV3FeatureToggleConcern
+
+  before_action do
+    api_released?(:ama_eventing_enabled)
+  end
+
   # rubocop:disable Layout/LineLength
   def decision_review_created
     consumer_event_id = drc_params[:event_id]

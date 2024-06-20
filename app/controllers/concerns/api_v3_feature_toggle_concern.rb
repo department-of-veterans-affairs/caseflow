@@ -6,6 +6,8 @@ module ApiV3FeatureToggleConcern
   def api_released?(feature)
     return true if FeatureToggle.enabled?(feature)
 
+    # return true if feature == :ama_eventing_enabled
+
     render json: {
       errors: [
         {
