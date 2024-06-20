@@ -183,7 +183,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def decision_mailed_appeal_state_update_action!
-    update_appeal_state_action!(:decision_mailed, true)
+    update_appeal_state_action!(:decision_mailed)
   end
 
   # Purpose: Method to update appeal_state in the case of
