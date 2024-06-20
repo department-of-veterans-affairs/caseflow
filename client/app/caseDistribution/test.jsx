@@ -23,7 +23,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedAod = () => {
     this.setState({ isReseedingAod: true });
-    ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-aod-hearing-seeds').then(() => {
       this.setState({
         isReseedingAod: false,
       });
@@ -202,24 +202,24 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="distribution_status">Distribution Status</h2>
                           <ul>
                             <li>
-                              <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals-ready-to-distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download Appeals Ready to Distribute CSV
                                 </Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals-distributed?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV</Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
+                              <a href="/case_distribution_levers_tests/ineligible-judge-list?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
+                              <a href="/appeals-non-priority-ready-to-distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download AMA Non-priority Distributable CSV
                                 </Button>

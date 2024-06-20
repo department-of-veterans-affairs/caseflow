@@ -27,12 +27,11 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
 
     namespace :case_distribution_levers_tests do
-      post 'run_demo_aod_hearing_seeds'
-      post 'run_demo_non_aod_hearing_seeds'
-      get 'appeals_ready_to_distribute'
-      get 'appeals_non_priority_ready_to_distribute'
-      get 'appeals_distributed'
-      get 'ineligible_judge_list'
+      post 'run-demo-aod-hearing-seeds', to: 'run_demo_aod_hearing_seeds', as: "run-demo-aod-hearing-seeds"
+      post 'run_demo_non_aod_hearing_seeds', to: 'run_demo_non_aod_hearing_seeds', as: "run_demo_non_aod_hearing_seeds"
+      get 'appeals-ready-to-distribute', to: 'appeals_ready_to_distribute'
+      get 'appeals-distributed', to: 'appeals_distributed'
+      get 'ineligible-judge-list', to: 'ineligible_judge_list'
     end
   end
 

@@ -113,7 +113,7 @@ const CustomSeeds = () => {
       <>
         <div className="cf-section-header">
           <div className="cf-right-side">
-            <a href="/appeals_ready_to_distribute?csv=1">
+            <a href="/appeals-ready-to-distribute?csv=1">
               <button className="usa-button-active usa-button">Download Appeals Ready to Distribute CSV</button>
             </a>
           </div>
