@@ -322,12 +322,49 @@ export const commonReducers = (state, action) => {
 
     issueModificationRequest.addedFromApprovedRequest = true;
 
+    // TODO: This should be an issue at this point instead of an issue modification request
     let addedIssues = [...listOfIssues, issueModificationRequest];
 
     return {
       ...state,
       addedIssues,
       issueCount: addedIssues.length
+    };
+  };
+
+  actionsMap[ACTIONS.SET_ALL_APPROVED_ISSUE_MODIFICATION_WITHDRAWAL_DATES] = () => {
+    // const calculatedLastPendingWithdrawalDate = pendingIssueModificationRequests?.reduce((latest, current) =>
+    //   latest?.withdrawalDate > current?.withdrawalDate ? latest : current, []).withdrawalDate;
+    const calculatedLastPendingWithdrawalDate = pendingIssueModificationRequests
+    ?.reduce((latest, current) => {
+      // Check if current request is a withdrawal and its status is approved
+      if (current.requestType === 'withdrawal' && current.status === 'approved') {
+        // If latest is not set yet or current withdrawalDate is later than latest, update latest
+        if (!latest || new Date(current.withdrawalDate) > new Date(latest.withdrawalDate)) {
+          return current;
+        }
+      }
+
+      // Return the latest as is if current does not meet criteria or is not later
+      return latest;
+    }, null)?.withdrawalDate;
+
+    console.log('inside my reducer');
+    console.log('payload withdrawaldate:', action.payload.withdrawalDate);
+    console.log('calculatedWithdrawalDate:', calculatedLastPendingWithdrawalDate);
+
+    const updatedWithdrawalDate = action.payload.withdrawalDate || calculatedLastPendingWithdrawalDate;
+    const updatedPendingModificationRequests = pendingIssueModificationRequests.map((request) => {
+      if (request.requestType === 'withdrawal' && request.status === 'approved') {
+        request.withdrawalDate = updatedWithdrawalDate;
+      }
+
+      return request;
+    });
+
+    return {
+      ...state,
+      pendingIssueModificationRequests: updatedPendingModificationRequests
     };
   };
 
