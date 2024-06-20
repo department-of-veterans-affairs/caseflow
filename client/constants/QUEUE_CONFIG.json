@@ -152,16 +152,14 @@
       "name": "notes"
     },
     "VA_DATE_OF_RECEIPT": {
-      "name": "vaDor",
-      "label": "Filter by VA Date of Receipt"
+      "name": "vaDor"
     },
     "VETERAN_DETAILS": {
       "name": "veteranDetails"
     },
     "PACKAGE_DOCUMENT_TYPE": {
       "filterable": true,
-      "name": "packageDocTypeColumn",
-      "label": "Filter by Package Document Type"
+      "name": "packageDocTypeColumn"
     },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
