@@ -54,8 +54,9 @@ module Seeds
 
     def create_priority_affinity_cases
       judges_with_attorneys.each do |judge|
-        3.times do
+        2.times do
           create_case_ready_for_less_than_cavc_affinty_days(judge)
+          byebug
           create_case_ready_for_less_than_aod_hearing_affinity_days(judge)
           create_case_ready_for_more_than_cavc_affinty_days(judge)
           create_case_ready_for_more_than_aod_hearing_affinity_days(judge)
@@ -65,9 +66,12 @@ module Seeds
 
     def create_nonpriority_affinity_cases
       judges_with_attorneys.each do |judge|
-        3.times do
+        2.times do
           create_case_ready_for_less_than_hearing_affinity_days(judge)
           create_case_ready_for_more_than_hearing_affinity_days(judge)
+          create_ama_affinity_cases_more_than_four_years_old(judge)
+          create_ama_affinity_cases_from_three_years_ago(judge)
+          create_ama_affinity_cases_from_a_year_ago(judge)
         end
       end
     end
@@ -222,6 +226,30 @@ module Seeds
       dist_task = appeal.tasks.where(type: DistributionTask.name).first
       dist_task.assigned! unless dist_task.assigned?
       create(:appeal_affinity, appeal: appeal)
+
+      Timecop.return
+    end
+
+    # 4 years and one week old
+    def create_ama_affinity_cases_more_than_four_years_old
+      Timecop.travel((Timecop.travel(4.years.ago)+ 1).week.ago)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+
+      Timecop.return
+    end
+
+    # 4 years and one week old
+    def create_ama_affinity_cases_from_three_years_ago
+      Timecop.travel(3.years.ago)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+
+      Timecop.return
+    end
+
+    # 3 years ago
+    def create_ama_affinity_cases_from_a_year_ago
+      Timecop.travel(1.year.ago)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
 
       Timecop.return
     end
