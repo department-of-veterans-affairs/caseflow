@@ -15,7 +15,7 @@ class IssueModificationRequests::NonAdminUpdater
   end
 
   # TODO: Rename this to nonadmin
-  def process!
+  def non_admin_process!
     return false if !non_admin_actions?
 
     # TODO: Redo this a bit since the two updaters are combined and need to work with the same controller logic
@@ -25,7 +25,7 @@ class IssueModificationRequests::NonAdminUpdater
   end
 
   # TODO: Rename this to admin
-  def perform!
+  def admin_process!
     puts "gets in my stupid block"
     return unless admin_actions?
 
@@ -99,38 +99,4 @@ class IssueModificationRequests::NonAdminUpdater
       issue_modification_request.approve_request_from_params!(data, user)
     end
   end
-
-  # TODO: Move this logic into the IssueModificationRequest model class
-  # def update_denied_request(issue_modification_request, data)
-  #   # TODO: I think this can also update some of the fields in the models, but I don't know which ones maybe all
-  #   # issue_modification_request.update!(
-  #   #   decided_at: Time.zone.now,
-  #   #   decider: user,
-  #   #   status: :denied,
-  #   #   decision_reason: data[:decision_reason]
-  #   # )
-  #   issue_modification_request.deny_request_from_params!(data, user)
-  # end
-
-  # TODO: Move this logic into the IssueModificationRequest model class
-  # def update_approved_request(issue_modification_request, data)
-  #   # common_updates = {
-  #   #   decider: user,
-  #   #   decided_at: Time.zone.now,
-  #   #   status: :approved
-  #   # }
-
-  #   # TODO: Also update some of the other params that the admin can update here
-  #   # specific_updates = case data[:request_type]&.to_sym
-  #   #                    when :withdrawal, :removal, :addition
-  #   #                      {}
-  #   #                    when :modification
-  #   #                      { remove_original_issue: data[:remove_original_issue] }
-  #   #                    else
-  #   #                      fail "Unknown request type: #{issue_modification_request.request_type}"
-  #   #                    end
-
-  #   # issue_modification_request.update!(common_updates.merge(specific_updates))
-  #   issue_modification_request.approve_request_from_params!(data, user)
-  # end
 end

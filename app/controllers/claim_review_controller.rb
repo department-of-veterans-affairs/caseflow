@@ -31,12 +31,13 @@ class ClaimReviewController < ApplicationController
     if issues_modification_request_updater.non_admin_actions?
       process_and_render_issue_non_admin_issue_modification_requests
     elsif issues_modification_request_updater.admin_actions?
-      issues_modification_request_updater.perform!
-      if request_issues_update.perform!
-        render_success
-      else
-        render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
-      end
+      # issues_modification_request_updater.perform!
+      process_and_render_issue_admin_issue_modification_requests
+      # if request_issues_update.perform!
+      #   render_success
+      # else
+      #   render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+      # end
     elsif request_issues_update.perform!
       render_success
     else
@@ -189,7 +190,6 @@ class ClaimReviewController < ApplicationController
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if claim_review.pending_issue_modification_requests.any?
-      # TODO: What about an admin that only edits a couple of pending requests?
       { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }
@@ -255,7 +255,23 @@ class ClaimReviewController < ApplicationController
   end
 
   def process_and_render_issue_non_admin_issue_modification_requests
-    if issues_modification_request_updater.process!
+    if issues_modification_request_updater.non_admin_process!
+      render_success
+    else
+      render json: { error_code: :default }, status: :unprocessable_entity
+    end
+  rescue StandardError => error
+    render_error(error)
+  end
+
+  def process_and_render_issue_admin_issue_modification_requests
+    if issues_modification_request_updater.admin_process!
+      # TODO: If there are no approvals then we don't have to do request_issues updates
+      if request_issues_update.perform!
+        render_success
+      else
+        render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+      end
       render_success
     else
       render json: { error_code: :default }, status: :unprocessable_entity
