@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
 import React from 'react';
@@ -48,7 +49,6 @@ const userListItemStyle = css({
 const topUserBorder = css({
   borderBottom: '.1rem solid gray'
 });
-
 
 const titleButtonsStyle = css({
   width: '60rem'

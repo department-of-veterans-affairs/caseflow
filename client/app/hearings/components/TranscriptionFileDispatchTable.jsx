@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../../queue/QueueTable';
 import
@@ -7,10 +7,10 @@ import
   caseDetailsColumn,
   typesColumn,
   hearingDateColumn,
-  hearingTypeColumn,
-  statusColumn } from './TranscriptionFileDispatchTableColumns';
+  hearingTypeColumn
+} from './TranscriptionFileDispatchTableColumns';
 import { css } from 'glamor';
-import { testTranscriptionFiles } from '../../../test/data/transcriptionFiles';
+import { encodeQueryParams } from '../../util/QueryParamsUtil';
 
 const styles = css({
   '& div *': {
@@ -32,29 +32,29 @@ const styles = css({
   },
   '& .cf-pagination-summary': {
     position: 'relative',
+    top: '4em',
+  },
+  '& .cf-pagination:last-child .cf-pagination-summary': {
     top: '2em'
   },
   '& .cf-pagination-pages': {
     position: 'relative',
+  },
+  '& th:last-child .cf-dropdown-filter': {
+    left: '-200px'
   }
 });
 
 export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
-  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
+  const [transcriptionFiles] = useState([]);
 
   /**
-   * This filters the transcription files by its status before it renders
-   * @param {array} This is an array of the original transcription files list
-   * @returns A filtered list
-   * Note: This function is commented out for testing purposes and will be put back in after other tabs are made
+   * Adds custom url params to the params used for pagenatation
+   * @returns The url params needed to handle pagenation
    */
-  // const filterTranscriptionFiles = (files) => files.filter((file) => file.status.includes(statusFilter));
-
-  useEffect(() => {
-    // const filteredFiles = filterTranscriptionFiles(testTranscriptionFiles);
-
-    setTranscriptionFiles(testTranscriptionFiles);
-  }, []);
+  const qs = encodeQueryParams({
+    tab: statusFilter
+  });
 
   /**
    * A map for the column to determine which function to use
@@ -63,13 +63,12 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
    */
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [columns.SELECT_ALL.name]: selectColumn(transcriptionFiles),
-      [columns.DOCKET_NUMBER.name]: docketNumberColumn(transcriptionFiles),
-      [columns.CASE_DETAILS.name]: caseDetailsColumn(transcriptionFiles),
-      [columns.TYPES.name]: typesColumn(transcriptionFiles),
-      [columns.HEARING_DATE.name]: hearingDateColumn(transcriptionFiles),
-      [columns.HEARING_TYPE.name]: hearingTypeColumn(transcriptionFiles),
-      [columns.STATUS.name]: statusColumn(transcriptionFiles),
+      [columns.SELECT_ALL.name]: selectColumn(),
+      [columns.DOCKET_NUMBER.name]: docketNumberColumn(),
+      [columns.CASE_DETAILS.name]: caseDetailsColumn(),
+      [columns.TYPES.name]: typesColumn(),
+      [columns.HEARING_DATE.name]: hearingDateColumn(),
+      [columns.HEARING_TYPE.name]: hearingTypeColumn()
     };
 
     return functionForColumn[column.name];
@@ -84,6 +83,17 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
     return Object.values(cols).map((column) => createColumnObject(column));
   };
 
+  /**
+   * Restores any URL params as defaults in the QueryTable
+   * @returns The restored params object
+   */
+  const getUrlParams = (query) =>
+    Array.from(new URLSearchParams(query)).reduce((pValue, [kValue, vValue]) =>
+      Object.assign({}, pValue, {
+        [kValue]: pValue[kValue] ? (Array.isArray(pValue[kValue]) ?
+          pValue[kValue] : [pValue[kValue]]).concat(vValue) : vValue
+      }), {});
+
   return (
     <div {...styles} >
       <QueueTable
@@ -91,11 +101,11 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter }) => {
         rowObjects={transcriptionFiles}
         enablePagination
         casesPerPage={15}
-        defaultSort={{
-          sortColName: 'hearingDateColumn',
-          sortAscending: true
-        }}
+        useTaskPagesApi
+        taskPagesApiEndpoint={`/hearings/transcription_files/transcription_file_tasks${qs}`}
         anyFiltersAreSet
+        tabPaginationOptions={getUrlParams(window.location.search)}
+        getKeyForRow={(_, row) => row.id}
       />
     </div>
   );

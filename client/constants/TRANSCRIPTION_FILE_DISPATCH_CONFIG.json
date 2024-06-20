@@ -24,7 +24,7 @@
     },
     "HEARING_DATE": {
       "name": "hearingDateColumn",
-      "filterable": "date",
+      "filterable": true,
       "anyFiltersAreSet": true,
       "sorting_table": "hearings",
       "sorting_columns": ["hearing_date"]

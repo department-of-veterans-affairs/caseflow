@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
@@ -241,6 +242,7 @@ Rails.application.routes.draw do
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
   get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
+  get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
