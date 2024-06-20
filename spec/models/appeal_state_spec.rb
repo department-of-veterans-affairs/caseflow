@@ -8,7 +8,7 @@ describe AppealState do
   context "State scopes" do
     let(:user) { create(:user) }
 
-    let(:appeal_docketed_state) do
+    let!(:appeal_docketed_state) do
       create(
         :appeal_state,
         :ama,
@@ -18,7 +18,7 @@ describe AppealState do
       )
     end
 
-    let(:hearing_withdrawn_docketed_appeal_state) do
+    let!(:hearing_withdrawn_docketed_appeal_state) do
       create(
         :appeal_state,
         :ama,
@@ -29,7 +29,7 @@ describe AppealState do
       )
     end
 
-    let(:privacy_pending_state) do
+    let!(:privacy_pending_state) do
       create(
         :appeal_state,
         :ama,
@@ -41,7 +41,7 @@ describe AppealState do
       )
     end
 
-    let(:ihp_pending_state) do
+    let!(:ihp_pending_state) do
       create(
         :appeal_state,
         :ama,
@@ -53,7 +53,7 @@ describe AppealState do
       )
     end
 
-    let(:ihp_pending_privacy_pending_state) do
+    let!(:ihp_pending_privacy_pending_state) do
       create(
         :appeal_state,
         :ama,
@@ -65,18 +65,7 @@ describe AppealState do
       )
     end
 
-    let(:hearing_scheduled_privacy_pending_state) do
-      create(
-        :appeal_state,
-        :ama,
-        created_by_id: user.id,
-        updated_by_id: user.id,
-        hearing_scheduled: true,
-        privacy_act_pending: true
-      )
-    end
-
-    let(:hearing_to_be_rescheduled_postponed_state) do
+    let!(:hearing_to_be_rescheduled_postponed_state) do
       create(
         :appeal_state,
         :ama,
@@ -86,7 +75,7 @@ describe AppealState do
       )
     end
 
-    let(:hearing_to_be_rescheduled_scheduled_in_error_state) do
+    let!(:hearing_to_be_rescheduled_scheduled_in_error_state) do
       create(
         :appeal_state,
         :ama,
@@ -96,7 +85,7 @@ describe AppealState do
       )
     end
 
-    let(:hearing_to_be_rescheduled_privacy_pending_state) do
+    let!(:hearing_to_be_rescheduled_privacy_pending_state) do
       create(
         :appeal_state,
         :ama,
@@ -107,7 +96,7 @@ describe AppealState do
       )
     end
 
-    let(:appeal_decided_state) do
+    let!(:appeal_decided_state) do
       create(
         :appeal_state,
         :ama,
@@ -117,7 +106,7 @@ describe AppealState do
       )
     end
 
-    let(:appeal_cancelled_state) do
+    let!(:appeal_cancelled_state) do
       create(
         :appeal_state,
         :ama,
@@ -125,6 +114,21 @@ describe AppealState do
         updated_by_id: user.id,
         appeal_cancelled: true
       )
+    end
+
+    shared_context "staged hearing task tree" do
+      let(:appeal) { create(:appeal, :active) }
+      let(:distribution_task) { DistributionTask.create!(appeal: appeal, parent: appeal.root_task) }
+      let(:hearing_task) { HearingTask.create!(appeal: appeal, parent: distribution_task) }
+      let!(:assign_disp_task) do
+        AssignHearingDispositionTask.create!(appeal: appeal, parent: hearing_task, assigned_to: Bva.singleton)
+      end
+    end
+
+    shared_context "vacols case with case hearing" do
+      let(:case_hearing) { create(:case_hearing) }
+      let(:vacols_case) { create(:case, case_hearings: [case_hearing]) }
+      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     end
 
     context "#eligible_for_quarterly" do
@@ -145,21 +149,6 @@ describe AppealState do
           [appeal_docketed_state.id, hearing_withdrawn_docketed_appeal_state.id]
         )
       end
-    end
-
-    shared_context "staged hearing task tree" do
-      let(:appeal) { create(:appeal, :active) }
-      let(:distribution_task) { DistributionTask.create!(appeal: appeal, parent: appeal.root_task) }
-      let(:hearing_task) { HearingTask.create!(appeal: appeal, parent: distribution_task) }
-      let!(:assign_disp_task) do
-        AssignHearingDispositionTask.create!(appeal: appeal, parent: hearing_task, assigned_to: Bva.singleton)
-      end
-    end
-
-    shared_context "vacols case with case hearing" do
-      let(:case_hearing) { create(:case_hearing) }
-      let(:vacols_case) { create(:case, case_hearings: [case_hearing]) }
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     end
 
     context "#hearing_scheduled" do
@@ -281,7 +270,16 @@ describe AppealState do
     end
 
     context "#hearing_scheduled_privacy_pending" do
+      include_context "staged hearing task tree"
+
       subject { described_class.hearing_scheduled_privacy_pending.pluck(:id) }
+
+      let!(:hearing_scheduled_privacy_pending_state) do
+        appeal.appeal_state.tap do
+          _1.update!(hearing_scheduled: true,
+          privacy_act_pending: true)
+        end
+      end
 
       it "Only appeals in hearing scheduled and privacy act state are included" do
         is_expected.to match_array([hearing_scheduled_privacy_pending_state.id])
