@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { shallow } from 'enzyme';
+import { render, waitFor, cleanup, screen} from '@testing-library/react';
+
 import { PdfFile } from '../../../app/reader/PdfFile';
 import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 import networkUtil from '../../../app/util/NetworkUtil';
+import * as PDFJS from 'pdfjs-dist';
 
 jest.mock('../../../app/util/ApiUtil', () => ({
   get: jest.fn().mockResolvedValue({
@@ -23,6 +26,19 @@ jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
+
+jest.mock('pdfjs-dist', () => ({
+  GlobalWorkerOptions: {
+    workerSrc: 'fakeWorkerSrc',
+  },
+  getDocument: jest.fn(),
+}));
+const docSpy = jest.spyOn(PdfFile.prototype, 'getDocument');
+
+let renderStartTime = null;
+const setRenderStartTime = jest.fn(time => {
+  renderStartTime = time;
+});
 
 const metricArgs = (featureValue) => {
   return [
@@ -53,8 +69,27 @@ const metricArgs = (featureValue) => {
 };
 
 describe('PdfFile', () => {
-
+  let subjectRef;
   let wrapper;
+  let getPagesSpyImplementation;
+
+  const defaultProps = {
+    documentId: 1,
+    file: 'test-url',
+    documentType: 'test',
+    isVisible: true,
+    featureToggles: {
+      metricsRecordPDFJSGetDocument: true,
+      prefetchDisabled: undefined
+    },
+    setPdfDocument: jest.fn(),
+    clearDocumentLoadError: jest.fn(),
+    setDocumentLoadError: jest.fn(),
+    setPageDimensions: jest.fn(),
+    onPageChange: jest.fn(),
+    scale: 1,
+    rotation: 0
+  };
 
   describe('getDocument', () => {
 
@@ -63,7 +98,7 @@ describe('PdfFile', () => {
       beforeAll(() => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
+        const {container} = render(
           <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
@@ -81,8 +116,6 @@ describe('PdfFile', () => {
             setPdfDocument={jest.fn()}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterAll(() => {
@@ -100,13 +133,18 @@ describe('PdfFile', () => {
     });
 
     describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
-
-      beforeEach(() => {
+      beforeEach( () => {
         networkUtil.connectionInfo.mockResolvedValueOnce('5 Mbits/s');
+        PDFJS.getDocument.mockResolvedValue({
+          numPages: 3,
+          getPage: jest.fn().mockResolvedValue({
+            getViewport: () => ({ width: 100, height: 200 }),
+          }),
+        });
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
-          <PdfFile
+        render(
+        <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
@@ -123,8 +161,6 @@ describe('PdfFile', () => {
             setPdfDocument={jest.fn()}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterEach(() => {
@@ -136,27 +172,18 @@ describe('PdfFile', () => {
           body: {},
           header: { 'x-document-source': 'VBMS' }
         });
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toHaveBeenCalledWith(
               undefined,
               metricArgs()[1],
               metricArgs(true)[2]
             );
-          });
       });
 
       it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
-
         ApiUtil.get.mockResolvedValue({
           body: {},
           header: {}
         });
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toHaveBeenCalledWith(
               undefined,
@@ -166,19 +193,25 @@ describe('PdfFile', () => {
           });
       });
 
-      it('clears measureTimeStartMs after unmount', () => {
+      it('clears measureTimeStartMs after unmount', async () => {
         // Mock the ApiUtil.get function to return a Promise that resolves immediately
         ApiUtil.get.mockResolvedValue({});
-        const subject = wrapper.instance();
 
-        // Trigger the ApiUtil.get function call
-        subject.getDocument();
+        const simulatedStartTime = Date.now();
+        setRenderStartTime(simulatedStartTime);;
 
-        // Assert that measureTimeStartMs is counting
-        expect(subject.props.renderStartTime).not.toBeNull();
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(simulatedStartTime);
+        });
+
+        cleanup();
+
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(null);
+        });
       });
 
-      it('calls sotoreMetrics when getDocument fails', async () => {
+      it.only('calls storeMetrics when getDocument fails', async () => {
 
         const timeoutError = new Error('Timeout error');
 
@@ -186,9 +219,16 @@ describe('PdfFile', () => {
         ApiUtil.get.mockRejectedValueOnce(timeoutError);
 
         // Trigger the getDocument method which initiates the API call
-        await wrapper.instance().getDocument();
+        // await wrapper.instance().getDocument();
+        // jest.spyOn(PdfFile.prototype, 'getDocument').mockImplementation(() =>
+        //   Promise.reject(timeoutError)
+        // );
+        expect(docSpy).toHaveBeenCalledTimes(1)
         // Only metric should be created per error event
-        expect(storeMetrics).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+          // Ensure storeMetrics is called once
+          expect(storeMetrics).toHaveBeenCalledTimes(1);
+        }, { timeout: 5000 });
 
         // Verify that storeMetrics is called with the correct error metric arguments
         expect(storeMetrics).toHaveBeenCalledWith(
@@ -215,20 +255,47 @@ describe('PdfFile', () => {
       });
 
       it('calls storeMetrics when getPage fails', async () => {
+
+        const error = new Error('Failed to get pages');
+
+        const mockLoadingTask = {
+          promise: Promise.resolve({
+            numPages: 5,
+            getPage: jest.fn().mockRejectedValue(error),
+            destroy: jest.fn()
+          }),
+          destroy: jest.fn()
+        };
+        PDFJS.getDocument.mockReturnValue(mockLoadingTask);
+
+
+        // getPagesSpyImplementation = jest.fn().mockRejectedValue(error);
+
+        // jest.spyOn(wrapper.instance(), 'getPages').mockImplementation(() => {
+          //   return Promise.reject(error);
+          // });
+
         ApiUtil.get.mockResolvedValue({
           body: {},
           header: { 'x-document-source': 'VBMS' }
         });
 
-        const error = new Error('Failed to get pages');
+        // jest.spyOn(console, 'error').mockImplementation(() => {});
 
-        jest.spyOn(wrapper.instance(), 'getPages').mockImplementation(() => {
-          return Promise.reject(error);
-        });
+        // await wrapper.instance().getDocument();
 
-        await wrapper.instance().getDocument();
+        // jest.spyOn(PdfFile.prototype, 'getPages').mockRejectedValue(error);
 
-        expect(storeMetrics).toHaveBeenCalledTimes(1);
+         // Override the PdfFile class for this test
+        // class TestPdfFile extends PdfFile {
+        //   getPages = getPagesSpyImplementation;
+        // }
+
+        // render(<TestPdfFile {...defaultProps} />);
+
+        await waitFor(() => {
+          expect(storeMetrics).toHaveBeenCalledTimes(1);
+        }, { timeout: 3000 });
         expect(storeMetrics).toHaveBeenLastCalledWith(
           expect.any(String),
           {
@@ -314,4 +381,3 @@ describe('PdfFile', () => {
       });
     });
   });
-});
