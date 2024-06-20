@@ -87,7 +87,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       within "#issue-#{issue_id}" do
         click_dropdown(text: "Add decision date") do
           visible_options = page.find_all(".cf-select__option")
-          expect(visible_options).not_to have_content("Withdraw Issue")
+          expect(visible_options).to have_no_content("Withdraw Issue")
         end
       end
 

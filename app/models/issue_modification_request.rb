@@ -56,7 +56,10 @@ class IssueModificationRequest < CaseflowRecord
       )
     end
 
-    create!(IssueModificationRequest.attributes_from_form_data(attributes).merge(decision_review: review, requestor: user))
+    create_attributes_hash = IssueModificationRequest.attributes_from_form_data(attributes)
+      .merge(decision_review: review, requestor: user)
+
+    create!(create_attributes_hash)
   end
 
   def edit_from_params!(attributes, user)
