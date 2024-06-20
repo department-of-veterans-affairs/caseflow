@@ -252,7 +252,6 @@ FactoryBot.define do
                 )
 
                 if evaluator.tied_to
-
                   create(
                     :case_hearing,
                     :disposition_held,
