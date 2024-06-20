@@ -22,8 +22,6 @@ class AppealState < CaseflowRecord
                                                                hearing_scheduled: false,
                                                                vso_ihp_pending: false,
                                                                vso_ihp_complete: false,
-                                                               privacy_act_pending: false,
-                                                               privacy_act_complete: false,
                                                                scheduled_in_error: false,
                                                                appeal_cancelled: false).freeze
 
@@ -217,8 +215,8 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_complete_appeal_state_update_action!
-    if !appeal.active_foia_task?
-      update_appeal_state_action!(:privacy_act_complete)
+    unless appeal.active_foia_task?
+      update!(privacy_act_pending: false, privacy_act_complete: true)
     end
   end
 
@@ -230,7 +228,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_cancelled_appeal_state_update_action!
-    if !appeal.active_foia_task?
+    unless appeal.active_foia_task?
       update!(privacy_act_pending: false)
     end
   end
@@ -315,7 +313,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_pending_appeal_state_update_action!
-    update_appeal_state_action!(:privacy_act_pending)
+    update!(privacy_act_pending: true, privacy_act_complete: false)
   end
 
   private
@@ -428,7 +426,17 @@ class AppealState < CaseflowRecord
     end
   end
 
-  def update_appeal_state_action!(new_state)
-    update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
+  # :reek:FeatureEnvy
+  def update_appeal_state_action!(status_to_update)
+    update!({}.merge(DEFAULT_STATE).tap do |existing_statuses|
+      existing_statuses[status_to_update] = true
+
+      if status_to_update == :appeal_cancelled
+        existing_statuses.merge!({
+                                   privacy_act_complete: false,
+                                   privacy_act_pending: false
+                                 })
+      end
+    end)
   end
 end
