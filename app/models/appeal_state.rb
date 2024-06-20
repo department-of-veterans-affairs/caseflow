@@ -325,10 +325,10 @@ class AppealState < CaseflowRecord
       existing_statuses[status_to_update] = true
 
       if status_to_update == :appeal_cancelled
-        existing_statuses.merge({
-                                  privacy_act_complete: false,
-                                  privacy_act_pending: false
-                                })
+        existing_statuses.merge!({
+                                   privacy_act_complete: false,
+                                   privacy_act_pending: false
+                                 })
       end
     end)
   end
