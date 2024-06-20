@@ -61,9 +61,6 @@ export const RequestIssueFormWrapper = (props) => {
     switch (props.type) {
     case 'withdrawal':
       dispatch(issueWithdrawalRequestApproved(enhancedData?.identifier, enhancedData));
-      // TODO: This needs to somehow do the logic from add issues in here or in a reducer.
-      // So probably need a new action/reducer to do it
-      // console.log('in my approve action before my two issue withdrawal reducers');
       dispatch(setIssueWithdrawalDate(enhancedData.withdrawalDate));
       dispatch(setAllApprovedIssueModificationsWithdrawalDates());
       break;
