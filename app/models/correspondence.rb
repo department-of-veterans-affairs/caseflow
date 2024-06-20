@@ -10,7 +10,6 @@ class Correspondence < CaseflowRecord
   include AppealableCorrespondence
 
   has_many :correspondence_documents, dependent: :destroy
-  has_many :correspondence_intakes, dependent: :destroy
   has_many :correspondence_appeals, dependent: :destroy
   has_many :appeals, through: :correspondence_appeals
   has_many :correspondence_relations, dependent: :destroy
