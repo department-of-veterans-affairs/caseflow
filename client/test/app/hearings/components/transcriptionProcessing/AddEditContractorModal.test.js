@@ -37,6 +37,12 @@ const renderAddContractorModal = () => {
   );
 };
 
+const renderEditContractorModal = () => {
+  return render(
+    <AddEditContractorModal onCancel={onCancel} onConfirm={onConfirm} title="Edit New Contractor information" />
+  );
+};
+
 beforeEach(() => {
   jest.mock('../../../../../app/util/ApiUtil');
 });
@@ -110,5 +116,13 @@ describe('Add contractor form', () => {
     await waitFor(() =>
       expect(screen.getByText(COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE)).toBeInTheDocument()
     );
+  });
+});
+
+describe('Edit contractor form', () => {
+  test('contains expected labels, fields and buttons', () => {
+    const component = renderEditContractorModal();
+
+    expect(component).toMatchSnapshot();
   });
 });

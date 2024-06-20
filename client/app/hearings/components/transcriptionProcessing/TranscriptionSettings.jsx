@@ -41,7 +41,7 @@ const contactAlign = css({
 });
 
 const returnLinkStyle = css({
-  padding: '1.5rem 0 2rem 0rem',
+  paddingTop: '3rem',
 });
 
 const toggleStyle = css({
@@ -56,6 +56,11 @@ const userListItemStyle = css({
   clear: 'both'
 });
 
+const editlinkStyle = css({
+  display: 'flex',
+  flexWrap: 'wrap'
+});
+
 const contractorDetailStyle = css({
   flex: '1'
 });
@@ -65,17 +70,6 @@ const alertStyle = css({
     paddingBottom: '2rem'
   }
 });
-
-const EditContractorLink = () => (
-  <Button linkStyling>
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
-      Edit Information
-    </span>
-    <span {...css({ position: 'absolute' })}>
-      <PencilIcon size={25} />
-    </span>
-  </Button>
-);
 
 const EditHearingsSentLink = () => (
   <Button linkStyling>
@@ -183,6 +177,19 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
+  editContractorLink = (id) => (
+    <div>
+      <Button linkStyling onClick={() => this.editContractor(id)}>
+        <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
+          Edit Information
+        </span>
+        <span {...css({ position: 'absolute' })}>
+          <PencilIcon size={25} />
+        </span>
+      </Button>
+    </div>
+  );
+
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
     this.getContractors();
@@ -190,6 +197,21 @@ export default class TranscriptionSettings extends React.PureComponent {
   };
 
   toggleAddEditModal = () => this.setState({ isAddEditOpen: !this.state.isAddEditOpen });
+
+  editContractor = (id) => {
+    const currentContractor = this.state.contractors.find((contractor) => contractor.id === id);
+
+    this.setState({ currentContractor: {
+      transcriptionContractor: currentContractor
+    } });
+
+    this.toggleAddEditModal();
+  };
+
+  addContractor = () => {
+    this.setState({ currentContractor: null });
+    this.toggleAddEditModal();
+  };
 
   sortedContractors = () => {
     const group = this.state.contractors.sort((aString, bString) => {
@@ -208,7 +230,7 @@ export default class TranscriptionSettings extends React.PureComponent {
     });
 
     return group;
-  }
+  };
 
   mainContent = () => {
     const listOfContractors = this.sortedContractors().map((contractor) => {
@@ -217,7 +239,10 @@ export default class TranscriptionSettings extends React.PureComponent {
           <div {...userListItemStyle}>
             <div {...contractorDetailStyle}>
               <ul {...instructionListStyle}>
-                <h2>{contractor.name}<EditContractorLink /></h2>
+                <h2 {...editlinkStyle}>
+                  {contractor.name}
+                  {this.editContractorLink(contractor.id)}
+                </h2>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_BOX_LINK}</strong>{contractor.directory}</li>
                 <li><strong>{COPY.TRANSCRIPTION_SETTINGS_POC_ADDRESS}</strong>{contractor.poc}</li>
                 <li {...contactAlign}>{contractor.phone}</li>
@@ -265,7 +290,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         {this.state.isAddEditOpen && <AddEditContractorModal
           onCancel={this.toggleAddEditModal}
           onConfirm={this.confirmEditAddModal}
-          // transcriptionContractor={{ ... pass in actual contractor with ID to trigger edit mode }}
+          {...this.state.currentContractor}
         />}
         {this.state.isRemoveModalOpen && (
           <RemoveContractorModal
@@ -281,6 +306,12 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   render = () => (
     <>
+      <div {...returnLinkStyle}>
+        <span>
+          <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
+          &nbsp;
+        </span>
+      </div>
       {this.state.alert.title && (
         <div {...alertStyle}>
           <Alert
@@ -291,12 +322,6 @@ export default class TranscriptionSettings extends React.PureComponent {
         </div>
       )}
       <AppSegment filledBackground>
-        <div {...returnLinkStyle}>
-          <span>
-            <Link linkStyling>&lt; {COPY.TRANSCRIPTION_QUEUE_LINK}</Link>
-            &nbsp;
-          </span>
-        </div>
         <div>{this.mainContent()}</div>
       </AppSegment>
     </>
