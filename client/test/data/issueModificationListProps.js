@@ -38,7 +38,7 @@ export const mockedModificationRequestProps = [
       nonratingIssueDescription: 'Stuff',
       decisionDate: '2023-09-23'
     }
-  }
+  },
 ];
 
 export const mockedAdditionRequestTypeProps = [

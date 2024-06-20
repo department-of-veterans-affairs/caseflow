@@ -30,9 +30,9 @@ describe('ConfirmPendingRequestIssueModal', () => {
   };
 
   it('renders the confirm pending issue modal for modification', () => {
-    setup(propsForConfirmModification);
     // The modal uses a useSelector hook on load so we will mock its return value since we are not connecting to redux.
-    useSelector.mockReturnValueOnce(0);
+    useSelector.mockReturnValueOnce(mockedModificationRequestProps[1]);
+    setup(propsForConfirmModification);
 
     expect(screen.getByText(/Confirm changes/)).toBeInTheDocument();
 

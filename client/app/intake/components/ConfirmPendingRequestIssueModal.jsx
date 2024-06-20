@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import { formatDateStr } from '../../util/DateUtil';
 import COPY from '../../../COPY';
@@ -11,15 +10,13 @@ import {
   toggleConfirmPendingRequestIssueModal
 } from '../actions/issueModificationRequest';
 
-export const ConfirmPendingRequestIssueModal = (props) => {
+export const ConfirmPendingRequestIssueModal = () => {
+  const activeIssueModificationRequest = useSelector((state) => state.activeIssueModificationRequest);
 
-  const {
-    pendingIssueModificationRequest,
-  } = props;
+  const requestIssue = activeIssueModificationRequest.requestIssue;
 
-  const requestIssue = pendingIssueModificationRequest.requestIssue;
   const indexOfOriginalIssue = useSelector(
-    (state) => state.addedIssues.findIndex((issue) => issue.id === pendingIssueModificationRequest.requestIssue.id));
+    (state) => state.addedIssues.findIndex((issue) => issue.id === activeIssueModificationRequest.requestIssue.id));
 
   const dispatch = useDispatch();
 
@@ -36,9 +33,9 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   const newIssue = (
     <div>
       <h2 style={{ marginBottom: '0px' }}>Create new issue</h2>
-      <strong>Issue type: </strong>{pendingIssueModificationRequest?.nonratingIssueCategory}<br />
-      <strong>Decision date: </strong>{formatDateStr(pendingIssueModificationRequest?.decisionDate)}<br />
-      <strong>Issue description: </strong>{pendingIssueModificationRequest?.nonratingIssueDescription}<br />
+      <strong>Issue type: </strong>{activeIssueModificationRequest.nonratingIssueCategory}<br />
+      <strong>Decision date: </strong>{formatDateStr(activeIssueModificationRequest.decisionDate)}<br />
+      <strong>Issue description: </strong>{activeIssueModificationRequest.nonratingIssueDescription}<br />
     </div>
   );
 
@@ -53,14 +50,16 @@ export const ConfirmPendingRequestIssueModal = (props) => {
   };
 
   const onSubmit = () => {
-    const newRequestIssue = convertPendingIssueToRequestIssue(pendingIssueModificationRequest);
+    // Update the pending issues data if any modification was made in the main modal
+    // this also updated the status to approved thus removing it from pending section.
+    dispatch(updatePendingReview(activeIssueModificationRequest.identifier,
+      activeIssueModificationRequest));
+    const newFormattedRequestIssue = convertPendingIssueToRequestIssue(activeIssueModificationRequest);
 
-    // Remove the original issue from addedIssues
     dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues
-    dispatch(addIssue(newRequestIssue));
-    // Update the pending issue status
-    dispatch(updatePendingReview(pendingIssueModificationRequest.identifier, { status: 'approved' }));
+    dispatch(addIssue(newFormattedRequestIssue));
+    // close modal
     dispatch(toggleConfirmPendingRequestIssueModal());
   };
 
@@ -80,11 +79,7 @@ export const ConfirmPendingRequestIssueModal = (props) => {
       ]}
       closeHandler={() => dispatch(toggleConfirmPendingRequestIssueModal())}
     >
-      {modalInfo[pendingIssueModificationRequest.requestType]}
+      {modalInfo[activeIssueModificationRequest.requestType]}
     </Modal>
   );
-};
-
-ConfirmPendingRequestIssueModal.propTypes = {
-  pendingIssueModificationRequest: PropTypes.object,
 };

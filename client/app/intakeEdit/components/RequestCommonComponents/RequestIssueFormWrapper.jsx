@@ -3,9 +3,19 @@ import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util/DateUtil';
 import uuid from 'uuid';
+import {
+  issueWithdrawalRequestApproved,
+  updatePendingReview,
+  issueAdditionRequestApproved,
+  updateActiveIssueModificationRequest
+} from 'app/intake/actions/issueModificationRequest';
+import {
+  toggleIssueRemoveModal
+} from 'app/intake/actions/addIssues';
+import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
 export const RequestIssueFormWrapper = (props) => {
   const pendingIssueModificationRequest = props.pendingIssueModificationRequest ?
@@ -16,14 +26,19 @@ export const RequestIssueFormWrapper = (props) => {
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
   const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
 
+  const dispatch = useDispatch();
+
   const methods = useForm({
     defaultValues: {
       requestReason: pendingIssueModificationRequest.requestReason || '',
       nonratingIssueCategory: pendingIssueModificationRequest.nonratingIssueCategory || '',
       decisionDate: pendingIssueModificationRequest.decisionDate || '',
       nonratingIssueDescription: pendingIssueModificationRequest.nonratingIssueDescription || '',
+      removeOriginalIssue: false,
       withdrawalDate: formatDateStr(formatDate(pendingIssueModificationRequest.withdrawalDate),
-        'MM/DD/YYYY', 'YYYY-MM-DD') || ''
+        'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+      status: 'assigned',
+      addedFromApprovedRequest: false
     },
     mode: 'onChange',
     resolver: yupResolver(props.schema),
@@ -31,55 +46,94 @@ export const RequestIssueFormWrapper = (props) => {
 
   const { handleSubmit, formState } = methods;
 
-  const vhaAdminOnSubmit = () => {
-    props.onCancel();
-    if (props.type === 'modification') {
-      props.toggleConfirmPendingRequestIssueModal();
+  const whenAdminApproves = (enhancedData, removeOriginalIssue) => {
+    if (['withdrawal', 'addition'].includes(props.type)) {
+      dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+    } else {
+      dispatch(updateActiveIssueModificationRequest(enhancedData));
+    }
+
+    switch (props.type) {
+    case 'withdrawal':
+      dispatch(issueWithdrawalRequestApproved(enhancedData?.identifier, enhancedData));
+      break;
+    case 'removal':
+      dispatch(toggleIssueRemoveModal());
+      break;
+    case 'addition':
+      dispatch(issueAdditionRequestApproved(convertPendingIssueToRequestIssue(enhancedData)));
+      break;
+    case 'modification':
+      if (removeOriginalIssue) {
+        props.toggleConfirmPendingRequestIssueModal();
+      } else {
+        const modifiedEnhancedData = { ...enhancedData, requestIssue: {}, requestIssueId: null };
+
+        dispatch(updatePendingReview(modifiedEnhancedData?.identifier, modifiedEnhancedData));
+        dispatch(issueAdditionRequestApproved(convertPendingIssueToRequestIssue(modifiedEnhancedData)));
+      }
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
     }
   };
 
-  const onSubmit = (issueModificationRequestFormData) => {
-    if (userIsVhaAdmin) {
-      vhaAdminOnSubmit();
-    } else {
-      const currentIssueFields = props.currentIssue ?
-        {
-          requestIssueId: props.currentIssue.id,
-          nonratingIssueCategory: props.currentIssue.category,
-          nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
-          benefitType: props.currentIssue.benefitType,
-        } : {};
-
-      // The decision date will come from the current issue for removal and withdrawal requests.
-      // Ensure date is in a serializable format for redux
-      const decisionDate = formatDateStringForApi(issueModificationRequestFormData.decisionDate) ||
-       formatDateStringForApi(props.currentIssue?.decisionDate);
-
-      const enhancedData = {
-        ...currentIssueFields,
-        requestIssue: props.pendingIssueModificationRequest?.requestIssue || props.currentIssue,
-        ...(props.type === 'addition') && { benefitType },
-        requestor: { fullName: userFullName, cssId: userCssId },
-        requestType: props.type,
-        ...issueModificationRequestFormData,
-        decisionDate,
-        status: props.pendingIssueModificationRequest?.status || 'assigned',
-        identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
-        ...(props.type === 'modification' && !userIsVhaAdmin) && { edited: true }
-      };
-
-      // close modal and move the issue
-      props.onCancel();
-
-      if (isNewModificationRequest) {
-        if (props.type === 'addition') {
-          props.addToPendingReviewSection(enhancedData);
-        } else {
-          props.moveToPendingReviewSection(props.issueIndex, enhancedData);
-        }
+  const vhaNonAdmin = (enhancedData) => {
+    if (isNewModificationRequest) {
+      if (props.type === 'addition') {
+        props.addToPendingReviewSection(enhancedData);
       } else {
-        props.updatePendingReview(enhancedData.identifier, enhancedData);
+        props.moveToPendingReviewSection(enhancedData);
       }
+    } else {
+      props.updatePendingReview(enhancedData.identifier, enhancedData);
+    }
+  };
+
+  const onSubmit = (issueModificationRequest) => {
+    const currentIssueFields = props.currentIssue ?
+      {
+        requestIssueId: props.currentIssue.id,
+        nonratingIssueCategory: props.currentIssue.category,
+        nonratingIssueDescription: props.currentIssue.nonRatingIssueDescription,
+        benefitType: props.currentIssue.benefitType,
+      } : {};
+
+    // The decision date will come from the current issue for removal and withdrawal requests.
+    // Ensure date is in a serializable format for redux
+    const decisionDate = formatDateStringForApi(issueModificationRequest.decisionDate) ||
+        formatDateStringForApi(props.currentIssue?.decisionDate);
+
+    const enhancedData = {
+      ...currentIssueFields,
+      ...props.pendingIssueModificationRequest,
+      requestIssue: props.pendingIssueModificationRequest?.requestIssue || props.currentIssue,
+      ...(props.type === 'addition') && { benefitType },
+      requestor: props.pendingIssueModificationRequest?.requestor || { fullName: userFullName, cssId: userCssId },
+      decider: userIsVhaAdmin ? { fullName: userFullName, cssId: userCssId } : {},
+      requestType: props.type,
+      ...issueModificationRequest,
+      decisionDate,
+      identifier: props.pendingIssueModificationRequest?.identifier || uuid.v4(),
+      status: issueModificationRequest.status || 'assigned',
+      addedFromApprovedRequest: false
+    };
+
+    const status = issueModificationRequest.status;
+    const removeOriginalIssue = issueModificationRequest.removeOriginalIssue;
+
+    // close modal and move the issue
+    props.onCancel();
+
+    if (userIsVhaAdmin) {
+      if (status === 'approved') {
+        whenAdminApproves(enhancedData, removeOriginalIssue);
+      } else {
+        dispatch(updatePendingReview(enhancedData?.identifier, enhancedData));
+      }
+    } else {
+      vhaNonAdmin(enhancedData);
     }
   };
 
@@ -96,7 +150,7 @@ export const RequestIssueFormWrapper = (props) => {
               },
               {
                 classNames: ['usa-button', 'usa-button-primary'],
-                name: 'Submit request',
+                name: userIsVhaAdmin ? 'Confirm' : 'Submit request',
                 onClick: handleSubmit(onSubmit),
                 disabled: !formState.isValid
               }
