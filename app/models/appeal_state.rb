@@ -193,7 +193,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def appeal_cancelled_appeal_state_update_action!
-    update_appeal_state_action!(:appeal_cancelled, true)
+    update_appeal_state_action!(:appeal_cancelled)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -320,11 +320,11 @@ class AppealState < CaseflowRecord
 
   private
 
-  def update_appeal_state_action!(status_to_update, reset_privacy_tasks = false)
+  def update_appeal_state_action!(status_to_update)
     update!({}.merge(DEFAULT_STATE).tap do |existing_statuses|
       existing_statuses[status_to_update] = true
 
-      if reset_privacy_tasks
+      if status_to_update == :appeal_cancelled
         existing_statuses.merge({
                                   privacy_act_complete: false,
                                   privacy_act_pending: false
