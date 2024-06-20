@@ -40,7 +40,10 @@ class AutoAssignableUserFinder
   def run_auto_assign_algorithm(correspondence, users)
     users.each do |user|
       if correspondence.nod && !user.nod?
-        self.unassignable_reason = "NOD permission is currently disabled for this user."
+        # self.unassignable_reason = "NOD permission is currently disabled for this user." --original
+        # self.unassignable_reason = "Case was not assigned due to NOD permission settings." --new idea
+        # Matching AC:
+        self.unassignable_reason = "Case was not assigned because of NOD permission settings."
         next
       end
 
@@ -49,7 +52,10 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        self.unassignable_reason = "User does not meet the sensitivity level required."
+        # self.unassignable_reason = "User does not meet the sensitivity level required." --original
+        # self.unassignable_reason = "Case was not assigned due to sensitivity level mismatch." --new idea
+        # Matching AC:
+        self.unassignable_reason = "Case was not assigned because of sensitivity level mismatch."
       end
     end
 
