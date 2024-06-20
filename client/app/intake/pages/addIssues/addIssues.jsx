@@ -74,7 +74,6 @@ import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssu
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
 import { getOpenPendingIssueModificationRequests } from '../../selectors';
-import { formatDateStr, formatDate } from '../../../util/DateUtil';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
