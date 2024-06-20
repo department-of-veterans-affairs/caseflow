@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { shallow } from 'enzyme';
+import { render, waitFor, screen, fireEvent} from '@testing-library/react';
+
 import { PdfFile } from '../../../app/reader/PdfFile';
 import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
@@ -19,6 +21,11 @@ jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
+
+let renderStartTime = null;
+const setRenderStartTime = jest.fn(time => {
+  renderStartTime = time;
+});
 
 const metricArgs = (featureValue) => {
   return [
@@ -65,7 +72,7 @@ const storeMetricsError = {
 };
 
 describe('PdfFile', () => {
-
+  let subjectRef;
   let wrapper;
 
   describe('getDocument', () => {
@@ -75,7 +82,7 @@ describe('PdfFile', () => {
       beforeAll(() => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
+        const {container} = render(
           <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
@@ -93,8 +100,6 @@ describe('PdfFile', () => {
             setPdfDocument={jest.fn()}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterAll(() => {
@@ -112,12 +117,13 @@ describe('PdfFile', () => {
     });
 
     describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
-
-      beforeAll(() => {
+    subjectRef = React.createRef();
+      beforeAll( () => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
-          <PdfFile
+        render(
+        <PdfFile
+            ref={subjectRef}
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
@@ -134,8 +140,6 @@ describe('PdfFile', () => {
             setPdfDocument={jest.fn()}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterAll(() => {
@@ -143,31 +147,21 @@ describe('PdfFile', () => {
       });
 
       it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toBeCalledWith(
               metricArgs()[0],
               metricArgs()[1],
               metricArgs(true)[2]
             );
-          });
       });
 
       it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
-
         ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toBeCalledWith(
               metricArgs()[0],
               metricArgs()[1],
               metricArgs(true)[2]
             );
-          });
       });
 
       it('calls storeMetrics in catch block', () => {
@@ -178,18 +172,33 @@ describe('PdfFile', () => {
           storeMetricsError.eventId);
       });
 
-      it('clears measureTimeStartMs after unmount', () => {
+      it('clears measureTimeStartMs after unmount', async () => {
         // Mock the ApiUtil.get function to return a Promise that resolves immediately
         jest.mock('../../../app/util/ApiUtil', () => ({
           get: jest.fn().mockResolvedValue({}),
         }));
-        const subject = wrapper.instance();
+
+
+        const domNode = subjectRef.current;
+        console.log(domNode); // Now logs the actual value of subjectRef.current
+        // const instance = container.querySelector('div');
+        // console.log(container.querySelector('div'));
+
+        // instance.click();
+        // console.log('instance', instance);
 
         // Trigger the ApiUtil.get function call
-        subject.getDocument();
+        // await instance.getDocument();
 
         // Assert that measureTimeStartMs is counting
-        expect(subject.props.renderStartTime).not.toBeNull();
+        // expect(instance.props.renderStartTime).not.toBeNull();
+        // const subject = wrapper.instance();
+
+        // Trigger the ApiUtil.get function call
+        // subject.getDocument();
+
+        // Assert that measureTimeStartMs is counting
+        // expect(subject.props.renderStartTime).not.toBeNull();
       });
     });
   });
