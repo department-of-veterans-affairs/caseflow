@@ -713,8 +713,10 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedCorrespondenceCases = () => (
-    <CorrespondenceCases {...this.props} />
+  routedCorrespondenceCases = (props) => (
+    <CorrespondenceCases {...props.match.params}
+      {...this.props}
+    />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
