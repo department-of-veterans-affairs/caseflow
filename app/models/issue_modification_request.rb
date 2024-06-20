@@ -86,7 +86,8 @@ class IssueModificationRequest < CaseflowRecord
   private
 
   def open_issue_modification_request
-    if request_issue.issue_modification_requests.where.not(id: id).where(status: "assigned").any?
+    if request_issue.presence &&
+       request_issue.issue_modification_requests.where.not(id: id).where(status: "assigned").any?
       fail(
         Caseflow::Error::ErrorOpenModifyingExistingRequest,
         message: COPY::ERROR_OPEN_MODIFICATION_EXISTING_REQUEST
