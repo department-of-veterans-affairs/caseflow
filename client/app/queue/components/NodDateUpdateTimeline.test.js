@@ -1,10 +1,7 @@
 import React from 'react';
 import * as redux from 'react-redux';
-import Enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { render, screen } from '@testing-library/react';
 import { NodDateUpdateTimeline } from 'app/queue/components/NodDateUpdateTimeline';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 describe('NodDateUpdateTimeline', () => {
   const nodDateUpdate = {
@@ -23,7 +20,7 @@ describe('NodDateUpdateTimeline', () => {
   });
 
   const setupNodDateUpdateTimeline = (timeline) => {
-    return shallow(
+    return render(
       <NodDateUpdateTimeline
         timelineEvent={nodDateUpdate}
         timeline={timeline}
@@ -32,23 +29,23 @@ describe('NodDateUpdateTimeline', () => {
   };
 
   it('renders correctly', () => {
-    const component = setupNodDateUpdateTimeline(true);
+    const { asFragment } = setupNodDateUpdateTimeline(true);
 
-    expect(component).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   it('should show update details', () => {
-    const component = setupNodDateUpdateTimeline(true);
+    setupNodDateUpdateTimeline(true);
 
-    expect(component.text()).toContain('01/05/2021');
-    expect(component.text()).toContain('01/12/2021');
-    expect(component.text()).toContain('J. Doe');
-    expect(component.text()).toContain('Data Entry Error');
+    expect(screen.getByText('01/05/2021')).toBeInTheDocument();
+    expect(screen.getByText('01/12/2021')).toBeInTheDocument();
+    expect(screen.getByText('J. Doe')).toBeInTheDocument();
+    expect(screen.getByText('Data Entry Error')).toBeInTheDocument();
   });
 
   it('should not render if Task Rows is in Task Snapshot', () => {
-    const component = setupNodDateUpdateTimeline(false);
+    setupNodDateUpdateTimeline(false);
 
-    expect(component.find('tr').exists()).toEqual(false);
+    expect(screen.queryAllByRole('row')).toHaveLength(0);
   });
 });

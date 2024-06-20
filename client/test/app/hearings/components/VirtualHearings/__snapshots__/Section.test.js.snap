@@ -1,15 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VirtualHearingSection Matches snapshot with default props 1`] = `
-<Fragment>
+<DocumentFragment>
   <div
-    className="cf-help-divider"
+    class="cf-help-divider"
   />
   <h2>
     Section Header
   </h2>
-  <Tester />
-</Fragment>
+  <div
+    data-testid="tester-component"
+  />
+</DocumentFragment>
 `;
 
-exports[`VirtualHearingSection Returns nothing when hide prop is true 1`] = `""`;
+exports[`VirtualHearingSection Returns nothing when hide prop is true: <div /> 1`] = `<div />`;
