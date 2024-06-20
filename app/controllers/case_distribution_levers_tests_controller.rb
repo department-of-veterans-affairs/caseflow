@@ -39,6 +39,19 @@ class CaseDistributionLeversTestsController < ApplicationController
     send_data csv_data, filename: filename
   end
 
+  def appeals_non_priority_ready_to_distribute
+    csv_data = AppealsNonPriorityReadyForDistribution.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
+
+    # Set dynamic filename with current date and time
+    filename = "AMA_Non_priority_distributable_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
   def appeals_distributed
     # change this to the correct class
     csv_data = AppealsDistributed.process

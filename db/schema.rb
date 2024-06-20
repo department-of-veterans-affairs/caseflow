@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_27_154315) do
+ActiveRecord::Schema.define(version: 2024_06_13_202232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,19 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.string "source"
     t.datetime "updated_at"
     t.string "vbms_id"
+  end
+
+  create_table "appeal_affinities", force: :cascade do |t|
+    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
+    t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
+    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
+    t.string "docket", null: false, comment: "The docket of the appeal"
+    t.boolean "priority", null: false, comment: "Priority status (true/false)"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
+    t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -357,7 +370,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
@@ -2157,6 +2170,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_affinities", "distributions"
   add_foreign_key "appeal_states", "users", column: "created_by_id"
   add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"

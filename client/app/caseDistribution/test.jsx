@@ -218,6 +218,13 @@ class CaseDistributionTest extends React.PureComponent {
                                 <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
                               </a>
                             </li>
+                            <li>
+                              <a href="/appeals-non-priority-ready-to-distribute?csv=1">
+                                <Button classNames={['usa-button-active']}>
+                                  Download AMA Non-priority Distributable CSV
+                                </Button>
+                              </a>
+                            </li>
                           </ul>
                           <hr />
                           <h2 id="run_seeds">Run Seed Files</h2>
