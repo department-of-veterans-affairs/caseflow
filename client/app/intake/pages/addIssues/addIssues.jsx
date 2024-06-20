@@ -28,7 +28,7 @@ import { formatAddedIssues,
   formatLegacyAddedIssues } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
-import issueModificationRow from 'app/intake/components/IssueModificationRow';
+import { IssueModificationRow as issueModificationRow } from 'app/intake/components/IssueModificationRow';
 
 import {
   toggleAddDecisionDateModal,

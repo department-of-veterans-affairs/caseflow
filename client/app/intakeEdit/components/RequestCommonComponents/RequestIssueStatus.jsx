@@ -28,6 +28,12 @@ export const statusSchema = yup.lazy((value) => {
   return yup.mixed().notRequired();
 });
 
+export const decisionReasonSchema = yup.string().when('status', {
+  is: 'rejected',
+  then: (schema) => schema.required(),
+  otherwise: (schema) => schema.notRequired()
+});
+
 export const RequestIssueStatus = ({ displayCheckbox = false }) => {
   const { register, methods, watch } = useFormContext();
   const { setValue } = useForm();
@@ -57,6 +63,7 @@ export const RequestIssueStatus = ({ displayCheckbox = false }) => {
         label=""
         vertical
         options={DECISION_REJECT}
+        optionsStyling= {{ marginTop: 0 }}
         hideLabel
         onChange={(val) => {
           setValue('status', val);
@@ -81,7 +88,7 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
   let fieldClasses = 'checkbox';
 
   return (
-    <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
+    <div className={fieldClasses} style={{ paddingLeft: '30px' }}>
       <Checkbox
         name={name}
         key={`${name}-${option}`}
@@ -92,7 +99,7 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
         }}
         unpadded
       />
-    </fieldset>
+    </div>
   );
 };
 

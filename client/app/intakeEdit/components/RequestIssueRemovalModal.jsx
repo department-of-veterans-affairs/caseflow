@@ -4,12 +4,17 @@ import { useSelector } from 'react-redux';
 import CurrentIssue from './RequestCommonComponents/CurrentIssue';
 import RequestReason from './RequestCommonComponents/RequestReason';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
-import { RequestIssueStatus, statusSchema } from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
+import {
+  RequestIssueStatus,
+  statusSchema,
+  decisionReasonSchema
+} from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const removalSchema = yup.object().shape({
   requestReason: yup.string().required(),
-  status: statusSchema
+  status: statusSchema,
+  decisionReason: decisionReasonSchema
 });
 
 const RequestIssueRemovalContent = ({

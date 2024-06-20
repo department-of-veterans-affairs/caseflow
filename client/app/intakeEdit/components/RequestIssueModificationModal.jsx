@@ -8,7 +8,11 @@ import PriorDecisionDateAlert from 'app/intakeEdit/components/RequestCommonCompo
 import PriorDecisionDateSelector from 'app/intakeEdit/components/RequestCommonComponents/PriorDecisionDateSelector';
 import IssueDescription from 'app/intakeEdit/components/RequestCommonComponents/IssueDescription';
 import IssueTypeSelector from 'app/intakeEdit/components/RequestCommonComponents/IssueTypeSelector';
-import { RequestIssueStatus, statusSchema } from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
+import {
+  RequestIssueStatus,
+  statusSchema,
+  decisionReasonSchema
+} from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const modificationSchema = yup.object().shape({
@@ -17,7 +21,8 @@ const modificationSchema = yup.object().shape({
     max(new Date(), 'Decision date cannot be in the future.'),
   nonratingIssueDescription: yup.string().required(),
   requestReason: yup.string().required(),
-  status: statusSchema
+  status: statusSchema,
+  decisionReason: decisionReasonSchema
 });
 
 const RequestIssueModificationContent = ({ currentIssue, pendingIssueModificationRequest }) => {

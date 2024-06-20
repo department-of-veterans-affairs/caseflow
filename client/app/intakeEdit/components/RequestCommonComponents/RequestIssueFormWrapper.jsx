@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Modal from 'app/components/Modal';
+<<<<<<< HEAD
+=======
+import { useSelector, useDispatch } from 'react-redux';
+>>>>>>> pamatya/APPEALS-40997-v3
 import { formatDateStr, formatDate, formatDateStringForApi } from '../../../util/DateUtil';
 import uuid from 'uuid';
 import { isEmpty } from 'lodash';
@@ -19,23 +23,37 @@ import {
 import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
 export const RequestIssueFormWrapper = (props) => {
+<<<<<<< HEAD
+=======
+  const pendingIssueModificationRequest = props.pendingIssueModificationRequest ?
+    { ...props.pendingIssueModificationRequest } : {};
+>>>>>>> pamatya/APPEALS-40997-v3
   const userFullName = useSelector((state) => state.userFullName);
   const userCssId = useSelector((state) => state.userCssId);
   const benefitType = useSelector((state) => state.benefitType);
   const userIsVhaAdmin = useSelector((state) => state.userIsVhaAdmin);
+<<<<<<< HEAD
   const isNewModificationRequest = isEmpty(props.pendingIssueModificationRequest);
+=======
+  const isNewModificationRequest = Object.entries(props.pendingIssueModificationRequest).length === 0;
+>>>>>>> pamatya/APPEALS-40997-v3
 
   const dispatch = useDispatch();
 
   const methods = useForm({
     defaultValues: {
-      requestReason: props.pendingIssueModificationRequest?.requestReason || '',
-      nonratingIssueCategory: props.pendingIssueModificationRequest?.nonratingIssueCategory || '',
-      decisionDate: props.pendingIssueModificationRequest?.decisionDate || '',
-      nonratingIssueDescription: props.pendingIssueModificationRequest?.nonratingIssueDescription || '',
+      requestReason: pendingIssueModificationRequest.requestReason || '',
+      nonratingIssueCategory: pendingIssueModificationRequest.nonratingIssueCategory || '',
+      decisionDate: pendingIssueModificationRequest.decisionDate || '',
+      nonratingIssueDescription: pendingIssueModificationRequest.nonratingIssueDescription || '',
       removeOriginalIssue: false,
+<<<<<<< HEAD
       withdrawalDate: props.pendingIssueModificationRequest?.withdrawalDate || '',
       // withdrawalDate: formatDateStr(formatDate(props.pendingIssueModificationRequest?.withdrawalDate), 'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+=======
+      withdrawalDate: formatDateStr(formatDate(pendingIssueModificationRequest.withdrawalDate),
+        'MM/DD/YYYY', 'YYYY-MM-DD') || '',
+>>>>>>> pamatya/APPEALS-40997-v3
       status: 'assigned',
       // TODO: Do you need this since it's not a form field?
       addedFromApprovedRequest: false
@@ -106,6 +124,7 @@ export const RequestIssueFormWrapper = (props) => {
 
     // The decision date will come from the current issue for removal and withdrawal requests.
     // Ensure date is in a serializable format for redux
+<<<<<<< HEAD
     // TODO: Make sure this works for all cases. Hopefully it does.
     const decisionDate = issueModificationRequestFormData.decisionDate ?
       formatDateStringForApi(issueModificationRequestFormData.decisionDate) :
@@ -125,6 +144,10 @@ export const RequestIssueFormWrapper = (props) => {
     // console.log('when it is formatted:', formatDateStringForApi(issueModificationRequestFormData.decisionDate));
     // console.log('currentIssue decision date', props.currentIssue?.decisionDate);
     // console.log('when it is formatted:', formatDateStringForApi(currentIssueFields.decisionDate));
+=======
+    const decisionDate = formatDateStringForApi(issueModificationRequest.decisionDate) ||
+        formatDateStringForApi(props.currentIssue?.decisionDate);
+>>>>>>> pamatya/APPEALS-40997-v3
 
     const enhancedData = {
       ...currentIssueFields,
@@ -167,7 +190,7 @@ export const RequestIssueFormWrapper = (props) => {
       <FormProvider {...methods}>
         <form>
           <Modal
-            title={isNewModificationRequest ? `Request issue ${props.type}` : 'Edit pending request'}
+            title={isNewModificationRequest || userIsVhaAdmin ? `Request issue ${props.type}` : 'Edit pending request'}
             buttons={[
               { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
                 name: 'Cancel',
@@ -175,7 +198,7 @@ export const RequestIssueFormWrapper = (props) => {
               },
               {
                 classNames: ['usa-button', 'usa-button-primary'],
-                name: 'Submit request',
+                name: userIsVhaAdmin ? 'Confirm' : 'Submit request',
                 onClick: handleSubmit(onSubmit),
                 disabled: !formState.isValid
               }

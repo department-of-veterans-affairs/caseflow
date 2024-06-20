@@ -6,14 +6,19 @@ import RequestReason from './RequestCommonComponents/RequestReason';
 import { useFormContext } from 'react-hook-form';
 import RequestIssueFormWrapper from './RequestCommonComponents/RequestIssueFormWrapper';
 import DateSelector from 'app/components/DateSelector';
-import { RequestIssueStatus, statusSchema } from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
+import {
+  RequestIssueStatus,
+  statusSchema,
+  decisionReasonSchema
+} from 'app/intakeEdit/components/RequestCommonComponents/RequestIssueStatus';
 import * as yup from 'yup';
 
 const withdrawalSchema = yup.object().shape({
   requestReason: yup.string().required(),
   withdrawalDate: yup.date().required().
     max(new Date(), 'We cannot process your request. Please select a date prior to today\'s date.'),
-  status: statusSchema
+  status: statusSchema,
+  decisionReason: decisionReasonSchema
 });
 
 const RequestIssueWithdrawalContent = ({ currentIssue, pendingIssueModificationRequest }) => {
