@@ -8,14 +8,20 @@ import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import { KeyboardIcon } from '../../components/icons/KeyboardIcon';
 import {
-  categoryColumns, categoryInstructions,
-  commentColumns, commentInstructions, documentsColumns,
-  documentsInstructions, searchColumns, searchInstructions
+  categoryColumns,
+  categoryInstructions,
+  commentColumns,
+  commentInstructions,
+  documentsColumns,
+  documentsInstructions,
+  searchColumns,
+  searchInstructions,
 } from '../../reader/PdfKeyboardInfo';
 import SideBarCategories from '../../reader/SideBarCategories';
 import SideBarComments from '../../reader/SideBarComments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import SideBarIssueTags from '../../reader/SideBarIssueTags';
+import IssueTags from './IssueTags';
 
 const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
@@ -25,14 +31,9 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
   return (
     <div className="cf-sidebar-wrapper-prototype">
       <div className="cf-sidebar-header">
-        <Button
-          name="hide menu"
-          classNames={['cf-pdf-button']}
-          id="hide-menu-header"
-          onClick={() => toggleSidebar()}
-        >
+        <Button name="hide menu" classNames={['cf-pdf-button']} id="hide-menu-header" onClick={() => toggleSidebar()}>
           <h2 className="cf-non-stylized-header">
-          Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            Hide menu <i className="fa fa-chevron-right" aria-hidden="true" />
           </h2>
         </Button>
       </div>
@@ -40,13 +41,14 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
       <div
         className="cf-sidebar-accordion"
         id="cf-sidebar-accordion"
-      // ref={(commentListElement) => {
-      //   commentListElement = commentListElement;
-      // }}
+        // ref={(commentListElement) => {
+        //   commentListElement = commentListElement;
+        // }}
       >
-        <Accordion style="outline"
-        // onChange={onAccordionOpenOrClose()}
-        // activeKey={props.openedAccordionSections}
+        <Accordion
+          style="outline"
+          // onChange={onAccordionOpenOrClose()}
+          // activeKey={props.openedAccordionSections}
         >
           <AccordionSection title="Document information">
             <SideBarDocumentInformation
@@ -58,11 +60,12 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
             <SideBarCategories doc={doc} />
           </AccordionSection>
           <AccordionSection title="Issue tags">
-            <SideBarIssueTags doc={doc} />
+            <IssueTags doc={doc?.doc} />
           </AccordionSection>
           <AccordionSection
-          // title={COMMENT_ACCORDION_KEY}
-            id="comments-header">
+            // title={COMMENT_ACCORDION_KEY}
+            id="comments-header"
+          >
             <SideBarComments comments={comments} />
           </AccordionSection>
         </Accordion>
@@ -71,50 +74,59 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
       <div className="cf-keyboard-shortcuts">
         <Button
           id="cf-open-keyboard-modal"
-          name={<span><KeyboardIcon />&nbsp; View keyboard shortcuts</span>}
+          name={
+            <span>
+              <KeyboardIcon />
+              &nbsp; View keyboard shortcuts
+            </span>
+          }
           // onClick={openKeyboardModal}
           classNames={['cf-btn-link']}
         />
-        { isKeyboardModalOpen &&
-          (
-            <div className="cf-modal-scroll">
-              <Modal
-                buttons = {[
-                  { classNames: ['usa-button', 'usa-button-secondary'],
-                    name: 'Thanks, got it!',
+        {isKeyboardModalOpen && (
+          <div className="cf-modal-scroll">
+            <Modal
+              buttons={[
+                {
+                  classNames: ['usa-button', 'usa-button-secondary'],
+                  name: 'Thanks, got it!',
                   // onClick: closeKeyboardModalFromButton
-                  }
-                ]}
-                // closeHandler={handleKeyboardModalClose}
-                title="Keyboard shortcuts"
-                noDivider
-                id="cf-keyboard-modal">
-                <div className="cf-keyboard-modal-scroll">
-                  <Table
-                    columns={documentsColumns}
-                    rowObjects={documentsInstructions}
-                    slowReRendersAreOk
-                    className="cf-keyboard-modal-table" />
-                  <Table
-                    columns={searchColumns}
-                    rowObjects={searchInstructions}
-                    slowReRendersAreOk
-                    className="cf-keyboard-modal-table" />
-                  <Table
-                    columns={commentColumns}
-                    rowObjects={commentInstructions}
-                    slowReRendersAreOk
-                    className="cf-keyboard-modal-table" />
-                  <Table
-                    columns={categoryColumns}
-                    rowObjects={categoryInstructions}
-                    slowReRendersAreOk
-                    className="cf-keyboard-modal-table" />
-                </div>
-              </Modal>
-            </div>
-          )
-        }
+                },
+              ]}
+              // closeHandler={handleKeyboardModalClose}
+              title="Keyboard shortcuts"
+              noDivider
+              id="cf-keyboard-modal"
+            >
+              <div className="cf-keyboard-modal-scroll">
+                <Table
+                  columns={documentsColumns}
+                  rowObjects={documentsInstructions}
+                  slowReRendersAreOk
+                  className="cf-keyboard-modal-table"
+                />
+                <Table
+                  columns={searchColumns}
+                  rowObjects={searchInstructions}
+                  slowReRendersAreOk
+                  className="cf-keyboard-modal-table"
+                />
+                <Table
+                  columns={commentColumns}
+                  rowObjects={commentInstructions}
+                  slowReRendersAreOk
+                  className="cf-keyboard-modal-table"
+                />
+                <Table
+                  columns={categoryColumns}
+                  rowObjects={categoryInstructions}
+                  slowReRendersAreOk
+                  className="cf-keyboard-modal-table"
+                />
+              </div>
+            </Modal>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -127,7 +139,7 @@ ReaderSidebar.propTypes = {
     filename: PropTypes.string,
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     receivedAt: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
   }),
   hideSidebar: PropTypes.bool,
   toggleSidebar: PropTypes.func,
