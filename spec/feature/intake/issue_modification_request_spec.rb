@@ -339,6 +339,7 @@ feature "Issue Modification Request", :postgres do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Requested Changes")
       verify_select_action_dropdown("modification")
+      fill_in "Issue description", with: "newly modified description"
       find('label[for="status_approved"]').click
       expect(page).to have_text("Remove original issue")
       find('label[for="removeOriginalIssue"]').click
@@ -349,7 +350,7 @@ feature "Issue Modification Request", :postgres do
       expect(page).to have_text("Issue description: A description of the newly added issue")
       expect(page).to have_text("Create new issue")
       expect(page).to have_text("Issue type: Camp Lejune Family Member")
-      expect(page).to have_text("Issue description: Newly modified issue description")
+      expect(page).to have_text("Issue description: newly modified description")
       click_on "Confirm"
 
       expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
@@ -614,7 +615,7 @@ feature "Issue Modification Request", :postgres do
   end
 
   def click_reject
-    find('label[for="status_rejected"]').click
+    find('label[for="status_denied"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
     click_on "Confirm"
