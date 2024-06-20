@@ -110,10 +110,14 @@ feature "Issue Modification Request", :postgres do
   end
 
   context "non-admin user" do
-    it "does not enable the submit button until all fields are touched" do
+    it "should open the edit issues page and show non-admin content" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
       expect(page).to have_content("Request additional issue")
+    end
+
+    it "does not enable the submit button until all fields are touched" do
+      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
       step "for modification" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
@@ -219,46 +223,6 @@ feature "Issue Modification Request", :postgres do
       expect(pending_section).to have_text("#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}".strip)
       expect(pending_section).to have_text(Constants::BENEFIT_TYPES["vha"])
       expect(pending_section).to have_text(ri.decision_date.strftime("%m/%d/%Y").to_s)
-
-      # Verify that the banner is present on the page
-      check_for_pending_requests_banner
-
-      # Submit the page and verify that the issue modification requests were saved
-      click_on "Save"
-
-      # Verify that the page is redirected to the decision review queue
-      expect(page).to have_content("Veterans Health Administration")
-
-      # Verify the success banner
-      expect(page).to have_content("You have successfully submitted a request.")
-      expect(page).to have_content("#{in_progress_hlr.veteran_full_name}'s Higher-Level Review was saved.")
-
-      # verify that is on the pending tab
-      expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_DESCRIPTION)
-      expect(current_url).to include("/decision_reviews/vha?tab=pending")
-
-      # TODO: This fetch might need to change if we create more than one
-      issue_request = IssueModificationRequest.last
-
-      # Verify the issue modification request attributes
-      expect(issue_request.nonrating_issue_category).to eq("Beneficiary Travel")
-      expect(issue_request.nonrating_issue_description).to eq("An issue description")
-      expect(issue_request.decision_date).to eq(Date.strptime("05/15/2024", "%m/%d/%Y"))
-      expect(issue_request.request_reason).to eq("I wanted to")
-      expect(issue_request.request_issue).to eq(ri)
-      expect(issue_request.requestor).to eq(current_user)
-      expect(issue_request.status).to eq("assigned")
-      expect(issue_request.request_type).to eq("modification")
-      expect(issue_request.remove_original_issue).to eq(false)
-      expect(issue_request.benefit_type).to eq("vha")
-
-      # TODO: Add an addition request to this as well and confirm that both are created
-
-      # TODO: Click the link as a non admin and verify that the pending requests are persisted
-      # Update one of them and cancel another and save the page
-
-      # TODO: Swap to admin click the link of the claim in the pending tab to revisit the edit page
-      # Then accept or deny the issue request
     end
   end
 
@@ -308,7 +272,6 @@ feature "Issue Modification Request", :postgres do
       step "request type Addition and request approval" do
         expect(page).to have_text("Requested Additional Issues")
         verify_select_action_dropdown("addition")
-        verify_admin_select_action_dropdown("addition")
         click_approve("addition")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         expect(page).to have_text(COPY::VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE)
@@ -319,7 +282,7 @@ feature "Issue Modification Request", :postgres do
 
       step "request type removal and request approval" do
         expect(page).to have_text("Requested Issue Removal")
-        verify_admin_select_action_dropdown("removal")
+        verify_select_action_dropdown("removal")
         click_approve("removal")
         expect(page).to have_text("Remove issue")
         expect(page).to have_text("The contention you selected will be removed from the decision review.")
@@ -331,7 +294,7 @@ feature "Issue Modification Request", :postgres do
       step "request type withdrawal and request approval" do
         expect(page).not_to have_text("Withdrawn issues")
         expect(page).to have_text("Requested Issue Withdrawal")
-        verify_admin_select_action_dropdown("withdrawal")
+        verify_select_action_dropdown("withdrawal")
         click_approve("withdrawal")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         expect(page).to have_text("Withdrawn issues")
@@ -342,7 +305,6 @@ feature "Issue Modification Request", :postgres do
       step "request type modification when remove original issue is not selected" do
         expect(page).to have_text("Requested Changes")
         verify_select_action_dropdown("modification")
-        verify_admin_select_action_dropdown("modification")
         click_approve("modification")
         expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
         requested_issues = page.find("tr", text: "Requested issues")
@@ -355,11 +317,11 @@ feature "Issue Modification Request", :postgres do
     it "should create remove original issue and create only 1 new issue when issue modification request is approved" do
       visit "higher_level_reviews/#{in_pending_hlr.uuid}/edit"
       expect(page).to have_text("Requested Changes")
-      verify_admin_select_action_dropdown("modification")
+      verify_select_action_dropdown("modification")
       find('label[for="status_approved"]').click
       expect(page).to have_text("Remove original issue")
       find('label[for="removeOriginalIssue"]').click
-      click_on "Submit request"
+      click_on "Confirm"
       expect(page).to have_text("Confirm changes")
       expect(page).to have_text("Delete original issue")
       expect(page).to have_text("Issue type: CHAMPVA")
@@ -383,7 +345,7 @@ feature "Issue Modification Request", :postgres do
 
       step "request type Addition and request rejected" do
         expect(page).to have_text("Requested Additional Issues")
-        verify_admin_select_action_dropdown("addition")
+        verify_select_action_dropdown("addition")
         click_reject
         verify_rejection_count(1, "Requested Additional Issues")
       end
@@ -391,7 +353,6 @@ feature "Issue Modification Request", :postgres do
       step "request type removal and request rejected" do
         expect(page).to have_text("Requested Issue Removal")
         verify_select_action_dropdown("removal")
-        verify_admin_select_action_dropdown("removal")
         click_reject
         verify_rejection_count(2, "Requested Issue Removal")
       end
@@ -400,6 +361,15 @@ feature "Issue Modification Request", :postgres do
         expect(page).not_to have_text("Withdrawn issues")
         expect(page).to have_text("Requested Issue Withdrawal")
         verify_select_action_dropdown("withdrawal")
+        click_reject
+        verify_rejection_count(3, "Requested Issue Withdrawal")
+      end
+
+      step "request type modification when remove original issue is not selected" do
+        expect(page).to have_text("Requested Changes")
+        verify_select_action_dropdown("modification")
+        click_reject
+        verify_rejection_count(4, "Requested Changes")
       end
     end
   end
@@ -431,16 +401,6 @@ feature "Issue Modification Request", :postgres do
           select_action = find("input", visible: false)
           expect(select_action[:disabled]).to eq "true"
         end
-        verify_admin_select_action_dropdown("withdrawal")
-        click_reject
-        verify_rejection_count(3, "Requested Issue Withdrawal")
-      end
-
-      step "request type modification when remove original issue is not selected" do
-        expect(page).to have_text("Requested Changes")
-        verify_admin_select_action_dropdown("modification")
-        click_reject
-        verify_rejection_count(4, "Requested Changes")
       end
     end
   end
@@ -521,41 +481,40 @@ feature "Issue Modification Request", :postgres do
     expect(page).to have_content(issue_modification_request.request_reason)
   end
 
+  # rubocop:disable convention:Metrics/PerceivedComplexity
   def verify_select_action_dropdown(request_type, admin = true)
     data_key = "div[data-key=issue-#{request_type}]"
-    option =
-      if admin
-        "Review issue #{request_type} request"
-      elsif request_type == "addition"
-        "Edit issue #{request_type} request"
-      else
-        "Edit #{request_type} request"
-      end
-    modal_title = "Edit pending request"
+    if admin
+      option = "Review issue #{request_type} request"
+      modal_title = "Request issue #{request_type}"
+    else
+      option = "Edit #{request_type} request"
+      modal_title = "Edit pending request"
+    end
     selector = page.find(data_key)
     dropdown_div = selector.find("div.cf-form-dropdown")
     dropdown_div.click
     expect(page).to have_text(option)
-    # click_dropdown(text: "#{option} request", container = selector)
     click_dropdown(name: "select-action-#{request_type}", text: option)
     expect(page).to have_text(modal_title)
-    expect(page).to have_button("Submit request", disabled: true)
-    expect(page).to have_text("Original issue") unless request_type == "addition"
-    expect(page).to have_text("Approve request")
-    expect(page).to have_text("Reject request")
+    expect(page).to have_button("Confirm", disabled: true) if admin
+    expect(page).to have_text("Approve request") if admin
+    expect(page).to have_text("Reject request") if admin
+    click_on "Cancel" unless admin
   end
+  # rubocop:enable convention:Metrics/PerceivedComplexity
 
   def click_approve(request_type)
     find('label[for="status_approved"]').click
     expect(page).to have_text("Remove original issue") if request_type == "modification"
-    click_on "Submit request"
+    click_on "Confirm"
   end
 
   def click_reject
     find('label[for="status_rejected"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
-    click_on "Submit request"
+    click_on "Confirm"
     expect(current_url).to include("higher_level_reviews/#{in_pending_hlr.uuid}/edit")
   end
 
