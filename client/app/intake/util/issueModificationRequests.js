@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import { v4 } from 'uuid';
+import { formatDateStrUtc } from '../../util/DateUtil';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -49,7 +50,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       decisionReason: modificationRequest.decision_reason,
       requestReason: modificationRequest.request_reason,
       requestIssueId: modificationRequest.request_issue_id,
-      withdrawalDate: modificationRequest.withdrawal_date,
+      withdrawalDate: formatDateStrUtc(modificationRequest.withdrawal_date, 'YYYY-MM-DD'),
       // Serialized Object fields
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),
@@ -59,21 +60,15 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
   });
 };
 
-// This might need to compare old and current to know which ones have been finished.
-// Either that or we need to only grab the ones where the status is still assigned.
-// TODO: Auto format all the non object attribute keys via a camel case -> snake case conversion
 export const formatIssueModificationRequestSubmissionData = (state) => {
   const groupedRequests = {
     new: [],
     cancelled: [],
     edited: [],
-    approved: [],
-    denied: []
+    decided: []
   };
 
   (state.pendingIssueModificationRequests || []).
-    // TODO: Remove this filter probably
-    filter((modificationRequest) => Boolean(modificationRequest)).
     forEach((modificationRequest) => {
       const formattedRequest = {
         id: modificationRequest.id,
@@ -96,10 +91,8 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
         groupedRequests.edited.push(formattedRequest);
       } else if (modificationRequest.status === 'cancelled') {
         groupedRequests.cancelled.push(formattedRequest);
-      } else {
-        // ADMIN STUFF
-        // Approved/denied will likely check for a variable that is set just like all the others
-        // groupedRequests.approved.push(formattedRequest);
+      } else if (modificationRequest.status === 'approved' || modificationRequest.status === 'denied') {
+        groupedRequests.decided.push(formattedRequest);
       }
     });
 
@@ -107,14 +100,21 @@ export const formatIssueModificationRequestSubmissionData = (state) => {
 };
 
 export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  const { nonratingIssueCategory, nonratingIssueDescription } = issueModificationRequest;
+
+  const requestIssueId = issueModificationRequest.requestIssue?.id ?
+    String(issueModificationRequest.requestIssue?.id) :
+    null;
+
   return {
-    id: String(issueModificationRequest?.requestIssue?.id),
+    id: requestIssueId,
     benefitType: issueModificationRequest.benefitType,
-    description: `${issueModificationRequest.nonratingIssueCategory} -
-      ${issueModificationRequest.nonratingIssueDescription}`,
-    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    description: nonratingIssueDescription,
+    nonRatingIssueDescription: nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,
-    category: issueModificationRequest.nonratingIssueCategory,
-    editable: true
+    category: nonratingIssueCategory,
+    editable: true,
+    // This is a one to many, but there should only ever be one assigned/pending issue modification request per issue
+    issueModificationRequestId: issueModificationRequest.id
   };
 };

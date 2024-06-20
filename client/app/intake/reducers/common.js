@@ -337,6 +337,38 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.SET_ALL_APPROVED_ISSUE_MODIFICATION_WITHDRAWAL_DATES] = () => {
+    const calculatedLastPendingWithdrawalDate = pendingIssueModificationRequests
+    ?.reduce((latest, current) => {
+      // Check if current request is a withdrawal and its status is approved
+      if (current.requestType === 'withdrawal' && current.status === 'approved') {
+        // If latest is not set yet or current withdrawalDate is later than latest, update latest
+        if (!latest || new Date(current.withdrawalDate) > new Date(latest.withdrawalDate)) {
+          return current;
+        }
+      }
+
+      // Return the latest as is if current does not meet criteria or is not later
+      return latest;
+    }, null)?.withdrawalDate;
+
+    // Prioritize the payload, if there is no withdrawal date in the payload then calculate it
+    const updatedWithdrawalDate = action.payload.withdrawalDate || calculatedLastPendingWithdrawalDate;
+    // Set all approved withdrawal pending issue modification requests to the updatedWithdrawalDate
+    const updatedPendingModificationRequests = pendingIssueModificationRequests.map((request) => {
+      if (request.requestType === 'withdrawal' && request.status === 'approved') {
+        request.withdrawalDate = updatedWithdrawalDate;
+      }
+
+      return request;
+    });
+
+    return {
+      ...state,
+      pendingIssueModificationRequests: updatedPendingModificationRequests
+    };
+  };
+
   return actionsMap;
 };
 

@@ -24,9 +24,6 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
 
   const data = { ...issueData, ...issueModificationData };
 
-  console.log('request issues:', data);
-  console.log('pending issue modficiation requests:', issueModificationData);
-
   return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).
     then(
       (response) => {

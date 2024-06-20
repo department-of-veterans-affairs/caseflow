@@ -76,9 +76,16 @@ export const issueAdditionRequestApproved = (issueModificationRequest) => (
   }
 );
 
-export const updateActiveIssueModificationRequest = (data) => ({
-  type: ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST,
-  payload: {
-    data
+export const updateActiveIssueModificationRequest = (data) => (
+  {
+    type: ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST,
+    payload: { data }
   }
-});
+);
+
+export const setAllApprovedIssueModificationsWithdrawalDates = (withdrawalDate) => (
+  {
+    type: ACTIONS.SET_ALL_APPROVED_ISSUE_MODIFICATION_WITHDRAWAL_DATES,
+    payload: { withdrawalDate }
+  }
+);
