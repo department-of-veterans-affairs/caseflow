@@ -28,8 +28,10 @@ class ClaimReviewController < ApplicationController
   end
 
   def update
-    if issues_modification_request_updater.process!
-      render_success
+    if issues_modification_request_updater.non_admin_actions?
+      process_and_render_issue_non_admin_issue_modification_requests
+    elsif issues_modification_request_updater.admin_actions?
+      process_and_render_issue_admin_issue_modification_requests
     elsif request_issues_update.perform!
       render_success
     else
@@ -60,7 +62,7 @@ class ClaimReviewController < ApplicationController
 
   def issues_modification_request_updater
     @issues_modification_request_updater ||= IssueModificationRequests::NonAdminUpdater.new(
-      current_user: current_user,
+      user: current_user,
       review: claim_review,
       issue_modifications_data: params[:issue_modification_requests]
     )
@@ -70,7 +72,8 @@ class ClaimReviewController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: claim_review,
-      request_issues_data: params[:request_issues]
+      request_issues_data: params[:request_issues],
+      issue_modification_responses_data: params[:issue_modification_responses]
     )
   end
 
@@ -181,7 +184,7 @@ class ClaimReviewController < ApplicationController
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if claim_review.pending_issue_modification_requests.any?
-      pending_issue_modification_requests_message
+      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }
     elsif request_issues_update.edited_issues.any?
@@ -203,20 +206,11 @@ class ClaimReviewController < ApplicationController
                      end
   end
 
-  # TODO: Move this into some sort of message builder helper if I have time.
   def decisions_message_hash_builder(vha_message, default_message)
     if claim_review.vha_claim?
       { title: vha_edited_title, message: vha_message }
     else
       { title: "Edit Completed", message: default_message }
-    end
-  end
-
-  def pending_issue_modification_requests_message
-    if current_user.vha_business_line_admin_user?
-      decisions_message_hash_builder(vha_edited_message, review_edited_message)
-    else
-      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
     end
   end
 
@@ -251,5 +245,34 @@ class ClaimReviewController < ApplicationController
     )
     ep_update.perform!
     ep_update
+  end
+
+  def process_and_render_issue_non_admin_issue_modification_requests
+    if issues_modification_request_updater.non_admin_process!
+      render_success
+    else
+      render json: { error_code: :default }, status: :unprocessable_entity
+    end
+  rescue StandardError => error
+    render_error(error)
+  end
+
+  def process_and_render_issue_admin_issue_modification_requests
+    if issues_modification_request_updater.admin_process!
+      # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
+      if issues_modification_request_updater.admin_approvals?
+        if request_issues_update.perform!
+          return render_success
+        else
+          return render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+        end
+      end
+
+      render_success
+    else
+      render json: { error_code: :default }, status: :unprocessable_entity
+    end
+  rescue StandardError => error
+    render_error(error)
   end
 end

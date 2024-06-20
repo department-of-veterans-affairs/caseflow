@@ -33,16 +33,8 @@ class IssueModificationRequest < CaseflowRecord
     Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def self.create_from_params!(attributes, review, user)
-    unless attributes[:status].casecmp("assigned").zero?
-      fail(
-        Caseflow::Error::ErrorCreatingNewRequest,
-        message: COPY::ERROR_CREATING_NEW_REQUEST
-      )
-    end
-
-    create!(
-      decision_review: review,
+  def self.attributes_from_form_data(attributes)
+    {
       request_issue_id: attributes[:request_issue_id],
       request_type: attributes[:request_type].downcase,
       request_reason: attributes[:request_reason],
@@ -52,30 +44,34 @@ class IssueModificationRequest < CaseflowRecord
       nonrating_issue_category: attributes[:nonrating_issue_category],
       nonrating_issue_description: attributes[:nonrating_issue_description],
       status: attributes[:status].downcase,
-      requestor: user
-    )
+      withdrawal_date: attributes[:withdrawal_date]
+    }
   end
 
-  def edit_from_params!(attributes, current_user)
-    unless allowed_to_update?(attributes, current_user)
+  def self.create_from_params!(attributes, review, user)
+    unless attributes[:status].casecmp("assigned").zero?
+      fail(
+        Caseflow::Error::ErrorCreatingNewRequest,
+        message: COPY::ERROR_CREATING_NEW_REQUEST
+      )
+    end
+
+    create!(IssueModificationRequest.attributes_from_form_data(attributes).merge(decision_review: review, requestor: user))
+  end
+
+  def edit_from_params!(attributes, user)
+    unless non_admin_allowed_to_update?(user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
       )
     end
 
-    update_attributes = attributes.slice(
-      :nonrating_issue_category,
-      :decision_date,
-      :nonrating_issue_description,
-      :request_reason
-    ).merge(edited_at: Time.zone.now)
-
-    update!(update_attributes)
+    update!(edited_attributes(attributes).merge(edited_at: Time.zone.now))
   end
 
-  def cancel_from_params!(attributes, current_user)
-    unless allowed_to_update?(attributes, current_user)
+  def cancel_from_params!(user)
+    unless non_admin_allowed_to_update?(user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
@@ -85,10 +81,45 @@ class IssueModificationRequest < CaseflowRecord
     update!(status: "cancelled")
   end
 
+  def deny_request_from_params!(attributes, user)
+    unless admin_allowed_to_update?(user)
+      fail(
+        CaseFlow::Error::ErrorDenyingExistingRequest,
+        message: COPY::ERROR_DECIDING_ISSUE_MODFICATION_REQUEST
+      )
+    end
+
+    denial_attributes = {
+      decider: user,
+      status: :denied,
+      decision_reason: attributes[:decision_reason]
+    }.merge(edited_attributes(attributes))
+
+    update!(denial_attributes)
+  end
+
+  def approve_request_from_params!(attributes, user)
+    unless admin_allowed_to_update?(user)
+      fail(
+        CaseFlow::Error::ErrorApprovingExistingRequest,
+        message: COPY::ERROR_DECIDING_ISSUE_MODFICATION_REQUEST
+      )
+    end
+
+    approve_attributes = {
+      decider: user,
+      status: :approved,
+      decision_reason: attributes[:decision_reason],
+      remove_original_issue: !!attributes[:remove_original_issue]
+    }.merge(edited_attributes(attributes))
+
+    update!(approve_attributes)
+  end
+
   private
 
   def only_one_assigned_issue_modification_request
-    if assigned? && request_issue.issue_modification_requests.assigned.exists?
+    if assigned? && request_issue.issue_modification_requests.assigned.where.not(id: id).exists?
       fail(
         Caseflow::Error::ErrorOpenModifyingExistingRequest,
         message: COPY::ERROR_OPEN_MODIFICATION_EXISTING_REQUEST
@@ -97,7 +128,7 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def request_issue_exists_unless_addition
-    if (!addition? || (addition? && approved?)) && request_issue.nil?
+    if !addition? && request_issue.nil?
       errors.add(:request_issue, "must exist if request_type is not addition")
     end
   end
@@ -108,7 +139,21 @@ class IssueModificationRequest < CaseflowRecord
     end
   end
 
-  def allowed_to_update?(attributes, user)
-    attributes[:status].casecmp("assigned").zero? && requestor == user
+  def non_admin_allowed_to_update?(user)
+    assigned? && requestor == user
+  end
+
+  def admin_allowed_to_update?(user)
+    assigned? && user.vha_business_line_admin_user?
+  end
+
+  def edited_attributes(attributes)
+    IssueModificationRequest.attributes_from_form_data(attributes).slice(
+      :nonrating_issue_category,
+      :decision_date,
+      :nonrating_issue_description,
+      :request_reason,
+      :withdrawal_date
+    )
   end
 end
