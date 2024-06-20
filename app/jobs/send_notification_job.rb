@@ -17,7 +17,8 @@ class SendNotificationJob < CaseflowJob
   RETRY_ERRORS = [
     Caseflow::Error::VANotifyNotFoundError,
     Caseflow::Error::VANotifyInternalServerError,
-    Caseflow::Error::VANotifyRateLimitError
+    Caseflow::Error::VANotifyRateLimitError,
+    HTTPClient::ReceiveTimeoutError
   ].freeze
 
   DISCARD_ERRORS = [
@@ -62,6 +63,12 @@ class SendNotificationJob < CaseflowJob
         send_to_va_notify if message_status_valid?
       end
     rescue StandardError => error
+      if Rails.deploy_env?(:prodtest) && error.in?(DISCARD_ERRORS)
+        transaction_wrapper do
+          @notification_audit = find_or_create_notification_audit
+        end
+      end
+
       log_error(error)
       raise error
     end
@@ -79,7 +86,7 @@ class SendNotificationJob < CaseflowJob
   #     notifications table and allow for observations around notification accuracy to be
   #     more easily obtained.
   def transaction_wrapper
-    Rails.deploy_env?(:prodtest) ? yield : ActiveRecord::Base.transaction { yield }
+    ActiveRecord::Base.transaction { yield }
   end
 
   def event_type

@@ -28,8 +28,7 @@ describe "ApplicationJob" do
       expect(execution_time_record.last_executed_at).to eq(Time.now.utc)
     end
 
-    it "adds record to JobExecutionTime if the ignore_job_execution_time? flag is false" do
-      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
+    it "adds record to JobExecutionTime if the IGNORE_JOB_EXECUTION_TIME constant is false" do
       Timecop.freeze(freeze_time_first_run) do
         expect(JobExecutionTime.count).to eq(0)
         JobThatIsGood.perform_now
@@ -39,7 +38,6 @@ describe "ApplicationJob" do
     end
 
     it "update existing record in JobExecutionTime table when job is run multiple times" do
-      allow(JobThatIsGood).to receive(:ignore_job_execution_time?).and_return(false)
       JobExecutionTime.create(job_name: JobThatIsGood.name, last_executed_at: 2.days.ago)
 
       Timecop.freeze(freeze_time_first_run) do
