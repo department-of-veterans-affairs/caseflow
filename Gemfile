@@ -8,13 +8,10 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 
-# Necessary for Shoryuken
-gem "aws-sdk"
-
 # amoeba gem for cloning appeals
 gem "amoeba"
+
 gem "aws-sdk"
-# BGS
 
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
