@@ -40,6 +40,7 @@ class SeedDB
     call_and_log_seed_step Seeds::ConsumerApiKey
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
+
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users

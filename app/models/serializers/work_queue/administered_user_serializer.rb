@@ -12,4 +12,13 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
     end
   end
   attribute :conference_provider
+  attribute :user_permission do |object, params|
+    object&.organization_permissions(params[:organization])
+  end
+  attribute :user_admin_permission do |object, params|
+    object&.organization_admin_permissions(params[:organization])
+  end
+  attribute :description do |object, params|
+    object&.organization_admin_permissions(params[:organization])
+  end
 end
