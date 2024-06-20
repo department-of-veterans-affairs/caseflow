@@ -277,7 +277,7 @@ describe AppealState do
       let!(:hearing_scheduled_privacy_pending_state) do
         appeal.appeal_state.tap do
           _1.update!(hearing_scheduled: true,
-          privacy_act_pending: true)
+                     privacy_act_pending: true)
         end
       end
 
