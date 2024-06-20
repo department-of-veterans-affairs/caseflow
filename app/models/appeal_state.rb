@@ -320,6 +320,7 @@ class AppealState < CaseflowRecord
 
   private
 
+  # :reek:FeatureEnvy
   def update_appeal_state_action!(status_to_update)
     update!({}.merge(DEFAULT_STATE).tap do |existing_statuses|
       existing_statuses[status_to_update] = true
