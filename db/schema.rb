@@ -78,19 +78,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.string "vbms_id"
   end
 
-  create_table "appeal_affinities", force: :cascade do |t|
-    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
-    t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
-    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
-    t.datetime "created_at", precision: 6, null: false
-    t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
-    t.string "docket", null: false, comment: "The docket of the appeal"
-    t.boolean "priority", null: false, comment: "Priority status (true/false)"
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
-    t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
-  end
-
   create_table "appeal_series", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.boolean "incomplete", default: false
@@ -2020,6 +2007,46 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2170,7 +2197,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
-  add_foreign_key "appeal_affinities", "distributions"
   add_foreign_key "appeal_states", "users", column: "created_by_id"
   add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
