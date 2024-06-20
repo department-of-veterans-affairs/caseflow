@@ -83,7 +83,7 @@ export const updateActiveIssueModificationRequest = (data) => ({
   }
 });
 
-export const setIssueModificationsWithdrawalDate = (withdrawalDate) => ({
-  type: ACTIONS.SET_ISSUE_WITHDRAWAL_DATE,
+export const setAllApprovedIssueModificationsWithdrawalDates = (withdrawalDate) => ({
+  type: ACTIONS.SET_ALL_APPROVED_ISSUE_MODIFICATION_WITHDRAWAL_DATES,
   payload: { withdrawalDate }
 });

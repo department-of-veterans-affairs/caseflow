@@ -33,17 +33,8 @@ class IssueModificationRequest < CaseflowRecord
     Intake::IssueModificationRequestSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def self.create_from_params!(attributes, review, user)
-    unless attributes[:status].casecmp("assigned").zero?
-      fail(
-        Caseflow::Error::ErrorCreatingNewRequest,
-        message: COPY::ERROR_CREATING_NEW_REQUEST
-      )
-    end
-
-    # TODO: use my new method here
-    create!(
-      decision_review: review,
+  def self.attributes_from_form_data(attributes)
+    {
       request_issue_id: attributes[:request_issue_id],
       request_type: attributes[:request_type].downcase,
       request_reason: attributes[:request_reason],
@@ -53,8 +44,19 @@ class IssueModificationRequest < CaseflowRecord
       nonrating_issue_category: attributes[:nonrating_issue_category],
       nonrating_issue_description: attributes[:nonrating_issue_description],
       status: attributes[:status].downcase,
-      requestor: user
-    )
+      withdrawal_date: attributes[:withdrawal_date]
+    }
+  end
+
+  def self.create_from_params!(attributes, review, user)
+    unless attributes[:status].casecmp("assigned").zero?
+      fail(
+        Caseflow::Error::ErrorCreatingNewRequest,
+        message: COPY::ERROR_CREATING_NEW_REQUEST
+      )
+    end
+
+    create!(IssueModificationRequest.attributes_from_form_data(attributes).merge(decision_review: review, requestor: user))
   end
 
   def edit_from_params!(attributes, user)
@@ -64,16 +66,6 @@ class IssueModificationRequest < CaseflowRecord
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
       )
     end
-
-    # puts "-----------------in edit from params! after allowed to update?---------------------------"
-    # edit_attributes =
-    #   attributes_from_form_data(attributes).slice(
-    #     :nonrating_issue_category,
-    #     :decision_date,
-    #     :nonrating_issue_description,
-    #     :request_reason,
-    #     :withdrawal_date
-    #   ).merge(edited_at: Time.zone.now)
 
     update!(edited_attributes(attributes).merge(edited_at: Time.zone.now))
   end
@@ -177,23 +169,8 @@ class IssueModificationRequest < CaseflowRecord
     assigned? && user.vha_business_line_admin_user?
   end
 
-  def attributes_from_form_data(attributes)
-    {
-      request_issue_id: attributes[:request_issue_id],
-      request_type: attributes[:request_type].downcase,
-      request_reason: attributes[:request_reason],
-      benefit_type: attributes[:benefit_type],
-      decision_date: attributes[:decision_date],
-      decision_reason: attributes[:decision_reason],
-      nonrating_issue_category: attributes[:nonrating_issue_category],
-      nonrating_issue_description: attributes[:nonrating_issue_description],
-      status: attributes[:status].downcase,
-      withdrawal_date: attributes[:withdrawal_date]
-    }
-  end
-
   def edited_attributes(attributes)
-    attributes_from_form_data(attributes).slice(
+    IssueModificationRequest.attributes_from_form_data(attributes).slice(
       :nonrating_issue_category,
       :decision_date,
       :nonrating_issue_description,

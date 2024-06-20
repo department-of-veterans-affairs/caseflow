@@ -11,11 +11,11 @@ import {
   issueWithdrawalRequestApproved,
   updatePendingReview,
   issueAdditionRequestApproved,
-  updateActiveIssueModificationRequest
-} from 'app/intake/actions/issueModificationRequest';
+  updateActiveIssueModificationRequest,
+  setAllApprovedIssueModificationsWithdrawalDates } from 'app/intake/actions/issueModificationRequest';
 import {
-  toggleIssueRemoveModal
-  , setIssueWithdrawalDate } from 'app/intake/actions/addIssues';
+  toggleIssueRemoveModal,
+  setIssueWithdrawalDate } from 'app/intake/actions/addIssues';
 import { convertPendingIssueToRequestIssue } from 'app/intake/util/issueModificationRequests';
 
 export const RequestIssueFormWrapper = (props) => {
@@ -63,7 +63,9 @@ export const RequestIssueFormWrapper = (props) => {
       dispatch(issueWithdrawalRequestApproved(enhancedData?.identifier, enhancedData));
       // TODO: This needs to somehow do the logic from add issues in here or in a reducer.
       // So probably need a new action/reducer to do it
+      // console.log('in my approve action before my two issue withdrawal reducers');
       dispatch(setIssueWithdrawalDate(enhancedData.withdrawalDate));
+      dispatch(setAllApprovedIssueModificationsWithdrawalDates());
       break;
     case 'removal':
       dispatch(toggleIssueRemoveModal());

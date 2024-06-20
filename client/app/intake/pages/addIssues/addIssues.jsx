@@ -59,7 +59,8 @@ import {
   moveToPendingReviewSection,
   addToPendingReviewSection,
   updatePendingReview,
-  cancelOrRemovePendingReview
+  cancelOrRemovePendingReview,
+  setAllApprovedIssueModificationsWithdrawalDates
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -73,7 +74,6 @@ import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssu
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
 import { getOpenPendingIssueModificationRequests } from '../../selectors';
-import { formatDateStr, formatDate } from '../../../util/DateUtil';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -212,6 +212,7 @@ class AddIssuesPage extends React.Component {
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
     // this.props.setIssueModificationsWithdrawalDate(value);
+    this.props.setAllApprovedIssueModificationsWithdrawalDates(value);
   };
 
   editingClaimReview() {
@@ -373,8 +374,8 @@ class AddIssuesPage extends React.Component {
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
 
-    const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
-      latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
+    // const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
+    //   latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
 
     // const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
     //   'MM/DD/YYYY', 'YYYY-MM-DD');
@@ -816,8 +817,7 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                // value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
-                value={pendingWithdrawalDate || intakeData.withdrawalDate}
+                value={intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"
@@ -935,6 +935,7 @@ export const EditAddIssuesPage = connect(
         cancelOrRemovePendingReview,
         updatePendingReview,
         setIssueWithdrawalDate,
+        setAllApprovedIssueModificationsWithdrawalDates,
         setMstPactDetails,
         correctIssue,
         undoCorrection,
