@@ -171,7 +171,6 @@ describe('PdfFile', () => {
 
         waitFor(() => {
           expect(setRenderStartTime).toHaveBeenCalledWith(null);
-          console.log('cleanup called', setRenderStartTime);
         });
       });
     });
