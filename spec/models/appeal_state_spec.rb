@@ -448,7 +448,7 @@ describe AppealState do
           created_by_id: user.id,
           updated_by_id: user.id,
           hearing_scheduled: true,
-          privacy_act_completed: true
+          privacy_act_complete: true
         )
       end
 
@@ -456,7 +456,7 @@ describe AppealState do
         subject
 
         expect(appeal_state.hearing_scheduled).to eq false
-        expect(appeal_state.privacy_act_completed).to eq false
+        expect(appeal_state.privacy_act_complete).to eq false
         expect(appeal_state.appeal_cancelled).to eq true
       end
     end
