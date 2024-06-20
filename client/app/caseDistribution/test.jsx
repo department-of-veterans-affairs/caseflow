@@ -23,7 +23,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedAod = () => {
     this.setState({ isReseedingAod: true });
-    ApiUtil.post('/case_distribution_levers_tests/run-demo-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-aod-hearing-seeds').then(() => {
       this.setState({
         isReseedingAod: false,
       });
@@ -37,7 +37,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedNonAod = () => {
     this.setState({ isReseedingNonAod: true });
-    ApiUtil.post('/case_distribution_levers_tests/run-demo-non-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingNonAod: false,
       });
@@ -223,9 +223,6 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="run_seeds">Run Seed Files</h2>
                           <ul>
                             <li>
-                              {/* <a href="/run-demo-aod-seeds">
-                                <button className="btn btn-primary">Run Demo AOD Hearing Held Seeds</button>
-                              </a> */}
                               <Button
                                 onClick={this.reseedAod}
                                 name="Run Demo AOD Hearing Held Seeds"
@@ -234,9 +231,6 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </li>
                             <li>
-                              {/* <a href="/run-demo-non-aod-seeds">
-                                <button className="btn btn-primary">Run Demo Non-AOD Hearing Held Seeds</button>
-                              </a> */}
                               <Button
                                 onClick={this.reseedNonAod}
                                 name="Run Demo NON AOD Hearing Held Seeds"
