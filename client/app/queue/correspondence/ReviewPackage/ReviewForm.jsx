@@ -84,7 +84,7 @@ export const ReviewForm = (props) => {
   const handleSelectCorrespondenceType = (val) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
-    setCorrespondenceTypeID(val.id - 1);
+    setCorrespondenceTypeID(val.id);
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
