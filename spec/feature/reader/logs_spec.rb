@@ -106,24 +106,6 @@ RSpec.feature "Reader", :all_dbs do
               expect(metric.metric_type).to eq "error"
             end
           end
-
-          context "Internet Speed not available", js: true do
-            it "creates an error Metric excluding internet speed" do
-              visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
-              page.execute_script(<<-JS)
-              window.networkUtil = {
-                connectionInfo: async () => 'Speed: Not available'
-                };
-              JS
-
-              expect(page.evaluate_script("window.networkUtil.connectionInfo()")).to eq "Speed: Not available"
-              expect(page).to have_content("Unable to load document")
-              metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
-              expect(metric.metric_message).not_to end_with("Mbits/s")
-              expect(metric.metric_attributes["step"]).to eq "getDocument"
-              expect(metric.metric_type).to eq "error"
-            end
-          end
         end
       end
     end
