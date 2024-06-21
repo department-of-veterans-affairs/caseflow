@@ -251,6 +251,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(current_url).to include("/decision_reviews/vha?tab=incomplete")
       expect(page).to have_content(edit_save_success_message_text)
+      expect(page).to have_content(edit_establish_success_message_text)
       expect(task.reload.status).to eq("on_hold")
 
       # Go back to the Edit issues page
@@ -370,7 +371,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     end
 
     let(:edit_save_success_message_text) do
-      "You have successfully added 2 issues."
+      "The claim has been modified"
     end
 
     context "an existing Higher-Level Review" do
