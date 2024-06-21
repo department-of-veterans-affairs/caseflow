@@ -67,12 +67,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: e9c1f961228b15f6cb03cd4828837d46a3d05d23
-  branch: feature/APPEALS-43121
+  revision: aa3a6f65a68523d8fd6bf887e1f66cd483bea41d
+  branch: feature/APPEALS-43121-efolder
   specs:
     ruby_claim_evidence_api (0.1.0)
       activesupport
-      aws-sdk-comprehend (~> 1.77)
       base64
       faraday
       faraday-multipart
