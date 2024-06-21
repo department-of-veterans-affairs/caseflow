@@ -75,12 +75,11 @@ module Seeds
 
     def create_set_of_affinity_cases
       judges_with_attorneys.each do |judge|
-        create_ama_affinity_cases_set(judge, 4.years)
+        create_ama_affinity_cases_set(judge, (4.years + 1.week))
         create_ama_affinity_cases_set(judge, 3.years)
       end
       2.times do
-        #{which judge do we need to create two sets for?}
-        create_ama_affinity_cases_set(judge, 1.year)
+        create_ama_affinity_cases_set(User.find_by_css_id("BVABDANIEL"), 1.year)
       end
     end
 
@@ -153,7 +152,7 @@ module Seeds
 
       # return system time back to now, then go to desired date where appeal will be ready for distribution
       Timecop.return
-      Timecop.travel((CaseDistributionLever.cavc_affinity_days + 7).days.ago)
+
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
@@ -271,20 +270,63 @@ module Seeds
                  create(:user, :with_vacols_attorney_record)
 
       Timecop.travel(years_old.ago)
-      if years_old == 4.years
-        Timecop.travel(1.week.ago.from_now)
-      end
-      direct_review_appeal = create(:appeal, :direct_review_docket, :with_post_intake_tasks, veteran: create_veteran)
-      direct_review_cavc_appeal = create(:appeal, :dispatched, :direct_review_docket, associated_judge: judge, associated_attorney: attorney, veteran: create_veteran veteran: create_veteran)
-      evidence_submission_appeal = create(:appeal, :evidence_submission_docket, :with_post_intake_tasks, veteran: create_veteran)
-      evidence_submission_cavc_appeal = create(:appeal, :dispatched, :evidence_submission_docket, associated_judge: judge, associated_attorney: attorney, veteran: create_veteran veteran: create_veteran)
+
+      direct_review_appeal = create(:appeal, :direct_review_docket, :ready_for_distribution, associated_judge: judge, veteran: create_veteran)
+      evidence_submission_appeal = create(:appeal, :evidence_submission_docket, :ready_for_distribution, associated_judge: judge, veteran: create_veteran)
       hearing_appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
       hearing_aod_appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
-      hearing_cavc_appeal = create(:appeal,:dispatched :hearing_docket, associated_judge: judge, associated_attorney: attorney, veteran: create_veteran veteran: create_veteran)
 
+      # travel to when the hearing was held, then create the held hearing and post-hearing tasks:
+      # add 91 days for the amount of time the post-hearing tasks are open and add 7 more to make the case ready
+      # for more than the hearing affinity days value
+      Timecop.return
+      Timecop.travel(92.days.ago)
+      create(:hearing, :held, appeal: hearing_appeal, judge: judge, adding_user: User.system_user)
+      create(:hearing, :held, appeal: hearing_aod_appeal, judge: judge, adding_user: User.system_user)
 
-      # go forward to when the remand is sent from CAVC. the source appeal's receipt_date will be the
-      # remand appeal's receipt_date, this is just to have more realistic data
+      Timecop.travel(91.days.from_now)
+      hearing_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+      hearing_aod_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
+
+      # created granted AOD motion to make this priority
+      create(:advance_on_docket_motion, appeal: hearing_aod_appeal, granted: true, person_id: hearing_aod_appeal.claimant.person.id,
+                                        reason: Constants.AOD_REASONS.financial_distress, user: User.system_user)
+
+      # set the distribution task to assigned, if it was not already
+      dist_task1 = hearing_appeal.tasks.where(type: DistributionTask.name).first
+      dist_task2 = hearing_aod_appeal.tasks.where(type: DistributionTask.name).first
+      dist_task1.assigned! unless dist_task1.assigned?
+      dist_task2.assigned! unless dist_task2.assigned?
+
+      Timecop.return
+      Timecop.travel(years_old.ago)
+
+      direct_review_cavc_appeal = create(
+        :appeal,
+        :dispatched,
+        :direct_review_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+      evidence_submission_cavc_appeal = create(
+        :appeal,
+        :dispatched,
+        :evidence_submission_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+
+      hearing_cavc_appeal = ccreate(
+        :appeal,
+        :dispatched,
+        :hearing_docket,
+        associated_judge: judge,
+        associated_attorney: attorney,
+        veteran: create_veteran
+      )
+
       Timecop.travel(1.year.from_now)
 
       # remand_appeal will have no tasks completed on it
@@ -292,51 +334,13 @@ module Seeds
       evidence_submission_cavc_remand = create(:cavc_remand, source_appeal: evidence_submission_cavc_appeal)
       hearing_cavc_remand = create(:cavc_remand, source_appeal: hearing_cavc_appeal)
 
+      # return system time back to now, then go to desired date where appeal will be ready for distribution
       Timecop.return
-      Timecop.travel((CaseDistributionLever.cavc_affinity_days + 7).days.ago)
 
       # complete the CAVC task and make the appeal ready to distribute
-      hearing_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
       direct_review_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
       evidence_submission_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
-
-      create(:appeal_affinity, appeal: hearing_cavc_remand.remand_appeal)
-      create(:appeal_affinity, appeal: direct_review_cavc_remand.remand_appeal)
-      create(:appeal_affinity, appeal: evidence_submission_cavc_remand.remand_appeal)
-
-      Timecop.return
-
-      Timecop.travel((91 + CaseDistributionLever.ama_hearing_case_affinity_days + 7).days.ago)
-      create(:hearing, :held, appeal: hearing_appeal, judge: judge, adding_user: User.system_user)
-      create(:hearing, :held, appeal: hearing_aod_appeal, judge: judge, adding_user: User.system_user)
-      create(:hearing, :held, appeal: hearing_cavc_appeal, judge: judge, adding_user: User.system_user)
-
-      # travel to when the tasks will auto-complete and complete them
-      Timecop.travel(91.days.from_now)
-      hearing_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
-      hearing_aod_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
-      hearing_cavc_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.children.map(&:completed!)
-
-
-      # created granted AOD motion to make this priority
-      create(:advance_on_docket_motion, appeal: hearing_aod_appeal, granted: true, person_id: appeal.claimant.person.id,
-                                        reason: Constants.AOD_REASONS.financial_distress, user: User.system_user)
-
-      #set the distribution task to assigned, if it was not already
-      dist_task1 = hearing_appeal.tasks.where(type: DistributionTask.name).first
-      dist_task2 = hearing_aod_appeal.tasks.where(type: DistributionTask.name).first
-      dist_task3 = hearing_cavc_appeal.tasks.where(type: DistributionTask.name).first
-
-      dist_task1.assigned! unless dist_task1.assigned?
-      dist_task2.assigned! unless dist_task2.assigned?
-      dist_task3.assigned! unless dist_task3.assigned?
-
-      create(:appeal_affinity, appeal: hearing_appeal)
-      create(:appeal_affinity, appeal: hearing_cavc_appeal)
-      create(:appeal_affinity, appeal: hearing_aod_appeal)
-
-      Timecop.return
-
+      hearing_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
     end
     # rubocop:enable Metrics/AbcSize
   end
