@@ -5,7 +5,7 @@
   "license": "none",
   "version": "0.0.1",
   "engines": {
-    "node": "16.16.0"
+    "node": "14.20.0"
   },
   "scripts": {
     "analyze": "yarn run analyze:build && yarn run analyze:view",
@@ -98,10 +98,9 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "node-sass": "^6.0.0",
+    "node-sass": "^4.14.0",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "2.6.347",
-    "picocolors": "^1.0.1",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.11.8",
@@ -131,7 +130,7 @@
     "regenerator-runtime": "^0.13.5",
     "remark-gfm": "^1.0.0",
     "reselect": "^4.0.0",
-    "sass-loader": "^10.1.1",
+    "sass-loader": "^8.0.0",
     "sprintf-js": "^1.1.2",
     "style-loader": "^1.0.1",
     "styled-components": "^5.2.1",

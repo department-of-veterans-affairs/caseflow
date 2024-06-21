@@ -34,6 +34,7 @@ import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 
+jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
 import { act } from 'react-dom/test-utils';
 
@@ -57,9 +58,6 @@ const setState = jest.fn();
 const useStateMock = (initState) => [initState, setState];
 const setScheduledHearingMock = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
-const errorMessageSpy = jest.spyOn(uiActions, 'showErrorMessage');
-const showSuccessMessageSpy = jest.spyOn(uiActions, 'showSuccessMessage');
-const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const scheduleVeteranProps = {
   showSuccessMessage: jest.fn(),
@@ -79,7 +77,10 @@ describe('ScheduleVeteran', () => {
     jest.spyOn(utils, 'processAlerts');
     patchSpy = jest.spyOn(ApiUtil, 'patch');
     jest.spyOn(React, 'useState').mockImplementation(useStateMock);
-    getSpy.mockImplementation(() => Promise.resolve({ body: {}}));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   beforeAll(() => {
@@ -208,7 +209,7 @@ describe('ScheduleVeteran', () => {
       at(1).
       find('button').
       simulate('click');
-    expect(errorMessageSpy).toHaveBeenCalledWith({
+    expect(uiActions.showErrorMessage).toHaveBeenCalledWith({
       title: 'No Available Slots',
       detail:
         'Could not find any available slots for this regional office and hearing day combination. ' +
@@ -391,15 +392,13 @@ describe('ScheduleVeteran', () => {
 
   test('Displays virtual hearing alerts when present', async () => {
     // Setup the test
-    patchSpy.mockImplementationOnce(() => {
-      return {
-        body: {
-          tasks: {
-            ...scheduleVeteranResponse.body.tasks,
-            alerts: [{ title: 'Success', detail: 'success' }],
-          },
+    patchSpy.mockReturnValueOnce({
+      body: {
+        tasks: {
+          ...scheduleVeteranResponse.body.tasks,
+          alerts: [{ title: 'Success', detail: 'success' }],
         },
-      };
+      },
     });
 
     // Render the scheduleVeteran component
@@ -449,13 +448,11 @@ describe('ScheduleVeteran', () => {
           },
         },
       },
-    }
-  );
+    });
     expect(uiActions.showSuccessMessage).not.toHaveBeenCalled();
     expect(utils.processAlerts).toHaveBeenCalled();
     expect(scheduleVeteran).toMatchSnapshot();
   });
-
   test('Can submit the form', async () => {
     // Setup the test
     patchSpy.mockReturnValue(scheduleVeteranResponse);
