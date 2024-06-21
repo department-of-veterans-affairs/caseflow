@@ -23,7 +23,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedAod = () => {
     this.setState({ isReseedingAod: true });
-    ApiUtil.post('/run-demo-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingAod: false,
       });
@@ -37,7 +37,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedNonAod = () => {
     this.setState({ isReseedingNonAod: true });
-    ApiUtil.post('/run-demo-non-aod-seeds').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run_demo_non_aod_hearing_seeds').then(() => {
       this.setState({
         isReseedingNonAod: false,
       });
@@ -202,24 +202,24 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="distribution_status">Distribution Status</h2>
                           <ul>
                             <li>
-                              <a href="/appeals-ready-to-distribute?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download Appeals Ready to Distribute CSV
                                 </Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/appeals-distributed?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals_distributed?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Distributed Appeals CSV</Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/ineligible-judge-list?csv=1">
+                              <a href="/case_distribution_levers_tests/ineligible_judge_list?csv=1">
                                 <Button classNames={['usa-button-active']}>Download Ineligible Judge List</Button>
                               </a>
                             </li>
                             <li>
-                              <a href="/appeals-non-priority-ready-to-distribute?csv=1">
+                              <a href="/case_distribution_levers_tests/appeals_non_priority_ready_to_distribute?csv=1">
                                 <Button classNames={['usa-button-active']}>
                                   Download AMA Non-priority Distributable CSV
                                 </Button>
@@ -230,9 +230,6 @@ class CaseDistributionTest extends React.PureComponent {
                           <h2 id="run_seeds">Run Seed Files</h2>
                           <ul>
                             <li>
-                              {/* <a href="/run-demo-aod-seeds">
-                                <button className="btn btn-primary">Run Demo AOD Hearing Held Seeds</button>
-                              </a> */}
                               <Button
                                 onClick={this.reseedAod}
                                 name="Run Demo AOD Hearing Held Seeds"
@@ -241,9 +238,6 @@ class CaseDistributionTest extends React.PureComponent {
                               />
                             </li>
                             <li>
-                              {/* <a href="/run-demo-non-aod-seeds">
-                                <button className="btn btn-primary">Run Demo Non-AOD Hearing Held Seeds</button>
-                              </a> */}
                               <Button
                                 onClick={this.reseedNonAod}
                                 name="Run Demo NON AOD Hearing Held Seeds"
