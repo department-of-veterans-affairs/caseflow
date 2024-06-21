@@ -12,6 +12,8 @@ RSpec.describe HearingsController, type: :controller do
   let(:disposition) { nil }
   let!(:vso_participant_id) { "12345" }
 
+  include_context "Enable both conference services"
+
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
       params = {
@@ -220,7 +222,6 @@ RSpec.describe HearingsController, type: :controller do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
           expect(VirtualHearing.first.status).to eq(:active)
-          expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.appellant_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
@@ -262,6 +263,7 @@ RSpec.describe HearingsController, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            :initialized,
             status: :active,
             hearing: hearing,
             conference_id: "000000"

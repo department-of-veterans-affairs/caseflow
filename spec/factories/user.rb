@@ -39,6 +39,77 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :inbound_ops_team_supervisor do
+      after(:create) do |user|
+        InboundOpsTeam.singleton.add_user(user)
+        MailTeam.singleton.add_user(user)
+        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: user).update!(admin: true)
+        User.authenticate!(user: current_user)
+      end
+    end
+
+    factory :correspondence_auto_assignable_user do
+      after(:create) do |u|
+        # Member of InboundOpsTeam
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+        org_permission = OrganizationPermission.find_or_create_by!(
+          organization: InboundOpsTeam.singleton,
+          permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign
+        ) do |op|
+          op.enabled = true
+          op.description = "Auto-Assignment"
+        end
+
+        # Has auto-assign permission
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: org_permission,
+          organizations_user: org_user
+        ) do |oup|
+          oup.permitted = true
+        end
+      end
+
+      trait :super_user do
+        after(:create) do |u|
+          OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u).update!(admin: true)
+          permission = OrganizationPermission.find_or_create_by!(
+            permission: Constants.ORGANIZATION_PERMISSIONS.superuser,
+            organization: InboundOpsTeam.singleton,
+            enabled: true,
+            description: "Superuser: Split, Merge, Reassign"
+          )
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: permission,
+            permitted: true,
+            organizations_user: OrganizationsUser.find_or_create_by(user_id: u.id)
+          )
+        end
+      end
+
+      trait :nod_enabled do
+        after(:create) do |u|
+          org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
+
+          org_permission = OrganizationPermission.find_or_create_by!(
+            organization: InboundOpsTeam.singleton,
+            permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail
+          ) do |op|
+            op.enabled = true
+            op.description = "Receive \"NOD Mail\""
+          end
+
+          OrganizationUserPermission.find_or_create_by!(
+            organization_permission: org_permission,
+            organizations_user: org_user
+          ) do |oup|
+            oup.permitted = true
+          end
+        end
+      end
+    end
+
     trait :inactive do
       status { "inactive" }
     end
@@ -56,6 +127,12 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :judge_inactive do
+      inactive
+      with_inactive_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
     trait :ama_only_judge do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge)&.update(ama_only_push: true, ama_only_request: true) ||
@@ -63,6 +140,12 @@ FactoryBot.define do
       end
 
       roles { ["Hearing Prep"] }
+    end
+
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, user: user)
+      end
     end
 
     trait :with_vacols_judge_record do
@@ -77,21 +160,23 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacols_record do
+    trait :with_vacols_record_satty_id do
       after(:create) do |user|
         create(:staff, :has_sattyid, slogid: user.css_id, user: user)
-      end
-    end
-
-    trait :with_inactive_vacols_judge_record do
-      after(:create) do |user|
-        create(:staff, :inactive_judge, user: user)
       end
     end
 
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      end
+    end
+
+    # This team will not end up being searchable unless you chain .unscoped because of the org model default scope
+    trait :with_inactive_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.inactive!
       end
     end
 
