@@ -84,19 +84,15 @@ RSpec.feature "Reader", :all_dbs do
 
         context "Get Document Error" do
           before do
-            Capybara.current_driver = :selenium_chrome
-
             allow_any_instance_of(::DocumentController).to receive(:pdf) do
               large_document = "a" * (50 * 1024 * 1024) # 50MB document
               send_data large_document, type: "application/pdf", disposition: "inline"
             end
           end
-          after do
-            Capybara.reset_sessions!
-          end
 
           context "Internet Speed available", js: true do
             it "create an error Metric including internet speed" do
+              Capybara.current_driver = :selenium_chrome_headless
               expect(Metric.any?).to be false
               visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
               expect(page).to have_content("Unable to load document")
