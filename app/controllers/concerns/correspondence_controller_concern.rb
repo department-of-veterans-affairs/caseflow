@@ -56,9 +56,10 @@ module CorrespondenceControllerConcern
     end
   end
 
-  def bulk_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
       "assigned #{task_count} Correspondence to #{user.css_id}."
+    # failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed" --Old
     failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{user.css_id}"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = errors.uniq.join(", ")
