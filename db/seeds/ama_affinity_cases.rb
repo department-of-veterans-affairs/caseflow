@@ -318,7 +318,7 @@ module Seeds
         veteran: create_veteran
       )
 
-      hearing_cavc_appeal = ccreate(
+      hearing_cavc_appeal = create(
         :appeal,
         :dispatched,
         :hearing_docket,
