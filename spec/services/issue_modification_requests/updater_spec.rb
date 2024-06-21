@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe IssueModificationRequests::NonAdminUpdater do
+describe IssueModificationRequests::Updater do
   let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_admin_user) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
   let(:issue_modification_request) do

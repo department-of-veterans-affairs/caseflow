@@ -61,7 +61,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def issues_modification_request_updater
-    @issues_modification_request_updater ||= IssueModificationRequests::NonAdminUpdater.new(
+    @issues_modification_request_updater ||= IssueModificationRequests::Updater.new(
       user: current_user,
       review: claim_review,
       issue_modifications_data: params[:issue_modification_requests]

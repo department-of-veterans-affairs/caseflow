@@ -2,7 +2,7 @@
 
 # has issue modification request business logic.
 
-class IssueModificationRequests::NonAdminUpdater
+class IssueModificationRequests::Updater
   attr_accessor :user,
                 :review,
                 :issue_modifications_data

@@ -17,7 +17,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
 
       it "should call #issues_modification_request_update.non_admin_process! and return 200" do
         updater = instance_double(
-          IssueModificationRequests::NonAdminUpdater, {
+          IssueModificationRequests::Updater, {
             current_user: user,
             review: supplemental_claim,
             issue_modifications_data: {
@@ -32,7 +32,7 @@ describe SupplementalClaimsController, :postgres, type: :controller do
           }
         )
 
-        allow(IssueModificationRequests::NonAdminUpdater).to receive(:new).and_return(updater)
+        allow(IssueModificationRequests::Updater).to receive(:new).and_return(updater)
 
         expect(updater).to receive(:non_admin_actions?).and_return(true)
         expect(updater).to receive(:non_admin_process!).and_return(true)
