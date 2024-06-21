@@ -127,8 +127,8 @@ module CorrespondenceControllerConcern
 
   def error_reason(error)
     case error
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "NOD permissions settings"
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "sensitivity level mismatch"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity reached for user's queue"
     end
   end
@@ -137,7 +137,7 @@ module CorrespondenceControllerConcern
     # Build message based on error types
     message = "#{count} cases were not #{action_prefix}assigned"
     message = "• #{message}" if use_bullet
-    message += " because of #{reason}." unless count.zero?
+    message += " because #{reason}." unless count.zero?
     message
   end
 

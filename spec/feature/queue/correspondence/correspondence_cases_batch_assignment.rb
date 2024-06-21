@@ -249,7 +249,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
       expect(page).to have_content("Not all correspondence was reassigned to #{target_user.css_id}")
-      expect(page).to have_content("3 cases were not reassigned because of maximum capacity reached for user's queue.")
+      expect(page).to have_content("3 cases were not reassigned because maximum capacity reached for user's queue.")
     end
   end
 end
