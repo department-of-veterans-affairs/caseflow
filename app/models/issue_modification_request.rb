@@ -63,7 +63,7 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def edit_from_params!(attributes, user)
-    unless non_admin_allowed_to_update?(user)
+    unless assigned? && non_admin_allowed_to_update?(user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST
@@ -74,7 +74,7 @@ class IssueModificationRequest < CaseflowRecord
   end
 
   def cancel_from_params!(user)
-    unless non_admin_allowed_to_update?(user)
+    unless assigned? && non_admin_allowed_to_update?(user)
       fail(
         Caseflow::Error::ErrorModifyingExistingRequest,
         message: COPY::ERROR_MODIFYING_EXISTING_REQUEST

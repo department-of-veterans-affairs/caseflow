@@ -3,8 +3,9 @@
 describe IssueModificationRequests::NonAdminUpdater do
   let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_admin_user) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
-  let(:issue_modification_request) { create(:issue_modification_request, requestor: non_admin_requestor) }
+  let(:issue_modification_request) { create(:issue_modification_request, status: current_status, requestor: non_admin_requestor) }
   let(:status) { "assigned" }
+  let(:current_status) { "assigned" }
   let(:edited_request_reason) { "Editing request reason text" }
 
   let(:cancelled_modification_requests) do
@@ -30,6 +31,7 @@ describe IssueModificationRequests::NonAdminUpdater do
           nonrating_issue_description: "Decision text",
           decision_date: "2024-01-30",
           request_reason: edited_request_reason,
+          request_type: "addition",
           status: status
         }
       ],
@@ -50,9 +52,8 @@ describe IssueModificationRequests::NonAdminUpdater do
           decision_review_type: "HigherLevelReview",
           benefit_type: "VHA",
           decision_reason: "New Decision text",
-          decision_date: Time.zone.now,
+          decision_date: Time.zone.today,
           request_reason: "This is my reason.",
-          requestor_id: non_admin_requestor.id,
           status: status
         }
       ]
@@ -61,7 +62,7 @@ describe IssueModificationRequests::NonAdminUpdater do
 
   shared_examples "validated requestor and state" do
     it "should return false and set error message" do
-      expect { subject.process! }.to raise_error(
+      expect { subject.non_admin_process! }.to raise_error(
         StandardError, COPY::ERROR_MODIFYING_EXISTING_REQUEST
       )
     end
@@ -70,7 +71,7 @@ describe IssueModificationRequests::NonAdminUpdater do
   describe "when new request modifications issues is made" do
     subject do
       described_class.new(
-        current_user: non_admin_requestor,
+        user: non_admin_requestor,
         review: review,
         issue_modifications_data: new_modification_requests
       )
@@ -78,7 +79,7 @@ describe IssueModificationRequests::NonAdminUpdater do
 
     context "and in assigned status" do
       it "should create new issue modifications request record" do
-        subject.process!
+        subject.non_admin_process!
         imr = IssueModificationRequest.first
 
         expect(IssueModificationRequest.count).to eq(1)
@@ -90,7 +91,7 @@ describe IssueModificationRequests::NonAdminUpdater do
       let(:status) { "cancelled" }
 
       it "should return false and set error message" do
-        expect { subject.process! }.to raise_error(
+        expect { subject.non_admin_process! }.to raise_error(
           StandardError, COPY::ERROR_CREATING_NEW_REQUEST
         )
       end
@@ -100,7 +101,7 @@ describe IssueModificationRequests::NonAdminUpdater do
   describe "when editing an existing issue modifications request" do
     subject do
       described_class.new(
-        current_user: non_admin_requestor,
+        user: non_admin_requestor,
         review: review,
         issue_modifications_data: edited_modification_requests
       )
@@ -108,7 +109,7 @@ describe IssueModificationRequests::NonAdminUpdater do
 
     context "and request is still in an assigned status, edited by the same requestor" do
       it "should edit issue modifications request record" do
-        subject.process!
+        subject.non_admin_process!
         issue_modification_request.reload
 
         expect(issue_modification_request.request_reason).to eq(edited_request_reason)
@@ -116,13 +117,13 @@ describe IssueModificationRequests::NonAdminUpdater do
     end
 
     context "and request is under a different status other than assigned" do
-      let(:status) { "cancelled" }
+      let(:current_status) { "cancelled" }
 
       include_examples "validated requestor and state"
     end
 
     context "and editing is attempted by a different user than original requestor" do
-      before { subject.instance_variable_set(:@current_user, create(:user)) }
+      before { subject.instance_variable_set(:@user, create(:user)) }
 
       include_examples "validated requestor and state"
     end
@@ -131,7 +132,7 @@ describe IssueModificationRequests::NonAdminUpdater do
   describe "when cancelling an existing issue modifications request" do
     subject do
       described_class.new(
-        current_user: non_admin_requestor,
+        user: non_admin_requestor,
         review: review,
         issue_modifications_data: cancelled_modification_requests
       )
@@ -139,7 +140,7 @@ describe IssueModificationRequests::NonAdminUpdater do
 
     context "and request is still in an assigned status, cancelled by the same requestor" do
       it "should change issues modification request status to cancelled" do
-        subject.process!
+        subject.non_admin_process!
         issue_modification_request.reload
 
         expect(issue_modification_request.status).to eq("cancelled")
@@ -147,13 +148,13 @@ describe IssueModificationRequests::NonAdminUpdater do
     end
 
     context "and request is under a different status other than assigned" do
-      let(:status) { "approved" }
+      let(:current_status) { "approved" }
 
       include_examples "validated requestor and state"
     end
 
     context "and cancelling is attempted by a different user than original requestor" do
-      before { subject.instance_variable_set(:@current_user, create(:user)) }
+      before { subject.instance_variable_set(:@user, create(:user)) }
 
       include_examples "validated requestor and state"
     end
