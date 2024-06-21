@@ -71,6 +71,13 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(query)).to eq(recent_docketed_appeal_ids)
     end
 
+    it "should create AppealState records if they do not exist" do
+      expect(AppealState.where(appeal_id: recent_docketed_appeal_ids)[0]).to be(nil)
+      appeal_state_count_before = AppealState.count
+      PollDocketedLegacyAppealsJob.new.create_corresponding_appeals(recent_docketed_appeal_ids)
+      expect(AppealState.count).not_to eq(appeal_state_count_before)
+    end
+
     it "should filter for all legacy appeals that havent already gotten a notification yet" do
       expect(PollDocketedLegacyAppealsJob.perform_now).to eq(filtered_docketed_appeal_ids)
     end

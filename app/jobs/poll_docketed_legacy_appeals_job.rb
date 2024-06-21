@@ -18,6 +18,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     vacols_ids = most_recent_docketed_appeals(LEGACY_DOCKETED)
     filtered_vacols_ids = filter_duplicate_legacy_notifications(vacols_ids)
+    create_corresponding_appeals(vacols_ids)
     send_legacy_notifications(filtered_vacols_ids)
   end
 
@@ -38,6 +39,15 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     vacols_ids.reject { |id| duplicate_ids.include?(id) }
   end
 
+  def create_corresponding_appeals(vacols_ids)
+    vacols_ids.each do |vacols_id|
+      appeal = LegacyAppeal.find_by(vacols_id: vacols_id)
+      appeal_state = AppealState.find_or_create_by(appeal: appeal)
+      appeal_state.appeal_docketed = true
+      appeal_state.save!
+    end
+  end
+
   # rubocop:disable all
   # Purpose: To send the 'appeal docketed' notification for the legacy appeals
   # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have notifications sent
@@ -46,7 +56,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     Rails.logger.info("Found #{vacols_ids.count} legacy appeals that have been recently docketed and have not gotten docketed notifications")
     vacols_ids.each do |vacols_id|
       begin
-        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), Constants.EVENT_TYPE_FILTERS.appeal_docketed)
+        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
       rescue Exception => ex
         Rails.logger.error("#{ex.class}: #{ex.message} for vacols id:#{vacols_id} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{ex.backtrace.join("\n")}")
         next
