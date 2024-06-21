@@ -11,6 +11,7 @@ gem "acts_as_tree"
 # amoeba gem for cloning appeals
 gem "amoeba"
 
+gem "aws-sdk"
 gem "aws-sdk-core", "3.131.0"
 
 # BGS
