@@ -58,16 +58,6 @@ RSpec.feature("The Correspondence Cases page") do
       FeatureToggle.enable!(:correspondence_queue)
     end
 
-    # before do
-    #   Timecop.freeze(Time.zone.local(2020, 5, 15))
-    #   40.times do
-    #     correspondence = create(:correspondence)
-    #     parent_task = create_correspondence_intake(correspondence, target_user)
-    #     create_efolderupload_task(correspondence, parent_task)
-    #   end
-    #   InboundOpsTeam.singleton.add_user(supervisor_user)
-    # end
-
     it "successfully loads the unassigned tab" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Correspondence owned by the Mail team are unassigned to an individual:")
