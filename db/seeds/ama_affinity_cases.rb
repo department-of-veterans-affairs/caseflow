@@ -152,7 +152,7 @@ module Seeds
 
       # return system time back to now, then go to desired date where appeal will be ready for distribution
       Timecop.return
-
+      Timecop.travel((CaseDistributionLever.cavc_affinity_days + 7).days.ago)
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
