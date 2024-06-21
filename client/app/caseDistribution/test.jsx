@@ -79,7 +79,6 @@ class CaseDistributionTest extends React.PureComponent {
     });
   };
 
-
   render() {
     const Router = this.props.router || BrowserRouter;
     const appName = 'Case Distribution';
