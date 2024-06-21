@@ -87,8 +87,8 @@ class IssueModificationRequest < CaseflowRecord
   def deny_request_from_params!(attributes, user)
     unless admin_allowed_to_update?(user)
       fail(
-        CaseFlow::Error::ErrorDenyingExistingRequest,
-        message: COPY::ERROR_DECIDING_ISSUE_MODFICATION_REQUEST
+        Caseflow::Error::ErrorDenyingExistingRequest,
+        message: COPY::ERROR_DECIDING_ISSUE_MODIFICATION_REQUEST
       )
     end
 
@@ -104,8 +104,8 @@ class IssueModificationRequest < CaseflowRecord
   def approve_request_from_params!(attributes, user)
     unless admin_allowed_to_update?(user)
       fail(
-        CaseFlow::Error::ErrorApprovingExistingRequest,
-        message: COPY::ERROR_DECIDING_ISSUE_MODFICATION_REQUEST
+        Caseflow::Error::ErrorApprovingExistingRequest,
+        message: COPY::ERROR_DECIDING_ISSUE_MODIFICATION_REQUEST
       )
     end
 
