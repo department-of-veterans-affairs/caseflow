@@ -53,7 +53,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedAmaDocketGoals = () => {
     this.setState({ isReseedingAmaDocketGoals: true });
-    ApiUtil.post('/run-demo-ama-docket-goals').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-ama-docket-goals').then(() => {
       this.setState({
         isReseedingAmaDocketGoals: false,
       });
@@ -67,7 +67,7 @@ class CaseDistributionTest extends React.PureComponent {
 
   reseedDocketPriority = () => {
     this.setState({ isReseedingDocketPriority: true });
-    ApiUtil.post('/run-demo-docket-priority').then(() => {
+    ApiUtil.post('/case_distribution_levers_tests/run-demo-docket-priority').then(() => {
       this.setState({
         isReseedingDocketPriority: false,
       });
