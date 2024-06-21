@@ -10,6 +10,7 @@ class WorkQueue::CorrespondenceSerializer
   attribute :notes
   attribute :va_date_of_receipt
   attribute :nod
+  attribute :correspondence_documents
 
   attribute :correspondence_type do |object|
     object.correspondence_type&.name

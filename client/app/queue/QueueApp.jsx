@@ -645,6 +645,7 @@ class QueueApp extends React.PureComponent {
     <ReviewPackageLoadingScreen
       {...props.match.params}>
       <CorrespondenceReviewPackage
+        correspondence={this.props.correspondence}
         inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}

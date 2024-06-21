@@ -3,6 +3,9 @@
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
+    @correspondence = WorkQueue::CorrespondenceSerializer
+    .new(correspondence)
+    .serializable_hash[:data][:attributes]
   end
 
   def show
