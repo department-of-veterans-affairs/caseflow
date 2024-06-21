@@ -43,7 +43,7 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
       )
       expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "queue_job",
-        attrs: { endpoint: "AppellantNotification.appeal_mapper", service: "queue_job", uuid: anything },
+        attrs: { endpoint: "AppellantNotification.appeal_mapper", service: "queue_job" },
         metric_group: "service",
         metric_name: "request_latency",
         metric_value: anything
