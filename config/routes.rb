@@ -25,14 +25,17 @@ Rails.application.routes.draw do
   constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
     get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
-    get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
-    get 'appeals-non-priority-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_non_priority_ready_to_distribute'
-    get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
-    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
-    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
-    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
-    post 'run-demo-ama-docket-goals', to: 'case_distribution_levers_tests#run_demo_ama_docket_goals', as: "run-demo-ama-docket-goals"
-    post 'run-demo-docket-priority', to: 'case_distribution_levers_tests#run_demo_docket_priority', as: "run-demo-docket-priority"
+
+    namespace :case_distribution_levers_tests do
+      get 'appeals_ready_to_distribute'
+      get 'appeals_non_priority_ready_to_distribute'
+      get 'appeals_distributed'
+      get 'ineligible_judge_list'
+      post 'run_demo_aod_hearing_seeds'
+      post 'run_demo_non_aod_hearing_seeds'
+      post 'run-demo-ama-docket-goals'
+      post 'run-demo-docket-priority'
+    end
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
