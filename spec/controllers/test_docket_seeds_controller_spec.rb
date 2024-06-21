@@ -3,7 +3,7 @@
 TEST_SEEDS = JSON.parse(File.read("client/constants/TEST_SEEDS.json"))
 
 RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
-  unless Rake::Task.task_defined?("assets:precompile")
+  unless Rake::Task.task_defined?("db:seed")
     Rails.application.load_tasks
   end
   let!(:authenticated_user) { User.authenticate!(css_id: "RSPEC", roles: ["System Admin"]) }
