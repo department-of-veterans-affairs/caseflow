@@ -257,8 +257,8 @@ describe Docket, :all_dbs do
       let(:ready) { nil }
       subject { DirectReviewDocket.new.count(priority: priority, ready: ready) }
 
-      it "counts all appeals on the docket" do
-        expect(subject).to eq(7)
+      it "counts all active appeals on the docket" do
+        expect(subject).to eq(6)
       end
 
       context "when looking for ready appeals" do
@@ -270,14 +270,14 @@ describe Docket, :all_dbs do
 
       context "when looking for nonpriority appeals" do
         let(:priority) { false }
-        it "counts nonpriority appeals" do
-          expect(subject).to eq(4)
+        it "counts active nonpriority appeals" do
+          expect(subject).to eq(3)
         end
       end
 
       context "when looking for priority appeals" do
         let(:priority) { true }
-        it "counts priority appeals" do
+        it "counts active priority appeals" do
           expect(subject).to eq(3)
         end
       end
@@ -305,17 +305,33 @@ describe Docket, :all_dbs do
       # Set cavc_appeal to be outside its affinity window
       let(:affinity_start_date) { (CaseDistributionLever.cavc_affinity_days + 7).days.ago }
       let(:judge) { create(:user, :with_vacols_judge_record) }
+      let!(:cavc_appeal_no_appeal_affinity) do
+        create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+      end
+
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      end
 
       subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
 
       it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
-        expect(subject.length).to eq(3)
-        expect(subject).to eq([aod_age_appeal.receipt_date, aod_motion_appeal.receipt_date, cavc_appeal.receipt_date])
+        expect(subject.length).to eq(4)
+        expect(subject).to match_array([aod_age_appeal.receipt_date,
+                                        aod_motion_appeal.receipt_date,
+                                        cavc_appeal.receipt_date,
+                                        cavc_appeal_no_appeal_affinity.receipt_date])
       end
     end
 
     context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
       let(:judge) { create(:user, :with_vacols_judge_record) }
+
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      end
 
       subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
 
@@ -711,5 +727,61 @@ describe Docket, :all_dbs do
         expect(distribution.distributed_cases.count(&:sct_appeal)).to eq(0)
       end
     end
+  end
+
+  context "distribute appeals when CAVC cases don't have an appeal_affinity record" do
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:distribution) { Distribution.create!(judge: judge) }
+    let!(:cavc_appeal_with_appeal_affinity) do
+      appeal = create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+      create(:appeal_affinity, appeal: appeal)
+      appeal
+    end
+    let!(:cavc_appeal_no_appeal_affinity) do
+      create_ready_cavc_appeal_without_appeal_affinity(tied_judge: judge, created_date: 7.days.ago)
+    end
+
+    before do
+      FeatureToggle.enable!(:acd_exclude_from_affinity)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    end
+
+    subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
+
+    it "selects all appeals tied to the requesting judge" do
+      expect(subject.map(&:case_id)).to match_array([cavc_appeal_with_appeal_affinity.uuid,
+                                                     cavc_appeal_no_appeal_affinity.uuid])
+    end
+  end
+
+  def create_ready_cavc_appeal_without_appeal_affinity(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date - 6.months)
+    if tied_judge
+      judge = tied_judge
+      attorney = JudgeTeam.for_judge(judge)&.attorneys&.first || create(:user, :with_vacols_attorney_record)
+    else
+      judge = create(:user, :judge, :with_vacols_judge_record)
+      attorney = create(:user, :with_vacols_attorney_record)
+    end
+
+    source_appeal = create(
+      :appeal,
+      :direct_review_docket,
+      :dispatched,
+      associated_judge: judge,
+      associated_attorney: attorney
+    )
+
+    Timecop.travel(6.months.from_now)
+    cavc_remand = create(
+      :cavc_remand,
+      source_appeal: source_appeal
+    )
+    remand_appeal = cavc_remand.remand_appeal
+    distribution_tasks = remand_appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+    (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+    Timecop.return
+
+    remand_appeal
   end
 end
