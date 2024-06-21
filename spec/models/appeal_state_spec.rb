@@ -65,27 +65,6 @@ describe AppealState do
       )
     end
 
-    let!(:hearing_scheduled_state) do
-      create(
-        :appeal_state,
-        :ama,
-        created_by_id: user.id,
-        updated_by_id: user.id,
-        hearing_scheduled: true
-      )
-    end
-
-    let!(:hearing_scheduled_privacy_pending_state) do
-      create(
-        :appeal_state,
-        :ama,
-        created_by_id: user.id,
-        updated_by_id: user.id,
-        hearing_scheduled: true,
-        privacy_act_pending: true
-      )
-    end
-
     let!(:hearing_to_be_rescheduled_postponed_state) do
       create(
         :appeal_state,
@@ -137,6 +116,21 @@ describe AppealState do
       )
     end
 
+    shared_context "staged hearing task tree" do
+      let(:appeal) { create(:appeal, :active) }
+      let(:distribution_task) { DistributionTask.create!(appeal: appeal, parent: appeal.root_task) }
+      let(:hearing_task) { HearingTask.create!(appeal: appeal, parent: distribution_task) }
+      let!(:assign_disp_task) do
+        AssignHearingDispositionTask.create!(appeal: appeal, parent: hearing_task, assigned_to: Bva.singleton)
+      end
+    end
+
+    shared_context "vacols case with case hearing" do
+      let(:case_hearing) { create(:case_hearing) }
+      let(:vacols_case) { create(:case, case_hearings: [case_hearing]) }
+      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    end
+
     context "#eligible_for_quarterly" do
       subject { described_class.eligible_for_quarterly.pluck(:id) }
 
@@ -160,13 +154,132 @@ describe AppealState do
     context "#hearing_scheduled" do
       subject { described_class.hearing_scheduled.pluck(:id) }
 
-      it "Only appeals in hearing scheduled state are included" do
-        is_expected.to match_array([hearing_scheduled_state.id])
+      context "ama" do
+        subject do
+          AppealState.find_by_appeal_id(appeal.id).update!(hearing_scheduled: true)
+
+          described_class.hearing_scheduled.pluck(:id)
+        end
+
+        let!(:appeal_state) { appeal.appeal_state }
+
+        context "Whenever the expected task is absent" do
+          let(:appeal) { create(:appeal, :active) }
+
+          it "The appeal state isn't retrieved by the query" do
+            is_expected.to be_empty
+          end
+        end
+
+        context "Whenever the hearing has been held and the evidence submission window is open" do
+          include_context "staged hearing task tree"
+
+          let!(:evidence_task) do
+            EvidenceSubmissionWindowTask.create!(
+              appeal: appeal,
+              parent: assign_disp_task,
+              assigned_to: MailTeam.singleton
+            )
+          end
+
+          it "The appeal state isn't retrieved by the query" do
+            is_expected.to be_empty
+          end
+        end
+
+        context "Whenever the hearing has not been held" do
+          include_context "staged hearing task tree"
+
+          it "The appeal state is returned" do
+            is_expected.to match_array([appeal_state.id])
+          end
+        end
+      end
+
+      context "legacy" do
+        include_context "vacols case with case hearing"
+
+        let!(:appeal_state) { legacy_appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
+
+        context "hearing has not been held" do
+          it "the appeal state is returned" do
+            is_expected.to match_array([appeal_state.id])
+          end
+        end
+
+        context "hearing has been held" do
+          it "the appeal state is not returned" do
+            case_hearing.update!(hearing_disp: "H")
+
+            is_expected.to be_empty
+          end
+        end
+      end
+
+      context "ama and legacy" do
+        include_context "vacols case with case hearing"
+        include_context "staged hearing task tree"
+
+        let!(:ama_state) { appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
+        let!(:legacy_state) { legacy_appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
+
+        context "An AMA and legacy hearings are both pending" do
+          it "both appeal states are returned by the query" do
+            is_expected.to match_array([ama_state.id, legacy_state.id])
+          end
+        end
+
+        context "An AMA and legacy hearings have been held" do
+          let!(:evidence_task) do
+            EvidenceSubmissionWindowTask.create!(
+              parent: assign_disp_task,
+              appeal: appeal,
+              assigned_to: MailTeam.singleton
+            )
+          end
+
+          it "neither appeal states are returned by the query" do
+            case_hearing.update!(hearing_disp: "H")
+
+            is_expected.to be_empty
+          end
+        end
+
+        context "An AMA hearing is pending and the legacy hearing has been held" do
+          it "only the AMA appeal state is returned by the query" do
+            case_hearing.update!(hearing_disp: "H")
+
+            is_expected.to match_array([ama_state.id])
+          end
+        end
+
+        context "A legacy hearing is pending and an AMA hearing has been held" do
+          let!(:evidence_task) do
+            EvidenceSubmissionWindowTask.create!(
+              assigned_to: MailTeam.singleton,
+              parent: assign_disp_task,
+              appeal: appeal
+            )
+          end
+
+          it "only the legacy appeal state is returned by the query" do
+            is_expected.to match_array([legacy_state.id])
+          end
+        end
       end
     end
 
     context "#hearing_scheduled_privacy_pending" do
+      include_context "staged hearing task tree"
+
       subject { described_class.hearing_scheduled_privacy_pending.pluck(:id) }
+
+      let!(:hearing_scheduled_privacy_pending_state) do
+        appeal.appeal_state.tap do
+          _1.update!(hearing_scheduled: true,
+                     privacy_act_pending: true)
+        end
+      end
 
       it "Only appeals in hearing scheduled and privacy act state are included" do
         is_expected.to match_array([hearing_scheduled_privacy_pending_state.id])
