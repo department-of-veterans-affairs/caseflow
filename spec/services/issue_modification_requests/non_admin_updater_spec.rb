@@ -3,7 +3,9 @@
 describe IssueModificationRequests::NonAdminUpdater do
   let(:non_admin_requestor) { create(:user, :admin_intake_role, :vha_admin_user) }
   let(:review) { create(:higher_level_review, :with_vha_issue) }
-  let(:issue_modification_request) { create(:issue_modification_request, status: current_status, requestor: non_admin_requestor) }
+  let(:issue_modification_request) do
+    create(:issue_modification_request, status: current_status, requestor: non_admin_requestor)
+  end
   let(:status) { "assigned" }
   let(:current_status) { "assigned" }
   let(:edited_request_reason) { "Editing request reason text" }
