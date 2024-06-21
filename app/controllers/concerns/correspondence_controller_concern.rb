@@ -6,11 +6,6 @@
 module CorrespondenceControllerConcern
   private
 
-  # Error message constants
-  NOD_ERROR = "NOD permission is currently disabled for this user."
-  SENSITIVITY_ERROR = "User does not meet the sensitivity level required."
-  CAPACITY_ERROR = "Queue volume has reached maximum capacity for this user."
-
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
@@ -115,9 +110,9 @@ module CorrespondenceControllerConcern
 
     # Get error counts
     error_counts = {
-      NOD_ERROR => errors.count(NOD_ERROR),
-      SENSITIVITY_ERROR => errors.count(SENSITIVITY_ERROR),
-      CAPACITY_ERROR => errors.count(CAPACITY_ERROR)
+      COPY::NOD_ERROR => errors.count(COPY::NOD_ERROR),
+      COPY::SENSITIVITY_ERROR => errors.count(COPY::SENSITIVITY_ERROR),
+      COPY::CAPACITY_ERROR => errors.count(COPY::CAPACITY_ERROR)
     }
 
     error_counts.each do |error, count|
@@ -132,9 +127,9 @@ module CorrespondenceControllerConcern
 
   def error_reason(error)
     case error
-    when NOD_ERROR then "NOD permissions settings"
-    when SENSITIVITY_ERROR then "sensitivity level mismatch"
-    when CAPACITY_ERROR then "maximum capacity reached for user's queue"
+    when COPY::NOD_ERROR then "NOD permissions settings"
+    when COPY::SENSITIVITY_ERROR then "sensitivity level mismatch"
+    when COPY::CAPACITY_ERROR then "maximum capacity reached for user's queue"
     end
   end
 

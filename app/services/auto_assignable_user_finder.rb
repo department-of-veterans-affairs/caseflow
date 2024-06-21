@@ -38,8 +38,8 @@ class AutoAssignableUserFinder
   attr_writer :unassignable_reason
 
   def run_auto_assign_algorithm(correspondence, users)
-    nod_error = CorrespondenceControllerConcern::NOD_ERROR
-    sensitivity_error = CorrespondenceControllerConcern::SENSITIVITY_ERROR
+    nod_error = COPY::NOD_ERROR
+    sensitivity_error = COPY::SENSITIVITY_ERROR
     users.each do |user|
       if correspondence.nod && !user.nod?
         unassignable_reason << nod_error unless unassignable_reason.include?(nod_error)
@@ -59,7 +59,7 @@ class AutoAssignableUserFinder
   end
 
   def user_is_at_max_capacity?(user)
-    capacity_error = CorrespondenceControllerConcern::CAPACITY_ERROR
+    capacity_error = COPY::CAPACITY_ERROR
     if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
       unassignable_reason << capacity_error unless unassignable_reason.include?(capacity_error)
       true
