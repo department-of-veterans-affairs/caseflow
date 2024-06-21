@@ -14,21 +14,35 @@ module CorrespondenceControllerConcern
     permission_checker = AutoAssignableUserFinder.new(mail_team_user)
     errors = []
 
-    task_ids.each do |id|
-      correspondence_task = Task.find(id)&.correspondence
-      check_result = permission_checker.can_user_work_this_correspondence?(
-        user: mail_team_user,
-        correspondence: correspondence_task
-      )
-
-      if check_result
-        update_task(mail_team_user, id)
-      else
-        errors << permission_checker.unassignable_reason
-      end
+    # Check if single or multiple assignments
+    if task_ids.count == 1
+      process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
+    else
+      process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
     end
 
     set_banner_params(mail_team_user, errors, task_ids.count, tab)
+  end
+
+  def process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
+    task_id = task_ids.first
+    correspondence_task = Task.find(task_id)&.correspondence
+    check_result = permission_checker.can_user_work_this_correspondence?(
+      user: mail_team_user,
+      correspondence: correspondence_task
+    )
+
+    if check_result
+      update_task(mail_team_user, task_id)
+    else
+      errors.concat(permission_checker.unassignable_reason)
+    end
+  end
+
+  def process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
+    task_ids.each do |id|
+      process_single_assignment([id], permission_checker, errors, mail_team_user)
+    end
   end
 
   def update_task(mail_team_user, task_id)
@@ -50,9 +64,17 @@ module CorrespondenceControllerConcern
   def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      bulk_assignment_banner_text(user, errors, task_count)
+      if task_count == 1
+        single_assignment_banner_text(user, errors, task_count)
+      else
+        multiple_assignment_banner_text(user, errors, task_count)
+      end
     when "correspondence_team_assigned"
-      bulk_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      if task_count == 1
+        single_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      else
+        multiple_assignment_banner_text(user, errors, task_count, action_prefix: "re")
+      end
     end
   end
 
@@ -67,6 +89,57 @@ module CorrespondenceControllerConcern
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
       message: errors.empty? ? success_message : failure_message
     }
+  end
+
+  def multiple_assignment_banner_text(user, errors, task_count, action_prefix: "")
+    success_header = "You have successfully #{action_prefix}"\
+    "assigned #{task_count} Correspondences to #{user.css_id}."
+    success_message = "Please go to your individual queue to see any self-assigned correspondences."
+    failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
+
+    failure_message = build_failure_message(errors, action_prefix)
+
+    # return JSON message
+    {
+      header: errors.blank? ? success_header : failure_header,
+      message: errors.blank? ? success_message : failure_message.join(" \n")
+    }
+  end
+
+  def build_failure_message(errors, action_prefix)
+    failure_message = []
+
+    # Get error counts
+    error_counts = {
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR)
+    }
+
+    error_counts.each do |error, count|
+      if count.positive?
+        multiple_errors = error_counts.values.count(&:positive?) > 1
+        failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
+      end
+    end
+
+    failure_message
+  end
+
+  def error_reason(error)
+    case error
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "NOD permissions settings"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "sensitivity level mismatch"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity reached for user's queue"
+    end
+  end
+
+  def build_error_message(count, action_prefix, reason, use_bullet)
+    # Build message based on error types
+    message = "#{count} cases were not #{action_prefix}assigned"
+    message = "• #{message}" if use_bullet
+    message += " because of #{reason}." unless count.zero?
+    message
   end
 
   def set_flash_intake_success_message
