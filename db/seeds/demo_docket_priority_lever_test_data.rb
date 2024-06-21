@@ -20,6 +20,7 @@ module Seeds
 
     def seed!
       RequestStore[:current_user] = User.system_user
+      puts "ababab"
       create_judges
       create_dockets
     end
@@ -40,6 +41,9 @@ module Seeds
       create_direct_review_priority_dockets
       create_hearings_non_priority_dockets
       create_hearings_priority_dockets
+      puts "here"
+      create_legacy_non_priority_dockets
+      create_legacy_priority_dockets
     end
 
     def initialize_docket_seeds_lists
@@ -181,6 +185,10 @@ module Seeds
       }
 
       Veteran.find_by_participant_id(params[:participant_id]) || create(:veteran, params.merge(options))
+    end
+
+    def regional_office
+      'RO17'
     end
 
     # Initialization functions
