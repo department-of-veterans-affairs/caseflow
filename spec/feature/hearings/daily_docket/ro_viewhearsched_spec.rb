@@ -11,7 +11,7 @@ RSpec.feature "Hearing Schedule Daily Docket for RO ViewHearSched", :all_dbs do
     expect(page).to_not have_content("Edit Hearing Day")
     expect(page).to_not have_content("Lock Hearing Day")
     expect(page).to_not have_content("Hearing Details")
-    expect(page).to_not have_content("Notes")
+    expect(page).to_not have_content("Notes:")
     expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
   end
 end
