@@ -1,3 +1,43 @@
+.prodtest-env-alert {
+  .usa-alert{
+    background-color: $color-gold-lightest;
+    border: 5px solid $color-gold-lighter;
+    background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+    &::before {
+      background-color: $color-gold-lightest;
+    }
+  }
+}
+.preprod-env-alert {
+  .usa-alert{
+    background-color: $color-secondary-lightest;
+    border: 5px solid $color-secondary-light;
+    background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+    &::before {
+      background-color: $color-secondary-lightest;
+    }
+  }
+}
+.uat-env-alert {
+  .usa-alert{
+    background-color: $color-primary-alt-lightest;
+    border: 5px solid $color-primary-alt-light;
+    background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+    &::before {
+      background-color: $color-primary-alt-lightest;
+    }
+  }
+}
+.demo-env-alert {
+  .usa-alert{
+    background-color: $color-gray-cool-light;
+    border: 5px solid $color-primary-darkest;
+    background-image: url(/images/warning-429d7a1540c2e7d036805bb73a0ba690.png);
+    &::before {
+      background-color: $color-gray-cool-light;
+    }
+  }
+}
 
 .usa-alert {
 
@@ -13,6 +53,7 @@
   // Remove after USWDS V.2.0
   &.usa-alert-slim {
     background-size: 4rem;
+
 
     .usa-alert-body {
       padding-left: 3.5rem;
