@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 feature "Issue Modification Request", :postgres do
-  let(:veteran_file_number) { "123412345" }
+  let(:veteran_file_number) { "998785765" }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number,
@@ -227,7 +227,7 @@ feature "Issue Modification Request", :postgres do
       click_on "Save"
 
       # Verify that the page is redirected to the decision review queue
-      expect(page).to have_content("Veterans Health Administration")
+      expect(page).to have_content("Reviews needing action")
 
       # Verify the success banner
       expect(page).to have_content("You have successfully submitted a request.")
@@ -547,7 +547,7 @@ feature "Issue Modification Request", :postgres do
   end
 
   def click_reject
-    find('label[for="status_rejected"]').click
+    find('label[for="status_denied"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
     click_on "Confirm"

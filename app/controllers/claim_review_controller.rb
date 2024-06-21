@@ -72,8 +72,7 @@ class ClaimReviewController < ApplicationController
     @request_issues_update ||= RequestIssuesUpdate.new(
       user: current_user,
       review: claim_review,
-      request_issues_data: params[:request_issues],
-      issue_modification_responses_data: params[:issue_modification_responses]
+      request_issues_data: params[:request_issues]
     )
   end
 
@@ -248,11 +247,8 @@ class ClaimReviewController < ApplicationController
   end
 
   def process_and_render_issue_non_admin_issue_modification_requests
-    if issues_modification_request_updater.non_admin_process!
-      render_success
-    else
-      render json: { error_code: :default }, status: :unprocessable_entity
-    end
+    issues_modification_request_updater.non_admin_process!
+    render_success
   rescue StandardError => error
     render_error(error)
   end
