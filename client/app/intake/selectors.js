@@ -47,6 +47,8 @@ const selectPendingIssueModificationRequests = (state) => state.pendingIssueModi
 export const getOpenPendingIssueModificationRequests = createSelector(
   [selectPendingIssueModificationRequests],
   (pendingIssueModificationRequests) =>
-    pendingIssueModificationRequests.filter((request) => request.status === 'assigned')
+    Array.isArray(pendingIssueModificationRequests) ?
+      pendingIssueModificationRequests.filter((request) => request.status === 'assigned') :
+      []
 );
 
