@@ -55,7 +55,7 @@ export const RequestIssueStatus = ({ displayCheckbox = false }) => {
         inputRef={register}
       />
       {(watchStatus === 'approved' && displayCheckbox) ?
-        <RemoveOriginalIssueCheckbox option="removeOriginalIssue" name="removeOriginalIssue" methods={methods} /> :
+        <RemoveOriginalIssueCheckbox name="removeOriginalIssue" methods={methods} /> :
         null}
       <RadioField
         name="status"
@@ -79,7 +79,7 @@ export const RequestIssueStatus = ({ displayCheckbox = false }) => {
   );
 };
 
-const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
+const RemoveOriginalIssueCheckbox = ({ name, control }) => {
   const { field } = useController({
     control,
     name
@@ -91,7 +91,7 @@ const RemoveOriginalIssueCheckbox = ({ option, name, control }) => {
     <div className={fieldClasses} style={{ paddingLeft: '30px' }}>
       <Checkbox
         name={name}
-        key={`${name}-${option}`}
+        key={`${name}`}
         label="Remove original issue"
         stronglabel
         onChange={(val) => {
