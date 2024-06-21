@@ -20,7 +20,6 @@ module Seeds
 
     def seed!
       RequestStore[:current_user] = User.system_user
-      puts "ababab"
       create_judges
       create_dockets
     end
@@ -41,7 +40,6 @@ module Seeds
       create_direct_review_priority_dockets
       create_hearings_non_priority_dockets
       create_hearings_priority_dockets
-      puts "here"
       create_legacy_non_priority_dockets
       create_legacy_priority_dockets
     end
