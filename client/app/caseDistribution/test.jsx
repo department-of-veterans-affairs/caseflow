@@ -18,6 +18,8 @@ class CaseDistributionTest extends React.PureComponent {
     this.state = {
       isReseedingAod: false,
       isReseedingNonAod: false,
+      isReseedingAmaDocketGoals: false,
+      isReseedingDocketPriority: false
     };
   }
 
@@ -48,6 +50,35 @@ class CaseDistributionTest extends React.PureComponent {
       });
     });
   };
+
+  reseedAmaDocketGoals = () => {
+    this.setState({ isReseedingAmaDocketGoals: true });
+    ApiUtil.post('/run-demo-ama-docket-goals').then(() => {
+      this.setState({
+        isReseedingAmaDocketGoals: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingAmaDocketGoals: false,
+      });
+    });
+  };
+
+  reseedDocketPriority = () => {
+    this.setState({ isReseedingDocketPriority: true });
+    ApiUtil.post('/run-demo-docket-priority').then(() => {
+      this.setState({
+        isReseedingDocketPriority: false,
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        isReseedingDocketPriority: false,
+      });
+    });
+  };
+
 
   render() {
     const Router = this.props.router || BrowserRouter;
@@ -249,6 +280,28 @@ class CaseDistributionTest extends React.PureComponent {
                                 name="Run Demo NON AOD Hearing Held Seeds"
                                 loading={this.state.isReseedingNonAod}
                                 loadingText="Reseeding NON AOD Hearing Held Seeds"
+                              />
+                            </li>
+                            <li>
+                              {/* <a href="/run-demo-ama-docket-goals">
+                                <button className="btn btn-primary">Run Demo Ama Docket Goals</button>
+                              </a> */}
+                              <Button
+                                onClick={this.reseedAmaDocketGoals}
+                                name="Run Demo Ama Docket Goals"
+                                loading={this.state.isReseedingAmaDocketGoals}
+                                loadingText="Reseeding Ama Docket Goals"
+                              />
+                            </li>
+                            <li>
+                              {/* <a href="/run-demo-docket-priority">
+                                <button className="btn btn-primary">Run Demo Docket Priority</button>
+                              </a> */}
+                              <Button
+                                onClick={this.reseedDocketPriority}
+                                name="Run Demo Docket Priority"
+                                loading={this.state.isReseedingDocketPriority}
+                                loadingText="Reseeding Docket Priority"
                               />
                             </li>
                           </ul>

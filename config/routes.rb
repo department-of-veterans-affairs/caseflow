@@ -31,6 +31,8 @@ Rails.application.routes.draw do
     get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
+    post 'run-demo-ama-docket-goals', to: 'case_distribution_levers_tests#run_demo_ama_docket_goals', as: "run-demo-ama-docket-goals"
+    post 'run-demo-docket-priority', to: 'case_distribution_levers_tests#run_demo_docket_priority', as: "run-demo-docket-priority"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
