@@ -35,10 +35,6 @@ class Events::CreateVeteranOnEvent
         date_of_death: parser.veteran_date_of_death
       )
 
-      # Update the CF cache
-      if vet.cached_attributes_updatable?
-        vet.update_cached_attributes!
-      end
       # create EventRecord indicating this is a backfilled Veteran
       EventRecord.create!(event: event, evented_record: vet)
 
