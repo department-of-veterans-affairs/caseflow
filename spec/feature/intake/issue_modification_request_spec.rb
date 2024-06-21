@@ -237,7 +237,6 @@ feature "Issue Modification Request", :postgres do
       expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_DESCRIPTION)
       expect(current_url).to include("/decision_reviews/vha?tab=pending")
 
-      # TODO: This fetch might need to change if we create more than one
       issue_request = IssueModificationRequest.last
 
       # Verify the issue modification request attributes
@@ -251,14 +250,6 @@ feature "Issue Modification Request", :postgres do
       expect(issue_request.request_type).to eq("modification")
       expect(issue_request.remove_original_issue).to eq(false)
       expect(issue_request.benefit_type).to eq("vha")
-
-      # TODO: Add an addition request to this as well and confirm that both are created
-
-      # TODO: Click the link as a non admin and verify that the pending requests are persisted
-      # Update one of them and cancel another and save the page
-
-      # TODO: Swap to admin click the link of the claim in the pending tab to revisit the edit page
-      # Then accept or deny the issue request
     end
   end
 
