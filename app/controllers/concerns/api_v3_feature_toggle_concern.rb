@@ -6,8 +6,6 @@ module ApiV3FeatureToggleConcern
   def api_released?(feature)
     return true if FeatureToggle.enabled?(feature)
 
-    # return true if feature == :ama_eventing_enabled
-
     render json: {
       errors: [
         {
@@ -18,5 +16,20 @@ module ApiV3FeatureToggleConcern
       ]
     },
            status: :not_implemented
+  end
+
+  def api_disabled?(feature)
+    if FeatureToggle.enabled?(feature)
+      render json: {
+        errors: [
+          {
+            status: "501",
+            title: "API is disabled",
+            detail: "This endpoint is not supported."
+          }
+        ]
+      },
+             status: :not_implemented
+    end
   end
 end

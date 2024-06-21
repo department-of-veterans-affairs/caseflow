@@ -4,7 +4,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   include ApiV3FeatureToggleConcern
 
   before_action do
-    api_released?(:ama_eventing_enabled)
+    api_disabled?(:ama_eventing_disabled)
   end
 
   # rubocop:disable Layout/LineLength
