@@ -100,20 +100,62 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
       end
     end
   end
-end
 
-def json_payload
-  JSON.parse(File.read(Rails.root.join("app",
-                                       "services",
-                                       "events",
-                                       "decision_review_created",
-                                       "decision_review_created_example.json")))
-end
+  describe "POST #decision_review_created_api disabled" do
+    let(:api_key) { ApiKey.create!(consumer_name: "Appeals-Consumer") }
+    let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
+    let!(:appeals_consumer_paylod) { { "event_id": 3333, "errored_claim_id": 1345, "error": "this was an error" } }
+    context "#contestable_issues with future ratings" do
+      before { FeatureToggle.enable!(:ama_eventing_disabled) }
+      after { FeatureToggle.disable!(:ama_eventing_disabled) }
 
-def load_headers
-  request.headers["X-VA-Vet-SSN"] = "123456789"
-  request.headers["X-VA-File-Number"] = "77799777"
-  request.headers["X-VA-Vet-First-Name"] = "John"
-  request.headers["X-VA-Vet-Last-Name"] = "Smith"
-  request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+      it "returns success response" do
+        request.headers["Authorization"] = "Token token=#{api_key.key_string}"
+        load_headers
+        post :decision_review_created, params: JSON.parse(payload)
+        expect(response).to have_http_status(:not_implemented)
+        expect(response.body).to eq(
+          '{"errors":[{"status":"501","title":"API is disabled","detail":"This endpoint is not supported."}]}'
+        )
+      end
+
+      it "raises not_implemented status instead of process request with Redis error" do
+        allow(Events::DecisionReviewCreatedError).to receive(:handle_service_error)
+          .and_raise(Caseflow::Error::RedisLockFailed.new("Lock Failure"))
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        post :decision_review_created_error, params: appeals_consumer_paylod
+        expect(response).to have_http_status(:not_implemented)
+        expect(response.body).to eq(
+          '{"errors":[{"status":"501","title":"API is disabled","detail":"This endpoint is not supported."}]}'
+        )
+      end
+
+      it "raises not_implemented status instead of process request with standart error" do
+        allow(Events::DecisionReviewCreatedError).to receive(:handle_service_error)
+          .and_raise(StandardError.new("Standard Failure"))
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        post :decision_review_created_error, params: appeals_consumer_paylod
+        expect(response).to have_http_status(:not_implemented)
+        expect(response.body).to eq(
+          '{"errors":[{"status":"501","title":"API is disabled","detail":"This endpoint is not supported."}]}'
+        )
+      end
+    end
+  end
+
+  def json_payload
+    JSON.parse(File.read(Rails.root.join("app",
+                                         "services",
+                                         "events",
+                                         "decision_review_created",
+                                         "decision_review_created_example.json")))
+  end
+
+  def load_headers
+    request.headers["X-VA-Vet-SSN"] = "123456789"
+    request.headers["X-VA-File-Number"] = "77799777"
+    request.headers["X-VA-Vet-First-Name"] = "John"
+    request.headers["X-VA-Vet-Last-Name"] = "Smith"
+    request.headers["X-VA-Vet-Middle-Name"] = "Alexander"
+  end
 end
