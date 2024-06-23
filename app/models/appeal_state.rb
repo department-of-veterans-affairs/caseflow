@@ -254,6 +254,16 @@ class AppealState < CaseflowRecord
   end
 
   # Purpose: Method to update appeal_state in the case of
+  # a hearing being marked as having been held.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_held_appeal_state_update_action!
+    update!(hearing_scheduled: false)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
   # a hearing being withdrawn.
   #
   # Params: None
