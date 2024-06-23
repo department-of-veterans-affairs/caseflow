@@ -11,6 +11,7 @@ class NightlySyncsJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     @slack_report = []
 
+    sync_held_hearing_states
     sync_vacols_cases
     sync_vacols_users
     sync_decision_review_tasks
@@ -87,5 +88,17 @@ class NightlySyncsJob < CaseflowJob
     reporter = LegacyAppealsWithNoVacolsCase.new
     reporter.call
     reporter.buffer.map { |vacols_id| LegacyAppeal.find_by(vacols_id: vacols_id) }
+  end
+
+  def sync_held_hearing_states
+    states_to_examine = AppealState.where(appeal_type: "LegacyAppeal", hearing_scheduled: true)
+
+    Parallel.each(states_to_examine, in_threads: 10) do |state|
+      RequestStore[:current_user] = User.system_user
+
+      if state.appeal.hearings.max_by(&:scheduled_for)&.disposition == "H"
+        state.hearing_held_appeal_state_update_action!
+      end
+    end
   end
 end
