@@ -90,6 +90,8 @@ class NightlySyncsJob < CaseflowJob
     reporter.buffer.map { |vacols_id| LegacyAppeal.find_by(vacols_id: vacols_id) }
   end
 
+  # Adjusts any appeal states appropriately if it is found that a hearing has been marked
+  #  with a held disposition in VACOLS without Caseflow's knowledge.
   def sync_held_hearing_states
     states_to_examine = AppealState.where(appeal_type: "LegacyAppeal", hearing_scheduled: true)
 
