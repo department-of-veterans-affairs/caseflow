@@ -117,9 +117,11 @@ module CorrespondenceControllerConcern
     }
 
     error_counts.each do |error, count|
-      if count.positive?
+      if (count > 1)
         multiple_errors = error_counts.values.count(&:positive?) > 1
         failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
+      else
+        failure_message << build_single_error_message(action_prefix, error_reason(error))
       end
     end
 
@@ -132,6 +134,17 @@ module CorrespondenceControllerConcern
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "sensitivity level mismatch"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity reached for user's queue"
     end
+  end
+
+  def build_single_error_message(action_prefix, reason)
+    # Build error message for single correspondence based on error types
+    case reason
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
+      then message = "Queue volume has reached max capacity for this user."
+    else
+      then message = "Case was not #{action_prefix}assigned because of #{reason}."
+    end
+    message
   end
 
   def build_error_message(count, action_prefix, reason, use_bullet)
