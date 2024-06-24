@@ -12,16 +12,26 @@ module CorrespondenceControllerConcern
 
     # Instantiate AutoAssignableUserFinder with current_user
     permission_checker = AutoAssignableUserFinder.new(mail_team_user)
-    errors = []
 
-    # Check if single or multiple assignments
-    if task_ids.count == 1
-      process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
-    else
-      process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
+    # iterate through each task and check if the user can work the correspondence
+    task_ids.each do |id|
+      correspondence = Task.find(id)&.correspondence
+      check_result = permission_checker.can_user_work_this_correspondence?(
+        user: mail_team_user,
+        correspondence: correspondence
+      )
+
+      # assign the task if the user can work the correspondence
+      update_task(mail_team_user, id) if check_result
     end
 
-    set_banner_params(mail_team_user, errors, task_ids.count, tab)
+    # use permission_checker.unassignable_reasons errors to generate the banner
+    set_banner_params(
+      mail_team_user,
+      permission_checker.unassignable_reasons,
+      task_ids.count,
+      tab
+    )
   end
 
   def process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
@@ -111,9 +121,15 @@ module CorrespondenceControllerConcern
 
     # Get error counts
     error_counts = {
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR),
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR),
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR)
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR
+      ),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR
+      ),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
+      )
     }
 
     error_counts.each do |error, count|
@@ -130,8 +146,8 @@ module CorrespondenceControllerConcern
 
   def error_reason(error)
     case error
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "NOD permissions settings"
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "sensitivity level mismatch"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity reached for user's queue"
     end
   end
@@ -151,7 +167,7 @@ module CorrespondenceControllerConcern
     # Build message based on error types
     message = "#{count} cases were not #{action_prefix}assigned"
     message = "• #{message}" if use_bullet
-    message += " because of #{reason}." unless count.zero?
+    message += " because #{reason}." unless count.zero?
     message
   end
 
