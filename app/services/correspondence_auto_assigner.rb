@@ -44,11 +44,12 @@ class CorrespondenceAutoAssigner
     correspondence = task.correspondence
     assignee = assignable_user_finder.get_first_assignable_user(correspondence: correspondence)
 
+    # return last error message for the most recent auto assign error.
     if assignee.blank?
       logger.no_eligible_assignees(
         task: task,
         started_at: started_at,
-        unassignable_reason: assignable_user_finder.unassignable_reason
+        unassignable_reason: assignable_user_finder.unassignable_reasons.last
       )
       return
     end
