@@ -5,6 +5,8 @@ describe AppealState do
     let!(:user) { create(:user) } # A User needs to exist for `appeal_state` factories
   end
 
+  let!(:user) { create(:user) }
+
   context "State scopes" do
     let!(:appeal_docketed_state) do
       create(
