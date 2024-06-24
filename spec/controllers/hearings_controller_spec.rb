@@ -13,7 +13,7 @@ RSpec.describe HearingsController, type: :controller do
   let!(:vso_participant_id) { "12345" }
 
   describe "PATCH update" do
-    let(:legacy_appeal_state) { hearing.appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
+    let(:legacy_appeal_state) { legacy_hearing.appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
 
     it "should be successful", :aggregate_failures do
       params = {
