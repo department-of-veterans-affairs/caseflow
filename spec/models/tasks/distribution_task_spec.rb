@@ -76,4 +76,37 @@ describe DistributionTask, :postgres do
       end
     end
   end
+
+  describe "validations" do
+    before do
+      distribution_task.update!(status: "completed")
+    end
+
+    context "when there are open JudgeAssignTasks" do
+      let!(:judge_assign_task) do
+        judge_assign_task = JudgeAssignTask.create!(
+          appeal: distribution_task.appeal,
+          parent_id: distribution_task.appeal.root_task.id,
+          assigned_to: create(:field_vso),
+          status: "assigned"
+        )
+
+        judge_assign_task.update!(status: "in_progress")
+      end
+
+      it "prevents changing the status from 'completed' to an active status" do
+        distribution_task.status = "assigned"
+        puts "Is distribution_task valid? #{distribution_task.valid?}"
+        expect(distribution_task.valid?).to be false
+        expect(distribution_task.errors[:status]).to include("cannot be changed from this status if there are open JudgeAssignTasks")
+      end
+    end
+
+    context "when there are no open JudgeAssignTasks" do
+      it "allows changing the status from 'completed' to an active status" do
+        distribution_task.status = "assigned"
+        expect(distribution_task.valid?).to be true
+      end
+    end
+  end
 end
