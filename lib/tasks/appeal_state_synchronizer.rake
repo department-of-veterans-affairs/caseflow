@@ -1,0 +1,96 @@
+# frozen_string_literal: true
+
+namespace :appeal_state_synchronizer do
+  desc "Used to synchronize appeal_states table records with cases in VACOLS."
+  task sync_appeal_states: :environment do
+    adjust_legacy_hearing_statuses
+
+    locate_unrecorded_docketed_states
+  end
+
+  def map_appeal_hearing_scheduled_state(appeal_state)
+    if !appeal_state.appeal&.hearings&.empty? && appeal_state.appeal.hearings.max_by(&:scheduled_for).disposition.nil?
+      return { hearing_scheduled: true }
+    end
+
+    { hearing_scheduled: false }
+  end
+
+  def map_appeal_hearing_postponed_state(appeal_state)
+    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition ==
+       Constants.HEARING_DISPOSITION_TYPES.postponed
+      { hearing_postponed: true }
+    else
+      { hearing_postponed: false }
+    end
+  end
+
+  def map_appeal_hearing_scheduled_in_error_state(appeal_state)
+    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition ==
+       Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      { scheduled_in_error: true }
+    else
+      { scheduled_in_error: false }
+    end
+  end
+
+  def map_appeal_hearing_withdrawn_state(appeal_state)
+    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+      { hearing_withdrawn: true }
+    else
+      { hearing_withdrawn: false }
+    end
+  end
+
+  def map_appeal_hearing_withdrawn_state(appeal_state)
+    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+      { hearing_withdrawn: true }
+    else
+      { hearing_withdrawn: false }
+    end
+  end
+
+  # Looks at the latest legacy hearings (in the VACOLS HEARSCHED table via the HearingRepository class)
+  #  to see if a disposition was placed onto a hearing without Caseflow having registered that event.
+  def adjust_legacy_hearing_statuses
+    relations = [
+      AppealState.eligible_for_quarterly.where(hearing_scheduled: true, appeal_type: "LegacyAppeal"),
+      AppealState.eligible_for_quarterly.hearing_to_be_rescheduled.where(appeal_type: "LegacyAppeal")
+    ]
+
+    Parallel.each(relations, in_processes: 2) do |relation|
+      Parallel.each(relation, in_threads: 10) do |appeal_state|
+        RequestStore[:current_user] = User.system_user
+
+        hs_state = map_appeal_hearing_scheduled_state(appeal_state)
+        hp_state = map_appeal_hearing_postponed_state(appeal_state)
+        sie_state = map_appeal_hearing_scheduled_in_error_state(appeal_state)
+        w_state = map_appeal_hearing_withdrawn_state(appeal_state)
+
+        appeal_state.update!([hs_state, hp_state, sie_state, w_state].inject(&:merge))
+      end
+    end
+  end
+
+  def locate_unrecorded_docketed_states
+    appeals_missing_states = LegacyAppeal.find_by_sql(
+      <<-SQL
+        SELECT la.*
+        FROM legacy_appeals la
+        JOIN notifications n ON la.vacols_id = n.appeals_id AND event_type = 'Appeal docketed'
+        LEFT JOIN appeal_states states ON la.id = states.appeal_id AND states.appeal_type = 'LegacyAppeal'
+        WHERE states.id IS NULL
+      SQL
+    )
+
+    Parallel.each(appeals_missing_states, in_threads: 10) do |appeal|
+      # It's necessary to have a current user set whenever creating appeal_states records
+      # as created_by_id is a required field, and it's derived from RequestStore[:current_user]
+      # in some higher environments. This must be done in each thread since a RequestStore instance's
+      # contents are scoped to each thread.
+      RequestStore[:current_user] = User.system_user
+
+      appeal.appeal_state.appeal_docketed_appeal_state_update_action!
+    end
+  end
+end
