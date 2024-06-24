@@ -126,7 +126,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
       setReviewDetails({
         veteran_name: data.veteran_name || {},
-        dropdown_values: data.correspondence_types || [],
+        dropdown_values: props.correspondenceTypes || [],
         correspondence_type_id: data.correspondence_type_id
       });
 
@@ -329,6 +329,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
+  correspondenceTypes: PropTypes.array,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,

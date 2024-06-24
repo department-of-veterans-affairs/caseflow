@@ -15,7 +15,7 @@ import { validateDateNotInFuture } from '../../../intake/util/issues';
 import moment from 'moment';
 
 export const ReviewForm = (props) => {
-  const correspondenceTypes = props.veteranInformation.correspondence_types;
+  const correspondenceTypes = props.correspondenceTypes;
   // eslint-disable-next-line max-len
   const [correspondenceTypeID, setCorrespondenceTypeID] = useState(props.correspondence.correspondence_type_id);
   // eslint-disable-next-line max-len
@@ -338,7 +338,7 @@ ReviewForm.propTypes = {
     default_select_value: PropTypes.number,
   }),
   veteranInformation: PropTypes.shape({
-    correspondence_types: PropTypes.array,
+    correspondenceTypes: PropTypes.array,
   }),
   disableButton: PropTypes.bool,
   setIsReturnToQueue: PropTypes.bool,
