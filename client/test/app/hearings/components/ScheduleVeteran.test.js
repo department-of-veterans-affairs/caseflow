@@ -38,19 +38,7 @@ const defaultError = {
   },
 };
 
-// jest.mock('app/util/ApiUtil', () => ({
-//   ...jest.requireActual('app/util/ApiUtil'), // Use the actual ApiUtil module for other functions
-//   get: jest.fn(), // Mock the `get` function
-// }));
-
-
 jest.spyOn(window, 'analyticsEvent').mockImplementation(() => {});
-
-// const mockHistory = createMemoryHistory();
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   useHistory: () => mockHistory
-// }));
 
 function customRender(ui, { wrapper: Wrapper, wrapperProps, ...options }) {
   if (Wrapper) {
