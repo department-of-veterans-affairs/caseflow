@@ -42,7 +42,7 @@ export const selectColumn = (selectFile, selectedFiles) => {
   return {
     header:
     (<div {...styles.checkBoxHeaderStyles}>
-      <Checkbox ariaLabel="select all files checkbox" />
+      <Checkbox name="" ariaLabel="select all files checkbox" />
       <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
     </div>),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
@@ -106,7 +106,7 @@ export const caseDetailsColumn = () => {
         {transcriptionFile.externalAppealId && (
           <LinkToAppeal
             appealExternalId={transcriptionFile.externalAppealId}
-            hearingDay=""
+            hearingDay={{}}
             regionalOffice="">
             {transcriptionFile.caseDetails}
           </LinkToAppeal>

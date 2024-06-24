@@ -117,7 +117,7 @@ Checkbox.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.bool,
+  value: PropTypes.string,
   styling: PropTypes.object,
   ariaLabel: PropTypes.string
 };
