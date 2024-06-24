@@ -76,7 +76,7 @@ const Description = ({ text, searchPrompt }) => {
 };
 
 // This maps the component to render for each tab
-export const tabConfig = [
+export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: () => {
@@ -104,9 +104,9 @@ export const tabConfig = [
             </div>
           </div>
           <div className="file-select" style={{ marginTop: '-2em' }}>
-            <h2>0 files selected</h2>
-            <div className="button-row" style={styles.buttonStyles} >
-              <Button disabled>Package files</Button>
+            <h2>{files} files selected</h2>
+            <div className="button-row" style={styles.buttonStyles} onClick={buildPackage} >
+              <Button disabled={files === 0}>Package files</Button>
               <Button linkStyling>Cancel</Button>
             </div>
           </div>
@@ -114,6 +114,7 @@ export const tabConfig = [
             <TranscriptionFileDispatchTable
               columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
               statusFilter={['Unassigned']}
+              selectFilesForPackage={selectFilesForPackage}
             />
           </div>
 

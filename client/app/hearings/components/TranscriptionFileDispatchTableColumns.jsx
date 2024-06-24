@@ -13,6 +13,7 @@ const styles = {
     '& .cf-form-checkbox': {
       position: 'relative',
       bottom: '0.2em',
+      left: '2px'
     },
     '& p': {
       marginBottom: '1em',
@@ -27,7 +28,8 @@ const styles = {
       marginTop: '1em'
     },
     '& .cf-form-checkbox': {
-      bottom: '0.7em'
+      bottom: '0.7em',
+      left: '2px'
     },
   }),
   HeaderWithIconStyles: css({
@@ -36,7 +38,7 @@ const styles = {
   }),
 };
 
-export const selectColumn = () => {
+export const selectColumn = (selectFile, selectedFiles) => {
   return {
     header:
     (<div {...styles.checkBoxHeaderStyles}>
@@ -48,7 +50,26 @@ export const selectColumn = () => {
     anyFiltersAreSet: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.anyFiltersAreSet,
     columnName: 'selectAll',
     valueName: 'Selected',
-    valueFunction: () => <div {...styles.checkBoxStyles}><Checkbox ariaLabel="select file checkbox" /></div>
+    valueFunction: (transcriptionFile) => {
+      const selectedFile = selectedFiles.find((file) => file.id === transcriptionFile.id);
+      const value = selectedFile && selectedFile.status === 'selected' ? 'selected' : '';
+      const disabled = selectedFile && selectedFile.status === 'locked';
+      const title = selectedFile && selectedFile.message ? selectedFile.message : '';
+
+      return (
+        <div {...styles.checkBoxStyles} title={title}>
+          <Checkbox
+            ariaLabel="select file checkbox"
+            name={`select-file-${ transcriptionFile.id}`}
+            onChange={(val) => selectFile(transcriptionFile.id, val)}
+            label={' '}
+            title="Test"
+            value={value}
+            disabled={disabled}
+          />
+        </div>
+      );
+    }
   };
 };
 

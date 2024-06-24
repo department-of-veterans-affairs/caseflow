@@ -4,7 +4,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
-  before_action :verify_transcription_user, only: [:transcription_file_tasks]
+  # before_action :verify_transcription_user, only: [:transcription_file_tasks]
 
   def download_transcription_file
     tmp_location = file.fetch_file_from_s3!
@@ -24,6 +24,39 @@ class Hearings::TranscriptionFilesController < ApplicationController
       tasks_per_page: @page_size,
       total_task_count: @total_count
     }
+  end
+
+  def locked
+    locked_files = TranscriptionFile.locked
+    files = []
+    locked_files.each do |file|
+      status = file.locked_by_id == current_user.id ? "selected" : "locked"
+      username = file.try(:locked_by).try(:username)
+      message = status == "locked" && username ? "Locked by " + username : ""
+      files << { id: file.id, status: status, message: message }
+    end
+    render json: files
+  end
+
+  def lock
+    if file
+      if file.lockable?(current_user.id)
+        status = params[:status] || false
+        if status
+          file.touch(:locked_at)
+          file.update!(locked_by: current_user)
+        else
+          file.update!(locked_by: nil, locked_at: nil)
+        end
+        render json: {
+          file_id: file.id,
+          locked_by_id: file.locked_by_id,
+          locked_at: file.locked_at
+        }
+      else
+        render json: { error: "You do not have permission to lock this record" }, status: :forbidden
+      end
+    end
   end
 
   private
