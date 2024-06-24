@@ -94,7 +94,9 @@ module CorrespondenceControllerConcern
     # failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed" --Old
     failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{user.css_id}"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_message = errors.uniq.join(", ")
+    # failure_message = build_single_failure_message(errors, action_prefix)
+    failure_message = build_single_error_message(action_prefix, error_reason(errors[0]))
+    # failure_message = errors.uniq.join(", ")
     {
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
       message: errors.empty? ? success_message : failure_message
@@ -136,8 +138,6 @@ module CorrespondenceControllerConcern
       if (count > 1)
         multiple_errors = error_counts.values.count(&:positive?) > 1
         failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
-      else
-        failure_message << build_single_error_message(action_prefix, error_reason(error))
       end
     end
 
@@ -158,7 +158,7 @@ module CorrespondenceControllerConcern
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
       message = "Queue volume has reached max capacity for this user."
     else
-      message = "Case was not #{action_prefix}assigned because of #{reason}."
+      message = "Case was not #{action_prefix}assigned because #{reason}."
     end
     message
   end
