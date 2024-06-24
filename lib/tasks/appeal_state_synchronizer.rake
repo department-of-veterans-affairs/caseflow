@@ -87,12 +87,42 @@ namespace :appeal_state_synchronizer do
 
     Parallel.each(appeals_missing_states, in_threads: 10) do |appeal|
       # It's necessary to have a current user set whenever creating appeal_states records
-      # as created_by_id is a required field, and it's derived from RequestStore[:current_user]
+      # as created_by_id is a required field, AND it's derived from RequestStore[:current_user]
       # in some higher environments. This must be done in each thread since a RequestStore instance's
       # contents are scoped to each thread.
       RequestStore[:current_user] = User.system_user
 
       appeal.appeal_state.appeal_docketed_appeal_state_update_action!
+    end
+
+    def incorrect_hearing_scheduled_appeal_states_query
+      <<-SQL
+      SELECT DISTINCT *
+      FROM appeal_states
+      WHERE hearing_scheduled IS TRUE
+      AND id NOT IN (
+          SELECT s.id
+          FROM appeals
+          INNER JOIN tasks ON appeals.id = tasks.appeal_id
+          INNER JOIN hearings h ON appeals.id = h.appeal_id
+          INNER JOIN appeal_states s ON s.appeal_id = appeals.id AND s.appeal_type = 'Appeal'
+          WHERE tasks.appeal_type = 'Appeal'
+          AND tasks.type = 'AssignHearingDispositionTask'
+          AND tasks.status IN ('assigned')
+          AND appeals.docket_type = 'hearing'
+          AND h.disposition IS NULL
+      )
+      SQL
+    end
+
+    def adjust_ama_hearing_statuses
+      incorrect_appeal_states = AppealState.find_by_sql(incorrect_hearing_scheduled_appeal_states_query)
+
+      Parallel.each(incorrect_appeal_states, in_threads: 10) do |_state_to_correct|
+        RequestStore[:current_user] = User.system_user
+
+        incorrect_appeal_states.update!(hearing_scheduled: false)
+      end
     end
   end
 end
