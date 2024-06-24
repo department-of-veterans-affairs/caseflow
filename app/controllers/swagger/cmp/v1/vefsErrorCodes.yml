@@ -1,0 +1,226 @@
+components:
+  schemas:
+    DOES_NOT_CONFORM_TO_SCHEMA:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR40001
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - null
+#  ", , 400),
+    VALIDATE_INVALID_VALUE:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR40003
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - 'Key: %s contained invalid value(s) %s'
+#  ", "", 400),
+    DUPLICATE_PROVIDERDATA_KEYS:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR40002
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - 'Duplicate key: providerData contained duplicate keys %s'
+#  ", "", 400),
+    INVALID_MIMETYPE:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR41501
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - 'File binary content contained magic bytes indicates mime type: %s which does not match accepted mime types: %s'
+#  ", "", 415),
+    WRONG_MIMETYPE_EXTENSION:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR41502
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - 'File binary content contained magic bytes indicates mime type: %s which does not match filename extension: %s'
+#  ", "", 415),
+    INVALID_REQUEST:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR40010
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Invalid request data.
+#  ", "", 400),
+    UNABLE_TO_DETERMINE_MIMETYPE:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50001
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - 'File binary content''s mime type was unable to be determined. Accepted Type(s): %s'
+#  ", "", 500),
+    OPERATION_NOT_ENABLED:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50102
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Operation not enabled.
+#  ", "", 501),
+    UNABLE_TO_PERSIST_DATA:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50003
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Unknown error encountered saving data.
+#  ", "", 500),
+    UNABLE_TO_UPLOAD_DATA:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50004
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Unknown error encountered uploading data.
+#  ", "", 500),
+    JSON_SERIALIZATION:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50010
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - JSON serialization error.
+#  ", "", 500),
+    JSON_DESERIALIZATION:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50011
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - JSON deserialization error.
+#  ", "", 500),
+    UNKNOWN_ERROR:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50009
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Unknown system error occurred.
+#  ", "", 500),
+    UNABLE_TO_CONVERT:
+      allOf:
+        - $ref: './baseErrorResponse.yml'
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - VEFSERR50012
+            message:
+              type: string
+              title: The message schema
+              description: The message describing the error.
+              enum:
+                - Unable to convert document from mime type %s to mime type %s
+#  ", "", 500),
