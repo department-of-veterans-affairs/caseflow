@@ -74,7 +74,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
     it "should create AppealState records if they do not exist" do
       expect(AppealState.where(appeal_id: recent_docketed_appeal_ids)[0]).to be(nil)
       appeal_state_count_before = AppealState.count
-      PollDocketedLegacyAppealsJob.new.create_corresponding_appeals(recent_docketed_appeal_ids)
+      PollDocketedLegacyAppealsJob.new.create_corresponding_appeal_states(recent_docketed_appeal_ids)
       expect(AppealState.count).not_to eq(appeal_state_count_before)
     end
 
