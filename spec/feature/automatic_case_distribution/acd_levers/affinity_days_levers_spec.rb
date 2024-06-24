@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.feature "Affinity Days Levers" do
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   let!(:current_user) do
     user = create(:user, css_id: "BVATTWAYNE")
     CDAControlGroup.singleton.add_user(user)
