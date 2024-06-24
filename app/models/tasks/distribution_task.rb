@@ -14,6 +14,8 @@
 class DistributionTask < Task
   before_validation :set_assignee
 
+  validate :prevent_status_change_if_judge_assign_task_open, on: :update
+
   def actions_available?(user)
     SpecialCaseMovementTeam.singleton.user_has_access?(user)
   end
@@ -58,5 +60,14 @@ class DistributionTask < Task
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
+  end
+
+  def prevent_status_change_if_judge_assign_task_open
+    if status_changed? && status_was == "completed" && Task.active_statuses.include?(status)
+      open_judge_assign_tasks = appeal.tasks.where(type: "JudgeAssignTask", status: Task.open_statuses)
+      if open_judge_assign_tasks.exists?
+        errors.add(:status, "cannot be changed from this status if there are open JudgeAssignTasks")
+      end
+    end
   end
 end
