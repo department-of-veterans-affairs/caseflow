@@ -31,7 +31,6 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
@@ -42,12 +41,14 @@ class Docket
 
     if docket_type_lever_value == "true"
       appeals.none
-    elsif start_distribution_prior_to_goal&.is_toggle_active && calculate_days_for_time_goal_with_prior_to_goal > 0
+    elsif priority_status == NON_PRIORITY &&
+          start_distribution_prior_to_goal&.is_toggle_active && calculate_days_for_time_goal_with_prior_to_goal > 0
       appeals.where("appeals.receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
     else
       appeals
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
