@@ -121,23 +121,34 @@ namespace :appeal_state_synchronizer do
     end
   end
 
+  def ama_backfill_sql
+    <<-SQL
+      UPDATE notifications n
+      SET notifiable_id = a.id,
+        notifiable_type = 'Appeal'
+      FROM appeals a
+      WHERE n.appeals_id = a.uuid::text
+    SQL
+  end
+
+  def legacy_backfill_sql
+    <<-SQL
+      UPDATE notifications n
+      SET notifiable_id = la.id,
+        notifiable_type = 'LegacyAppeal'
+      FROM legacy_appeals la
+      WHERE n.appeals_id = la.vacols_id
+    SQL
+  end
+
   def backfill_appeal_information
-    updates_to_make = {}
+    # Temporarily Bump Up Timeout
+    ActiveRecord::Base.connection.execute("SET statement_timeout = '300s'")
 
-    Notification.where(notifiable_id: nil)
-      .or(Notification.where(notifiable_type: nil))
-      .find_in_batches(batch_size: 10_000) do |notification_batch|
-      notification_batch.index_by(&:id).each do |id, notification_row|
-        appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(notification_row.appeals_id)
-        updates_to_make[id] = { id: id, notifiable: appeal }
-      end
+    ActiveRecord::Base.connection.execute(ama_backfill_sql)
+    ActiveRecord::Base.connection.execute(legacy_backfill_sql)
 
-      Notification.update(updates_to_make.keys, updates_to_make.values)
-
-    rescue StandardError => error
-      Rails.logger.error("#{notification.id} couldn't have its appeal set because of #{error.message}")
-    ensure
-      updates_to_make = {}
-    end
+    # Set Timeout Back
+    ActiveRecord::Base.connection.execute("SET statement_timeout = '30s'")
   end
 end
