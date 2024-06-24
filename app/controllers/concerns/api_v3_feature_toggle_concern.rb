@@ -18,6 +18,7 @@ module ApiV3FeatureToggleConcern
            status: :not_implemented
   end
 
+  # Checks if feature that disables API is ON
   def api_disabled?(feature)
     if FeatureToggle.enabled?(feature)
       render json: {

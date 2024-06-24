@@ -3,6 +3,7 @@
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
   include ApiV3FeatureToggleConcern
 
+  # Checks if API is disabled
   before_action do
     api_disabled?(:ama_eventing_disabled)
   end
