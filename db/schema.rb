@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_01_180157) do
+ActiveRecord::Schema.define(version: 2024_05_28_153139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1880,6 +1880,7 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
   create_table "transcription_contractors", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
+    t.datetime "deleted_at"
     t.string "directory", null: false, comment: "The contract house box.com folder full path"
     t.string "email", null: false, comment: "The contract house contact email address"
     t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
@@ -1889,6 +1890,7 @@ ActiveRecord::Schema.define(version: 2024_05_01_180157) do
     t.string "poc", null: false, comment: "The contract house poc name"
     t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
     t.index ["inactive"], name: "index_transcription_contractors_on_inactive"
   end
 
