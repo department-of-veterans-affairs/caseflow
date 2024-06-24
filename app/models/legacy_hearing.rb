@@ -400,6 +400,7 @@ class LegacyHearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user
