@@ -154,18 +154,13 @@ module CorrespondenceControllerConcern
 
   def build_single_error_message(action_prefix, reason)
     # Build error message for single correspondence based on error types
-    case reason
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
-      message = "Queue volume has reached max capacity for this user."
-    else
-      message = "Case was not #{action_prefix}assigned because #{reason}."
-    end
+    message = "Case was not #{action_prefix}assigned to user because #{reason}."
     message
   end
 
   def build_error_message(count, action_prefix, reason, use_bullet)
     # Build message based on error types
-    message = "#{count} cases were not #{action_prefix}assigned"
+    message = "#{count} cases were not #{action_prefix}assigned to user"
     message = "• #{message}" if use_bullet
     message += " because #{reason}." unless count.zero?
     message
