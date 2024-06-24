@@ -77,7 +77,7 @@ namespace :appeal_state_synchronizer do
   def locate_unrecorded_docketed_states
     appeals_missing_states = LegacyAppeal.find_by_sql(
       <<-SQL
-        SELECT la.*
+        SELECT DISTINCT la.*
         FROM legacy_appeals la
         JOIN notifications n ON la.vacols_id = n.appeals_id AND event_type = 'Appeal docketed'
         LEFT JOIN appeal_states states ON la.id = states.appeal_id AND states.appeal_type = 'LegacyAppeal'
