@@ -40,6 +40,8 @@ export const virtualHearing = {
     guestLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
+    scheduledInTimezone: 'America/Chicago',
+    scheduledTimeString: '03:30'
   },
 };
 
