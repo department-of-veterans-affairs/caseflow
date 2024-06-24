@@ -98,7 +98,7 @@ class NightlySyncsJob < CaseflowJob
     Parallel.each(states_to_examine, in_threads: 10) do |state|
       RequestStore[:current_user] = User.system_user
 
-      if state.appeal.hearings.max_by(&:scheduled_for)&.disposition == Contants.HEARING_DISPOSITION_TYPES.held
+      if state.appeal&.hearings&.max_by(&:scheduled_for)&.disposition == Constants.HEARING_DISPOSITION_TYPES.held
         state.hearing_held_appeal_state_update_action!
       end
     end
