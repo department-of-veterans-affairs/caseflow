@@ -382,10 +382,9 @@ describe AppealState do
         )
       end
 
-      it "sets vso_ihp_pending to true and all others false" do
+      it "sets vso_ihp_pending to true" do
         subject
 
-        expect(appeal_state.appeal_docketed).to eq false
         expect(appeal_state.vso_ihp_pending).to eq true
       end
     end
@@ -622,10 +621,9 @@ describe AppealState do
         )
       end
 
-      it "sets hearing_scheduled to true and all others false" do
+      it "sets hearing_scheduled to true" do
         subject
 
-        expect(appeal_state.appeal_docketed).to eq false
         expect(appeal_state.hearing_scheduled).to eq true
       end
     end

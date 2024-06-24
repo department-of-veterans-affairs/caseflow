@@ -109,7 +109,7 @@ namespace :appeal_state_synchronizer do
           INNER JOIN appeal_states s ON s.appeal_id = appeals.id AND s.appeal_type = 'Appeal'
           WHERE tasks.appeal_type = 'Appeal'
           AND tasks.type = 'AssignHearingDispositionTask'
-          AND tasks.status IN ('assigned')
+          AND tasks.status = 'assigned'
           AND appeals.docket_type = 'hearing'
           AND h.disposition IS NULL
       )
