@@ -57,7 +57,6 @@ context "api/docs/v3/decision_reviews.yaml" do
 
   describe "#decision_reviews" do
     describe "/higher_level_reviews documentation" do
-
       let(:hlr_doc) do
         spec.dig("paths", "/higher_level_reviews", "post")
       end
