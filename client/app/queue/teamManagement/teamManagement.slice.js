@@ -104,8 +104,9 @@ const teamManagementSlice = createSlice({
       state.data = { ...newVals };
       state.loading = false;
     },
-    [fetchTeamManagement.rejected]: (state) => {
+    [fetchTeamManagement.rejected]: (state, action) => {
       state.loading = false;
+      state.error = action.error.message;
     },
     [updateOrg.pending]: (state, action) => {
       const { orgId } = action.meta.arg;
