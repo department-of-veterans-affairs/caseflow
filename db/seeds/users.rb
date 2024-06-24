@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# Create Users/Organizations used by other seed classes.
+# Create Users/Organizations used by other seed classes. Some users which exist that are not created in this file are
+# created using the seed file populate_caseflow_from_vacols.rb, which mimics Caseflow's creation of some users from
+# the VACOLS DB if they do not yet exist in the Caseflow DB.
 
 module Seeds
   # rubocop:disable Metrics/AbcSize

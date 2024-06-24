@@ -9,11 +9,11 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
     User.authenticate!(user: user)
   end
 
-  let(:ama_hearings) { Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals }
+  let(:ama_hearings) { Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals }
   let(:ama_direct_reviews) { Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals }
   let(:ama_evidence_submissions) { Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals }
 
-  let(:ama_hearings_field) { Constants.DISTRIBUTION.ama_hearings_docket_time_goals }
+  let(:ama_hearings_field) { Constants.DISTRIBUTION.ama_hearing_docket_time_goals }
   let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
   let(:ama_evidence_submissions_field) { Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals }
 
