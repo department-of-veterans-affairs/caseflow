@@ -13,7 +13,7 @@ task :lint do # rubocop:disable Rails/RakeEnvironment
   fasterer_result = ShellCommand.run("bundle exec fasterer")
 
   puts "running rubocop..."
-  rubocop_result = ShellCommand.run("bundle exec rubocop -a")
+  rubocop_result = ShellCommand.run("bundle exec rubocop")
 
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
