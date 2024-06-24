@@ -99,9 +99,15 @@ module CorrespondenceControllerConcern
 
     # Get error counts
     error_counts = {
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR),
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR),
-      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR => errors.count(Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR)
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR
+      ),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR
+      ),
+      Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR => errors.count(
+        Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
+      )
     }
 
     error_counts.each do |error, count|
