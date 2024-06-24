@@ -140,9 +140,9 @@ module CorrespondenceControllerConcern
     # Build error message for single correspondence based on error types
     case reason
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
-      then message = "Queue volume has reached max capacity for this user."
+      message = "Queue volume has reached max capacity for this user."
     else
-      then message = "Case was not #{action_prefix}assigned because of #{reason}."
+      message = "Case was not #{action_prefix}assigned because of #{reason}."
     end
     message
   end
