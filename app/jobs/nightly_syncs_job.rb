@@ -93,11 +93,7 @@ class NightlySyncsJob < CaseflowJob
   # Adjusts any appeal states appropriately if it is found that a seemingly pending
   #  hearing has been marked with a disposition in VACOLS without Caseflow's knowledge.
   def sync_hearing_states
-    states_to_examine = AppealState.where(appeal_type: "LegacyAppeal", hearing_scheduled: true)
-
-    Parallel.each(states_to_examine, in_threads: 10) do |state|
-      RequestStore[:current_user] = User.system_user
-
+    AppealState.where(appeal_type: "LegacyAppeal", hearing_scheduled: true).each do |state|
       case state.appeal&.hearings&.max_by(&:scheduled_for)&.disposition
       when Constants.HEARING_DISPOSITION_TYPES.held
         state.hearing_held_appeal_state_update_action!
