@@ -37,15 +37,8 @@ namespace :appeal_state_synchronizer do
   end
 
   def map_appeal_hearing_withdrawn_state(appeal_state)
-    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
-      { hearing_withdrawn: true }
-    else
-      { hearing_withdrawn: false }
-    end
-  end
-
-  def map_appeal_hearing_withdrawn_state(appeal_state)
-    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+    if appeal_state.appeal.hearings&.max_by(&:scheduled_for)&.disposition ==
+       Constants.HEARING_DISPOSITION_TYPES.cancelled
       { hearing_withdrawn: true }
     else
       { hearing_withdrawn: false }
@@ -94,9 +87,10 @@ namespace :appeal_state_synchronizer do
 
       appeal.appeal_state.appeal_docketed_appeal_state_update_action!
     end
+  end
 
-    def incorrect_hearing_scheduled_appeal_states_query
-      <<-SQL
+  def incorrect_hearing_scheduled_appeal_states_query
+    <<-SQL
       SELECT DISTINCT *
       FROM appeal_states
       WHERE hearing_scheduled IS TRUE
@@ -113,17 +107,16 @@ namespace :appeal_state_synchronizer do
           AND appeals.docket_type = 'hearing'
           AND h.disposition IS NULL
       )
-      SQL
-    end
+    SQL
+  end
 
-    def adjust_ama_hearing_statuses
-      incorrect_appeal_states = AppealState.find_by_sql(incorrect_hearing_scheduled_appeal_states_query)
+  def adjust_ama_hearing_statuses
+    incorrect_appeal_states = AppealState.find_by_sql(incorrect_hearing_scheduled_appeal_states_query)
 
-      Parallel.each(incorrect_appeal_states, in_threads: 10) do |state_to_correct|
-        RequestStore[:current_user] = User.system_user
+    Parallel.each(incorrect_appeal_states, in_threads: 10) do |state_to_correct|
+      RequestStore[:current_user] = User.system_user
 
-        state_to_correct.update!(hearing_scheduled: false)
-      end
+      state_to_correct.update!(hearing_scheduled: false)
     end
   end
 end
