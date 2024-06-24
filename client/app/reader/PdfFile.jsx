@@ -52,9 +52,7 @@ export class PdfFile extends React.PureComponent {
       file: this.props.file,
       documentType: this.props.documentType,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-      overscan: this.props.windowingOverscan,
-      isPageVisible: this.props.isVisible,
-      name: null
+      overscan: this.props.windowingOverscan
     };
   }
 
@@ -469,26 +467,32 @@ export class PdfFile extends React.PureComponent {
         clearTimeout(this.scrollTimer);
       }
 
-      const scrollStart = performance.now();
-
       this.scrollTimer = setTimeout(() => {
-        const scrollEnd = performance.now();
-        const scrollMessage = `Scroll to page ${this.currentPage + 1}
-        (${(Math.round(this.scrollLeft * 100) / 100).toFixed(2)},
-        ${(Math.round(this.scrollTop * 100) / 100).toFixed(2)})`;
+        const scrollStart = performance.now();
 
-        this.metricsAttributes.name = scrollMessage;
+        const data = {
+          overscan: this.props.windowingOverscan,
+          documentType: this.props.documentType,
+          pageCount: this.props.pdfDocument.numPages,
+          pageIndex: this.pageIndex,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          start: scrollStart,
+          end: performance.now()
+        };
+
+        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
+        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
 
         storeMetrics(
           this.props.documentId,
           this.metricsAttributes,
           {
-            message: scrollMessage,
+            message: `Scroll to position ${posx}, ${posy}`,
             type: 'performance',
             product: 'reader',
-            start: new Date(performance.timeOrigin + scrollStart),
-            end: new Date(performance.timeOrigin + scrollEnd),
-            duration: scrollStart ? scrollEnd - scrollStart : 0
+            start: new Date(performance.timeOrigin + data.start),
+            end: new Date(performance.timeOrigin + data.end),
+            duration: data.start ? data.end - data.start : 0
           },
           this.metricsIdentifier,
         );

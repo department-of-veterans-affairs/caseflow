@@ -33,9 +33,7 @@ const metricArgs = (featureValue) => {
         file: '/document/1/pdf',
         documentType: 'test',
         prefetchDisabled: undefined,
-        overscan: undefined,
-        isPageVisible: true,
-        name: null
+        overscan: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -81,7 +79,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible
+            isVisible={documents[0].content_url}
             scale="test"
             documentType="test"
             featureToggles={{
@@ -122,7 +120,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible
+            isVisible={documents[0].content_url}
             scale="test"
             documentType="test"
             featureToggles={{

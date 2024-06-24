@@ -957,6 +957,8 @@ class Task < CaseflowRecord
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
+
+    true
   end
 
   def assignee_status_is_valid_on_create
