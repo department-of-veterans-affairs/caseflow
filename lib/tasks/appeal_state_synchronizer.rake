@@ -8,6 +8,7 @@ namespace :appeal_state_synchronizer do
     adjust_legacy_hearing_statuses
     adjust_ama_hearing_statuses
     locate_unrecorded_docketed_states
+    backfill_appeal_information
   end
 
   def map_appeal_hearing_scheduled_state(appeal_state)
@@ -117,6 +118,26 @@ namespace :appeal_state_synchronizer do
       RequestStore[:current_user] = User.system_user
 
       state_to_correct.update!(hearing_scheduled: false)
+    end
+  end
+
+  def backfill_appeal_information
+    updates_to_make = {}
+
+    Notification.where(notifiable_id: nil)
+      .or(Notification.where(notifiable_type: nil))
+      .find_in_batches(batch_size: 10_000) do |notification_batch|
+      notification_batch.index_by(&:id).each do |id, notification_row|
+        appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(notification_row.appeals_id)
+        updates_to_make[id] = { id: id, notifiable: appeal }
+      end
+
+      Notification.update(updates_to_make.keys, updates_to_make.values)
+
+    rescue StandardError => error
+      Rails.logger.error("#{notification.id} couldn't have its appeal set because of #{error.message}")
+    ensure
+      updates_to_make = {}
     end
   end
 end
