@@ -16,7 +16,6 @@ class AppealState < CaseflowRecord
   # Purpose: Default state of a hash of attributes for an appeal_state, all set to false.
   #          This will be used in the `update_appeal_state` method.
   DEFAULT_STATE = ActiveSupport::HashWithIndifferentAccess.new(decision_mailed: false,
-                                                               appeal_docketed: false,
                                                                hearing_postponed: false,
                                                                hearing_withdrawn: false,
                                                                hearing_scheduled: false,
@@ -251,6 +250,16 @@ class AppealState < CaseflowRecord
   # Response: None
   def hearing_postponed_appeal_state_update_action!
     update_appeal_state_action!(:hearing_postponed)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being marked as having been held.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_held_appeal_state_update_action!
+    update!(hearing_scheduled: false)
   end
 
   # Purpose: Method to update appeal_state in the case of

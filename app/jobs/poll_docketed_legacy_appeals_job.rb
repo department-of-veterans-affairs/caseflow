@@ -50,9 +50,9 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
         appeal_state.appeal_docketed = true
         appeal_state.save!
       else
-        appeal_state = AppealState.new(appeal: appeal,
-          created_by_id: User.system_user.id,
-          appeal_docketed: true)
+        AppealState.new(appeal: appeal,
+                        created_by_id: User.system_user.id,
+                        appeal_docketed: true)
           .save!
       end
     end
