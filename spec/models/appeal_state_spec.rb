@@ -2,12 +2,10 @@
 
 describe AppealState do
   it_behaves_like "AppealState belongs_to polymorphic appeal" do
-    let!(:_user) { create(:user) } # A User needs to exist for `appeal_state` factories
+    let!(:user) { create(:user) } # A User needs to exist for `appeal_state` factories
   end
 
   context "State scopes" do
-    let(:user) { create(:user) }
-
     let!(:appeal_docketed_state) do
       create(
         :appeal_state,
@@ -343,8 +341,6 @@ describe AppealState do
   end
 
   context "#appeal_docketed_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.appeal_docketed_appeal_state_update_action! }
 
     context "updates the appeal_docketed attribute" do
@@ -369,8 +365,6 @@ describe AppealState do
   end
 
   context "#vso_ihp_pending_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.vso_ihp_pending_appeal_state_update_action! }
 
     context "updates the vso_ihp_pending attribute" do
@@ -396,8 +390,6 @@ describe AppealState do
   end
 
   context "#vso_ihp_cancelled_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.vso_ihp_cancelled_appeal_state_update_action! }
 
     context "updates the vso_ihp_pending attribute" do
@@ -422,8 +414,6 @@ describe AppealState do
   end
 
   context "#vso_ihp_complete_appeal_state_update_action!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.vso_ihp_complete_appeal_state_update_action! }
 
     context "updates the vso_ihp_complete attribute" do
@@ -448,8 +438,6 @@ describe AppealState do
   end
 
   context "#privacy_act_pending_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.privacy_act_pending_appeal_state_update_action! }
 
     context "updates the privacy_act_pending attribute" do
@@ -472,8 +460,6 @@ describe AppealState do
   end
 
   context "#privacy_act_cancelled_appeal_state_update_action!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.privacy_act_cancelled_appeal_state_update_action! }
 
     context "updates the privacy_act_pending attribute" do
@@ -496,8 +482,6 @@ describe AppealState do
   end
 
   context "#privacy_act_complete_appeal_state_update_action!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.privacy_act_complete_appeal_state_update_action! }
 
     context "updates the privacy_act_complete attribute" do
@@ -523,8 +507,6 @@ describe AppealState do
   end
 
   context "#decision_mailed_appeal_state_update_action!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.decision_mailed_appeal_state_update_action! }
 
     context "updates the decision_mailed attribute" do
@@ -549,8 +531,6 @@ describe AppealState do
   end
 
   context "#appeal_cancelled_appeal_state_update_action!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.appeal_cancelled_appeal_state_update_action! }
 
     context "updates the appeal_cancelled attribute" do
@@ -574,9 +554,8 @@ describe AppealState do
       end
     end
   end
-  context "#hearing_postponed_appeal_state_update!" do
-    let(:user) { create(:user) }
 
+  context "#hearing_postponed_appeal_state_update!" do
     subject { appeal_state.hearing_postponed_appeal_state_update_action! }
 
     context "updates the hearing_postponed attribute" do
@@ -602,8 +581,6 @@ describe AppealState do
   end
 
   context "#hearing_withdrawn_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.hearing_withdrawn_appeal_state_update_action! }
 
     context "updates the hearing_withdrawn attribute" do
@@ -628,8 +605,6 @@ describe AppealState do
     end
   end
   context "#hearing_scheduled_appeal_state_update!" do
-    let(:user) { create(:user) }
-
     subject { appeal_state.hearing_scheduled_appeal_state_update_action! }
 
     context "updates the hearing_scheduled attribute" do
@@ -654,9 +629,33 @@ describe AppealState do
     end
   end
 
-  context "#scheduled_in_error_appeal_state_update!" do
-    let(:user) { create(:user) }
+  context "hearing_held_appeal_state_update_action!" do
+    subject { appeal_state.hearing_held_appeal_state_update_action! }
 
+    context "updates the hearing_scheduled attribute" do
+      include_examples "privacy_act_pending status remains active upon update"
+
+      let(:appeal_state) do
+        create(
+          :appeal_state,
+          :ama,
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          hearing_scheduled: true
+        )
+      end
+
+      it "sets hearing_scheduled to true and all others false" do
+        expect(appeal_state.hearing_scheduled).to eq true
+
+        subject
+
+        expect(appeal_state.hearing_scheduled).to eq false
+      end
+    end
+  end
+
+  context "#scheduled_in_error_appeal_state_update!" do
     subject { appeal_state.scheduled_in_error_appeal_state_update_action! }
 
     context "updates the scheduled_in_error attribute" do
