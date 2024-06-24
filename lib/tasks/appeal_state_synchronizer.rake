@@ -100,6 +100,7 @@ namespace :appeal_state_synchronizer do
       SELECT DISTINCT *
       FROM appeal_states
       WHERE hearing_scheduled IS TRUE
+      AND appeal_type = 'Appeal'
       AND id NOT IN (
           SELECT s.id
           FROM appeals
