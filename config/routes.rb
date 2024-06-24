@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       get 'ineligible_judge_list'
       post 'run_demo_aod_hearing_seeds'
       post 'run_demo_non_aod_hearing_seeds'
+      post 'run-demo-ama-docket-goals'
+      post 'run-demo-docket-priority'
     end
   end
 

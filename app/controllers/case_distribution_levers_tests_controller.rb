@@ -26,6 +26,20 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
+  def run_demo_ama_docket_goals
+    Rake::Task["db:seed:demo_ama_docket_goals_lever_test_data"].reenable
+    Rake::Task["db:seed:demo_ama_docket_goals_lever_test_data"].invoke
+
+    head :ok
+  end
+
+  def run_demo_docket_priority
+    Rake::Task["db:seed:demo_docket_priority_lever_test_data"].reenable
+    Rake::Task["db:seed:demo_docket_priority_lever_test_data"].invoke
+
+    head :ok
+  end
+
   def appeals_ready_to_distribute
     csv_data = AppealsReadyForDistribution.process
 
