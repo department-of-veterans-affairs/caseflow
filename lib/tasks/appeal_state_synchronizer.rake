@@ -118,10 +118,10 @@ namespace :appeal_state_synchronizer do
     def adjust_ama_hearing_statuses
       incorrect_appeal_states = AppealState.find_by_sql(incorrect_hearing_scheduled_appeal_states_query)
 
-      Parallel.each(incorrect_appeal_states, in_threads: 10) do |_state_to_correct|
+      Parallel.each(incorrect_appeal_states, in_threads: 10) do |state_to_correct|
         RequestStore[:current_user] = User.system_user
 
-        incorrect_appeal_states.update!(hearing_scheduled: false)
+        state_to_correct.update!(hearing_scheduled: false)
       end
     end
   end
