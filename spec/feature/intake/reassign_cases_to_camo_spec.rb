@@ -63,7 +63,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
            claimant_type: :veteran_claimant)
   end
 
-  describe "none-admin user" do
+  describe "issue modification request and approval workflow" do
     it "should be able to request new issue addition and admin should be able to approve requested issues" do
       visit_decision_review
 
@@ -120,7 +120,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        # expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
         find('label[for="status_approved"]').click
         click_on "Confirm"
         click_establish
@@ -147,6 +147,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_text "#{current_user.full_name} (#{current_user.css_id})"
         click_on_save(in_progress_hlr_removal)
       end
+
       step "approve issue removal request by admin" do
         make_current_user_admin
 
@@ -167,7 +168,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        # expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
         find('label[for="status_approved"]').click
         click_on "Confirm"
         expect(page).to have_text("Remove issue")
@@ -228,7 +229,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        # expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
         find('label[for="status_approved"]').click
         click_on "Confirm"
 
@@ -236,7 +237,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Establish", disabled: false)
         click_on("Establish")
 
-        expect(page).to have_text("You have successfully established #{veteran3.name}'s Higher-Level Review")
+        expect(page).to have_text("You have successfully edited #{veteran3.name}'s Higher-Level Review")
         expect(current_url).to have_content("tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc")
       end
     end
@@ -288,7 +289,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        # expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
         find('label[for="status_approved"]').click
         click_on "Confirm"
         requested_issues = page.find("tr", text: "Requested issues")
