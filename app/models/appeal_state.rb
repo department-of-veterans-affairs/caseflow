@@ -16,7 +16,6 @@ class AppealState < CaseflowRecord
   # Purpose: Default state of a hash of attributes for an appeal_state, all set to false.
   #          This will be used in the `update_appeal_state` method.
   DEFAULT_STATE = ActiveSupport::HashWithIndifferentAccess.new(decision_mailed: false,
-                                                               appeal_docketed: false,
                                                                hearing_postponed: false,
                                                                hearing_withdrawn: false,
                                                                hearing_scheduled: false,

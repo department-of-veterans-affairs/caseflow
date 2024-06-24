@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 namespace :appeal_state_synchronizer do
-  desc "Used to synchronize appeal_states table records with cases in VACOLS."
+  desc "Used to synchronize appeal_states table using data from other sources."
   task sync_appeal_states: :environment do
     Rails.application.eager_load!
 
     adjust_legacy_hearing_statuses
-
+    adjust_ama_hearing_statuses
     locate_unrecorded_docketed_states
   end
 
