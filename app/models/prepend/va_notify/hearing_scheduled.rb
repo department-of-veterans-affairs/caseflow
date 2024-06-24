@@ -3,14 +3,11 @@
 # Module to notify appellant if Hearing is Scheduled
 module HearingScheduled
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Hearing scheduled"
-  # rubocop:enable all
 
   def create_hearing(task_values)
     # original method defined in app/models/tasks/schedule_hearing_task.rb
     super_return_value = super
-    AppellantNotification.notify_appellant(appeal, @@template_name)
+    AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.hearing_scheduled)
     super_return_value
   end
 
@@ -20,9 +17,6 @@ module HearingScheduled
   #
   # Response: none
   def update_appeal_states_on_hearing_scheduled
-    MetricsService.record("Updating HEARING_SCHEDULED in Appeal States Table for #{appeal.class} ID #{appeal.id}",
-                          name: "AppellantNotification.appeal_mapper") do
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_scheduled")
-    end
+    appeal.appeal_state.hearing_scheduled_appeal_state_update_action!
   end
 end
