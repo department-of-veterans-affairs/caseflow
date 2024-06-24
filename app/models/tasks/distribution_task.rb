@@ -67,7 +67,6 @@ class DistributionTask < Task
       open_judge_assign_tasks = appeal.tasks.where(type: "JudgeAssignTask", status: Task.open_statuses)
       if open_judge_assign_tasks.exists?
         errors.add(:status, "cannot be changed from this status if there are open JudgeAssignTasks")
-        puts("cannot be changed from this status if there are open JudgeAssignTasks")
       end
     end
   end
