@@ -28,7 +28,7 @@ RSpec.describe HearingsController, type: :controller do
         prepped: true
       }
 
-      expect(appeal_state.hearing_scheduled).to eq true
+      expect(legacy_appeal_state.hearing_scheduled).to eq true
 
       patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
@@ -40,7 +40,7 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["disposition"]).to eq "held"
       expect(response_body["location"]["facility_id"]).to eq "vba_301"
       expect(response_body["prepped"]).to eq true
-      expect(appeal_state.reload.hearing_scheduled).to eq false
+      expect(legacy_appeal_state.reload.hearing_scheduled).to eq false
     end
 
     context "when updating an ama hearing" do
