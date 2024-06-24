@@ -46,7 +46,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
-  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
+  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(props.hasEfolderFailedTasks);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
@@ -116,7 +116,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
       setDisplayIntakeAppeal(response.body.display_intake_appeal);
 
-      if (response.body.efolder_upload_failed_before.length > 0) {
+      if (props.hasEfolderFailedTasks === true) {
         setBannerInformation({
           title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
           message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
@@ -330,6 +330,7 @@ CorrespondenceReviewPackage.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTasks: PropTypes.bool,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,

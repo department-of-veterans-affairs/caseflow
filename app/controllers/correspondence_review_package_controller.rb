@@ -7,6 +7,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     @correspondence = WorkQueue::CorrespondenceSerializer
     .new(correspondence)
     .serializable_hash[:data][:attributes]
+    @has_efolder_failed_tasks = correspondence_has_efolder_failed_task?
   end
 
   def show
@@ -20,7 +21,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id),
       taskInstructions: task_instructions,
       display_intake_appeal: display_intake_appeal
     }
@@ -72,6 +72,10 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   private
+
+  def correspondence_has_efolder_failed_task?
+    EfolderUploadFailedTask.exists?(appeal_id: correspondence.id)
+  end
 
   def correspondence_params
     params.require(:correspondence).permit(:correspondence, :notes, :correspondence_type_id, :va_date_of_receipt)

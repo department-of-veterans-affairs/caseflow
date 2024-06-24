@@ -647,6 +647,7 @@ class QueueApp extends React.PureComponent {
       <CorrespondenceReviewPackage
         correspondence={this.props.correspondence}
         correspondenceTypes={this.props.correspondenceTypes}
+        hasEfolderFailedTasks={this.props.hasEfolderFailedTasks}
         inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
@@ -1569,6 +1570,7 @@ QueueApp.propTypes = {
   userIsCobAdmin: PropTypes.bool,
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTasks: PropTypes.bool,
   priorMail: PropTypes.array,
   veteranInformation: PropTypes.string,
   autoTexts: PropTypes.array,
