@@ -128,7 +128,14 @@ namespace :appeal_state_synchronizer do
       .or(Notification.where(notifiable_type: nil))
       .find_in_batches(batch_size: 10_000) do |notification_batch|
       notification_batch.index_by(&:id).each do |id, notification_row|
-        appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(notification_row.appeals_id)
+        appeal = if notification_row.appeals_type == "Appeal"
+                   Appeal.find_by_uuid(notification_row.appeals_id)
+                 elsif notification_row.appeals_type == "LegacyAppeal"
+                   LegacyAppeal.find_by_uuid(notification_row.appeals_id)
+                 end
+
+        next unless appeal
+
         updates_to_make[id] = { id: id, notifiable: appeal }
       end
 
