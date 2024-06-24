@@ -37,7 +37,7 @@ module HearingHeld
   # Params: none
   #
   # Response: none
-  def update_appeal_states_on_hearing_hled
+  def update_appeal_states_on_hearing_held
     appeal.appeal_state.hearing_held_appeal_state_update_action! if ama_hearing_held? || legacy_hearing_held?
   end
 
