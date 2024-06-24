@@ -12,37 +12,26 @@ module CorrespondenceControllerConcern
 
     # Instantiate AutoAssignableUserFinder with current_user
     permission_checker = AutoAssignableUserFinder.new(mail_team_user)
-    errors = []
 
-    # Check if single or multiple assignments
-    if task_ids.count == 1
-      process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
-    else
-      process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
-    end
-
-    set_banner_params(mail_team_user, errors, task_ids.count, tab)
-  end
-
-  def process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
-    task_id = task_ids.first
-    correspondence_task = Task.find(task_id)&.correspondence
-    check_result = permission_checker.can_user_work_this_correspondence?(
-      user: mail_team_user,
-      correspondence: correspondence_task
-    )
-
-    if check_result
-      update_task(mail_team_user, task_id)
-    else
-      errors.concat(permission_checker.unassignable_reason)
-    end
-  end
-
-  def process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
+    # iterate through each task and check if the user can work the correspondence
     task_ids.each do |id|
-      process_single_assignment([id], permission_checker, errors, mail_team_user)
+      correspondence = Task.find(id)&.correspondence
+      check_result = permission_checker.can_user_work_this_correspondence?(
+        user: mail_team_user,
+        correspondence: correspondence
+      )
+
+      # assign the task if the user can work the correspondence
+      update_task(mail_team_user, id) if check_result
     end
+
+    # use permission_checker.unassignable_reasons errors to generate the banner
+    set_banner_params(
+      mail_team_user,
+      permission_checker.unassignable_reasons,
+      task_ids.count,
+      tab
+    )
   end
 
   def update_task(mail_team_user, task_id)

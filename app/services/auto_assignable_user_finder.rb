@@ -7,11 +7,11 @@
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
-  attr_reader :unassignable_reason
+  attr_reader :unassignable_reasons
 
   def initialize(current_user)
     self.current_user = current_user
-    self.unassignable_reason = []
+    self.unassignable_reasons = []
   end
 
   def assignable_users_exist?
@@ -35,14 +35,14 @@ class AutoAssignableUserFinder
   private
 
   attr_accessor :current_user
-  attr_writer :unassignable_reason
+  attr_writer :unassignable_reasons
 
   def run_auto_assign_algorithm(correspondence, users)
     nod_error = Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR
     sensitivity_error = Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR
     users.each do |user|
       if correspondence.nod && !user.nod?
-        unassignable_reason << nod_error unless unassignable_reason.include?(nod_error)
+        unassignable_reasons << nod_error
         next
       end
 
@@ -51,7 +51,7 @@ class AutoAssignableUserFinder
       if sensitivity_levels_compatible?(user: user_obj, veteran: correspondence.veteran)
         return user_obj
       else
-        unassignable_reason << sensitivity_error unless unassignable_reason.include?(sensitivity_error)
+        unassignable_reasons << sensitivity_error
       end
     end
 
@@ -61,7 +61,7 @@ class AutoAssignableUserFinder
   def user_is_at_max_capacity?(user)
     capacity_error = Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR
     if num_assigned_user_tasks(user) >= CorrespondenceAutoAssignmentLever.max_capacity
-      unassignable_reason << capacity_error unless unassignable_reason.include?(capacity_error)
+      unassignable_reasons << capacity_error
       true
     else
       false
