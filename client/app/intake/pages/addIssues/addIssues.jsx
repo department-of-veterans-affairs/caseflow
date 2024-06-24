@@ -541,7 +541,7 @@ class AddIssuesPage extends React.Component {
       // flash a save message if user is on the edit page & issues have changed
       const isAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
         issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-      );
+      ) && _.isEmpty(pendingIssueModificationRequests);
 
       const establishText = intakeData.benefitType === 'vha' && isAllIssuesReadyToBeEstablished ? 'Establish' : 'Save';
       const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;

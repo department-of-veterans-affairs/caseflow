@@ -161,7 +161,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def vha_edited_title
-    "You have successfully established #{claimant_name}'s #{claim_review.class.review_title}"
+    "You have successfully edited #{claimant_name}'s #{claim_review.class.review_title}"
   end
 
   def vha_edited_message
@@ -183,7 +183,7 @@ class ClaimReviewController < ApplicationController
       .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if claim_review.pending_issue_modification_requests.any?
-      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
+      vha_pending_reviews_message_hash
     elsif issues_without_decision_date.empty?
       { title: "Edit Completed", message: vha_established_message }
     elsif request_issues_update.edited_issues.any?
@@ -219,6 +219,14 @@ class ClaimReviewController < ApplicationController
 
   def decisions_withdrawn_hash
     decisions_message_hash_builder("The claim has been withdrawn.", review_withdrawn_message)
+  end
+
+  def vha_pending_reviews_message_hash
+    if current_user.vha_business_line_admin_user?
+      { title: vha_edited_title, message: vha_edited_message }
+    else
+      { title: "You have successfully submitted a request.", message: vha_pending_reviews_message }
+    end
   end
 
   def decisions_removed_message
