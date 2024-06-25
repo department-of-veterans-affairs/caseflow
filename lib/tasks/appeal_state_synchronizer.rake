@@ -142,13 +142,17 @@ namespace :appeal_state_synchronizer do
   end
 
   def backfill_appeal_information
-    # Temporarily Bump Up Timeout
-    ActiveRecord::Base.connection.execute("SET statement_timeout = '600s'")
+    begin
+      # Temporarily Bump Up Timeout
+      ActiveRecord::Base.connection.execute("SET statement_timeout = '600s'")
 
-    ActiveRecord::Base.connection.execute(ama_backfill_sql)
-    ActiveRecord::Base.connection.execute(legacy_backfill_sql)
-
-    # Set Timeout Back
-    ActiveRecord::Base.connection.execute("SET statement_timeout = '30s'")
+      ActiveRecord::Base.connection.execute(ama_backfill_sql)
+      ActiveRecord::Base.connection.execute(legacy_backfill_sql)
+    rescue StandardError => error
+      Rails.logger.error("#{error.class}: #{error.message}\n#{error.backtrace}")
+    ensure
+      # Set Timeout Back
+      ActiveRecord::Base.connection.execute("SET statement_timeout = '30s'")
+    end
   end
 end
