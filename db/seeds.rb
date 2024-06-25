@@ -53,10 +53,8 @@ class SeedDB
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
-
-    # Keep?
-    # call_and_log_seed_step Seeds::TranscriptionContractor
-    # call_and_log_seed_step Seeds::TranscriptionFiles
+    call_and_log_seed_step Seeds::TranscriptionContractor
+    call_and_log_seed_step Seeds::TranscriptionFiles
   end
 end
 
