@@ -98,7 +98,7 @@ class LegacyHearing < CaseflowRecord
 
   before_create :assign_created_by_user
 
-  after_create :update_appeal_states_on_hearing_create, :maybe_create_non_virtual_conference
+  after_create :update_appeal_states_on_hearing_create
   after_update :update_appeal_states_on_hearing_update
 
   CO_HEARING = "Central"
