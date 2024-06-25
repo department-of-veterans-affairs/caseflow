@@ -7,7 +7,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     @correspondence = WorkQueue::CorrespondenceSerializer
     .new(correspondence)
     .serializable_hash[:data][:attributes]
-    @has_efolder_failed_tasks = correspondence_has_efolder_failed_task?
+    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
   end
 
   def show
@@ -74,7 +74,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   private
 
   def correspondence_has_efolder_failed_task?
-    EfolderUploadFailedTask.exists?(appeal_id: correspondence.id)
+    correspondence.tasks.active.where(type: EfolderUploadFailedTask.name).exists?
   end
 
   def correspondence_params

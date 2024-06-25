@@ -46,7 +46,6 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
-  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(props.hasEfolderFailedTasks);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
@@ -89,15 +88,6 @@ export const CorrespondenceReviewPackage = (props) => {
       );
     };
 
-    const hasEfolderUploadTask = (tasks) => {
-      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
-      task.type === 'EfolderUploadFailedTask');
-
-      if (existEfolderUploadTask) {
-        setIsEfolderUploadFailedTask(false);
-      }
-    };
-
     try {
       const response = await ApiUtil.get(
         `/queue/correspondence/${correspondence.correspondence_uuid}`
@@ -112,11 +102,9 @@ export const CorrespondenceReviewPackage = (props) => {
       setApiResponse(apiResWithVADOR);
       const data = apiResWithVADOR;
 
-      hasEfolderUploadTask(data.correspondence_tasks);
-
       setDisplayIntakeAppeal(response.body.display_intake_appeal);
 
-      if (props.hasEfolderFailedTasks === true) {
+      if (props.hasEfolderFailedTask === true) {
         setBannerInformation({
           title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
           message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
@@ -245,7 +233,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             reviewDetails={reviewPackageDetails}
-            efolder={isEfolderUploadFailedTask}
+            efolder={props.hasEfolderFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
@@ -330,7 +318,7 @@ CorrespondenceReviewPackage.propTypes = {
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
-  hasEfolderFailedTasks: PropTypes.bool,
+  hasEfolderFailedTask: PropTypes.bool,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
