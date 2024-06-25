@@ -177,9 +177,8 @@ class TranscriptionFile < CaseflowRecord
     "#{appellant_name} (#{file_number})"
   end
 
+  # Purpose: Returns true if record is not locked, was locked by user_id, or locked more than two hours ago
   def lockable?(user_id)
-    return true if !locked_by_id || locked_by_id == user_id || locked_at < Time.now.utc - 2.hours
-
-    false
+    !locked_by_id || locked_by_id == user_id || locked_at < Time.now.utc - 2.hours
   end
 end

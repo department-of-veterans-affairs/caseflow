@@ -274,4 +274,73 @@ RSpec.describe Hearings::TranscriptionFilesController do
       expect(response.body).to eq(expected_response)
     end
   end
+
+  describe "locking" do
+    let!(:current_user) { User.authenticate!(roles: ["Transcriptions"]) }
+    let!(:other_user) { create(:user) }
+    let!(:current_time) { Time.zone.local(2024, 1, 17, 15, 37, 0).utc }
+
+    let!(:transcription_file_1) do
+      create(:transcription_file,
+             locked_by_id: current_user.id, locked_at: current_time - 1.hour)
+    end
+    let!(:transcription_file_2) do
+      create(:transcription_file,
+             locked_by_id: other_user.id, locked_at: current_time - 1.hour)
+    end
+    let!(:transcription_file_3) do
+      create(:transcription_file,
+             locked_by_id: current_user.id, locked_at: current_time - 3.hours)
+    end
+    let!(:transcription_file_4) do
+      create(:transcription_file,
+             locked_by_id: other_user.id, locked_at: current_time - 3.hours)
+    end
+    let!(:transcription_file_5) { create(:transcription_file) }
+
+    before do
+      TranscriptionTeam.singleton.add_user(current_user)
+      Timecop.freeze(current_time)
+    end
+
+    describe "GET locked" do
+      it "returns a list of locked items including locked or selected status and skips unlocked items" do
+        get :locked
+
+        expected_response = [
+          { id: transcription_file_1.id, status: "selected", message: "" },
+          { id: transcription_file_2.id, status: "locked", message: "Locked by " + other_user.username }
+        ].to_json
+
+        expect(response.status).to eq(200)
+        expect(response.body).to eq(expected_response)
+      end
+    end
+
+    describe "POST lock" do
+      it "locks lockable items based on list of IDs passed in and returns all locked items" do
+        post :lock, params: { file_ids: [transcription_file_2.id, transcription_file_5.id], status: "true" }
+
+        expected_response = [
+          { id: transcription_file_1.id, status: "selected", message: "" },
+          { id: transcription_file_2.id, status: "locked", message: "Locked by " + other_user.username },
+          { id: transcription_file_5.id, status: "selected", message: "" }
+        ].to_json
+
+        expect(response.status).to eq(200)
+        expect(response.body).to eq(expected_response)
+      end
+
+      it "unlocks lockable items based on list of IDs passed in and returns all locked items" do
+        post :lock, params: { file_ids: [transcription_file_1.id, transcription_file_2.id], status: "false" }
+
+        expected_response = [
+          { id: transcription_file_2.id, status: "locked", message: "Locked by " + other_user.username }
+        ].to_json
+
+        expect(response.status).to eq(200)
+        expect(response.body).to eq(expected_response)
+      end
+    end
+  end
 end

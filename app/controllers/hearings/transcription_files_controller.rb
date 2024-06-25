@@ -40,8 +40,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   def lock
     files = TranscriptionFile.where(id: params[:file_ids])
-    status = params[:status] || false
-
+    status = params[:status] && params[:status] == "true" ? true : false
     lockable_file_ids = []
     files.each do |file|
       if file.lockable?(current_user.id)
