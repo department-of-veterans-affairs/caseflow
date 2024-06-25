@@ -66,7 +66,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Auto assign correspondence")
     end
 
-    it "Verify the mail team user batch assignment with Assign button" do
+    it "Verify the inbound ops team user batch assignment with Assign button" do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Assign to Inbound Ops Team user")
       expect(page).to have_button("Assign", disabled: true)
@@ -86,7 +86,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Please go to your individual queue to see any self-assigned correspondences.")
     end
 
-    it "Verify the mail team user batch assignment with assign button with queue limit" do
+    it "Verify the inbound ops team user batch assignment with assign button with queue limit" do
       60.times do
         corr = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
@@ -119,7 +119,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: true)
     end
 
-    it "Verify the mail team user batch reassignment with Reassign button" do
+    it "Verify the inbound ops team user batch reassignment with Reassign button" do
       40.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, mail_user)
@@ -144,7 +144,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Please go to your individual queue to see any self-assigned correspondence.")
     end
 
-    it "Verify the mail team user batch reassignment with reassign button with queue limit" do
+    it "Verify the inbound ops team user batch reassignment with reassign button with queue limit" do
       60.times do
         corr = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
@@ -170,7 +170,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
 
-    it "Verify the mail team user batch reassignment with NOD permissions" do
+    it "Verify the inbound ops team user batch reassignment with NOD permissions" do
       40.times do
         correspondence = create(:correspondence, :nod)
         auto = AutoAssignableUserFinder.new(nod_user)
@@ -198,7 +198,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("NOD permission is currently disabled for this user.")
     end
 
-    it "Verify the mail team user multiple batch reassignment with NOD permissions" do
+    it "Verify the inbound ops team user multiple batch reassignment with NOD permissions" do
       40.times do
         correspondence = create(:correspondence, :nod)
         auto = AutoAssignableUserFinder.new(nod_user)
@@ -226,7 +226,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("3 cases were not reassigned because of NOD permissions settings.")
     end
 
-    it "Verify the mail team user multiple batch reassignment with reassign button with queue limit" do
+    it "Verify the inbound ops team user multiple batch reassignment with reassign button with queue limit" do
       60.times do
         corr = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
