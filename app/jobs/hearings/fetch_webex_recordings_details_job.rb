@@ -21,7 +21,8 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
       provider: "webex",
       recording_id: recording_id,
       host_email: host_email,
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{recording_id}#{query}",
+      api_call:
+        "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}recordings/#{recording_id}#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       docket_number: nil
     }

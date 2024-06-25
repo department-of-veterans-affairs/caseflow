@@ -16,7 +16,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
       provider: "webex",
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms?#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       times: nil,
       docket_number: nil
