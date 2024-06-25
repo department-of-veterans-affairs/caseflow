@@ -44,7 +44,8 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
       {
         error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
         provider: "webex",
-        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
+        api_call:
+          "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}admin/recordings/#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
         meeting_id: id,
         docket_number: nil

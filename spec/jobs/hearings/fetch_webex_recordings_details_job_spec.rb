@@ -58,7 +58,8 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
         provider: "webex",
         recording_id: id,
         host_email: email,
-        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{id}#{query}",
+        api_call:
+          "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}recordings/#{id}#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
         docket_number: nil
       }
