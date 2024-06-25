@@ -609,7 +609,6 @@ module Seeds
     def create_non_aod_video_vacols_case(veteran, correspondent, judge, days_ago)
       create(
         :case,
-        :aod,
         :tied_to_judge,
         :video_hearing_requested,
         :type_original,
