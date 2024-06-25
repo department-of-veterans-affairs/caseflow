@@ -39,6 +39,7 @@ export const CorrespondenceReviewPackage = (props) => {
   );
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [apiResponse, setApiResponse] = useState(null);
+  // console.log(apiResponse);
   const [disableButton, setDisableButton] = useState(false);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -221,6 +222,17 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   }, [editableData, apiResponse]);
 
+  const NEW_DATA_CHANGEME = {
+    notes: props.correspondence.notes,
+    veteranFullName: props.veteranInformation.veteran_name,
+    fileNumber: props.veteranInformation.file_number,
+    packageDocumentType: props.correspondenceDocuments[0].document_title.includes("10182") ? "NOD" : "Non-NOD",
+    vaDor: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD')
+  };
+
+  //moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
+  console.log(moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD'));
+
   return (
     <div>
       { bannerInformation && (
@@ -253,6 +265,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
+              NEW_DATA_CHANGEME,
               reviewDetails,
               setReviewDetails,
               editableData,
