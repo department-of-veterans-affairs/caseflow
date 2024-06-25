@@ -40,25 +40,9 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
 
     docket_coordinator.dockets
       .flat_map do |sym, docket|
-        appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
-        # if sym == :legacy
-        #   binding.pry
-        #   # appeals = docket.ready_priority_nonpriority_legacy_appeals(priority: false)
-        #   # appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
-        #   legacy_rows(appeals, docket, sym)
-        # else
-        #   ama_rows(appeals, docket, sym)
-        # end
         if sym == :legacy
-          if docket.ready_priority_nonpriority_legacy_appeals(priority: false)
-          # appeals = docket.ready_priority_nonpriority_legacy_appeals(priority: false)
-          # binding.pry
-          appeals = [docket]
-          binding.pry
+          appeals = docket.ready_to_distribute_appeals.select { |appeal| appeal["aod"] == 0 }
           legacy_rows(appeals, docket, sym)
-          else
-            []
-          end
         else
           appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
           ama_rows(appeals, docket, sym)
