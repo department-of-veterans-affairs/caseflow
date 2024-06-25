@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
     post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
     post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
@@ -434,6 +435,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      post "/optional_seed", to: "users#optional_seed", as: "optional_seed"
       get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
