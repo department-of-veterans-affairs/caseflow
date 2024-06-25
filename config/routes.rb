@@ -216,6 +216,7 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
+    resources :transcription_packages, only: [:show], param: :task_number
     namespace :hearing_day do
       get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
     end
@@ -239,6 +240,9 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
+  get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
+  get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 

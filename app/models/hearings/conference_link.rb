@@ -4,84 +4,47 @@ class ConferenceLink < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
 
+  acts_as_paranoid
+
   include UpdatedByUserConcern
   include CreatedByUserConcern
+  include ConferenceableConcern
 
-  after_create :generate_links_and_pins
+  belongs_to :hearing, polymorphic: true
 
-  class << self
-    def client_host_or_default
-      ENV["VIRTUAL_HEARING_URL_HOST"] || "care.evn.va.gov"
-    end
+  after_create :generate_conference_information
 
-    def formatted_alias(alias_name)
-      "BVA#{alias_name}@#{client_host_or_default}"
-    end
-
-    def base_url
-      "https://#{client_host_or_default}/bva-app/"
-    end
-  end
+  belongs_to :hearing_day
+  belongs_to :created_by, class_name: "User"
 
   alias_attribute :alias_name, :alias
 
-  belongs_to :hearing_day
-
-  # Override the host pin
-  def host_pin
-    host_pin_long || self[:host_pin]
-  end
-
-  # rubocop:disable Naming/MemoizedInstanceVariableName
-  def host_link
-    @full_host_link ||= "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{alias_with_host}&" \
-    "pin=#{host_pin}&role=host"
-  end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
-
-  def guest_pin
-    return guest_pin_long if !guest_pin_long.nil?
-
-    link_service = VirtualHearings::LinkService.new
-    update!(guest_pin_long: link_service.guest_pin)
-    guest_pin_long
-  end
-
-  def guest_link
-    return guest_hearing_link if !guest_hearing_link.to_s.empty?
-
-    if !alias_name.nil?
-      link_service = VirtualHearings::LinkService.new(alias_name)
-      update!(guest_hearing_link: link_service.guest_link)
-    elsif !alias_with_host.nil?
-      link_service = VirtualHearings::LinkService.new(alias_with_host.split("@")[0].split("A")[1])
-      update!(guest_hearing_link: link_service.guest_link, alias: link_service.get_conference_id)
-    end
-    guest_hearing_link
+  # Purpose: updates the conf_link and then soft_deletes them.
+  #
+  # Params: None
+  #
+  # Return: None
+  def soft_removal_of_link
+    update!(update_conf_links)
+    destroy
   end
 
   private
 
-  def generate_links_and_pins
-    Rails.logger.info(
-      "Trying to create conference links for Hearing Day Id: #{hearing_day_id}."
-    )
-    begin
-      link_service = VirtualHearings::LinkService.new
-      update!(
-        alias: link_service.get_conference_id,
-        host_link: link_service.host_link,
-        host_pin_long: link_service.host_pin,
-        alias_with_host: link_service.alias_with_host,
-        guest_hearing_link: link_service.guest_link,
-        guest_pin_long: link_service.guest_pin
-      )
-    rescue VirtualHearings::LinkService::PINKeyMissingError,
-           VirtualHearings::LinkService::URLHostMissingError,
-           VirtualHearings::LinkService::URLPathMissingError => error
-      Raven.capture_exception(error: error)
-      raise error
-    end
+  # Purpose: Updates conference_link attributes when passed into the 'update!' method.
+  #
+  # Params: None
+  #
+  # Return: Hash that will update the conference_link
+  def update_conf_links
+    {
+      conference_deleted: true,
+      updated_by_id: RequestStore[:current_user] = User.system_user,
+      updated_at: Time.zone.now
+    }
+  end
+
+  def generate_conference_information
+    fail NotImplementedError
   end
 end

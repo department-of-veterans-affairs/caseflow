@@ -66,11 +66,13 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rtf"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "spreadsheet", "~> 1.3"
 gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
@@ -81,6 +83,7 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
@@ -111,8 +114,8 @@ group :test, :development, :demo do
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
-  gem "rspec-rails"
   # For CircleCI test metadata analysis
+  gem "rspec-rails"
   gem "rspec_junit_formatter"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
@@ -152,3 +155,5 @@ end
 # rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+
+gem "rcredstash", "~> 1.1.0"

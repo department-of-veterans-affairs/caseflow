@@ -23,6 +23,7 @@ import PageRoute from '../components/PageRoute';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
+import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -119,6 +120,9 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
+  routeForTranscriptionFileDispatch = () =>
+    <TranscriptionFileDispatchView />
+
   render = () => <BrowserRouter basename="/hearings">
     <Switch>
       <PageRoute
@@ -210,6 +214,12 @@ export default class HearingsApp extends React.PureComponent {
               title="Assign Hearings"
               breadcrumb="Assign"
               component={this.routeForAssignHearingsContainer}
+            />
+            <PageRoute
+              exact
+              path="/transcription_files"
+              title="Transcription File Dispatch"
+              component={this.routeForTranscriptionFileDispatch}
             />
           </div>
         </AppFrame>
