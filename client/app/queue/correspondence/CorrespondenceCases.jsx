@@ -28,8 +28,6 @@ const CorrespondenceCases = (props) => {
 
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
 
-  debugger;
-
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
   const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
 
