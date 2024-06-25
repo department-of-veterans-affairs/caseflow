@@ -152,7 +152,8 @@ const DocketTimeGoals = () => {
             <span className={distributionPriorLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               data-disabled-in-ui={distributionPriorLever.is_disabled_in_ui}
             >
-              {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
+              {distributionPriorLever.is_toggle_active ?
+              `On ${distributionPriorLever.value} ${distributionPriorLever.unit}` : 'Off'}
             </span>
           </div>
         </div>
