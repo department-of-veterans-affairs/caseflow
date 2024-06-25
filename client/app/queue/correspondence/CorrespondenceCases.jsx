@@ -118,7 +118,6 @@ const CorrespondenceCases = (props) => {
     case 'reassignPackage':
       return sprintf(COPY.CORRESPONDENCE_TITLE_REASSIGNMENT_PACKAGE_MESSAGE, vetName);
     default:
-      //
     }
   };
 
