@@ -35,4 +35,28 @@ module CorrespondenceTaskHelpers
     cit = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
     cit.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
   end
+
+  def create_correspondence_review
+    @review_correspondence = create(:correspondence)
+    rpt = ReviewPackageTask.find_by(appeal_id: @review_correspondence.id)
+    rpt.update!(assigned_to: current_user, status: "assigned")
+    rpt.save!
+  end
+
+  def update_correspondence_for_review
+    veteran = create(:veteran, first_name: "Zzzane", last_name: "Zzzans")
+    review_correspondence = create(:correspondence, veteran_id: veteran.id)
+    rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+    rpt.update!(assigned_to: current_user,
+                status: "assigned",
+                assigned_at: 42.days.ago)
+    rpt.save!
+  end
+
+  def correspondence_root_task_completion
+    correspondence = create(:correspondence)
+    correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
+                                     closed_at: rand(6 * 24 * 60).minutes.ago)
+  end
+
 end

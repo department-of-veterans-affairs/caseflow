@@ -72,7 +72,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
 
   describe "GET #correspondence_team" do
     before do
-      inbound_ops_team_admin
+      inbound_ops_team_admin_setup
     end
 
     it "returns cancel intake response" do

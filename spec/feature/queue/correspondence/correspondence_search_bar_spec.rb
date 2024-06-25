@@ -5,8 +5,6 @@ RSpec.feature("Search Bar for Correspondence") do
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
 
-  let(:last_user) { create(:veteran, first_name: "Zzzane", last_name: "Zzzans") }
-
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
@@ -39,19 +37,10 @@ RSpec.feature("Search Bar for Correspondence") do
 
     before do
       20.times do
-        @review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: @review_correspondence.id)
-        rpt.update!(assigned_to: current_user, status: "assigned")
-        rpt.save!
+        create_correspondence_review
       end
       1.times do
-        veteran = last_user
-        review_correspondence = create(:correspondence, veteran_id: veteran.id)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user,
-                    status: "assigned",
-                    assigned_at: 42.days.ago)
-        rpt.save!
+        update_correspondence_for_review
       end
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -162,19 +151,10 @@ RSpec.feature("Search Bar for Correspondence") do
 
     before do
       25.times do
-        review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user, status: "assigned")
-        rpt.save!
+        create_correspondence_review
       end
       1.times do
-        veteran = last_user
-        review_correspondence = create(:correspondence, veteran_id: veteran.id)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user,
-                    status: "assigned",
-                    assigned_at: 42.days.ago)
-        rpt.save!
+        update_correspondence_for_review
       end
       FeatureToggle.enable!(:correspondence_queue)
     end

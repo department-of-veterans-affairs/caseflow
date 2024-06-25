@@ -151,13 +151,7 @@ module CorrespondenceHelpers
     visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
 
-  def correspondence_root_task_completion
-    correspondence = create(:correspondence)
-    correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
-                                     closed_at: rand(6 * 24 * 60).minutes.ago)
-  end
-
-  def inbound_ops_team_admin
+  def inbound_ops_team_admin_setup
     InboundOpsTeam.singleton.add_user(current_user)
     MailTeam.singleton.add_user(current_user)
     OrganizationsUser.find_or_create_by!(

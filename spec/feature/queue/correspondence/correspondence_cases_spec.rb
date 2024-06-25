@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature("The Correspondence Cases page") do
-  include CorrespondenceHelpers
   include CorrespondenceTaskHelpers
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task

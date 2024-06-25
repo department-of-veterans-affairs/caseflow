@@ -205,7 +205,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "Step 3 - Confirm" do
     before :each do
-      inbound_ops_team_admin
+      inbound_ops_team_admin_setup
     end
 
     describe "Tasks not related to an Appeal section" do
