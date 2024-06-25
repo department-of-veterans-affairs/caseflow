@@ -4,6 +4,7 @@ module PrintsTaskTree
   extend ActiveSupport::Concern
   include TaskTreeRenderModule
 
+  # :reek:LongParameterList
   def structure_render(tasks, *attrs)
     TTY::Tree.new(structure(tasks, *attrs)).render
   end
@@ -49,3 +50,4 @@ module PrintsTaskTree
     attrs.map { |att| self[att].presence || "(#{att})" }.flatten.compact.join(", ")
   end
 end
+
