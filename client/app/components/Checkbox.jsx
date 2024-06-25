@@ -64,7 +64,7 @@ Checkbox.propTypes = {
   /**
    * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
    */
-  defaultValue: PropTypes.bool,
+  defaultValue: PropTypes.string,
 
   /**
    * Text (or other node) to display in associated `label` element

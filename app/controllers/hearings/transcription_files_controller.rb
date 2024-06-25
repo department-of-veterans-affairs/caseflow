@@ -39,24 +39,27 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def lock
-    if file
+    files = TranscriptionFile.where(id: params[:file_ids])
+    status = params[:status] || false
+
+    lockable_file_ids = []
+    files.each do |file|
       if file.lockable?(current_user.id)
-        status = params[:status] || false
-        if status
-          file.touch(:locked_at)
-          file.update!(locked_by: current_user)
-        else
-          file.update!(locked_by: nil, locked_at: nil)
-        end
-        render json: {
-          file_id: file.id,
-          locked_by_id: file.locked_by_id,
-          locked_at: file.locked_at
-        }
-      else
-        render json: { error: "You do not have permission to lock this record" }, status: :forbidden
+        lockable_file_ids << file.id
       end
     end
+
+    if status
+      locked_by_id = current_user.id
+      locked_at = Time.now.utc
+    else
+      locked_by_id = nil
+      locked_at = nil
+    end
+
+    TranscriptionFile.where(id: lockable_file_ids).update_all(locked_by_id: locked_by_id, locked_at: locked_at)
+
+    locked
   end
 
   private

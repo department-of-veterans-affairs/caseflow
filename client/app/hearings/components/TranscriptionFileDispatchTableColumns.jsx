@@ -38,11 +38,21 @@ const styles = {
   }),
 };
 
-export const selectColumn = (selectFile, selectedFiles) => {
+export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptionFiles) => {
+  const selectedFileIds = selectedFiles.map((file) => file.id);
+  const selectedTransscriptionFiles = transcriptionFiles.filter((file) => selectedFileIds.includes(file.id));
+  const selectAllChecked = selectedTransscriptionFiles.length === transcriptionFiles.length ? 'selected' : '';
+
   return {
     header:
     (<div {...styles.checkBoxHeaderStyles}>
-      <Checkbox name="" ariaLabel="select all files checkbox" />
+      <Checkbox
+        ariaLabel="select all files checkbox"
+        name="select-all"
+        onChange={(val) => selectAll(val)}
+        value={selectAllChecked}
+        label=" "
+      />
       <p>{COPY.TRANSCRIPTION_FILE_DISPATCH_SELECT_COLUMN_NAME}</p>
     </div>),
     name: TRANSCRIPTION_DISPATCH_CONFIG.COLUMNS.SELECT_ALL.name,
@@ -54,16 +64,15 @@ export const selectColumn = (selectFile, selectedFiles) => {
       const selectedFile = selectedFiles.find((file) => file.id === transcriptionFile.id);
       const value = selectedFile && selectedFile.status === 'selected' ? 'selected' : '';
       const disabled = selectedFile && selectedFile.status === 'locked';
-      const title = selectedFile && selectedFile.message ? selectedFile.message : '';
+      const title = selectedFile && selectedFile.message ? selectedFile.message : transcriptionFile.id;
 
       return (
         <div {...styles.checkBoxStyles} title={title}>
           <Checkbox
             ariaLabel="select file checkbox"
             name={`select-file-${ transcriptionFile.id}`}
-            onChange={(val) => selectFile(transcriptionFile.id, val)}
+            onChange={(val) => selectFiles([transcriptionFile.id], val)}
             label={' '}
-            title="Test"
             value={value}
             disabled={disabled}
           />

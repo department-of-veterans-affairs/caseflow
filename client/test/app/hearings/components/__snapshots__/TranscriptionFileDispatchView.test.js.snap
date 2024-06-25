@@ -2,6 +2,7 @@
 
 exports[`TranscriptionFileDispatch matches snapshot 1`] = `
 <div>
+  
   <section
     class="cf-app-segment cf-app-segment--alt"
   >

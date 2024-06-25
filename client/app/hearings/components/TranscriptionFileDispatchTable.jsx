@@ -47,16 +47,21 @@ const styles = css({
 });
 
 export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFilesForPackage }) => {
-  const [transcriptionFiles] = useState([]);
+  const [transcriptionFiles, setTranscriptionFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectingFile, setSelectingFile] = useState(false);
 
-  // need to pass initial values in from tasks endpoint ?
-  // need to get new values on timer
-  // need to pass locked status
-  // need to make sure records are disabled if not current user
-  // need to figure out how to get current user
+  /**
+   * Callback passed into the Queue Table triggered when table is updated from the API
+   */
+  const tableDataUpdated = (files) => {
+    setTranscriptionFiles(files);
+  };
 
+  /**
+   * Get the most recent locked status of files from the backend
+   * including files locked by other users
+   */
   const getFileStatuses = () => {
     ApiUtil.get('/hearings/transcription_files/locked').
       then((response) => {
@@ -67,15 +72,6 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
       });
   };
 
-  useEffect(() => {
-    getFileStatuses();
-    const interval = setInterval(() => {
-      getFileStatuses();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   /**
    * Adds custom url params to the params used for pagenatation
    * @returns The url params needed to handle pagenation
@@ -84,33 +80,48 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
     tab: statusFilter
   });
 
-  const selectFile = (id, value) => {
+  /**
+   * Calls to the backend to select or unselect a set of file IDs
+   * @param {array} ids - list of ids to update
+   * @param {string} value - Selecting or unselecting
+   */
+  const selectFiles = (ids, value) => {
     setSelectingFile(true);
-
-    let newlySelectedFiles = [];
+    let newlySelectedFiles;
 
     if (value) {
-      newlySelectedFiles = [...selectedFiles, { id, status: 'selected' }];
+      newlySelectedFiles = selectedFiles.concat(ids.map((id) => ({ id, status: 'selected' })));
     } else {
-      newlySelectedFiles = selectedFiles.filter((item) => item.id !== id);
+      newlySelectedFiles = selectedFiles.filter((file) => !ids.includes(file.id));
     }
 
     setSelectedFiles(newlySelectedFiles);
     selectFilesForPackage(newlySelectedFiles);
 
     const data = {
-      file_id: id,
+      file_ids: ids,
       status: value
     };
 
+    // send lock requests and return actual list of locks to refresh the view
     ApiUtil.post('/hearings/transcription_files/lock', { data }).
-      then(() => {
+      then((response) => {
         setSelectingFile(false);
-      }).
-      catch(() => {
-        // refresh file statuses since we failed to lock or unlock
-        getFileStatuses();
+        setSelectedFiles(response.body);
+        selectFilesForPackage(response.body);
       });
+  };
+
+  /**
+   * Callback passed into tabs that will find the IDs of all files in the current table
+   * page that need to be selected or unselected
+   * @param {string} value - Selecting or unselecting
+   */
+  const selectAllFiles = (value) => {
+    const lockedFileIds = selectedFiles.filter((file) => file.status === 'locked').map((file) => file.id);
+    const ids = transcriptionFiles.filter((file) => !lockedFileIds.includes(file.id)).map((file) => file.id);
+
+    selectFiles(ids, value);
   };
 
   /**
@@ -120,7 +131,7 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
    */
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [columns.SELECT_ALL.name]: selectColumn(selectFile, selectedFiles),
+      [columns.SELECT_ALL.name]: selectColumn(selectFiles, selectAllFiles, selectedFiles, transcriptionFiles),
       [columns.DOCKET_NUMBER.name]: docketNumberColumn(),
       [columns.CASE_DETAILS.name]: caseDetailsColumn(),
       [columns.TYPES.name]: typesColumn(),
@@ -151,11 +162,23 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
           pValue[kValue] : [pValue[kValue]]).concat(vValue) : vValue
       }), {});
 
+  /**
+   * Call for initial selection statuses and set interval to keep refreshing them
+   */
+  useEffect(() => {
+    getFileStatuses();
+    const interval = setInterval(() => {
+      getFileStatuses();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div {...styles} >
       <QueueTable
         columns={columnsFromConfig(columns)}
-        rowObjects={transcriptionFiles}
+        rowObjects={[]}
         enablePagination
         casesPerPage={15}
         useTaskPagesApi
@@ -163,6 +186,8 @@ export const TranscriptionFileDispatchTable = ({ columns, statusFilter, selectFi
         anyFiltersAreSet
         tabPaginationOptions={getUrlParams(window.location.search)}
         getKeyForRow={(_, row) => row.id}
+        onTableDataUpdated={tableDataUpdated}
+        skipCache
       />
     </div>
   );
@@ -175,5 +200,6 @@ TranscriptionFileDispatchTable.propTypes = {
       filterable: PropTypes.bool || PropTypes.string
     })),
   statusFilter: PropTypes.arrayOf(PropTypes.string),
+  selectAll: PropTypes.func,
   selectFilesForPackage: PropTypes.func
 };

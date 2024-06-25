@@ -81,16 +81,16 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
     page: <>
       <div className="tab-description" style={{ ...styles.rowstyles, marginTop: '-0.1em' }} >
-          Transcription owned by the Transcription Team are unassigned to a contractor:
+            Transcription owned by the Transcription Team are unassigned to a contractor:
         <Link>
           <span style={styles.linkStyles}>
-                Transcription settings
+                  Transcription settings
             <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
           </span>
         </Link>
       </div>
       <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
-            Please select the files you would like to dispatch for transcription:
+              Please select the files you would like to dispatch for transcription:
         <div {...searchBarStyles} >
           <SearchBar
             placeholder="Type to search..."
@@ -103,8 +103,8 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
       </div>
       <div className="file-select" style={{ marginTop: '-2em' }}>
         <h2>{files} files selected</h2>
-        <div className="button-row" style={styles.buttonStyles} onClick={buildPackage} >
-          <Button disabled={files === 0}>Package files</Button>
+        <div className="button-row" style={styles.buttonStyles}>
+          <Button disabled={files === 0} onClick={buildPackage}>Package files</Button>
           <Button linkStyling>Cancel</Button>
         </div>
       </div>
