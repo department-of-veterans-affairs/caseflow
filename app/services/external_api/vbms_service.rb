@@ -25,21 +25,40 @@ class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     DBService.release_db_connections
 
-    @vbms_client ||= init_vbms_client
+    if FeatureToggle.enabled?(:use_ce_api)
+      VeteranFileFetcher.get_document_content(doc_series_id: document.series_id)
+    else
+      @vbms_client ||= init_vbms_client
 
-    vbms_id = document.vbms_document_id
-    request = VBMS::Requests::GetDocumentContent.new(vbms_id)
+      vbms_id = document.vbms_document_id
+      request = VBMS::Requests::GetDocumentContent.new(vbms_id)
 
-    result = send_and_log_request(vbms_id, request)
-    result&.content
+      result = send_and_log_request(vbms_id, request)
+      result&.content
+    end
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    if FeatureToggle.enabled?(:use_ce_api)
+      response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
+      documents = JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+      {
+        manifest_vbms_fetched_at: nil,
+        manifest_vva_fetched_at: nil,
+        documents: DocumentsFromVbmsDocuments.new(documents: documents, file_number: appeal.veteran_file_number).call
+      }
+    else
+      ExternalApi::VbmsDocumentsForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    end
   end
 
   def self.fetch_document_series_for(appeal)
-    ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    if FeatureToggle.enabled?(:use_ce_api)
+      response = VeteranFileFetcher.fetch_veteran_file_list(veteran_file_number: appeal.veteran_file_number)
+      JsonApiResponseAdapter.new.adapt_fetch_document_series_for(response)
+    else
+      ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
+    end
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document)
