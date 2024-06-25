@@ -16,7 +16,7 @@ class SlackService
     warn: "#ffff00"
   }.freeze
 
-  def initialize(url: ENV["SLACK_DISPATCH_ALERT_URL"])
+  def initialize(url:)
     @url = url
   end
 

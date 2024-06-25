@@ -92,6 +92,7 @@ class SelectDispositionsView extends React.PureComponent {
       (response) => {
         const { ...specialIssues } = response.body;
 
+        this.editStagedAppeal({ specialIssues });
         this.setState({ specialIssues });
       }
     );
