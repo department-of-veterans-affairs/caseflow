@@ -13,11 +13,15 @@ class CorrespondenceTaskPagesController < ApplicationController
 
   private
 
+  def task_pages_params
+    params.permit(:user_id, :organization_id)
+  end
+
   def find_assignee
-    if params[:user_id]
-      User.find(params[:user_id])
-    elsif params[:organization_id]
-      Organization.find(params[:organization_id])
+    if task_pages_params[:user_id]
+      User.find(task_pages_params[:user_id])
+    elsif task_pages_params[:organization_id]
+      Organization.find(task_pages_params[:organization_id])
     end
   end
 end

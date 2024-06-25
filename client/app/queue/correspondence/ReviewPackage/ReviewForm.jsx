@@ -84,7 +84,7 @@ export const ReviewForm = (props) => {
   const handleSelectCorrespondenceType = (val) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
-    setCorrespondenceTypeID(val.id - 1);
+    setCorrespondenceTypeID(val.id);
     const updatedSelectedValue = {
       ...props.editableData,
       default_select_value: val.id,
@@ -131,7 +131,7 @@ export const ReviewForm = (props) => {
       data: {
         correspondence: {
           notes: props.editableData.notes,
-          correspondence_type_id: props.editableData.default_select_value,
+          correspondence_type_id: correspondenceTypeID,
           va_date_of_receipt: vaDORDate
         },
         veteran: {
