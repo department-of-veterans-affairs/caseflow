@@ -288,7 +288,7 @@ export const ReviewForm = (props) => {
               <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
-                options={generateOptions(props.reviewDetails.dropdown_values)}
+                options={generateOptions(props.NEW_DATA_CHANGEME.correspondenceTypes)}
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
                 placeholder= {correspondenceTypeID < 0 ? 'Select...' :

@@ -58,106 +58,106 @@ export const CorrespondenceReviewPackage = (props) => {
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
-  const fetchData = async () => {
-    const correspondence = props;
-    // When a remove package task is active and pending review, the page is read-only
-    const isPageReadOnly = (tasks) => {
-      const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+  // const fetchData = async () => {
+  //   const correspondence = props;
+  //   // When a remove package task is active and pending review, the page is read-only
+  //   const isPageReadOnly = (tasks) => {
+  //     const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
-      if (assignedRemoveTask) {
-        setReviewPackageDetails((prev) => {
-          return { ...prev, taskId: assignedRemoveTask.id };
-        }
-        );
-      }
+  //     if (assignedRemoveTask) {
+  //       setReviewPackageDetails((prev) => {
+  //         return { ...prev, taskId: assignedRemoveTask.id };
+  //       }
+  //       );
+  //     }
 
-      // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined');
-    };
+  //     // Return true if a removePackageTask that is currently assigned is found, else false
+  //     return (typeof assignedRemoveTask !== 'undefined');
+  //   };
 
-    // When a reassign package task is active and pending review, the page is read-only
-    const hasAssignedReassignPackageTask = (tasks) => {
-      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
-          task.type === 'ReassignPackageTask');
+  //   // When a reassign package task is active and pending review, the page is read-only
+  //   const hasAssignedReassignPackageTask = (tasks) => {
+  //     const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+  //         task.type === 'ReassignPackageTask');
 
-      if (assignedReassignTask) {
-        setReviewPackageDetails({ taskId: assignedReassignTask.id });
-      }
+  //     if (assignedReassignTask) {
+  //       setReviewPackageDetails({ taskId: assignedReassignTask.id });
+  //     }
 
-      // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (
-        (typeof assignedReassignTask !== 'undefined')
-      );
-    };
+  //     // Return true if a reassignPackageTask that is currently assigned is found, else false
+  //     return (
+  //       (typeof assignedReassignTask !== 'undefined')
+  //     );
+  //   };
 
-    try {
-      const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondence_uuid}`
-      );
-      // API Response Without VA DOR
-      const apiResWithVADOR = response.body.general_information;
+  //   try {
+  //     const response = await ApiUtil.get(
+  //       `/queue/correspondence/${correspondence.correspondence_uuid}`
+  //     );
+  //     // API Response Without VA DOR
+  //     const apiResWithVADOR = response.body.general_information;
 
-      // Appended API Response VA DOR to
-      // eslint-disable-next-line max-len
-      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+  //     // Appended API Response VA DOR to
+  //     // eslint-disable-next-line max-len
+  //     apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
 
-      setApiResponse(apiResWithVADOR);
-      const data = apiResWithVADOR;
+  //     setApiResponse(apiResWithVADOR);
+  //     const data = apiResWithVADOR;
 
-      setDisplayIntakeAppeal(response.body.display_intake_appeal);
+  //     setDisplayIntakeAppeal(response.body.display_intake_appeal);
 
-      if (props.hasEfolderFailedTask === true) {
-        setBannerInformation({
-          title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
-          message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
-          bannerType: 'error'
-        });
-      }
+  //     if (props.hasEfolderFailedTask === true) {
+  //       setBannerInformation({
+  //         title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+  //         message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+  //         bannerType: 'error'
+  //       });
+  //     }
 
-      setReviewDetails({
-        veteran_name: data.veteran_name || {},
-        dropdown_values: props.correspondenceTypes || [],
-        correspondence_type_id: data.correspondence_type_id
-      });
+  //     setReviewDetails({
+  //       veteran_name: data.veteran_name || {},
+  //       dropdown_values: props.correspondenceTypes || [],
+  //       correspondence_type_id: data.correspondence_type_id
+  //     });
 
-      setReviewPackageDetails((prev) => {
-        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
-      }
-      );
+  //     setReviewPackageDetails((prev) => {
+  //       return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
+  //     }
+  //     );
 
-      setEditableData({
-        notes: data.notes,
-        veteran_file_number: data.file_number,
-        default_select_value: data.correspondence_type_id,
-        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-      });
+  //     setEditableData({
+  //       notes: data.notes,
+  //       veteran_file_number: data.file_number,
+  //       default_select_value: data.correspondence_type_id,
+  //       va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
+  //     });
 
-      if (isPageReadOnly(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-      }
+  //     if (isPageReadOnly(data.correspondence_tasks)) {
+  //       setBannerInformation({
+  //         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+  //         message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
+  //         bannerType: 'info'
+  //       });
+  //       setIsReadOnly(true);
+  //     }
 
-      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-        setIsReassignPackage(true);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
+  //       setBannerInformation({
+  //         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+  //         message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+  //         bannerType: 'info'
+  //       });
+  //       setIsReadOnly(true);
+  //       setIsReassignPackage(true);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const handleModalClose = () => {
     if (isReturnToQueue) {
@@ -227,7 +227,8 @@ export const CorrespondenceReviewPackage = (props) => {
     veteranFullName: props.veteranInformation.veteran_name,
     fileNumber: props.veteranInformation.file_number,
     packageDocumentType: props.correspondenceDocuments[0].document_title.includes("10182") ? "NOD" : "Non-NOD",
-    vaDor: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD')
+    vaDor: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD'),
+    correspondenceTypes: props.correspondenceTypes
   };
 
   //moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
@@ -273,7 +274,7 @@ export const CorrespondenceReviewPackage = (props) => {
               disableButton,
               setDisableButton,
               setIsReturnToQueue,
-              fetchData,
+              // fetchData,
               showModal,
               handleModalClose,
               handleReview,
