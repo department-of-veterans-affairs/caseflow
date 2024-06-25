@@ -4,46 +4,48 @@ module PrintsTaskTree
   extend ActiveSupport::Concern
   include TaskTreeRenderModule
 
-  def structure_render(*atts)
-    TTY::Tree.new(structure(*atts)).render
+  def structure_render(*attrs)
+    TTY::Tree.new(structure(*attrs)).render
   end
 
-  def structure(*atts)
-    leaf_name = "#{self.class.name} #{task_tree_attributes(*atts)}"
-    { "#{leaf_name}": task_tree_children.map { |child| child.structure(*atts) } }
+  def structure(*attrs)
+    leaf_name = "#{self.class.name} #{task_tree_attributes(*attrs)}"
+    { "#{leaf_name}": task_tree_children(*attrs).map { |child| child.structure(*attrs) } }
   end
 
-  def structure_as_json(*atts)
+  def structure_as_json(*attrs)
     leaf_name = self.class.name
-    child_tree = task_tree_children.map { |child| child.structure_as_json(*atts) }
-    { "#{leaf_name}": task_tree_attributes_as_json(*atts).merge(tasks: child_tree) }
+    child_tree = task_tree_children(*attrs).map { |child| child.structure_as_json(*attrs) }
+    { "#{leaf_name}": task_tree_attributes_as_json(*attrs).merge(tasks: child_tree) }
   end
 
   private
 
-  def task_tree_children
-    return children.order(:id) if is_a? Task
-
-    tasks.where(parent_id: nil).order(:id)
+  def task_tree_children(*attrs)
+    if is_a?(Task)
+      attrs.first.select { |task| task.parent_id == id }.sort_by(&:id)
+    else
+      attrs.first.select { |task| task.parent_id.nil? }.sort_by(&:id)
+    end
   end
 
-  def task_tree_attributes(*atts)
-    return attributes_to_s(*atts) if is_a? Task
+  def task_tree_attributes(*attrs)
+    return attributes_to_s(*attrs.last) if is_a? Task
 
-    "#{id} [#{atts.join(', ')}]"
+    "#{id} [#{attrs.join(', ')}]"
   end
 
-  def task_tree_attributes_as_json(*atts)
-    return attributes_to_h(*atts) if is_a? Task
+  def task_tree_attributes_as_json(*attrs)
+    return attributes_to_h(*attrs.last) if is_a? Task
 
     { id: id }
   end
 
-  def attributes_to_h(*atts)
-    atts.map { |att| [att, self[att]] }.to_h
+  def attributes_to_h(*attrs)
+    attrs.map { |att| [att, self[att]] }.to_h
   end
 
-  def attributes_to_s(*atts)
-    atts.map { |att| self[att].presence || "(#{att})" }.flatten.compact.join(", ")
+  def attributes_to_s(*attrs)
+    attrs.map { |att| self[att].presence || "(#{att})" }.flatten.compact.join(", ")
   end
 end
