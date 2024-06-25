@@ -242,14 +242,16 @@ FactoryBot.define do
                 vacols_case.correspondent.update!(ssn: vacols_case.bfcorlid.chomp("S"))
                 vacols_case.save
 
-                create(
-                  :veteran,
-                  first_name: vacols_case.correspondent.snamef,
-                  last_name: vacols_case.correspondent.snamel,
-                  name_suffix: vacols_case.correspondent.ssalut,
-                  ssn: vacols_case.correspondent.ssn,
-                  file_number: vacols_case.correspondent.ssn
-                )
+                unless Veteran.find_by_file_number_or_ssn(vacols_case.bfcorlid)
+                  create(
+                    :veteran,
+                    first_name: vacols_case.correspondent.snamef,
+                    last_name: vacols_case.correspondent.snamel,
+                    name_suffix: vacols_case.correspondent.ssalut,
+                    ssn: vacols_case.correspondent.ssn,
+                    file_number: vacols_case.correspondent.ssn
+                  )
+                end
 
                 if evaluator.tied_to
                   create(
