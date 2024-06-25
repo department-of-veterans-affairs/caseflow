@@ -40,13 +40,51 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
 
     docket_coordinator.dockets
       .flat_map do |sym, docket|
+        appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
+        # if sym == :legacy
+        #   binding.pry
+        #   # appeals = docket.ready_priority_nonpriority_legacy_appeals(priority: false)
+        #   # appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
+        #   legacy_rows(appeals, docket, sym)
+        # else
+        #   ama_rows(appeals, docket, sym)
+        # end
         if sym == :legacy
-          []
+          if docket.ready_priority_nonpriority_legacy_appeals(priority: false)
+          # appeals = docket.ready_priority_nonpriority_legacy_appeals(priority: false)
+          # binding.pry
+          appeals = [docket]
+          binding.pry
+          legacy_rows(appeals, docket, sym)
+          else
+            []
+          end
         else
           appeals = docket.ready_priority_nonpriority_appeals(priority: false, ready: true)
           ama_rows(appeals, docket, sym)
         end
       end
+  end
+
+  def self.legacy_rows(appeals, docket, sym)
+    appeals.map do |appeal|
+      veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+      vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
+      hearing_judge = vlj_name.empty? ? nil : vlj_name
+      {
+        docket_number: appeal["tinum"],
+        docket: sym.to_s,
+        aod: appeal["aod"] == 1,
+        cavc: appeal["cavc"] == 1,
+        receipt_date: appeal["bfd19"],
+        ready_for_distribution_at: appeal["bfdloout"],
+        target_distro_date: target_distro_date(appeal["bfd19"], docket),
+        days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
+        hearing_judge: hearing_judge,
+        veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
+        veteran_name: veteran_name
+      }
+    end
   end
 
   def self.ama_rows(appeals, docket, sym)
