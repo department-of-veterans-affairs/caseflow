@@ -34,7 +34,6 @@ export const IssueModificationRow = (
           <IssueModificationList
             issueModificationRequests={value}
             sectionTitle={sectionTitleMapper[key]}
-            lastSection={lastSection}
             key={`${key}-${i}`}
             onClickIssueRequestModificationAction={onClickIssueRequestModificationAction}
           />

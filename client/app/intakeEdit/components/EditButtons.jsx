@@ -179,21 +179,25 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => !issue.withdrawalPending
     ) || validateWithdrawDateError;
 
-    const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
-       _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
-      invalidVeteran ||
-      !withdrawDateValid;
-
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
+
+    const hasPendingAdditionRequests = openIssueModificationRequests.some((issueModificationRequest) => {
+      return issueModificationRequest.requestType === 'addition';
+    }) && (_.isEmpty(addedIssues) || withdrawReview);
+
+    const saveDisabled = (_.isEqual(addedIssues, originalIssues) &&
+       _.isEqual(pendingIssueModificationRequests, originalPendingIssueModificationRequests)) ||
+      invalidVeteran ||
+      !withdrawDateValid || hasPendingAdditionRequests;
 
     let saveButtonText;
 
     if (benefitType === 'vha' && _.every(addedIssues, (issue) => (
       issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
     ) && _.isEmpty(openIssueModificationRequests)) {
-      saveButtonText = COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
+      saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
     } else {
       saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
     }

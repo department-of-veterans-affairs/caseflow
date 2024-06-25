@@ -74,6 +74,7 @@ import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssu
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
 import { getOpenPendingIssueModificationRequests } from '../../selectors';
+import Alert from '../../../components/Alert';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -495,7 +496,20 @@ class AddIssuesPage extends React.Component {
       }
     };
 
-    const columns = [{ valueName: 'field' }, { valueName: 'content' }];
+    // Factory function for generating cell span functions based on an array of possible field values
+    const createTableCellSpanFunc = (fieldValues, matchSpan, noMatchSpan) => {
+      return (rowObj) => fieldValues.includes(rowObj.field) ? matchSpan : noMatchSpan;
+    };
+
+    // Add keys to this field to make the content span an entire row
+    const fieldKeysThatSpanTheRow = ['undecided pending addition requests'];
+
+    // Create two spaning functions to pass to the Table component. If it matches the field key,
+    // then the content should span the full row.
+    const hideFieldColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 0, 1);
+    const growContentColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 2, 1);
+
+    const columns = [{ valueName: 'field', span: hideFieldColumn }, { valueName: 'content', span: growContentColumn }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
@@ -551,6 +565,27 @@ class AddIssuesPage extends React.Component {
         content: issuesChangedBanner
       });
       additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
+    }
+
+    // This checks for open addition requests to prevent claim deletion while they still exist
+    const hasPendingAdditionRequests = pendingIssueModificationRequests.some((issueModificationRequest) => {
+      return issueModificationRequest.requestType === 'addition';
+    }) && (_.isEmpty(intakeData.addedIssues) || _.every(
+      intakeData.addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    ));
+
+    if (editPage && hasPendingAdditionRequests) {
+      // If there are remaining addition issue modification requests, and all the other request issues
+      // have been removed or withdrawn, then show a banner that tells the user that they can't save the
+      // claim until those pending issue modification requests have been decided to prevent premature claim deletion
+      const deletionBanner = <Alert
+        type="warning"
+        message="All pending issue addition requests must be reviewed before the claim can be saved." />;
+
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'undecided pending addition requests',
+        content: deletionBanner
+      });
     }
 
     const endProductLabelRow = (endProductCode, editDisabled) => {

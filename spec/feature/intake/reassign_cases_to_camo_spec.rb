@@ -98,6 +98,9 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(pending_section).to have_text("05/15/2024")
         expect(pending_section).to have_text("Benefit type: Veterans Health Administration")
         click_on_save(in_progress_hlr)
+
+        expect(page).to have_content("You have successfully submitted a request.")
+        expect(page).to have_content("#{in_progress_hlr.claimant.name}'s #{HigherLevelReview.review_title} was saved.")
       end
 
       step "admin approves Issue Addition request" do
@@ -129,6 +132,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
 
     it "should be able to request issue removal and admin should be able to approve it" do
       visit_decision_review
+      vet_name_and_claim = "#{in_progress_hlr_removal.claimant.name}'s #{HigherLevelReview.review_title}"
 
       step "request issue removal" do
         click_to_edit_page(veteran2, in_progress_hlr_removal)
@@ -145,7 +149,28 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_text "this issue is bad"
         expect(page).to have_text "Requested by"
         expect(page).to have_text "#{current_user.full_name} (#{current_user.css_id})"
+
+        # Also create an addition
+        click_on "Request additional issue"
+
+        expect(page).to have_button("Submit request", disabled: true)
+
+        fill_in "Issue type", with: "Beneficiary Travel"
+        find(".cf-select__option", exact_text: "Beneficiary Travel").click
+
+        fill_in "Decision date", with: "05/15/2024"
+        fill_in "Issue description", with: "Adding issue description"
+        fill_in "Please provide a reason for the issue addition request", with: "Lets test this addition"
+
+        expect(page).to have_button("Submit request", disabled: false)
+        within ".cf-modal-body" do
+          click_on "Submit request"
+        end
+
         click_on_save(in_progress_hlr_removal)
+
+        expect(page).to have_content("You have successfully submitted a request.")
+        expect(page).to have_content("#{vet_name_and_claim} was saved.")
       end
 
       step "approve issue removal request by admin" do
@@ -168,12 +193,26 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true)
         find('label[for="status_approved"]').click
         click_on "Confirm"
         expect(page).to have_text("Remove issue")
         expect(page).to have_text("The contention you selected will be removed from the decision review.")
         click_button "Remove"
+
+        # Check for my new banner here
+        banner_text = "All pending issue addition requests must be reviewed before the claim can be saved."
+        expect(page).to have_content(banner_text)
+        expect(page).to have_button("Save", disabled: true)
+
+        click_dropdown(text: "Review issue addition request")
+        find('label[for="status_denied"]').click
+        fill_in "Provide a reason for rejection", with: "Testing rejection of an addition"
+        click_on "Confirm"
+
+        expect(page).not_to have_text(banner_text)
+        expect(page).to have_button("Establish", disabled: false)
+
         expect(current_url).to include("higher_level_reviews/#{in_progress_hlr_removal.uuid}/edit")
         expect(page).to have_button("Establish", disabled: false)
         click_on("Establish")
@@ -181,6 +220,12 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_text("The review originally had 1 issue but now has 0")
         expect(page).to have_text("Removing the last issue will cancel all tasks")
         click_on "Remove"
+
+        # Verify that we are back on the in progress tab
+        expect(page).to have_content("Reviews needing action")
+        expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
+        expect(page).to have_content("The claim has been removed.")
+        expect(page).to have_content("You have successfully edited #{vet_name_and_claim}")
       end
     end
 
@@ -229,13 +274,13 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true)
         find('label[for="status_approved"]').click
         click_on "Confirm"
 
         expect(current_url).to include("higher_level_reviews/#{in_progress_hlr_withdrawal.uuid}/edit")
-        expect(page).to have_button("Establish", disabled: false)
-        click_on("Establish")
+        expect(page).to have_button("Withdraw", disabled: false)
+        click_on("Withdraw")
 
         expect(page).to have_text("You have successfully edited #{veteran3.name}'s Higher-Level Review")
         expect(current_url).to have_content("tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc")
@@ -289,7 +334,7 @@ feature "Reassign Cases to Camo feature test", :postgres do
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).to have_text("Reject request")
         find('label[for="status_denied"]').click
-        expect(page).to have_button("Confirm", disabled: true) # this should be uncommented after the file merge
+        expect(page).to have_button("Confirm", disabled: true)
         find('label[for="status_approved"]').click
         click_on "Confirm"
         requested_issues = page.find("tr", text: "Requested issues")
