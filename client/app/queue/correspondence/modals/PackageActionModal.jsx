@@ -129,7 +129,7 @@ const PackageActionModal = (props) => {
           props.setTaskInstructions(textInputReason);
         }
         props.updateLastAction(packageActionModal);
-        history.replace(`/queue/correspondence/`);
+        history.replace('/queue/correspondence/');
       }
     }
     ).

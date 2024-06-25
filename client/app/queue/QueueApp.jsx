@@ -648,6 +648,7 @@ class QueueApp extends React.PureComponent {
         inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
+        configUrl={this.props.configUrl}
         {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );

@@ -27,6 +27,9 @@ const CorrespondenceCases = (props) => {
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
 
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
+
+  debugger;
+
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
   const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
 
@@ -104,6 +107,21 @@ const CorrespondenceCases = (props) => {
         fontSize: '17px'
       }
     })
+  };
+
+  const packageActionMessage = () => {
+    switch (currentAction.action_type) {
+    case 'removePackage':
+      return sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_MESSAGE, vetName);
+    case 'splitPackage':
+      return sprintf(COPY.CORRESPONDENCE_TITLE_SPLIT_PACKAGE_MESSAGE, vetName);
+    case 'mergePackage':
+      return sprintf(COPY.CORRESPONDENCE_TITLE_MERGE_PACKAGE_MESSAGE, vetName);
+    case 'reassignPackage':
+      return sprintf(COPY.CORRESPONDENCE_TITLE_REASSIGNMENT_PACKAGE_MESSAGE, vetName);
+    default:
+      //
+    }
   };
 
   const approveElement = (
@@ -223,11 +241,10 @@ const CorrespondenceCases = (props) => {
 
   useEffect(() => {
     if (
-      veteranInformation?.veteranName?.firstName &&
-      veteranInformation?.veteranName?.lastName
+      veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name
     ) {
       setVetName(
-        `${veteranInformation.veteranName.firstName.trim()} ${veteranInformation.veteranName.lastName.trim()}`);
+        `${veteranInformation.veteran_name.first_name.trim()} ${veteranInformation.veteran_name.last_name.trim()}`);
     }
   }, [veteranInformation]);
 
@@ -252,11 +269,11 @@ const CorrespondenceCases = (props) => {
             scrollOnAlert={false}
           />
         )}
-        {currentAction.action_type === 'removePackage' && (
-         <Alert
+        {['splitPackage', 'removePackage', 'reassignPackage', 'mergePackage'].includes(currentAction.action_type) && (
+          <Alert
             type="success"
-            title={sprintf('you have successfully submitted removal request for', vetName)}
-            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
+            title={packageActionMessage()}
+            message={COPY.CORRESPONDENCE_PACKAGE_ACTION_DESCRIPTION}
             scrollOnAlert={false}
           />
         )}
