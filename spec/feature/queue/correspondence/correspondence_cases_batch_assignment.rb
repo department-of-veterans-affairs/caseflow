@@ -86,7 +86,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Please go to your individual queue to see any self-assigned correspondences.")
     end
 
-    it "Verify the inbound ops team user batch assignment with assign button with queue limit" do
+    it "verifies failure when assigning a correspondence to an inbound ops team user when queue limit is reached" do
       60.times do
         corr = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
@@ -108,8 +108,8 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
-      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
-      expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
+      expect(page).to have_content("Correspondence was not assigned to #{target_user.css_id}")
+      expect(page).to have_content("Case was not assigned to user because maximum capacity has been reached for user's queue.")
     end
 
     it "successfully loads the assigned tab" do
@@ -144,7 +144,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_content("Please go to your individual queue to see any self-assigned correspondence.")
     end
 
-    it "Verify the inbound ops team user batch reassignment with reassign button with queue limit" do
+    it "verifies failure when reassigning a correspondence to an inbound ops team user when queue limit is reached" do
       60.times do
         corr = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
@@ -166,11 +166,11 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
-      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} has failed")
-      expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
+      expect(page).to have_content("Correspondence was not reassigned to #{target_user.css_id}")
+      expect(page).to have_content("Case was not reassigned to user because maximum capacity has been reached for user's queue.")
     end
 
-    it "Verify the inbound ops team user batch reassignment with NOD permissions" do
+    it "verifies failure when reassigning a correspondence to an inbound ops team user that lacks NOD permissions" do
       40.times do
         correspondence = create(:correspondence, :nod)
         auto = AutoAssignableUserFinder.new(nod_user)
@@ -194,8 +194,8 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
-      expect(page).to have_content("Correspondence reassignment to #{nod_user.css_id} has failed")
-      expect(page).to have_content("NOD permission is currently disabled for this user.")
+      expect(page).to have_content("Correspondence was not reassigned to #{nod_user.css_id}")
+      expect(page).to have_content("Case was not reassigned to user because of NOD permissions settings.")
     end
 
     it "Verify the inbound ops team user multiple batch reassignment with NOD permissions" do
@@ -223,7 +223,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
       expect(page).to have_content("Not all correspondence was reassigned to #{nod_user.css_id}")
-      expect(page).to have_content("3 cases were not reassigned because of NOD permissions settings.")
+      expect(page).to have_content("3 cases were not reassigned to user because of NOD permissions settings.")
     end
 
     it "Verify the inbound ops team user multiple batch reassignment with reassign button with queue limit" do
@@ -249,7 +249,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
       expect(page).to have_content("Not all correspondence was reassigned to #{target_user.css_id}")
-      expect(page).to have_content("3 cases were not reassigned because maximum capacity reached for user's queue.")
+      expect(page).to have_content("3 cases were not reassigned to user because maximum capacity has been reached for user's queue.")
     end
   end
 end
