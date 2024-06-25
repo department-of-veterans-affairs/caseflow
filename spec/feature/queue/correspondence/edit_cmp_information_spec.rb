@@ -4,6 +4,8 @@
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
+  let(:mail_team_supervisor_user) { create(:inbound_ops_team_supervisor) }
+  let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:inbound_ops_team_user) { create(:user) }
   let(:mail_team_org) { InboundOpsTeam.singleton }
   let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon InboundOpsTeam Snow Admin") }
@@ -52,13 +54,6 @@ RSpec.feature("The Correspondence Review Package page") do
     it "Checking the VA DOR and Package document type values in modal" do
       expect(find_field("VA DOR").value).to eq correspondence.va_date_of_receipt.strftime("%Y-%m-%d")
       expect(find_field("Package document type").value).to have_content "NOD" || "Non-NOD"
-    end
-
-    it "Saving the VA DOR and Package document type values in modal" do
-      fill_in "VA DOR", with: 6.days.ago.strftime("%m/%d/%Y")
-      expect(page).to have_button("Save", disabled: false)
-      click_button "Save"
-      expect(page).to have_content("NOD")
     end
 
     it "displays request package action dropdown" do
@@ -122,17 +117,35 @@ RSpec.feature("The Correspondence Review Package page") do
     end
   end
 
-  context "Checking VADOR field is enable for InboundOpsTeam" do
-    before do
+  context "when request package action dropdown is clicked" do
+    before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
+      @correspondence_uuid = "123456789"
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+    end
+
+    it "Saving the VA DOR and Package document type values in modal" do
+      fill_in "VA DOR", with: 6.days.ago.strftime("%m/%d/%Y")
+      expect(page).to have_button("Save", disabled: false)
+      click_button "Save"
+      expect(page).to have_content("NOD")
+    end
+
+  end
+
+  context "Checking VADOR field is enable for InboundOpsTeam" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
+      @correspondence_uuid = "123456789"
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
     it "Checking VADOR field is enabled for Mail Supervisor" do
-      click_button "Edit"
-      expect find_by_id("va-dor-input").readonly?
+      expect(page).to have_field("VA DOR", readonly: false)
     end
   end
 

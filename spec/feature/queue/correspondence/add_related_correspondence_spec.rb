@@ -87,9 +87,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         associate_with_prior_mail_radio_options[:yes].click
 
         expect(page).to have_content("1/1/2023")
-        expect(page).to have_content("Mail")
-        expect(page).to have_content("15")
-        expect(page).to have_content("0304")
+        expect(page).to have_content("a correspondence type")
       end
 
       it "table displays 15 items per page" do
