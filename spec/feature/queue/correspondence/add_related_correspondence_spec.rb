@@ -47,7 +47,13 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         visit_intake_form_with_correspondence_load
 
         associate_with_prior_mail_radio_options[:yes].click
-        page.all(".cf-form-checkbox")[1].click
+        page.execute_script('
+          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+            if (index < 6) {
+              checkbox.click();
+            }
+          });
+        ')
 
         expect(page.has_button?("Continue")).to be(true)
       end
@@ -123,7 +129,13 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
         associate_with_prior_mail_radio_options[:yes].click
 
-        page.all(".cf-form-checkbox")[0..5].each { |cb| cb.set(true) }
+        page.execute_script('
+          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+            if (index < 6) {
+              checkbox.click();
+            }
+          });
+        ')
 
         click_button("Next")
 
