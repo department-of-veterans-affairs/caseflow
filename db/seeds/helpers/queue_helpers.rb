@@ -29,7 +29,7 @@ module QueueHelpers
       va_date_of_receipt: receipt_date,
       notes: generate_notes([corr_type, receipt_date, user]),
       veteran_id: vet.id,
-      nod: [true, false].sample,
+      nod: doc_type.id == 1250
     )
     create_correspondence_document(correspondence, vet)
 
@@ -65,6 +65,7 @@ module QueueHelpers
       document_type: 1250,
       pages: 30,
       correspondence_id: correspondence.id
+      nod: generate_vbms_doc_type
     )
   end
 

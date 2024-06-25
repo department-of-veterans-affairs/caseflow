@@ -53,7 +53,7 @@ namespace :correspondence do
         corr_type = CorrespondenceType.all.sample
         receipt_date = rand(1.month.ago..1.day.ago)
 
-        nod = [true, false].sample
+        nod = doc_type.id
 
         doc_type = generate_vbms_doc_type(nod)
 
