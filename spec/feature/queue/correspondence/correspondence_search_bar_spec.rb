@@ -5,6 +5,8 @@ RSpec.feature("Search Bar for Correspondence") do
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
 
+  let(:last_user) { create(:veteran, first_name: "Zzzane", last_name: "Zzzans") }
+
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
@@ -43,11 +45,7 @@ RSpec.feature("Search Bar for Correspondence") do
         rpt.save!
       end
       1.times do
-        params = {
-          first_name: "Zzzane",
-          last_name: "Zzzans"
-        }
-        veteran = create(:veteran, params)
+        veteran = last_user
         review_correspondence = create(:correspondence, veteran_id: veteran.id)
         rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
         rpt.update!(assigned_to: current_user,
@@ -123,7 +121,7 @@ RSpec.feature("Search Bar for Correspondence") do
 
       # Return to first page, should not exist
       first("[aria-label='Page 1']").click
-      expect(page).not_to have_content("Zzzans")
+      expect(page).to have_no_content("Zzzans")
 
       # Sort Z-A, should return details from Zzzane
       sort_icon = find("[aria-label='Sort by Veteran Details']")
@@ -133,7 +131,7 @@ RSpec.feature("Search Bar for Correspondence") do
       # Sort A-Z, should result in no results
       sort_icon = find("[aria-label='Sort by Veteran Details']")
       sort_icon.click
-      expect(page).not_to have_content("Zzzans")
+      expect(page).to have_no_content("Zzzans")
     end
 
     it "Verify the user can have search results filtered by receipt date on filter correctly" do
@@ -170,11 +168,7 @@ RSpec.feature("Search Bar for Correspondence") do
         rpt.save!
       end
       1.times do
-        params = {
-          first_name: "Zzzane",
-          last_name: "Zzzans"
-        }
-        veteran = create(:veteran, params)
+        veteran = last_user
         review_correspondence = create(:correspondence, veteran_id: veteran.id)
         rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
         rpt.update!(assigned_to: current_user,

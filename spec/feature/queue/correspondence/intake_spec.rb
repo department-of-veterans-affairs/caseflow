@@ -205,14 +205,9 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "Step 3 - Confirm" do
     before :each do
-      InboundOpsTeam.singleton.add_user(current_user)
-      MailTeam.singleton.add_user(current_user)
-      OrganizationsUser.find_or_create_by!(
-        organization: InboundOpsTeam.singleton,
-        user: current_user
-      ).update!(admin: true)
-      User.authenticate!(user: current_user)
+      inbound_ops_team_admin
     end
+
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated

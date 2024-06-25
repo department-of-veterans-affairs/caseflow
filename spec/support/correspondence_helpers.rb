@@ -150,5 +150,22 @@ module CorrespondenceHelpers
     correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
+
+  def correspondence_root_task_completion
+    correspondence = create(:correspondence)
+    correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
+                                     closed_at: rand(6 * 24 * 60).minutes.ago)
+  end
+
+  def inbound_ops_team_admin
+    InboundOpsTeam.singleton.add_user(current_user)
+    MailTeam.singleton.add_user(current_user)
+    OrganizationsUser.find_or_create_by!(
+      organization: InboundOpsTeam.singleton,
+      user: current_user
+    ).update!(admin: true)
+    User.authenticate!(user: current_user)
+  end
+
   # rubocop:enable Metrics/ModuleLength
 end
