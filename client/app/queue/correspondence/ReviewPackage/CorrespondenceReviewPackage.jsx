@@ -260,6 +260,7 @@ export const CorrespondenceReviewPackage = (props) => {
             <PackageActionModal
               packageActionModal={packageActionModal}
               closeHandler={handlePackageActionModal}
+              correspondence={props.correspondence}
             />
           }
           <ReviewForm
