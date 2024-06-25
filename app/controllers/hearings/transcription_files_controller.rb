@@ -4,7 +4,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
   before_action :verify_access_to_hearings, only: [:download_transcription_file]
-  # before_action :verify_transcription_user, only: [:transcription_file_tasks]
+  before_action :verify_transcription_user, only: [:transcription_file_tasks]
 
   def download_transcription_file
     tmp_location = file.fetch_file_from_s3!
@@ -40,7 +40,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
 
   def lock
     files = TranscriptionFile.where(id: params[:file_ids])
-    status = params[:status] && params[:status] == "true" ? true : false
+    status = params[:status] && params[:status].to_s == "true" ? true : false
     lockable_file_ids = []
     files.each do |file|
       if file.lockable?(current_user.id)

@@ -296,7 +296,9 @@ RSpec.describe Hearings::TranscriptionFilesController do
       create(:transcription_file,
              locked_by_id: other_user.id, locked_at: current_time - 3.hours)
     end
-    let!(:transcription_file_5) { create(:transcription_file) }
+    let!(:transcription_file_5) do
+      create(:transcription_file, locked_by_id: nil, locked_at: nil)
+    end
 
     before do
       TranscriptionTeam.singleton.add_user(current_user)
@@ -319,7 +321,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
 
     describe "POST lock" do
       it "locks lockable items based on list of IDs passed in and returns all locked items" do
-        post :lock, params: { file_ids: [transcription_file_2.id, transcription_file_5.id], status: "true" }
+        post :lock, params: { file_ids: [transcription_file_2.id, transcription_file_5.id], status: true }
 
         expected_response = [
           { id: transcription_file_1.id, status: "selected", message: "" },
@@ -332,7 +334,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
       end
 
       it "unlocks lockable items based on list of IDs passed in and returns all locked items" do
-        post :lock, params: { file_ids: [transcription_file_1.id, transcription_file_2.id], status: "false" }
+        post :lock, params: { file_ids: [transcription_file_1.id, transcription_file_2.id], status: false }
 
         expected_response = [
           { id: transcription_file_2.id, status: "locked", message: "Locked by " + other_user.username }
