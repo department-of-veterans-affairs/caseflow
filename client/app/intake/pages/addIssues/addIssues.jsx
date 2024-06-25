@@ -567,25 +567,28 @@ class AddIssuesPage extends React.Component {
       additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
-    // This checks for open addition requests to prevent claim deletion while they still exist
-    const hasPendingAdditionRequests = pendingIssueModificationRequests.some((issueModificationRequest) => {
-      return issueModificationRequest.requestType === 'addition';
-    }) && (_.isEmpty(intakeData.addedIssues) || _.every(
-      intakeData.addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
-    ));
+    if (editPage) {
+      // This checks for open addition requests to prevent claim deletion while they still exist
+      const hasPendingAdditionRequests = pendingIssueModificationRequests.some((issueModificationRequest) => {
+        return issueModificationRequest.requestType === 'addition';
+      }) && (_.isEmpty(intakeData.addedIssues) || _.every(
+        intakeData.addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+      ));
 
-    if (editPage && hasPendingAdditionRequests) {
-      // If there are remaining addition issue modification requests, and all the other request issues
-      // have been removed or withdrawn, then show a banner that tells the user that they can't save the
-      // claim until those pending issue modification requests have been decided to prevent premature claim deletion
-      const deletionBanner = <Alert
-        type="warning"
-        message="All pending issue addition requests must be reviewed before the claim can be saved." />;
+      if (hasPendingAdditionRequests) {
+        // If there are remaining addition issue modification requests, and all the other request issues
+        // have been removed or withdrawn, then show a banner that tells the user that they can't save the
+        // claim until those pending issue modification requests have been decided to prevent premature claim deletion
+        const deletionBanner = <Alert
+          type="warning"
+          message="All pending issue addition requests must be reviewed before the claim can be saved." />;
 
-      fieldsForFormType = fieldsForFormType.concat({
-        field: 'undecided pending addition requests',
-        content: deletionBanner
-      });
+        fieldsForFormType = fieldsForFormType.concat({
+          field: 'undecided pending addition requests',
+          content: deletionBanner
+        });
+      }
+
     }
 
     const endProductLabelRow = (endProductCode, editDisabled) => {
