@@ -31,23 +31,24 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def ready_priority_nonpriority_appeals(priority: false, ready: true, judge: nil, genpop: nil)
     priority_status = priority ? PRIORITY : NON_PRIORITY
     appeals = appeals(priority: priority, ready: ready, genpop: genpop, judge: judge)
     lever_item = "disable_ama_#{priority_status}_#{docket_type.downcase}"
-    item = CaseDistributionLever.find_by_item(lever_item)
-    value = item ? CaseDistributionLever.public_send(lever_item) : nil
+    docket_type_lever = CaseDistributionLever.find_by_item(lever_item)
+    docket_type_lever_value = docket_type_lever ? CaseDistributionLever.public_send(lever_item) : nil
 
-    if value == "true"
+    if docket_type_lever_value == "true"
       appeals.none
-    elsif calculate_days_for_time_goal_with_prior_to_goal > 0
+    elsif priority_status == NON_PRIORITY &&
+          start_distribution_prior_to_goal&.is_toggle_active && calculate_days_for_time_goal_with_prior_to_goal > 0
       appeals.where("appeals.receipt_date <= ?", calculate_days_for_time_goal_with_prior_to_goal.days.ago)
     else
       appeals
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
@@ -161,7 +162,7 @@ class Docket
   def calculate_days_for_time_goal_with_prior_to_goal
     return 0 unless docket_time_goal > 0
 
-    docket_time_goal - start_distribution_prior_to_goal
+    docket_time_goal - Integer(start_distribution_prior_to_goal.value)
   end
 
   def docket_time_goal
@@ -172,13 +173,8 @@ class Docket
   end
 
   def start_distribution_prior_to_goal
-    @start_distribution_prior_to_goal ||= begin
-      lever = CaseDistributionLever.find_by(
-        item: "ama_#{docket_type}_start_distribution_prior_to_goals",
-        is_toggle_active: true
-      )
-      lever ? Integer(lever.value) : 0
-    end
+    @start_distribution_prior_to_goal ||=
+      CaseDistributionLever.find_by(item: "ama_#{docket_type}_start_distribution_prior_to_goals")
   end
 
   private

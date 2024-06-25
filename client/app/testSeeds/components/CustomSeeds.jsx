@@ -113,7 +113,7 @@ const CustomSeeds = () => {
       <>
         <div className="cf-section-header">
           <div className="cf-right-side">
-            <a href="/appeals-ready-to-distribute?csv=1">
+            <a href="/case_distribution_levers_tests/appeals_ready_to_distribute?csv=1">
               <button className="usa-button-active usa-button">Download Appeals Ready to Distribute CSV</button>
             </a>
           </div>
@@ -186,7 +186,12 @@ const CustomSeeds = () => {
                 </td>
                 <td>
                   <div className="cf-add-comment-button">
-                    <Button id={`btn-${type}`} dataTestid={`btn-${type}`} onClick={() => reseedByCaseType(type)}>
+                    <Button
+                      id={`btn-${type}`}
+                      dataTestid={`btn-${type}`}
+                      onClick={() => reseedByCaseType(type)}
+                      name={`add-${type}`}
+                    >
                       <span>
                         <PlusIcon size={24} />
                       </span>
@@ -202,7 +207,7 @@ const CustomSeeds = () => {
       <div className="custom-seeds-preview">
         <h2 id="show_seeds_preview">Preview</h2>
         <div className="preview-table-scroll">
-          <table className="seed-table-style preview-table">
+          <table className="seed-table-style preview-table" id="preview-table">
             <thead>
               <tr>
                 <th className={cx('table-header-styling')}>Case(s) Type</th>
