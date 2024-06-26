@@ -337,7 +337,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_button_text) { "Save Supplemental Claim" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{SupplementalClaim.review_title}" }
     let(:edit_establish_success_message_text) do
-      "You have successfully established #{veteran.name}'s #{SupplementalClaim.review_title}"
+      "You have successfully edited #{veteran.name}'s #{SupplementalClaim.review_title}"
     end
 
     it_behaves_like "Vha HLR/SC Issue without decision date"
@@ -351,7 +351,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_button_text) { "Save Higher-Level Review" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{HigherLevelReview.review_title}" }
     let(:edit_establish_success_message_text) do
-      "You have successfully established #{veteran.name}'s #{HigherLevelReview.review_title}"
+      "You have successfully edited #{veteran.name}'s #{HigherLevelReview.review_title}"
     end
 
     it_behaves_like "Vha HLR/SC Issue without decision date"
@@ -384,7 +384,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       let(:edit_establish_success_message_text) do
-        "You have successfully established #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
+        "You have successfully edited #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
       end
 
       let(:edit_editable_success_message_text) do
@@ -404,7 +404,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       let(:edit_establish_success_message_text) do
-        "You have successfully established #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
+        "You have successfully edited #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
       end
       let(:edit_editable_success_message_text) do
         "You have successfully edited #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"

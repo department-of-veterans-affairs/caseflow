@@ -381,7 +381,8 @@ feature "Reassign Cases to Camo feature test", :postgres do
     expect(page).to have_content("Number of issues has changed")
     expect(page).to have_content("The review originally had 1 issue but now has 2")
     click_on("Confirm")
-    expect(page).to have_text("Edit Completed")
+    expect(page).to have_text("You have successfully edited")
+    expect(page).to have_text("The claim has been modified.")
     expect(current_url).to have_content("tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc")
   end
 
