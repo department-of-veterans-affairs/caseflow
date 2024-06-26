@@ -62,7 +62,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
       error: { type: "retrieval", expalantion: "retrieve a list of rooms from Webex" },
       provider: "webex",
       api_call: "GET https://api-usgov.webex.com/v1/rooms#{query}",
-      response: { status: 400, message: "Sample error message" }.to_json,
+      response: { status: 400, message: "Sample error message" }.to_json
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
