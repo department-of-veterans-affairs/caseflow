@@ -72,15 +72,6 @@ const alertStyle = css({
   }
 });
 
-const EditHearingsSentLink = () => (
-  <Button linkStyling>
-    <span {...css({ marginRight: '1px', marginLeft: '5px' })}>Edit Total</span>
-    <span {...css({ position: 'absolute' })}>
-      <PencilIcon size={25} />
-    </span>
-  </Button>
-);
-
 export default class TranscriptionSettings extends React.PureComponent {
   constructor(props) {
     super(props);
