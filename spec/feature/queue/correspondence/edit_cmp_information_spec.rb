@@ -131,7 +131,6 @@ RSpec.feature("The Correspondence Review Package page") do
       click_button "Save"
       expect(page).to have_content("NOD")
     end
-
   end
 
   context "Checking VADOR field is enable for InboundOpsTeam" do
