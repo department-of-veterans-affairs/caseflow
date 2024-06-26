@@ -106,8 +106,8 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     let!(:payload) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.example_response }
     let!(:appeals_consumer_paylod) { { "event_id": 3333, "errored_claim_id": 1345, "error": "this was an error" } }
     context "#contestable_issues with future ratings" do
-      before { FeatureToggle.enable!(:ama_eventing_disabled) }
-      after { FeatureToggle.disable!(:ama_eventing_disabled) }
+      before { FeatureToggle.enable!(:disable_ama_eventing) }
+      after { FeatureToggle.disable!(:disable_ama_eventing) }
 
       it "returns success response" do
         request.headers["Authorization"] = "Token token=#{api_key.key_string}"

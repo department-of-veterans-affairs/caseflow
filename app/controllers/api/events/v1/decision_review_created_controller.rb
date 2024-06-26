@@ -1,11 +1,21 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
-  include ApiV3FeatureToggleConcern
 
   # Checks if API is disabled
   before_action do
-    api_disabled?(:ama_eventing_disabled)
+    if FeatureToggle.enabled?(:disable_ama_eventing)
+      render json: {
+        errors: [
+          {
+            status: "501",
+            title: "API is disabled",
+            detail: "This endpoint is not supported."
+          }
+        ]
+      },
+             status: :not_implemented
+    end
   end
 
   # rubocop:disable Layout/LineLength
