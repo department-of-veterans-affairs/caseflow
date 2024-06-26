@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
-
   # Checks if API is disabled
   before_action do
     if FeatureToggle.enabled?(:disable_ama_eventing)
