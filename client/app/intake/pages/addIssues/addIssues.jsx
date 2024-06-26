@@ -554,9 +554,9 @@ class AddIssuesPage extends React.Component {
 
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
-      const areAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
-        issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-      );
+      const areAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) =>
+        issue.withdrawalDate || issue.withdrawalPending || issue.decisionDate
+      ) && _.isEmpty(pendingIssueModificationRequests);
 
       const isEstablishedAndVha = intakeData.benefitType === 'vha' &&
         areAllIssuesReadyToBeEstablished &&
