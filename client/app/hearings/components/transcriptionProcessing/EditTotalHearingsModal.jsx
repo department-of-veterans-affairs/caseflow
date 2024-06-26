@@ -93,6 +93,5 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
 EditTotalHearingsModal.propTypes = {
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func.isRequired,
-  title: PropTypes.string,
   transcriptionContractor: PropTypes.object
 };

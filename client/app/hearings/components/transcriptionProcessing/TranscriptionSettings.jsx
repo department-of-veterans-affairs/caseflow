@@ -191,7 +191,7 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
-  editTotalHearingsLink = (id) => {
+  editTotalHearingsLink = (id) => (
     <div>
       <Button linkStyling onClick={() => this.editTotalHearings(id)}>
         <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
@@ -202,7 +202,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         </span>
       </Button>
     </div>
-  }
+  )
 
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
@@ -280,7 +280,7 @@ export default class TranscriptionSettings extends React.PureComponent {
                 <li {...contactAlign}>{contractor.phone}</li>
                 <li {...contactAlign}>{contractor.email}</li>
                 <span>
-                  <li>
+                  <li {...editlinkStyle}>
                     <strong>
                       {'Hearings sent to '}
                       {contractor.name}
