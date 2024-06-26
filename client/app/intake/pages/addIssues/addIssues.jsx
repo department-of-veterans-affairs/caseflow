@@ -397,6 +397,14 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const areAllIssuesReadyToBeEstablished = () => {
+
+      const withdrawnIssue = (issue) => (issue.withdrawalDate || issue.withdrawalPending);
+      const establishedIssue = (issue) => (withdrawnIssue(issue) || issue.decisionDate);
+
+      return _.every(intakeData.addedIssues, establishedIssue);
+    };
+
     const issuesChanged = !_.isEqual(
       intakeData.addedIssues, intakeData.originalIssues
     );
@@ -554,13 +562,8 @@ class AddIssuesPage extends React.Component {
 
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
-      const withdrawnIssue = (issue) => (issue.withdrawalDate || issue.withdrawalPending);
-      const establishedIssue = (issue) => (withdrawnIssue(issue) || issue.decisionDate);
-      // eslint-disable-next-line
-      const areAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, establishedIssue);
-
       const isEstablishedAndVha = intakeData.benefitType === 'vha' &&
-        areAllIssuesReadyToBeEstablished &&
+        areAllIssuesReadyToBeEstablished() &&
         _.isEmpty(pendingIssueModificationRequests);
 
       const establishText = isEstablishedAndVha ? 'Establish' : 'Save';
