@@ -34,27 +34,6 @@ module CorrespondenceControllerConcern
     )
   end
 
-  def process_single_assignment(task_ids, permission_checker, errors, mail_team_user)
-    task_id = task_ids.first
-    correspondence_task = Task.find(task_id)&.correspondence
-    check_result = permission_checker.can_user_work_this_correspondence?(
-      user: mail_team_user,
-      correspondence: correspondence_task
-    )
-
-    if check_result
-      update_task(mail_team_user, task_id)
-    else
-      errors.concat(permission_checker.unassignable_reason)
-    end
-  end
-
-  def process_multiple_assignments(task_ids, permission_checker, errors, mail_team_user)
-    task_ids.each do |id|
-      process_single_assignment([id], permission_checker, errors, mail_team_user)
-    end
-  end
-
   def update_task(mail_team_user, task_id)
     task = Task.find_by(id: task_id)
     task.update(
