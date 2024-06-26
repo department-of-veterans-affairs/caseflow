@@ -620,13 +620,16 @@ input[type="search"].cf-search-input-with-close {
 }
 
 .canvas-wrapper-prototype {
-  margin: 10px;
+  white-space: nowrap;
   display: inline-block;
-  position: relative;
+  overflow: visible;
 }
 
 .canvas-container-prototype {
   background-color: white;
+  display: inline-block;
+  position: relative;
+  margin: 10px;
 }
 
 .cf-pdf-spaced-buttons-left {
@@ -652,4 +655,14 @@ input[type="search"].cf-search-input-with-close {
     display: flex;
     justify-content: center;
   }
+}
+
+#pdfContainer {
+  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  column-gap: 15rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
