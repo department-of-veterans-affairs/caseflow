@@ -149,7 +149,8 @@ const DocketTimeGoals = () => {
           id={`${distributionPriorLever.item}-lever-toggle`}
         >
           <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}>
-            <span className={distributionPriorLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
+            <span
+              className={distributionPriorLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               data-disabled-in-ui={distributionPriorLever.is_disabled_in_ui}
             >
               {distributionPriorLever.is_toggle_active ?
