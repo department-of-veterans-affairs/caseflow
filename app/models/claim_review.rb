@@ -126,8 +126,10 @@ class ClaimReview < DecisionReview
   end
 
   def redirect_url
-    if benefit_type == "vha" && request_issues_without_decision_dates?
+    if vha_claim? && request_issues_without_decision_dates?
       "#{business_line.tasks_url}?tab=incomplete"
+    elsif vha_claim? && pending_issue_modification_requests.any?
+      "#{business_line.tasks_url}?tab=pending"
     else
       business_line.tasks_url
     end
@@ -204,6 +206,10 @@ class ClaimReview < DecisionReview
 
   def active_status?
     active?
+  end
+
+  def vha_claim?
+    benefit_type == "vha"
   end
 
   def search_table_ui_hash

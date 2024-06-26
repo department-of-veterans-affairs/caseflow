@@ -199,7 +199,8 @@ class NonratingRequestIssueModal extends React.Component {
       (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement ||
-      (this.isVhaAdminAndTaskInProgress() && !decisionDate)
+      // if the claim is in progress tab, then decision date should be required.
+      (this.vhaHlrOrSC() && this.isTaskInProgress() && !decisionDate)
     );
   }
 
@@ -210,11 +211,10 @@ class NonratingRequestIssueModal extends React.Component {
     return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
-  // if the user is vha admin and task is in progress tab then decision date should be required.
-  isVhaAdminAndTaskInProgress() {
-    const { userIsVhaAdmin, isTaskInProgress } = this.state;
+  isTaskInProgress() {
+    const { isTaskInProgress } = this.state;
 
-    return userIsVhaAdmin && isTaskInProgress;
+    return isTaskInProgress;
   }
 
   getModalButtons() {
@@ -288,7 +288,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <React.Fragment>
-        {(this.vhaHlrOrSC() && this.isVhaAdminAndTaskInProgress()) ?
+        {(this.vhaHlrOrSC() && this.isTaskInProgress()) ?
           <Alert
             message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
             type="info"
@@ -304,7 +304,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={this.vhaHlrOrSC() && !this.isVhaAdminAndTaskInProgress()}
+            optional={this.vhaHlrOrSC() && !this.isTaskInProgress()}
           />
         </div>
 

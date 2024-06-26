@@ -50,11 +50,16 @@ export const ConfirmPendingRequestIssueModal = () => {
   };
 
   const onSubmit = () => {
+    // Since this is being treated as a brand new request issue. The issue modification request
+    // no longer needs to retain references to the old request issue
+    const modifiedIssueRequest = { ...activeIssueModificationRequest, requestIssue: {}, requestIssueId: null };
+
     // Update the pending issues data if any modification was made in the main modal
     // this also updated the status to approved thus removing it from pending section.
     dispatch(updatePendingReview(activeIssueModificationRequest.identifier,
-      activeIssueModificationRequest));
-    const newFormattedRequestIssue = convertPendingIssueToRequestIssue(activeIssueModificationRequest);
+      modifiedIssueRequest));
+
+    const newFormattedRequestIssue = convertPendingIssueToRequestIssue(modifiedIssueRequest);
 
     dispatch(removeIssue(indexOfOriginalIssue));
     // Add the pending issue that is now a request issue to addedIssues

@@ -132,7 +132,7 @@ export default class IssuesList extends React.Component {
 
           const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
           const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn &&
-            !issue.isUnidentified;
+            !issue.isUnidentified && !intakeData.isLegacy;
 
           const showNewIssueBasedOnRequestIssueBanner = issue.addedFromApprovedRequest;
 

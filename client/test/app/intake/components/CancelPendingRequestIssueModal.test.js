@@ -18,32 +18,28 @@ describe('CancelPendingRequestIssueModal', () => {
   };
 
   const propsForCancelModification = {
-    pendingIssue: mockedModificationRequestProps[1],
-    removeIndex: 0,
+    pendingIssueModificationRequest: mockedModificationRequestProps[1],
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
     toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelAddition = {
-    pendingIssue: mockedAdditionRequestTypeProps[0],
-    removeIndex: 0,
+    pendingIssueModificationRequest: mockedAdditionRequestTypeProps[0],
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
     toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelRemoval = {
-    pendingIssue: mockedRemovalRequestTypeProps[0],
-    removeIndex: 0,
+    pendingIssueModificationRequest: mockedRemovalRequestTypeProps[0],
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
     toggleCancelPendingRequestIssueModal: jest.fn()
   };
 
   const propsForCancelWithdrawal = {
-    pendingIssue: mockedWithdrawalRequestTypeProps[0],
-    removeIndex: 0,
+    pendingIssueModificationRequest: mockedWithdrawalRequestTypeProps[0],
     onCancel: jest.fn(),
     removeFromPendingReviewSection: jest.fn(),
     toggleCancelPendingRequestIssueModal: jest.fn()

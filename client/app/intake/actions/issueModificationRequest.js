@@ -62,6 +62,13 @@ export const issueWithdrawalRequestApproved = (identifier, issueModificationRequ
   }
 );
 
+export const cancelOrRemovePendingReview = (issueModificationRequest) => (
+  {
+    type: ACTIONS.CANCEL_OR_REMOVE_PENDING_REVIEW,
+    payload: { issueModificationRequest }
+  }
+);
+
 export const issueAdditionRequestApproved = (issueModificationRequest) => (
   {
     type: ACTIONS.ISSUE_ADDITION_REQUEST_APPROVED,
@@ -69,9 +76,16 @@ export const issueAdditionRequestApproved = (issueModificationRequest) => (
   }
 );
 
-export const updateActiveIssueModificationRequest = (data) => ({
-  type: ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST,
-  payload: {
-    data
+export const updateActiveIssueModificationRequest = (data) => (
+  {
+    type: ACTIONS.ACTIVE_ISSUE_MODIFICATION_REQUEST,
+    payload: { data }
   }
-});
+);
+
+export const setAllApprovedIssueModificationsWithdrawalDates = (withdrawalDate) => (
+  {
+    type: ACTIONS.SET_ALL_APPROVED_ISSUE_MODIFICATION_WITHDRAWAL_DATES,
+    payload: { withdrawalDate }
+  }
+);

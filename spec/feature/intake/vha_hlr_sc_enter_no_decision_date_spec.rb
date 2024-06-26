@@ -87,7 +87,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       within "#issue-#{issue_id}" do
         click_dropdown(text: "Add decision date") do
           visible_options = page.find_all(".cf-select__option")
-          expect(visible_options).not_to have_content("Withdraw Issue")
+          expect(visible_options).to have_no_content("Withdraw Issue")
         end
       end
 
@@ -203,7 +203,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Click the links and get to the edit issues page
       # As an admin if the task is assigned or in progressed then it is presummed
       # that Task is being opened from in progress tab
-      # and in that case Decision date is no longer  optional.
+      # and in that case Decision date is no longer optional.
       User.authenticate!(user: admin_user)
       click_link veteran.name.to_s
       click_link "Edit Issues"
@@ -251,6 +251,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(current_url).to include("/decision_reviews/vha?tab=incomplete")
       expect(page).to have_content(edit_save_success_message_text)
+      expect(page).to have_content(edit_editable_success_message_text)
       expect(task.reload.status).to eq("on_hold")
 
       # Go back to the Edit issues page
@@ -336,7 +337,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_button_text) { "Save Supplemental Claim" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{SupplementalClaim.review_title}" }
     let(:edit_establish_success_message_text) do
-      "You have successfully established #{veteran.name}'s #{SupplementalClaim.review_title}"
+      "You have successfully edited #{veteran.name}'s #{SupplementalClaim.review_title}"
     end
 
     it_behaves_like "Vha HLR/SC Issue without decision date"
@@ -350,7 +351,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_button_text) { "Save Higher-Level Review" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{HigherLevelReview.review_title}" }
     let(:edit_establish_success_message_text) do
-      "You have successfully established #{veteran.name}'s #{HigherLevelReview.review_title}"
+      "You have successfully edited #{veteran.name}'s #{HigherLevelReview.review_title}"
     end
 
     it_behaves_like "Vha HLR/SC Issue without decision date"
@@ -370,7 +371,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     end
 
     let(:edit_save_success_message_text) do
-      "You have successfully added 2 issues."
+      "The claim has been modified"
     end
 
     context "an existing Higher-Level Review" do
@@ -383,7 +384,11 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       let(:edit_establish_success_message_text) do
-        "You have successfully established #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
+        "You have successfully edited #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
+      end
+
+      let(:edit_editable_success_message_text) do
+        "You have successfully edited #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
       end
 
       it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
@@ -399,7 +404,10 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       let(:edit_establish_success_message_text) do
-        "You have successfully established #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
+        "You have successfully edited #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
+      end
+      let(:edit_editable_success_message_text) do
+        "You have successfully edited #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
       end
 
       it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"

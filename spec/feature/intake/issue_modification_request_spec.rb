@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 feature "Issue Modification Request", :postgres do
-  let(:veteran_file_number) { "123412345" }
+  let(:veteran_file_number) { "998785765" }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number,
@@ -110,14 +110,10 @@ feature "Issue Modification Request", :postgres do
   end
 
   context "non-admin user" do
-    it "should open the edit issues page and show non-admin content" do
+    it "does not enable the submit button until all fields are touched" do
       visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
       expect(page).to have_content("Request additional issue")
-    end
-
-    it "does not enable the submit button until all fields are touched" do
-      visit "higher_level_reviews/#{in_progress_hlr.uuid}/edit"
 
       step "for modification" do
         within "#issue-#{in_progress_hlr.request_issues.first.id}" do
@@ -223,6 +219,37 @@ feature "Issue Modification Request", :postgres do
       expect(pending_section).to have_text("#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}".strip)
       expect(pending_section).to have_text(Constants::BENEFIT_TYPES["vha"])
       expect(pending_section).to have_text(ri.decision_date.strftime("%m/%d/%Y").to_s)
+
+      # Verify that the banner is present on the page
+      check_for_pending_requests_banner
+
+      # Submit the page and verify that the issue modification requests were saved
+      click_on "Save"
+
+      # Verify that the page is redirected to the decision review queue
+      expect(page).to have_content("Reviews needing action")
+
+      # Verify the success banner
+      expect(page).to have_content("You have successfully submitted a request.")
+      expect(page).to have_content("#{in_progress_hlr.veteran_full_name}'s Higher-Level Review was saved.")
+
+      # verify that is on the pending tab
+      expect(page).to have_content(COPY::VHA_PENDING_REQUESTS_TAB_DESCRIPTION)
+      expect(current_url).to include("/decision_reviews/vha?tab=pending")
+
+      issue_request = IssueModificationRequest.last
+
+      # Verify the issue modification request attributes
+      expect(issue_request.nonrating_issue_category).to eq("Beneficiary Travel")
+      expect(issue_request.nonrating_issue_description).to eq("An issue description")
+      expect(issue_request.decision_date).to eq(Date.strptime("05/15/2024", "%m/%d/%Y"))
+      expect(issue_request.request_reason).to eq("I wanted to")
+      expect(issue_request.request_issue).to eq(ri)
+      expect(issue_request.requestor).to eq(current_user)
+      expect(issue_request.status).to eq("assigned")
+      expect(issue_request.request_type).to eq("modification")
+      expect(issue_request.remove_original_issue).to eq(false)
+      expect(issue_request.benefit_type).to eq("vha")
     end
   end
 
@@ -511,7 +538,7 @@ feature "Issue Modification Request", :postgres do
   end
 
   def click_reject
-    find('label[for="status_rejected"]').click
+    find('label[for="status_denied"]').click
     expect(page).to have_text("Provide a reason for rejection")
     fill_in "decisionReason", with: "Because i do not agree with you."
     click_on "Confirm"

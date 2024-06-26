@@ -1,4 +1,6 @@
+import { isEmpty } from 'lodash';
 import { v4 } from 'uuid';
+import { formatDateStrUtc } from '../../util/DateUtil';
 
 const formatRequestIssueForPendingRequest = (requestIssue) => {
   if (!requestIssue) {
@@ -48,7 +50,7 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
       decisionReason: modificationRequest.decision_reason,
       requestReason: modificationRequest.request_reason,
       requestIssueId: modificationRequest.request_issue_id,
-      withdrawalDate: modificationRequest.withdrawal_date,
+      withdrawalDate: formatDateStrUtc(modificationRequest.withdrawal_date, 'YYYY-MM-DD'),
       // Serialized Object fields
       requestIssue: formatRequestIssueForPendingRequest(modificationRequest.request_issue),
       requestor: formatUserForPendingRequest(modificationRequest.requestor),
@@ -58,15 +60,61 @@ export const formatIssueModificationRequests = (issueModificationRequests) => {
   });
 };
 
+export const formatIssueModificationRequestSubmissionData = (state) => {
+  const groupedRequests = {
+    new: [],
+    cancelled: [],
+    edited: [],
+    decided: []
+  };
+
+  (state.pendingIssueModificationRequests || []).
+    forEach((modificationRequest) => {
+      const formattedRequest = {
+        id: modificationRequest.id,
+        status: modificationRequest.status,
+        request_type: modificationRequest.requestType,
+        benefit_type: modificationRequest.benefitType,
+        nonrating_issue_category: modificationRequest.nonratingIssueCategory,
+        nonrating_issue_description: modificationRequest.nonratingIssueDescription,
+        decision_date: modificationRequest.decisionDate,
+        withdrawal_date: modificationRequest.withdrawalDate,
+        request_reason: modificationRequest.requestReason,
+        decision_reason: modificationRequest.decisionReason,
+        request_issue_id: modificationRequest.requestIssueId,
+        remove_original_issue: modificationRequest.removeOriginalIssue,
+      };
+
+      if (isEmpty(modificationRequest.id)) {
+        groupedRequests.new.push(formattedRequest);
+      } else if (modificationRequest.edited) {
+        groupedRequests.edited.push(formattedRequest);
+      } else if (modificationRequest.status === 'cancelled') {
+        groupedRequests.cancelled.push(formattedRequest);
+      } else if (modificationRequest.status === 'approved' || modificationRequest.status === 'denied') {
+        groupedRequests.decided.push(formattedRequest);
+      }
+    });
+
+  return groupedRequests;
+};
+
 export const convertPendingIssueToRequestIssue = (issueModificationRequest) => {
+  const { nonratingIssueCategory, nonratingIssueDescription } = issueModificationRequest;
+
+  const requestIssueId = issueModificationRequest.requestIssue?.id ?
+    String(issueModificationRequest.requestIssue?.id) :
+    null;
+
   return {
-    id: String(issueModificationRequest?.requestIssue?.id),
+    id: requestIssueId,
     benefitType: issueModificationRequest.benefitType,
-    description: `${issueModificationRequest.nonratingIssueCategory} -
-      ${issueModificationRequest.nonratingIssueDescription}`,
-    nonRatingIssueDescription: issueModificationRequest.nonratingIssueDescription,
+    description: nonratingIssueDescription,
+    nonRatingIssueDescription: nonratingIssueDescription,
     decisionDate: issueModificationRequest.decisionDate,
-    category: issueModificationRequest.nonratingIssueCategory,
-    editable: true
+    category: nonratingIssueCategory,
+    editable: true,
+    // This is a one to many, but there should only ever be one assigned/pending issue modification request per issue
+    issueModificationRequestId: issueModificationRequest.id
   };
 };

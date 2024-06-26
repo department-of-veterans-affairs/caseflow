@@ -58,8 +58,9 @@ import {
   toggleConfirmPendingRequestIssueModal,
   moveToPendingReviewSection,
   addToPendingReviewSection,
-  removeFromPendingReviewSection,
-  updatePendingReview
+  updatePendingReview,
+  cancelOrRemovePendingReview,
+  setAllApprovedIssueModificationsWithdrawalDates
 } from '../../actions/issueModificationRequest';
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
@@ -72,7 +73,9 @@ import { RequestIssueWithdrawalModal } from 'app/intakeEdit/components/RequestIs
 import { RequestIssueAdditionModal } from 'app/intakeEdit/components/RequestIssueAdditionModal';
 import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPendingRequestIssueModal';
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
-import { formatDateStr, formatDate } from '../../../util/DateUtil';
+import { getOpenPendingIssueModificationRequests } from '../../selectors';
+import Alert from '../../../components/Alert';
+import { css } from 'glamor';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -135,6 +138,9 @@ class AddIssuesPage extends React.Component {
       this.props.toggleRequestIssueRemovalModal(identifier);
       break;
     case 'cancelReviewIssueRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
       this.props.toggleCancelPendingRequestIssueModal();
       break;
     default:
@@ -207,6 +213,7 @@ class AddIssuesPage extends React.Component {
 
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
+    this.props.setAllApprovedIssueModificationsWithdrawalDates(value);
   };
 
   editingClaimReview() {
@@ -356,27 +363,17 @@ class AddIssuesPage extends React.Component {
       formatLegacyAddedIssues(intakeData.requestIssues, intakeData.addedIssues) :
       formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
 
-    const activePendingIssues = pendingIssueModificationRequests?.
-      filter((issue) => issue.status === 'assigned');
-
     // Filter the issues to remove those that have a pending modification request
-    const issuesWithoutPendingModificationRequests = _.isEmpty(activePendingIssues) ?
+    const issuesWithoutPendingModificationRequests = _.isEmpty(pendingIssueModificationRequests) ?
       issues : issues.filter((issue) => {
-        return !activePendingIssues.some((request) => {
-          return request?.requestIssue && request?.requestIssue?.id === issue.id &&
-            !issue.withdrawalPending;
+        return !pendingIssueModificationRequests.some((request) => {
+          return request?.requestIssue && request?.requestIssue?.id === issue.id;
         });
       });
 
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
 
     const issuesBySection = formatIssuesBySection(issuesWithoutPendingModificationRequests);
-
-    const pendingWithdrawalDate = issuesPendingWithdrawal?.reduce((latest, current) =>
-      latest?.pendingWithdrawalDate > current?.pendingWithdrawalDate ? latest : current, []).pendingWithdrawalDate;
-
-    const pendingWithdrawalDateFormatted = formatDateStr(formatDate(pendingWithdrawalDate),
-      'MM/DD/YYYY', 'YYYY-MM-DD');
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -500,7 +497,20 @@ class AddIssuesPage extends React.Component {
       }
     };
 
-    const columns = [{ valueName: 'field' }, { valueName: 'content' }];
+    // Factory function for generating cell span functions based on an array of possible field values
+    const createTableCellSpanFunc = (fieldValues, matchSpan, noMatchSpan) => {
+      return (rowObj) => fieldValues.includes(rowObj.field) ? matchSpan : noMatchSpan;
+    };
+
+    // Add keys to this field to make the content span an entire row
+    const fieldKeysThatSpanTheRow = ['undecided pending addition requests'];
+
+    // Create two spaning functions to pass to the Table component. If it matches the field key,
+    // then the content should span the full row.
+    const hideFieldColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 0, 1);
+    const growContentColumn = createTableCellSpanFunc(fieldKeysThatSpanTheRow, 2, 1);
+
+    const columns = [{ valueName: 'field', span: hideFieldColumn }, { valueName: 'content', span: growContentColumn }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
@@ -546,7 +556,7 @@ class AddIssuesPage extends React.Component {
       // flash a save message if user is on the edit page & issues have changed
       const isAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
         issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-      );
+      ) && _.isEmpty(pendingIssueModificationRequests);
 
       const establishText = intakeData.benefitType === 'vha' && isAllIssuesReadyToBeEstablished ? 'Establish' : 'Save';
       const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;
@@ -556,6 +566,36 @@ class AddIssuesPage extends React.Component {
         content: issuesChangedBanner
       });
       additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
+    }
+
+    if (editPage) {
+      // This checks for open addition requests to prevent claim deletion while they still exist
+      const hasPendingAdditionRequests = pendingIssueModificationRequests.some((issueModificationRequest) => {
+        return issueModificationRequest.requestType === 'addition';
+      }) && (_.isEmpty(intakeData.addedIssues) || _.every(
+        intakeData.addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+      ));
+
+      if (hasPendingAdditionRequests) {
+        // If there are remaining addition issue modification requests, and all the other request issues
+        // have been removed or withdrawn, then show a banner that tells the user that they can't save the
+        // claim until those pending issue modification requests have been decided to prevent premature claim deletion
+        const messageStyling = css({
+          fontSize: '17px !important',
+          fontWeight: 'normal'
+        });
+
+        const deletionBanner = <Alert
+          type="warning"
+          message="All pending issue addition requests must be reviewed before the claim can be saved."
+          messageStyling={messageStyling} />;
+
+        fieldsForFormType = fieldsForFormType.concat({
+          field: 'undecided pending addition requests',
+          content: deletionBanner
+        });
+      }
+
     }
 
     const endProductLabelRow = (endProductCode, editDisabled) => {
@@ -630,9 +670,9 @@ class AddIssuesPage extends React.Component {
       });
 
     // Pending modifications table section
-    if (!_.isEmpty(activePendingIssues)) {
+    if (!_.isEmpty(pendingIssueModificationRequests)) {
       rowObjects = rowObjects.concat(issueModificationRow({
-        issueModificationRequests: activePendingIssues,
+        issueModificationRequests: pendingIssueModificationRequests,
         fieldTitle: 'Pending admin review',
         onClickIssueRequestModificationAction: this.onClickIssueRequestModificationAction
       }));
@@ -782,10 +822,9 @@ class AddIssuesPage extends React.Component {
 
         {intakeData.cancelPendingRequestIssueModalVisible && (
           <CancelPendingRequestIssueModal
-            pendingIssue={this.props.pendingIssueModificationRequests[this.state.issueRemoveIndex]}
-            removeIndex={this.state.issueRemoveIndex}
+            pendingIssueModificationRequest={this.state.pendingIssueModification}
             onCancel={() => this.props.toggleCancelPendingRequestIssueModal()}
-            removeFromPendingReviewSection={this.props.removeFromPendingReviewSection}
+            removeFromPendingReviewSection={this.props.cancelOrRemovePendingReview}
             toggleCancelPendingRequestIssueModal={this.props.toggleCancelPendingRequestIssueModal}
           />
         )}
@@ -816,7 +855,7 @@ class AddIssuesPage extends React.Component {
               <DateSelector
                 label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
                 name="withdraw-date"
-                value={pendingWithdrawalDateFormatted || intakeData.withdrawalDate}
+                value={intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
                 type="date"
@@ -904,7 +943,7 @@ export const EditAddIssuesPage = connect(
     featureToggles: state.featureToggles,
     editPage: true,
     activeIssue: state.activeIssue,
-    pendingIssueModificationRequests: state.pendingIssueModificationRequests,
+    pendingIssueModificationRequests: getOpenPendingIssueModificationRequests(state),
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
@@ -931,8 +970,9 @@ export const EditAddIssuesPage = connect(
         withdrawIssue,
         moveToPendingReviewSection,
         addToPendingReviewSection,
-        removeFromPendingReviewSection,
+        cancelOrRemovePendingReview,
         updatePendingReview,
+        setAllApprovedIssueModificationsWithdrawalDates,
         setIssueWithdrawalDate,
         setMstPactDetails,
         correctIssue,
