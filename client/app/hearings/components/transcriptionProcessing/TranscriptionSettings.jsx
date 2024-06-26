@@ -14,6 +14,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import COPY from '../../../../COPY';
 import { RemoveContractorModal } from './RemoveContractorModal';
 import { AddEditContractorModal } from './AddEditContractorModal';
+import { EditTotalHearingsModal } from './EditTotalHearingsModal';
 
 const buttonStyle = css({
   float: 'left',
@@ -190,6 +191,19 @@ export default class TranscriptionSettings extends React.PureComponent {
     </div>
   );
 
+  editTotalHearingsLink = (id) => {
+    <div>
+      <Button linkStyling onClick={() => this.editTotalHearings(id)}>
+        <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
+          Edit Total
+        </span>
+        <span {...css({ position: 'absolute' })}>
+          <PencilIcon size={25} />
+        </span>
+      </Button>
+    </div>
+  }
+
   confirmEditAddModal = (response) => {
     this.setState({ alert: response.alert });
     this.getContractors();
@@ -212,6 +226,24 @@ export default class TranscriptionSettings extends React.PureComponent {
     this.setState({ currentContractor: null });
     this.toggleAddEditModal();
   };
+
+  confirmEditTotalHearingsModal = (response) => {
+    this.setState({ alert: response.alert });
+    this.getContractors();
+    this.toggleEditTotalHearingsModal();
+  }
+
+  toggleEditTotalHearingsModal = () => this.setState({ isEditTotalHearingsOpen: !this.state.isEditTotalHearingsOpen });
+
+  editTotalHearings = (id) => {
+    const currentContractor = this.state.contractors.find((contractor) => contractor.id === id);
+
+    this.setState({ currentContractor: {
+      transcriptionContractor: currentContractor
+    } });
+
+    this.toggleEditTotalHearingsModal();
+  }
 
   sortedContractors = () => {
     const group = this.state.contractors.sort((aString, bString) => {
@@ -248,7 +280,16 @@ export default class TranscriptionSettings extends React.PureComponent {
                 <li {...contactAlign}>{contractor.phone}</li>
                 <li {...contactAlign}>{contractor.email}</li>
                 <span>
-                  <li><strong>{'Hearings sent to '}{contractor.name}{' this week: '}</strong>{'0 of '}{contractor.current_goal}<EditHearingsSentLink /></li>
+                  <li>
+                    <strong>
+                      {'Hearings sent to '}
+                      {contractor.name}
+                      {' this week: '}
+                    </strong>
+                    {'0 of '}
+                    {contractor.current_goal}
+                    {this.editTotalHearingsLink()}
+                  </li>
                 </span>
               </ul>
             </div>
@@ -300,6 +341,11 @@ export default class TranscriptionSettings extends React.PureComponent {
             title={COPY.TRANSCRIPTION_SETTINGS_REMOVE_CONTRACTOR_MODAL_TITLE}
           />
         )}
+        {this.state.isEditTotalHearingsOpen && <EditTotalHearingsModal
+          onCancel={this.toggleEditTotalHearingsModal}
+          onConfirm={this.confirmEditTotalHearingsModal}
+          {...this.state.currentContractor}
+        />}
       </React.Fragment>
     );
   };
