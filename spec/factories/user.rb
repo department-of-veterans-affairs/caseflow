@@ -127,6 +127,12 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :judge_inactive do
+      inactive
+      with_inactive_judge_team
+      roles { ["Hearing Prep"] }
+    end
+
     trait :ama_only_judge do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge)&.update(ama_only_push: true, ama_only_request: true) ||
@@ -134,6 +140,12 @@ FactoryBot.define do
       end
 
       roles { ["Hearing Prep"] }
+    end
+
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, user: user)
+      end
     end
 
     trait :with_vacols_judge_record do
@@ -148,21 +160,23 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacols_record do
+    trait :with_vacols_record_satty_id do
       after(:create) do |user|
         create(:staff, :has_sattyid, slogid: user.css_id, user: user)
-      end
-    end
-
-    trait :with_inactive_vacols_judge_record do
-      after(:create) do |user|
-        create(:staff, :inactive_judge, user: user)
       end
     end
 
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      end
+    end
+
+    # This team will not end up being searchable unless you chain .unscoped because of the org model default scope
+    trait :with_inactive_judge_team do
+      after(:create) do |judge|
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        judge_team.inactive!
       end
     end
 

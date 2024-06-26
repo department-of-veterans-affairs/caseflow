@@ -16,7 +16,7 @@ class Metrics::V2::LogsController < ApplicationController
   private
 
   def metrics_not_saved
-    render json: { error_code: "Metrics not saved for user" }, status: :unprocessable_entity
+    render json: { error_code: "Metrics not saved for user" }, status: :accepted
   end
 
   def allowed_params

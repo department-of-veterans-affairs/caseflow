@@ -7,7 +7,7 @@ import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { bindActionCreators } from 'redux';
-import { setTaskInstructions } from '../correspondenceReducer/reviewPackageActions';
+import { setTaskInstructions, updateLastAction } from '../correspondenceReducer/reviewPackageActions';
 import { getPackageActionColumns, getModalInformation } from '../ReviewPackage/utils';
 import { useHistory } from 'react-router';
 
@@ -121,13 +121,15 @@ const PackageActionModal = (props) => {
     ) {
       data.instructions.push(textInputReason);
     }
+
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {
         if (packageActionModal === 'removePackage') {
           props.setTaskInstructions(textInputReason);
         }
-        history.push('/queue/correspondence');
+        props.updateLastAction(packageActionModal);
+        history.replace('/queue/correspondence/');
       }
     }
     ).
@@ -204,7 +206,8 @@ PackageActionModal.propTypes = {
   modalInfo: PropTypes.object,
   packageActionModal: PropTypes.string,
   closeHandler: PropTypes.func,
-  setTaskInstructions: PropTypes.func
+  setTaskInstructions: PropTypes.func,
+  updateLastAction: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -214,7 +217,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setTaskInstructions
+  setTaskInstructions, updateLastAction
 }, dispatch);
 
 export default connect(
