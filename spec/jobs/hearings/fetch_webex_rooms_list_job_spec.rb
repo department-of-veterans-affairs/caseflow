@@ -18,7 +18,7 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
   # rubocop:enable Layout/LineLength
 
   context "job errors" do
-    let(:query) { "?sortBy=created?max=1000" }
+    let(:query) { "?sortBy=created&max=1000" }
     let(:error_details) do
       {
         error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },

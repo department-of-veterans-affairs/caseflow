@@ -39,7 +39,7 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
 
   context "job errors" do
     let(:exception) { Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error") }
-    let(:query) { "?max=100?meetingId=#{id}" }
+    let(:query) { "?max=100&meetingId=#{id}" }
     let(:error_details) do
       {
         error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },

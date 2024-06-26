@@ -15,7 +15,7 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     max = 100
     id = job.arguments&.first&.[](:meeting_id)
     meeting_title = job.arguments&.first&.[](:meeting_title)
-    query = "?max=#{max}?meetingId=#{id}"
+    query = "?max=#{max}&meetingId=#{id}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       provider: "webex",

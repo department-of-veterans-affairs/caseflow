@@ -52,14 +52,13 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
 
-  # rubocop:disable Naming/VariableName
   def webex_rooms_list_issues
-    sortBy = "created"
+    sort_by = "created"
     max = 1000
-    query = "?sortBy=#{sortBy}?max=#{max}"
+    query = "?sortBy=#{sort_by}&max=#{max}"
 
     details = {
-      error: { type: "retrieval", expalantion: "retrieve a list of rooms from Webex" },
+      error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
       provider: "webex",
       api_call: "GET https://api-usgov.webex.com/v1/rooms#{query}",
       response: { status: 400, message: "Sample error message" }.to_json
@@ -71,7 +70,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     room_id = "1234567"
     meeting_title = "221218-977_933_Hearing"
     details = {
-      error: { type: "retrieval", expalantion: "retrieve a list of room details from Webex" },
+      error: { type: "retrieval", explanation: "retrieve a list of room details from Webex" },
       provider: "webex",
       api_call: "GET https://api-usgov.webex.com/v1/rooms/#{room_id}/meetingInfo",
       response: { status: 400, message: "Sample error message" }.to_json,
@@ -83,9 +82,9 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
 
   def webex_recording_list_issues
     max = 100
-    meetindId = "123abc"
+    meeting_id = "123abc"
     meeting_title = "221218-977_933_Hearing"
-    query = "?max=#{max}?meetingId=#{meetindId}"
+    query = "?max=#{max}&meetingId=#{meeting_id}"
 
     details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
@@ -97,7 +96,6 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
-  # rubocop:enable Naming/VariableName
 
   def webex_recording_details_issues
     recording_id = "12345"
