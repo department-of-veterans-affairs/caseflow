@@ -556,6 +556,7 @@ class AddIssuesPage extends React.Component {
       // flash a save message if user is on the edit page & issues have changed
       const withdrawnIssue = (issue) => (issue.withdrawalDate || issue.withdrawalPending);
       const establishedIssue = (issue) => (withdrawnIssue(issue) || issue.decisionDate);
+      // eslint-disable-next-line
       const areAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, establishedIssue);
 
       const isEstablishedAndVha = intakeData.benefitType === 'vha' &&
