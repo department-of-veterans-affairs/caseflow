@@ -101,6 +101,11 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     end
   end
 
+  # Returns only legacy appeals with no affinity record
+  def legacy_appeals_with_no_appeal_affinities(appeals)
+    appeals.select { |appeal| appeal.appeal_affinity.present? }
+  end
+
   # To be implemented in future work
   def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array); end
 
