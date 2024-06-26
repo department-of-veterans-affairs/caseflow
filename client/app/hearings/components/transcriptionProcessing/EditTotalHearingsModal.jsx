@@ -84,6 +84,7 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
       <TextField
         label={COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_INPUT_TEXT}
         name="current-goals"
+        defaultValue={formData.current_goal}
         onChange={(value) => handleChange('current-goals', value)} />
     </Modal>
   );
