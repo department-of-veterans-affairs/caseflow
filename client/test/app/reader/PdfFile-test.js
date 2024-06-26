@@ -4,7 +4,6 @@ import { render, waitFor, cleanup, screen} from '@testing-library/react';
 
 import { PdfFile } from '../../../app/reader/PdfFile';
 import { documents } from '../../data/documents';
-import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 import networkUtil from '../../../app/util/NetworkUtil';
 import * as PDFJS from 'pdfjs-dist';
@@ -144,11 +143,11 @@ describe('PdfFile', () => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         render(
-        <PdfFile
+          <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
-            onPageChange= {jest.fn()}
+            onPageChange={jest.fn()}
             isVisible
             scale="test"
             documentType="test"
@@ -159,11 +158,13 @@ describe('PdfFile', () => {
             setDocumentLoadError={jest.fn()}
             setPageDimensions={jest.fn()}
             setPdfDocument={jest.fn()}
+            setRenderStartTime={setRenderStartTime}
           />
         );
       });
 
-      afterEach(() => {
+      afterAll(() => {
+        cleanup();
         jest.clearAllMocks();
       });
 
