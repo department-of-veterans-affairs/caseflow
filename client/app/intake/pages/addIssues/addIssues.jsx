@@ -553,12 +553,15 @@ class AddIssuesPage extends React.Component {
     };
 
     if (editPage && haveIssuesChanged()) {
+      const isPendingIssueModificationRequestEmpty = _.isEmpty(pendingIssueModificationRequests);
       // flash a save message if user is on the edit page & issues have changed
       const isAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
         issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
-      ) && _.isEmpty(pendingIssueModificationRequests);
+      );
 
-      const establishText = intakeData.benefitType === 'vha' && isAllIssuesReadyToBeEstablished ? 'Establish' : 'Save';
+      const establishText = intakeData.benefitType === 'vha' &&
+        isAllIssuesReadyToBeEstablished &&
+        isPendingIssueModificationRequestEmpty ? 'Establish' : 'Save';
       const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;
 
       fieldsForFormType = fieldsForFormType.concat({
