@@ -24,7 +24,6 @@ import SideBarComments from '../../reader/SideBarComments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import IssueTags from './IssueTags';
 
-
 const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   let comments = [];
@@ -59,17 +58,12 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
             />
           </AccordionSection>
           <AccordionSection title="Categories">
-            <SideBarCategories
-              doc={doc?.doc}
-              documents={documents}
-            />
+            <SideBarCategories doc={doc?.doc} documents={documents} />
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <IssueTags doc={doc?.doc} />
           </AccordionSection>
-          <AccordionSection title="Comments"
-            id="comments-header"
-          >
+          <AccordionSection title="Comments" id="comments-header">
             <SideBarComments comments={comments} />
           </AccordionSection>
         </Accordion>
@@ -84,54 +78,54 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
               &nbsp; View keyboard shortcuts
             </span>
           }
-          // onClick={openKeyboardModal}
+          onClick={() => setIsKeyboardModalOpen(true)}
           classNames={['cf-btn-link']}
         />
-        {isKeyboardModalOpen && (
-          <div className="cf-modal-scroll">
-            <Modal
-              buttons={[
-                {
-                  classNames: ['usa-button', 'usa-button-secondary'],
-                  name: 'Thanks, got it!',
-                  // onClick: closeKeyboardModalFromButton
-                },
-              ]}
-              // closeHandler={handleKeyboardModalClose}
-              title="Keyboard shortcuts"
-              noDivider
-              id="cf-keyboard-modal"
-            >
-              <div className="cf-keyboard-modal-scroll">
-                <Table
-                  columns={documentsColumns}
-                  rowObjects={documentsInstructions}
-                  slowReRendersAreOk
-                  className="cf-keyboard-modal-table"
-                />
-                <Table
-                  columns={searchColumns}
-                  rowObjects={searchInstructions}
-                  slowReRendersAreOk
-                  className="cf-keyboard-modal-table"
-                />
-                <Table
-                  columns={commentColumns}
-                  rowObjects={commentInstructions}
-                  slowReRendersAreOk
-                  className="cf-keyboard-modal-table"
-                />
-                <Table
-                  columns={categoryColumns}
-                  rowObjects={categoryInstructions}
-                  slowReRendersAreOk
-                  className="cf-keyboard-modal-table"
-                />
-              </div>
-            </Modal>
-          </div>
-        )}
       </div>
+      {isKeyboardModalOpen && (
+        <div className="cf-modal-scroll">
+          <Modal
+            buttons={[
+              {
+                classNames: ['usa-button', 'usa-button-secondary'],
+                name: 'Thanks, got it!',
+                onClick: () => setIsKeyboardModalOpen(false),
+              },
+            ]}
+            closeHandler={() => setIsKeyboardModalOpen(false)}
+            title="Keyboard shortcuts"
+            noDivider
+            id="cf-keyboard-modal"
+          >
+            <div className="cf-keyboard-modal-scroll">
+              <Table
+                columns={documentsColumns}
+                rowObjects={documentsInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table"
+              />
+              <Table
+                columns={searchColumns}
+                rowObjects={searchInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table"
+              />
+              <Table
+                columns={commentColumns}
+                rowObjects={commentInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table"
+              />
+              <Table
+                columns={categoryColumns}
+                rowObjects={categoryInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table"
+              />
+            </div>
+          </Modal>
+        </div>
+      )}
     </div>
   );
 };
