@@ -88,7 +88,9 @@ const OrganizationPermissions = (props) => {
 
     return result;
   };
-
+  // Correspondence: Refactor Candidate
+  // CodeClimate: Avoid too many return statements within this function.
+  // eslint-disable max-statements
   const getCheckboxEnabled = (user, orgUserData, permission) => {
 
     // uses the local state over what comes in over props
@@ -122,8 +124,8 @@ const OrganizationPermissions = (props) => {
     }
 
     return false;
-
   };
+  // eslint-enable max-statements
 
   const permissionAdminCheck = (user, permission) => {
     if (user.attributes.admin && permission.default_for_admin) {
