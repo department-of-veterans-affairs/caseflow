@@ -9,14 +9,15 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearings_schedule
 
+  # rubocop:disable Naming/VariableName
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    sort_by = "created"
+    sortBy = "created"
     max = 1000
-    query = { "sortBy": sort_by, "max": max }
+    query = "?sortBy=#{sortBy}?max=#{max}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
       provider: "webex",
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms?#{query}",
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms#{query}",
       response: { status: exception.code, message: exception.message }.to_json,
       times: nil,
       docket_number: nil
@@ -24,6 +25,7 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
     job.log_error(exception)
     job.send_transcription_issues_email(error_details)
   end
+  # rubocop:enable Naming/VariableName
 
   def perform
     ensure_current_user_is_set

@@ -19,10 +19,21 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
   end
   let(:meeting_title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1" }
   let(:exception) { Caseflow::Error::WebexApiError.new(code: 300, message: "Error", title: "Bad Error") }
+  let(:error_details) do
+    {
+      error: { type: "retrieval", explanation: "retrieve details of room from Webex" },
+      provider: "webex",
+      api_call:
+        "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms/#{room_id}/meetingInfo",
+      response: { status: exception.code, message: exception.message }.to_json,
+      times: nil,
+      docket_number: nil
+    }
+  end
 
   subject { described_class.perform_now(room_id: room_id, meeting_title: meeting_title) }
 
-  describe "#perform" do
+  context "#perform" do
     it "can run the job" do
       subject
 
@@ -35,14 +46,36 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
     it "returns correct response" do
       expect(described_class.new.send(:fetch_room_details, room_id).resp.raw_body).to eq(room_details)
     end
+  end
 
-    it "retries and logs errors" do
+  context "job errors" do
+    before do
       allow_any_instance_of(described_class)
         .to receive(:fetch_room_details)
         .and_raise(exception)
+    end
 
+    it "retries and logs errors" do
+      subject
       expect(Rails.logger).to receive(:error).at_least(:once)
       perform_enqueued_jobs { described_class.perform_later(room_id: room_id, meeting_title: meeting_title) }
+    end
+
+    it "mailer receives correct params" do
+      allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).and_call_original
+      expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
+        .with(error_details)
+      expect_any_instance_of(described_class).to receive(:log_error).once
+      perform_enqueued_jobs { described_class.perform_later(room_id: room_id, meeting_title: meeting_title) }
+    end
+
+    context "mailer fails to send email" do
+      it "captures external delivery error" do
+        allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
+          .and_raise(GovDelivery::TMS::Request::Error.new(500))
+        expect_any_instance_of(described_class).to receive(:log_error).twice
+        perform_enqueued_jobs { described_class.perform_later(room_id: room_id, meeting_title: meeting_title) }
+      end
     end
   end
 end

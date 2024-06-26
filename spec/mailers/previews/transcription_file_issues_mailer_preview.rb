@@ -52,8 +52,11 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
 
+  # rubocop:disable Naming/VariableName
   def webex_rooms_list_issues
-    query = "?sortBy=created?max=1000"
+    sortBy = "created"
+    max = 1000
+    query = "?sortBy=#{sortBy}?max=#{max}"
 
     details = {
       error: { type: "retrieval", expalantion: "retrieve a list of rooms from Webex" },
@@ -81,7 +84,9 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
   end
 
   def webex_recording_list_issues
-    query = "?max=100?meetingId=123abc"
+    max = 100
+    meetindId = "123abc"
+    query = "?max=#{max}?meetingId=#{meetindId}"
 
     details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
@@ -93,6 +98,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
+  # rubocop:enable Naming/VariableName
 
   def webex_recording_details_issues
     recording_id = "12345"

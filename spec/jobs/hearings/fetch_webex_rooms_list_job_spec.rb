@@ -18,6 +18,19 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
   # rubocop:enable Layout/LineLength
 
   context "job errors" do
+    let(:query) { "?sortBy=created?max=1000" }
+    let(:error_details) do
+      {
+        error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
+        provider: "webex",
+        api_call:
+          "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms#{query}",
+        response: { status: 400, message: "Fake Error" }.to_json,
+        times: nil,
+        docket_number: nil
+      }
+    end
+
     before do
       allow_any_instance_of(WebexService)
         .to receive(:fetch_rooms_list)
@@ -33,6 +46,23 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
       subject
       expect(Rails.logger).to receive(:error).at_least(:once)
       perform_enqueued_jobs { described_class.perform_later }
+    end
+
+    it "mailer receives correct params" do
+      allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).and_call_original
+      expect(TranscriptionFileIssuesMailer).to receive(:issue_notification)
+        .with(error_details)
+      expect_any_instance_of(described_class).to receive(:log_error).once
+      perform_enqueued_jobs { described_class.perform_later }
+    end
+
+    context "mailer fails to send email" do
+      it "captures external delivery error" do
+        allow(TranscriptionFileIssuesMailer).to receive(:issue_notification).with(error_details)
+          .and_raise(GovDelivery::TMS::Request::Error.new(500))
+        expect_any_instance_of(described_class).to receive(:log_error).twice
+        perform_enqueued_jobs { described_class.perform_later }
+      end
     end
   end
 
