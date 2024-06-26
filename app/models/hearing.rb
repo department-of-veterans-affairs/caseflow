@@ -77,7 +77,7 @@ class Hearing < CaseflowRecord
   delegate :hearing_day_full?, :request_type, to: :hearing_day, allow_nil: true
   delegate :regional_office, to: :hearing_day, prefix: true, allow_nil: true
 
-  after_create :update_fields_from_hearing_day, :maybe_create_non_virtual_conference
+  after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
   before_create :assign_created_by_user
 
