@@ -113,7 +113,7 @@ module CorrespondenceControllerConcern
     }
 
     error_counts.each do |error, count|
-      if count > 1
+      if count.positive?
         multiple_errors = error_counts.values.count(&:positive?) > 1
         failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
       end
