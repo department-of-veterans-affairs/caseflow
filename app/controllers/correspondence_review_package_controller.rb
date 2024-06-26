@@ -4,10 +4,11 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
     @correspondence_types = CorrespondenceType.all
+    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
     @correspondence = WorkQueue::CorrespondenceSerializer
     .new(correspondence)
     .serializable_hash[:data][:attributes]
-    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
+
   end
 
   def show
