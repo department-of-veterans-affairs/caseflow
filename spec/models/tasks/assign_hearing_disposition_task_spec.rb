@@ -96,7 +96,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       it "hearing creates a new conference link" do
         RequestStore.store[:current_user] = webex_user
         subject
-        expect(WebexConferenceLink.all.length).to eq(1)
+        expect(WebexConferenceLink.count).to eq(1)
       end
 
       context "when params includes virtual_hearing_attributes" do
