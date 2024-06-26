@@ -1,0 +1,97 @@
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Modal from '../../../components/Modal';
+import TextField from '../../../components/TextField';
+import COPY from '../../../../COPY';
+import { sprintf } from 'sprintf-js';
+import ApiUtil from '../../../util/ApiUtil';
+import Alert from '../../../components/Alert';
+
+export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor }) => {
+  const [formData, setFormData] = useState(transcriptionContractor);
+  const [serverError, setServerError] = useState(false);
+  const [formValid, setFormValid] = useState(false);
+  const title = COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_TITLE
+
+  const updateContractorTotalHearings = (contractorFormData) => {
+    const data = {
+      transcription_contractor: contractorFormData
+    };
+
+    ApiUtil.patch(`/hearings/find_by_contractor/${formData.id}`, { data }).
+      then((response) => {
+
+        if (response.body.transcription_contractor) {
+          const contractor = response.body.transcription_contractor;
+
+          onConfirm({
+            transcription_contractor: contractor,
+            alert: {
+              title: COPY.TRANSCRIPTION_SETTINGS_CREATE_SUCCESS,
+              message: sprintf(COPY.TRANSCRIPTION_SETTINGS_UPDATE_HEARINGS_GOAL_MESSAGE, contractor.name),
+              type: 'success'
+            }
+          });
+        }
+      }, () => {
+        setServerError(true);
+      });
+  };
+
+  const handleConfirm = () => { updateContractorTotalHearings(formData) };
+
+  const validateForm = () => {
+    setFormValid(
+      formData.current_goal.length
+    );
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
+  const handleChange = (name, value) => {
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  return (
+    <Modal
+      title={title}
+      buttons={[
+        {
+          classNames: ['cf-modal-link cf-btn-link'],
+          name: 'Cancel',
+          onClick: onCancel,
+        },
+        {
+          classNames: ['usa-button', 'usa-button-primary'],
+          name: COPY.MODAL_CONFIRM_BUTTON,
+          onClick: handleConfirm,
+          disabled: !formValid,
+        },
+      ]}
+      closeHandler={onCancel}
+      id="custom-total-hearings-modal"
+    >
+      {serverError &&
+        <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
+          message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
+
+      <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2>
+
+      <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p>
+
+      <TextField
+        label={COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_INPUT_TEXT}
+        name="current-goals"
+        onChange={(value) => handleChange('current-goals', value)} />
+    </Modal>
+  );
+};
+
+EditTotalHearingsModal.propTypes = {
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  transcriptionContractor: PropTypes.object
+};
