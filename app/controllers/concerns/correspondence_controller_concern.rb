@@ -48,10 +48,9 @@ module CorrespondenceControllerConcern
   end
 
   def message_template(user, errors, task_count, tab)
-    case tab
-    when "correspondence_unassigned"
+    if tab == "correspondence_unassigned"
       bulk_assignment_banner_text(user, errors, task_count)
-    when "correspondence_team_assigned"
+    elsif tab == "correspondence_team_assigned"
       bulk_assignment_banner_text(user, errors, task_count, action_prefix: "re")
     end
   end

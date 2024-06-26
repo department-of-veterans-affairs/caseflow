@@ -238,6 +238,7 @@ const CorrespondenceCases = (props) => {
 
   useEffect(() => {
     if (
+      // eslint-disable-next-line camelcase
       veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name
     ) {
       setVetName(

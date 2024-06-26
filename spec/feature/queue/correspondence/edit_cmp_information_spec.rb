@@ -8,7 +8,7 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:inbound_ops_team_user) { create(:user) }
   let(:mail_team_org) { InboundOpsTeam.singleton }
-  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon InboundOpsTeam Snow Admin") }
+  let(:current_user) { create(:inbound_ops_team_supervisor) }
   let!(:correspondence_type) { CorrespondenceType.create!(name: "a correspondence type.") }
   let(:correspondence) do
     create(
@@ -36,7 +36,6 @@ RSpec.feature("The Correspondence Review Package page") do
   context "Review package form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
@@ -132,7 +131,6 @@ RSpec.feature("The Correspondence Review Package page") do
       click_button "Save"
       expect(page).to have_content("NOD")
     end
-
   end
 
   context "Checking VADOR field is enable for InboundOpsTeam" do

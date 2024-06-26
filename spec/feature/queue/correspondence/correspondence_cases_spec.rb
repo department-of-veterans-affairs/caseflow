@@ -212,9 +212,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       20.times do
-        correspondence = create(:correspondence)
-        correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
-                                         closed_at: rand(6 * 24 * 60).minutes.ago)
+        correspondence_root_task_completion
       end
     end
 
@@ -1324,9 +1322,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       20.times do
-        correspondence = create(:correspondence)
-        correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
-                                         closed_at: rand(6 * 24 * 60).minutes.ago)
+        correspondence_root_task_completion
       end
     end
 
@@ -1453,17 +1449,17 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       5.times do
-        corres_array = (1..2).map { |index| create(:correspondence, nod: index == 1) }
+        correspondence_array = (1..2).map { |index| create(:correspondence, nod: index == 1) }
         task_array = [ReassignPackageTask, RemovePackageTask]
 
-        corres_array.each_with_index do |corres, index|
-          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+        correspondence_array.each_with_index do |correspondence, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
           task_array[index].create!(
             parent_id: rpt.id,
             appeal_type: "Correspondence",
-            appeal_id: corres.id,
+            appeal_id: correspondence.id,
             assigned_to: InboundOpsTeam.singleton,
-            instructions: ["This was the default"],
+            instructions: ["Default for type column"],
             assigned_by_id: rpt.assigned_to_id
           )
         end
