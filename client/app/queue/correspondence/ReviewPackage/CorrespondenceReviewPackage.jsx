@@ -28,11 +28,12 @@ export const CorrespondenceReviewPackage = (props) => {
     dropdown_values: [],
   });
   const [editableData, setEditableData] = useState({
-    notes: '',
-    veteran_file_number: '',
+    notes: props.correspondence.notes || '',
+    veteran_file_number: props.correspondence.file_number || '',
     default_select_value: null,
-    va_date_of_receipt: '',
+    va_date_of_receipt: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD') || '',
   });
+
   const stateCorrespondence = useSelector(
     (state) => state.reviewPackage.correspondence
   );
@@ -48,7 +49,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
-    veteranName: '',
+    veteranName: props.correspondence.veteranFullName || '',
     taskId: [],
   });
 
