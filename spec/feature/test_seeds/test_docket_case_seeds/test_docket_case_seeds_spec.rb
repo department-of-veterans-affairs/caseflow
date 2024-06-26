@@ -31,7 +31,7 @@ RSpec.feature "Test Docket Case Seeds" do
       fill_in "days-ago-ama-aod-hearing-seeds", with: 10
       fill_in "css-id-ama-aod-hearing-seeds", with: current_user.css_id + "10"
 
-      click_button "button-add-ama-aod-hearing-seeds"
+      click_button "btn-ama-aod-hearing-seeds"
 
       expect(find("#preview-table")).to have_content("ama-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -59,7 +59,7 @@ RSpec.feature "Test Docket Case Seeds" do
       fill_in "days-ago-ama-non-aod-hearing-seeds", with: 10
       fill_in "css-id-ama-non-aod-hearing-seeds", with: current_user.css_id + "10"
 
-      click_button "button-add-ama-non-aod-hearing-seeds"
+      click_button "btn-ama-non-aod-hearing-seeds"
 
       expect(find("#preview-table")).to have_content("ama-non-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -87,7 +87,7 @@ RSpec.feature "Test Docket Case Seeds" do
       fill_in "days-ago-legacy-case-seeds", with: 10
       fill_in "css-id-legacy-case-seeds", with: current_user.css_id + "10"
 
-      click_button "button-add-legacy-case-seeds"
+      click_button "btn-legacy-case-seeds"
 
       expect(find("#preview-table")).to have_content("legacy-case-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
@@ -107,7 +107,7 @@ RSpec.feature "Test Docket Case Seeds" do
       fill_in "days-ago-ama-direct-review-seeds", with: 10
       fill_in "css-id-ama-direct-review-seeds", with: current_user.css_id + "10"
 
-      click_button "button-add-ama-direct-review-seeds"
+      click_button "btn-ama-direct-review-seeds"
       expect(find("#preview-table")).to have_content("ama-direct-review-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")
       expect(find("#preview-table")).to have_content("10 Days Ago")
@@ -140,10 +140,10 @@ RSpec.feature "Test Docket Case Seeds" do
       fill_in "days-ago-ama-direct-review-seeds", with: 13
       fill_in "css-id-ama-direct-review-seeds", with: current_user.css_id + "13"
 
-      click_button "button-add-ama-aod-hearing-seeds"
-      click_button "button-add-ama-non-aod-hearing-seeds"
-      click_button "button-add-legacy-case-seeds"
-      click_button "button-add-ama-direct-review-seeds"
+      click_button "btn-ama-aod-hearing-seeds"
+      click_button "btn-ama-non-aod-hearing-seeds"
+      click_button "btn-legacy-case-seeds"
+      click_button "btn-ama-direct-review-seeds"
 
       expect(find("#preview-table")).to have_content("ama-aod-hearing-seeds")
       expect(find("#preview-table")).to have_content("2 Cases")

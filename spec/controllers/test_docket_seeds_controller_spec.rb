@@ -11,14 +11,6 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
   describe "POST run-demo?seed_type=ii?seed_count=x&days_ago=y&judge_css_id=zzz" do
     before(:all) do
       Rake::Task.define_task(:environment)
-      ama_aod_hearing_seeds_task = TEST_SEEDS["ama-aod-hearing-seeds"]
-      ama_non_aod_hearing_seeds_task = TEST_SEEDS["ama-non-aod-hearing-seeds"]
-      legacy_case_seeds_task = TEST_SEEDS["legacy-case-seeds"]
-      ama_direct_review_seeds_task = TEST_SEEDS["ama-direct-review-seeds"]
-      Rake::Task[ama_aod_hearing_seeds_task].reenable
-      Rake::Task[ama_non_aod_hearing_seeds_task].reenable
-      Rake::Task[legacy_case_seeds_task].reenable
-      Rake::Task[ama_direct_review_seeds_task].reenable
     end
 
     context "seed_ama_aod_hearings" do
