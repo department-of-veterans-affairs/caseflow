@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable max-statements-per-line */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
@@ -7,11 +9,16 @@ import { sprintf } from 'sprintf-js';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
 
-export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor }) => {
+const defaultContractor = {
+  name: '',
+  current_goal: ''
+};
+
+export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor = defaultContractor }) => {
   const [formData, setFormData] = useState(transcriptionContractor);
   const [serverError, setServerError] = useState(false);
   const [formValid, setFormValid] = useState(false);
-  const title = COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_TITLE
+  const title = COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_TITLE;
 
   const updateContractorTotalHearings = (contractorFormData) => {
     const data = {
@@ -38,7 +45,9 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
       });
   };
 
-  const handleConfirm = () => { updateContractorTotalHearings(formData) };
+  const handleConfirm = () => {
+    updateContractorTotalHearings(formData);
+  };
 
   const validateForm = () => {
     setFormValid(
@@ -77,9 +86,9 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
         <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
           message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
 
-      <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2>
+      {/* <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2> */}
 
-      <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p>
+      {/* <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p> */}
 
       <TextField
         label={COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_INPUT_TEXT}
