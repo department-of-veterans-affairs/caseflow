@@ -75,6 +75,7 @@ import { CancelPendingRequestIssueModal } from 'app/intake/components/CancelPend
 import { ConfirmPendingRequestIssueModal } from '../../components/ConfirmPendingRequestIssueModal';
 import { getOpenPendingIssueModificationRequests } from '../../selectors';
 import Alert from '../../../components/Alert';
+import { css } from 'glamor';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -579,9 +580,15 @@ class AddIssuesPage extends React.Component {
         // If there are remaining addition issue modification requests, and all the other request issues
         // have been removed or withdrawn, then show a banner that tells the user that they can't save the
         // claim until those pending issue modification requests have been decided to prevent premature claim deletion
+        const messageStyling = css({
+          fontSize: '17px !important',
+          fontWeight: 'normal'
+        });
+
         const deletionBanner = <Alert
           type="warning"
-          message="All pending issue addition requests must be reviewed before the claim can be saved." />;
+          message="All pending issue addition requests must be reviewed before the claim can be saved."
+          messageStyling={messageStyling} />;
 
         fieldsForFormType = fieldsForFormType.concat({
           field: 'undecided pending addition requests',
