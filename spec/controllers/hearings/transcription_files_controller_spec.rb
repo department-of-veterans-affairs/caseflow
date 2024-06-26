@@ -94,7 +94,7 @@ RSpec.describe Hearings::TranscriptionFilesController do
     let(:transcription_response_3) do
       {
         id: transcription_file_3.id,
-        externalAppealId: "",
+        externalAppealId: transcription_file_3.hearing.appeal.vacols_id,
         docketNumber: transcription_file_3.docket_number,
         caseDetails: "#{transcription_file_3.hearing.appeal.appellant_or_veteran_name} " \
           "(#{transcription_file_3.hearing.appeal.veteran_file_number})",

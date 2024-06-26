@@ -27,7 +27,7 @@ class Hearings::TranscriptionFilesController < ApplicationController
   end
 
   def locked
-    locked_files = TranscriptionFile.locked
+    locked_files = TranscriptionFile.locked.preload(:locked_by)
     files = []
     locked_files.each do |file|
       status = file.locked_by_id == current_user.id ? "selected" : "locked"

@@ -161,11 +161,11 @@ class TranscriptionFile < CaseflowRecord
     (hearing.appeal.try(:stream_type) || "Original").capitalize
   end
 
-  # Purpose: Returns the external appeal id from an AMA appeal
+  # Purpose: Returns the external appeal id from an AMA appeal or Legacy appeal
   #
   # Returns: string, defaults to blank of not AMA
   def external_appeal_id
-    hearing.appeal.try(:uuid) || ""
+    hearing.appeal.try(:uuid) || hearing.appeal.try(:vacols_id) || ""
   end
 
   # Purpose: Returns a formatted value containing the veteral name and file number
