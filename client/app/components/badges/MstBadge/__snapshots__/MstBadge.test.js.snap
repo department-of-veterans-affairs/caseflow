@@ -6,25 +6,25 @@ exports[`MstBadge renders correctly 1`] = `
     class="cf-mst-badge"
   >
     <span
-      aria-describedby="badge-mst-undefined"
+      aria-describedby="badge-mst-1234"
       aria-label="mst"
       currentitem="false"
       data-css-cyp2td=""
       data-event="focus mouseenter"
       data-event-off="mouseleave keydown"
-      data-for="badge-mst-undefined"
+      data-for="badge-mst-1234"
       data-tip="true"
       tabindex="0"
     >
       MST
     </span>
     <span
-      data-css-ow37v3=""
+      data-css-smgb9j=""
     >
       <div
         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
         data-id="tooltip"
-        id="badge-mst-undefined"
+        id="badge-mst-1234"
         role="tooltip"
       >
         <style>
