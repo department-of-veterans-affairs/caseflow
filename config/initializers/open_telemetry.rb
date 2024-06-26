@@ -11,22 +11,17 @@ DT_API_TOKEN = ENV["DT_API_TOKEN"]
 Rails.logger.info("DT_API_TOKEN is set to #{DT_API_TOKEN}")
 
 if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
-  OpenTelemetry::SDK.configure do |config|
-
-    Rails.logger.info("OpenTelemetry configuration started")
-
-    config.service_name = "caseflow"
-    config.service_version = "1.0.1"
-    # automatic instrumentation
-    config.use_all
-    ["dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties", "/var/lib/dynatrace/enrichment/dt_host_metadata.properties"].each do |name|
+  OpenTelemetry::SDK.configure do |c|
+    c.service_name = 'ruby-quickstart'
+    c.service_version = '1.0.1'
+    c.use_all #application will be using all instrumentation provided by OpenTelemetry
+    %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_metadata.properties].each { |name|
       begin
-        config.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
-      rescue StandardError => error
-        Rails.logger.error("OpenTelemetry config error for #{name}: #{error.full_message}")
+        c.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
+      rescue
       end
-    end
-    config.add_span_processor(
+    }
+    c.add_span_processor(
       OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
         OpenTelemetry::Exporter::OTLP::Exporter.new(
           endpoint: DT_API_URL + "/v1/traces",
