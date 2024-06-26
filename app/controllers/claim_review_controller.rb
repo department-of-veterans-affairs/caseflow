@@ -152,10 +152,6 @@ class ClaimReviewController < ApplicationController
     COPY::VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE
   end
 
-  def vha_established_message
-    "You have successfully edited #{claimant_name}'s #{claim_review.class.review_title}"
-  end
-
   def vha_pending_reviews_message
     "#{claimant_name}'s #{claim_review.class.review_title} was saved."
   end
@@ -185,7 +181,7 @@ class ClaimReviewController < ApplicationController
     if claim_review.pending_issue_modification_requests.any?
       vha_pending_reviews_message_hash
     elsif issues_without_decision_date.empty?
-      { title: vha_established_message, message: vha_edited_message}
+      { title: vha_edited_title, message: vha_edited_message }
     elsif request_issues_update.edited_issues.any?
       { title: "Edit Completed", message: vha_edited_decision_date_message }
     else
