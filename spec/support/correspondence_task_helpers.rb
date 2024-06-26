@@ -58,5 +58,4 @@ module CorrespondenceTaskHelpers
     correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
                                      closed_at: rand(6 * 24 * 60).minutes.ago)
   end
-
 end
