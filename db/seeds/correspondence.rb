@@ -177,7 +177,6 @@ module Seeds
 
     def create_correspondence_with_unassigned_review_package_task(user = {}, veteran = {})
       corres = create_correspondence(user, veteran)
-      create_correspondence_document(corres, veteran, doc_type)
       # vary days waiting to be able to test column sorting
       rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
       rpt.update(assigned_at: corres.va_date_of_receipt)
