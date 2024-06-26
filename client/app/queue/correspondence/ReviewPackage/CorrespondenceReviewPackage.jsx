@@ -274,7 +274,6 @@ export const CorrespondenceReviewPackage = (props) => {
               disableButton,
               setDisableButton,
               setIsReturnToQueue,
-              // fetchData,
               showModal,
               handleModalClose,
               handleReview,
