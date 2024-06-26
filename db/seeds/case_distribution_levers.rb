@@ -100,9 +100,6 @@ module Seeds
     def validate_levers_creation
       levers = CaseDistributionLevers.levers.map { |lever| lever[:item] }
       existing_levers = CaseDistributionLever.all.map(&:item)
-
-      puts "#{CaseDistributionLever.count} levers exist"
-      puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
     end
 
     class << self
@@ -459,7 +456,7 @@ module Seeds
             lever_group_order: 3006
           },
           {
-            item: Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
+            item: Constants.DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals,
             title: "AMA Hearings Start Distribution Prior to Goals",
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.combination,
@@ -475,7 +472,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -487,7 +484,7 @@ module Seeds
             title: "AMA Direct Review Start Distribution Prior to Goals",
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.combination,
-            value: 365,
+            value: 60,
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -499,7 +496,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -523,7 +520,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -531,12 +528,12 @@ module Seeds
             lever_group_order: 4002
           },
           {
-            item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
+            item: Constants.DISTRIBUTION.ama_hearing_docket_time_goals,
             title: "AMA Hearings Docket Time Goals",
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 730,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -562,7 +559,7 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.number,
             value: 550,
             unit: Constants.ACD_LEVERS.days,
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -576,10 +573,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 10
+            lever_group_order: 105,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_legacy_priority,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_legacy_priority,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_legacy_non_priority,
@@ -588,10 +600,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 101
+            lever_group_order: 101,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_legacy_non_priority,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_legacy_non_priority,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
@@ -600,10 +627,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 102
+            lever_group_order: 102,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
@@ -612,22 +654,52 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 103
+            lever_group_order: 103,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 104
+            lever_group_order: 104,
+            control_group: Constants.ACD_LEVERS.non_priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_submission,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_priority_hearing,
@@ -636,10 +708,25 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 105
+            lever_group_order: 106,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
             item: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
@@ -648,22 +735,52 @@ module Seeds
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 106
+            lever_group_order: 107,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
           {
-            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
-            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub_title,
+            item: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+            title: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission_title,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.boolean,
             value: false,
             unit: "",
-            is_disabled_in_ui: true,
+            is_disabled_in_ui: false,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
-            lever_group_order: 107
+            lever_group_order: 108,
+            control_group: Constants.ACD_LEVERS.priority,
+            options: [
+              {
+                displayText: 'On',
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+                value:  'true',
+                disabled: false
+              },
+              {
+                displayText: 'Off',
+                name: Constants.DISTRIBUTION.disable_ama_priority_evidence_submission,
+                value:  'false',
+                disabled: false
+              }
+            ]
           },
         ]
       end
