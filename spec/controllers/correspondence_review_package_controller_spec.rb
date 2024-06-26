@@ -4,6 +4,8 @@ require "pry"
 RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
   let(:correspondence_type) { create(:correspondence_type) }
+  let(:mail_team_supervisor_user) { create(:inbound_ops_team_supervisor) }
+  let(:mail_team_supervisor_org) { InboundOpsTeam.singleton }
   let(:correspondence) { create(:correspondence, veteran: veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: correspondence_type.id } }
   let(:new_file_number) { "50000005" }
@@ -83,8 +85,8 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
 
     it "returns a success response when current user is part of InboundOpsTeam" do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      InboundOpsTeam.singleton.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
       correspondence.save(validate: false)
       get :show, params: { correspondence_uuid: correspondence.uuid }
       expect(response).to have_http_status(:ok)

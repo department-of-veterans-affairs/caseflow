@@ -1503,13 +1503,13 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "correctly filters NOD type" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
+      find("[aria-label='Filter by Package Document Type']").click
       all(".cf-filter-option-row")[1].click
       expect(page).to_not have_content("Non-NOD")
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
+      find("[aria-label='Filter by Package Document Type']").click
       all(".cf-filter-option-row")[1].click
-      find("[aria-label='packageDocTypeColumn. Filtering by true']").click
+      find("[aria-label='Filter by Package Document Type. Filtering by true']").click
       all(".cf-filter-option-row")[2].click
       expect(page).to have_content("Package Document Type (2)")
       expect(page).to have_content("Viewing 1-10 of 10 total")

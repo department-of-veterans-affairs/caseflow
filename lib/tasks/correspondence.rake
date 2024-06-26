@@ -64,7 +64,7 @@ namespace :correspondence do
           notes: doc_type[:description],
           veteran_id: veteran.id,
           nod: nod
-        ).tap
+        )
 
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,

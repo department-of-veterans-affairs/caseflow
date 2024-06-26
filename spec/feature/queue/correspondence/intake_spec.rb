@@ -378,14 +378,14 @@ RSpec.feature("The Correspondence Intake page") do
   context "checks for failed to upload to the eFolder banner after navigating away from page" do
     let(:current_user) { create(:user) }
     before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      MailTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
+      InboundOpsTeam.singleton.add_user(supervisor_user)
+      MailTeam.singleton.add_user(supervisor_user)
+      User.authenticate!(user: supervisor_user)
       FeatureToggle.enable!(:correspondence_queue)
 
       5.times do
         correspondence = create(:correspondence)
-        parent_task = create_correspondence_intake(correspondence, current_user)
+        parent_task = create_correspondence_intake(correspondence, supervisor_user)
         create_efolderupload_task(correspondence, parent_task)
       end
     end
