@@ -57,6 +57,8 @@ export const CorrespondenceReviewPackage = (props) => {
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
+  const isPageReadOnly = (tasks) => tasks?.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+  const hasAssignedReassignPackageTask = (tasks) => tasks?.find((task) => task.status === 'assigned' && task.type === 'ReassignPackageTask');
 
   // const fetchData = async () => {
   //   const correspondence = props;
@@ -168,7 +170,35 @@ export const CorrespondenceReviewPackage = (props) => {
         bannerType: 'error'
       });
     }
+
+    if (isPageReadOnly(props.veteranInformation.correspondence_tasks)){
+       updateReviewPackageDetailsWithTask(props.veteranInformation.correspondence_tasks, 'RemovePackageTask');
+       setBannerInformation({
+         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+         message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
+         bannerType: 'info'
+       });
+       setIsReadOnly(true);
+    }
+
+   if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
+      updateReviewPackageDetailsWithTask(props.veteranInformation.correspondence_tasks, 'ReassignPackageTask');
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
+      setIsReassignPackage(true);
+    }
   }, [props.hasEfolderFailedTask]);
+
+  const updateReviewPackageDetailsWithTask = (tasks, taskType) => {
+    const assignedTask = tasks?.find((task) => task.status === 'assigned' && task.type === taskType);
+    if (assignedTask) {
+      setReviewPackageDetails((prev) => ({ ...prev, taskId: assignedTask.id }));
+    }
+  };
 
   const handleModalClose = () => {
     if (isReturnToQueue) {
