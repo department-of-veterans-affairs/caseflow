@@ -63,22 +63,20 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
       provider: "webex",
       api_call: "GET https://api-usgov.webex.com/v1/rooms#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
-      times: nil,
-      docket_number: nil
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
 
   def webex_room_meeting_details_issues
     room_id = "1234567"
-
+    meeting_title = "221218-977_933_Hearing"
     details = {
       error: { type: "retrieval", expalantion: "retrieve a list of room details from Webex" },
       provider: "webex",
       api_call: "GET https://api-usgov.webex.com/v1/rooms/#{room_id}/meetingInfo",
       response: { status: 400, message: "Sample error message" }.to_json,
-      times: nil,
-      docket_number: nil
+      room_id: room_id,
+      meeting_title: meeting_title
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
@@ -86,6 +84,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
   def webex_recording_list_issues
     max = 100
     meetindId = "123abc"
+    meeting_title = "221218-977_933_Hearing"
     query = "?max=#{max}?meetingId=#{meetindId}"
 
     details = {
@@ -94,7 +93,7 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
       api_call: "GET https://api-usgov.webex.com/v1/admin/recordings/#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
       meeting_id: "123abc",
-      docket_number: nil
+      meeting_title: meeting_title
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
@@ -103,15 +102,16 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
   def webex_recording_details_issues
     recording_id = "12345"
     host_email = "fake@email.com"
+    meeting_title = "221218-977_933_Hearing"
     query = "?hostEmail=#{host_email}"
     details = {
       error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
       provider: "webex",
-      recording_id: recording_id,
-      host_email: host_email,
       api_call: "GET https://api-usgov.webex.com/v1/recordings/#{recording_id}#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
-      docket_number: nil
+      recording_id: recording_id,
+      host_email: host_email,
+      meeting_title: meeting_title
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end

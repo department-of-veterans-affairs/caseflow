@@ -26,8 +26,6 @@ describe Hearings::FetchWebexRoomsListJob, type: :job do
         api_call:
           "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms#{query}",
         response: { status: 400, message: "Fake Error" }.to_json,
-        times: nil,
-        docket_number: nil
       }
     end
 

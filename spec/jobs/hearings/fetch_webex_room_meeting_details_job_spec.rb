@@ -17,7 +17,7 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
   let(:room_id) do
     "Y2lzY29zcGFyazovL3VybjpURUFNOnVzLWdvdi13ZXN0LTFfYTEvUk9PTS85YTZjZTRjMC0xNmM5LTExZWYtYjIxOC1iMWE5YTQ2"
   end
-  let(:meeting_title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1" }
+  let(:meeting_title) { "221218-977_933_Hearing" }
   let(:exception) { Caseflow::Error::WebexApiError.new(code: 300, message: "Error", title: "Bad Error") }
   let(:error_details) do
     {
@@ -26,8 +26,8 @@ describe Hearings::FetchWebexRoomMeetingDetailsJob, type: :job do
       api_call:
         "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms/#{room_id}/meetingInfo",
       response: { status: exception.code, message: exception.message }.to_json,
-      times: nil,
-      docket_number: nil
+      room_id: room_id,
+      meeting_title: meeting_title
     }
   end
 

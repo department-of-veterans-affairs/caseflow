@@ -3,7 +3,7 @@
 describe Hearings::FetchWebexRecordingsListJob, type: :job do
   include ActiveJob::TestHelper
   let(:id) { "f91b6edce9864428af084977b7c68291_I_166641849979635652" }
-  let(:title) { "Virtual Visit - 221218-977_933_Hearing-20240508 1426-1" }
+  let(:title) { "221218-977_933_Hearing" }
 
   subject { described_class.perform_now(meeting_id: id, meeting_title: title) }
 
@@ -48,7 +48,7 @@ describe Hearings::FetchWebexRecordingsListJob, type: :job do
           "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}admin/recordings/#{query}",
         response: { status: exception.code, message: exception.message }.to_json,
         meeting_id: id,
-        docket_number: nil
+        meeting_title: title
       }
     end
 
