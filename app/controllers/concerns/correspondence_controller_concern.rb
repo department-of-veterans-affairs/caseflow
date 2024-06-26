@@ -113,7 +113,7 @@ module CorrespondenceControllerConcern
     }
 
     error_counts.each do |error, count|
-      if (count > 1)
+      if count > 1
         multiple_errors = error_counts.values.count(&:positive?) > 1
         failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
       end
@@ -126,7 +126,8 @@ module CorrespondenceControllerConcern
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity has been reached for user's queue"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR
+      .CAPACITY_ERROR then "maximum capacity has been reached for user's queue"
     end
   end
 

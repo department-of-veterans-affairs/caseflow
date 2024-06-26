@@ -109,7 +109,9 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
       expect(page).to have_content("Correspondence was not assigned to #{target_user.css_id}")
-      expect(page).to have_content("Case was not assigned to user because maximum capacity has been reached for user's queue.")
+      expect(page).to have_content(
+        "Case was not assigned to user because maximum capacity has been reached for user's queue."
+      )
     end
 
     it "successfully loads the assigned tab" do
@@ -167,7 +169,9 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
       expect(page).to have_content("Correspondence was not reassigned to #{target_user.css_id}")
-      expect(page).to have_content("Case was not reassigned to user because maximum capacity has been reached for user's queue.")
+      expect(page).to have_content(
+        "Case was not reassigned to user because maximum capacity has been reached for user's queue."
+      )
     end
 
     it "verifies failure when reassigning a correspondence to an inbound ops team user that lacks NOD permissions" do
@@ -249,7 +253,9 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Reassign", disabled: false)
       find_by_id("button-Reassign").click
       expect(page).to have_content("Not all correspondence was reassigned to #{target_user.css_id}")
-      expect(page).to have_content("3 cases were not reassigned to user because maximum capacity has been reached for user's queue.")
+      expect(page).to have_content(
+        "3 cases were not reassigned to user because maximum capacity has been reached for user's queue."
+      )
     end
   end
 end
