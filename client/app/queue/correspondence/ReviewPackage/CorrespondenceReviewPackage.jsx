@@ -159,6 +159,17 @@ export const CorrespondenceReviewPackage = (props) => {
   //   fetchData();
   // }, []);
 
+  useEffect(() => {
+    // Check for eFolder upload failure
+    if (props.hasEfolderFailedTask) {
+      setBannerInformation({
+        title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+        message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+        bannerType: 'error'
+      });
+    }
+  }, [props.hasEfolderFailedTask]);
+
   const handleModalClose = () => {
     if (isReturnToQueue) {
       setShowModal(!showModal);
