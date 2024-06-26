@@ -281,9 +281,9 @@ class CaseDistributionTest extends React.PureComponent {
                               </a> */}
                               <Button
                                 onClick={this.reseedAmaDocketGoals}
-                                name="Run Demo Ama Docket Goals"
+                                name="Run Docket Time Goal (AMA non-pri) Seeds"
                                 loading={this.state.isReseedingAmaDocketGoals}
-                                loadingText="Reseeding Ama Docket Goals"
+                                loadingText="Reseeding Docket Time Goal (AMA non-pri) Seeds"
                               />
                             </li>
                             <li>
@@ -292,9 +292,9 @@ class CaseDistributionTest extends React.PureComponent {
                               </a> */}
                               <Button
                                 onClick={this.reseedDocketPriority}
-                                name="Run Demo Docket Priority"
+                                name="Run Docket-type Seeds"
                                 loading={this.state.isReseedingDocketPriority}
-                                loadingText="Reseeding Docket Priority"
+                                loadingText="Reseeding Docket-type Seeds"
                               />
                             </li>
                           </ul>
