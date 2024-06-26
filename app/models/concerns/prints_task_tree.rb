@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
+# :reek:DataClump
 module PrintsTaskTree
   extend ActiveSupport::Concern
   include TaskTreeRenderModule
 
-  # :reek:DataClump
   def structure_render(tasks, *attrs)
     TTY::Tree.new(structure(tasks, *attrs)).render
   end
 
-  # :reek:DataClump
   def structure(tasks, *attrs)
     leaf_name = "#{self.class.name} #{task_tree_attributes(*attrs)}"
     { "#{leaf_name}": task_tree_children(tasks).map { |child| child.structure(tasks, *attrs) } }
   end
 
-  # :reek:DataClump
   def structure_as_json(tasks, *attrs)
     leaf_name = self.class.name
     child_tree = task_tree_children(tasks).map { |child| child.structure_as_json(tasks, *attrs) }
