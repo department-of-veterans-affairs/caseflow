@@ -555,10 +555,6 @@ module Seeds
       Organization.subclasses.map { |subclass| subclass.singleton if subclass.respond_to?(:singleton) }
     end
 
-    def count
-      "4"
-    end
-
     def create_qa_test_users
       create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY1", full_name: "QA Attorney_1")
       create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY2", full_name: "QA Attorney_2")
