@@ -150,7 +150,8 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      check_virtual_hearings_links(hearing.reload.virtual_hearing)
+      hearing.reload
+      check_virtual_hearings_links(hearing.virtual_hearing)
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
@@ -244,7 +245,6 @@ RSpec.feature "Hearing Details", :all_dbs do
         User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
-
       include_examples "always updatable fields"
       include_examples "non-virtual hearing types"
     end
