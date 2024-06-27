@@ -9,23 +9,25 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     .new(correspondence)
     .serializable_hash[:data][:attributes]
 
-  end
-
-  def show
-    corres_docs = correspondence.correspondence_documents
-    task_instructions = CorrespondenceTask.package_action_tasks.open
-      .find_by(appeal_id: correspondence.id)&.instructions || ""
-    response_json = {
-      correspondence: correspondence,
-      general_information: general_information,
-      user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
-      correspondence_documents: corres_docs.map do |doc|
-        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-      end,
-      taskInstructions: task_instructions,
-      display_intake_appeal: display_intake_appeal
-    }
-    render({ json: response_json }, status: :ok)
+    respond_to do |format|
+      format.html
+      format.json do
+        corres_docs = @correspondence[:correspondenceDocuments]
+        task_instructions = CorrespondenceTask.package_action_tasks.open
+          .find_by(appeal_id: @correspondence[:id])&.instructions || ""
+        response_json = {
+          correspondence: @correspondence,
+          general_information: general_information,
+          user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
+          correspondence_documents: corres_docs.map do |doc|
+            WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+          end,
+          taskInstructions: task_instructions,
+          display_intake_appeal: display_intake_appeal
+        }
+        render({ json: response_json }, status: :ok)
+      end
+    end
   end
 
   def update
