@@ -51,3 +51,22 @@ echo "==> Installing InstantClient"
 brew tap InstantClientTap/instantclient
 brew install instantclient-basic
 brew install instantclient-sdk
+
+echo "
+===================================
+You must do the following manually:
+"
+
+echo "1. Run Docker and go into advanced preferences to limit Docker's resources
+   in order to keep FACOLS from consuming your Macbook.
+   Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+   "
+
+echo "2. To install the latest and enterprise Oracle Database version follow (https://seanstacey.org/deploying-an-oracle-database-19c-as-a-docker-container/2020/09/) guide.
+    1. Go to http://container-registry.oracle.com/ (Here log in and opt for Database)
+    2. On command line docker login container-registry.oracle.com
+    3. On command line docker pull container-registry.oracle.com/database/enterprise:latest
+   "
+
+echo "==> Close this terminal, open a new terminal, and run ./dev_env_setup_step2.sh
+	in the new terminal."
