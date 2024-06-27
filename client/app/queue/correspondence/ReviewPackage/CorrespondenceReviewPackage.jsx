@@ -276,8 +276,9 @@ export const CorrespondenceReviewPackage = (props) => {
     notes: props.correspondence.notes,
     veteranFullName: props.veteranInformation.veteran_name,
     fileNumber: props.veteranInformation.file_number,
-    packageDocumentType: props.correspondenceDocuments[0].document_title.includes("10182") ? "NOD" : "Non-NOD",
-    vaDor: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD'),
+    packageDocumentType: props.correspondenceDocuments.length &&
+     props.correspondenceDocuments[0].document_title.includes("10182") ? "NOD" : "Non-NOD",
+     vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
     correspondenceTypes: props.correspondenceTypes
   };
 
