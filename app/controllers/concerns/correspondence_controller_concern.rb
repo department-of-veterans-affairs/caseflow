@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# :reek:DataClump
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerConcern
@@ -42,7 +43,6 @@ module CorrespondenceControllerConcern
   end
 
   # :reek:LongParameterList
-  # :reek:DataClump
   def set_banner_params(user, errors, task_count, tab)
     template = message_template(user, errors, task_count, tab)
     @response_type = errors.empty? ? "success" : "warning"
