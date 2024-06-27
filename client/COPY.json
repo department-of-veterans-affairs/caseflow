@@ -1581,7 +1581,7 @@
       "TITLE": "You have successfully generated correspondence for the unassigned tab",
       "MESSAGE": " correspondence have been created for the following Veteran file number(s): "
     }
-  }
+  },
   "VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE": "This is a new issue based on a requested issue addition.",
   "ISSUE_MODIFICATION_REQUESTS": {
     "ADDITION": {
