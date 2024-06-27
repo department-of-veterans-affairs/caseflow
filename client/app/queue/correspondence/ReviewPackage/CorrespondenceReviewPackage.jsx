@@ -28,13 +28,13 @@ export const CorrespondenceReviewPackage = (props) => {
     dropdown_values: props.correspondenceTypes || [],
   });
   const [editableData, setEditableData] = useState({
-    notes: props.correspondence.notes || "",
-    veteran_file_number: props.correspondence.veteranFileNumber || "",
+    notes: props.correspondence.notes || '',
+    veteran_file_number: props.correspondence.veteranFileNumber || '',
     default_select_value: null,
     va_date_of_receipt:
-      moment
-        .utc(props.correspondence.vaDateOfReceipt)
-        .format("YYYY-MM-DD") || "",
+      moment.
+        utc(props.correspondence.vaDateOfReceipt).
+        format('YYYY-MM-DD') || '',
   });
 
   const stateCorrespondence = useSelector(
@@ -54,18 +54,23 @@ export const CorrespondenceReviewPackage = (props) => {
     veteranName: props.correspondence.veteranFullName || '',
     taskId: [],
   });
+  const [fileNumber, setFileNumber] = useState(props.veteranInformation.file_number);
+
+  const handleFileNumberChange = (newValue) => {
+    setFileNumber(newValue)
+  }
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
   const isPageReadOnly = (tasks) =>
     tasks?.find(
-      (task) => task.status === "assigned" && task.type === "RemovePackageTask"
+      (task) => task.status === 'assigned' && task.type === 'RemovePackageTask'
     );
   const hasAssignedReassignPackageTask = (tasks) =>
     tasks?.find(
       (task) =>
-        task.status === "assigned" && task.type === "ReassignPackageTask"
+        task.status === 'assigned' && task.type === 'ReassignPackageTask'
     );
 
   // const fetchData = async () => {
@@ -179,17 +184,17 @@ export const CorrespondenceReviewPackage = (props) => {
       });
     }
 
-    if (isPageReadOnly(props.veteranInformation.correspondence_tasks)){
-       updateReviewPackageDetailsWithTask(props.veteranInformation.correspondence_tasks, 'RemovePackageTask');
-       setBannerInformation({
-         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-         message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
-         bannerType: 'info'
-       });
-       setIsReadOnly(true);
+    if (isPageReadOnly(props.veteranInformation.correspondence_tasks)) {
+      updateReviewPackageDetailsWithTask(props.veteranInformation.correspondence_tasks, 'RemovePackageTask');
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
     }
 
-   if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
+    if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
       updateReviewPackageDetailsWithTask(props.veteranInformation.correspondence_tasks, 'ReassignPackageTask');
       setBannerInformation({
         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -204,6 +209,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const updateReviewPackageDetailsWithTask = (tasks, taskType) => {
     const assignedTask = tasks?.find((task) => task.status === 'assigned' && task.type === taskType);
+
     if (assignedTask) {
       setReviewPackageDetails((prev) => ({ ...prev, taskId: assignedTask.id }));
     }
@@ -275,10 +281,10 @@ export const CorrespondenceReviewPackage = (props) => {
   const NEW_DATA_CHANGEME = {
     notes: props.correspondence.notes,
     veteranFullName: props.veteranInformation.veteran_name,
-    fileNumber: props.veteranInformation.file_number,
+    fileNumber: fileNumber,
     packageDocumentType: props.correspondenceDocuments.length &&
-     props.correspondenceDocuments[0].document_title.includes("10182") ? "NOD" : "Non-NOD",
-     vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
+     props.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
+    vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
     correspondenceTypes: props.correspondenceTypes
   };
 
@@ -317,6 +323,8 @@ export const CorrespondenceReviewPackage = (props) => {
               NEW_DATA_CHANGEME,
               reviewDetails,
               setReviewDetails,
+              handleFileNumberChange,
+              fileNumber,
               editableData,
               setEditableData,
               disableButton,

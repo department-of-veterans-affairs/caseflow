@@ -193,13 +193,13 @@ export const ReviewForm = (props) => {
 
     return <div className="veternal-file-styling-review-form">
       <TextField
-        label="Veteran file number"
-        value={props.NEW_DATA_CHANGEME.fileNumber}
-        onChange={handleFileNumber}
+        label="Veteran file nummber"
+        value={props.fileNumber}
+        onChange={props.handleFileNumberChange}
         name="veteran-file-number-input"
         useAriaLabel
         errorMessage={props.errorMessage}
-        readOnly={props.isReadOnly}
+        // readOnly={props.isReadOnly}
       />
     </div>;
 
