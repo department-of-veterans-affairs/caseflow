@@ -9,12 +9,12 @@ require 'bundler/setup'
 # require 'opentelemetry/instrumentation/active_job'
 # require 'opentelemetry/instrumentation/active_model_serializers'
 # require 'opentelemetry/instrumentation/rack'
-# require 'opentelemetry/instrumentation/rails'
 
 require 'opentelemetry/sdk'
-require 'opentelemetry/instrumentation/active_record'
+require 'opentelemetry/exporter/otlp'
 require 'opentelemetry/instrumentation/rack'
 require 'opentelemetry/instrumentation/rails'
+require 'opentelemetry/instrumentation/active_record'
 # rubocop:disable Layout/LineLength
 
 DT_API_URL = ENV["DT_API_URL"]
@@ -26,7 +26,11 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
   OpenTelemetry::SDK.configure do |c|
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
-    c.use_all #application will be using all instrumentation provided by OpenTelemetry
+    # c.use_all # application will be using all instrumentation provided by OpenTelemetry
+    c.use 'OpenTelemetry::Instrumentation::Rails'
+    c.use 'OpenTelemetry::Instrumentation::Rack'
+    c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+
     %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_host_metadata.properties].each { |name|
       begin
         c.resource = OpenTelemetry::SDK::Resources::Resource.create(Hash[*File.read(name.start_with?("/var") ? name : File.read(name)).split(/[=\n]+/)])
