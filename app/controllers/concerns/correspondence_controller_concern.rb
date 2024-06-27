@@ -41,7 +41,7 @@ module CorrespondenceControllerConcern
     )
   end
 
-  # reek:DataClump and :reek:LongParameterList
+  # :reek:DataClump and :reek:LongParameterList
   def set_banner_params(user, errors, task_count, tab)
     template = message_template(user, errors, task_count, tab)
     @response_type = errors.empty? ? "success" : "warning"
