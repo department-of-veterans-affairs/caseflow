@@ -1,0 +1,14 @@
+{
+  "retrieval": {
+    "success": "Successful retrieval (Webex)",
+    "failure": "Failed retrieval (Webex)"
+  },
+  "upload": {
+    "success": "Successful upload (AWS)",
+    "failure": "Failed upload (AWS)"
+  },
+  "conversion": {
+    "success": "Successful conversion",
+    "failure": "Failed conversion"
+  }
+}

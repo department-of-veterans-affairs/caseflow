@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AmaNotificationEfolderSyncJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
@@ -38,7 +40,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     Appeal
       .where(id: RootTask.where(
         appeal_type: "Appeal",
-        status: "completed",
+        status: Constants.TASK_STATUSES.completed,
         closed_at: 1.day.ago..Time.zone.now
       )
       .pluck(:appeal_id)
