@@ -9,7 +9,6 @@ import Tooltip from './Tooltip';
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 import { helpText } from './RadioField.module.scss';
-
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
 
@@ -26,7 +25,12 @@ RadioFieldHelpText.propTypes = {
  * See StyleGuideRadioField.jsx for usage examples.
  */
 
+// Correspondence: Refactor Candidate
+// CodeClimate: Identical blocks of code with RadioField
+/* eslint-disable */
+
 export const RadioFieldWithChildren = (props) => {
+
   const {
     id,
     className,

@@ -46,14 +46,14 @@
       "fingerprint": "423f180bb8e4dc3808789fd57fdea4b6fb50ac23eb024d1ab4bbf706938fea41",
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
-      "file": "app/controllers/correspondence_controller.rb",
-      "line": 99,
+      "file": "app/controllers/correspondence_review_package_controller.rb",
+      "line": 63,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(Document.find(params[:pdf_id]).serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{params[:type]}-#{params[:id]}.pdf'\")))",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "CorrespondenceController",
+        "class": "CorrespondenceReviewPackageController",
         "method": "pdf"
       },
       "user_input": "Document.find(params[:pdf_id]).serve",
