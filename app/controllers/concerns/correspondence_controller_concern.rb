@@ -87,7 +87,7 @@ module CorrespondenceControllerConcern
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
     failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
 
-    failure_message = build_failure_message(errors, action_prefix)
+    failure_message = build_multi_error_message(errors, action_prefix)
 
     # return JSON message
     {
@@ -96,7 +96,7 @@ module CorrespondenceControllerConcern
     }
   end
 
-  def build_failure_message(errors, action_prefix)
+  def build_multi_error_message(errors, action_prefix)
     failure_message = []
 
     # Get error counts
