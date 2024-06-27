@@ -38,8 +38,6 @@ export const CorrespondenceReviewPackage = (props) => {
     (state) => state.reviewPackage.correspondence
   );
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
-  const [apiResponse, setApiResponse] = useState(null);
-  // console.log(apiResponse);
   const [disableButton, setDisableButton] = useState(false);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -217,10 +215,10 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== apiResponse.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
-    const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
+    const notesChanged = editableData.notes !== props.correspondence.notes;
+    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.file_number;
+    const selectValueChanged = editableData.default_select_value !== props.correspondence.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== props.correspondence.va_date_of_receipt;
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
@@ -255,13 +253,13 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   useEffect(() => {
-    if (apiResponse) {
+    if (props.correspondence) {
       const hasChanged = isEditableDataChanged();
 
       setDisableButton(hasChanged);
       setErrorMessage('');
     }
-  }, [editableData, apiResponse]);
+  }, [editableData, props.correspondence]);
 
   const NEW_DATA_CHANGEME = {
     notes: props.correspondence.notes,
