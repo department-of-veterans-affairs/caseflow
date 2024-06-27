@@ -77,34 +77,13 @@ const ExclusionTable = () => {
 
   const handleToggleChange = (isPriority) => {
     if (isPriority) {
-      if (comboPriorityToggle) {
-        let priorityStatus = false;
+      const toggleState = priorityToggle !== true;
 
-        setPriorityToggle(priorityStatus);
-        const leverStatus = 'false';
+      setPriorityToggle(toggleState);
+      const newToggleState = toggleState ? 'true' : 'false';
 
-        priorityRadios.forEach((lever) => {
-          dispatch(updateLeverValue(lever.leverGroup, lever.item, leverStatus));
-        });
-      } else {
-        const toggleState = priorityToggle !== true;
-
-        setPriorityToggle(toggleState);
-        const newToggleState = toggleState ? 'true' : 'false';
-
-        priorityRadios.forEach((lever) => {
-          dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
-        });
-      }
-
-    } else if (comboNonPriorityToggle) {
-      let nonPriorityStatus = false;
-
-      setNonPriorityToggle(nonPriorityStatus);
-      const leverStatus = 'false';
-
-      nonPriorityRadios.forEach((lever) => {
-        dispatch(updateLeverValue(lever.leverGroup, lever.item, leverStatus));
+      priorityRadios.forEach((lever) => {
+        dispatch(updateLeverValue(lever.leverGroup, lever.item, newToggleState));
       });
     } else {
       const toggleState = nonPriorityToggle !== true;
@@ -140,8 +119,8 @@ const ExclusionTable = () => {
       <table >
         <thead>
           <tr>
-            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
-              'table-header-member-styling')} scope="column">{' '}</th>
+            <div className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column" aria-hidden="true"></div>
             <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
               'table-header-member-styling')} scope="column">
               {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
