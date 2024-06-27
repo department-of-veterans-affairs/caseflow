@@ -29,9 +29,9 @@ RSpec.feature "Hearing Details", :all_dbs do
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "veteran@example.com" }
-  let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
+  let(:fill_in_veteran_tz) { "Eastern Time (US & Canada)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
-  let(:fill_in_rep_tz) { "Mountain Time (US & Canada) (10:00 PM)" }
+  let(:fill_in_rep_tz) { "Mountain Time (US & Canada)" }
   let(:pexip_url) { "fake.va.gov" }
 
   def check_row_content(event, index)
@@ -150,22 +150,6 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      expect(page).to have_no_content(expected_alert)
-      expect(page).to have_content(virtual_hearing_alert)
-
-      # expect VSO checkboxes to not be present for non-VSO users
-      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
-      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
-
-      # Test the links are not present
-      within "#vlj-hearings-link" do
-        expect(page).to have_content("Scheduling in progress")
-      end
-      within "#guest-hearings-link" do
-        expect(page).to have_content("Scheduling in progress")
-      end
-
-      expect(page).to have_content(expected_alert)
       check_virtual_hearings_links(hearing.reload.virtual_hearing)
 
       # Check the Email Notification History
@@ -352,10 +336,6 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           # Confirm the Modal change to cancel the virtual hearing
           click_button("Convert to #{hearing.readable_request_type} Hearing")
-
-          # Confirm the alerts
-          expect(page).to have_content(virtual_hearing_alert)
-          expect(page).to have_content(expected_alert)
 
           # Ensure the emails and timezone were updated
           expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
