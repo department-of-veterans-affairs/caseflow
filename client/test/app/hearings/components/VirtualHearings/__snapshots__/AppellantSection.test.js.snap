@@ -112,6 +112,8 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -827,6 +829,8 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -17195,6 +17199,8 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -17406,6 +17412,8 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -17622,6 +17630,8 @@ exports[`Appellant Matches snapshot with default props 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }

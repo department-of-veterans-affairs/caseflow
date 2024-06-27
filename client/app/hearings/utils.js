@@ -426,9 +426,7 @@ export const timezones = (time, roTimezone) => {
   // Get the list of Regional Office Timezones
   const ros = roTimezones();
 
-
   if (!isNil(time)) {
-
     const getAmTime = time.search('AM');
     const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
