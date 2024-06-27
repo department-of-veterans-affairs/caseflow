@@ -5,6 +5,8 @@
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_upload_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_conversion_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/file_name_issues
+#   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/webex_rooms_list_issues
+#   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/webex_room_meeting_details_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/webex_recording_list_issues
 #   http://localhost:3000/rails/mailers/transcription_file_issues_mailer/webex_recording_details_issues
 class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
@@ -50,16 +52,47 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
 
+  def webex_rooms_list_issues
+    sort_by = "created"
+    max = 1000
+    query = "?sortBy=#{sort_by}&max=#{max}"
+
+    details = {
+      error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
+      provider: "webex",
+      api_call: "GET https://api-usgov.webex.com/v1/rooms#{query}",
+      response: { status: 400, message: "Sample error message" }.to_json
+    }
+    TranscriptionFileIssuesMailer.issue_notification(details)
+  end
+
+  def webex_room_meeting_details_issues
+    room_id = "1234567"
+    meeting_title = "221218-977_933_Hearing"
+    details = {
+      error: { type: "retrieval", explanation: "retrieve a list of room details from Webex" },
+      provider: "webex",
+      api_call: "GET https://api-usgov.webex.com/v1/rooms/#{room_id}/meetingInfo",
+      response: { status: 400, message: "Sample error message" }.to_json,
+      room_id: room_id,
+      meeting_title: meeting_title
+    }
+    TranscriptionFileIssuesMailer.issue_notification(details)
+  end
+
   def webex_recording_list_issues
-    query = "?max=100?meetingId=123abc"
+    max = 100
+    meeting_id = "123abc"
+    meeting_title = "221218-977_933_Hearing"
+    query = "?max=#{max}&meetingId=#{meeting_id}"
 
     details = {
       error: { type: "retrieval", explanation: "retrieve a list of recordings from Webex" },
       provider: "webex",
-      api_call: "GET webex.com/recordings/list/#{query}",
+      api_call: "GET https://api-usgov.webex.com/v1/admin/recordings/#{query}",
       response: { status: 400, message: "Sample error message" }.to_json,
       meeting_id: "123abc",
-      docket_number: nil
+      meeting_title: meeting_title
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
@@ -67,15 +100,16 @@ class TranscriptionFileIssuesMailerPreview < ActionMailer::Preview
   def webex_recording_details_issues
     recording_id = "12345"
     host_email = "fake@email.com"
+    meeting_title = "221218-977_933_Hearing"
     query = "?hostEmail=#{host_email}"
     details = {
       error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
       provider: "webex",
+      api_call: "GET https://api-usgov.webex.com/v1/recordings/#{recording_id}#{query}",
+      response: { status: 400, message: "Sample error message" }.to_json,
       recording_id: recording_id,
       host_email: host_email,
-      api_call: "GET webex.com/recordings/details/#{recording_id}#{query}",
-      response: { status: 400, message: "Sample error message" }.to_json,
-      docket_number: nil
+      meeting_title: meeting_title
     }
     TranscriptionFileIssuesMailer.issue_notification(details)
   end
