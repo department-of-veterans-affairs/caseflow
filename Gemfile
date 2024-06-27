@@ -10,6 +10,9 @@ gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
+
+gem "aws-sdk-core", "3.131.0"
+
 # BGS
 
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
