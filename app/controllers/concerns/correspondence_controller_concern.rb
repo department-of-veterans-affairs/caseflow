@@ -70,9 +70,11 @@ module CorrespondenceControllerConcern
   def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
       "assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence #{action_prefix}assignment to #{user.css_id} has failed"
+    failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{user.css_id}"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
-    failure_message = errors.uniq.join(", ")
+
+    failure_message = build_single_error_message(action_prefix, error_reason(errors[0]))
+
     {
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
       message: errors.empty? ? success_message : failure_message
@@ -85,7 +87,7 @@ module CorrespondenceControllerConcern
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
     failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
 
-    failure_message = build_failure_message(errors, action_prefix)
+    failure_message = build_multi_error_message(errors, action_prefix)
 
     # return JSON message
     {
@@ -94,7 +96,7 @@ module CorrespondenceControllerConcern
     }
   end
 
-  def build_failure_message(errors, action_prefix)
+  def build_multi_error_message(errors, action_prefix)
     failure_message = []
 
     # Get error counts
@@ -124,13 +126,20 @@ module CorrespondenceControllerConcern
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR then "maximum capacity reached for user's queue"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR
+      .CAPACITY_ERROR then "maximum capacity has been reached for user's queue"
     end
   end
 
+  def build_single_error_message(action_prefix, reason)
+    # Build error message for single correspondence based on error types
+    message = "Case was not #{action_prefix}assigned to user because #{reason}."
+    message
+  end
+
   def build_error_message(count, action_prefix, reason, use_bullet)
-    # Build message based on error types
-    message = "#{count} cases were not #{action_prefix}assigned"
+    # Build error message for multiple correspondence based on error types
+    message = "#{count} cases were not #{action_prefix}assigned to user"
     message = "• #{message}" if use_bullet
     message += " because #{reason}." unless count.zero?
     message
