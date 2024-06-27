@@ -16,6 +16,9 @@
 
 module IhpTaskPending
   extend AppellantNotification
+  # rubocop:disable all
+  @@template_name = "VSO IHP pending"
+  # rubocop:enable all
 
   # All variants of IHP Tasks
   IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
@@ -35,7 +38,7 @@ module IhpTaskPending
         "for #{@parent.appeal.class} ID #{@parent.appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(@parent.appeal, Constants.EVENT_TYPE_FILTERS.vso_ihp_pending)
+        AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
       end
     end
     super_return_value
@@ -58,7 +61,7 @@ module IhpTaskPending
         "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.vso_ihp_pending)
+        AppellantNotification.notify_appellant(appeal, @@template_name)
       end
     end
     super_return_value
@@ -73,7 +76,12 @@ module IhpTaskPending
   # Response: Update 'vso_ihp_pending' column to True
   def update_appeal_state_when_ihp_created
     if IHP_TYPE_TASKS.include?(type)
-      appeal.appeal_state.vso_ihp_pending_appeal_state_update_action!
+      MetricsService.record("Updating VSO_IHP_PENDING column to TRUE & VSO_IHP_COMPLETE column to FALSE in"\
+        " Appeal States Table for #{appeal.class} ID #{appeal.id}",
+                            service: nil,
+                            name: "AppellantNotification.appeal_mapper") do
+        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
+      end
     end
   end
 end

@@ -58,7 +58,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(5)
+            .exactly(10)
             .times
         )
       end
@@ -170,7 +170,7 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       it "job goes back on queue and logs if error", :aggregate_failures do
-        expect(Rails.logger).to receive(:error).exactly(6).times
+        expect(Rails.logger).to receive(:error).exactly(11).times
 
         expect do
           perform_enqueued_jobs do
@@ -178,7 +178,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(5)
+            .exactly(10)
             .times
         )
 

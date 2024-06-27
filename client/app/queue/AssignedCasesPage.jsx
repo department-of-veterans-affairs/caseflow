@@ -18,7 +18,6 @@ import {
 import Alert from '../components/Alert';
 
 import COPY from '../../COPY';
-import { DEFAULT_QUEUE_TABLE_SORT } from './constants';
 
 /**
  * Component showing the cases assigned to a specific attorney referenced by `attorneyId`.
@@ -122,8 +121,7 @@ class AssignedCasesPage extends React.Component {
         includeReaderLink
         includeNewDocsIcon
         tasks={this.props.tasksOfAttorney}
-        userId={attorneyId}
-        defaultSort={DEFAULT_QUEUE_TABLE_SORT} />
+        userId={attorneyId} />
     </React.Fragment>;
   }
 }

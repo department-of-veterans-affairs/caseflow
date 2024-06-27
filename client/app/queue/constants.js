@@ -11,7 +11,6 @@ import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflo
 import COPY from '../../COPY';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID';
-import { DEFAULT_SORTING_COLUMN_KEY, DEFAULT_SORTING_DIRECTION_KEY, COLUMNS } from '../../constants/QUEUE_CONFIG';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -291,9 +290,3 @@ export const DECISION_SPECIAL_ISSUES = [
     requiresJustification: false
   }
 ];
-
-export const DEFAULT_QUEUE_TABLE_SORT = {
-  [DEFAULT_SORTING_COLUMN_KEY]: COLUMNS.APPEAL_TYPE.name,
-  [DEFAULT_SORTING_DIRECTION_KEY]: true
-};
-

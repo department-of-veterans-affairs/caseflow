@@ -13,8 +13,6 @@ RSpec.describe HearingsController, type: :controller do
   let!(:vso_participant_id) { "12345" }
 
   describe "PATCH update" do
-    let(:legacy_appeal_state) { legacy_hearing.appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
-
     it "should be successful", :aggregate_failures do
       params = {
         notes: "Test",
@@ -27,9 +25,6 @@ RSpec.describe HearingsController, type: :controller do
         },
         prepped: true
       }
-
-      expect(legacy_appeal_state.hearing_scheduled).to eq true
-
       patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["data"]
@@ -40,12 +35,10 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["disposition"]).to eq "held"
       expect(response_body["location"]["facility_id"]).to eq "vba_301"
       expect(response_body["prepped"]).to eq true
-      expect(legacy_appeal_state.reload.hearing_scheduled).to eq false
     end
 
     context "when updating an ama hearing" do
       let!(:hearing) { create(:hearing, :with_tasks) }
-      let(:appeal_state) { hearing.appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
 
       it "should update an ama hearing", :aggregate_failures do
         params = {
@@ -58,9 +51,6 @@ RSpec.describe HearingsController, type: :controller do
           prepped: true,
           evidence_window_waived: true
         }
-
-        expect(appeal_state.hearing_scheduled).to eq true
-
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["data"]
@@ -70,7 +60,6 @@ RSpec.describe HearingsController, type: :controller do
         expect(response_body["prepped"]).to eq true
         expect(response_body["location"]["facility_id"]).to eq "vba_301"
         expect(response_body["evidence_window_waived"]).to eq true
-        expect(appeal_state.reload.hearing_scheduled).to eq false
       end
     end
 

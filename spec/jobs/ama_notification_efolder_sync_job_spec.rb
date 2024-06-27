@@ -21,7 +21,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeal.uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: Time.zone.now - (10 - index).minutes,
                email_notification_status: "delivered")
@@ -38,8 +38,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
     before(:all) { Seeds::NotificationEvents.new.seed! }
     before(:each) { stub_const("AmaNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
-
-    after(:all) { DatabaseCleaner.clean_with(:truncation, except: %w[vftypes issref]) }
 
     context "first run" do
       after(:all) { clean_up_after_threads }
@@ -61,7 +59,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[6].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")
@@ -87,7 +85,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[6].uuid,
                appeals_type: appeals[6].class.name,
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_decision_mailed_non_contested_claims,
+               event_type: "Appeal decision mailed (Non-contested claims)",
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")
@@ -123,7 +121,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[6].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "Failure Due to Deceased")
@@ -153,7 +151,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")
@@ -215,7 +213,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: 2.minutes.ago,
                email_notification_status: "delivered")
@@ -231,7 +229,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: 1.minute.ago,
                email_notification_status: "Failure Due to Deceased")
@@ -246,7 +244,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
                event_date: today,
-               event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
+               event_type: "Appeal docketed",
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")

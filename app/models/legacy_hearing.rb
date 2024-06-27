@@ -35,13 +35,10 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
-
-  # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
-  prepend HearingHeld
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -400,7 +397,6 @@ class LegacyHearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
-    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user

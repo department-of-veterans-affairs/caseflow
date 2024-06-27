@@ -442,6 +442,15 @@
       "zip" : "89086",
       "timezone" : "America/Los_Angeles"
    },
+   "vc_0505V" : {
+      "address_1" : "7455 W. Washington Ave.",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Las Vegas",
+      "state" : "NV",
+      "zip" : "89128",
+      "timezone" : "America/Los_Angeles"
+   },
    "vba_355" : {
       "address_1" : "50 Carr 165",
       "address_2" : null,

@@ -113,26 +113,34 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseReaderLinkColumn()
       ])), ['order'], ['desc']);
 
-  getDefaultSortHash = () => {
-    if (this.props.defaultSort) {
-      return this.props.defaultSort;
+  getDefaultSortableColumn = () => {
+    if (this.props.defaultSortIdx) {
+      return this.props.defaultSortIdx;
     }
+    const index = _.findIndex(this.getQueueColumns(),
+      (column) => column.header === COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE);
+
+    if (index >= 0) {
+      return index;
+    }
+
+    return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-    render = () => <QueueTable
-      columns={this.getQueueColumns()}
-      rowObjects={this.props.tasks}
-      getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-      defaultSort={this.getDefaultSortHash()}
-      enablePagination
-      onHistoryUpdate={this.props.onHistoryUpdate}
-      preserveFilter={this.props.preserveQueueFilter}
-      rowClassNames={(task) =>
-        (this.taskHasDASRecord(task) || !this.props.requireDasRecord) ? null : 'usa-input-error'}
-      taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
-      useTaskPagesApi={this.props.useTaskPagesApi}
-      tabPaginationOptions={this.props.tabPaginationOptions}
-    />;
+  render = () => <QueueTable
+    columns={this.getQueueColumns()}
+    rowObjects={this.props.tasks}
+    getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+    defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+    enablePagination
+    onHistoryUpdate={this.props.onHistoryUpdate}
+    preserveFilter={this.props.preserveQueueFilter}
+    rowClassNames={(task) =>
+      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
+    taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
+    useTaskPagesApi={this.props.useTaskPagesApi}
+    tabPaginationOptions={this.props.tabPaginationOptions}
+  />;
 }
 
 TaskTableUnconnected.propTypes = {
@@ -155,10 +163,7 @@ TaskTableUnconnected.propTypes = {
   includeReaderLink: PropTypes.bool,
   includeNewDocsIcon: PropTypes.bool,
   customColumns: PropTypes.array,
-  defaultSort: PropTypes.shape({
-    sortColName: PropTypes.string,
-    sortAscending: PropTypes.bool
-  }),
+  defaultSortIdx: PropTypes.number,
   getKeyForRow: PropTypes.func,
   taskPagesApiEndpoint: PropTypes.string,
   useTaskPagesApi: PropTypes.bool,

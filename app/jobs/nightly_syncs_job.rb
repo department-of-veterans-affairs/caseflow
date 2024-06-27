@@ -11,7 +11,6 @@ class NightlySyncsJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     @slack_report = []
 
-    sync_hearing_states
     sync_vacols_cases
     sync_vacols_users
     sync_decision_review_tasks
@@ -88,22 +87,5 @@ class NightlySyncsJob < CaseflowJob
     reporter = LegacyAppealsWithNoVacolsCase.new
     reporter.call
     reporter.buffer.map { |vacols_id| LegacyAppeal.find_by(vacols_id: vacols_id) }
-  end
-
-  # Adjusts any appeal states appropriately if it is found that a seemingly pending
-  #  hearing has been marked with a disposition in VACOLS without Caseflow's knowledge.
-  def sync_hearing_states
-    AppealState.where(appeal_type: "LegacyAppeal", hearing_scheduled: true).each do |state|
-      case state.appeal&.hearings&.max_by(&:scheduled_for)&.disposition
-      when Constants.HEARING_DISPOSITION_TYPES.held
-        state.hearing_held_appeal_state_update_action!
-      when Constants.HEARING_DISPOSITION_TYPES.cancelled
-        state.hearing_withdrawn_appeal_state_update_action!
-      when Constants.HEARING_DISPOSITION_TYPES.postponed
-        state.hearing_postponed_appeal_state_update_action!
-      when Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-        state.scheduled_in_error_appeal_state_update_action!
-      end
-    end
   end
 end
