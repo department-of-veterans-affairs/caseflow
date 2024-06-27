@@ -20,11 +20,29 @@ module Seeds
     def initial_file_number_and_participant_id
       @file_number ||= 520_000_000
       @participant_id ||= 920_000_000
+      @tied_to_file_number ||= 550_000_000
+      @tied_to_participant_id ||= 950_000_000
       # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
       while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 1000
         @participant_id += 1000
       end
+
+      while Veteran.find_by(file_number: format("%<n>09d", n: @tied_to_file_number + 1))
+        @tied_to_file_number += 1000
+        @tied_to_participant_id += 1000
+      end
+    end
+
+    def create_veteran_for_tied_to
+      @tied_to_file_number += 1
+      @tied_to_participant_id += 1
+
+      Veteran.find_by_participant_id(@tied_to_participant_id) || create(
+        :veteran,
+        file_number: format("%<n>09d", n: @tied_to_file_number),
+        participant_id: format("%<n>09d", n: @tied_to_participant_id)
+      )
     end
 
     def create_veteran
@@ -138,12 +156,12 @@ module Seeds
         .update!(bfmemid: affinity_and_tied_to_judge.sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, appeal_affinity: false)
 
         # hearing held but no previous deciding judge
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney)
@@ -178,9 +196,9 @@ module Seeds
         .update!(bfmemid: excluded_judge.sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney, appeal_affinity: false)
     end
 
     def create_cases_for_cavc_affinity_days_lever_ineligible_judge
@@ -200,11 +218,11 @@ module Seeds
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: other_judge, attorney: attorney, appeal_affinity: false)
         .update!(bfmemid: ineligible_judge.sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney,  affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney,  appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney,  affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney,  appeal_affinity: false)
         # hearing held but no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney).update!(bfmemid: nil)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney).update!(bfmemid: nil)
     end
 
     def create_cases_for_cavc_aod_affinty_days_lever
@@ -229,12 +247,12 @@ module Seeds
           .update!(bfmemid: affinity_and_tied_to_judge.sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true, appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: affinity_and_tied_to_judge, attorney: attorney, aod: true, appeal_affinity: false)
         # hearing held but no previous deciding judge
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: tied_to_judge, attorney: attorney, aod: true)
         .update!(bfmemid: nil)
@@ -261,9 +279,9 @@ module Seeds
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: other_judge, attorney: attorney, aod: true, appeal_affinity: false)
           .update!(bfmemid: excluded_judge.sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney, aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: excluded_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney, aod: true)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: excluded_judge, attorney: attorney, aod: true, appeal_affinity: false)
     end
 
     def create_cases_for_cavc_aod_affinity_days_lever_ineligible_judge
@@ -280,9 +298,9 @@ module Seeds
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: other_judge, attorney: attorney, aod: true, appeal_affinity: false)
           .update!(bfmemid: ineligible_judge.sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_tied_to.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true, appeal_affinity: false)
         # hearing held but no previous deciding judge
         create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran.file_number}S", judge: ineligible_judge, attorney: attorney, aod: true)
           .update!(bfmemid: nil)
