@@ -90,9 +90,7 @@ export const caseDetailsColumn = () => {
             {transcriptionFile.caseDetails}
           </LinkToAppeal>
         )}
-        {!transcriptionFile.externalAppealId && (
-          <div>{transcriptionFile.caseDetails}</div>
-        )}
+        
       </div>
     )
   };
