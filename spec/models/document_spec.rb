@@ -232,6 +232,19 @@ describe Document, :postgres do
         expect(subject.type).to eq("VA Form 20-0995 Supplemental Claim Application")
       end
     end
+
+    context "when use_ce_api Featuretoggle is enabled" do
+      before { FeatureToggle.enable!(:use_ce_api) }
+      let(:vbms_document) do
+        OpenStruct.new(
+          document_id: "1",
+          series_id: "2"
+        )
+      end
+      it "assigns the series_id" do
+        expect(subject.series_id).to eq("2")
+      end
+    end
   end
 
   context "content tests" do
