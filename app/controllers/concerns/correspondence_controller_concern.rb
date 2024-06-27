@@ -87,7 +87,7 @@ module CorrespondenceControllerConcern
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
     failure_header = "Not all correspondence was #{action_prefix}assigned to #{user.css_id}"
 
-    failure_message = build_failure_message(errors, action_prefix)
+    failure_message = build_multi_error_message(errors, action_prefix)
 
     # return JSON message
     {
@@ -96,7 +96,7 @@ module CorrespondenceControllerConcern
     }
   end
 
-  def build_failure_message(errors, action_prefix)
+  def build_multi_error_message(errors, action_prefix)
     failure_message = []
 
     # Get error counts
@@ -113,7 +113,7 @@ module CorrespondenceControllerConcern
     }
 
     error_counts.each do |error, count|
-      if count > 1
+      if count.positive?
         multiple_errors = error_counts.values.count(&:positive?) > 1
         failure_message << build_error_message(count, action_prefix, error_reason(error), multiple_errors)
       end
