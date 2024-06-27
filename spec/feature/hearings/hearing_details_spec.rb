@@ -150,9 +150,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      using_wait_time(10) do
-        check_virtual_hearings_links(hearing.reload.virtual_hearing)
-      end
+      hearing.reload
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
@@ -168,6 +166,8 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
+
+      check_virtual_hearings_links(hearing.virtual_hearing)
     end
 
     scenario "user can optionally change emails and timezone" do
