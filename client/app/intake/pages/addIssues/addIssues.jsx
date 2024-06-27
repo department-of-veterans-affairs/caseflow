@@ -327,14 +327,10 @@ class AddIssuesPage extends React.Component {
       userCanEditIntakeIssues,
       userIsVhaAdmin,
       userCanSplitAppeal,
-<<<<<<< HEAD
       userCanRequestIssueUpdates,
       isLegacy,
       pendingIssueModificationRequests,
-=======
-      isLegacy,
       intakeFromVbms
->>>>>>> uat/FY24Q3.5.1
     } = this.props;
 
     const intakeData = intakeForms[formType];
@@ -964,7 +960,6 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    isLegacy: state.isLegacy,
     isLegacy: state.isLegacy,
     intakeFromVbms: state.intakeFromVbms
   }),
