@@ -227,9 +227,9 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const isEditableDataChanged = () => {
     const notesChanged = editableData.notes !== props.correspondence.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.file_number;
-    const selectValueChanged = editableData.default_select_value !== props.correspondence.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== props.correspondence.va_date_of_receipt;
+    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
+    const selectValueChanged = editableData.default_select_value !== props.correspondence.correspondenceType;
+    const selectDateChanged = editableData.va_date_of_receipt !== props.correspondence.vaDateOfReceipt;
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
@@ -280,9 +280,6 @@ export const CorrespondenceReviewPackage = (props) => {
     vaDor: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD'),
     correspondenceTypes: props.correspondenceTypes
   };
-
-  //moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-  console.log(moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD'));
 
   return (
     <div>
