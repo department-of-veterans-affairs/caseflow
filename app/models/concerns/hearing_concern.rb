@@ -5,6 +5,7 @@
 ##
 module HearingConcern
   extend ActiveSupport::Concern
+  include RunAsyncable
 
   CLOSED_HEARING_DISPOSITIONS = [
     Constants.HEARING_DISPOSITION_TYPES.postponed,
@@ -134,5 +135,19 @@ module HearingConcern
         TranscriptionFileSerializer.new(file).serializable_hash[:data][:attributes]
       end
     end
+  end
+
+  def start_non_virtual_hearing_job?
+    disposition.nil? && conference_provider == "webex" &&
+      virtual_hearing.nil? && ConferenceLink.find_by(hearing_id: id).nil?
+  end
+
+  def start_non_virtual_hearing_job
+    perform_later_or_now(Hearings::CreateNonVirtualConferenceJob, hearing: self)
+  end
+
+  # Complexity of create schedule hearing task was too large - had to break out
+  def maybe_create_non_virtual_conference
+    start_non_virtual_hearing_job if start_non_virtual_hearing_job?
   end
 end

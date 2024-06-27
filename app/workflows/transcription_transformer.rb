@@ -136,7 +136,7 @@ class TranscriptionTransformer
   #       count - amount of line breaks to add
   def insert_line_breaks(row, count)
     breaks = 0
-    while i < count
+    while breaks < count
       row.line_break
       breaks += 1
     end
