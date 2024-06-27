@@ -78,16 +78,12 @@
     "BOARD_INTAKE": {
       "name": "boardIntakeColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "assigned_at"
-      ]
+      "sorting_columns": ["assigned_at"]
     },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
       "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": [
-        "veteran_name"
-      ]
+      "sorting_columns": ["veteran_name"]
     },
     "CHECKBOX_COLUMN": {
       "name": "checkboxColumn"
@@ -111,9 +107,7 @@
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "assigned_at"
-      ]
+      "sorting_columns": ["assigned_at"]
     },
     "DAYS_WAITING_CORRESPONDENCE": {
       "name": "daysWaitingCorrespondence",
@@ -127,10 +121,7 @@
       "filterable": true,
       "name": "docketNumberColumn",
       "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": [
-        "docket_type",
-        "docket_number"
-      ]
+      "sorting_columns": ["docket_type", "docket_number"]
     },
     "DOCUMENT_COUNT_READER_LINK": {
       "name": "readerLinkColumn"
@@ -144,15 +135,10 @@
     "CLAIMANT_NAME": {
       "name": "claimantColumn"
     },
-    "PENDING_ISSUE_MODIFICATION_COUNT": {
-      "name": "pendingIssueModificationRequests"
-    },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
       "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": [
-        "issue_count"
-      ]
+      "sorting_columns": ["issue_count"]
     },
     "ISSUE_TYPES": {
       "filterable": true,
@@ -188,17 +174,13 @@
       "filterable": true,
       "name": "regionalOfficeColumn",
       "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": [
-        "closest_regional_office_city"
-      ]
+      "sorting_columns": ["closest_regional_office_city"]
     },
     "TASK_ASSIGNEE": {
       "filterable": true,
       "name": "assignedToColumn",
       "sorting_table": "assignees",
-      "sorting_columns": [
-        "display_name"
-      ]
+      "sorting_columns": ["display_name"]
     },
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
@@ -209,9 +191,7 @@
     "TASK_CLOSED_DATE": {
       "name": "completedDateColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "closed_at"
-      ]
+      "sorting_columns": ["closed_at"]
     },
     "CORRESPONDENCE_TASK_CLOSED_DATE": {
       "name": "correspondenceCompletedDateColumn",
@@ -221,51 +201,33 @@
     "TASK_CREATED_AT": {
       "name": "createdDateColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "created_at"
-      ]
+      "sorting_columns": ["created_at"]
     },
     "TASK_DUE_DATE": {
       "name": "caseDueDateColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "assigned_at"
-      ]
+      "sorting_columns": ["assigned_at"]
     },
     "TASK_HOLD_LENGTH": {
       "name": "caseDaysOnHoldColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "placed_on_hold_at"
-      ]
+      "sorting_columns": ["placed_on_hold_at"]
     },
     "TASK_OWNER": {
       "name": "taskOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": [
-        "type",
-        "action",
-        "created_at"
-      ]
+      "sorting_columns": ["type", "action", "created_at"]
     },
     "TASK_TYPE": {
       "filterable": true,
       "name": "taskColumn",
       "sorting_table": "tasks",
-      "sorting_columns": [
-        "type",
-        "action",
-        "created_at"
-      ]
+      "sorting_columns": ["type", "action", "created_at"]
     },
     "VAMC_OWNER": {
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": [
-        "type",
-        "action",
-        "created_at"
-      ]
+      "sorting_columns": ["type", "action", "created_at"]
     }
   },
   "TAB_NAME_REQUEST_PARAM": "tab",

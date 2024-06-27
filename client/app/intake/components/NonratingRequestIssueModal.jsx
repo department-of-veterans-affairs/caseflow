@@ -15,7 +15,7 @@ import Alert from 'app/components/Alert';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
-import { VHA_PRE_DOCKET_ISSUE_BANNER, VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
+import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
 import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
 
@@ -50,8 +50,6 @@ class NonratingRequestIssueModal extends React.Component {
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
       userCanEditIntakeIssues: props.userCanEditIntakeIssues,
-      userIsVhaAdmin: props.userIsVhaAdmin,
-      isTaskInProgress: props.intakeData.taskInProgress,
       mstChecked: false,
       pactChecked: false,
       dateError: ''
@@ -183,7 +181,7 @@ class NonratingRequestIssueModal extends React.Component {
       category,
       decisionDate,
       benefitType,
-      isPreDocketNeeded
+      isPreDocketNeeded,
     } = this.state;
 
     const enforcePreDocketRequirement = (
@@ -198,9 +196,7 @@ class NonratingRequestIssueModal extends React.Component {
       !category ||
       (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
-      enforcePreDocketRequirement ||
-      // if the claim is in progress tab, then decision date should be required.
-      (this.vhaHlrOrSC() && this.isTaskInProgress() && !decisionDate)
+      enforcePreDocketRequirement
     );
   }
 
@@ -209,12 +205,6 @@ class NonratingRequestIssueModal extends React.Component {
     const { formType } = this.props;
 
     return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
-  }
-
-  isTaskInProgress() {
-    const { isTaskInProgress } = this.state;
-
-    return isTaskInProgress;
   }
 
   getModalButtons() {
@@ -288,13 +278,6 @@ class NonratingRequestIssueModal extends React.Component {
 
     return (
       <React.Fragment>
-        {(this.vhaHlrOrSC() && this.isTaskInProgress()) ?
-          <Alert
-            message={VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER}
-            type="info"
-          /> :
-          null
-        }
         <div className="decision-date">
           <DateSelector
             name="decision-date"
@@ -304,7 +287,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={this.vhaHlrOrSC() && !this.isTaskInProgress()}
+            optional={this.vhaHlrOrSC()}
           />
         </div>
 
@@ -335,12 +318,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
-    const {
-      benefitType,
-      category,
-      selectedNonratingIssueId,
-      isPreDocketNeeded
-    } = this.state;
+    const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
     const mstIdentification = featureToggles.mstIdentification && formType === 'appeal';
     const pactIdentification = featureToggles.pactIdentification && formType === 'appeal';
@@ -422,9 +400,7 @@ NonratingRequestIssueModal.propTypes = {
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
-  isTaskInProgress: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
-  userIsVhaAdmin: PropTypes.bool,
   mstChecked: PropTypes.bool,
   pactChecked: PropTypes.bool,
   featureToggles: PropTypes.object

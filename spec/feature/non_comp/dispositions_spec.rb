@@ -273,7 +273,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     end
 
     let!(:vha_org) { VhaBusinessLine.singleton }
-    let(:user) { create(:default_user, roles: ["Mail Intake"]) }
+    let(:user) { create(:default_user) }
     let(:veteran) { create(:veteran) }
     let(:decision_date) { Time.zone.now + 10.days }
 
@@ -281,8 +281,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       create(:higher_level_review,
              :with_vha_issue,
              :with_end_product_establishment,
-             :processed,
-             :update_assigned_at,
+             :create_business_line,
              benefit_type: "vha",
              veteran: veteran,
              claimant_type: :veteran_claimant)
@@ -394,14 +393,16 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
-    scenario "VHA non-admins should see request issue modification" do
-      visit dispositions_url
+    context "with a VHA Admin" do
+      before do
+        OrganizationsUser.make_user_admin(user, vha_org)
+      end
 
-      expect(page).to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
-      expect(page).to have_button("Edit Issues", disabled: true)
-      expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+      it "should display a view history link" do
+        visit dispositions_url
+        expect(page).to have_link("View History")
+      end
     end
-
     context "with no POA" do
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
