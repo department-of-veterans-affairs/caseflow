@@ -96,23 +96,62 @@ module Seeds
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
-      create_and_add_cda_control_group_users
-      add_users_to_bva_dispatch
-
-      # Below originated in the VeteransHealthAdministration seed file
-      setup_camo_org
-      setup_caregiver_org
-      setup_program_offices
-      setup_specialty_case_team
-      create_visn_org_teams
-
-      # Below originated in Education seed file
-      setup_emo_org
-      setup_rpo_orgs
+      create_cda_control_group_users
+      create_qa_test_users
+      CachedUser.sync_from_vacols
     end
 
-    def create_bva_dispatch_admin
-      dispatch_admin = create(:user, css_id: "BVAGBLACK", full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
+    def create_batch_1_users
+      User.find_or_create_by(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
+      User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
+      User.find_or_create_by(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
+      User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
+      User.find_or_create_by(css_id: "BVARERDMAN",
+                             station_id: 101,
+                             full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
+    end
+
+    def create_bvaebecker
+      bvaebecker = User.find_or_create_by(css_id: "BVAEBECKER",
+                                          station_id: 101,
+                                          full_name: "Elizabeth Judge_CaseToAssign Becker")
+      CDAControlGroup.singleton.add_user(bvaebecker)
+    end
+
+    def create_bvakkeeling
+      bvakkeeling = User.find_or_create_by(css_id: "BVAKKEELING",
+                                           station_id: 101,
+                                           full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      CDAControlGroup.singleton.add_user(bvakkeeling)
+    end
+
+    def create_batch_2_users
+      User.find_or_create_by(css_id: "BVAAWAKEFIELD",
+                             station_id: 101,
+                             full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.find_or_create_by(css_id: "BVAABELANGER",
+                             station_id: 101,
+                             full_name: "Andy Attorney_CaseAtDispatch Belanger")
+      User.find_or_create_by(css_id: "BVATWARNER",
+                             station_id: 101,
+                             full_name: "Theresa BuildHearingSchedule Warner")
+      User.find_or_create_by(css_id: "BVAGWHITE",
+                             station_id: 101,
+                             full_name: "George BVADispatchUser_Cases White")
+      User.find_or_create_by(css_id: "BVAGGREY",
+                             station_id: 101,
+                             full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.find_or_create_by(css_id: "BVATCOLLIER",
+                             station_id: 101,
+                             full_name: "Tonja DVCTeam Collier")
+    end
+
+    def create_dispatch_admin
+      dispatch_admin = User.find_or_create_by(
+        css_id: "BVAGBLACK",
+        station_id: 101,
+        full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
+      )
       OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     end
 
@@ -630,12 +669,58 @@ module Seeds
     end
 
     def create_qa_judge_team_2
-      qa_judge_2 = create(:user, :judge, :with_vacols_judge_record,
-                          css_id: "QACTIVEVLJ2", full_name: "QA_Active_Judge With Team_of_2")
-      qa_judge_team_2 = JudgeTeam.for_judge(qa_judge_2)
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY1"))
-      qa_judge_team_2.add_user(User.find_by(css_id: "QATTY2"))
+      judge = User.find_by_css_id("QACTIVEVLJ2") ||
+              create(
+                :user,
+                :judge,
+                :with_vacols_judge_record,
+                css_id: "QACTIVEVLJ2",
+                full_name: "QA_ACTIVE_JUDGE WITH TEAM_OF_2",
+                station_id: 101,
+                roles: ["Hearing Prep", "Mail Intake"]
+              )
+      team_array = [
+        { "css_id": "QATTY1", "full_name": "QA Attorney_1" },
+        { "css_id": "QATTY2", "full_name": "QA Attorney_2" }
+      ]
+      CDAControlGroup.singleton.add_user(judge)
+      OrganizationsUser.make_user_admin(judge, CDAControlGroup.singleton)
+      create_qa_judge_team(judge, team_array)
     end
+
+    def create_qa_attny_1
+      User.find_by_css_id("QATTY1") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY1",
+          full_name: "QA Attorney_1",
+          station_id: 101,
+        )
+    end
+
+    def create_qa_attny_2
+      User.find_by_css_id("QATTY2") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY2",
+          full_name: "QA Attorney_2",
+          station_id: 101,
+        )
+    end
+
+    def create_qa_attny_3
+      User.find_by_css_id("QATTY3") ||
+        create(
+          :user,
+          :with_vacols_titled_attorney_record,
+          css_id: "QATTY3",
+          full_name: "QA Attorney_3",
+          station_id: 101,
+        )
+    end
+
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/ClassLength
