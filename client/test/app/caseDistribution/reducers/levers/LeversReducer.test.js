@@ -145,14 +145,14 @@ describe('Lever reducer', () => {
       type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
       payload: {
         leverGroup: 'docket_distribution_prior',
-        leverItem: 'ama_hearings_start_distribution_prior_to_goals',
+        leverItem: 'ama_hearing_start_distribution_prior_to_goals',
         toggleValue: false
       }
     };
 
     const combinationLevers = initialState.levers.docket_distribution_prior;
     const updatedCombinationLevers = combinationLevers.map((lever) => {
-      if (lever.item === 'ama_hearings_start_distribution_prior_to_goals') {
+      if (lever.item === 'ama_hearing_start_distribution_prior_to_goals') {
         return {
           ...lever,
           is_toggle_active: false

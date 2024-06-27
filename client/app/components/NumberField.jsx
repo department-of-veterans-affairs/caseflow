@@ -21,6 +21,7 @@ export default class NumberField extends React.Component {
         onChange={this.onChange}
         aria-readonly={this.props.readOnly}
         ariaLabelText={this.props.ariaLabelText}
+        useAriaLabel={this.props.useAriaLabel}
         disabled={this.props.disabled}
       />
     </div>;
@@ -46,6 +47,7 @@ NumberField.propTypes = {
     }
   },
   ariaLabelText: PropTypes.string,
+  useAriaLabel: PropTypes.bool,
   placeholder: PropTypes.string,
   isInteger: PropTypes.bool,
   readOnly: PropTypes.bool,
