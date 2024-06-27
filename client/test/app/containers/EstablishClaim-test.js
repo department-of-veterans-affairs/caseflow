@@ -1,27 +1,16 @@
 import React from 'react';
-import { logRoles, render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { mount } from 'enzyme';
-import EstablishClaim, {
-  DECISION_PAGE,
-  FORM_PAGE,
-  NOTE_PAGE
-} from '../../../app/containers/EstablishClaimPage/EstablishClaim';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import EstablishClaim from '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
-import { findElementById } from '../../helpers';
 import { WrappingComponent, store } from '../establishClaim/WrappingComponent';
 import bootstrapRedux from '../../../app/establishClaim/reducers/bootstrap';
 import { createStore } from 'redux';
-import { log } from 'console';
-import ApiUtil from 'app/util/ApiUtil';
 
 jest.mock('app/util/ApiUtil', () => ({
   convertToSnakeCase: jest.fn(obj => obj),
   put: jest.fn().mockResolvedValue({}),
+  post: jest.fn().mockResolvedValue({})
 }));
-
-let func = function() {
-  // empty function
-};
 
 const task = {
   appeal: {
@@ -50,42 +39,228 @@ const regionalOfficeCities = {
 };
 
 describe('EstablishClaim', () => {
-  const setup = (props = {}, page) => {
-    return render(
-      <EstablishClaim
-        regionalOfficeCities={regionalOfficeCities}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task}
-        page={page}
-        {...props}
-      />,
-      {
-        wrapper: WrappingComponent
-      }
-    );
-  };
+  describe('.getClaimTypeFromDecision', () => {
 
-  describe('.render', () => {
+    const setup = ({ props = {}, decisionType, stationOfJurisdiction = '397' } = {}) => {
+      const task2 = {
+        appeal: {
+          vbms_id: '516517691',
+          dispatch_decision_type: decisionType,
+          decisions: [
+            {
+              label: null
+            }
+          ],
+          non_canceled_end_products_within_30_days: [],
+          pending_eps: []
+        },
+        user: 'a'
+      };
 
+      const utils = render(
+        <EstablishClaim
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={() => {}}
+          handleAlertClear={() => {}}
+          task={task2}
+          {...props}
+        />,
+        {
+          wrapper: ({ children }) => <WrappingComponent store={store}>{children}</WrappingComponent>
+        }
+      );
 
-    describe('EstablishClaimForm', () => {
-      beforeEach(() => {
+      if (stationOfJurisdiction !== '397') {
         store.dispatch({
-          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+          type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
-            field: 'stationOfJurisdiction',
-            value: '397'
+            specialIssue: 'mustardGas',
+            value: true
           }
         });
+      }
+
+      store.dispatch({
+        type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+        payload: {
+          field: 'stationOfJurisdiction',
+          value: stationOfJurisdiction
+        }
       });
 
-      it('shows cancel modal', () => {
-        const {container} = setup(FORM_PAGE);
+      return utils;
+    };
+
+    describe('when ARC EP', () => {
+      it('changes to form page after decision page submission', async () => {
+        setup({ decisionType: 'Remand' });
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+            const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+            expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+            expect(loadingButtonDecision).toBeDisabled();
+          });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070RMNDARC - ARC Remand (070)');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('397 - ARC');
+      });
+
+      it('returns proper values for partial grant', async () => {
+        setup({ decisionType: 'Partial Grant' });
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
+        });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070RMBVAGARC - ARC Remand with BVA Grant');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('397 - ARC');
+      });
+
+      it('returns proper values for full grant', async () => {
+        setup({ decisionType: 'Full Grant' });
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
+        });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070BVAGRARC - ARC BVA Grant');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('397 - ARC');
+      });
+    });
+
+    describe('when Routed EP', () => {
+      it('returns proper value for remand', async () => {
+        setup({ decisionType: 'Remand', stationOfJurisdiction: '301'});
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
+        });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070RMND - Remand (070)');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('351 - Muskogee, OK');
+      });
+
+      it('returns proper value for partial grant', async () => {
+        setup({ decisionType: 'Partial Grant', stationOfJurisdiction: '301'});
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
+        });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070RMNDBVAG - Remand with BVA Grant (070)');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('351 - Muskogee, OK');
+      });
+
+      it('returns proper value for full grant', async () => {
+        setup({ decisionType: 'Full Grant', stationOfJurisdiction: '301'});
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
+
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
+        });
+
+        const claimLabelValue = screen.getByRole('textbox', { name: /EP & Claim Label/i });
+        expect(claimLabelValue).toHaveValue('070BVAGR - BVA Grant (070)');
+
+        const stationOfJurisdiction = screen.getByRole('textbox', { name: /Station of Jurisdiction/i });
+        expect(stationOfJurisdiction).toHaveValue('351 - Muskogee, OK');
+      });
+    });
+  });
+
+
+  describe('.render', () => {
+    const setup = (props = {}) => {
+      const { initialState, reducer } = bootstrapRedux();
+      const store = createStore(reducer, initialState);
+
+      return render(
+        <EstablishClaim
+          regionalOfficeCities={regionalOfficeCities}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={() => {}}
+          handleAlertClear={() => {}}
+          task={task}
+          {...props}
+        />,
+        {
+          wrapper: ({ children }) => <WrappingComponent store={store}>{children}</WrappingComponent>
+        }
+      );
+    };
+    describe('EstablishClaimForm', () => {
+      it('shows cancel modal', async () => {
+        const {container} = setup();
 
         expect(container.querySelector('.cf-modal')).toBeNull();
+
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        fireEvent.click(routeClaimButton);
+
+        // Wait for the page change
+        await waitFor(() => {
+          const loadingButton = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButton).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButton).toBeDisabled();
+        });
+
+        // Verify Form Page
+        const progressBarActivatedDivs = container.querySelectorAll('.cf-progress-bar-activated');
+        let textContents = [];
+        progressBarActivatedDivs.forEach(div => {
+          textContents.push(div.textContent.trim());
+        });
+        expect(textContents).toContain('2. Route Claim');
 
         // click cancel to open modal
         const cancelButton = screen.getByRole('button', { name: /Cancel/i });
@@ -101,7 +276,7 @@ describe('EstablishClaim', () => {
 
     describe('EstablishClaimDecision', () => {
       it('shows cancel model', () => {
-        const {container} = setup(DECISION_PAGE);
+        const {container} = setup();
 
         expect(container.querySelector('.cf-moda-body')).toBeNull();
 
@@ -116,272 +291,51 @@ describe('EstablishClaim', () => {
       });
     });
 
+    // This test must be last to maintin proper state as there is no way to
+    // go back to the decision page from the note page
     describe('EstablishClaimNote', () => {
-      beforeEach((done) => {
-        store.dispatch({
-          type: Constants.CHANGE_SPECIAL_ISSUE,
-          payload: {
-            specialIssue: 'mustardGas',
-            value: true
-          }
-        });
-        done();
-      });
-
       it('route claim button is disabled until checkbox is checked', async () => {
-        const {container} = setup({}, NOTE_PAGE);
+        const {container} = setup();
 
-        const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-        fireEvent.click(cancelButton);
+        const mustardGasCheckbox = screen.getByRole('checkbox', { name: /mustardGas/i });
+        fireEvent.click(mustardGasCheckbox);
+        await waitFor(() => expect(mustardGasCheckbox).toBeChecked());
 
-        // logRoles(container);
+        const routeClaimButton = screen.getByRole('link', { name: /Route claim/i });
+        await waitFor(() => expect(routeClaimButton).not.toBeDisabled());
+        fireEvent.click(routeClaimButton);
 
-        // Ensure the button is initially disabled
-        // const button = getByText(/Finish routing claim/i);
-        // expect(button).toBeDisabled();
-
-        // Simulate clicking the checkbox
-        // const checkbox = getByLabelText(/Confirm Note/i);
-        // fireEvent.click(checkbox);
-
-        // Wait for the button to be enabled
-        // await waitFor(() => {
-        //   expect(button).not.toBeDisabled();
-        // });
-      });
-    });
-  });
-
-  describe('.getClaimTypeFromDecision', () => {
-
-  const task = {
-    appeal: {
-      vbms_id: '516517691',
-      dispatch_decision_type: 'Remand',
-      decisions: [
-        {
-          label: null
-        }
-      ],
-      non_canceled_end_products_within_30_days: [],
-      pending_eps: []
-    },
-    user: 'a'
-  };
-
-    const mountApp = (decisionType, stationOfJurisdiction = '397') => {
-      task.appeal.dispatch_decision_type = decisionType;
-
-      const { initialState, reducer } = bootstrapRedux();
-      const newStore = createStore(reducer, initialState);
-
-      if (stationOfJurisdiction !== '397') {
-        newStore.dispatch({
-          type: Constants.CHANGE_SPECIAL_ISSUE,
-          payload: {
-            specialIssue: 'mustardGas',
-            value: true
-          }
+        await waitFor(() => {
+          const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
+          expect(loadingButtonDecision).toHaveClass('cf-submit usa-button-disabled cf-dispatch cf-loading');
+          expect(loadingButtonDecision).toBeDisabled();
         });
-      }
 
-      newStore.dispatch({
-        type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
-        payload: {
-          field: 'stationOfJurisdiction',
-          value: stationOfJurisdiction
-        }
-      });
+         // Verify Form Page
+         const progressBarActivatedDivs = container.querySelectorAll('.cf-progress-bar-activated');
+         let textContents = [];
+         progressBarActivatedDivs.forEach(div => {
+           textContents.push(div.textContent.trim());
+         });
 
-      const props = {
-        regionalOfficeCities: {},
-        pdfLink: "",
-        pdfjsLink: "",
-        handleAlert: func,
-        handleAlertClear: func,
-        task: task,
-        page: 'form'
-      };
+        expect(textContents).toContain('2. Route Claim');
 
-      console.log('Props passed to EstablishClaim:', props);
+        const createEndProductButton = screen.getByRole('button', { name: /Create End Product/i });
+        await waitFor(() => expect(createEndProductButton).not.toBeDisabled());
+        fireEvent.click(createEndProductButton);
 
-      return render(
-        <EstablishClaim {...props} />,
-        {
-          wrapper: WrappingComponent,
-          wrapperProps: { store: newStore }
-        }
-      );
-    };
-    // const mountApp = (
-    //   decisionType,
-    //   stationOfJurisdiction = '397',
-    //   page = 'decision',
-    //   additionalProps = {},
-    //   additionalState = {}
-    // ) => {
-    //   task.appeal.dispatch_decision_type = decisionType;
+        // Verify Note Page
+        await waitFor(() => {
+          expect(screen.getByText("I confirm that I have created a VBMS note to help route this claim.")).toBeInTheDocument();
+        });
 
-    //   const { initialState, reducer } = bootstrapRedux();
+        const finishRoutingClaimButton = screen.getByRole('button', { name: /Finish routing claim/i });
+        await waitFor(() => expect(finishRoutingClaimButton).toBeDisabled());
 
-    //   // Merge additional state with initial state
-    //   const mergedInitialState = {
-    //     ...initialState,
-    //     ...additionalState,
-    //     page: page // Set the page in the initial state
-    //   };
+        const confirmNoteCheckbox = screen.getByRole('checkbox', { name: /confirmNote/i });
+        fireEvent.click(confirmNoteCheckbox);
 
-    //   const newStore = createStore(reducer, mergedInitialState);
-
-    //   if (stationOfJurisdiction !== '397') {
-    //     newStore.dispatch({
-    //       type: Constants.CHANGE_SPECIAL_ISSUE,
-    //       payload: {
-    //         specialIssue: 'mustardGas',
-    //         value: true
-    //       }
-    //     });
-    //   }
-
-    //   newStore.dispatch({
-    //     type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
-    //     payload: {
-    //       field: 'stationOfJurisdiction',
-    //       value: stationOfJurisdiction
-    //     }
-    //   });
-
-    //   const defaultProps = {
-    //     regionalOfficeCities: {},
-    //     pdfLink: "",
-    //     pdfjsLink: "",
-    //     handleAlert: jest.fn(),
-    //     handleAlertClear: jest.fn(),
-    //     task: task,
-    //     page: page
-    //   };
-
-    //   // Merge additional props with default props
-    //   const props = {
-    //     ...defaultProps,
-    //     ...additionalProps
-    //   };
-
-    //   console.log('Props passed to EstablishClaim:', props);
-
-    //   return render(
-    //     <EstablishClaim {...props} />,
-    //     {
-    //       wrapper: ({ children }) => (
-    //         <WrappingComponent store={newStore}>
-    //           {children}
-    //         </WrappingComponent>
-    //       )
-    //     }
-    //   );
-    // };
-
-    describe('when ARC EP', () => {
-      it.only('changes to form page after decision page submission', async () => {
-        // Mock the API call
-        ApiUtil.put.mockResolvedValue({});
-
-        // Create a spy for handlePageChange
-        // const handlePageChangeSpy = jest.fn();
-
-
-
-        // Mock the conditions
-        // const willCreateEndProduct = jest.fn().mockReturnValue(true);
-        // const shouldShowAssociatePage = jest.fn().mockReturnValue(false);
-
-        // Render the component
-        const { container } = mountApp('Remand');
-
-
-        const checkbox = screen.getByRole('checkbox', { name: /mustardGas/i });
-        fireEvent.click(checkbox);
-        // const button = screen.getByRole('link', { name: /Route claim/i });
-        // fireEvent.click(button);
-
-        // logRoles(container);
-        screen.debug(null, Infinity);
-
-
-        // Get the instance of EstablishClaim
-        // const instance = container.querySelector('EstablishClaim').instance();
-
-        // Mock the methods on the instance
-        // instance.willCreateEndProduct = willCreateEndProduct;
-        // instance.shouldShowAssociatePage = shouldShowAssociatePage;
-
-        // Call handleDecisionPageSubmit
-        // await instance.handleDecisionPageSubmit();
-
-        // Assert that handlePageChange was called with FORM_PAGE
-        // expect(handlePageChangeSpy).toHaveBeenCalledWith('FORM_PAGE');
-
-        // You might also want to check if the state has been updated correctly
-        // expect(instance.state.loading).toBe(false);
-
-        // Additional assertions as needed
-      });
-
-      it('returns proper values for partial grant', () => {
-        const wrapper = mountApp('Partial Grant');
-
-        expect(
-          wrapper.
-            find('EstablishClaim').
-            instance().
-            getClaimTypeFromDecision()
-        ).toEqual(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
-      });
-
-      it('returns proper values for full grant', () => {
-        const wrapper = mountApp('Full Grant');
-
-        expect(
-          wrapper.
-            find('EstablishClaim').
-            instance().
-            getClaimTypeFromDecision()
-        ).toEqual(['070BVAGRARC', 'ARC BVA Grant']);
-      });
-    });
-
-    describe('when Routed EP', () => {
-      it('returns proper value for remand', () => {
-        const wrapper = mountApp('Remand', '301');
-
-        expect(
-          wrapper.
-            find('EstablishClaim').
-            instance().
-            getClaimTypeFromDecision()
-        ).toEqual(['070RMND', 'Remand (070)']);
-      });
-
-      it('returns proper value for partial grant', () => {
-        const wrapper = mountApp('Partial Grant', '301');
-
-        expect(
-          wrapper.
-            find('EstablishClaim').
-            instance().
-            getClaimTypeFromDecision()
-        ).toEqual(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
-      });
-
-      it('returns proper value for full grant', () => {
-        const wrapper = mountApp('Full Grant', '301');
-
-        expect(
-          wrapper.
-            find('EstablishClaim').
-            instance().
-            getClaimTypeFromDecision()
-        ).toEqual(['070BVAGR', 'BVA Grant (070)']);
+        await waitFor(() => expect(finishRoutingClaimButton).not.toBeDisabled());
       });
     });
   });
