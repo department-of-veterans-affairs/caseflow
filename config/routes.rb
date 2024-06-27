@@ -243,6 +243,8 @@ Rails.application.routes.draw do
   get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
   get 'hearings/transcription_files', to: 'hearings_application#transcription_file_dispatch'
   get 'hearings/transcription_files/transcription_file_tasks', to: 'hearings/transcription_files#transcription_file_tasks'
+  get 'hearings/transcription_files/locked', to: 'hearings/transcription_files#locked'
+  post 'hearings/transcription_files/lock', to: 'hearings/transcription_files#lock'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 

@@ -76,89 +76,73 @@ const Description = ({ text, searchPrompt }) => {
 };
 
 // This maps the component to render for each tab
-export const tabConfig = [
+export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
   {
     label: COPY.CASE_LIST_TABLE_UNASSIGNED_LABEL,
-    page: () => {
-      return (
-        <>
-          <div className="tab-description" style={{ ...styles.rowstyles, marginTop: '-0.1em' }} >
-          Transcription owned by the Transcription Team are unassigned to a contractor:
-            <Link>
-              <span style={styles.linkStyles}>
-                Transcription settings
-                <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-              </span>
-            </Link>
-          </div>
-          <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
-            Please select the files you would like to dispatch for transcription:
-            <div {...searchBarStyles} >
-              <SearchBar
-                placeholder="Type to search..."
-                size="big"
-                id="transcription-table-search"
-                isSearchAhead
-                title="Search by Docket Number, Claimant Name, File Number, or SSN"
-              />
-            </div>
-          </div>
-          <div className="file-select" style={{ marginTop: '-2em' }}>
-            <h2>0 files selected</h2>
-            <div className="button-row" style={styles.buttonStyles} >
-              <Button disabled>Package files</Button>
-              <Button linkStyling>Cancel</Button>
-            </div>
-          </div>
-          <div style={styles.tableStyles}>
-            <TranscriptionFileDispatchTable
-              columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
-              statusFilter={['Unassigned']}
-            />
-          </div>
-
-        </>
-      );
-    }
+    page: <>
+      <div className="tab-description" style={{ ...styles.rowstyles, marginTop: '-0.1em' }} >
+            Transcription owned by the Transcription Team are unassigned to a contractor:
+        <Link>
+          <span style={styles.linkStyles}>
+                  Transcription settings
+            <ExternalLinkIcon style={styles.linkIconStyles} color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+          </span>
+        </Link>
+      </div>
+      <div style={{ ...styles.rowstyles, marginTop: '3em' }} className="cf-search-ahead-parent">
+              Please select the files you would like to dispatch for transcription:
+        <div {...searchBarStyles} >
+          <SearchBar
+            placeholder="Type to search..."
+            size="big"
+            id="transcription-table-search"
+            isSearchAhead
+            title="Search by Docket Number, Claimant Name, File Number, or SSN"
+          />
+        </div>
+      </div>
+      <div className="file-select" style={{ marginTop: '-2em' }}>
+        <h2>{files} files selected</h2>
+        <div className="button-row" style={styles.buttonStyles}>
+          <Button disabled={files === 0} onClick={buildPackage}>Package files</Button>
+          <Button linkStyling>Cancel</Button>
+        </div>
+      </div>
+      <div style={styles.tableStyles}>
+        <TranscriptionFileDispatchTable
+          columns={unassignedColumns(TRANSCRIPTION_FILE_DISPATCH_CONFIG.COLUMNS)}
+          statusFilter={['Unassigned']}
+          selectFilesForPackage={selectFilesForPackage}
+        />
+      </div>
+    </>
   },
   {
     label: COPY.TRANSCRIPTION_DISPATCH_ASSIGNED_TAB,
-    page: () => {
-      return (
-        <>
-          <Description
-            text="Transcription owned by the Transcription Team are returned from contractor:"
-            searchPrompt="Search by work Order, Claimant Name, Docket Number, File Number or SSN"
-          />
-        </>
-      );
-    }
+    page: <>
+      <Description
+        text="Transcription owned by the Transcription Team are returned from contractor:"
+        searchPrompt="Search by work Order, Claimant Name, Docket Number, File Number or SSN"
+      />
+    </>
   },
   {
     label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
-    page: () => {
-      return (
-        <>
-          <Description
-            text="Transcription owned by the Transcription Team are returned from contractor:"
-            searchPrompt="Search by work Order, or Docket Number"
-          />
-        </>
-      );
-    }
+    page: <>
+      <Description
+        text="Transcription owned by the Transcription Team are returned from contractor:"
+        searchPrompt="Search by work Order, or Docket Number"
+      />
+    </>
   },
   {
     label: COPY.TRANSCRIPTION_FILE_DISPATCH_ALL_TAB,
-    page: () => {
-      return (
-        <>
-          <Description
-            text="All transcription owned by the Transcription team:"
-            searchPrompt="Search by work Order, or Docket Number"
-          />
-        </>
-      );
-    }
+    page: <>
+      <Description
+        text="All transcription owned by the Transcription team:"
+        searchPrompt="Search by work Order, or Docket Number"
+      />
+    </>
   }
 ];
 
