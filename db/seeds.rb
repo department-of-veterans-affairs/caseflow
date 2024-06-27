@@ -54,7 +54,16 @@ class SeedDB
     call_and_log_seed_step Seeds::DecisionIssues
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
+    call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
+    call_and_log_seed_step Seeds::AmaIntake
+    call_and_log_seed_step Seeds::IssueModificationRequest
+    # Always run this as last one
+    call_and_log_seed_step Seeds::StaticTestCaseData
+    call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+    call_and_log_seed_step Seeds::RemandedAmaAppeals
+    call_and_log_seed_step Seeds::RemandedLegacyAppeals
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    call_and_log_seed_step Seeds::IssueModificationRequest
   end
 end
 

@@ -3912,7 +3912,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
       box-sizing: border-box !important;
       overflow: hidden !important;
       position: relative !important;
-      
+
       padding-right: 1024px !important;
     }"
             />
@@ -3961,6 +3961,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
             style={
               Object {
                 "display": "flex",
+                "flexWrap": "wrap",
               }
             }
           >
@@ -4530,7 +4531,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
       box-sizing: border-box !important;
       overflow: hidden !important;
       position: relative !important;
-      
+
       padding-right: 1024px !important;
     }"
             />
@@ -4579,6 +4580,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
             style={
               Object {
                 "display": "flex",
+                "flexWrap": "wrap",
               }
             }
           >
@@ -5364,7 +5366,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
       box-sizing: border-box !important;
       overflow: hidden !important;
       position: relative !important;
-      
+
       padding-right: 1024px !important;
     }"
             />
@@ -5413,6 +5415,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
             style={
               Object {
                 "display": "flex",
+                "flexWrap": "wrap",
               }
             }
           >
@@ -6198,7 +6201,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
       box-sizing: border-box !important;
       overflow: hidden !important;
       position: relative !important;
-      
+
       padding-right: 1024px !important;
     }"
             />
@@ -6247,6 +6250,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
             style={
               Object {
                 "display": "flex",
+                "flexWrap": "wrap",
               }
             }
           >
