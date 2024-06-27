@@ -151,6 +151,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_button("Save")
 
       hearing.reload
+      hearing.virtual_hearing.reload
       check_virtual_hearings_links(hearing.virtual_hearing)
 
       # Check the Email Notification History
