@@ -108,6 +108,7 @@ class Document < CaseflowRecord
         received_at: vbms_document.received_at,
         upload_date: vbms_document.upload_date,
         vbms_document_id: vbms_document.document_id,
+        series_id: vbms_document.series_id,
         filename: vbms_document.filename,
         file_number: file_number)
   end
