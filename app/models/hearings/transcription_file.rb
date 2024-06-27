@@ -161,7 +161,7 @@ class TranscriptionFile < CaseflowRecord
   #
   # Returns: string, defaults to blank of not AMA
   def external_appeal_id
-    hearing.external_id
+    hearing.appeal.external_id
   end
 
   # Purpose: Returns a formatted value containing the veteral name and file number
