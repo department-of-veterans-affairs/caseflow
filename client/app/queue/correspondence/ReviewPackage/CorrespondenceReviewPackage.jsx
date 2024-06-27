@@ -24,14 +24,17 @@ import {
 export const CorrespondenceReviewPackage = (props) => {
   const history = useHistory();
   const [reviewDetails, setReviewDetails] = useState({
-    veteran_name: {},
-    dropdown_values: [],
+    veteran_name: props.correspondence.veteranFullName || {},
+    dropdown_values: props.correspondenceTypes || [],
   });
   const [editableData, setEditableData] = useState({
-    notes: props.correspondence.notes || '',
-    veteran_file_number: props.correspondence.file_number || '',
+    notes: props.correspondence.notes || "",
+    veteran_file_number: props.correspondence.veteranFileNumber || "",
     default_select_value: null,
-    va_date_of_receipt: moment.utc(props.correspondence.va_date_of_receipt).format('YYYY-MM-DD') || '',
+    va_date_of_receipt:
+      moment
+        .utc(props.correspondence.vaDateOfReceipt)
+        .format("YYYY-MM-DD") || "",
   });
 
   const stateCorrespondence = useSelector(
@@ -55,8 +58,15 @@ export const CorrespondenceReviewPackage = (props) => {
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
-  const isPageReadOnly = (tasks) => tasks?.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-  const hasAssignedReassignPackageTask = (tasks) => tasks?.find((task) => task.status === 'assigned' && task.type === 'ReassignPackageTask');
+  const isPageReadOnly = (tasks) =>
+    tasks?.find(
+      (task) => task.status === "assigned" && task.type === "RemovePackageTask"
+    );
+  const hasAssignedReassignPackageTask = (tasks) =>
+    tasks?.find(
+      (task) =>
+        task.status === "assigned" && task.type === "ReassignPackageTask"
+    );
 
   // const fetchData = async () => {
   //   const correspondence = props;
@@ -189,6 +199,7 @@ export const CorrespondenceReviewPackage = (props) => {
       setIsReadOnly(true);
       setIsReassignPackage(true);
     }
+    setDisplayIntakeAppeal(props.veteranInformation.display_intake_appeal);
   }, [props.hasEfolderFailedTask]);
 
   const updateReviewPackageDetailsWithTask = (tasks, taskType) => {
