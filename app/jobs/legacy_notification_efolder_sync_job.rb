@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class LegacyNotificationEfolderSyncJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["LEGACY_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
@@ -38,7 +40,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
     LegacyAppeal
       .where(id: RootTask.where(
         appeal_type: "LegacyAppeal",
-        status: "completed",
+        status: Constants.TASK_STATUSES.completed,
         closed_at: 1.day.ago..Time.zone.now
       )
       .pluck(:appeal_id)

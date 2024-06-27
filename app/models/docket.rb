@@ -17,7 +17,11 @@ class Docket
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
-    scope = docket_appeals.active
+    scope = docket_appeals
+
+    # The `ready_for_distribution` scope will functionally add a filter for active appeals, and adding it here first
+    # will cause that scope to always return zero appeals.
+    scope = scope.active unless ready
 
     if ready
       scope = scope.ready_for_distribution
@@ -60,7 +64,7 @@ class Docket
 
   # currently this is used for reporting needs
   def ready_to_distribute_appeals
-    docket_appeals.active.ready_for_distribution
+    docket_appeals.ready_for_distribution
   end
 
   def genpop_priority_count

@@ -918,6 +918,27 @@ describe User, :all_dbs do
     end
   end
 
+  describe "#can_request_for_issue_updates?" do
+    let(:user) { create(:user) }
+    subject { user.can_request_for_issue_updates? }
+
+    it { is_expected.to be_falsey }
+
+    context "when the user is not an admin user for VHA" do
+      before { VhaBusinessLine.singleton.add_user(user) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when the user is an admin user for VHA" do
+      before do
+        VhaBusinessLine.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
+      end
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
   describe "when the status is updated" do
     let(:user) { create(:user) }
 
@@ -1065,6 +1086,43 @@ describe User, :all_dbs do
           end
         end
       end
+    end
+  end
+
+  describe "#conference_provider" do
+    let!(:user) { create(:user, css_id: "HEARINGS_USER") }
+
+    subject { user.conference_provider }
+
+    it "User's initial conference provider is Pexip" do
+      is_expected.to eq "pexip"
+    end
+
+    it "User's conference provider can be swapped" do
+      OrganizationsUser.update_user_conference_provider(user, "webex")
+
+      is_expected.to eq "webex"
+    end
+  end
+
+  describe "#vha_business_line_admin_user?" do
+    let(:user) { create(:user) }
+    subject { user.vha_business_line_admin_user? }
+
+    it { is_expected.to be_falsey }
+
+    context "when the user is not an admin user for VHA" do
+      before { VhaBusinessLine.singleton.add_user(user) }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when the user is an admin user for VHA" do
+      before do
+        VhaBusinessLine.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
+      end
+
+      it { is_expected.to be_truthy }
     end
   end
 end

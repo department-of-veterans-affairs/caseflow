@@ -11,6 +11,9 @@ import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflo
 import COPY from '../../COPY';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID';
+import { DEFAULT_SORTING_COLUMN_KEY, DEFAULT_SORTING_DIRECTION_KEY, COLUMNS } from '../../constants/QUEUE_CONFIG';
+import QUEUE_INTAKE_FORM_TASK_TYPES from '../../constants/QUEUE_INTAKE_FORM_TASK_TYPES';
+import CORRESPONDENCE_LETTER_SELECTIONS from '../../constants/CORRESPONDENCE_LETTER_SELECTIONS';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -143,6 +146,8 @@ const formatRemandReasons = (reasons) => Object.assign({},
   }))
 );
 
+export const ADD_CORRESPONDENCE_LETTER_SELECTIONS = CORRESPONDENCE_LETTER_SELECTIONS;
+
 export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
 export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
 
@@ -163,6 +168,8 @@ export const LEGACY_APPEAL_TYPES = _.fromPairs(_.zip(
   _.invokeMap(_.keys(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
   _.values(LEGACY_APPEAL_TYPES_BY_ID)
 ));
+
+export const INTAKE_FORM_TASK_TYPES = QUEUE_INTAKE_FORM_TASK_TYPES;
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
 export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
@@ -212,7 +219,10 @@ export const PAGE_TITLES = {
   CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
   CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',
   COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Hearing Postponement Request',
-  COMPLETE_HEARING_WITHDRAWAL_REQUEST: 'Complete Hearing Withdrawal Request'
+  COMPLETE_HEARING_WITHDRAWAL_REQUEST: 'Complete Hearing Withdrawal Request',
+  REVIEW_PACKAGE: 'Review Package',
+  CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
+  CORRESPONDENCE_INTAKE: 'Correspondence Intake'
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
@@ -290,3 +300,9 @@ export const DECISION_SPECIAL_ISSUES = [
     requiresJustification: false
   }
 ];
+
+export const DEFAULT_QUEUE_TABLE_SORT = {
+  [DEFAULT_SORTING_COLUMN_KEY]: COLUMNS.APPEAL_TYPE.name,
+  [DEFAULT_SORTING_DIRECTION_KEY]: true
+};
+
