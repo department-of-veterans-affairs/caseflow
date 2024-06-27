@@ -1766,6 +1766,9 @@ GEM
     opentelemetry-instrumentation-active_support (0.3.0)
       opentelemetry-api (~> 1.0)
       opentelemetry-instrumentation-base (~> 0.21.0)
+    opentelemetry-instrumentation-aws_sdk (0.3.2)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-instrumentation-base (~> 0.21.0)
     opentelemetry-instrumentation-base (0.21.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-registry (~> 0.1)
@@ -2143,8 +2146,12 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
   opentelemetry-exporter-otlp
+  opentelemetry-instrumentation-action_pack
+  opentelemetry-instrumentation-action_view
   opentelemetry-instrumentation-active_job
   opentelemetry-instrumentation-active_model_serializers
+  opentelemetry-instrumentation-active_record
+  opentelemetry-instrumentation-aws_sdk
   opentelemetry-instrumentation-concurrent_ruby
   opentelemetry-instrumentation-faraday
   opentelemetry-instrumentation-http

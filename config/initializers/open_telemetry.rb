@@ -27,9 +27,18 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
     # c.use_all # application will be using all instrumentation provided by OpenTelemetry
-    c.use 'OpenTelemetry::Instrumentation::Rails'
-    c.use 'OpenTelemetry::Instrumentation::Rack'
-    c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+    # c.use 'OpenTelemetry::Instrumentation::Rails'
+    # c.use 'OpenTelemetry::Instrumentation::Rack'
+    # c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+    config = {
+      'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
+      'OpenTelemetry::Instrumentation::PG' => { enabled: false },
+      'OpenTelemetry::Instrumentation::Rack' => {
+          use_rack_events: false,
+          untraced_endpoints: ['/health-check', '/sample', '/logs'],
+       }
+    }
+    c.use_all(config)
 
     %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_host_metadata.properties].each { |name|
       begin
