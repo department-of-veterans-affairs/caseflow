@@ -9,16 +9,17 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
   end
 
   def show
-    veteran = find_veteran
-    page = init_page
-    per_page = init_per
-    if veteran
-      MetricsService.record("Retrieving AMA Request Issues for Veteran: #{veteran.participant_id}",
-                            service: "AMA Request Issue endpoint",
-                            name: "VeteransController.show") do
-        render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page, per_page).hash_response)
-      end
-    end
+    MetricsService.record("Retrieving AMA Request Issues for Veteran with participant ID: #{params[:participant_id]}",
+                          service: "AMA Request Issue endpoint",
+                          name: "VeteransController.show") do
+                            veteran = find_veteran
+                            page = init_page
+                            per_page = init_per
+                            if veteran
+                              render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page, per_page)
+                                                                                           .hash_response)
+                            end
+                          end
   end
 
   private
