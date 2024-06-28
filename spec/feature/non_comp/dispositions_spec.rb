@@ -265,6 +265,12 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       vha_org.add_user(user)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
+
+      OrganizationsUser.make_user_admin(admin_user, VhaBusinessLine.singleton)
+    end
+
+    let!(:admin_user) do
+      create(:user, roles: ["Mail Intake"])
     end
 
     after do
@@ -400,6 +406,31 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_link("Request issue modification", href: in_progress_task.caseflow_only_edit_issues_url)
       expect(page).to have_button("Edit Issues", disabled: true)
       expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+    end
+
+    context "claims with pending issue modifications should not be able to be dispositioned" do
+      before do
+        create(:issue_modification_request, decision_review: in_progress_task)
+        visit dispositions_url
+      end
+      scenario "The banner should display and the save button should be disabled" do
+        expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
+        expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NONE_ADMIN)
+        expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+        expect(page).to have_selector("textarea#description-issue-0[disabled]")
+        expect(page).to have_selector("input#decision-date[readonly]")
+        expect(page).to have_button("Complete", disabled: true)
+        step "As an admin user" do
+          User.authenticate!(user: admin_user)
+          visit dispositions_url
+          expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN)
+          expect(page).not_to have_text(COPY::DISPOSITION_DECISION_HEADER_ADMIN)
+          expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
+          expect(page).to have_selector("textarea#description-issue-0[disabled]")
+          expect(page).to have_selector("input#decision-date[readonly]")
+          expect(page).to have_button("Complete", disabled: true)
+        end
+      end
     end
 
     context "with no POA" do

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import moment from 'moment';
+import { css } from 'glamor';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -21,6 +22,11 @@ import {
   buildDispositionSubmission
 } from '../util';
 import Link from 'app/components/Link';
+import Alert from '../../components/Alert';
+
+const messageStyling = css({
+  fontSize: '17px !important',
+});
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -174,6 +180,8 @@ class NonCompDispositions extends React.PureComponent {
     let displayPOAComponent = this.props.task.business_line === 'vha';
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
+    const decisionHasPendingRequestIssues = this.props.task.pending_issue_modification_count > 0;
+
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
@@ -196,6 +204,15 @@ class NonCompDispositions extends React.PureComponent {
     const decisionHeaderText = displayRequestIssueModification ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
       COPY.DISPOSITION_DECISION_HEADER_NONADMIN;
 
+    // // if pending issues are present and if the user is in uat then decision header should not be visible
+    // decisionHeaderText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ? '' : decisionHeaderText;
+
+    const bannerDecisionBannerText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ?
+      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN :
+      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NONE_ADMIN;
+
+    const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
+
     return <div>
       {displayPOAComponent && <div className="cf-decisions">
         <div className="cf-decision">
@@ -213,17 +230,23 @@ class NonCompDispositions extends React.PureComponent {
           {displayPOAComponent && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
-              <h2 style={{ 'margin-bottom': '30px' }}>Decision</h2>
+              <h2 style={{ marginBottom: '30px' }}>Decision</h2>
             </div>
             <div className="usa-width-one-half cf-txt-r">
               {editIssuesLink}
             </div>
           </div>
           <div className="usa-grid-full">
-            <div className="usa-width-one-whole">{decisionHeaderText}</div >
+            {isBusinessLineAdmin && decisionHasPendingRequestIssues ? null :
+              <div className="usa-width-one-whole" style={{ paddingBottom: '30px' }} >{decisionHeaderText}</div>
+            }
+            {decisionHasPendingRequestIssues ?
+              <div className="usa-width-one-whole">
+                <Alert type="info" messageStyling={messageStyling} message={bannerDecisionBannerText} />
+              </div> :
+              null}
           </div>
         </div>
-
         <div className="cf-decision-list">
           {
             this.state.requestIssues.map((issue, index) => {
@@ -232,7 +255,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.closed_at)}
+                disabled={disableIssueFields}
               />;
             })
           }
@@ -246,7 +269,7 @@ class NonCompDispositions extends React.PureComponent {
               name="decision-date"
               value={decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={Boolean(task.closed_at)}
+              readOnly={disableIssueFields}
               type="date"
             />
           </InlineForm>
