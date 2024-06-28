@@ -1,17 +1,29 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import Layer from './Comments/Layer';
 import { css } from 'glamor';
-
 
 import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
 
 import ApiUtil from '../../util/ApiUtil';
 import Page from './Page';
+import TextLayer from './TextLayer';
 
-const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel }) => {
+const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel, documentId }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
+
+  const containerClass = css({
+    width: '100%',
+    height: '100%',
+    overflow: 'auto',
+    alignContent: 'start',
+    flexGrow: 'auto',
+    zoom: `${zoomLevel}%`,
+    justifyContent: 'center',
+    gap: zoomLevel > 100 ? `${zoomLevel / 3}rem 15rem` : 0,
+  });
 
   useEffect(() => {
     const getDocData = async () => {
@@ -54,9 +66,19 @@ const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel }) => {
   }, [pdfDoc]);
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto', zoom: `${zoomLevel}%` }} id="pdfContainer">
+    <div id="pdfContainer" className={containerClass}>
       {pdfPages.map((page, index) => (
-        <Page page={page} rotation={rotateDeg} key={`page-index`} />
+        <Page
+          scale={zoomLevel}
+          page={page}
+          rotation={rotateDeg}
+          key={`page-${index}`}
+          renderItem={(childProps) => (
+            <Layer documentId={documentId} zoomLevel={zoomLevel} {...childProps}>
+              <TextLayer page={page} />
+            </Layer>
+          )}
+        />
       ))}
     </div>
   );
@@ -66,7 +88,8 @@ PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
   rotateDeg: PropTypes.string,
   setNumPages: PropTypes.func,
-  zoomLevel: PropTypes.string
+  zoomLevel: PropTypes.string,
+  documentId: PropTypes.number,
 };
 
 export default PdfDocument;
