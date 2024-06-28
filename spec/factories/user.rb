@@ -192,6 +192,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_vacols_titled_attorney_record do
+      after(:create) do |user|
+        create(:staff, :titled_attorney_role, user: user)
+      end
+    end
+
     trait :vlj_support_user do
       after(:create) do |user|
         Colocated.singleton.add_user(user)
