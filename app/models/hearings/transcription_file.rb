@@ -6,6 +6,8 @@ class TranscriptionFile < CaseflowRecord
   belongs_to :transcription
   belongs_to :docket
 
+  belongs_to :locked_by, class_name: "User"
+
   VALID_FILE_TYPES = %w[mp3 mp4 vtt rtf xls csv zip].freeze
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
@@ -65,6 +67,8 @@ class TranscriptionFile < CaseflowRecord
   scope :order_by_hearing_date, ->(direction) { order(Arel.sql("scheduled_for " + direction)) }
   scope :order_by_hearing_type, ->(direction) { order(Arel.sql("hearing_type " + direction)) }
   scope :order_by_case_type, ->(direction) { order(Arel.sql("sortable_case_type " + direction)) }
+
+  scope :locked, -> { where(locked_at: (Time.now.utc - 2.hours)..Time.now.utc) }
 
   # Purpose: Fetches file from S3
   # Return: The temporary save location of the file
@@ -157,7 +161,7 @@ class TranscriptionFile < CaseflowRecord
     (hearing.appeal.try(:stream_type) || "Original").capitalize
   end
 
-  # Purpose: Returns the external appeal id from an AMA appeal
+  # Purpose: Returns the external appeal id from an AMA appeal or Legacy appeal
   #
   # Returns: string, defaults to blank of not AMA
   def external_appeal_id
@@ -171,5 +175,10 @@ class TranscriptionFile < CaseflowRecord
     appellant_name = hearing.appeal.appellant_or_veteran_name
     file_number = hearing.appeal.veteran_file_number
     "#{appellant_name} (#{file_number})"
+  end
+
+  # Purpose: Returns true if record is not locked, was locked by user_id, or locked more than two hours ago
+  def lockable?(user_id)
+    !locked_by_id || locked_by_id == user_id || locked_at < Time.now.utc - 2.hours
   end
 end
