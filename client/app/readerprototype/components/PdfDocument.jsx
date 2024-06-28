@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { css } from 'glamor';
+
 
 import * as PDFJS from 'pdfjs-dist';
 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js';
@@ -7,7 +9,7 @@ PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pd
 import ApiUtil from '../../util/ApiUtil';
 import { renderPageBatch, rotatePages } from '../util/pageUtil';
 
-const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
+const PdfDocument = ({ fileUrl, rotateDeg, setNumPages, zoomLevel }) => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
 
@@ -26,6 +28,7 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
       if (docProxy) {
         setPdfDoc(docProxy);
+        setNumPages(docProxy.numPages);
       }
     };
 
@@ -63,9 +66,9 @@ const PdfDocument = ({ fileUrl, zoomLevel, rotateDeg }) => {
 
 PdfDocument.propTypes = {
   fileUrl: PropTypes.string,
-  zoomLevel: PropTypes.string,
   rotateDeg: PropTypes.string,
-  setDocumentPageCount: PropTypes.number,
+  setNumPages: PropTypes.func,
+  zoomLevel: PropTypes.string
 };
 
 export default PdfDocument;
