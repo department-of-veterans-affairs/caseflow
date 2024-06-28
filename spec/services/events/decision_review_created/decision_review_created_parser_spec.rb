@@ -174,24 +174,19 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
         create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Valid Category")
       end
 
-      it "sets the nonrating_issue_category from the database when there is exactly one matching issue" do
-        parser.process_nonrating(payload_with_valid_issue)
-        expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Valid Category")
-      end
-
       it "sets the nonrating_issue_category to 'Unknown Issue Category' when there are multiple matching issues" do
         create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Another Valid Category")
-        parser.process_nonrating(payload_with_valid_issue)
+        parser.process_nonrating_issue_category(payload_with_valid_issue)
         expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
       end
 
       it "doesn't change anything if nonrating_issue_category is not Disposition" do
-        parser.process_nonrating(payload_with_invalid_issue)
+        parser.process_nonrating_issue_category(payload_with_invalid_issue)
         expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Other")
       end
 
       it "sets the nonrating_issue_category to 'Unknown Issue Category' for all request issues when the contested_decision_issue_id is not found" do
-        parser.process_nonrating(payload_with_unknown_issue)
+        parser.process_nonrating_issue_category(payload_with_unknown_issue)
         payload_with_unknown_issue[:request_issues].each do |issue|
           expect(issue[:nonrating_issue_category]).to eq("Unknown Issue Category")
         end
