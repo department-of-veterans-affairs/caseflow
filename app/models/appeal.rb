@@ -27,6 +27,8 @@ class Appeal < DecisionReview
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
   has_many :notifications, as: :notifiable
+  has_many :correspondence_appeals
+  has_many :correspondences, through: :correspondence_appeals
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -957,6 +959,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   def is_legacy?
