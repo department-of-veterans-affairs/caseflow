@@ -8,7 +8,6 @@
   vertical-align: text-top;
   font-family: Source Sans Pro;
   font-size: 17px;
-  // width: 20%;
 }
 
 .lever-history-table-header-styling {
@@ -34,14 +33,14 @@
   table {
     width: 100%;
     margin-top: 0;
-    tr td {
-      max-width: 30rem;
-      overflow-x: auto;
-      padding:  1rem;
-      font-size: 1.5rem;
-    }
+    overflow: auto;
+    display: block;
 
     tr {
+      max-width: 30rem;
+      overflow-x: auto;
+      padding: 1rem;
+      font-size: 1.5rem;
       border-bottom: 1px solid $color-gray-lighter;
 
       th {
@@ -59,18 +58,5 @@
         }
       }
     }
-  }
-
-  .entry-user-id {
-    // width: 10%;
-  }
-
-  .entry-previous-values,
-  .entry-updated-values {
-    // width: 15%;
-  }
-
-  .entry-titles {
-    // width: 40%;
   }
 }
