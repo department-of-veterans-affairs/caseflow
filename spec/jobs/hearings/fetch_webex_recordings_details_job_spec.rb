@@ -56,11 +56,12 @@ describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
       {
         error: { type: "retrieval", explanation: "retrieve recording details from Webex" },
         provider: "webex",
+        api_call:
+          "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}recordings/#{id}#{query}",
+        response: { status: exception.code, message: exception.message }.to_json,
         recording_id: id,
         host_email: email,
-        api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{id}#{query}",
-        response: { status: exception.code, message: exception.message }.to_json,
-        docket_number: nil
+        meeting_title: meeting_title
       }
     end
 

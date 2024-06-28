@@ -12,14 +12,12 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     sort_by = "created"
     max = 1000
-    query = { "sortBy": sort_by, "max": max }
+    query = "?sortBy=#{sort_by}&max=#{max}"
     error_details = {
       error: { type: "retrieval", explanation: "retrieve a list of rooms from Webex" },
       provider: "webex",
-      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
-      response: { status: exception.code, message: exception.message }.to_json,
-      times: nil,
-      docket_number: nil
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}rooms#{query}",
+      response: { status: exception.code, message: exception.message }.to_json
     }
     job.log_error(exception)
     job.send_transcription_issues_email(error_details)
