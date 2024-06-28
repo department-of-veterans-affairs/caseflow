@@ -3,8 +3,8 @@
 /* eslint-disable max-len */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -18,10 +18,14 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 import OrganizationPermissions from './OrganizationPermissions';
 
-const listStyle = css({
-  listStyle: 'none'
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -70,8 +74,10 @@ export default class OrganizationUsers extends React.PureComponent {
 
   dropdownOptions = () => {
     return this.state.remainingUsers.map((user) => {
-      return { label: this.formatName(user),
-        value: user };
+      return {
+        label: this.formatName(user),
+        value: user
+      };
     });
   };
 
@@ -109,16 +115,20 @@ export default class OrganizationUsers extends React.PureComponent {
 
   removeUser = (user) => () => {
     this.setState({
-      removingUser: { ...this.state.removingUser,
-        [user.id]: true }
+      removingUser: {
+        ...this.state.removingUser,
+        [user.id]: true
+      }
     });
 
     ApiUtil.delete(`/organizations/${this.props.organization}/users/${user.id}`).then(() => {
       this.setState({
         remainingUsers: [...this.state.remainingUsers, user],
         organizationUsers: this.state.organizationUsers.filter((arrayUser) => arrayUser.id !== user.id),
-        removingUser: { ...this.state.removingUser,
-          [user.id]: false }
+        removingUser: {
+          ...this.state.removingUser,
+          [user.id]: false
+        }
       });
     }, (error) => {
       let errorDetail = error.message;
@@ -132,8 +142,10 @@ export default class OrganizationUsers extends React.PureComponent {
       }
 
       this.setState({
-        removingUser: { ...this.state.removingUser,
-          [user.id]: false },
+        removingUser: {
+          ...this.state.removingUser,
+          [user.id]: false
+        },
         error: {
           title: COPY.USER_MANAGEMENT_REMOVE_USER_ERROR_TITLE,
           body: errorDetail
@@ -144,8 +156,10 @@ export default class OrganizationUsers extends React.PureComponent {
 
   modifyUser = (user, flagName) => {
     this.setState({
-      [flagName]: { ...this.state[flagName],
-        [user.id]: true }
+      [flagName]: {
+        ...this.state[flagName],
+        [user.id]: true
+      }
     });
   }
 
@@ -158,15 +172,19 @@ export default class OrganizationUsers extends React.PureComponent {
 
     this.setState({
       organizationUsers: updatedUserList,
-      [flagName]: { ...this.state[flagName],
-        [user.id]: false }
+      [flagName]: {
+        ...this.state[flagName],
+        [user.id]: false
+      }
     });
   }
 
   modifyUserError = (title, body, user, flagName) => {
     this.setState({
-      [flagName]: { ...this.state[flagName],
-        [user.id]: false },
+      [flagName]: {
+        ...this.state[flagName],
+        [user.id]: false
+      },
       error: {
         title,
         body
@@ -221,56 +239,79 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
-getFilteredUsers = () => {
-  if (this.state.searchValue.length > 1) {
+  getFilteredUsers = () => {
+    if (this.state.searchValue.length > 1) {
 
-    // return name or css id if match
-    return this.state.organizationUsers.filter((user) =>
-      user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
-      user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
-    );
-  }
+      // return name or css id if match
+      return this.state.organizationUsers.filter((user) =>
+        user.attributes.full_name.toLowerCase().includes(this.state.searchValue.toLowerCase()) ||
+        user.attributes.css_id.toLowerCase().includes(this.state.searchValue.toLowerCase())
+      );
+    }
 
-  return this.state.organizationUsers;
+    return this.state.organizationUsers;
 
-};
+  };
 
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
     const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
+      const { conferenceSelectionVisibility } = this.props;
 
-      return <React.Fragment key={user.id}>
-        <div className={['team-member-container']}>
-          <div className={['team-member-info']}>
-            <div key={user.id} className={['team-member-list-item']}>{this.formatName(user)}
-              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+      return (
+        <React.Fragment key={user.id}>
+          <li key={user.id} className="user-list-item">
+            <div className="title-buttons">
+              {this.formatName(user)}
+              {judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong>}
+              {dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong>}
+              {judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong>}
+              {(judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong>}
+
+              {
+                (judgeTeam || dvcTeam) && admin ?
+                  null :
+                  <div>
+                    {(judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin)}
+                    {this.removeUserButton(user)}
+                  </div>
+              }
+
             </div>
-            { (judgeTeam || dvcTeam) && admin ?
-              <div className={['top-user-border']}></div> :
-              <div>
-                <div className={['team-member-buttons-container']}>
-                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-                  { this.removeUserButton(user) }
-                </div>
-              </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
+                conferenceSelectionVisibility && (
+                  <div className="button-style">
+                    <div>
+                      <SelectConferenceTypeRadioField
+                        key={`${user.id}-conference-selection`}
+                        name={user.id}
+                        conferenceProvider={
+                          user.attributes.conference_provider
+                        }
+                        organization={this.props.organization}
+                        user={user}
+                      />
+                    </div>
+                  </div>
+                )}
 
-            }
-          </div>
-          {(this.props.organizationPermissions.length > 0) && <div className={['team-member-permission-toggles-container']}>
-            <OrganizationPermissions
-              organization={this.props.organization}
-              permissions={this.props.organizationPermissions}
-              user={user}
-              orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
-              orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
-          </div>}
-        </div>
-      </React.Fragment>;
+              {(this.props.organizationPermissions.length > 0) &&
+                <div className={['team-member-permission-toggles-container']}>
+                  <OrganizationPermissions
+                    organization={this.props.organization}
+                    permissions={this.props.organizationPermissions}
+                    user={user}
+                    orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+                    orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+                </div>
+              }
+            </div>
+          </li>
+        </React.Fragment>
+      );
     });
 
     const handleSearchChange = (value) => {
@@ -287,34 +328,35 @@ getFilteredUsers = () => {
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
-            `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+      <div className="add-dropdown">
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
+              `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
-            { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
+          <ul className="instruction-list">
+            {(judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li>}
+            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
           </ul>
           <div className="make-content-centered">
             <p className="text-styling-for-filter-search-bar">
-          Filter by username or CSS ID</p>
+              Filter by username or CSS ID</p>
             <div className="search-bar-styling-for-filter">
               <SearchBar
                 id="searchBar"
@@ -323,13 +365,13 @@ getFilteredUsers = () => {
                 size="small"
                 onChange={(value) => handleSearchChange(value)}
                 onClearSearch={handleClearSearch}
-                value= {this.state.searchValue}
+                value={this.state.searchValue}
               />
             </div>
           </div>
         </div>
-        { listOfUsers.length > 0 ? (
-          <ul>{listOfUsers}</ul>
+        {listOfUsers.length > 0 ? (
+          <ul className="user-list">{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
@@ -337,7 +379,6 @@ getFilteredUsers = () => {
           </>
         )
         }
-
       </div>
     </React.Fragment>;
   }
@@ -386,17 +427,17 @@ getFilteredUsers = () => {
     failStatusMessageProps={{
       title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
     }}>
-    { this.state.success && <Alert title={this.state.success.title} type="success">
+    {this.state.success && <Alert title={this.state.success.title} type="success">
       {this.state.success.body}
     </Alert>}
     <AppSegment filledBackground>
-      { this.state.error && <Alert title={this.state.error.title} type="error">
+      {this.state.error && <Alert title={this.state.error.title} type="error">
         {this.state.error.body}
       </Alert>}
       <div>
-        <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
+        <h1>{this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
-            sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
+            sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName)}</h1>
         {this.state.isVhaOrg && (<>
           <MembershipRequestTable requests={this.state.membershipRequests} membershipRequestActionHandler={this.membershipRequestHandler} />
           <div style={{ paddingBottom: '7rem' }}></div>
@@ -410,6 +451,7 @@ getFilteredUsers = () => {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string,
+  conferenceSelectionVisibility: PropTypes.bool,
   organizationPermissions: PropTypes.array,
   orgnizationUserPermissions: PropTypes.array
 };
