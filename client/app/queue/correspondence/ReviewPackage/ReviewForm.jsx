@@ -19,7 +19,7 @@ export const ReviewForm = (props) => {
   // eslint-disable-next-line max-len
   const [correspondenceTypeID, setCorrespondenceTypeID] = useState(props.correspondence.correspondence_type_id);
   // eslint-disable-next-line max-len
-  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
+  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
   const [saveChanges, setSaveChanges] = useState(true);
   const stateCorrespondence = useSelector(
@@ -180,8 +180,8 @@ export const ReviewForm = (props) => {
     if (props.errorMessage) {
       return <div className="error-veternal-file-styling-review-form">
         <TextField
-          label="Veteran file edewdnumber"
-          value={'no'}
+          label="Veteran file number"
+          value={props.editableData.veteran_file_number}
           onChange={handleFileNumber}
           name="veteran-file-number-input"
           useAriaLabel
@@ -193,13 +193,13 @@ export const ReviewForm = (props) => {
 
     return <div className="veternal-file-styling-review-form">
       <TextField
-        label="Veteran file nummber"
-        value={props.fileNumber}
-        onChange={props.handleFileNumberChange}
+        label="Veteran file number"
+        value={props.editableData.veteran_file_number}
+        onChange={handleFileNumber}
         name="veteran-file-number-input"
         useAriaLabel
         errorMessage={props.errorMessage}
-        // readOnly={props.isReadOnly}
+        readOnly={props.isReadOnly}
       />
     </div>;
 
@@ -264,7 +264,7 @@ export const ReviewForm = (props) => {
               <TextField
                 name="correspondence-package-document-type"
                 label="Package document type"
-                value = {props.NEW_DATA_CHANGEME.packageDocumentType}
+                value = {props.correspondence?.nod ? 'NOD' : 'Non-NOD'}
                 readOnly
               />
             </div>
@@ -279,7 +279,7 @@ export const ReviewForm = (props) => {
               <TextareaField
                 id= "textarea-styling-review-form"
                 name="Notes"
-                value={props.NEW_DATA_CHANGEME.notes}
+                value={props.editableData.notes}
                 onChange={handleChangeNotes}
                 disabled={props.isReadOnly}
               />

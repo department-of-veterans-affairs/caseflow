@@ -8,6 +8,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     @correspondence = WorkQueue::CorrespondenceSerializer
     .new(correspondence)
     .serializable_hash[:data][:attributes]
+    .merge(general_information, display_intake_appeal: display_intake_appeal)
 
     respond_to do |format|
       format.html
