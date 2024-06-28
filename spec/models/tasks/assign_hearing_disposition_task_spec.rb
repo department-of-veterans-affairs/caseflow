@@ -82,7 +82,8 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(hearing.notes).to eq hearing_notes
         end
         expect(hearing_class.last.hearing_location.facility_id).to eq "vba_370"
-        expect(hearing_class.last.scheduled_for.strftime("%I:%M%p")).to eq "12:30PM"
+        scheduled_time = hearing_class.last.scheduled_for.zone == "EDT" ? "01:30PM" : "12:30PM"
+        expect(hearing_class.last.scheduled_for.strftime("%I:%M%p")).to eq scheduled_time
         expect(HearingTask.count).to eq 2
         expect(HearingTask.order(:id).first.cancelled?).to be_truthy
         expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq hearing_class.last.id
