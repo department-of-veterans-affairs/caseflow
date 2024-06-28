@@ -34,10 +34,12 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/ama_issues'
+- url: /api/v3/issues/ama/
 paths:
-  /api/v3/issues/ama/find_by_veteran/{veteran_participant_id}:
+  /find_by_veteran/{veteran_participant_id}:
     get:
       tags:
         - Request Issues
@@ -46,6 +48,7 @@ paths:
           in: path
           required: true
           description: Veteran Participant ID
+          example: 123456789
           schema:
             $ref: "#/components/schemas/VeteranParticipantId"
         - in: query
@@ -586,3 +589,8 @@ components:
             updated_at:
               type: string
               description: "The date and time the record was updated"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow
