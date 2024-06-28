@@ -166,10 +166,11 @@ export class PdfFile extends React.PureComponent {
         file,
         step,
         reason,
-        prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        bandwidth: this.connectionInfo
       };
 
-      let message = `Getting PDF document: "${file}" ${this.connectionInfo}`;
+      let message = `Getting PDF document: "${file}"`;
 
       storeMetrics(logId, documentData, {
         message,

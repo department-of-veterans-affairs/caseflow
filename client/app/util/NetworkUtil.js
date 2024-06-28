@@ -27,10 +27,10 @@ class NetworkUtil {
 
     // Handle case where bandwidth is not set
     if (this.bandwidth === null) {
-      return 'Speed: Not available';
+      return 'Not available';
     }
 
-    return `Speed: ${this.bandwidth} Mbits/s`;
+    return `${this.bandwidth} Mbits/s`;
   }
 }
 

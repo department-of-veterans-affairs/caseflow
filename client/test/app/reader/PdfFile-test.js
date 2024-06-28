@@ -116,7 +116,7 @@ describe('PdfFile', () => {
     describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
 
       beforeEach(() => {
-        networkUtil.connectionInfo.mockResolvedValueOnce('Speed: 5 Mbits/s');
+        networkUtil.connectionInfo.mockResolvedValueOnce('5 Mbits/s');
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         wrapper = shallow(
@@ -222,10 +222,11 @@ describe('PdfFile', () => {
             step: 'getDocument',
             reason: timeoutError,
             prefetchDisabled: undefined,
+            bandwidth: '5 Mbits/s',
 
           },
           {
-            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}" Speed: 5 Mbits/s`),
+            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}"`),
             type: 'error',
             product: 'reader'
           },
@@ -259,10 +260,11 @@ describe('PdfFile', () => {
             step: 'setPageDimensions',
             reason: error,
             prefetchDisabled: undefined,
+            bandwidth: '5 Mbits/s',
 
           },
           {
-            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}" Speed: 5 Mbits/s`),
+            message: expect.stringContaining(`Getting PDF document: "${documents[0].content_url}"`),
             type: 'error',
             product: 'reader'
           },
@@ -270,10 +272,10 @@ describe('PdfFile', () => {
         );
       });
     });
-    describe('when internet speed is not available', () => {
+    describe('when internet bandwidth is not available', () => {
 
       beforeEach(() => {
-        networkUtil.connectionInfo.mockResolvedValueOnce('Speed: Not available');
+        networkUtil.connectionInfo.mockResolvedValueOnce('Not available');
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         wrapper = shallow(
@@ -302,7 +304,7 @@ describe('PdfFile', () => {
         jest.clearAllMocks();
       });
 
-      it('handles Speed: Not Available from NetworkUtil', async () => {
+      it('handles bandwidth: Not available from NetworkUtil', async () => {
         const timeoutError = new Error('Timeout error');
 
         jest.clearAllMocks();
@@ -320,11 +322,12 @@ describe('PdfFile', () => {
             step: 'getDocument',
             reason: timeoutError,
             prefetchDisabled: undefined,
+            bandwidth: 'Not available'
 
           },
           {
             message: expect.stringContaining(
-              `Getting PDF document: "${documents[0].content_url}" Speed: Not available`),
+              `Getting PDF document: "${documents[0].content_url}"`),
             type: 'error',
             product: 'reader'
           },
