@@ -562,8 +562,8 @@ class AddIssuesPage extends React.Component {
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
       const isEstablishedAndVha = intakeData.benefitType === 'vha' &&
-              areAllIssuesReadyToBeEstablished() &&
-              _.isEmpty(pendingIssueModificationRequests);
+        areAllIssuesReadyToBeEstablished() &&
+        _.isEmpty(pendingIssueModificationRequests);
 
       const establishText = isEstablishedAndVha ? 'Establish' : 'Save';
       const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;
