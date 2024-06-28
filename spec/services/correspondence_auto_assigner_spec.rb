@@ -31,7 +31,7 @@ describe CorrespondenceAutoAssigner do
 
           before do
             expect(mock_assignable_user_finder).to receive(:assignable_users_exist?).and_return(true)
-            allow(mock_assignable_user_finder).to receive(:unassignable_reason).and_return("User is at max capacity")
+            allow(mock_assignable_user_finder).to receive(:unassignable_reasons).and_return(["User is at max capacity"])
           end
 
           it "assigns review package tasks to assignable users" do
