@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
-# Migration with built-in timeout extensions for adding indexes
-
+# @deprecated Use {Caseflow::Migrations::AddIndexConcurrently} instead, because descendants of this class are forever
+#   coupled to Active Record 5.1.
+#   This class should be preserved until all descendant migrations <= 20240227154315 are pruned.
+#
+# @note Migration with built-in timeout extensions for adding indexes
 class Caseflow::Migration < ActiveRecord::Migration[5.1]
+  def initialize(*)
+    super
+    # Trigger deprecation warning to prevent re-introduction in migrations after version 20240227154315
+    if version > 20_240_227_154_315
+      ActiveSupport::Deprecation.warn(
+        "Caseflow::Migration is deprecated and should no longer be used.\n" \
+        "If adding an index, see Caseflow::Migrations::AddIndexConcurrently."
+      )
+    end
+  end
+
   # hardcode this because setting via class method does not work in subclass
   def disable_ddl_transaction
     say "disable_ddl_transaction is true"
