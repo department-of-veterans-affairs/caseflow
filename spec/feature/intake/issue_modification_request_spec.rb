@@ -87,7 +87,7 @@ feature "Issue Modification Request", :postgres do
            nonrating_issue_description: withdrawal_request_issue.nonrating_issue_description,
            decision_date: withdrawal_request_issue.decision_date,
            request_issue: withdrawal_request_issue,
-           withdrawal_date: Time.zone.now)
+           withdrawal_date: Time.zone.now - 1.day)
   end
 
   let!(:modify_existing_modification_request) do
@@ -107,6 +107,11 @@ feature "Issue Modification Request", :postgres do
 
   before do
     vha_org.add_user(current_user)
+    Timecop.freeze
+  end
+
+  after do
+    Timecop.return
   end
 
   context "non-admin user" do
