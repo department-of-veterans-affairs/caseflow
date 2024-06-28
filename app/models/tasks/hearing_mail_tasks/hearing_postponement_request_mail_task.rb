@@ -144,7 +144,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
         .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
 
       AppellantNotification.notify_appellant(appeal, "Hearing scheduled")
-
+      new_hearing.maybe_create_non_virtual_conference
       [new_hearing_task, disposition_task]
     end
   end
