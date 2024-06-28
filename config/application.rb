@@ -12,7 +12,7 @@ require "vbms"
 module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 6.0
     config.autoloader = :classic
 
     # Settings in config/environments/* take precedence over those specified here.
@@ -65,16 +65,6 @@ module CaseflowCertification
     # Default as of 5.2: true
     config.active_record.cache_versioning = false
 
-    # Use AES-256-GCM authenticated encryption for encrypted cookies.
-    # Also, embed cookie expiry in signed or encrypted cookies for increased security.
-    #
-    # This option is not backwards compatible with earlier Rails versions.
-    # It's best enabled when your entire app is migrated and stable on 5.2.
-    #
-    # Existing cookies will be converted on read then written with the new scheme.
-    # Default as of 5.2: true
-    config.action_dispatch.use_authenticated_cookie_encryption = false
-    #
     # Use AES-256-GCM authenticated encryption as default cipher for encrypting messages
     # instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
     # Default as of 5.2: true
@@ -96,27 +86,9 @@ module CaseflowCertification
     # Default as of 6.0: false
     config.action_view.default_enforce_utf8 = true
 
-    # Embed purpose and expiry metadata inside signed and encrypted
-    # cookies for increased security.
-    #
-    # This option is not backwards compatible with earlier Rails versions.
-    # It's best enabled when your entire app is migrated and stable on 6.0.
-    # Default as of 6.0: true
-    config.action_dispatch.use_cookies_with_metadata = false
-
     # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
     # Default as of 6.0: false
     config.action_dispatch.return_only_media_type_on_content_type = true
-
-    # Use ActionMailer::MailDeliveryJob for sending parameterized and normal mail.
-    #
-    # The default delivery jobs (ActionMailer::Parameterized::DeliveryJob, ActionMailer::DeliveryJob),
-    # will be removed in Rails 6.1. This setting is not backwards compatible with earlier Rails versions.
-    # If you send mail in the background, job workers need to have a copy of
-    # MailDeliveryJob to ensure all delivery jobs are processed properly.
-    # Make sure your entire app is migrated and stable on 6.0 before using this setting.
-    # Default as of 6.0: "ActionMailer::MailDeliveryJob"
-    config.action_mailer.delivery_job = nil
 
     # Enable the same cache key to be reused when the object being cached of type
     # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
