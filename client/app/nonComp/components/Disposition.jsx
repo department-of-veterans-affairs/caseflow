@@ -209,7 +209,7 @@ class NonCompDispositions extends React.PureComponent {
 
     const bannerDecisionBannerText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ?
       COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN :
-      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NONE_ADMIN;
+      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN;
 
     const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
 

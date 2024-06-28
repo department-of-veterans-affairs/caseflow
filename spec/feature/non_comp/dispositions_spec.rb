@@ -415,7 +415,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
       scenario "The banner should display and the save button should be disabled" do
         expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
-        expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NONE_ADMIN)
+        expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN)
         expect(page).to have_selector("input#disposition-issue-0[disabled]", visible: false)
         expect(page).to have_selector("textarea#description-issue-0[disabled]")
         expect(page).to have_selector("input#decision-date[readonly]")
