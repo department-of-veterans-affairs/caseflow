@@ -35,10 +35,14 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
+
+ # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -72,6 +76,7 @@ class LegacyHearing < CaseflowRecord
   has_one :hearing_location, as: :hearing
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :hearing_id
+  has_many :transcription_files, as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
@@ -357,6 +362,10 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def daily_docket_conference_link
+    hearing_day.conference_link
+  end
+
   class << self
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
@@ -397,6 +406,7 @@ class LegacyHearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user

@@ -31,11 +31,14 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
+  # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingPostponed
   prepend HearingWithdrawn
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -47,6 +50,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
+  has_many :transcription_files, as: :hearing
 
   class HearingDayFull < StandardError; end
 
@@ -185,6 +189,10 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def daily_docket_conference_link
+    hearing_day.conference_link
+  end
+
   def scheduled_for
     return nil unless hearing_day
 
@@ -291,6 +299,7 @@ class Hearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user

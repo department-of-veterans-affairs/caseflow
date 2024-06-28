@@ -46,6 +46,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       subject
     end
+
+    it "queues the UpdateAppealAffinityDatesJob" do
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
+
+      subject
+    end
   end
 
   context ".distribute_non_genpop_priority_appeals" do
@@ -80,6 +86,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: ready_priority_uuid,
           docket_type: Constants.AMA_DOCKETS.hearing,
           receipt_date: receipt_date
@@ -113,8 +120,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
+          :with_appeal_affinity,
           docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
+          receipt_date: receipt_date,
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -181,6 +189,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
           docket_type: Constants.AMA_DOCKETS.hearing,
           receipt_date: receipt_date
@@ -312,6 +321,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.hearing,
                         receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
@@ -323,6 +334,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission,
                         receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
