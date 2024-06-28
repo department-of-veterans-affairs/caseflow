@@ -1,47 +1,22 @@
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import * as PDFJS from 'pdfjs-dist';
 import React, { useEffect, useRef } from 'react';
 
-const Page = ({ page, rotation = '0deg' }) => {
+const Page = ({ page, rotation = '0deg', renderItem, scale }) => {
   const canvasRef = useRef(null);
-  const textLayerRef = useRef(null);
 
   const viewport = page.getViewport({ scale: 1 });
-
-  const textLayerStyle = css({
-    width: `${viewport?.width}px`,
-    height: `${viewport?.height}px`,
-    transformOrigin: 'left top',
-    opacity: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  });
   const wrapperStyle = css({
     rotate: rotation,
+    transform: `scale(${scale / 100.0})`,
+    padding: '10px',
   });
 
   useEffect(() => {
-    if (canvasRef.current) page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport });
-  }, [canvasRef.current, viewport]);
-
-  useEffect(() => {
-    const getPageText = async () => {
-      const pageText = await page.getTextContent();
-
-      PDFJS.renderTextLayer({
-        textContent: pageText,
-        container: textLayerRef.current,
-        viewport,
-        textDivs: [],
-      });
-    };
-
-    if (textLayerRef.current) {
-      getPageText();
+    if (canvasRef.current) {
+      page.render({ canvasContext: canvasRef.current?.getContext('2d'), viewport });
     }
-  }, [textLayerRef.current]);
+  }, [canvasRef.current, viewport]);
 
   return (
     <div id={`canvasContainer-${page.pageNumber}`} className={`${wrapperStyle} canvas-wrapper-prototype`}>
@@ -52,7 +27,15 @@ const Page = ({ page, rotation = '0deg' }) => {
         height={viewport.height}
         width={viewport.width}
       />
-      <div ref={textLayerRef} className={`cf-pdf-pdfjs-textLayer ${textLayerStyle}`} />
+      {renderItem &&
+        renderItem({
+          pageNumber: page.pageNumber,
+          dimensions: {
+            width: viewport?.width,
+            height: viewport?.height,
+          },
+          rotation,
+        })}
     </div>
   );
 };
@@ -60,6 +43,8 @@ const Page = ({ page, rotation = '0deg' }) => {
 Page.propTypes = {
   page: PropTypes.object,
   rotation: PropTypes.string,
+  renderItem: PropTypes.func,
+  scale: PropTypes.number,
 };
 
 export default Page;

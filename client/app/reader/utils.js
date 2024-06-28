@@ -29,8 +29,13 @@ export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
  * the proper helper functions.
  */
 export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
+  x: x - pageBoundingBox.left / scale,
+  y: y - pageBoundingBox.top / scale,
+});
+
+export const pageCoordsOfRootCoords2 = ({ x, y }, pageBoundingBox, scale) => ({
+  x: x - pageBoundingBox.left * scale,
+  y: y - pageBoundingBox.top * scale,
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
@@ -46,19 +51,27 @@ export const rotateCoordinates = ({ x, y }, container, rotation) => {
 
   return {
     x,
-    y
+    y,
   };
 };
 
 export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {
   const constrainedRootCoords = {
     x: clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
-    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
+    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH),
   };
 
   return rotateCoordinates(pageCoordsOfRootCoords(constrainedRootCoords, container, scale), container, rotation);
 };
 
+export const getPageCoordinatesOfMouseEventPrototype = (event, container, scale, rotation) => {
+  const constrainedRootCoords = {
+    x: clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
+    y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH),
+  };
+
+  return rotateCoordinates(pageCoordsOfRootCoords2(constrainedRootCoords, container, scale), container, rotation);
+};
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
  *
@@ -100,7 +113,7 @@ const immutabilityHelperSpecOfPath = (objPath, spec, specVal) => {
 export const moveModel = (state, srcPath, destPath, id) =>
   update(state, {
     ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),
-    ...immutabilityHelperSpecOfPath([...destPath, id], '$set', get(state, [...srcPath, id]))
+    ...immutabilityHelperSpecOfPath([...destPath, id], '$set', get(state, [...srcPath, id])),
   });
 
 export const isValidWholeNumber = (number) => {
