@@ -83,6 +83,8 @@ class SeedDB
 
     Judge.list_all
     Attorney.list_all
+
+
   end
 end
 
