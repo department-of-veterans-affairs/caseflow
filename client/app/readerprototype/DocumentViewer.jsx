@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PdfDocument from './components/PdfDocument';
 import ReaderFooter from './components/ReaderFooter';
+import ReaderSearchBar from './components/ReaderSearchBar';
 import ReaderSidebar from './components/ReaderSidebar';
 import ReaderToolbar from './components/ReaderToolbar';
-import ReaderSearchBar from './components/ReaderSearchBar';
 
+import DeleteModal from './components/Comments/DeleteModal';
+import ShareModal from './components/Comments/ShareModal';
 import { getNextDocId, getPrevDocId, getRotationDeg, selectedDoc, selectedDocIndex } from './util/documentUtil';
 import { docViewerStyles } from './util/layoutUtil';
 
@@ -20,6 +22,7 @@ const DocumentViewer = (props) => {
   const [rotateDeg, setRotateDeg] = useState('0deg');
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
+  const currentDocumentId = Number(props.match.params.docId);
 
   useEffect(() => {
     const keyHandler = (event) => {
@@ -43,8 +46,7 @@ const DocumentViewer = (props) => {
 
   const getPageNumFromScrollTop = (event) => {
     const { clientHeight, scrollTop, scrollHeight } = event.target;
-    const pageHeightEstimate = (rotateDeg === '90deg' || rotateDeg === '270deg') ?
-      clientHeight : (scrollHeight / numPages);
+    const pageHeightEstimate = rotateDeg === '90deg' || rotateDeg === '270deg' ? clientHeight : scrollHeight / numPages;
     const pageNumber = Math.floor((pageHeightEstimate + scrollTop) / pageHeightEstimate);
 
     if (pageNumber > numPages) {
@@ -90,6 +92,7 @@ const DocumentViewer = (props) => {
               rotateDeg={rotateDeg}
               setNumPages={setNumPages}
               zoomLevel={`${zoomLevel}`}
+              documentId={currentDocumentId}
             />
           </div>
           <ReaderFooter
@@ -105,6 +108,8 @@ const DocumentViewer = (props) => {
           />
         </div>
       </div>
+      <DeleteModal documentId={currentDocumentId} />
+      <ShareModal />
     </div>
   );
 };
@@ -112,7 +117,7 @@ const DocumentViewer = (props) => {
 DocumentViewer.propTypes = {
   allDocuments: PropTypes.array.isRequired,
   documentPathBase: PropTypes.string,
-  showPdf: PropTypes.func
+  showPdf: PropTypes.func,
 };
 
 export default DocumentViewer;
