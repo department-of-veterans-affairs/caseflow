@@ -22,7 +22,7 @@ module Seeds
 
       validate_levers_creation
       updated_levers.compact!
-      Rails.logger.info "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
+      Rails.logger.info("#{updated_levers.count} levers updated: #{updated_levers}") if updated_levers.count > 0
     end
 
     private
@@ -46,9 +46,11 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
-      Rails.logger.warn "*********************************************" unless lever.valid?
-      Rails.logger.warn lever.errors.full_messages unless lever.valid?
-      Rails.logger.warn "*********************************************" unless lever.valid?
+      unless lever.valid?
+        Rails.logger.error( "*********************************************")
+        Rails.logger.error(lever.errors.full_messages)
+        Rails.logger.error( "*********************************************")
+      end
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -101,8 +103,8 @@ module Seeds
       levers = CaseDistributionLevers.levers.map { |lever| lever[:item] }
       existing_levers = CaseDistributionLever.all.map(&:item)
 
-      Rails.logger.info "#{CaseDistributionLever.count} levers exist"
-      Rails.logger.warn "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
+      Rails.logger.info("#{CaseDistributionLever.count} levers exist")
+      Rails.logger.info("Levers not created #{levers - existing_levers}") if levers.length != existing_levers.length
     end
 
     class << self
@@ -689,7 +691,7 @@ module Seeds
           full_update_lever(lever)
         end
 
-        Rails.logger.info "Levers updated: #{levers_to_update.map { |lever| lever[:item] }}"
+        Rails.logger.info("Levers updated: #{levers_to_update.map { |lever| lever[:item] }}")
       end
 
       private
@@ -723,9 +725,11 @@ module Seeds
           lever_group_order: lever[:lever_group_order]
         )
 
-        Rails.logger.warn "*********************************************" unless existing_lever.valid?
-        Rails.logger.warn existing_lever.errors.full_messages unless existing_lever.valid?
-        Rails.logger.warn "*********************************************" unless existing_lever.valid?
+        unless lever.valid?
+          Rails.logger.error( "*********************************************")
+          Rails.logger.error(lever.errors.full_messages)
+          Rails.logger.error( "*********************************************")
+        end
       end
     end
   end
