@@ -20,14 +20,17 @@ import {
 } from '../../reader/PdfKeyboardInfo';
 
 import SideBarCategories from '../../reader/SideBarCategories';
-import SideBarComments from '../../reader/SideBarComments';
+import Comments from './Comments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
 import IssueTags from './IssueTags';
+import { useDispatch } from 'react-redux';
+import { setOpenedAccordionSections } from '../../reader/PdfViewer/PdfViewerActions';
 
 const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
-  let comments = [];
-  const hiddenSidebar = hideSidebar ? 'hidden-sidebar' : '';
+  const dispatch = useDispatch();
+
+  const onAccordionOpenOrClose = (openedSections) => dispatch(setOpenedAccordionSections(openedSections, []));
 
   return (
     <div className="cf-sidebar-wrapper-prototype">
@@ -48,7 +51,7 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
       >
         <Accordion
           style="outline"
-          // onChange={onAccordionOpenOrClose()}
+          onChange={onAccordionOpenOrClose}
           // activeKey={props.openedAccordionSections}
         >
           <AccordionSection title="Document information">
@@ -64,7 +67,7 @@ const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
             <IssueTags doc={doc?.doc} />
           </AccordionSection>
           <AccordionSection title="Comments" id="comments-header">
-            <SideBarComments comments={comments} />
+            <Comments documentId={doc?.doc?.id} />
           </AccordionSection>
         </Accordion>
       </div>

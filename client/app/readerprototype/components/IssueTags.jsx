@@ -32,7 +32,7 @@ const IssueTags = ({ doc }) => {
 
   return (
     <div className="cf-issue-tag-sidebar">
-      {errors && <CannotSaveAlert />}
+      {errors?.visible && <CannotSaveAlert />}
       <SearchableDropdown
         key={doc.id}
         name="tags"

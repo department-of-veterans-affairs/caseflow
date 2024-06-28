@@ -32,7 +32,7 @@ export const renderPage = async (pdfPage) => {
     opacity: 1,
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   });
 
   textLayer.className = `cf-pdf-pdfjs-textLayer ${textLayerStyle}`;
@@ -41,7 +41,7 @@ export const renderPage = async (pdfPage) => {
     textContent: pageText,
     container: textLayer,
     viewport,
-    textDivs: []
+    textDivs: [],
   });
 };
 
