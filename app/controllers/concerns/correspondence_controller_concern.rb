@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# :reek:DataClump
 
 # Contains most of the logic inside of CorrespondenceController
 module CorrespondenceControllerConcern
   private
 
+  # :reek:FeatureEnvy
   def process_tasks_if_applicable(mail_team_user, task_ids, tab)
     # candidate for refactor using PATCH request
     return unless mail_team_user && task_ids.present?
@@ -43,6 +45,7 @@ module CorrespondenceControllerConcern
     )
   end
 
+  # :reek:LongParameterList
   def set_banner_params(user, errors, task_count, tab)
     template = message_template(user, errors, task_count, tab)
     @response_type = errors.empty? ? "success" : "warning"
@@ -50,6 +53,7 @@ module CorrespondenceControllerConcern
     @response_message = template[:message]
   end
 
+  # :reek:ControlParameter and :reek:LongParameterList
   def message_template(user, errors, task_count, tab)
     case tab
     when "correspondence_unassigned"
@@ -154,6 +158,7 @@ module CorrespondenceControllerConcern
     ]
   end
 
+  # :reek:ControlParameter
   def intake_cancel_message(action_type)
     vet = veteran_by_correspondence
     if action_type == "cancel_intake"
