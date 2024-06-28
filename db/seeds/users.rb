@@ -129,37 +129,49 @@ module Seeds
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
     end
 
-
-      # Below originated in Education seed file
-      setup_emo_org
-      setup_rpo_orgs
+    def create_batch_2_users
+      User.find_or_create_by(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.find_or_create_by(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
+      User.find_or_create_by(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
+      User.find_or_create_by(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
+      User.find_or_create_by(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.find_or_create_by(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
     end
 
-    def create_bva_dispatch_admin
-      dispatch_admin = create(:user, css_id: "BVAGBLACK", full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
+    def create_dispatch_admin
+      dispatch_admin = User.find_or_create_by(
+        css_id: "BVAGBLACK",
+        station_id: 101,
+        full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
+      )
       OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     end
 
     def create_case_review_admin
-      case_review_admin = create(:user, css_id: "BVAKBLUE", full_name: "Kim CaseReviewAdmin Blue")
+      case_review_admin = User.find_or_create_by(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
       OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
     end
 
-    def create_special_case_movement_users
-      special_case_movement_user = create(:user, :with_vacols_record,
-                                          css_id: "BVARDUNKLE", full_name: "Rosalie SpecialCaseMovement Dunkle")
+    def create_special_case_movement_user
+      special_case_movement_user = User.find_or_create_by(
+        css_id: "BVARDUNKLE",
+        station_id: 101,
+        full_name: "Rosalie SpecialCaseMovement Dunkle"
+      )
+      FactoryBot.create(:staff, user: special_case_movement_user)
       SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
+    end
 
-      special_case_movement_admin = create(:user, :with_vacols_record,
-                                           css_id: "BVAGBEEKMAN", full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+    def special_case_movement_admin
+      special_case_movement_admin = User.find_or_create_by(css_id: "BVAGBEEKMAN",
+                                                station_id: 101,
+                                                full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+      FactoryBot.create(:staff, user: special_case_movement_admin)
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
     end
 
-    def create_bva_intake_users
-      bva_intake_admin = create(:user, css_id: "BVADWISE", full_name: "Deborah BvaIntakeAdmin Wise")
-      OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
-
-      bva_intake_user = create(:user, css_id: "BVAISHAW", full_name: "Ignacio BvaIntakeUser Shaw")
+    def create_bva_intake_user
+      bva_intake_user = User.find_or_create_by(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
       BvaIntake.singleton.add_user(bva_intake_user)
     end
 
@@ -257,7 +269,6 @@ module Seeds
                                                                       assigned_to_type: User.name
                                                                     }], u)
           end
-        end
       end
     end
 
@@ -672,4 +683,5 @@ module Seeds
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/ClassLength
+  end
 end
