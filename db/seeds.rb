@@ -46,16 +46,6 @@ class SeedDB
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
     call_and_log_seed_step Seeds::Dispatch
-<<<<<<< Updated upstream
-    call_and_log_seed_step Seeds::Jobs
-    call_and_log_seed_step Seeds::DecisionIssues
-    call_and_log_seed_step Seeds::SanitizedJsonSeeds
-    call_and_log_seed_step Seeds::VeteransHealthAdministration
-    call_and_log_seed_step Seeds::MTV
-    call_and_log_seed_step Seeds::Education
-    call_and_log_seed_step Seeds::TranscriptionContractor
-    call_and_log_seed_step Seeds::TranscriptionFiles
-=======
     call_and_log_seed_step Seeds::TranscriptionFiles
     call_and_log_seed_step Seeds::Jobs
     call_and_log_seed_step Seeds::Substitutions
@@ -66,8 +56,7 @@ class SeedDB
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
     call_and_log_seed_step Seeds::TranscriptionContractor
-    
->>>>>>> Stashed changes
+
     # Case Distribution Seed Data
     # Creates 300+ priority cases ready for distribution
     # Warning a number are not setup correctly so cannot be used beyond
@@ -83,9 +72,6 @@ class SeedDB
     call_and_log_seed_step Seeds::VhaChangeHistory
     call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
-<<<<<<< Updated upstream
-    call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
-=======
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     call_and_log_seed_step Seeds::AmaIntake
     # Always run this as last one
@@ -97,7 +83,6 @@ class SeedDB
 
     Judge.list_all
     Attorney.list_all
->>>>>>> Stashed changes
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
