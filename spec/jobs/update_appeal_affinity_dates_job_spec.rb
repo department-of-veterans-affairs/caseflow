@@ -212,6 +212,25 @@ describe UpdateAppealAffinityDatesJob do
     end
   end
 
+  context "#legacy_appeals_with_no_appeal_affinities" do
+    before { create(:case_distribution_lever, :request_more_cases_minimum) }
+
+    let(:judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:distribution) { create(:distribution, :completed, judge: judge) }
+    let(:appeal_no_appeal_affinity) { create(:case) }
+    let(:appeal_with_appeal_affinity) { create(:case, :with_appeal_affinity) }
+    let(:job) { described_class.new }
+
+    before { job.instance_variable_set(:@distribution_id, distribution.id) }
+
+    it "only returns appeals with no affinity records" do
+      appeals = [appeal_with_appeal_affinity, appeal_no_appeal_affinity]
+      result = job.send(:legacy_appeals_with_no_appeal_affinities, appeals)
+
+      expect(result.count).to eq 1
+    end
+  end
+
   context "#perform" do
     it "updates from distribution if provided a distribution_id" do
       expect_any_instance_of(described_class).to receive(:update_from_requested_distribution).and_return(true)
