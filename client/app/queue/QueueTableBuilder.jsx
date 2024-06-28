@@ -252,7 +252,13 @@ const QueueTableBuilder = (props) => {
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown organizations={props.organizations} />
+    <QueueOrganizationDropdown
+      isInboundOpsTeamUser={props.isInboundOpsTeamUser}
+      isInboundOpsSupervisor={props.isInboundOpsSupervisor}
+      isInboundOpsSuperuser={props.isInboundOpsSuperuser}
+      organizations={props.organizations}
+      featureToggles = {props.featureToggles}
+    />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -265,12 +271,19 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
+    isInboundOpsTeamUser: state.ui.isInboundOpsTeamUser,
+    isInboundOpsSupervisor: state.ui.isInboundOpsSupervisor,
+    isInboundOpsSuperuser: state.ui.isInboundOpsSuperuser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
 QueueTableBuilder.propTypes = {
+  isInboundOpsTeamUser: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
@@ -280,6 +293,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
