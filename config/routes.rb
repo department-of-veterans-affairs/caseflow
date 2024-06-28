@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -47,6 +49,7 @@ Rails.application.routes.draw do
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
       post 'va_notify_update', to: 'va_notify#notifications_update'
+      post 'cmp', to: 'cmp#upload'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -80,11 +83,19 @@ Rails.application.routes.draw do
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-        get "ama_issues", to: "docs#ama_issues"
-        get "vacols_issues", to: "docs#vacols_issues"
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
+
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+      end
+    end
+
     get "metadata", to: 'metadata#index'
   end
 
@@ -201,6 +212,8 @@ Rails.application.routes.draw do
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
+  get '/appeals/:appeal_id/active_evidence_submissions' => 'appeals#active_evidence_submissions'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
@@ -239,6 +252,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+  get 'hearings/transcription_file/:file_id/download', to: 'hearings/transcription_files#download_transcription_file'
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
@@ -324,13 +338,39 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence_queue#correspondence_cases'
+    get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence_intake#intake', as: :queue_correspondence_intake
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence_intake#current_step', as: :queue_correspondence_intake_current_step
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
+    post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
+    post '/correspondence/:id/completed_package', to: 'correspondence_tasks#completed_package'
+    patch '/correspondence/tasks/:task_id/update', to: 'correspondence_tasks#update'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence_review_package#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence_review_package#document_type_correspondence'
+    patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
+    get '/correspondence/team', to: 'correspondence_queue#correspondence_team'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence_review_package#update_cmp'
+    get '/correspondence/packages', to: 'correspondence_review_package#package_documents'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence_review_package#pdf'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
+    patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
+    post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake
+    post '/correspondence/:correspondence_uuid/cancel_intake', to: 'correspondence_intake#cancel_intake', as: :queue_correspondence_intake_cancel_intake
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
+    post '/correspondence_response_letters', to: 'correspondence_response_letters#create'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
+    get 'correspondence/users/:user_id(*rest)', to: 'correspondence_task_pages#index'
+    get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -380,9 +420,11 @@ Rails.application.routes.draw do
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
+    patch '/organizations/users/update_permission', to: 'organizations/users#modify_user_permission'
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
+    patch '/update_permissions', to: 'organizations/users#modify_user_permission'
     # Maintain /organizations/members for backwards compatability for a few days.
     resources :members, only: [:index], controller: 'organizations/task_summary'
     resources :task_summary, only: [:index], controller: 'organizations/task_summary'
@@ -414,6 +456,8 @@ Rails.application.routes.draw do
 
   get "feedback" => "application#feedback"
 
+  get "under_construction" => "application#under_construction"
+
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code
   end
@@ -431,6 +475,8 @@ Rails.application.routes.draw do
     resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
+    resources :correspondence, only: [:index]
+    post "/correspondence/generate_correspondence", to: "correspondence#generate_correspondence"
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
