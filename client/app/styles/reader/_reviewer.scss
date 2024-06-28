@@ -6,7 +6,6 @@
 }
 
 .claim-detail-container {
-
   .claim-detail-type-info {
     color: $color-secondary;
     display: inherit;
@@ -17,7 +16,7 @@
   color: $color-base;
 }
 
-[id=claim-folder-details-accordion] {
+[id='claim-folder-details-accordion'] {
   .disabled {
     font-style: italic;
   }
@@ -88,7 +87,6 @@
   text-align: left;
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
-
 
   &.hidden-sidebar {
     width: 0;
@@ -217,7 +215,6 @@
       > label {
         display: inline-block;
       }
-
     }
 
     .doc-list-progress-indicator {
@@ -289,12 +286,10 @@
 }
 
 .cf-sidebar-document-information {
-
   .cf-pdf-meta-doc-info-issues {
     padding-left: 1em;
-    margin-top: .5em;
+    margin-top: 0.5em;
   }
-
 }
 
 .cf-sidebar-accordion {
@@ -309,7 +304,6 @@
       margin-bottom: 20px;
 
       .cf-form-checkbox {
-
         label {
           display: block;
         }
@@ -356,7 +350,7 @@
 }
 
 .cf-label {
-  opacity: .3;
+  opacity: 0.3;
 }
 
 .cf-selected-label {
@@ -376,7 +370,6 @@
   left: 15px;
   right: 15px;
 }
-
 
 .cf-pdf-pdfjs-container {
   display: inline-block;
@@ -482,18 +475,18 @@
   margin-left: 8px;
 }
 
-[type="button"].cf-pdf-download-icon {
+[type='button'].cf-pdf-download-icon {
   margin-left: 0;
 }
 
 // scss-lint:disable QualifyingElement
-input[type="search"].cf-search-input-with-close {
+input[type='search'].cf-search-input-with-close {
   padding-right: 25px;
 }
 // scss-lint:enable QualifyingElement
 
 .usa-search-small {
-  [type="button"].cf-search-close-icon {
+  [type='button'].cf-search-close-icon {
     margin-left: -20px;
     position: absolute;
   }
@@ -521,7 +514,7 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
-[id=cf-keyboard-modal] {
+[id='cf-keyboard-modal'] {
   height: 580px;
   overflow: auto;
   display: block;
@@ -551,7 +544,7 @@ input[type="search"].cf-search-input-with-close {
     .usa-alert {
       margin-top: 0;
       margin-bottom: 20px;
-      padding: .5em;
+      padding: 0.5em;
     }
   }
 
@@ -560,9 +553,8 @@ input[type="search"].cf-search-input-with-close {
 
     .issues {
       padding-left: 1em;
-      margin-top: .5em;
+      margin-top: 0.5em;
     }
-
   }
 }
 
@@ -604,10 +596,18 @@ input[type="search"].cf-search-input-with-close {
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
   z-index: 5;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
 
   &.hidden-sidebar {
     width: 0;
     min-width: 0;
+  }
+
+  .cf-sidebar-accordion {
+    height: calc(100% - 120px);
   }
 
   .usa-accordion-content {
@@ -629,7 +629,6 @@ input[type="search"].cf-search-input-with-close {
   background-color: white;
   display: inline-block;
   position: relative;
-  margin: 10px;
 }
 
 .cf-pdf-spaced-buttons-left {
@@ -661,8 +660,7 @@ input[type="search"].cf-search-input-with-close {
   position: relative;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-around;
-  column-gap: 15rem;
+  justify-content: center;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: start;
 }
