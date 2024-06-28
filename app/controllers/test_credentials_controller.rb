@@ -17,7 +17,25 @@ class TestCredentialsController < ApplicationController
     }
   end
 
+  def pull_test_data
+    data_for_testing
+  end
+
   private
+
+  # Private: Pull the last persisted appeal.
+  def data_for_testing
+    appeal = Appeal.last
+    legacy_appeal_to_test = LegacyAppeal.first
+    review = HigherLevelReview.last
+
+    render json: {
+      appeal: appeal,
+      legacy_appeal: legacy_appeal_to_test,
+      veteran_info: appeal.veteran,
+      review_info: review
+    }
+  end
 
   # Private: Checks if the load testing user already has an active session.
   def load_tester_already_activated?
@@ -29,7 +47,8 @@ class TestCredentialsController < ApplicationController
   # current session. This will be reflected in the session cookie.
   def set_current_user
     user = User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: 101)
-
+    # user update for roles and orgs, in order to gain access to certain endpoints.
+    user.update!(roles: ["Reader", "Admin Intake", "Edit HearSched", "Build HearSched"])
     Functions.grant!("System Admin", users: [LOAD_TESTING_USER])
 
     session["user"] = user.to_session_hash

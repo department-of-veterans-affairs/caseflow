@@ -447,5 +447,6 @@ Rails.application.routes.draw do
 
   unless Rails.deploy_env == :production
     get "/test_credentials", to: "test_credentials#index"
+    get "/test_credentials_data", to: "test_credentials#pull_test_data"
   end
 end
