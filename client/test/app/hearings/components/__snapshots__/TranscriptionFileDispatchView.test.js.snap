@@ -2,6 +2,7 @@
 
 exports[`TranscriptionFileDispatch matches snapshot 1`] = `
 <div>
+  
   <section
     class="cf-app-segment cf-app-segment--alt"
   >
@@ -201,7 +202,8 @@ exports[`TranscriptionFileDispatch matches snapshot 1`] = `
           style="margin-top: -2em;"
         >
           <h2>
-            0 files selected
+            0
+             files selected
           </h2>
           <div
             class="button-row"

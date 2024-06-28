@@ -26,6 +26,41 @@ class Hearings::TranscriptionFilesController < ApplicationController
     }
   end
 
+  def locked
+    locked_files = TranscriptionFile.locked.preload(:locked_by)
+    files = []
+    locked_files.each do |file|
+      status = file.locked_by_id == current_user.id ? "selected" : "locked"
+      username = file.try(:locked_by).try(:username)
+      message = status == "locked" && username ? "Locked by " + username : ""
+      files << { id: file.id, status: status, message: message }
+    end
+    render json: files
+  end
+
+  def lock
+    files = TranscriptionFile.where(id: params[:file_ids])
+    status = params[:status] && params[:status].to_s == "true" ? true : false
+    lockable_file_ids = []
+    files.each do |file|
+      if file.lockable?(current_user.id)
+        lockable_file_ids << file.id
+      end
+    end
+
+    if status
+      locked_by_id = current_user.id
+      locked_at = Time.now.utc
+    else
+      locked_by_id = nil
+      locked_at = nil
+    end
+
+    TranscriptionFile.where(id: lockable_file_ids).update_all(locked_by_id: locked_by_id, locked_at: locked_at)
+
+    locked
+  end
+
   private
 
   def file
