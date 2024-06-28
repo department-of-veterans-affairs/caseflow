@@ -81,11 +81,13 @@ class IssueModificationRequests::Updater
   end
 
   def update_admin_request(issue_modification_request, data)
-    case data[:status].to_sym
-    when :denied
-      issue_modification_request.deny_request_from_params!(data, user)
-    when :approved
-      issue_modification_request.approve_request_from_params!(data, user)
+    ActiveRecord::Base.transaction do
+      case data[:status].to_sym
+      when :denied
+        issue_modification_request.deny_request_from_params!(data, user)
+      when :approved
+        issue_modification_request.approve_request_from_params!(data, user)
+      end
     end
   end
 end

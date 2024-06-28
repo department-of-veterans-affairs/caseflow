@@ -924,9 +924,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(page).to have_button("Add this issue", disabled: false)
 
       # this section of test is needed to check if Add this issue becomes disabled if decision date is future.
-      date = Time.zone.now
+      date = Time.zone.now + 2.days
 
-      find("#decision-date").set(date.tomorrow.strftime("%m/%d/%Y"))
+      find("#decision-date").set(date.strftime("%m/%d/%Y"))
       safe_click "#decision-date"
       expect(page).to have_button("Add this issue", disabled: true)
     end

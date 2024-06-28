@@ -143,6 +143,10 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def can_be_performed?
+    validate_before_perform
+  end
+
   private
 
   def changes?
