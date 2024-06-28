@@ -258,16 +258,20 @@ class ClaimReviewController < ApplicationController
   end
 
   def process_and_render_issue_admin_issue_modification_requests
-    if request_issues_update.validate_before_perform && issues_modification_request_updater.admin_approvals?
-      # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
-      issues_modification_request_updater.admin_process!
-      if request_issues_update.perform!
-        render_success
-      else
-        render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+    # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
+    if issues_modification_request_updater.admin_approvals?
+      if request_issues_update.can_be_performed?
+        if request_issues_update.perform!
+          return render_success
+        end
       end
+
+      # Fallback return error since it fell through
+      render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     else
-      render json: { error_code: :default }, status: :unprocessable_entity
+      # Only denied requests to just run the process and return success unless it errors
+      issues_modification_request_updater.admin_process!
+      render_success
     end
   rescue StandardError => error
     render_error(error)
