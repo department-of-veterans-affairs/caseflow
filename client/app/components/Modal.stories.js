@@ -60,3 +60,7 @@ const Template = (args) => {
 
 export const Basic = Template.bind({});
 
+export const Icon = Template.bind({});
+Icon.args = {
+  icon: 'warning'
+};

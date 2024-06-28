@@ -55,4 +55,62 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
       end
     end
   end
+
+  describe "#update" do
+    let(:higher_level_review) { create(:higher_level_review, :with_vha_issue) }
+
+    before do
+      User.stub = user
+      higher_level_review.establish!
+    end
+
+    context "When non admin user is requesting an issue modification " do
+      let(:user) { create(:intake_user, :vha_default_user) }
+      let(:issue_modification_request) do
+        create(:issue_modification_request, decision_review: higher_level_review)
+      end
+
+      it "should call #issues_modification_request_update.non_admin_process! and return 200" do
+        updater = instance_double(
+          IssueModificationRequests::Updater, {
+            current_user: user,
+            review: higher_level_review,
+            issue_modifications_data: {
+              issue_modification_requests: {
+                new: [],
+                edited: [],
+                cancelled: [
+                  {
+                    id: issue_modification_request.id,
+                    status: "assigned"
+                  }
+                ]
+              }
+            }
+          }
+        )
+
+        allow(IssueModificationRequests::Updater).to receive(:new).and_return(updater)
+        expect(updater).to receive(:non_admin_actions?).and_return(true)
+        expect(updater).to receive(:non_admin_process!).and_return(true)
+
+        post :update, params: {
+          claim_id: higher_level_review.uuid,
+          request_issues: [{ request_issue_id: higher_level_review.request_issues.first.id }],
+          issue_modification_requests: {
+            new: [],
+            edited: [],
+            cancelled: [
+              {
+                id: issue_modification_request.id,
+                status: "assigned"
+              }
+            ]
+          }
+        }
+
+        expect(response.status).to eq 200
+      end
+    end
+  end
 end

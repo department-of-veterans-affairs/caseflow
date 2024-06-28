@@ -141,8 +141,8 @@ $validation-error-color: #cd2026;
     z-index: 1;
   }
 
-  .cf-pagination-pages {
-    padding-top: 65px;
+  .cf-table-wrapper {
+    overflow-x: unset;
   }
 }
 
@@ -268,4 +268,17 @@ $validation-error-color: #cd2026;
 
 .claim-history-table-border-fix td {
   border-top-style: none;
+}
+
+.search-and-description-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+
+  .cf-noncomp-search {
+    max-width: 65%;
+  }
 }

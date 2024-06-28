@@ -1306,4 +1306,35 @@ describe ClaimReview, :postgres do
       expect(claim_review.end_product_establishments.first.last_synced_at).to_not be_nil
     end
   end
+
+  describe "#task_in_progress?" do
+    subject { claim_review.task_in_progress? }
+
+    context "should return false if Claim review task is on hold and doesn't have decision date" do
+      before do
+        task.appeal.establish!
+      end
+      let(:task) do
+        create(:higher_level_review_vha_task_incomplete, assigned_to: VhaBusinessLine.singleton)
+      end
+
+      let(:claim_review) { task.appeal }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "should return true if Claim review task is either assigned or in_progress" do
+      before do
+        task.appeal.establish!
+      end
+
+      let(:task) do
+        FactoryBot.create(:higher_level_review_vha_task, assigned_to: VhaBusinessLine.singleton)
+      end
+
+      let(:claim_review) { task.appeal }
+
+      it { is_expected.to be_truthy }
+    end
+  end
 end

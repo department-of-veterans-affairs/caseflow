@@ -97,159 +97,161 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
           style={
             Object {
               "display": "flex",
+              "flexWrap": "wrap",
             }
           }
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
+            style={
+              Object {
+                "flex": 1,
+              }
+            }
           >
-            <h1
-              id="modal_id-title"
+            Review extension request
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <RadioField
+              className={
+                Array [
+                  "usa-fieldset-inputs",
+                ]
+              }
+              errorMessage={null}
+              label="How will you proceed?"
+              name="decision"
+              onChange={[Function]}
+              options={
+                Array [
+                  Object {
+                    "displayText": "Grant",
+                    "help": "Task will go on hold for selected number of days",
+                    "value": "grant",
+                  },
+                  Object {
+                    "displayText": "Deny",
+                    "help": "Marks the extension request as denied",
+                    "value": "deny",
+                  },
+                ]
+              }
+              required={false}
+              strongLabel={true}
             >
-              Review extension request
-            </h1>
-            <div
-              data-css-o98ubo=""
-            >
-              <RadioField
-                className={
-                  Array [
-                    "usa-fieldset-inputs",
-                  ]
-                }
-                errorMessage={null}
-                label="How will you proceed?"
-                name="decision"
-                onChange={[Function]}
-                options={
-                  Array [
-                    Object {
-                      "displayText": "Grant",
-                      "help": "Task will go on hold for selected number of days",
-                      "value": "grant",
-                    },
-                    Object {
-                      "displayText": "Deny",
-                      "help": "Marks the extension request as denied",
-                      "value": "deny",
-                    },
-                  ]
-                }
-                required={false}
-                strongLabel={true}
+              <fieldset
+                className="usa-fieldset-inputs cf-form-radio-inline "
               >
-                <fieldset
-                  className="usa-fieldset-inputs cf-form-radio-inline "
+                <legend
+                  className=""
                 >
-                  <legend
-                    className=""
-                  >
-                    <strong>
-                      <span>
-                        How will you proceed?
-                         
-                      </span>
-                    </strong>
-                  </legend>
-                  <div
-                    className="cf-form-radio-options"
-                  >
-                    <div
-                      className="cf-form-radio-option"
-                      key="decision-grant-0"
-                    >
-                      <input
-                        disabled={false}
-                        id="decision_grant"
-                        name="decision"
-                        onChange={[Function]}
-                        type="radio"
-                        value="grant"
-                      />
-                      <label
-                        className=""
-                        htmlFor="decision_grant"
-                      >
-                        Grant
-                      </label>
-                      <RadioFieldHelpText
-                        help="Task will go on hold for selected number of days"
-                      >
-                        <div
-                          className="cf-form-radio-help helpText"
-                        >
-                          Task will go on hold for selected number of days
-                        </div>
-                      </RadioFieldHelpText>
-                    </div>
-                    <div
-                      className="cf-form-radio-option"
-                      key="decision-deny-1"
-                    >
-                      <input
-                        disabled={false}
-                        id="decision_deny"
-                        name="decision"
-                        onChange={[Function]}
-                        type="radio"
-                        value="deny"
-                      />
-                      <label
-                        className=""
-                        htmlFor="decision_deny"
-                      >
-                        Deny
-                      </label>
-                      <RadioFieldHelpText
-                        help="Marks the extension request as denied"
-                      >
-                        <div
-                          className="cf-form-radio-help helpText"
-                        >
-                          Marks the extension request as denied
-                        </div>
-                      </RadioFieldHelpText>
-                    </div>
-                  </div>
-                </fieldset>
-              </RadioField>
-              <TextareaField
-                characterLimitTopRight={false}
-                disabled={false}
-                errorMessage={null}
-                label="Provide instructions and context for this action"
-                name="instructions"
-                onChange={[Function]}
-                optional={false}
-                required={false}
-              >
+                  <strong>
+                    <span>
+                      How will you proceed?
+                       
+                    </span>
+                  </strong>
+                </legend>
                 <div
-                  className="cf-form-textarea"
+                  className="cf-form-radio-options"
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="instructions"
+                  <div
+                    className="cf-form-radio-option"
+                    key="decision-grant-0"
                   >
-                    <FormLabel
-                      label="Provide instructions and context for this action"
-                      name="instructions"
-                      optional={false}
-                      required={false}
+                    <input
+                      disabled={false}
+                      id="decision_grant"
+                      name="decision"
+                      onChange={[Function]}
+                      type="radio"
+                      value="grant"
+                    />
+                    <label
+                      className=""
+                      htmlFor="decision_grant"
                     >
-                      <span>
-                        Provide instructions and context for this action
-                      </span>
-                    </FormLabel>
-                  </label>
-                  <textarea
-                    disabled={false}
-                    id="instructions"
-                    name="instructions"
-                    onChange={[Function]}
-                  />
+                      Grant
+                    </label>
+                    <RadioFieldHelpText
+                      help="Task will go on hold for selected number of days"
+                    >
+                      <div
+                        className="cf-form-radio-help helpText"
+                      >
+                        Task will go on hold for selected number of days
+                      </div>
+                    </RadioFieldHelpText>
+                  </div>
+                  <div
+                    className="cf-form-radio-option"
+                    key="decision-deny-1"
+                  >
+                    <input
+                      disabled={false}
+                      id="decision_deny"
+                      name="decision"
+                      onChange={[Function]}
+                      type="radio"
+                      value="deny"
+                    />
+                    <label
+                      className=""
+                      htmlFor="decision_deny"
+                    >
+                      Deny
+                    </label>
+                    <RadioFieldHelpText
+                      help="Marks the extension request as denied"
+                    >
+                      <div
+                        className="cf-form-radio-help helpText"
+                      >
+                        Marks the extension request as denied
+                      </div>
+                    </RadioFieldHelpText>
+                  </div>
                 </div>
-              </TextareaField>
-            </div>
+              </fieldset>
+            </RadioField>
+            <TextareaField
+              characterLimitTopRight={false}
+              disabled={false}
+              errorMessage={null}
+              label="Provide instructions and context for this action"
+              name="instructions"
+              onChange={[Function]}
+              optional={false}
+              required={false}
+            >
+              <div
+                className="cf-form-textarea"
+              >
+                <label
+                  className="question-label"
+                  htmlFor="instructions"
+                >
+                  <FormLabel
+                    label="Provide instructions and context for this action"
+                    name="instructions"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Provide instructions and context for this action
+                    </span>
+                  </FormLabel>
+                </label>
+                <textarea
+                  disabled={false}
+                  id="instructions"
+                  name="instructions"
+                  onChange={[Function]}
+                />
+              </div>
+            </TextareaField>
           </div>
         </div>
         <div

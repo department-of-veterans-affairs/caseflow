@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import issueSectionRow from './issueSectionRow';
 import Table from 'app/components/Table';
-import { issueSectionRowProps } from './mockData';
+import { issueSectionRowProps, issueSectionRowDataProps, issueSectionRowDataNonAdminProps } from './mockData';
 
 export default {
   title: 'Intake/Edit Issues/Issue Section Row',
@@ -39,6 +39,26 @@ export const WithNoDecisionDate = () => {
     <BaseComponent content={Component.content} field={Component.field} />
   );
 };
+
+const RequestIssuesTemplate = (args) => {
+  const Component = issueSectionRow({
+    ...args,
+    fieldTitle: 'Requested issues',
+  });
+
+  return (
+    <BaseComponent content={Component.content} field={Component.field} />
+  );
+};
+
+export const withoutPendingRequestIssuesForAdmin = RequestIssuesTemplate.bind({});
+withoutPendingRequestIssuesForAdmin.args = issueSectionRowProps;
+
+export const withPendingRequestIssuesForAdmin = RequestIssuesTemplate.bind({});
+withPendingRequestIssuesForAdmin.args = issueSectionRowDataProps;
+
+export const requestIssuesForNonAdmin = RequestIssuesTemplate.bind({});
+requestIssuesForNonAdmin.args = issueSectionRowDataNonAdminProps;
 
 BaseComponent.propTypes = {
   content: PropTypes.element,
