@@ -197,10 +197,18 @@ FactoryBot.define do
               end
             end
 
+            # You can change the judge, attorney, AOD status, and Appeal Affinity of your Legacy CAVC Appeal.
+            # The Appeal_Affinity is default but the AOD must be toggled on. Example:
+            # "FactoryBot.create(:legacy_cavc_appeal, judge: judge, aod: true, affinity_start_date: 2.weeks.ago)"
+
             factory :legacy_cavc_appeal do
               transient do
                 judge { nil }
                 attorney { nil }
+                aod { false }
+                appeal_affinity { true }
+                affinity_start_date { 1.month.ago }
+                tied_to { true }
               end
 
               bfmpro { "HIS" }
@@ -234,17 +242,28 @@ FactoryBot.define do
                 vacols_case.correspondent.update!(ssn: vacols_case.bfcorlid.chomp("S"))
                 vacols_case.save
 
-                create(
-                  :veteran,
-                  first_name: vacols_case.correspondent.snamef,
-                  last_name: vacols_case.correspondent.snamel,
-                  name_suffix: vacols_case.correspondent.ssalut,
-                  ssn: vacols_case.correspondent.ssn,
-                  file_number: vacols_case.correspondent.ssn
-                )
+                unless Veteran.find_by_file_number_or_ssn(vacols_case.correspondent.ssn)
+                  create(
+                    :veteran,
+                    first_name: vacols_case.correspondent.snamef,
+                    last_name: vacols_case.correspondent.snamel,
+                    name_suffix: vacols_case.correspondent.ssalut,
+                    ssn: vacols_case.correspondent.ssn,
+                    file_number: vacols_case.correspondent.ssn
+                  )
+                end
 
-                create(
-                  :case,
+                if evaluator.tied_to
+                  create(
+                    :case_hearing,
+                    :disposition_held,
+                    folder_nr: vacols_case.bfkey,
+                    hearing_date: 5.days.ago.to_date,
+                    user: User.find_by_css_id(evaluator.judge.sdomainid)
+                  )
+                end
+
+                params = {
                   bfdpdcn: vacols_case.bfddec,
                   bfac: "7",
                   bfcurloc: "81",
@@ -259,7 +278,24 @@ FactoryBot.define do
                   original_case: vacols_case,
                   case_issues_equal: true,
                   original_case_issues: vacols_case.case_issues
-                )
+                }
+
+                cavc_appeal = if evaluator.aod
+                                create(
+                                  :case,
+                                  :aod,
+                                  params
+                                )
+                              else
+                                create(
+                                  :case,
+                                  params
+                                )
+                              end
+
+                if evaluator.appeal_affinity
+                  create(:appeal_affinity, appeal: cavc_appeal, affinity_start_date: evaluator.affinity_start_date)
+                end
               end
             end
           end
@@ -291,6 +327,22 @@ FactoryBot.define do
           folder_nr: vacols_case.bfkey,
           hearing_date: 5.days.ago.to_date,
           user: evaluator.tied_judge
+        )
+      end
+    end
+
+    trait :tied_to_previous_judge do
+      transient do
+        previous_tied_judge { nil }
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          user: evaluator.previous_tied_judge
         )
       end
     end
