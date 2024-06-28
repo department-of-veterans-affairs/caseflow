@@ -4,16 +4,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { removeIssue } from '../../actions/addIssues';
-import { updatePendingReview } from 'app/intake/actions/issueModificationRequest';
 import Modal from '../../../components/Modal';
 import { benefitTypeProcessedInVBMS } from '../../util';
-import { isEmpty } from 'lodash';
-import COPY from 'app/../COPY';
 
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
       <p>The contention you selected will be removed from the decision review.</p>
+      <p>Are you sure you want to remove this issue?</p>
     </div>;
   }
 
@@ -33,24 +31,8 @@ class RemoveIssueModal extends React.PureComponent {
   render() {
     const {
       intakeData,
-      removeIndex,
-      userIsVhaAdmin
+      removeIndex
     } = this.props;
-
-    const onSubmit = () => {
-      const activeIssueModificationRequest = intakeData.activeIssueModificationRequest;
-      let removePendingIndex;
-
-      if (userIsVhaAdmin && !isEmpty(activeIssueModificationRequest)) {
-        removePendingIndex = intakeData.addedIssues.
-          findIndex((issue) => issue?.id === activeIssueModificationRequest.requestIssue?.id);
-
-        this.props.updatePendingReview(activeIssueModificationRequest.identifier, activeIssueModificationRequest);
-      } else {
-        removePendingIndex = removeIndex;
-      }
-      this.props.removeIssue(removePendingIndex);
-    };
 
     return <div className="intake-remove-issue">
       <Modal
@@ -59,11 +41,11 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Cancel',
             onClick: this.props.closeHandler
           },
-          { classNames: ['usa-button', 'remove-issue'],
-            name: COPY.MODAL_REMOVE_BUTTON,
+          { classNames: ['usa-button-red', 'remove-issue'],
+            name: 'Yes, remove issue',
             onClick: () => {
               this.props.closeHandler();
-              onSubmit();
+              this.props.removeIssue(removeIndex);
             }
           }
         ]}
@@ -84,15 +66,11 @@ RemoveIssueModal.propTypes = {
   intakeData: PropTypes.object.isRequired,
   removeIndex: PropTypes.number.isRequired,
   removeIssue: PropTypes.func.isRequired,
-  updatePendingReview: PropTypes.func.isRequired,
-  pendingIssueModificationRequest: PropTypes.object,
-  userIsVhaAdmin: PropTypes.bool
 };
 
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    removeIssue,
-    updatePendingReview
+    removeIssue
   }, dispatch)
 )(RemoveIssueModal);

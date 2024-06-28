@@ -74,7 +74,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               <span>
                 
                 <span>
-                  Incomplete Tasks (0)
+                  Incomplete tasks
                 </span>
                 
               </span>
@@ -93,7 +93,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               <span>
                 
                 <span>
-                  In Progress Tasks (410)
+                  In progress tasks
                 </span>
                 
               </span>
@@ -112,7 +112,7 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
               <span>
                 
                 <span>
-                  Completed Tasks
+                  Completed tasks
                 </span>
                 
               </span>
@@ -135,13 +135,10 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
             role="tabpanel"
           >
             <div
-              class="search-and-description-container"
+              class="non-comp-queue-table-wrapper"
             >
               <div
-                class="cf-noncomp-queue-completed-task noncomp-tab-description"
-              />
-              <div
-                class="cf-search-ahead-parent cf-noncomp-search"
+                class="cf-search-ahead-parent cf-push-right cf-noncomp-search"
               >
                 <span
                   class="usa-search usa-search-small cf-search-ahead"
@@ -164,10 +161,6 @@ exports[`ReviewPage renders correctly for Admin user renders correctly 1`] = `
                   />
                 </span>
               </div>
-            </div>
-            <div
-              class="non-comp-queue-table-wrapper"
-            >
               <div
                 class="section-hearings-list"
               >
@@ -299,7 +292,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               <span>
                 
                 <span>
-                  Incomplete Tasks (0)
+                  Incomplete tasks
                 </span>
                 
               </span>
@@ -318,7 +311,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               <span>
                 
                 <span>
-                  In Progress Tasks (410)
+                  In progress tasks
                 </span>
                 
               </span>
@@ -337,7 +330,7 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
               <span>
                 
                 <span>
-                  Completed Tasks
+                  Completed tasks
                 </span>
                 
               </span>
@@ -360,13 +353,10 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
             role="tabpanel"
           >
             <div
-              class="search-and-description-container"
+              class="non-comp-queue-table-wrapper"
             >
               <div
-                class="cf-noncomp-queue-completed-task noncomp-tab-description"
-              />
-              <div
-                class="cf-search-ahead-parent cf-noncomp-search"
+                class="cf-search-ahead-parent cf-push-right cf-noncomp-search"
               >
                 <span
                   class="usa-search usa-search-small cf-search-ahead"
@@ -389,10 +379,6 @@ exports[`ReviewPage renders correctly for nonAdmin user renders correctly 1`] = 
                   />
                 </span>
               </div>
-            </div>
-            <div
-              class="non-comp-queue-table-wrapper"
-            >
               <div
                 class="section-hearings-list"
               >

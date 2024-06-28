@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import COPY from '../../../COPY';
 import userEvent from '@testing-library/user-event';
 import IssuesList from 'app/intake/components/IssueList';
@@ -20,22 +20,18 @@ describe('IssuesList', () => {
       />
     );
 
-  it('renders the "Add Decision Date" list action if an issue has no decision date', async () => {
+  it('renders the "Add Decision Date" list action if an issue has no decision date', () => {
     setup(mockedIssueListProps);
-    const dropdown = screen.getAllByText('Select action')[0];
 
-    await userEvent.click(dropdown);
     expect(screen.getByText('Add decision date')).toBeInTheDocument();
 
   });
 
   it('clicking "Add Decision Date" list action will open the Add Decision Date Modal', async () => {
     setup(mockedIssueListProps);
-    const dropdown = screen.getAllByText('Select action')[0];
+    const select = screen.getAllByText('Select action')[0].parentElement;
 
-    await userEvent.click(dropdown);
-    await userEvent.click(screen.getByText('Add decision date'));
-
+    await userEvent.selectOptions(select, ['Add decision date']);
     expect(mockOnClickIssueAction).toHaveBeenCalledWith(0, 'add_decision_date');
 
   });
@@ -62,7 +58,7 @@ describe('IssuesList', () => {
 
   });
 
-  it('renders the "Edit decision date" list action if an issue originally has an editedDecisionDate', async () => {
+  it('renders the "Edit decision date" list action if an issue originally has an editedDecisionDate', () => {
     const propsWithEditedDecisionDate = {
       ...mockedIssueListProps,
     };
@@ -71,30 +67,6 @@ describe('IssuesList', () => {
 
     setup(propsWithEditedDecisionDate);
 
-    const dropdown = screen.getAllByText('Select action')[0];
-
-    await userEvent.click(dropdown);
-
     expect(screen.getByText('Edit decision date')).toBeInTheDocument();
-  });
-
-  it('renders the request for issue updates dropdown actions', async () => {
-    const propsWithRequestForIssueUpdates = {
-      ...mockedIssueListProps,
-      userCanRequestForIssueUpdates: true,
-      showRequestIssueUpdateOptions: true
-    };
-
-    // having only one dropdown will be easier to query for
-    propsWithRequestForIssueUpdates.issues.pop();
-
-    setup(propsWithRequestForIssueUpdates);
-    const dropdown = screen.getByText('Select action');
-
-    await userEvent.click(dropdown);
-
-    expect(screen.getByText('Request modification')).toBeInTheDocument();
-    expect(screen.getByText('Request removal')).toBeInTheDocument();
-    expect(screen.getByText('Request withdrawal')).toBeInTheDocument();
   });
 });

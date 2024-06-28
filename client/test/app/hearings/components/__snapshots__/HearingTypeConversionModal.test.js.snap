@@ -379,30 +379,28 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
               style={
                 Object {
                   "display": "flex",
-                  "flexWrap": "wrap",
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-              >
-                Convert Hearing To Central
-              </h1>
               <div
-                data-css-2flkvz=""
+                data-css-1gs0ko2=""
               >
-                <p
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "The hearing request will appear in the scheduling queue for the <strong>Central Office</strong>.",
+                <h1
+                  id="modal_id-title"
+                >
+                  Convert Hearing To Central
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <p
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "The hearing request will appear in the scheduling queue for the <strong>Central Office</strong>.",
+                      }
                     }
-                  }
-                />
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -858,30 +856,28 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
               style={
                 Object {
                   "display": "flex",
-                  "flexWrap": "wrap",
                 }
               }
             >
-              <h1
-                id="modal_id-title"
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-              >
-                Convert Hearing To Video
-              </h1>
               <div
-                data-css-2flkvz=""
+                data-css-1gs0ko2=""
               >
-                <p
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "The hearing request will appear in the scheduling queue for the appropriate regional office.",
+                <h1
+                  id="modal_id-title"
+                >
+                  Convert Hearing To Video
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <p
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "The hearing request will appear in the scheduling queue for the appropriate regional office.",
+                      }
                     }
-                  }
-                />
+                  />
+                </div>
               </div>
             </div>
             <div

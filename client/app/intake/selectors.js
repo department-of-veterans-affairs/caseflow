@@ -41,14 +41,3 @@ export const issueCountSelector = (state) => {
 
   return selectedIssues ? selectedIssues.length : 0;
 };
-
-const selectPendingIssueModificationRequests = (state) => state.pendingIssueModificationRequests;
-
-export const getOpenPendingIssueModificationRequests = createSelector(
-  [selectPendingIssueModificationRequests],
-  (pendingIssueModificationRequests) =>
-    Array.isArray(pendingIssueModificationRequests) ?
-      pendingIssueModificationRequests.filter((request) => request.status === 'assigned') :
-      []
-);
-

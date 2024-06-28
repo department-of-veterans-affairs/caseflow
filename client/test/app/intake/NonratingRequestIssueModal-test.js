@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER } from 'app/../COPY';
 import NonratingRequestIssueModal from '../../../app/intake/components/NonratingRequestIssueModal';
 import { sample1 } from './testData';
 
@@ -153,58 +152,6 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('submit button is enabled without a decision date entered', () => {
-      expect(submitButton.prop('disabled')).toBe(false);
-    });
-  });
-
-  describe('on higher level review, with VHA Admin and Task on Progress', () => {
-    wrapperNoSkip.setState({
-      benefitType: 'vha',
-      isTaskInProgress: true,
-      userIsVhaAdmin: true,
-      category: {
-        label: 'Beneficiary Travel',
-        value: 'Beneficiary Travel'
-      },
-      description: 'VHA data test'
-    });
-
-    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
-    const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
-    const alertText = wrapperNoSkip.find('.usa-alert-text');
-
-    it('renders modal with Decision date required alert banner', () => {
-      expect(alertText.text()).toContain(VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER);
-    });
-
-    it('renders modal without Decision date optional text', () => {
-      expect(optionalLabel).not.toBe();
-      expect(submitButton.prop('disabled')).toBe(true);
-    });
-  });
-
-  describe('on higher level review, with VHA Admin User and Task not in Progress', () => {
-    wrapperNoSkip.setState({
-      benefitType: 'vha',
-      isTaskInProgress: false,
-      userIsVhaAdmin: true,
-      category: {
-        label: 'Beneficiary Travel',
-        value: 'Beneficiary Travel'
-      },
-      description: 'VHA data test'
-    });
-
-    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
-    const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
-    const alertBody = wrapperNoSkip.find('.usa-alert-body');
-
-    it('renders modal without Decision date required alert banner', () => {
-      expect(alertBody.exists()).toBe(false);
-    });
-
-    it('renders modal without Decision date optional text', () => {
-      expect(optionalLabel.text()).toBe('Optional');
       expect(submitButton.prop('disabled')).toBe(false);
     });
   });

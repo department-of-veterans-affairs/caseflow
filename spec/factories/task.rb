@@ -460,25 +460,6 @@ FactoryBot.define do
         assigned_to { VhaBusinessLine.singleton }
       end
 
-      factory :higher_level_review_vha_task_incomplete, class: DecisionReviewTask do
-        appeal do
-          create(:higher_level_review,
-                 :with_intake,
-                 :without_decision_date,
-                 benefit_type: "vha",
-                 claimant_type: :veteran_claimant,
-                 issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                 description: "with no decision date added",
-                 number_of_claimants: 1)
-        end
-        assigned_by { nil }
-        assigned_to { VhaBusinessLine.singleton }
-
-        after(:create) do |task|
-          task.appeal.handle_issues_with_no_decision_date!
-        end
-      end
-
       factory :higher_level_review_vha_task_with_decision, class: DecisionReviewTask do
         appeal do
           create(:higher_level_review,
@@ -510,27 +491,6 @@ FactoryBot.define do
         end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
-      end
-
-      factory :supplemental_claim_vha_task_incomplete, class: DecisionReviewTask do
-        appeal do
-          create(
-            :supplemental_claim,
-            :with_vha_issue,
-            :with_intake,
-            :without_decision_date,
-            benefit_type: "vha",
-            issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-            description: "no decision date should be created",
-            claimant_type: :veteran_claimant
-          )
-        end
-        assigned_by { nil }
-        assigned_to { VhaBusinessLine.singleton }
-
-        after(:create) do |task|
-          task.appeal.handle_issues_with_no_decision_date!
-        end
       end
 
       factory :supplemental_claim_vha_task_with_decision, class: DecisionReviewTask do

@@ -99,7 +99,6 @@ class IntakesController < ApplicationController
       userDisplayName: current_user.display_name,
       userCanIntakeAppeals: current_user.can_intake_appeals?,
       userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
-      userIsVhaAdmin: current_user.vha_business_line_admin_user?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       applicationUrls: application_urls,

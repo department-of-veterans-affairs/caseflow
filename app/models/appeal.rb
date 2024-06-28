@@ -911,10 +911,6 @@ class Appeal < DecisionReview
     end
   end
 
-  def task_in_progress?
-    nil
-  end
-
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end

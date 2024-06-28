@@ -41,14 +41,6 @@ class BusinessLine < Organization
     ).build_query
   end
 
-  def pending_tasks(pagination_params = {})
-    QueryBuilder.new(
-      query_type: :pending,
-      query_params: pagination_params,
-      parent: self
-    ).build_query
-  end
-
   def completed_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :completed,
@@ -81,14 +73,6 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
   end
 
-  def pending_tasks_issue_type_counts
-    QueryBuilder.new(query_type: :pending, parent: self).issue_type_count
-  end
-
-  def pending_tasks_type_counts
-    QueryBuilder.new(query_type: :pending, parent: self).task_type_count
-  end
-
   def change_history_rows(filters = {})
     QueryBuilder.new(query_params: filters, parent: self).change_history_rows
   end
@@ -115,9 +99,6 @@ class BusinessLine < Organization
       in_progress: {
         sort_by: :assigned_at
       },
-      pending: {
-        sort_by: :assigned_at
-      },
       completed: {
         sort_by: :closed_at
       }
@@ -127,6 +108,7 @@ class BusinessLine < Organization
       @query_type = query_type
       @parent = parent
       @query_params = query_params.dup
+
       # Initialize default sorting
       @query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
       @query_params[:sort_order] ||= "desc"
@@ -154,21 +136,15 @@ class BusinessLine < Organization
       appeals_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(ama_appeal: :request_issues)
-        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(issue_modification_request_filter)
       hlr_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(supplemental_claim: :request_issues)
-        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(issue_modification_request_filter)
       sc_query = Task.send(parent.tasks_query_type[query_type])
         .select(shared_select_statement)
         .joins(higher_level_review: :request_issues)
-        .joins(issue_modification_request_join)
         .where(query_constraints)
-        .where(issue_modification_request_filter)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
@@ -470,7 +446,6 @@ class BusinessLine < Organization
       [
         Task.arel_table[Arel.star],
         issue_count,
-        pending_issue_count,
         claimant_name_alias,
         participant_id_alias,
         veteran_ssn_alias,
@@ -482,14 +457,7 @@ class BusinessLine < Organization
 
     def issue_count
       # Issue count alias for sorting and serialization
-      # This needs a distinct count because the query returns 1 row for each request issue and
-      # now it can return 1 additional row for each issue modification request with a duplicated request issue.id
-      "COUNT(DISTINCT request_issues.id) AS issue_count"
-    end
-
-    def pending_issue_count
-      # Issue modification request count alias for sorting and serialization
-      "COUNT(DISTINCT issue_modification_requests.id) AS pending_issue_count"
+      "COUNT(request_issues.id) AS issue_count"
     end
 
     # Alias for the issue_categories on request issues for sorting and serialization
@@ -572,24 +540,6 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
-    def issue_modification_request_join
-      "LEFT JOIN issue_modification_requests on issue_modification_requests.decision_review_id = tasks.appeal_id
-        AND issue_modification_requests.decision_review_type = tasks.appeal_type"
-    end
-
-    def issue_modification_request_filter
-      if query_type == :pending
-        "issue_modification_requests.id IS NOT NULL
-          AND issue_modification_requests.status = 'assigned'"
-      else
-        "NOT EXISTS(
-          SELECT decision_review_id FROM issue_modification_requests WHERE
-          issue_modification_requests.status = 'assigned'
-          AND issue_modification_requests.decision_review_id = tasks.appeal_id
-          AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
-      end
-    end
-
     def union_query_join_clauses
       [
         veterans_join,
@@ -597,8 +547,7 @@ class BusinessLine < Organization
         people_join,
         unrecognized_appellants_join,
         party_details_join,
-        bgs_attorneys_join,
-        issue_modification_request_join
+        bgs_attorneys_join
       ]
     end
 
@@ -675,7 +624,6 @@ class BusinessLine < Organization
         .where(where_constraints)
         .where(search_all_clause, *search_values)
         .where(issue_type_filter_predicate(query_params[:filters]))
-        .where(issue_modification_request_filter)
         .group(group_by_columns)
         .arel
     end
@@ -702,11 +650,6 @@ class BusinessLine < Organization
         },
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
-          assigned_to: parent,
-          "request_issues.closed_at": nil,
-          "request_issues.ineligible_reason": nil
-        },
-        pending: {
           assigned_to: parent,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil

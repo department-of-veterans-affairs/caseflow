@@ -214,7 +214,6 @@ class AddIssuesModal extends React.Component {
           renderPact={renderTrueOrFalse('pact')}
           renderJustification={renderTrueOrFalse('justification')}
           userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
-          userIsVhaAdmin={this.props.userIsVhaAdmin}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
@@ -281,7 +280,6 @@ AddIssuesModal.propTypes = {
   intakeData: PropTypes.object,
   featureToggles: PropTypes.object,
   userCanEditIntakeIssues: PropTypes.bool,
-  userIsVhaAdmin: PropTypes.bool,
   formType: PropTypes.string
 };
 
