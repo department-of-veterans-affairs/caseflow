@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
+  include CorrespondenceHelpers
   let(:current_user) { create(:user) }
   let(:veteran) { create(:veteran) }
   let(:correspondence) { create(:correspondence, veteran: veteran) }
@@ -71,13 +72,7 @@ RSpec.describe CorrespondenceQueueController, :all_dbs, type: :controller do
 
   describe "GET #correspondence_team" do
     before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      MailTeam.singleton.add_user(current_user)
-      OrganizationsUser.find_or_create_by!(
-        organization: InboundOpsTeam.singleton,
-        user: current_user
-      ).update!(admin: true)
-      User.authenticate!(user: current_user)
+      inbound_ops_team_admin_setup
     end
 
     it "returns cancel intake response" do

@@ -9,7 +9,13 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays a success banner and links the correspondence" do
         visit_intake_form_with_correspondence_load
         associate_with_prior_mail_radio_options[:yes].click
-        page.all(".cf-form-checkbox").first.click
+        page.execute_script('
+          document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+            if (index == 1) {
+              checkbox.click();
+            }
+          });
+        ')
         click_button("Continue")
         click_button("Continue")
         click_button("Submit")

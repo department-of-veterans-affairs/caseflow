@@ -7,7 +7,20 @@ export const veteranInformation = {
     last_name: 'Vetner',
   },
   file_number: '998877665',
-  correspondence_type_id: 8
+  correspondence_type_id: 8,
+  correspondence_types: [{ id: 1, name: 'Abeyance' },
+    { id: 2, name: 'Attorney Inquiry' },
+    { id: 3, name: 'CAVE Correspondence' },
+    { id: 4, name: 'Change of address' },
+    { id: 5, name: 'Congressional interest' },
+    { id: 6, name: 'CUE related' },
+    { id: 7, name: 'Death certificate' },
+    { id: 8, name: 'Evidence or argument' },
+    { id: 9, name: 'Extension request' },
+    { id: 10, name: 'FOIA request' },
+    { id: 11, name: 'Hearing Postponement Request' },
+    { id: 12, name: 'Hearing related' },
+    { id: 13, name: 'Hearing Withdrawal Request' }]
 };
 
 export const correspondenceData = {

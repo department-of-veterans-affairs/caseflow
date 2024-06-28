@@ -37,23 +37,10 @@ RSpec.feature("Search Bar for Correspondence") do
 
     before do
       20.times do
-        @review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: @review_correspondence.id)
-        rpt.update!(assigned_to: current_user, status: "assigned")
-        rpt.save!
+        create_correspondence_review
       end
       1.times do
-        params = {
-          first_name: "Zzzane",
-          last_name: "Zzzans"
-        }
-        veteran = create(:veteran, params)
-        review_correspondence = create(:correspondence, veteran_id: veteran.id)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user,
-                    status: "assigned",
-                    assigned_at: 42.days.ago)
-        rpt.save!
+        update_correspondence_for_review
       end
       FeatureToggle.enable!(:correspondence_queue)
     end
@@ -123,7 +110,7 @@ RSpec.feature("Search Bar for Correspondence") do
 
       # Return to first page, should not exist
       first("[aria-label='Page 1']").click
-      expect(page).not_to have_content("Zzzans")
+      expect(page).to have_no_content("Zzzans")
 
       # Sort Z-A, should return details from Zzzane
       sort_icon = find("[aria-label='Sort by Veteran Details']")
@@ -133,7 +120,7 @@ RSpec.feature("Search Bar for Correspondence") do
       # Sort A-Z, should result in no results
       sort_icon = find("[aria-label='Sort by Veteran Details']")
       sort_icon.click
-      expect(page).not_to have_content("Zzzans")
+      expect(page).to have_no_content("Zzzans")
     end
 
     it "Verify the user can have search results filtered by receipt date on filter correctly" do
@@ -164,23 +151,10 @@ RSpec.feature("Search Bar for Correspondence") do
 
     before do
       25.times do
-        review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user, status: "assigned")
-        rpt.save!
+        create_correspondence_review
       end
       1.times do
-        params = {
-          first_name: "Zzzane",
-          last_name: "Zzzans"
-        }
-        veteran = create(:veteran, params)
-        review_correspondence = create(:correspondence, veteran_id: veteran.id)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
-        rpt.update!(assigned_to: current_user,
-                    status: "assigned",
-                    assigned_at: 42.days.ago)
-        rpt.save!
+        update_correspondence_for_review
       end
       FeatureToggle.enable!(:correspondence_queue)
     end
