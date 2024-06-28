@@ -29,7 +29,7 @@ class AppealActiveTaskCancellation
   end
 
   def assign_distribution_task
-    tasks.find_by(type: "DistributionTask").update!(status: "assigned")
+    tasks.find_by(type: "DistributionTask").update!(status: Constants.TASK_STATUSES.assigned)
   end
 
   def all_tasks_except_those_needed_for_distribution
