@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-# @note Temporary solution for disallowed deprecation warnings.
-#   To be replaced by ActiveSupport Disallowed Deprecations after upgrading to Rails 6.1:
-#   https://rubyonrails.org/2020/12/9/Rails-6-1-0-release#disallowed-deprecation-support
-module DisallowedDeprecations
-  class ::DisallowedDeprecationError < StandardError; end
-
+module DeprecationWarnings
   # Regular expressions for custom deprecation warnings that we have addressed in the codebase
   CUSTOM_DEPRECATION_WARNING_REGEXES = [
     /Caseflow::Migration is deprecated/
@@ -25,7 +20,8 @@ module DisallowedDeprecations
     /render file: should be given the absolute path to a file/,
     /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/,
     /Class level methods will no longer inherit scoping/,
-    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/
+    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/,
+    /NOT conditions will no longer behave as NOR in Rails 6\.1/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
@@ -34,11 +30,4 @@ module DisallowedDeprecations
     *RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES,
     *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES
   ].freeze
-
-  # @param message [String] deprecation warning message to be checked against disallow list
-  def raise_if_disallowed_deprecation!(message)
-    if DISALLOWED_DEPRECATION_WARNING_REGEXES.any? { |re| re.match?(message) }
-      fail DisallowedDeprecationError, message
-    end
-  end
 end

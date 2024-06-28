@@ -88,7 +88,7 @@ class UsersController < ApplicationController
   end
 
   # Depending on the route and the requested resource, the requested user's id could be sent as :id or :user_id
-  # ex from rake routes: user GET /users/:id       or      user_task_pages GET /users/:user_id/task_pages
+  # ex from rails routes: user GET /users/:id       or      user_task_pages GET /users/:user_id/task_pages
   def id
     @id ||= params[:id] || params[:user_id]
   end
