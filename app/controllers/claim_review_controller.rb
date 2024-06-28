@@ -261,6 +261,7 @@ class ClaimReviewController < ApplicationController
     # If there are no approvals, then we can just deny the requests. We do not need to process request_issues_updates
     if issues_modification_request_updater.admin_approvals?
       if request_issues_update.can_be_performed?
+        issues_modification_request_updater.admin_process!
         if request_issues_update.perform!
           return render_success
         end
