@@ -43,6 +43,7 @@ import Error403 from 'app/errors/Error403';
 import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
+import UnderConstruction from 'app/containers/UnderConstruction';
 import Login from 'app/login';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
@@ -60,6 +61,7 @@ import Admin from 'app/admin';
 import CaseDistribution from 'app/caseDistribution';
 import CaseDistributionTest from 'app/caseDistribution/test';
 import uuid from 'uuid';
+import TestCorrespondence from 'app/test/TestCorrespondence';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -74,6 +76,7 @@ const COMPONENTS = {
   EstablishClaimPage,
   CaseWorker,
   Login,
+  TestCorrespondence,
   TestUsers,
   TestData,
   Error403,
@@ -82,6 +85,7 @@ const COMPONENTS = {
   OutOfService,
   Unauthorized,
   Feedback,
+  UnderConstruction,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -166,6 +170,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './containers/BaseContainer',
         './containers/EstablishClaimPage/index',
         './login/index',
+        './test/TestCorrespondence',
         './test/TestUsers',
         './test/TestData',
         './certification/Certification',

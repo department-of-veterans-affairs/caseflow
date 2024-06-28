@@ -133,6 +133,18 @@ class TableFilter extends React.PureComponent {
   //
   // Adds the text (string) for a filtered value to an internal list. The list holds all the
   // values to filter by.
+  putIntofilter = (filtersForColumn, columnName, value) => {
+    let newValue = [];
+
+    if ((columnName === 'Receipt Date') || (columnName === 'Date Completed')) {
+      newValue = [value];
+    } else {
+      newValue = filtersForColumn.concat([value]);
+    }
+
+    return newValue;
+  }
+
   updateSelectedFilter = (value, columnName) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
@@ -142,7 +154,7 @@ class TableFilter extends React.PureComponent {
       if (filtersForColumn.includes(value)) {
         newFilters = _.pull(filtersForColumn, value);
       } else {
-        newFilters = filtersForColumn.concat([value]);
+        newFilters = this.putIntofilter(filtersForColumn, columnName, value);
       }
     } else {
       newFilters = newFilters.concat([value]);
@@ -153,6 +165,7 @@ class TableFilter extends React.PureComponent {
     let newFilteredByList = _.clone(filteredByList);
 
     newFilteredByList[columnName] = newFilters;
+
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
   }
@@ -209,10 +222,14 @@ class TableFilter extends React.PureComponent {
         {this.state.open &&
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
+            isReceiptDateFilter={this.props.isReceiptDateFilter}
+            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
+            setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)}
             addClearFiltersRow>
+
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
@@ -228,6 +245,8 @@ TableFilter.defaultProps = {
 };
 
 TableFilter.propTypes = {
+  isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,
