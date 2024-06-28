@@ -3,27 +3,40 @@ import networkUtil from '../../../app/util/NetworkUtil';
 
 describe('NetworkUtil', () => {
   describe('connectionInfo', () => {
+    let originalNavigator;
+
     beforeEach(() => {
-      jest.spyOn(console, 'log').mockImplementation();
+      originalNavigator = global.navigator;
     });
     afterEach(() => {
-      // eslint-disable-next-line no-console
-      console.log.mockRestore();
+      global.navigator = originalNavigator;
     });
-    if (typeof navigator.connection === 'undefined') {
-      it('should handle browsers where Network Information API is not supported', async () => {
-        await networkUtil.connectionInfo();
-        expect(networkUtil.bandwidth).toBeNull();
-        expect(await networkUtil.connectionInfo()).toBe('Not available');
-        // eslint-disable-next-line no-console
-        expect(console.log).toHaveBeenCalledWith('Network Information API not supported in this browser');
+
+    it('should handle browsers where Network Information API is not supported', async () => {
+      Object.defineProperty(global.navigator, 'connection', {
+        value: undefined,
+        writable: true
       });
-    } else {
-      it('should return bandwidth in Mbits/s if the browser supports the Network Information API', async () => {
-        await networkUtil.connectionInfo();
-        expect(networkUtil.bandwidth).toBe(navigator.connection.downlink);
-        expect(await networkUtil.connectionInfo()).toMatch(/\d+ Mbits\/s/);
+
+      await networkUtil.connectionInfo();
+      expect(networkUtil.bandwidth).toBeNull();
+      expect(await networkUtil.connectionInfo()).toBe('Not available');
+
+    });
+
+    it('should return bandwidth in Mbits/s if the browser supports the Network Information API', async () => {
+      Object.defineProperty(global.navigator, 'connection', {
+        value: {
+          downlink: 5,
+          effectiveType: '4g'
+        },
+        writable: true
       });
-    }
+
+      await networkUtil.connectionInfo();
+      expect(networkUtil.bandwidth).toBe(navigator.connection.downlink);
+      expect(await networkUtil.connectionInfo()).toMatch(/\d+ Mbits\/s/);
+    });
+
   });
 });
