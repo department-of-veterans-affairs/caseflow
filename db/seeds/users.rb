@@ -684,4 +684,5 @@ module Seeds
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/ClassLength
   end
+  
 end
