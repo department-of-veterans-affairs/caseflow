@@ -204,9 +204,6 @@ class NonCompDispositions extends React.PureComponent {
     const decisionHeaderText = displayRequestIssueModification ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
       COPY.DISPOSITION_DECISION_HEADER_NONADMIN;
 
-    // // if pending issues are present and if the user is in uat then decision header should not be visible
-    // decisionHeaderText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ? '' : decisionHeaderText;
-
     const bannerDecisionBannerText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ?
       COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN :
       COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN;

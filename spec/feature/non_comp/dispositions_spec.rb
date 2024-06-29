@@ -413,6 +413,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         create(:issue_modification_request, decision_review: in_progress_task)
         visit dispositions_url
       end
+
       scenario "The banner should display and the save button should be disabled" do
         expect(page).to have_content(COPY::DISPOSITION_DECISION_HEADER_NONADMIN)
         expect(page).to have_content(COPY::VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN)
@@ -420,6 +421,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(page).to have_selector("textarea#description-issue-0[disabled]")
         expect(page).to have_selector("input#decision-date[readonly]")
         expect(page).to have_button("Complete", disabled: true)
+
         step "As an admin user" do
           User.authenticate!(user: admin_user)
           visit dispositions_url
