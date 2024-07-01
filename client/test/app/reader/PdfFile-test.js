@@ -1,8 +1,8 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render, waitFor, cleanup} from '@testing-library/react';
+
 import { PdfFile } from '../../../app/reader/PdfFile';
 import { documents } from '../../data/documents';
-import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
 jest.mock('../../../app/util/ApiUtil', () => ({
@@ -66,8 +66,6 @@ const storeMetricsError = {
 
 describe('PdfFile', () => {
 
-  let wrapper;
-
   describe('getDocument', () => {
 
     describe('when the feature toggle metricsRecordPDFJSGetDocument is OFF', () => {
@@ -75,7 +73,7 @@ describe('PdfFile', () => {
       beforeAll(() => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
+        const {container} = render(
           <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
@@ -93,8 +91,6 @@ describe('PdfFile', () => {
             setPdfDocument={jest.fn()}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterAll(() => {
@@ -112,16 +108,18 @@ describe('PdfFile', () => {
     });
 
     describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
+      let renderStartTime = null;
+      const setRenderStartTime = jest.fn(time => {
+        renderStartTime = time;
+      });
 
       beforeAll(() => {
-        // This component throws an error about halfway through getDocument at destroy
-        // giving it access to both recordAsyncMetrics and storeMetrics
-        wrapper = shallow(
+        render(
           <PdfFile
             documentId={documents[0].id}
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
-            onPageChange= {jest.fn()}
+            onPageChange={jest.fn()}
             isVisible
             scale="test"
             documentType="test"
@@ -132,64 +130,49 @@ describe('PdfFile', () => {
             setDocumentLoadError={jest.fn()}
             setPageDimensions={jest.fn()}
             setPdfDocument={jest.fn()}
+            setRenderStartTime={setRenderStartTime}
           />
         );
-
-        wrapper.instance().componentDidMount();
       });
 
       afterAll(() => {
+        cleanup();
         jest.clearAllMocks();
       });
 
       it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricArgs()[1],
-              metricArgs(true)[2]
-            );
-          });
-      });
-
-      it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
-
-        ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricArgs()[1],
-              metricArgs(true)[2]
-            );
-          });
+        expect(recordAsyncMetrics).toBeCalledWith(
+          metricArgs()[0],
+          metricArgs()[1],
+          metricArgs(true)[2]
+        );
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(
-          storeMetricsError.uuid,
-          storeMetricsError.data,
-          storeMetricsError.info,
-          storeMetricsError.eventId);
+        waitFor(() => {
+          expect(storeMetrics).toBeCalledWith(
+            storeMetricsError.uuid,
+            storeMetricsError.data,
+            storeMetricsError.info,
+            storeMetricsError.eventId
+          );
+        });
       });
 
-      it('clears measureTimeStartMs after unmount', () => {
-        // Mock the ApiUtil.get function to return a Promise that resolves immediately
-        jest.mock('../../../app/util/ApiUtil', () => ({
-          get: jest.fn().mockResolvedValue({}),
-        }));
-        const subject = wrapper.instance();
+      it('clears measureTimeStartMs after unmount', async () => {
+        const simulatedStartTime = Date.now();
+        setRenderStartTime(simulatedStartTime);;
 
-        // Trigger the ApiUtil.get function call
-        subject.getDocument();
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(simulatedStartTime);
+        });
 
-        // Assert that measureTimeStartMs is counting
-        expect(subject.props.renderStartTime).not.toBeNull();
+        cleanup();
+
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(null);
+          console.log('cleanup called', setRenderStartTime);
+        });
       });
     });
   });

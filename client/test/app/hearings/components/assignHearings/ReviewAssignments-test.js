@@ -1,28 +1,27 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReviewAssignments } from '../../../../../../client/app/hearings/components/ReviewAssignments';
 
 describe('ReviewAssignments', () => {
   it('renders the RO/CO alert', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter>
         <ReviewAssignments schedulePeriod={{ type: 'RoSchedulePeriod', hearingDays: [] }} />
       </MemoryRouter>
     );
 
-    expect(wrapper.text().includes(['We have assigned your hearings days'])).toBe(true);
+    expect(screen.getByText('We have assigned your hearings days')).toBeInTheDocument();
   });
 
   it('renders the modal if displayConfirmationModal is true', () => {
-    const wrapper = mount(
+    render(
       <MemoryRouter>
         <ReviewAssignments displayConfirmationModal schedulePeriod={{ type: 'RoSchedulePeriod', hearingDays: [] }} />
       </MemoryRouter>
     );
 
-    expect(wrapper.text().includes('Please confirm Caseflow upload')).toBe(true);
-    // expect(2).equals(2);
+    expect(screen.getByText('Please confirm Caseflow upload')).toBeInTheDocument();
   });
 
   // This test appears to no longer be applicable (and is failing after test suite updates)
