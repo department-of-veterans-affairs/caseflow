@@ -45,3 +45,5 @@ if [ ! -z "$jsxCommits" || ! -z "$jsCommits" ]; then
   cd "$SCRIPT_DIR"
   cd ../client && yarn jest -o
 fi
+
+echo "Tests relevant to current code changes have been run"

@@ -1,5 +1,6 @@
 #!/bin/bash
 # git command to run test-commits before pushing code to branch
+# requires user to type a commit message with push
 
 message=$1 # commit message
 currentBranch=$(git symbolic-ref --short -q HEAD) # get current branch
@@ -7,9 +8,19 @@ currentBranch=$(git symbolic-ref --short -q HEAD) # get current branch
 # check if the current commit message is present
 if [ ! -z "$1" ]
 then
-  git add .
-  git commit -m "$message"
-  git push origin $currentBranch
+  # run test-commits
+  git test-commits
+
+  # read user input to continue
+  read -p "Do you want to merge this commit? (Y/N) " yn
+
+  # case y: commit to branch. case n: cancel commit
+  case $yn in
+      [Yy]* ) git add .; git commit -m "$message"; git push origin $currentBranch; break;;
+      [Nn]* ) echo "commit cancelled"; exit;;
+      * ) echo "Please answer yes or no.";;
+  esac
+
 else
     echo "Commit message was not provided"
 fi
