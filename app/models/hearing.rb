@@ -32,10 +32,12 @@ class Hearing < CaseflowRecord
   include HearingConcern
   include HasHearingEmailRecipientsConcern
 
+  # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingPostponed
   prepend HearingWithdrawn
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -287,6 +289,7 @@ class Hearing < CaseflowRecord
     update_appeal_states_on_hearing_scheduled_in_error
     update_appeal_states_on_hearing_postponed
     update_appeal_states_on_hearing_withdrawn
+    update_appeal_states_on_hearing_held
   end
 
   def assign_created_by_user
