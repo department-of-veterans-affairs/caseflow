@@ -22,6 +22,8 @@ export default function TestUsers(props) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [reseedingError, setReseedingError] = useState(null);
   const [isReseeding, setIsReseeding] = useState(false);
+  const [optionalSeedingError, setOptionalSeedingError] = useState(null);
+  const [isOptionalSeeding, setIsOptionalSeeding] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
@@ -77,6 +79,18 @@ export default function TestUsers(props) {
       console.warn(err);
       setReseedingError(err);
       setIsReseeding(false);
+    });
+  };
+
+  const optionalSeed = () => {
+    setIsOptionalSeeding(true);
+    ApiUtil.post('/test/optional_seed').then(() => {
+      setOptionalSeedingError(null);
+      setIsOptionalSeeding(false);
+    }, (err) => {
+      console.warn(err);
+      setOptionalSeedingError(err);
+      setIsOptionalSeeding(false);
     });
   };
 
@@ -215,9 +229,9 @@ export default function TestUsers(props) {
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.
                   <br />This button reseeds the database with default values.</p>
-                {reseedingError &&
+                {(reseedingError || optionalSeedingError) &&
                   <Alert
-                    message={reseedingError.toString()}
+                    message={reseedingError ? reseedingError.toString() : optionalSeedingError.toString()}
                     type="error"
                   />
                 }
@@ -226,6 +240,12 @@ export default function TestUsers(props) {
                   name="Reseed the DB"
                   loading={isReseeding}
                   loadingText="Reseeding the DB" />
+                <br />
+                <Button
+                  onClick={optionalSeed}
+                  name="Run optional seeds"
+                  loading={isOptionalSeeding}
+                  loadingText="Running optional seed" />
                 <br /> <br />
                 <h3>Global Feature Toggles Enabled:</h3>
                 <SearchableDropdown
