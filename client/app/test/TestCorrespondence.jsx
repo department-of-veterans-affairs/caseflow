@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
@@ -20,6 +20,7 @@ export default function TestCorrespondence(props) {
   const [invalidFileNumbers, setInvalidFileNumbers] = useState('');
   const [validFileNumbers, setValidFileNumbers] = useState('');
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
+  const [disabled, setDisabled] = useState(true);
 
   const handleVeteranFileNumbers = (inputValue) => {
     // Allow only digits and commas
@@ -70,8 +71,16 @@ export default function TestCorrespondence(props) {
   };
 
   const handleSubmit = () => {
-    generateCorrespondence();
+    generateCorrespondence().then((res) => res);
   };
+
+  useEffect(() => {
+    if (veteranFileNumbers && correspondenceCount > 0) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [veteranFileNumbers, correspondenceCount]);
 
   return <BrowserRouter>
     <div>
@@ -127,6 +136,7 @@ export default function TestCorrespondence(props) {
             <Button
               name="Generate correspondence"
               onClick={handleSubmit}
+              disabled={disabled}
             />
           </div>
         </AppSegment>
