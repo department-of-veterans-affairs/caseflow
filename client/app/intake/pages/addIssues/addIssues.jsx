@@ -232,7 +232,8 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
       userCanSplitAppeal,
-      isLegacy
+      isLegacy,
+      intakeFromVbms
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
@@ -440,7 +441,16 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const intakeSystemLabelRow = () => {
+      return {
+        field: 'Intake System',
+        content: intakeFromVbms ? 'VBMS' : 'Caseflow'
+      };
+    };
+
     let rowObjects = fieldsForFormType;
+
+    rowObjects = rowObjects.concat(intakeSystemLabelRow());
 
     Object.keys(issuesBySection).sort().
       map((key) => {
@@ -692,7 +702,8 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal,
-    isLegacy: state.isLegacy
+    isLegacy: state.isLegacy,
+    intakeFromVbms: state.intakeFromVbms
   }),
   (dispatch) =>
     bindActionCreators(
