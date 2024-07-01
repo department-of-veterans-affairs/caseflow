@@ -287,7 +287,6 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
-                // disabled={disableButton || isReadOnly}
                 disabled={!disableButton || isReadOnly}
 
               />
