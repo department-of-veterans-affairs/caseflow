@@ -35,6 +35,9 @@ const modalContentStyles = css({
   '& .usa-input-error label': {
     left: '115px',
     bottom: '13px'
+  },
+  '& .usa-alert': {
+    marginBottom: '1.5em'
   }
 });
 
@@ -108,11 +111,11 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
       closeHandler={onCancel}
       id="custom-total-hearings-modal"
     >
-      {serverError &&
-        <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
-          message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
-
       <div {...modalContentStyles}>
+        {serverError &&
+          <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
+            message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
+
         <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2>
 
         <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p>

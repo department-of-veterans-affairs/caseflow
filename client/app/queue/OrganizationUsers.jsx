@@ -279,7 +279,7 @@ getFilteredUsers = () => {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.getFilteredUsers().map((user, i) => {
+    const listOfUsers = this.getFilteredUsers().map((user) => {
       const { dvc, admin } = user.attributes;
       const { conferenceSelectionVisibility } = this.props;
 
@@ -381,7 +381,7 @@ getFilteredUsers = () => {
           </div>
         </div>
         { listOfUsers.length > 0 ? (
-          <ul>{listOfUsers}</ul>
+          <ul {...userListStyle}>{listOfUsers}</ul>
         ) : (
           <>
             <p className="no-results-found-styling">No results found</p>
