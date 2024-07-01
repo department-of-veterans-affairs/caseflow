@@ -109,6 +109,8 @@ module Seeds
       # Below originated in Education seed file
       setup_emo_org
       setup_rpo_orgs
+
+      create_qa_test_users
     end
 
     def create_bva_dispatch_admin
@@ -554,9 +556,9 @@ module Seeds
     end
 
     def create_qa_test_users
-      create(:user, css_id: "QATTY1", full_name: "QA Attorney_1")
-      create(:user, css_id: "QATTY2", full_name: "QA Attorney_2")
-      create(:user, css_id: "QATTY3", full_name: "QA Attorney_3")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY1", full_name: "QA Attorney_1")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY2", full_name: "QA Attorney_2")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY3", full_name: "QA Attorney_3")
       create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
              css_id: "QINELIGVLJ", full_name: "QA Ineligible Judge")
       create(:user, :judge, :with_vacols_judge_record,
