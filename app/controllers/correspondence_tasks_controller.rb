@@ -18,9 +18,9 @@ class CorrespondenceTasksController < TasksController
       task = task_to_create
       task_params = {
         parent_id: review_package_task.id,
-        instructions: params[:instructions],
+        instructions: correspondence_tasks_params[:instructions],
         assigned_to: InboundOpsTeam.singleton,
-        appeal_id: params[:correspondence_id],
+        appeal_id: correspondence_tasks_params[:correspondence_id],
         appeal_type: "Correspondence",
         status: Constants.TASK_STATUSES.assigned,
         type: task.name
@@ -33,7 +33,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def create_correspondence_intake_task
-    review_package_task = ReviewPackageTask.open.find_by(appeal_id: params[:id])
+    review_package_task = ReviewPackageTask.open.find_by(appeal_id: correspondence_tasks_params[:id])
     return render json: { message: "Correspondence Root Task not found" }, status: :not_found unless review_package_task
 
     current_parent = review_package_task.parent
@@ -58,7 +58,7 @@ class CorrespondenceTasksController < TasksController
 
   def remove_package
     root_task = CorrespondenceRootTask.find_by!(
-      appeal_id: params[:id],
+      appeal_id: correspondence_tasks_params[:id],
       assigned_to: InboundOpsTeam.singleton,
       appeal_type: "Correspondence"
     )
@@ -70,7 +70,7 @@ class CorrespondenceTasksController < TasksController
     remove_package_task.update!(
       assigned_to: current_user,
       status: Constants.TASK_STATUSES.completed,
-      instructions: params[:instructions]
+      instructions: correspondence_tasks_params[:instructions]
     )
 
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id])
@@ -78,24 +78,38 @@ class CorrespondenceTasksController < TasksController
   end
 
   def update
-    process_package_action_decision(params[:decision])
+    process_package_action_decision(correspondence_tasks_params[:decision])
   end
 
   private
 
+  def correspondence_tasks_params
+    params.permit(
+      :correspondence_id,
+      :id,
+      :decision,
+      :task_id,
+      :new_assignee,
+      :decision_reason,
+      :action_type,
+      :type,
+      instructions: []
+    )
+  end
+
   def process_package_action_decision(decision)
-    task = CorrespondenceTask.find(params[:task_id])
+    task = CorrespondenceTask.find(correspondence_tasks_params[:task_id])
     requesting_user_name = task.assigned_by&.display_name
     begin
       case decision
       when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["APPROVE"]
         if task.is_a?(ReassignPackageTask)
-          task.approve(current_user, User.find_by(css_id: params[:new_assignee]))
+          task.approve(current_user, User.find_by(css_id: correspondence_tasks_params[:new_assignee]))
         elsif task.is_a?(RemovePackageTask)
           task.approve(current_user)
         end
       when COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_DECISION_OPTIONS["REJECT"]
-        task.reject(current_user, params[:decision_reason])
+        task.reject(current_user, correspondence_tasks_params[:decision_reason])
       end
       package_action_flash(decision.upcase, requesting_user_name)
     rescue StandardError
@@ -104,7 +118,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def package_action_flash(decision, user_name)
-    action = params[:action_type].upcase
+    action = correspondence_tasks_params[:action_type].upcase
     flash[:custom] = {
       title: format(
         COPY::CORRESPONDENCE_QUEUE_PACKAGE_ACTION_SUCCESS[action][decision]["TITLE"],
@@ -115,7 +129,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def flash_error_banner(user_name)
-    operation_verb = (params[:action_type] == "approve") ? "approved" : "rejected"
+    operation_verb = (correspondence_tasks_params[:action_type] == "approve") ? "approved" : "rejected"
     flash[:custom_error] = {
       title: "Package request for #{user_name} could not be #{operation_verb}",
       message: "Please try again at a later time or contact the Help Desk."
@@ -123,7 +137,7 @@ class CorrespondenceTasksController < TasksController
   end
 
   def task_to_create
-    case params[:type]
+    case correspondence_tasks_params[:type]
     when "removePackage"
       RemovePackageTask
     when "mergePackage"
