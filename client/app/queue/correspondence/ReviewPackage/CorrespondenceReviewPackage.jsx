@@ -208,10 +208,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const NEW_DATA_CHANGEME = {
     notes: props.correspondence.notes,
-    veteranFullName: props.correspondence.veteran_name,
+    veteranFullName: props.correspondence.veteranFullName,
     fileNumber: fileNumber,
-    packageDocumentType: props.correspondenceDocuments.length &&
-     props.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
+    packageDocumentType: props.correspondence.correspondenceDocuments.length &&
+     props.correspondence.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
     vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
     correspondenceTypes: props.correspondenceTypes
   };
@@ -317,7 +317,6 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
-  correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
@@ -329,7 +328,6 @@ CorrespondenceReviewPackage.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
   createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,

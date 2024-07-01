@@ -20,9 +20,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
           correspondence: @correspondence,
           general_information: general_information,
           user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
-          correspondence_documents: corres_docs.map do |doc|
-            WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-          end,
+          corres_docs: corres_docs,
           taskInstructions: task_instructions,
           display_intake_appeal: display_intake_appeal
         }

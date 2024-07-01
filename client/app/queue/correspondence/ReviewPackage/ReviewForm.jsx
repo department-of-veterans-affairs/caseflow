@@ -22,9 +22,6 @@ export const ReviewForm = (props) => {
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
   const [saveChanges, setSaveChanges] = useState(true);
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
-  );
 
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeID < 0) {
@@ -349,7 +346,6 @@ ReviewForm.propTypes = {
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
-  correspondenceDocuments: PropTypes.array,
   handleReview: PropTypes.func,
   errorMessage: PropTypes.any,
   isReadOnly: PropTypes.bool,
@@ -361,7 +357,6 @@ ReviewForm.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
 });
