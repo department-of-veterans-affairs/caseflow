@@ -2,8 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import moment from 'moment-timezone';
 import { invert } from 'lodash';
-
-
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import TIMEZONES from 'constants/TIMEZONES';
