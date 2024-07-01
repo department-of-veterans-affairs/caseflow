@@ -177,10 +177,10 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    let displayPOAComponent = this.props.task.business_line === 'vha';
+    let displayPOAComponent = task.business_line === 'vha';
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
-    const decisionHasPendingRequestIssues = this.props.task.pending_issue_modification_count > 0;
+    const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
