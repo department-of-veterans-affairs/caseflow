@@ -52,8 +52,7 @@ const NonCompTabsUnconnected = (props) => {
         filterableTaskIssueTypes={props.taskFilterDetails.incomplete_issue_types}
         description={COPY.VHA_INCOMPLETE_TAB_DESCRIPTION}
         tabName="incomplete"
-        predefinedColumns={{ includeDaysWaiting: true,
-          defaultSortIdx: 3 }} />
+        predefinedColumns={{ includeDaysWaiting: true }} />
     },
     in_progress: {
       label: 'In progress tasks',
@@ -64,8 +63,7 @@ const NonCompTabsUnconnected = (props) => {
         {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
         filterableTaskTypes={props.taskFilterDetails.in_progress}
         filterableTaskIssueTypes={props.taskFilterDetails.in_progress_issue_types}
-        predefinedColumns={{ includeDaysWaiting: true,
-          defaultSortIdx: 3 }} />
+        predefinedColumns={{ includeDaysWaiting: true }} />
     },
     completed: {
       label: 'Completed tasks',
@@ -77,8 +75,7 @@ const NonCompTabsUnconnected = (props) => {
         filterableTaskTypes={props.taskFilterDetails.completed}
         filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
         description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
-        predefinedColumns={{ includeCompletedDate: true,
-          defaultSortIdx: 3 }} />
+        predefinedColumns={{ includeCompletedDate: true }} />
     }
   };
 
