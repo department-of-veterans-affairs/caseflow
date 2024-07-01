@@ -207,7 +207,7 @@ class AssignHearingDispositionTask < Task
       elsif email_recipients_attributes.present?
         create_or_update_email_recipients(new_hearing, email_recipients_attributes)
       end
-
+      new_hearing.maybe_create_non_virtual_conference
       [new_hearing_task, self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)]
     end
   end

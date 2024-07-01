@@ -44,9 +44,9 @@ class Hearings::HearingDayController < HearingsApplicationController
           hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
         )
       }
-    rescue VirtualHearings::LinkService::PINKeyMissingError,
-           VirtualHearings::LinkService::URLHostMissingError,
-           VirtualHearings::LinkService::URLPathMissingError => error
+    rescue VirtualHearings::PexipLinkService::PINKeyMissingError,
+           VirtualHearings::PexipLinkService::URLHostMissingError,
+           VirtualHearings::PexipLinkService::URLPathMissingError => error
       log_error(error)
       render json: {
         hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
@@ -89,7 +89,9 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def update
     hearing_day.update!(update_params)
-    render json: hearing_day.to_hash
+    render json: hearing_day.to_hash.merge(
+      conference_link: ::HearingDaySerializer.serialize_conference_link(hearing_day.conference_link)
+    )
   end
 
   def destroy

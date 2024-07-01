@@ -48,6 +48,13 @@ export const setUserIsCobAdmin = (userIsCobAdmin) => ({
   }
 });
 
+export const setMeetingType = (conferenceProvider) => ({
+  type: ACTIONS.SET_CONFERENCE_PROVIDER,
+  payload: {
+    conferenceProvider
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {

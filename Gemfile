@@ -59,6 +59,7 @@ gem "rack", "~> 2.2.6.2"
 gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rcredstash", "~> 1.1.0"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
@@ -68,6 +69,7 @@ gem "request_store"
 gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
+gem "rtf"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -83,6 +85,7 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
