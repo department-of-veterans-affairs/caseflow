@@ -34,9 +34,6 @@ export const CorrespondenceReviewPackage = (props) => {
     va_date_of_receipt: '',
   });
 
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
-  );
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
@@ -282,12 +279,12 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (displayIntakeAppeal || stateCorrespondence.nod) && (
+            { (displayIntakeAppeal || props.correspondence.nod) && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
-                disabled={!disableButton || isReadOnly}
+                disabled={disableButton || isReadOnly}
 
               />
             )}
