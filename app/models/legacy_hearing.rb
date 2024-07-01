@@ -37,7 +37,6 @@ class LegacyHearing < CaseflowRecord
   include HasHearingEmailRecipientsConcern
   include ConferenceableConcern
 
-
   # VA Notify Hooks
   prepend HearingScheduled
   prepend HearingWithdrawn
