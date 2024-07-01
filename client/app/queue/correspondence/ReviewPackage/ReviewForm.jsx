@@ -123,7 +123,7 @@ export const ReviewForm = (props) => {
           va_date_of_receipt: vaDORDate
         },
         veteran: {
-          file_number: props.NEW_DATA_CHANGEME.fileNumber,
+          file_number: props.reviewPackageData.fileNumber,
         }
       },
     };
@@ -202,7 +202,7 @@ export const ReviewForm = (props) => {
         name="date"
         type="date"
         onChange={handleSelectVADOR}
-        value={props.NEW_DATA_CHANGEME.vaDor}
+        value={props.reviewPackageData.vaDor}
         errorMessage={dateError}
         readOnly = {vaDORReadOnly() || props.isReadOnly}
       />;
@@ -241,7 +241,7 @@ export const ReviewForm = (props) => {
               <div className="veternal-name-styling-review-form ">
                 <TextField
                   label="Veteran name"
-                  value={props.NEW_DATA_CHANGEME.veteranFullName}
+                  value={props.reviewPackageData.veteranFullName}
                   readOnly
                   name="Veteran-name-display"
                   useAriaLabel
@@ -276,7 +276,7 @@ export const ReviewForm = (props) => {
               <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
-                options={generateOptions(props.NEW_DATA_CHANGEME.correspondenceTypes)}
+                options={generateOptions(props.reviewPackageData.correspondenceTypes)}
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
                 placeholder= {correspondenceTypeID < 0 ? 'Select...' :

@@ -202,7 +202,7 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   }, [editableData, apiResponse]);
 
-  const NEW_DATA_CHANGEME = {
+  const reviewPackageData = {
     notes: props.correspondence.notes,
     veteranFullName: props.correspondence.veteranFullName,
     fileNumber: props.correspondence.file_number,
@@ -244,7 +244,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
-              NEW_DATA_CHANGEME,
+              reviewPackageData,
               reviewDetails,
               setReviewDetails,
               editableData,
