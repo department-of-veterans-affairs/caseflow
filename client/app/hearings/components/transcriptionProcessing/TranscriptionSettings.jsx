@@ -8,6 +8,7 @@ import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import { PencilIcon } from '../../../components/icons/PencilIcon';
+import { sprintf } from 'sprintf-js';
 
 import Alert from '../../../components/Alert';
 import ApiUtil from '../../../util/ApiUtil';
@@ -70,6 +71,12 @@ const alertStyle = css({
   '& .usa-alert': {
     paddingBottom: '2rem'
   }
+});
+
+const editTotalStyling = css({
+  position: 'relative',
+  left: '5px',
+  top: '-5px'
 });
 
 export default class TranscriptionSettings extends React.PureComponent {
@@ -183,9 +190,9 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   editTotalHearingsLink = (id) => (
-    <div>
+    <div {...editTotalStyling}>
       <Button linkStyling onClick={() => this.editTotalHearings(id)}>
-        <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
+        <span>
           Edit Total
         </span>
         <span {...css({ position: 'absolute' })}>
@@ -273,13 +280,12 @@ export default class TranscriptionSettings extends React.PureComponent {
                 <span>
                   <li {...editlinkStyle}>
                     <strong>
-                      {'Hearings sent to '}
-                      {contractor.name}
-                      {' this week: '}
+                      { sprintf(COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT, contractor.name)}
                     </strong>
-                    {'0 of '}
+                    &nbsp;
+                    {' 0 of '}
                     {contractor.current_goal}
-                    {this.editTotalHearingsLink()}
+                    {this.editTotalHearingsLink(contractor.id)}
                   </li>
                 </span>
               </ul>

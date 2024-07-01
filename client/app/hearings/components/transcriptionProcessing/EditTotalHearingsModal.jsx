@@ -8,13 +8,37 @@ import COPY from '../../../../COPY';
 import { sprintf } from 'sprintf-js';
 import ApiUtil from '../../../util/ApiUtil';
 import Alert from '../../../components/Alert';
+import { css } from 'glamor';
 
-const defaultContractor = {
-  name: '',
-  current_goal: ''
-};
+const modalContentStyles = css({
+  '& h2': {
+    margin: 0,
+  },
+  '& p': {
+    marginTop: 0,
+  },
+  '& .input-container': {
+    width: '73px'
+  },
+  '& .cf-form-textinput': {
+    marginBottom: 0,
+    position: 'relative'
+  },
+  '& label ': {
+    position: 'absolute',
+    left: '82px',
+    bottom: '3px'
+  },
+  '& .usa-input-error': {
+    marginBottom: 0
+  },
+  '& .usa-input-error label': {
+    left: '115px',
+    bottom: '13px'
+  }
+});
 
-export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor = defaultContractor }) => {
+export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContractor }) => {
   const [formData, setFormData] = useState(transcriptionContractor);
   const [serverError, setServerError] = useState(false);
   const [formValid, setFormValid] = useState(false);
@@ -50,8 +74,10 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
   };
 
   const validateForm = () => {
+    const currentGoal = parseInt(formData.current_goal, 10);
+
     setFormValid(
-      formData.current_goal.length
+      currentGoal >= 1 && currentGoal <= 1000
     );
   };
 
@@ -86,15 +112,20 @@ export const EditTotalHearingsModal = ({ onCancel, onConfirm, transcriptionContr
         <Alert title={COPY.TRANSCRIPTION_SETTINGS_ERROR_TITLE}
           message={COPY.TRANSCRIPTION_SETTINGS_ERROR_MESSAGE} type="error" /> }
 
-      {/* <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2> */}
+      <div {...modalContentStyles}>
+        <h2>{sprintf(COPY.TRANSCTIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CONTRACTOR, transcriptionContractor.name)}</h2>
 
-      {/* <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p> */}
+        <p><strong>{sprintf(COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_CURRENT_GOAL, transcriptionContractor.current_goal)}</strong></p>
 
-      <TextField
-        label={COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_INPUT_TEXT}
-        name="current-goals"
-        defaultValue={formData.current_goal}
-        onChange={(value) => handleChange('current-goals', value)} />
+        <TextField
+          label={COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_MODAL_INPUT_TEXT}
+          name="current_goal"
+          defaultValue={formData.current_goal}
+
+          errorMessage={!formData.current_goal || !formValid ? COPY.TRANSCRIPTION_SETTINGS_EDIT_TOTAL_HEARINGS_VALIDATION : null}
+
+          onChange={(value) => handleChange('current_goal', value)} />
+      </div>
     </Modal>
   );
 };
