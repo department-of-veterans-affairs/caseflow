@@ -1,20 +1,29 @@
 # frozen_string_literal: true
 require 'rubygems'
 require 'bundler/setup'
-# require 'opentelemetry/sdk'
-# require 'opentelemetry/instrumentation/all'
 
 # require 'opentelemetry/sdk'
 # require 'opentelemetry/exporter/otlp'
-# require 'opentelemetry/instrumentation/active_job'
-# require 'opentelemetry/instrumentation/active_model_serializers'
-# require 'opentelemetry/instrumentation/rack'
+# require 'opentelemetry/instrumentation/all'
 
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
 require 'opentelemetry/instrumentation/rack'
 require 'opentelemetry/instrumentation/rails'
 require 'opentelemetry/instrumentation/active_record'
+require 'opentelemetry/instrumentation/active_job'
+require 'opentelemetry/instrumentation/action_pack'
+require 'opentelemetry/instrumentation/active_view'
+require 'opentelemetry/instrumentation/active_model_serializers'
+require 'opentelemetry/instrumentation/aws_sdk'
+require 'opentelemetry/instrumentation/concurrent_ruby'
+require 'opentelemetry/instrumentation/faraday'
+require 'opentelemetry/instrumentation/http'
+require 'opentelemetry/instrumentation/http-client'
+require 'opentelemetry/instrumentation/net_http'
+# require 'opentelemetry/instrumentation/pg'
+# require 'opentelemetry/instrumentation/redis'
+
 # rubocop:disable Layout/LineLength
 
 DT_API_URL = ENV["DT_API_URL"]

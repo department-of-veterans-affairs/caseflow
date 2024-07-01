@@ -60,7 +60,7 @@ group :opentelemetry do
   gem "opentelemetry-instrumentation-http_client", require: false
   gem "opentelemetry-instrumentation-net_http", require: false
   # gem "opentelemetry-instrumentation-pg", require: false
-    # gem "opentelemetry-instrumentation-pg", require: false
+  # gem "opentelemetry-instrumentation-redis", require: false
 end
 
 gem "paper_trail", "~> 12.0"
