@@ -7,9 +7,12 @@ describe HearingRequestDocket, :postgres do
     create(:case_distribution_lever, :ama_hearing_case_affinity_days, value: "60")
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days, value: "14")
     create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :cavc_aod_affinity_days)
 
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    FeatureToggle.enable!(:acd_exclude_from_affinity)
   end
 
   context "#ready_priority_appeals" do
@@ -82,7 +85,9 @@ describe HearingRequestDocket, :postgres do
         subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
 
         it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
-          expect(subject).to match_array([ready_aod_appeal_hearing_cancelled.receipt_date])
+          expect(subject).to match_array(
+            [ready_aod_appeal_tied_to_judge.receipt_date, ready_aod_appeal_hearing_cancelled.receipt_date]
+          )
         end
       end
     end
@@ -113,7 +118,10 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
-          expect(subject).to match_array([ready_nonpriority_appeal_hearing_cancelled.receipt_date])
+          expect(subject).to match_array(
+            [ready_nonpriority_appeal_tied_to_judge.receipt_date,
+             ready_nonpriority_appeal_hearing_cancelled.receipt_date]
+          )
         end
       end
     end
@@ -693,6 +701,97 @@ describe HearingRequestDocket, :postgres do
       end
     end
   end
+
+  context "CAVC and Hearing affinities combined" do
+    let!(:original_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "ORIG_JUDGE") }
+    let!(:hearing_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "HEAR_JUDGE") }
+    let!(:request_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "REQ_JUDGE") }
+    let!(:other_judge) { create(:user, :judge, :with_vacols_judge_record, css_id: "OTHER_JUDGE") }
+    let!(:cavc_hearing_appeal_with_new_hearing) do
+      create_cavc_hearing_appeal_with_new_hearing(
+        original_judge: original_judge,
+        hearing_judge: hearing_judge,
+        other_judge: other_judge,
+        created_date: 4.years.ago
+      )
+    end
+
+    subject { described_class.new }
+
+    context "when within the CAVC and Hearing affinity windows" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 5.days.ago) }
+
+      it "distributes to only the original judge", :aggregate_failures do
+        o_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res.length).to eq 1
+
+        h_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res.length).to eq 0
+
+        r_j_res = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res.length).to eq 0
+      end
+    end
+
+    context "when out of CAVC affinity window but within Hearing affinity window" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 35.days.ago) }
+
+      it "distributes to original or hearing judge" do
+        o_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res1.length).to eq 1
+
+        h_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res1.length).to eq 1
+
+        r_j_res1 = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res1.length).to eq 0
+      end
+    end
+
+    context "when out of both CAVC and Hearing affinity windows" do
+      before { cavc_hearing_appeal_with_new_hearing.appeal_affinity.update!(affinity_start_date: 75.days.ago) }
+
+      it "distributes to any judge", :aggregate_failures do
+        o_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(original_judge, 3)
+        expect(o_j_res2.length).to eq 1
+
+        h_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(hearing_judge, 3)
+        expect(h_j_res2.length).to eq 1
+
+        r_j_res2 = subject.age_of_n_oldest_priority_appeals_available_to_judge(request_judge, 3)
+        expect(r_j_res2.length).to eq 1
+      end
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def create_cavc_hearing_appeal_with_new_hearing(
+    original_judge: nil, hearing_judge: nil, other_judge: nil, created_date: 4.years.ago
+  )
+    Timecop.travel(created_date)
+    source = create(
+      :appeal,
+      :dispatched,
+      :hearing_docket,
+      associated_judge: original_judge
+    )
+    Timecop.travel(1.year.from_now)
+    remand = create(:cavc_remand, source_appeal: source).remand_appeal
+    Timecop.return
+    Timecop.travel(6.months.ago)
+    remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
+    create(:appeal_affinity, appeal: remand)
+    Timecop.travel(1.month.from_now)
+    jat = JudgeAssignTaskCreator.new(appeal: remand, judge: other_judge, assigned_by_id: other_judge.id).call
+    create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: other_judge).completed!
+    Timecop.travel(1.month.from_now)
+    create(:hearing, :held, appeal: remand, judge: hearing_judge, adding_user: User.system_user)
+    Timecop.travel(3.months.from_now)
+    remand.tasks.where(type: AssignHearingDispositionTask.name).last.completed!
+    Timecop.return
+    remand
+  end
+  # rubocop:enable Metrics/AbcSize
 
   def create_ready_aod_appeal(tied_judge: nil, created_date: 1.year.ago)
     Timecop.travel(created_date)

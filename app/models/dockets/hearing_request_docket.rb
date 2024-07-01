@@ -5,12 +5,12 @@ class HearingRequestDocket < Docket
     Constants.AMA_DOCKETS.hearing
   end
 
-  def ready_priority_appeals
-    appeals(priority: true, ready: true)
+  def ready_priority_appeals(judge: nil)
+    appeals(priority: true, ready: true, judge: judge)
   end
 
-  def ready_nonpriority_appeals
-    appeals(priority: false, ready: true)
+  def ready_nonpriority_appeals(judge: nil)
+    appeals(priority: false, ready: true, judge: judge)
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
@@ -23,7 +23,7 @@ class HearingRequestDocket < Docket
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop", judge: judge
+      base_relation: ready_nonpriority_appeals(judge: judge).limit(num), genpop: "only_genpop", judge: judge
     ).call.map(&:receipt_date)
   end
 
@@ -35,7 +35,7 @@ class HearingRequestDocket < Docket
 
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop", judge: judge
+      base_relation: ready_priority_appeals(judge: judge).limit(num), genpop: "only_genpop", judge: judge
     ).call.flatten.map(&:receipt_date)
   end
 
