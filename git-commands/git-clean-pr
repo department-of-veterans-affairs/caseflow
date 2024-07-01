@@ -1,14 +1,27 @@
 #!/bin/bash
 
+# git command to run relevant jest, rubocop, and rspecs on files changed
+# can accept a branch parameter to compare changes to another given branch
+
 # get script directory
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # get current directory
 CURRENT_DIR=$(pwd)
 
-# get the list of files changed that are eligible for testing
-jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
-jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
-rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+# determine if branch param was passed
+if [ ! -z "$1" ]; then
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only "$1" | grep -E '.rb$') # get the list of ruby files
+
+else
+  # else default to no branch comparison
+  # get the list of files changed that are eligible for testing
+  jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
+  jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
+  rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+fi
 
 # cycle through ruby suite of tests
 for commit in $rbCommits; do
@@ -39,8 +52,8 @@ for commit in $rbCommits; do
 done
 
 # if there is a jsx or js file, use jest -o to run tests that cover file
-if [ ! -z "$jsxCommits" || ! -z "$jsCommits" ]; then
-  echo "running jest tests for $jsxCommits"
+if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
+  echo "running jest tests for $jsxCommits $jsCommits"
   # use SCRIPT_DIR to get to appeals/client/test
   cd "$SCRIPT_DIR"
   cd ../client && yarn jest -o
