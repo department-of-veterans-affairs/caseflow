@@ -68,16 +68,6 @@ export const ReviewForm = (props) => {
       id: option.id,
     }));
 
-  const fullName = (vetaranName) => {
-    const {
-      first_name: firstName = '',
-      middle_initial: middleInitial = '',
-      last_name: lastName = '',
-    } = vetaranName;
-
-    return `${firstName} ${middleInitial} ${lastName}`;
-  };
-
   const handleSelectCorrespondenceType = (val) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
@@ -123,6 +113,7 @@ export const ReviewForm = (props) => {
   const handleSubmit = async () => {
     setSaveChanges(true);
     props.setCreateRecordIsReadOnly('');
+    console.log(props)
     const correspondence = props;
     const payloadData = {
       data: {
@@ -250,7 +241,7 @@ export const ReviewForm = (props) => {
               <div className="veternal-name-styling-review-form ">
                 <TextField
                   label="Veteran name"
-                  value={fullName(props.NEW_DATA_CHANGEME.veteranFullName)}
+                  value={props.NEW_DATA_CHANGEME.veteranFullName}
                   readOnly
                   name="Veteran-name-display"
                   useAriaLabel

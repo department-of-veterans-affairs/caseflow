@@ -85,7 +85,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf_params
-    params.permit(params.permit(:pdf_id, :type, :id, :download))
+    params.permit(:pdf_id, :type, :id, :download)
   end
 
   def display_intake_appeal

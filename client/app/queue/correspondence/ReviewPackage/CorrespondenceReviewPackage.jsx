@@ -31,7 +31,7 @@ export const CorrespondenceReviewPackage = (props) => {
     notes: '',
     veteran_file_number: '',
     default_select_value: null,
-    va_date_of_receipt:'',
+    va_date_of_receipt: '',
   });
 
   const stateCorrespondence = useSelector(
@@ -52,48 +52,44 @@ export const CorrespondenceReviewPackage = (props) => {
     veteranName: '',
     taskId: [],
   });
-  const [fileNumber, setFileNumber] = useState(props.veteranInformation.file_number);
-
-  const handleFileNumberChange = (newValue) => {
-    setFileNumber(newValue)
-  }
 
   // Banner Information takes in the following object:
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
   // When a remove package task is active and pending review, the page is read-only
-   const isPageReadOnly = (tasks) => {
-      const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+  const isPageReadOnly = (tasks) => {
+    const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
-      if (assignedRemoveTask) {
-        setReviewPackageDetails((prev) => {
-          return { ...prev, taskId: assignedRemoveTask.id };
-        }
-        );
+    if (assignedRemoveTask) {
+      setReviewPackageDetails((prev) => {
+        return { ...prev, taskId: assignedRemoveTask.id };
       }
+      );
+    }
 
-      // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined');
-    };
+    // Return true if a removePackageTask that is currently assigned is found, else false
+    return (typeof assignedRemoveTask !== 'undefined');
+  };
 
-    // When a reassign package task is active and pending review, the page is read-only
-    const hasAssignedReassignPackageTask = (tasks) => {
-      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+  // When a reassign package task is active and pending review, the page is read-only
+  const hasAssignedReassignPackageTask = (tasks) => {
+    const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
           task.type === 'ReassignPackageTask');
 
-      if (assignedReassignTask) {
-        setReviewPackageDetails({ taskId: assignedReassignTask.id });
-      }
+    if (assignedReassignTask) {
+      setReviewPackageDetails({ taskId: assignedReassignTask.id });
+    }
 
-      // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (
-        (typeof assignedReassignTask !== 'undefined')
-      );
-    };
+    // Return true if a reassignPackageTask that is currently assigned is found, else false
+    return (
+      (typeof assignedReassignTask !== 'undefined')
+    );
+  };
 
   useEffect(() => {
     const apiResWithVADOR = moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
+
     setApiResponse(apiResWithVADOR);
     setDisplayIntakeAppeal(props.correspondence.display_intake_appeal);
 
@@ -107,13 +103,13 @@ export const CorrespondenceReviewPackage = (props) => {
     }
 
     setReviewDetails({
-        veteran_name: props.correspondence.veteran_name || {},
-        dropdown_values: props.correspondence.correspondenceTypes || [],
-        correspondence_type_id: props.correspondence.correspondence_type_id
+      veteran_name: props.correspondence.veteran_name || {},
+      dropdown_values: props.correspondence.correspondenceTypes || [],
+      correspondence_type_id: props.correspondence.correspondence_type_id
     });
     setReviewPackageDetails((prev) => {
-       return { ...prev, veteranName: `${props.correspondence.veteran_name.first_name} ${props.correspondence.veteran_name.last_name}` };
-      }
+      return { ...prev, veteranName: `${props.correspondence.veteran_name.first_name} ${props.correspondence.veteran_name.last_name}` };
+    }
     );
 
     setEditableData({
@@ -160,10 +156,10 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== apiResponse.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
-    const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
+    const notesChanged = editableData.notes !== props.correspondence.notes;
+    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
+    const selectValueChanged = editableData.default_select_value !== reviewDetails.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
@@ -209,7 +205,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const NEW_DATA_CHANGEME = {
     notes: props.correspondence.notes,
     veteranFullName: props.correspondence.veteranFullName,
-    fileNumber: fileNumber,
+    fileNumber: props.correspondence.file_number,
     packageDocumentType: props.correspondence.correspondenceDocuments.length &&
      props.correspondence.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
     vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
@@ -251,8 +247,6 @@ export const CorrespondenceReviewPackage = (props) => {
               NEW_DATA_CHANGEME,
               reviewDetails,
               setReviewDetails,
-              handleFileNumberChange,
-              fileNumber,
               editableData,
               setEditableData,
               disableButton,
@@ -293,7 +287,9 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
-                disabled={disableButton || isReadOnly}
+                // disabled={disableButton || isReadOnly}
+                disabled={!disableButton || isReadOnly}
+
               />
             )}
             <a href={intakeLink}>
