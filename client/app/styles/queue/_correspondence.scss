@@ -1246,6 +1246,9 @@ $color-black: #323a45;
       max-width: 300%;
       margin-bottom: 15px;
     }
+    label {
+      max-width: none;
+    }
   }
   button {
     margin-top: 10px;
