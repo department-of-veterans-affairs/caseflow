@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# get script directory
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# get current directory
+CURRENT_DIR=$(pwd)
+
+# get the list of files changed that are eligible for testing
+jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
+jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
+rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+
+# cycle through JSX suite of tests
+for commit in $jsxCommits; do
+  # get base file name
+  base=$(basename $commit .jsx)
+  echo "base test: $base"
+  
+  # use SCRIPT_DIR to get to /client/test
+  cd "$SCRIPT_DIR"
+  cd ..
+  testFile=$(find ./client/test -name "$base*")
+  # check that there is a path
+  if [ ! -z "$testFile" ]; then
+    echo "running jest test for $testFile path"
+    cd client && yarn jest $testFile
+    cd ..
+  else
+    echo "no test file found at $testFile"
+  fi
+  # return to current path
+  cd $CURRENT_DIR
+done
+
+# cyle through javascript suite of tests
+for commit in $jsCommits; do
+  #placeholder
+  echo "js commit $commit"
+done
+
+# cycle through ruby suite of tests
+for commit in $rbCommits; do
+  # attempt to run reek and rubocop
+  echo "ruby commit: $commit"
+  # change to appeals directory
+  bundle exec rubocop $commit
+done
