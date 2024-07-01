@@ -43,69 +43,66 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div>
-                 Jane
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div>
+               Jane
         McClaimant 
-              </div>
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
+            </div>
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+            <div
+              class="usa-alert usa-alert-warning usa-alert-slim"
+              role="alert"
+            >
               <div
-                class="usa-alert usa-alert-warning usa-alert-slim"
-                role="alert"
+                class="usa-alert-body"
               >
                 <div
-                  class="usa-alert-body"
+                  class="usa-alert-text"
                 >
-                  <div
-                    class="usa-alert-text"
-                  >
-                    We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?
-                  </div>
+                  We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?
                 </div>
               </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                Intake does not have a Form 21-22
-              </div>
-            </section>
-          </div>
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+              Intake does not have a Form 21-22
+            </div>
+          </section>
         </div>
       </div>
       <div
@@ -181,69 +178,66 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div>
-                 Jane
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div>
+               Jane
         McClaimant 
-              </div>
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
+            </div>
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+            <div
+              class="usa-alert usa-alert-warning usa-alert-slim"
+              role="alert"
+            >
               <div
-                class="usa-alert usa-alert-warning usa-alert-slim"
-                role="alert"
+                class="usa-alert-body"
               >
                 <div
-                  class="usa-alert-body"
+                  class="usa-alert-text"
                 >
-                  <div
-                    class="usa-alert-text"
-                  >
-                    We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?
-                  </div>
+                  We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?
                 </div>
               </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                Intake does not have a Form 21-22
-              </div>
-            </section>
-          </div>
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+              Intake does not have a Form 21-22
+            </div>
+          </section>
         </div>
       </div>
       <div
@@ -319,52 +313,49 @@ exports[`AddClaimantConfirmationModal leftover redux claimant information render
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div />
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                Intake does not have a Form 21-22
-              </div>
-            </section>
-          </div>
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div />
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+              Intake does not have a Form 21-22
+            </div>
+          </section>
         </div>
       </div>
       <div
@@ -440,52 +431,49 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div />
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                Intake does not have a Form 21-22
-              </div>
-            </section>
-          </div>
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div />
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+              Intake does not have a Form 21-22
+            </div>
+          </section>
         </div>
       </div>
       <div
@@ -561,63 +549,60 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div>
-                 Jane
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div>
+               Jane
         McClaimant Doe
-              </div>
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                 Paul
+            </div>
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+               Paul
         Ern O'Attorney
-              </div>
-              <div />
-              <div>
-                Washington, DC 20001 USA
-              </div>
-              <div>
-                555-321-4567
-              </div>
-            </section>
-          </div>
+            </div>
+            <div />
+            <div>
+              Washington, DC 20001 USA
+            </div>
+            <div>
+              555-321-4567
+            </div>
+          </section>
         </div>
       </div>
       <div
@@ -693,55 +678,52 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Review and confirm claimant information
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
-            </p>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant
-                </strong>
-              </div>
-              <div>
-                 Jane
+          Review and confirm claimant information
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+          </p>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant
+              </strong>
+            </div>
+            <div>
+               Jane
         McClaimant Doe
-              </div>
-              <div />
-              <div>
-                San Francisco, CA 94123 USA
-              </div>
-              <div>
-                555-123-4567
-              </div>
-            </section>
-            <section>
-              <div
-                class="css-td0hbt"
-              >
-                <strong>
-                  Claimant's POA
-                </strong>
-              </div>
-              <div>
-                Intake does not have a Form 21-22
-              </div>
-            </section>
-          </div>
+            </div>
+            <div />
+            <div>
+              San Francisco, CA 94123 USA
+            </div>
+            <div>
+              555-123-4567
+            </div>
+          </section>
+          <section>
+            <div
+              class="css-td0hbt"
+            >
+              <strong>
+                Claimant's POA
+              </strong>
+            </div>
+            <div>
+              Intake does not have a Form 21-22
+            </div>
+          </section>
         </div>
       </div>
       <div

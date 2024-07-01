@@ -38,6 +38,11 @@ module Caseflow::Error
   end
 
   class VaDotGovAPIError < SerializableError; end
+  class ErrorCreatingNewRequest < SerializableError; end
+  class ErrorModifyingExistingRequest < SerializableError; end
+  class ErrorOpenModifyingExistingRequest < SerializableError; end
+  class ErrorApprovingExistingRequest < SerializableError; end
+  class ErrorDenyingExistingRequest < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
