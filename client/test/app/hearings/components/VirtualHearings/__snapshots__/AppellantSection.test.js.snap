@@ -125,155 +125,79 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
     label="Appellant"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Appellant
-    </h2>
-    <ReadOnly
-      label="Appellant Name"
-      text="Tom Brady"
-    >
-      <div
-        data-css-1a5irm0=""
-      >
-        <strong>
-          Appellant Name
-        </strong>
-        <pre>
-          Tom Brady
-        </pre>
-      </div>
-    </ReadOnly>
-    <ReadOnly
-      label="Relation to Veteran"
-      text="Spouse"
-    >
-      <div
-        data-css-1a5irm0=""
-      >
-        <strong>
-          Relation to Veteran
-        </strong>
-        <pre>
-          Spouse
-        </pre>
-      </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Appellant Mailing Address"
-      name="Tom Brady"
-    >
-      <ReadOnly
-        label="Appellant Mailing Address"
-        text="Tom Brady
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <strong>
-            Appellant Mailing Address
-          </strong>
-          <pre>
-            Tom Brady
+    <strong>
+      Appellant Name
+    </strong>
+    <pre>
+      Tom Brady
+    </pre>
+  </div>
+  <div
+    data-css-1a5irm0=""
+  >
+    <strong>
+      Relation to Veteran
+    </strong>
+    <pre>
+      Spouse
+    </pre>
+  </div>
+  <div
+    data-css-1a5irm0=""
+  >
+    <strong>
+      Appellant Mailing Address
+    </strong>
+    <pre>
+      Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+    id="email-section"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Appellant Email (for these notifications only)"
-          optional={false}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="Appellant Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              Appellant Email (for these notifications only)
+              <span
+                class="cf-required"
+              >
+                Required
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="Appellant Email (for these notifications only)"
             name="Appellant Email (for these notifications only)"
-            onChange={[Function]}
-            optional={false}
-            required={true}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="Appellant Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="Appellant Email (for these notifications only)"
-                    optional={false}
-                    required={true}
-                  >
-                    <span>
-                      Appellant Email (for these notifications only)
-                      <span
-                        className="cf-required"
-                      >
-                        Required
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="Appellant Email (for these notifications only)"
-                  name="Appellant Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Displays email alert when email is null 1`] = `
@@ -390,114 +314,37 @@ exports[`Appellant Displays email alert when email is null 1`] = `
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Veteran
-    </h2>
-    <ReadOnly
-      label="Veteran Name"
-      text="John Smith"
+      class="usa-width-one-half"
     >
       <div
         data-css-1a5irm0=""
       >
         <strong>
-          Veteran Name
+          Veteran Email (for these notifications only)
         </strong>
         <pre>
-          John Smith
+          None
         </pre>
       </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Veteran Mailing Address"
-      name="John Smith"
-    >
-      <ReadOnly
-        label="Veteran Mailing Address"
-        text="John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
+      <div>
         <div
-          data-css-1a5irm0=""
+          class="usa-alert usa-alert-info usa-alert-slim"
+          role="alert"
         >
-          <strong>
-            Veteran Mailing Address
-          </strong>
-          <pre>
-            John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
-    <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
-    >
-      <div
-        className="usa-width-one-half"
-      >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Veteran Email (for these notifications only)"
-          optional={false}
-          readOnly={true}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
-        >
-          <ReadOnly
-            label="Veteran Email (for these notifications only)"
-            text="None"
+          <div
+            class="usa-alert-body"
           >
             <div
-              data-css-1a5irm0=""
+              class="usa-alert-text"
             >
-              <strong>
-                Veteran Email (for these notifications only)
-              </strong>
-              <pre>
-                None
-              </pre>
+              If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
             </div>
-          </ReadOnly>
-        </HearingEmail>
-        <div>
-          <Alert
-            fixed={false}
-            message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-            scrollOnAlert={false}
-            type="info"
-          >
-            <div
-              className="usa-alert usa-alert-info usa-alert-slim"
-              role="alert"
-            >
-              <div
-                className="usa-alert-body"
-              >
-                <div
-                  className="usa-alert-text"
-                >
-                  If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                </div>
-              </div>
-            </div>
-          </Alert>
+          </div>
         </div>
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Displays email alert when email is undefined 1`] = `
@@ -609,114 +456,37 @@ exports[`Appellant Displays email alert when email is undefined 1`] = `
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Veteran
-    </h2>
-    <ReadOnly
-      label="Veteran Name"
-      text="John Smith"
+      class="usa-width-one-half"
     >
       <div
         data-css-1a5irm0=""
       >
         <strong>
-          Veteran Name
+          Veteran Email (for these notifications only)
         </strong>
         <pre>
-          John Smith
+          None
         </pre>
       </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Veteran Mailing Address"
-      name="John Smith"
-    >
-      <ReadOnly
-        label="Veteran Mailing Address"
-        text="John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
+      <div>
         <div
-          data-css-1a5irm0=""
+          class="usa-alert usa-alert-info usa-alert-slim"
+          role="alert"
         >
-          <strong>
-            Veteran Mailing Address
-          </strong>
-          <pre>
-            John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
-    <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
-    >
-      <div
-        className="usa-width-one-half"
-      >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Veteran Email (for these notifications only)"
-          optional={false}
-          readOnly={true}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
-        >
-          <ReadOnly
-            label="Veteran Email (for these notifications only)"
-            text="None"
+          <div
+            class="usa-alert-body"
           >
             <div
-              data-css-1a5irm0=""
+              class="usa-alert-text"
             >
-              <strong>
-                Veteran Email (for these notifications only)
-              </strong>
-              <pre>
-                None
-              </pre>
+              If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
             </div>
-          </ReadOnly>
-        </HearingEmail>
-        <div>
-          <Alert
-            fixed={false}
-            message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-            scrollOnAlert={false}
-            type="info"
-          >
-            <div
-              className="usa-alert usa-alert-info usa-alert-slim"
-              role="alert"
-            >
-              <div
-                className="usa-alert-body"
-              >
-                <div
-                  className="usa-alert-text"
-                >
-                  If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.
-                </div>
-              </div>
-            </div>
-          </Alert>
+          </div>
         </div>
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`] = `
@@ -845,60 +615,33 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
     label="Veteran"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Veteran
-    </h2>
-    <ReadOnly
-      label="Veteran Name"
-      text="John Smith"
-    >
-      <div
-        data-css-1a5irm0=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          John Smith
-        </pre>
-      </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Veteran Mailing Address"
-      name="John Smith"
-    >
-      <ReadOnly
-        label="Veteran Mailing Address"
-        text="John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <strong>
-            Veteran Mailing Address
-          </strong>
-          <pre>
-            John Smith
+    <strong>
+      Veteran Name
+    </strong>
+    <pre>
+      John Smith
+    </pre>
+  </div>
+  <div
+    data-css-1a5irm0=""
+  >
+    <strong>
+      Veteran Mailing Address
+    </strong>
+    <pre>
+      John Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class=""
       >
         <Timezone
           hearingDayDate="2025-01-01"
@@ -1706,37 +1449,13 @@ SAN FRANCISCO, CA 94103
             value="America/Los_Angeles"
           >
             <div
-              className=""
+              class=" css-2b097c-container"
             >
               <div
-                className="cf-form-dropdown dropdown-appellantTz"
-                data-css-1gh7024=""
+                class="cf-select__control css-yk16xz-control"
               >
-                <label
-                  className="question-label"
-                  htmlFor="appellant-tz"
-                  id="appellant-tz-label"
-                >
-                  <strong>
-                    <FormLabel
-                      label="Veteran Timezone"
-                      name="Veteran Timezone"
-                      optional={false}
-                      required={true}
-                    >
-                      <span>
-                        Veteran Timezone
-                        <span
-                          className="cf-required"
-                        >
-                          Required
-                        </span>
-                      </span>
-                    </FormLabel>
-                  </strong>
-                </label>
                 <div
-                  className="cf-select"
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                 >
                   <StateManager
                     cache={false}
@@ -16990,105 +16709,66 @@ SAN FRANCISCO, CA 94103
                   </StateManager>
                 </div>
               </div>
+              <input
+                name="appellantTz"
+                type="hidden"
+                value="America/Los_Angeles"
+              />
             </div>
-          </SearchableDropdown>
-        </Timezone>
-        <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone."
-        >
-          <div
-            className="helper-text"
-          >
-            The hearing time in email notifications is calculated based on the timezone.
           </div>
-        </HelperText>
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        The hearing time in email notifications is calculated based on the timezone.
       </div>
     </div>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+    id="email-section"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Veteran Email (for these notifications only)"
-          optional={false}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="Veteran Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              Veteran Email (for these notifications only)
+              <span
+                class="cf-required"
+              >
+                Required
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="Veteran Email (for these notifications only)"
             name="Veteran Email (for these notifications only)"
-            onChange={[Function]}
-            optional={false}
-            required={true}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="Veteran Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="Veteran Email (for these notifications only)"
-                    optional={false}
-                    required={true}
-                  >
-                    <span>
-                      Veteran Email (for these notifications only)
-                      <span
-                        className="cf-required"
-                      >
-                        Required
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="Veteran Email (for these notifications only)"
-                  name="Veteran Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Does not allow editing emails when read-only 1`] = `
@@ -17218,91 +16898,21 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Veteran
-    </h2>
-    <ReadOnly
-      label="Veteran Name"
-      text="John Smith"
+      class="usa-width-one-half"
     >
       <div
         data-css-1a5irm0=""
       >
         <strong>
-          Veteran Name
+          Veteran Email (for these notifications only)
         </strong>
         <pre>
-          John Smith
+          None
         </pre>
       </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Veteran Mailing Address"
-      name="John Smith"
-    >
-      <ReadOnly
-        label="Veteran Mailing Address"
-        text="John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <strong>
-            Veteran Mailing Address
-          </strong>
-          <pre>
-            John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
-    <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
-    >
-      <div
-        className="usa-width-one-half"
-      >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Veteran Email (for these notifications only)"
-          optional={false}
-          readOnly={true}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
-        >
-          <ReadOnly
-            label="Veteran Email (for these notifications only)"
-            text="None"
-          >
-            <div
-              data-css-1a5irm0=""
-            >
-              <strong>
-                Veteran Email (for these notifications only)
-              </strong>
-              <pre>
-                None
-              </pre>
-            </div>
-          </ReadOnly>
-        </HearingEmail>
-      </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
@@ -17432,97 +17042,45 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
     showDivider={true}
   >
     <div
-      className="cf-help-divider"
-    />
-    <strong>
-       
-      Appellant
-    </strong>
-    <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Appellant Email (for these notifications only)"
-          optional={false}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="Appellant Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              Appellant Email (for these notifications only)
+              <span
+                class="cf-required"
+              >
+                Required
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="Appellant Email (for these notifications only)"
             name="Appellant Email (for these notifications only)"
-            onChange={[Function]}
-            optional={false}
-            required={true}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="Appellant Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="Appellant Email (for these notifications only)"
-                    optional={false}
-                    required={true}
-                  >
-                    <span>
-                      Appellant Email (for these notifications only)
-                      <span
-                        className="cf-required"
-                      >
-                        Required
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="Appellant Email (for these notifications only)"
-                  name="Appellant Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Appellant Matches snapshot with default props 1`] = `
@@ -17650,138 +17208,67 @@ exports[`Appellant Matches snapshot with default props 1`] = `
     label="Veteran"
     showDivider={true}
   >
-    <div
-      className="cf-help-divider"
-    />
-    <h2>
-      Veteran
-    </h2>
-    <ReadOnly
-      label="Veteran Name"
-      text="John Smith"
-    >
-      <div
-        data-css-1a5irm0=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          John Smith
-        </pre>
-      </div>
-    </ReadOnly>
-    <AddressLine
-      addressCity="SAN FRANCISCO"
-      addressLine1="9999 MISSION ST"
-      addressState="CA"
-      addressZip="94103"
-      label="Veteran Mailing Address"
-      name="John Smith"
-    >
-      <ReadOnly
-        label="Veteran Mailing Address"
-        text="John Smith
-9999 MISSION ST
-SAN FRANCISCO, CA 94103"
-      >
-        <div
-          data-css-1a5irm0=""
-        >
-          <strong>
-            Veteran Mailing Address
-          </strong>
-          <pre>
-            John Smith
+    <strong>
+      Veteran Name
+    </strong>
+    <pre>
+      John Smith
+    </pre>
+  </div>
+  <div
+    data-css-1a5irm0=""
+  >
+    <strong>
+      Veteran Mailing Address
+    </strong>
+    <pre>
+      John Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
-          </pre>
-        </div>
-      </ReadOnly>
-    </AddressLine>
+    </pre>
+  </div>
+  <div
+    class="usa-grid css-1jfbwxw"
+    id="email-section"
+  >
     <div
-      className="usa-grid css-1jfbwxw"
-      id="email-section"
+      class="usa-width-one-half"
     >
       <div
-        className="usa-width-one-half"
+        class="cf-form-textinput cf-inline-field   "
       >
-        <HearingEmail
-          helperLabel="This email address will be used to send notifications for this hearing only."
-          label="Veteran Email (for these notifications only)"
-          optional={false}
-          required={true}
-          showHelper={true}
-          type="change_to_virtual"
-          update={[MockFunction]}
+        <label
+          for="Veteran Email (for these notifications only)"
         >
-          <TextField
-            className={
-              Array [
-                "cf-form-textinput cf-inline-field",
-              ]
-            }
+          <strong>
+            <span>
+              Veteran Email (for these notifications only)
+              <span
+                class="cf-required"
+              >
+                Required
+              </span>
+            </span>
+          </strong>
+        </label>
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput cf-inline-field"
+            id="Veteran Email (for these notifications only)"
             name="Veteran Email (for these notifications only)"
-            onChange={[Function]}
-            optional={false}
-            required={true}
-            strongLabel={true}
             type="text"
-            useAriaLabel={false}
-          >
-            <div
-              className="cf-form-textinput cf-inline-field   "
-            >
-              <label
-                htmlFor="Veteran Email (for these notifications only)"
-              >
-                <strong>
-                  <FormLabel
-                    name="Veteran Email (for these notifications only)"
-                    optional={false}
-                    required={true}
-                  >
-                    <span>
-                      Veteran Email (for these notifications only)
-                      <span
-                        className="cf-required"
-                      >
-                        Required
-                      </span>
-                    </span>
-                  </FormLabel>
-                </strong>
-              </label>
-              <div
-                className="input-container"
-              >
-                <input
-                  className={
-                    Array [
-                      "cf-form-textinput cf-inline-field",
-                    ]
-                  }
-                  id="Veteran Email (for these notifications only)"
-                  name="Veteran Email (for these notifications only)"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  type="text"
-                />
-              </div>
-            </div>
-          </TextField>
-          <HelperText
-            label="This email address will be used to send notifications for this hearing only."
-          >
-            <div
-              className="helper-text"
-            >
-              This email address will be used to send notifications for this hearing only.
-            </div>
-          </HelperText>
-        </HearingEmail>
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="helper-text"
+      >
+        This email address will be used to send notifications for this hearing only.
       </div>
     </div>
-  </VirtualHearingSection>
-</AppellantSection>
+  </div>
+</DocumentFragment>
 `;

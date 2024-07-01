@@ -815,29 +815,25 @@ exports[`Timezone Can set timezone 1`] = `
     value={null}
   >
     <div
-      className=""
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
     >
-      <div
-        className="cf-form-dropdown dropdown-tz"
-        data-css-1gh7024=""
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
       >
-        <label
-          className="question-label"
-          htmlFor="tz"
-          id="tz-label"
-        >
-          <strong>
-            <FormLabel
-              name="tz"
-            >
-              <span>
-                tz
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
         <div
-          className="cf-select"
+          class=" css-2b097c-container"
         >
           <StateManager
             cache={false}
@@ -4125,21 +4121,32 @@ exports[`Timezone Can set timezone 1`] = `
                   }
                 }
               >
-                <EmotionCssPropInternal
-                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SelectContainer"
-                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                  className=""
-                  css={
-                    Object {
-                      "boxSizing": "border-box",
-                      "direction": null,
-                      "label": "container",
-                      "pointerEvents": null,
-                      "position": "relative",
-                    }
-                  }
-                  onKeyDown={[Function]}
+                Eastern Time (US & Canada) (8:15 AM)
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
                 >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-labelledby="timezone-label"
+                    aria-owns="timezone-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="timezone"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
                   <div
                     className=" css-2b097c-container"
                     onKeyDown={[Function]}
@@ -16092,8 +16099,8 @@ exports[`Timezone Can set timezone 1`] = `
         </div>
       </div>
     </div>
-  </SearchableDropdown>
-</Timezone>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Timezone Displays Regional Office timezones first 1`] = `
@@ -16896,29 +16903,25 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
     value={null}
   >
     <div
-      className=""
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
     >
-      <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1gh7024=""
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
       >
-        <label
-          className="question-label"
-          htmlFor="timezone"
-          id="timezone-label"
-        >
-          <strong>
-            <FormLabel
-              name="Timezone"
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
         <div
-          className="cf-select"
+          class=" css-2b097c-container"
         >
           <StateManager
             cache={false}
@@ -20190,21 +20193,32 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                   }
                 }
               >
-                <EmotionCssPropInternal
-                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SelectContainer"
-                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                  className=""
-                  css={
-                    Object {
-                      "boxSizing": "border-box",
-                      "direction": null,
-                      "label": "container",
-                      "pointerEvents": null,
-                      "position": "relative",
-                    }
-                  }
-                  onKeyDown={[Function]}
+                Pacific Time (US & Canada) (5:15 AM)
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
                 >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="true"
+                    aria-haspopup="true"
+                    aria-labelledby="timezone-label"
+                    aria-owns="timezone-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="timezone"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
                   <div
                     className=" css-2b097c-container"
                     onKeyDown={[Function]}
@@ -32116,8 +32130,8 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
         </div>
       </div>
     </div>
-  </SearchableDropdown>
-</Timezone>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Timezone Does not show required when ReadOnly 1`] = `
@@ -32922,30 +32936,25 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
     value={null}
   >
     <div
-      className=""
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
     >
-      <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1gh7024=""
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
       >
-        <label
-          className="question-label"
-          htmlFor="timezone"
-          id="timezone-label"
-        >
-          <strong>
-            <FormLabel
-              name="Timezone"
-              required={false}
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
         <div
-          className="cf-select"
+          class="cf-select--is-disabled css-14jk2my-container"
         >
           <StateManager
             cache={false}
@@ -36217,20 +36226,35 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                   }
                 }
               >
-                <EmotionCssPropInternal
-                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SelectContainer"
-                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                  className="cf-select--is-disabled"
-                  css={
-                    Object {
-                      "boxSizing": "border-box",
-                      "direction": null,
-                      "label": "container",
-                      "pointerEvents": "none",
-                      "position": "relative",
-                    }
-                  }
-                  onKeyDown={[Function]}
+                Select a timezone
+              </div>
+              <input
+                aria-autocomplete="list"
+                class="css-62g3xt-dummyInput"
+                disabled=""
+                id="timezone"
+                readonly=""
+                tabindex="0"
+                value=""
+              />
+            </div>
+            <div
+              class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+            >
+              <span
+                class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+              />
+              <div
+                aria-hidden="true"
+                class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="css-6q0nyr-Svg"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  width="20"
                 >
                   <div
                     className="cf-select--is-disabled css-14jk2my-container"
@@ -46322,8 +46346,8 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
         </div>
       </div>
     </div>
-  </SearchableDropdown>
-</Timezone>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Timezone Dropdown displays correct times based on props time and roTimezone 1`] = `
@@ -47126,29 +47150,25 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
     value={null}
   >
     <div
-      className=""
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
     >
-      <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1gh7024=""
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
       >
-        <label
-          className="question-label"
-          htmlFor="timezone"
-          id="timezone-label"
-        >
-          <strong>
-            <FormLabel
-              name="Timezone"
-            >
-              <span>
-                Timezone
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
         <div
-          className="cf-select"
+          class=" css-2b097c-container"
         >
           <StateManager
             cache={false}
@@ -50420,21 +50440,32 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                   }
                 }
               >
-                <EmotionCssPropInternal
-                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SelectContainer"
-                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                  className=""
-                  css={
-                    Object {
-                      "boxSizing": "border-box",
-                      "direction": null,
-                      "label": "container",
-                      "pointerEvents": null,
-                      "position": "relative",
-                    }
-                  }
-                  onKeyDown={[Function]}
+                Select a timezone
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
                 >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="true"
+                    aria-haspopup="true"
+                    aria-labelledby="timezone-label"
+                    aria-owns="timezone-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="timezone"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
                   <div
                     className=" css-2b097c-container"
                     onKeyDown={[Function]}
@@ -62346,8 +62377,8 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
         </div>
       </div>
     </div>
-  </SearchableDropdown>
-</Timezone>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Timezone Matches snapshot with default props 1`] = `
@@ -63945,35 +63976,25 @@ exports[`Timezone Respects required prop 1`] = `
     value={null}
   >
     <div
-      className=""
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
     >
-      <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1gh7024=""
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
       >
-        <label
-          className="question-label"
-          htmlFor="timezone"
-          id="timezone-label"
-        >
-          <strong>
-            <FormLabel
-              name="Timezone"
-              required={true}
-            >
-              <span>
-                Timezone
-                <span
-                  className="cf-required"
-                >
-                  Required
-                </span>
-              </span>
-            </FormLabel>
-          </strong>
-        </label>
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
         <div
-          className="cf-select"
+          class=" css-2b097c-container"
         >
           <StateManager
             cache={false}
@@ -67245,21 +67266,32 @@ exports[`Timezone Respects required prop 1`] = `
                   }
                 }
               >
-                <EmotionCssPropInternal
-                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SelectContainer"
-                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                  className=""
-                  css={
-                    Object {
-                      "boxSizing": "border-box",
-                      "direction": null,
-                      "label": "container",
-                      "pointerEvents": null,
-                      "position": "relative",
-                    }
-                  }
-                  onKeyDown={[Function]}
+                Select a timezone
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
                 >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="true"
+                    aria-haspopup="true"
+                    aria-labelledby="timezone-label"
+                    aria-owns="timezone-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="timezone"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
                   <div
                     className=" css-2b097c-container"
                     onKeyDown={[Function]}
@@ -79171,6 +79203,115 @@ exports[`Timezone Respects required prop 1`] = `
         </div>
       </div>
     </div>
-  </SearchableDropdown>
-</Timezone>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Timezone Respects required prop 1`] = `
+<DocumentFragment>
+  <div
+    class=""
+  >
+    <div
+      class="cf-form-dropdown dropdown-Timezone"
+      data-css-1gh7024=""
+    >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+            <span
+              class="cf-required"
+            >
+              Required
+            </span>
+          </span>
+        </strong>
+      </label>
+      <div
+        class="cf-select"
+      >
+        <div
+          class=" css-2b097c-container"
+        >
+          <div
+            class="cf-select__control css-yk16xz-control"
+          >
+            <div
+              class="cf-select__value-container css-g1d714-ValueContainer"
+            >
+              <div
+                class="cf-select__placeholder css-1wa3eu0-placeholder"
+              >
+                Select a timezone
+              </div>
+              <div
+                class="css-81nyic-Input"
+              >
+                <div
+                  class="cf-select__input"
+                  style="display: inline-block;"
+                >
+                  <input
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-labelledby="timezone-label"
+                    aria-owns="timezone-listbox"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    id="timezone"
+                    role="combobox"
+                    spellcheck="false"
+                    style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
+                  <div
+                    style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+            >
+              <span
+                class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+              />
+              <div
+                aria-hidden="true"
+                class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="css-6q0nyr-Svg"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  width="20"
+                >
+                  <path
+                    d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <input
+            name="Timezone"
+            type="hidden"
+            value=""
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
 `;
