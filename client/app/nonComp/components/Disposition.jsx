@@ -177,7 +177,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    let displayPOAComponent = task.business_line === 'vha';
+    const displayPOAComponent = task.business_line === 'vha';
     const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
 
     const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
