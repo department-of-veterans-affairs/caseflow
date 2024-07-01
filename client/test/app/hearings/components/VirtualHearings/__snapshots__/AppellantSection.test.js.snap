@@ -136,7 +136,6 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   </div>
   <div
     data-css-1a5irm0=""
-    data-testid="read-only-testid"
   >
     <strong>
       Relation to Veteran
@@ -147,7 +146,6 @@ exports[`Appellant Displays appellant information when appellant is not veteran 
   </div>
   <div
     data-css-1a5irm0=""
-    data-testid="read-only-testid"
   >
     <strong>
       Appellant Mailing Address
@@ -634,7 +632,6 @@ exports[`Appellant Displays timezone when showTimezoneField is passed as prop 1`
   </div>
   <div
     data-css-1a5irm0=""
-    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
@@ -1455,8 +1452,7 @@ SAN FRANCISCO, CA 94103
               class=" css-2b097c-container"
             >
               <div
-                className="cf-form-dropdown dropdown-appellantTz"
-                data-css-1dzedb9=""
+                class="cf-select__control css-yk16xz-control"
               >
                 <div
                   class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -17228,7 +17224,6 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   </div>
   <div
     data-css-1a5irm0=""
-    data-testid="read-only-testid"
   >
     <strong>
       Veteran Mailing Address
