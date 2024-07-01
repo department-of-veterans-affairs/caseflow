@@ -31,28 +31,18 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     )
   end
 
-  retry_on(IncompleteError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(IncompleteError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
-  retry_on(VirtualHearingNotCreatedError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(VirtualHearingNotCreatedError, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
   # Retry if Pexip returns an invalid response.
-  retry_on(Caseflow::Error::PexipApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    kwargs = job.arguments.first
-    extra = {
-      application: job.class.app_name.to_s,
-      hearing_id: kwargs[:hearing_id],
-      hearing_type: kwargs[:hearing_type]
-    }
+  retry_on(Caseflow::Error::PexipApiError, attempts: 5, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
-    job.log_error(exception, extra: extra)
-  end
-
-  # Retry if Webex returns an invalid response.
-  retry_on(Caseflow::Error::WebexApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
     kwargs = job.arguments.first
     extra = {
       application: job.class.app_name.to_s,
