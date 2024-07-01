@@ -9,9 +9,19 @@ exports[`Timezone Can set timezone 1`] = `
       class="cf-form-dropdown dropdown-Timezone"
       data-css-1dzedb9=""
     >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
       <div
-        className="cf-form-dropdown dropdown-tz"
-        data-css-1dzedb9=""
+        class="cf-select"
       >
         <div
           class=" css-2b097c-container"
@@ -103,9 +113,19 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
       class="cf-form-dropdown dropdown-Timezone"
       data-css-1dzedb9=""
     >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
       <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        class="cf-select"
       >
         <div
           class=" css-2b097c-container"
@@ -1583,9 +1603,19 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
       class="cf-form-dropdown dropdown-Timezone"
       data-css-1dzedb9=""
     >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
       <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        class="cf-select"
       >
         <div
           class="cf-select--is-disabled css-14jk2my-container"
@@ -1652,9 +1682,19 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
       class="cf-form-dropdown dropdown-Timezone"
       data-css-1dzedb9=""
     >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
       <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        class="cf-select"
       >
         <div
           class=" css-2b097c-container"
@@ -3132,9 +3172,19 @@ exports[`Timezone Matches snapshot with default props 1`] = `
       class="cf-form-dropdown dropdown-Timezone"
       data-css-1dzedb9=""
     >
+      <label
+        class="question-label"
+        for="timezone"
+        id="timezone-label"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
       <div
-        className="cf-form-dropdown dropdown-Timezone"
-        data-css-1dzedb9=""
+        class="cf-select"
       >
         <div
           class=" css-2b097c-container"

@@ -681,8 +681,7 @@ SAN FRANCISCO, CA 94103
               class=" css-2b097c-container"
             >
               <div
-                className="cf-form-dropdown dropdown-appellantTz"
-                data-css-1dzedb9=""
+                class="cf-select__control css-yk16xz-control"
               >
                 <div
                   class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
