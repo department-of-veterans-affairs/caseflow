@@ -139,7 +139,7 @@ module HearingConcern
 
   def start_non_virtual_hearing_job?
     disposition.nil? && conference_provider == "webex" &&
-      virtual_hearing.nil? && ConferenceLink.find_by(hearing_id: id).nil?
+      virtual_hearing.nil? && ConferenceLink.find_by(hearing: self).nil?
   end
 
   def start_non_virtual_hearing_job
