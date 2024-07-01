@@ -1,0 +1,15 @@
+#!/bin/bash
+# git command to run test-commits before pushing code to branch
+
+message=$1 # commit message
+currentBranch=$(git symbolic-ref --short -q HEAD) # get current branch
+
+# check if the current commit message is present
+if [ ! -z "$1" ]
+then
+  git add .
+  git commit -m "$message"
+  git push origin $currentBranch
+else
+    echo "Commit message was not provided"
+fi
