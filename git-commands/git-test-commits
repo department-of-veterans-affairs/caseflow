@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# get script directory
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# get current directory
+CURRENT_DIR=$(pwd)
+
+# get the list of files changed that are eligible for testing
+jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
+jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
+rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+
+# cycle through ruby suite of tests
+for commit in $rbCommits; do
+  # change to appeals directory
+  cd "$SCRIPT_DIR"
+  cd ..
+
+  # attempt to find unit test
+  # get base file name
+  base=$(basename $commit .rb)
+  # find the corresponding unit test (if any)
+  testFile=$(find ./spec -name "${base}_spec.rb")
+
+  # check that there is a path
+  if [ ! -z "$testFile" ]; then
+    echo "running spec test for $testFile path"
+    # run spec if there is a corresponding spec test for the file
+    bundle exec rspec $testFile --format progress
+  else
+    echo "no test file found at $testFile"
+  fi
+
+  # run rubocop
+  bundle exec rubocop $commit
+
+  # return to current path
+  cd $CURRENT_DIR
+done
+
+# if there is a jsx or js file, use jest -o to run tests that cover file
+if [ ! -z "$jsxCommits" || ! -z "$jsCommits" ]; then
+  echo "running jest tests for $jsxCommits"
+  # use SCRIPT_DIR to get to appeals/client/test
+  cd "$SCRIPT_DIR"
+  cd ../client && yarn jest -o
+fi
