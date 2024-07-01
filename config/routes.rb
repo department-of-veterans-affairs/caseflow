@@ -25,7 +25,8 @@ Rails.application.routes.draw do
   constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
     get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
-
+    get 'test/seeds', to: 'test_seeds#seeds'
+    
     namespace :case_distribution_levers_tests do
       get 'appeals_ready_to_distribute'
       get 'appeals_non_priority_ready_to_distribute'

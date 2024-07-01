@@ -221,7 +221,7 @@ class ApplicationController < ApplicationBaseController
     add_team_management_items(admin_urls)
     add_user_management_items(admin_urls)
     add_case_distribution_item(admin_urls)
-    add_test_seeds_item(admin_urls)
+    # add_test_seeds_item(admin_urls)
 
     admin_urls.flatten
   end
@@ -241,9 +241,9 @@ class ApplicationController < ApplicationBaseController
     admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
   end
 
-  def add_test_seeds_item(admin_urls)
-    admin_urls.push(test_seeds_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
-  end
+  # def add_test_seeds_item(admin_urls)
+  #   admin_urls.push(test_seeds_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+  # end
 
   def dropdown_urls
     urls = defult_menu_items
