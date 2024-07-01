@@ -24,7 +24,7 @@ class Correspondence < CaseflowRecord
   end
 
   def type
-    "test push"
+    "Correspondence"
   end
 
   # Alias for cmp_packet_number

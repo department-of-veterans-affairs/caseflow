@@ -16,7 +16,7 @@ then
 
   # case y: commit to branch. case n: cancel commit
   case $yn in
-      [Yy]* ) git add .; git commit -m "$message"; git push origin $currentBranch; break;;
+      [Yy]* ) git commit -am "$message"; git push origin $currentBranch; break;;
       [Nn]* ) echo "commit cancelled"; exit;;
       * ) echo "Please answer yes or no.";;
   esac
