@@ -327,6 +327,7 @@ class AddIssuesPage extends React.Component {
       userCanEditIntakeIssues,
       userIsVhaAdmin,
       userCanSplitAppeal,
+      intakeFromVbms,
       userCanRequestIssueUpdates,
       isLegacy,
       pendingIssueModificationRequests,
@@ -627,7 +628,16 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const intakeSystemLabelRow = () => {
+      return {
+        field: 'Intake System',
+        content: intakeFromVbms ? 'VBMS' : 'Caseflow'
+      };
+    };
+
     let rowObjects = fieldsForFormType;
+
+    rowObjects = rowObjects.concat(intakeSystemLabelRow());
 
     Object.keys(issuesBySection).sort().
       map((key) => {
@@ -956,6 +966,7 @@ export const EditAddIssuesPage = connect(
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
+    intakeFromVbms: state.intakeFromVbms,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
     isLegacy: state.isLegacy,
   }),
