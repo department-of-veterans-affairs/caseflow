@@ -34,10 +34,7 @@ Shoryuken.configure_server do |config|
     chain.add JobMonitoringMiddleware
     chain.add JobRequestStoreMiddleware
     chain.add JobSentryScopeMiddleware
-<<<<<<< HEAD
     chain.add JobTimeZoneMiddleware
-=======
     chain.add JobMessageDeletionMiddleware
->>>>>>> master
   end
 end
