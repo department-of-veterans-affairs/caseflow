@@ -12,7 +12,7 @@ then
   git clean-pr
 
   # read user input to continue
-  read -p "Do you want to merge this commit? (Y/N) " yn
+  read -p "Do you want to merge this commit to $currentBranch? (Y/N) " yn
 
   # case y: commit to branch. case n: cancel commit
   case $yn in
