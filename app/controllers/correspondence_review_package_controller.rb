@@ -65,6 +65,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
 
     # The line below enables document caching for a month.
+    puts "document.serve: #{document.inspect}"
     expires_in 30.days, public: true
     send_file(
       document.serve,
@@ -85,7 +86,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def pdf_params
-    params.permit(:pdf_id, :type, :id, :download)
+    params.permit(pdf: [:pdf_id, :type, :id, :download])
   end
 
   def display_intake_appeal
