@@ -63,7 +63,7 @@ describe VirtualHearings::CreateConferenceJob do
           end
         end.to(
           have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(10)
+            .exactly(5)
             .times
         )
       end
@@ -212,6 +212,56 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       include_examples "job is retried"
+    end
+
+    context "conference creation fails" do
+      let(:fake_pexip) { Fakes::PexipService.new(status_code: 400) }
+
+      before do
+        allow(PexipService).to receive(:new).and_return(fake_pexip)
+      end
+
+      after do
+        clear_enqueued_jobs
+      end
+
+      it "job goes back on queue and logs if error", :aggregate_failures do
+        expect(Rails.logger).to receive(:error).exactly(6).times
+
+        expect do
+          perform_enqueued_jobs do
+            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
+          end
+        end.to(
+          have_performed_job(VirtualHearings::CreateConferenceJob)
+            .exactly(5)
+            .times
+        )
+
+        virtual_hearing.establishment.reload
+        expect(virtual_hearing.establishment.error.nil?).to eq(false)
+        expect(virtual_hearing.establishment.attempted?).to eq(true)
+        expect(virtual_hearing.establishment.processed?).to eq(false)
+      end
+
+      it "logs failure to datadog" do
+        expect(MetricsService).to receive(:increment_counter).with(
+          hash_including(
+            metric_name: "created_conference.failed",
+            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+            attrs: { hearing_id: hearing.id }
+          )
+        )
+
+        subject.perform_now
+      end
+
+      it "does not create sent email events" do
+        subject.perform_now
+
+        virtual_hearing.reload
+        expect(virtual_hearing.hearing.email_events.count).to eq(0)
+      end
     end
 
     context "when the virtual hearing is not immediately available" do

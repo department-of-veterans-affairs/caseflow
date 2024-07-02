@@ -1,0 +1,78 @@
+post:
+  tags:
+    - File
+  summary: Upload a file with associated provider data
+  description: |-
+    ### Upload a file.
+     This endpoint when given a file and associated data returns a UUID which is a reference to the created object within Caseflow. Information on how to properly create a payload object for this endpoint is available in the schema section <a href="#model-payload">here</a>. (Upload Payload)
+  operationId: upload
+  parameters:
+    - name: X-Folder-URI
+      in: header
+      description: >-
+        This should have a value of BIN:NAME:Caseflow
+      required: true
+      schema:
+        type: string
+      example: 'BIN:NAME:Caseflow '
+  requestBody:
+    required: true
+    content:
+      multipart/form-data: # Media type
+        schema: # Request payload
+          $ref: './uploadRequest.yml'
+  responses:
+    '200':
+      description: >-
+        Response containing the Correspondence package UUID
+      content:
+        application/json:
+          schema:
+            $ref: './uploadResponse.yml'
+    '400':
+      description: Server was unable to understand the request. This may come back as an empty response if the json is malformed or not understood by the server.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: './vefsErrorCodes.yml#/components/schemas/INVALID_REQUEST'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/DOES_NOT_CONFORM_TO_SCHEMA'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/VALIDATE_INVALID_VALUE'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/DUPLICATE_PROVIDERDATA_KEYS'
+    '401':
+      description: API Key does not exist or is not authorized to access the resource.
+      content:
+        application/json:
+          schema:
+            $ref: './noApiKeyResponse.yml'
+    '415':
+      description: Unsupported Media Type. This is common when uploading an unacceptable file type.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: './vefsErrorCodes.yml#/components/schemas/INVALID_MIMETYPE'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/WRONG_MIMETYPE_EXTENSION'
+    '500':
+      description: >-
+        There was an error encountered processing the Request.  Response
+        will contain a  "messages" element that will provide further
+        information on the error.  Please retry.  If problem persists,
+        please contact support with a copy of the Response.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: './vefsErrorCodes.yml#/components/schemas/UNABLE_TO_DETERMINE_MIMETYPE'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/UNABLE_TO_UPLOAD_DATA'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/UNABLE_TO_PERSIST_DATA'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/UNABLE_TO_CONVERT'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/UNKNOWN_ERROR'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/JSON_DESERIALIZATION'
+              - $ref: './vefsErrorCodes.yml#/components/schemas/JSON_SERIALIZATION'
+    '501':
+      description: This endpoint is not enabled.
+      content:
+        application/json:
+          schema:
+            $ref: './vefsErrorCodes.yml#/components/schemas/OPERATION_NOT_ENABLED'

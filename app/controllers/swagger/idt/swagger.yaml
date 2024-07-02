@@ -1,3 +1,4 @@
+---
 openapi: 3.0.2
 info:
   title: IDT-Caseflow-Package Manager Bridge API
@@ -10,13 +11,12 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
+security:
+  - bearerAuth: []
 servers:
-- url: https://appeals.cf.uat.ds.va.gov
-  description: UAT/Staging server
-- url: http://localhost:3000
-  description: Local Development server
+- url: /
 paths:
-  /idt/api/v1/addresses/validate:
+  /addresses/validate:
     post:
       tags:
         - Address Validation
@@ -93,7 +93,8 @@ paths:
         <ul>
           <li>country</li>
         </ul>
-
+      servers:
+        - url: /idt/api/v1/
       requestBody:
         content:
           application/json:
@@ -170,14 +171,17 @@ paths:
                     type: string
                 example:
                   message: 'Lighthouse API Error ID: 322483ae-7953-4d3c-9738-e108506d52c2 An unexpected error occurred, please try again.'
-  /idt/api/v1/appeals/{appeal_id}/upload_document:
+  /appeals/{appeal_id}/upload_document:
     post:
       tags:
         - Document Posting
       summary: Used for uploading documents to eFolder for specific appeals/veterans
+      servers:
+        - url: /idt/api/v1/
       parameters:
         - in: path
           name: appeal_id
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type: string
           required: true
@@ -395,11 +399,13 @@ paths:
                       message:
                         type: string
                         example: "Unexpected error: job error"
-  /idt/api/v1/upload_document:
+  /upload_document:
     post:
       tags:
         - Document Posting
       summary: Used for uploading documents to eFolder for specific appeals/veterans
+      servers:
+        - url: /idt/api/v1/
       requestBody:
         content:
           application/json:
@@ -617,14 +623,17 @@ paths:
                     errors:
                       "distribution 1": "Address line 3 can't be blank"
 
-  /idt/api/v2/appeals/{appeal_id}/outcode:
+  /appeals/{appeal_id}/outcode:
     post:
       tags:
         - Document Posting
       summary: Route used for outcoding decision reviews
+      servers:
+        - url: /idt/api/v2/
       parameters:
         - in: path
           name: appeal_id
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type: string
           required: true
@@ -876,14 +885,17 @@ paths:
                         detail:
                           type: string
                           example: "The veteran file number does not match the file number in VBMS"
-  /idt/api/v2/distributions/{distribution_id}:
+  /distributions/{distribution_id}:
     get:
       tags:
         - Distribution Tracking
       summary: Queries Package Manager for information on a specified distribution.
+      servers:
+        - url: /idt/api/v2/
       parameters:
         - in: path
           name: distribution_id
+          example: 1234
           schema:
             type: string
           required: true
@@ -1367,7 +1379,7 @@ components:
           type: number
           format: double
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: TOKEN
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

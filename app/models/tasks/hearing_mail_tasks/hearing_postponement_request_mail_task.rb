@@ -143,7 +143,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       disposition_task = AssignHearingDispositionTask
         .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
 
-      AppellantNotification.notify_appellant(appeal, "Hearing scheduled")
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.hearing_scheduled)
 
       [new_hearing_task, disposition_task]
     end

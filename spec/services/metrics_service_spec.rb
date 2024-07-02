@@ -38,8 +38,7 @@ describe MetricsService do
           app_name: "other",
           attrs: {
             service: service,
-            endpoint: name,
-            uuid: anything
+            endpoint: name
           }
         )
         expect(MetricsService).to receive(:increment_counter).with(
@@ -72,8 +71,7 @@ describe MetricsService do
               app_name: "other",
               attrs: {
                 service: service,
-                endpoint: name,
-                uuid: anything
+                endpoint: name
               }
             },
             start: anything,

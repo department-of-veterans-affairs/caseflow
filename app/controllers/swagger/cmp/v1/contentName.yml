@@ -1,0 +1,7 @@
+type: string
+title: Content Name
+description: The content name of the document being uploaded. This must be unique for the folder being uploaded to. For instance the document "pdf.pdf" cannot be uploaded twice for fileNumber 987654321. The acceptable file extensions are png, pdf, tif, tiff, txt, jpg, jpeg, and bmp.
+minLength: 4
+maxLength: 256
+pattern: "^[a-zA-Z0-9 Q`'~=+#^@$&-_.(){};[]E]+.[a-zA-Z]{3,4}$"
+example: filename.pdf

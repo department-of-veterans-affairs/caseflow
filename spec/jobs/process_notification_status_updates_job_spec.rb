@@ -19,7 +19,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
       create(:notification, appeals_id: appeal.uuid,
                             appeals_type: "Appeal",
                             event_date: 6.days.ago,
-                            event_type: "Quarterly Notification",
+                            event_type: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
                             notification_type: "Email",
                             email_notification_external_id: SecureRandom.uuid)
     end
@@ -27,7 +27,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
       create(:notification, appeals_id: appeal.uuid,
                             appeals_type: "Appeal",
                             event_date: 6.days.ago,
-                            event_type: "Hearing scheduled",
+                            event_type: Constants.EVENT_TYPE_FILTERS.hearing_scheduled,
                             sms_notification_external_id: SecureRandom.uuid,
                             notification_type: "SMS")
     end

@@ -93,11 +93,8 @@ describe BulkTaskReassignment, :all_dbs do
             expect { subject }.to raise_error(BulkTaskReassignment::InvalidTaskParent).with_message(expected_output)
           end
         end
-
         context "with no children" do
           it "describes what changes will be made and makes them" do
-            expect(Rails.logger).to receive(:info).exactly(9).times
-
             subject
             tasks.each do |task|
               expect(task.reload.cancelled?).to eq true

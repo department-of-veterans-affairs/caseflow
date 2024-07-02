@@ -156,6 +156,61 @@ describe NightlySyncsJob, :all_dbs do
         expect(BgsAttorney.count).to eq 5
       end
     end
+
+    context "#sync_hearing_states" do
+      let(:pending_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing(nil)
+      end
+
+      let(:postponed_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("P")
+      end
+
+      let(:withdrawn_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("C")
+      end
+
+      let(:scheduled_in_error_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("E")
+      end
+
+      let(:held_hearing_appeal_state) do
+        create_appeal_state_with_case_record_and_hearing("H")
+      end
+
+      it "Job synchronizes hearing statuses" do
+        expect([pending_hearing_appeal_state,
+                postponed_hearing_appeal_state,
+                withdrawn_hearing_appeal_state,
+                scheduled_in_error_hearing_appeal_state,
+                held_hearing_appeal_state].all?(&:hearing_scheduled)).to eq true
+
+        subject
+
+        expect(pending_hearing_appeal_state.hearing_scheduled).to eq true
+
+        expect(postponed_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(postponed_hearing_appeal_state.hearing_postponed).to eq true
+
+        expect(withdrawn_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(withdrawn_hearing_appeal_state.hearing_withdrawn).to eq true
+
+        expect(scheduled_in_error_hearing_appeal_state.reload.hearing_scheduled).to eq false
+        expect(scheduled_in_error_hearing_appeal_state.scheduled_in_error).to eq true
+
+        expect(held_hearing_appeal_state.reload.hearing_scheduled).to eq false
+      end
+
+      # Hearing scheduled will be set to true to simulate Caseflow missing a
+      # disposition update.
+      def create_appeal_state_with_case_record_and_hearing(desired_disposition)
+        case_hearing = create(:case_hearing, hearing_disp: desired_disposition)
+        vacols_case = create(:case, case_hearings: [case_hearing])
+        appeal = create(:legacy_appeal, vacols_case: vacols_case)
+
+        appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) }
+      end
+    end
   end
 
   context "when errors occur" do

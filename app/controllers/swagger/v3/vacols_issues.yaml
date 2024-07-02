@@ -33,10 +33,12 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/issues/vacols'
+- url: /api/v3/issues/vacols/
 paths:
-  /api/v3/issues/vacols/find_by_veteran:
+  /find_by_veteran:
     get:
       tags:
         - VACOLS Issues
@@ -272,3 +274,8 @@ components:
             issue_note:
               type: string
               description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

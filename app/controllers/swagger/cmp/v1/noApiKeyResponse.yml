@@ -1,0 +1,13 @@
+type: object
+title: Vefs No/Invalid API Key Error Response
+description: Error response when no or invalid API Key is present on the request
+properties:
+  messages:
+    type: array
+    items:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - "unauthorized"

@@ -39,7 +39,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
              appeals_id: "12342",
              appeals_type: "LegacyAppeal",
              event_date: today,
-             event_type: "Appeal docketed",
+             event_type: Constants.EVENT_TYPE_FILTERS.appeal_docketed,
              notification_type: "Email",
              notified_at: today)
     }
@@ -69,6 +69,13 @@ describe PollDocketedLegacyAppealsJob, type: :job do
 
     it "should filter for all cases that have been recently docketed" do
       expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(query)).to eq(recent_docketed_appeal_ids)
+    end
+
+    it "should create AppealState records if they do not exist" do
+      expect(AppealState.where(appeal_id: recent_docketed_appeal_ids)[0]).to be(nil)
+      appeal_state_count_before = AppealState.count
+      PollDocketedLegacyAppealsJob.new.create_corresponding_appeal_states(recent_docketed_appeal_ids)
+      expect(AppealState.count).not_to eq(appeal_state_count_before)
     end
 
     it "should filter for all legacy appeals that havent already gotten a notification yet" do

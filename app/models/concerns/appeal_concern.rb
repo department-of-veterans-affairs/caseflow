@@ -90,6 +90,25 @@ module AppealConcern
     timezone_identifier_for_address(representative_address)
   end
 
+  # Checks for any active foia tasks on an appeal.
+  def active_foia_task?
+    tasks.open.where(type: [
+                       FoiaColocatedTask.name,
+                       PrivacyActTask.name,
+                       HearingAdminActionFoiaPrivacyRequestTask.name,
+                       FoiaRequestMailTask.name,
+                       PrivacyActRequestMailTask.name
+                     ]).any?
+  end
+
+  # Checks for any active vso ihp tasks on an appeal.
+  def active_vso_ihp_task?
+    tasks.open.where(type: [
+                       IhpColocatedTask.name,
+                       InformalHearingPresentationTask.name
+                     ]).any?
+  end
+
   def accessible?
     # this is used for calling BGSService.can_access? to fix VSO access that is being blocked
     # by BGS returning false for veteran.accessible? when they should indeed have access to the appeal.

@@ -253,8 +253,6 @@ module Seeds
     end
 
     def create_bva_dispatch_user_with_tasks
-      BvaDispatch.singleton.add_user(User.find_or_create_by(css_id: "BVAGWHITE", station_id: "101"))
-
       [42, 66, 13].each do |rand_seed|
         create_task_at_bva_dispatch(rand_seed)
       end
@@ -391,8 +389,6 @@ module Seeds
     end
 
     def create_bva_dispatch_user_for_split_appeals
-      BvaDispatch.singleton.add_user(User.find_or_create_by(css_id: "BVAGBLACK", station_id: "101"))
-
       (1..30).each do |rand_seed|
         create_task_at_bva_dispatch_for_split_appeals(rand_seed)
       end

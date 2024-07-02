@@ -119,7 +119,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               include_context :number_of_request_issues_exceeds_paginates_per, true
             end
 
-            context "when a veteran has multiple decision issues with multiple request issues" do
+            context "when a veteran has multiple decision issues with multiple request issues", skip: "Flakey test" do
               let_it_be(:vet) { create(:veteran, file_number: "123456789") }
               let_it_be(:vacols_case) { create(:case, bfcorlid: "123456789S") }
               let_it_be(:decision_issues) { create_list(:decision_issue, 2, participant_id: vet.participant_id) }

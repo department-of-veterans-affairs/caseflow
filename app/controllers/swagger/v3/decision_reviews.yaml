@@ -32,8 +32,10 @@ info:
     ```
 
   version: 3.0.0
+security:
+  - bearerAuth: []
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/decision_reviews'
+- url: /api/v3/decision_reviews/
 paths:
   /higher_level_reviews:
     post:
@@ -45,7 +47,7 @@ paths:
 
         ### Asynchronous processing
 
-        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status. 
+        The Decision Reviews API leverages a pattern recommended by JSON API for asynchronous processing (more information [here](https://jsonapi.org/recommendations/#asynchronous-processing)).  Submitting a Decision Review is an asynchronous process due to the multiple systems that are involved.  Because of this, when a new Decision Review is submitted, the POST endpoint will return a 202 `accepted` response including an Intake UUID.  That Intake UUID is associated with the submission and can be used as an identifier for the Intake Status endpoint.  While the submission is processing the Intake Status endpoint will return a 200 response.  Once the asynchronous process is complete and the Decision Review is submitted into Caseflow, the Intake Status endpoint will return a 303 response including the Decision Review ID for the submitted Decision Review, which will allow you to retrieve the full details including the processing status.
       requestBody:
         required: true
         content:
@@ -472,6 +474,7 @@ paths:
           in: path
           required: true
           description: Decision Review UUID
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             $ref: "#/components/schemas/Uuid"
       summary: Check a Decision Review's (Higher-Level Review, Supplemental Claim, Board Appeal) intake status.
@@ -479,7 +482,7 @@ paths:
         After creating a Decision Review, you can use this endpoint to check its _intake status_—whether or not a Decision Review has been processed in the Caseflow system.
 
 
-        **A Decision Review is not immediately accessible after creation.** Intake involves communicating with several systems/databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation. 
+        **A Decision Review is not immediately accessible after creation.** Intake involves communicating with several systems/databases asynchronously. Consequently, a new Decision Review isn't available for API interaction immediately after creation.
 
 
         _Check a Decision Review's intake status to know when it has become accessible, and also its location for further actions._
@@ -488,7 +491,7 @@ paths:
         * **Before a Decision Review is successfully processed:** This endpoint will return `200 OK` and a JSON payload describing the status in more detail.
 
 
-        * **Once processing is complete:** this endpoint will return a `303 see other` and a Location header containing the URL of the processed, and now accessible, Decision Review. You can use that URL to get the Decision Review and retrieve its full details. 
+        * **Once processing is complete:** this endpoint will return a `303 see other` and a Location header containing the URL of the processed, and now accessible, Decision Review. You can use that URL to get the Decision Review and retrieve its full details.
       responses:
         '200':
           description: Processing incomplete
@@ -580,7 +583,6 @@ paths:
                       status: 500,
                       code: unknown_error
                       title: "Unknown error"
-
   /higher_level_reviews/{uuid}:
     get:
       tags:
@@ -590,6 +592,7 @@ paths:
           in: path
           required: true
           description: UUID of a Higher-Level Review
+          example: cc165d4f-1e16-4bcf-9134-4f864c121c97
           schema:
             type : string
             format: uuid
@@ -926,9 +929,14 @@ paths:
           in: header
           required: true
           description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
+          example: '2000-01-01'
           schema:
             type: string
             format: date
+      servers:
+        - url: /api/v3/decision_reviews/higher_level_reviews/
+        - url: /api/v3/decision_reviews/supplemental_claims/
+        - url: /api/v3/decision_reviews/appeals/
       summary: Returns all contestable issues for a specific veteran.
       description: >-
         Returns all issues a Veteran could contest in a Decision Review
@@ -1414,3 +1422,8 @@ components:
                     * `attempted` - Processing of the DecisionReview is being attempted.
                     * `canceled` - The DecisionReview has been successfully canceled.
                     * `processed` - The DecisionReview has been processed and transmitted to the appropriate government agency.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

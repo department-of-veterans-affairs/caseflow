@@ -1,140 +1,57 @@
 # frozen_string_literal: true
 
 class QuarterlyNotificationsJob < CaseflowJob
+  include MessageConfigurations::DeleteMessageBeforeStart
+
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
-  application_attr :hearing_schedule
+  application_attr :va_notify
 
-  QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
+  NOTIFICATION_TYPES = Constants.QUARTERLY_STATUSES.to_h.freeze
 
-  # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
+  # Locates appeals eligible for quarterly notifications and queues a NotificationInitializationJob
+  # for each for further processing, and eventual (maybe) transmission of correspondence to an appellant.
   #
-  # Params: none
-  #
-  # Response: None
-  def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # @return [Hash]
+  #   Returns the hash of NOTIFICATION_TYPES that were iterated over, though this value isn't designed
+  #     to be utilized by a caller due to the async nature of this job.
+  def perform
     ensure_current_user_is_set
 
-    AppealState.where.not(decision_mailed: true).where.not(appeal_cancelled: true)
-      .find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
-      batched_appeal_states.each do |appeal_state|
-        # add_record_to_appeal_states_table(appeal_state.appeal)
-        if appeal_state.appeal_type == "Appeal"
-          appeal = Appeal.find_by(id: appeal_state.appeal_id)
-        elsif appeal_state.appeal_type == "LegacyAppeal"
-          appeal = LegacyAppeal.find_by(id: appeal_state.appeal_id)
+    begin
+      NOTIFICATION_TYPES.each_key do |notification_type|
+        status_text = NOTIFICATION_TYPES[notification_type.to_sym]
+
+        jobs = AppealState.eligible_for_quarterly.send(notification_type).pluck(:appeal_id, :appeal_type)
+          .map do |related_appeal_info|
+          NotificationInitializationJob.new(
+            appeal_id: related_appeal_info.first,
+            appeal_type: related_appeal_info.last,
+            template_name: Constants.EVENT_TYPE_FILTERS.quarterly_notification,
+            appeal_status: status_text
+          )
         end
-        if appeal.nil?
-          begin
-            fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable "\
-            "to be found."
-          rescue Caseflow::Error::AppealNotFound => error
-            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
-          end
-        else
-          begin
-            MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
-                                  name: "send_quarterly_notifications(appeal_state, appeal)") do
-              send_quarterly_notifications(appeal_state, appeal)
-            end
-          rescue StandardError => error
-            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
-          end
-        end
+
+        Parallel.each(jobs.each_slice(10).to_a, in_threads: 5) { |jobs_to_enqueue| enqueue_init_jobs(jobs_to_enqueue) }
       end
+    rescue StandardError => error
+      log_error(error)
     end
   end
 
   private
 
-  # Purpose: Method to check appeal state for statuses and send out a notification based on
-  # which statuses are turned on in the appeal state
+  # Batches enqueueing of the NotificationInitializationJobs in order to reduce round-trips to the SQS API
   #
-  # Params: appeal state, appeal
+  # @param jobs [Array<NotificationInitializationJob>] An array of NotificationInitializationJob objects to enqueue.
   #
-  # Response: SendNotificationJob queued to send_notification SQS queue
-  def send_quarterly_notifications(appeal_state, appeal) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-    # if either there's a hearing postponed or a hearing scheduled in error
-    if appeal_state.hearing_postponed || appeal_state.scheduled_in_error
-      # appeal status is Hearing to be Rescheduled / Privacy Act Pending
-      if appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled_privacy_pending
-        )
-      # appeal status is Hearing to be Rescheduled
-      else
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_to_be_rescheduled
-        )
-      end
-    # if there's a hearing scheduled
-    elsif appeal_state.hearing_scheduled
-      # if there's privacy act tasks pending
-      # appeal status is Hearing Scheduled /  Privacy Act Pending
-      if appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_scheduled_privacy_pending
-        )
-      # if there's no privacy act tasks pending
-      # appeal status is Hearing Scheduled
-      elsif !appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.hearing_scheduled
-        )
-      end
-    # if there's no hearing scheduled and no hearing withdrawn
-    elsif !appeal_state.hearing_withdrawn
-      # if there's ihp tasks pending and privacy act tasks pending
-      # appeal status is VSO IHP Pending / Privacy Act Pending
-      if appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.ihp_pending_privacy_pending
-        )
-      # if there's no ihp tasks pending and there are privacy act tasks pending
-      # appeal status is Privacy Act Pending
-      elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.privacy_pending
-        )
-      # if there's no privacy acts pending and there are ihp tasks pending
-      # appeal status is VSO IHP Pending
-      elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.ihp_pending
-        )
-      # if there's no privacy acts pending or ihp tasks pending
-      # appeal status is Appeal Docketed
-      elsif !appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.appeal_docketed
-        AppellantNotification.notify_appellant(
-          appeal,
-          "Quarterly Notification",
-          Constants.QUARTERLY_STATUSES.appeal_docketed
-        )
-      end
-    # appeal status is Appeal Docketed
-    elsif appeal_state.appeal_docketed && appeal_state.hearing_withdrawn
-      AppellantNotification.notify_appellant(
-        appeal,
-        "Quarterly Notification",
-        Constants.QUARTERLY_STATUSES.appeal_docketed
-      )
-    end
+  # @return [Aws::SQS::Types::SendMessageBatchResult]
+  #   A struct containing the messages that were successfully enqueued and those that failed.
+  def enqueue_init_jobs(jobs)
+    CaseflowJob.enqueue_batch_of_jobs(
+      jobs_to_enqueue: jobs,
+      name_of_queue: NotificationInitializationJob.queue_name
+    )
   end
 end

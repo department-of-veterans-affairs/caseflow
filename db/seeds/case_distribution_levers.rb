@@ -22,7 +22,7 @@ module Seeds
 
       validate_levers_creation
       updated_levers.compact!
-      puts "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
+      Rails.logger.info("#{updated_levers.count} levers updated: #{updated_levers}") if updated_levers.count > 0
     end
 
     private
@@ -46,9 +46,11 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
-      puts "*********************************************" unless lever.valid?
-      puts lever.errors.full_messages unless lever.valid?
-      puts "*********************************************" unless lever.valid?
+      unless lever.valid?
+        Rails.logger.error( "*********************************************")
+        Rails.logger.error(lever.errors.full_messages)
+        Rails.logger.error( "*********************************************")
+      end
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -689,7 +691,7 @@ module Seeds
           full_update_lever(lever)
         end
 
-        puts "Levers updated: #{levers_to_update.map { |lever| lever[:item] }}"
+        Rails.logger.info("Levers updated: #{levers_to_update.map { |lever| lever[:item] }}")
       end
 
       private
@@ -723,9 +725,11 @@ module Seeds
           lever_group_order: lever[:lever_group_order]
         )
 
-        puts "*********************************************" unless existing_lever.valid?
-        puts existing_lever.errors.full_messages unless existing_lever.valid?
-        puts "*********************************************" unless existing_lever.valid?
+        unless lever.valid?
+          Rails.logger.error( "*********************************************")
+          Rails.logger.error(lever.errors.full_messages)
+          Rails.logger.error( "*********************************************")
+        end
       end
     end
   end
