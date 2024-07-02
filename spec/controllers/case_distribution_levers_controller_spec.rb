@@ -3,7 +3,6 @@
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   before { Seeds::CaseDistributionLevers.new.seed! }
   let!(:lever_user) { create(:user) }
-  let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }
 
   # rubocop:disable Layout/LineLength
@@ -37,7 +36,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2023-07-01 10:10:01",
+      created_at: 11.months.ago,
       previous_value: 10,
       update_value: 42,
       case_distribution_lever: lever2
@@ -50,7 +49,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2023-07-01 10:11:01",
+      created_at: 11.months.ago,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
@@ -63,7 +62,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: "2020-07-01 10:11:01",
+      created_at: 13.months.ago,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
@@ -102,10 +101,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -122,10 +118,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_truthy
     end
   end
@@ -176,10 +169,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -196,10 +186,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
-      expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1_serialized)
-      expect(request_history).to include(audit_lever_entry2_serialized)
-      expect(request_history).not_to include(old_audit_lever_entry_serialized)
+      expect(request_history).to match_array([audit_lever_entry1_serialized, audit_lever_entry2_serialized])
       expect(request_user_is_an_admin).to be_truthy
     end
   end
