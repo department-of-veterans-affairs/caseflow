@@ -79,7 +79,7 @@ describe('ReviewForm', () => {
     const inputNode = screen.getByRole('textbox', { name: 'veteran-file-number-input' });
 
     fireEvent.change(inputNode, { target: { value: '12345678' } });
-    expect(mockFunction).toHaveBeenCalledTimes(4);
+    expect(mockFunction).toHaveBeenCalledTimes(5);
   });
 
 });
