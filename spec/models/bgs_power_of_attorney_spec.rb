@@ -110,12 +110,11 @@ describe BgsPowerOfAttorney do
 
       before do
         allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id) do
-          sleep 1
           bgs_record
         end
       end
 
-      it "does not raise an error on unique constraint violation", skip: "Test is flaky" do
+      it "does not raise an error on unique constraint violation" do
         threads = []
         concurrency.times do
           threads << Thread.new do
