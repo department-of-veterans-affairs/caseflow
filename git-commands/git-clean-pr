@@ -14,6 +14,7 @@ if [ ! -z "$1" ]; then
   jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
   rbCommits=$(git diff --name-only "$1" | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only "$1" | grep -E '.scss$') # get the list of scss files
 
 else
   # else default to no branch comparison
@@ -21,7 +22,7 @@ else
   jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
   rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
-  scssCommits=$(git diff --name-only | grep -E '.scss$')
+  scssCommits=$(git diff --name-only | grep -E '.scss$') # get the list of scss files
 fi
 
 # cycle through ruby suite of tests
