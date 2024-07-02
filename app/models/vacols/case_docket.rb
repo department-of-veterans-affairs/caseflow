@@ -206,7 +206,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       order by BFD19
     ) APPEALS
     left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
-    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
   # rubocop:disable Metrics/MethodLength
