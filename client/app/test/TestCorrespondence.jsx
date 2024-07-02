@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
@@ -11,15 +11,18 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY';
 import Alert from 'app/components/Alert';
+import Checkbox from 'app/components/Checkbox';
 
 export default function TestCorrespondence(props) {
-  const [correspondenceCount, setCorrespondenceCount] = useState(0);
+  const [correspondenceCount, setCorrespondenceCount] = useState(null);
   const [veteranFileNumbers, setVeteranFileNumbers] = useState('');
   const [showInvalidVeteransBanner, setShowInvalidVeteransBanner] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const [invalidFileNumbers, setInvalidFileNumbers] = useState('');
   const [validFileNumbers, setValidFileNumbers] = useState('');
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
+  const [disabled, setDisabled] = useState(true);
+  const [autoAssign, setAutoAssign] = useState(true);
 
   const handleVeteranFileNumbers = (inputValue) => {
     // Allow only digits and commas
@@ -35,7 +38,16 @@ export default function TestCorrespondence(props) {
     }
   };
   const handleCorrespondenceCountChange = (value) => {
-    setCorrespondenceCount(value);
+    // setCorrespondenceCount(value === '' ? null : Number(value));
+    if (value === '') {
+      setCorrespondenceCount(null);
+    } else {
+      const num = Number(value);
+
+      if (num >= 1 && num <= 40) {
+        setCorrespondenceCount(num);
+      }
+    }
   };
 
   const generateCorrespondence = async () => {
@@ -61,7 +73,7 @@ export default function TestCorrespondence(props) {
       setShowSuccessBanner(true);
       setCorrespondenceSize(correspondenceCount);
 
-      setCorrespondenceCount(0);
+      setCorrespondenceCount(null);
       setVeteranFileNumbers('');
     } else {
       setValidFileNumbers('');
@@ -70,8 +82,16 @@ export default function TestCorrespondence(props) {
   };
 
   const handleSubmit = () => {
-    generateCorrespondence();
+    generateCorrespondence().then((res) => res);
   };
+
+  useEffect(() => {
+    if (veteranFileNumbers && correspondenceCount > 0) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [veteranFileNumbers, correspondenceCount]);
 
   return <BrowserRouter>
     <div>
@@ -120,13 +140,25 @@ export default function TestCorrespondence(props) {
             <NumberField
               name={COPY.CORRESPONDENCE_ADMIN.COUNT_LABEL}
               type="number"
-              value={correspondenceCount}
+              value={correspondenceCount === null ? '' : correspondenceCount}
               onChange={handleCorrespondenceCountChange}
               className={['correspondence-number']}
+              min={1}
+              max={40}
             />
+            <div className="auto-assign-container">
+              <h3>{COPY.CORRESPONDENCE_ADMIN.AUTO_ASSIGN_HEADER}</h3>
+              <Checkbox
+                name="autoAssign"
+                label={COPY.CORRESPONDENCE_ADMIN.AUTO_ASSIGN_LABEL}
+                onChange={(val) => setAutoAssign(val)}
+                value={autoAssign}
+              />
+            </div>
             <Button
               name="Generate correspondence"
               onClick={handleSubmit}
+              disabled={disabled}
             />
           </div>
         </AppSegment>
