@@ -23,12 +23,14 @@ class SlackService
   attr_reader :url
 
   def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
-    return unless url && (aws_env == "uat" || aws_env == "prodtest" || aws_env == "prod")
-
     slack_msg = format_slack_msg(msg, title, channel)
 
-    params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
-    http_service.post(url, params)
+    unless url && (Rails.deploy_env?(:uat) || Rails.deploy_env?(:prodtest) || Rails.deploy_env?(:prod))
+      Rails.logger.info(pp(slack_msg))
+    else
+      params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
+      http_service.post(url, params)
+    end
   end
 
   private
@@ -61,7 +63,7 @@ class SlackService
     channel.prepend("#") unless channel.match?(/^#/)
 
     {
-      username: "Caseflow (#{aws_env})",
+      username: "Caseflow (#{Rails.deploy_env})",
       channel: channel,
       attachments: [
         {
@@ -71,9 +73,5 @@ class SlackService
         }
       ]
     }
-  end
-
-  def aws_env
-    ENV.fetch("DEPLOY_ENV", "development")
   end
 end
