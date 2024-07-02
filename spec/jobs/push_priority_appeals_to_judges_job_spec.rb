@@ -120,13 +120,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
-<<<<<<< HEAD
           docket_type: Constants.AMA_DOCKETS.hearing,
           receipt_date: receipt_date
-=======
-          :with_appeal_affinity,
-          docket_type: Constants.AMA_DOCKETS.hearing
->>>>>>> master
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
@@ -338,15 +333,11 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
-<<<<<<< HEAD
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission,
                         receipt_date: 1.month.ago)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
-=======
-                        :with_appeal_affinity,
-                        affinity_start_date: i.months.ago,
-                        docket_type: Constants.AMA_DOCKETS.evidence_submission)
->>>>>>> master
         appeal
       end
     end
