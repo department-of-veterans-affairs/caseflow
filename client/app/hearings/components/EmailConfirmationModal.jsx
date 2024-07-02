@@ -17,12 +17,7 @@ import { ReadOnly } from './details/ReadOnly';
 import { emailConfirmationModalStyles } from './details/style';
 
 const getCentralOfficeTime = (hearing) => {
-  const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
-
-  return moment.
-    tz(newTime, hearing.regionalOfficeTimezone).
-    tz('America/New_York').
-    format('HH:mm');
+  return zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
 };
 
 const formatTimeString = (hearing, timeWasEdited) => {
@@ -35,8 +30,13 @@ const formatTimeString = (hearing, timeWasEdited) => {
   }
 
   const centralOfficeTime = timeWasEdited ? getCentralOfficeTime(hearing) : hearing.centralOfficeTimeString;
+  let timeString = '';
 
-  let timeString = `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
+  if (timeWasEdited) {
+    timeString = centralOfficeTime.replace('EDT', 'ET');
+  } else {
+    timeString = `${moment(centralOfficeTime, 'hh:mm').format('h:mm a')} ET`;
+  }
 
   timeString += ` / ${moment(hearing.scheduledTimeString, 'hh:mm').format('h:mm a')} `;
   timeString += moment().
