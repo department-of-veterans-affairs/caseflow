@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_07_203310) do
+ActiveRecord::Schema.define(version: 2024_06_21_083822) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,19 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.string "source"
     t.datetime "updated_at"
     t.string "vbms_id"
+  end
+
+  create_table "appeal_affinities", force: :cascade do |t|
+    t.datetime "affinity_start_date", comment: "The date from which to calculate an appeal's affinity window"
+    t.string "case_id", null: false, comment: "Appeal UUID for AMA or BRIEFF.BFKEY for Legacy"
+    t.string "case_type", null: false, comment: "Appeal type for ActiveRecord Associations"
+    t.datetime "created_at", precision: 6, null: false
+    t.bigint "distribution_id", comment: "The distribution which caused the affinity start date to be set, if by a distribution"
+    t.string "docket", null: false, comment: "The docket of the appeal"
+    t.boolean "priority", null: false, comment: "Priority status (true/false)"
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["case_id", "case_type"], name: "index_appeal_affinities_on_case_id_and_case_type", unique: true
+    t.index ["distribution_id"], name: "index_appeal_affinities_on_distribution_id"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -1141,6 +1154,12 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
   end
 
+  create_table "job_execution_times", id: :serial, force: :cascade do |t|
+    t.string "job_name", comment: "Name of the Job whose Last Execution Time is being tracked"
+    t.datetime "last_executed_at", comment: "DateTime value when the Job was Last Executed"
+    t.index ["job_name"], name: "index_job_execution_times_on_job_name", unique: true
+  end
+
   create_table "job_notes", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
     t.bigint "job_id", null: false, comment: "The job to which the note applies"
@@ -1389,6 +1408,8 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
+    t.bigint "notifiable_id"
+    t.string "notifiable_type"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
     t.datetime "notified_at", comment: "Time Notification was created"
@@ -1398,10 +1419,13 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.string "sms_response_content", comment: "Message body of the sms notification response."
+    t.datetime "sms_response_time", comment: "Date and Time of the sms notification response."
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
     t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
     t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
     t.index ["participant_id"], name: "index_participant_id"
     t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
@@ -1881,13 +1905,13 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.datetime "created_at", precision: 6, null: false
     t.integer "current_goal", default: 0, comment: "The current weeks goal of hearings to send for transcribing"
     t.datetime "deleted_at"
-    t.string "directory", null: false, comment: "The qat contract house box.com folder full path"
-    t.string "email", comment: "The qat contract house contact email address"
-    t.boolean "inactive", default: false, null: false, comment: "Indicates if the qat is active or not inactive equates to not displayed in ui"
-    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a qat is available or not to take work"
-    t.string "name", null: false, comment: "The qat contract house name"
-    t.string "phone", comment: "The qat contract house contact phone number"
-    t.string "poc", comment: "The qat contract house poc name"
+    t.string "directory", null: false, comment: "The contract house box.com folder full path"
+    t.string "email", null: false, comment: "The contract house contact email address"
+    t.boolean "inactive", default: false, null: false, comment: "Indicates if the contractor is active or not inactive equates to not displayed in ui"
+    t.boolean "is_available_for_work", default: false, null: false, comment: "Work Stoppage flag to indicate if a is available or not to take work"
+    t.string "name", null: false, comment: "The contract house name"
+    t.string "phone", null: false, comment: "The contract house contact phone number"
+    t.string "poc", null: false, comment: "The contract house poc name"
     t.integer "previous_goal", default: 0, comment: "The previous weeks goal of hearings to send for transcribing"
     t.datetime "updated_at", precision: 6, null: false
     t.index ["deleted_at"], name: "index_transcription_contractors_on_deleted_at"
@@ -1908,6 +1932,8 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
     t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
     t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.datetime "locked_at", comment: "Locked record timeout field"
+    t.bigint "locked_by_id", comment: "ID of user who locked the record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
     t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
@@ -1916,6 +1942,34 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
     t.index ["file_type"], name: "index_transcription_files_on_file_type"
     t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
     t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
+    t.index ["locked_by_id", "locked_at"], name: "index_transcription_files_locked_by_id_locked_at"
+  end
+
+  create_table "transcription_package_hearings", force: :cascade do |t|
+    t.bigint "hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_package_legacy_hearings", force: :cascade do |t|
+    t.bigint "legacy_hearing_id"
+    t.bigint "transcription_package_id"
+  end
+
+  create_table "transcription_packages", force: :cascade do |t|
+    t.string "aws_link_work_order", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.string "aws_link_zip", comment: "Link of where the file is in AWS S3 (transcription_text) for the return work order"
+    t.bigint "contractor_id", comment: "FK to transcription_contractors table"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_upload_aws", comment: "Date of successful upload of master transcription zip file to AWS"
+    t.datetime "date_upload_box", comment: "Date of successful delivery to box.com contractor endpoint"
+    t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
+    t.datetime "returned_at", comment: "When the Contractor returns their completed Work Order excel file"
+    t.string "status", comment: "Status of the package, could be one of nil, 'Successful Upload (AWS), Successful Upload (BOX), Failed Upload (BOX), Successful Retrieval (BOX), Failed Retrieval (BOX)'"
+    t.string "task_number", comment: "Number associated with transcription, use as FK to transcriptions"
+    t.datetime "updated_at"
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["task_number"], name: "index_transcription_packages_on_task_number"
   end
 
   create_table "transcriptions", force: :cascade do |t|
@@ -2261,6 +2315,7 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_affinities", "distributions"
   add_foreign_key "appeal_states", "users", column: "created_by_id"
   add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
@@ -2390,6 +2445,12 @@ ActiveRecord::Schema.define(version: 2024_05_07_203310) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
+  add_foreign_key "transcription_files", "users", column: "locked_by_id"
+  add_foreign_key "transcription_package_hearings", "hearings"
+  add_foreign_key "transcription_package_hearings", "transcription_packages"
+  add_foreign_key "transcription_package_legacy_hearings", "legacy_hearings"
+  add_foreign_key "transcription_package_legacy_hearings", "transcription_packages"
+  add_foreign_key "transcription_packages", "transcription_contractors", column: "contractor_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "transcriptions", "transcription_contractors"
   add_foreign_key "transcriptions", "users", column: "created_by_id"
