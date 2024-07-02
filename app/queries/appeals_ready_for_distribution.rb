@@ -112,6 +112,7 @@ class AppealsReadyForDistribution
   end
 
   def self.legacy_original_deciding_judge(appeal)
-    VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"]).sdomainid
+    staff = VACOLS::Staff.find_by(sattyid: appeal["prev_deciding_judge"])
+    staff&.sdomainid || appeal["prev_deciding_judge"]
   end
 end
