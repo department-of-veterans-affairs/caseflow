@@ -53,6 +53,20 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     job.log_error(exception, extra: extra)
   end
 
+  # Retry if Webex returns an invalid response.
+  retry_on(Caseflow::Error::WebexApiError, attempts: 5, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
+    kwargs = job.arguments.first
+    extra = {
+      application: job.class.app_name.to_s,
+      hearing_id: kwargs[:hearing_id],
+      hearing_type: kwargs[:hearing_type]
+    }
+
+    job.log_error(exception, extra: extra)
+  end
+
   # Log the timezone of the job. This is primarily used for debugging context around times
   # that appear in the hearings notification emails.
   before_perform do |job|
