@@ -50,6 +50,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       report << "*Number of general population cases distributed*: " \
                 "#{genpop_distributions_sum}"
     end
+    report << "Priority Target: #{priority_target}"
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
@@ -66,21 +67,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     report << ""
     report << "*Debugging information*"
-    report << "Priority Target: #{priority_target}"
     report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}" # rubocop:disable Layout/LineLength
 
-    if appeals_not_distributed.values.flatten.any?
-      add_stuck_appeals_to_report(report, appeals_not_distributed)
-    end
-
     report
-  end
-
-  def add_stuck_appeals_to_report(report, appeals)
-    report.unshift("[WARN]")
-    report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
-    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
-    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
   end
 
   # Distribute all priority cases tied to a judge without limit
