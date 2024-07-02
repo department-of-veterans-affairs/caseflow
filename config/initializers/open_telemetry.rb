@@ -46,7 +46,7 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
         use_rack_events: false,
         untraced_endpoints: ['/health-check', '/sample', '/logs'],
       },
-      'OpenTelemetry::Instrumentation::AwsSdk', {
+      'OpenTelemetry::Instrumentation::AwsSdk' => {
         suppress_internal_instrumentation: true
       }
     }
