@@ -48,6 +48,10 @@ export const getUndecidedIssues = (issues) =>
   });
 
 export const mostRecentHeldHearingForAppeal = (appeal) => {
+  if (appeal.hearings === undefined) {
+    return null;
+  }
+
   const hearings = appeal.hearings.
     filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
     sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
@@ -68,6 +72,37 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       isVirtual: hearing.is_virtual,
       scheduledForIsPast: hearing.scheduled_for_is_past,
     },
+  };
+};
+
+const correspondenceTaskAttributesFromRawTask = (task) => {
+  return {
+    uniqueId: task.attributes.unique_id,
+    instructions: task.attributes.instructions,
+    veteranDetails: task.attributes.veteran_details,
+    notes: task.attributes.notes,
+    closedAt: task.attributes.closed_at,
+    daysWaiting: task.attributes.days_waiting,
+    vaDor: task.attributes.va_date_of_receipt,
+    nod: task.attributes.nod,
+    label: task.attributes.label,
+    taskUrl: task.attributes.task_url,
+    parentTaskUrl: task.attributes.parent_task_url.parent_task_url,
+    status: task.attributes.status,
+    assignedAt: task.attributes.assigned_at,
+    assignedTo: {
+      cssId: task.attributes.assigned_to.css_id,
+      isOrganization: task.attributes.assigned_to.is_organization,
+      id: task.attributes.assigned_to.id,
+      type: task.attributes.assigned_to.type,
+      name: task.attributes.assigned_to.name,
+    },
+    assignedBy: {
+      firstName: task.attributes.assigned_by.first_name,
+      lastName: task.attributes.assigned_by.last_name,
+      cssId: task.attributes.assigned_by.css_id,
+      pgId: task.attributes.assigned_by.pg_id,
+    }
   };
 };
 
@@ -195,6 +230,7 @@ const appealAttributesFromRawTask = (task) => ({
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   issueTypes: task.attributes.issue_types,
+  pendingIssueModificationCount: task.attributes.pending_issue_modification_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
@@ -227,6 +263,11 @@ export const tasksWithAppealsFromRawTasks = (tasks) =>
     appeal: appealAttributesFromRawTask(task),
   }));
 
+export const tasksWithCorrespondenceFromRawTasks = (tasks) =>
+  tasks?.map((task) => ({
+    ...correspondenceTaskAttributesFromRawTask(task)
+  }));
+
 export const prepareLegacyTasksForStore = (tasks) => {
   const mappedLegacyTasks = tasks.map((task) => {
     return {
@@ -242,8 +283,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
       assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
-        isOrganization: task.attributes.assigned_to.is_organization,
         id: task.attributes.assigned_to.id,
+        isOrganization: task.attributes.assigned_to.is_organization,
         type: task.attributes.assigned_to.type,
         name: task.attributes.assigned_to.name,
       },
@@ -402,7 +443,6 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
-
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -443,6 +483,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };
@@ -565,13 +607,14 @@ export const prepareAppealForSearchStore = (appeals) => {
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };
 
     return accumulator;
   }, {});
-
 
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
@@ -625,6 +668,7 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
       editIssuesUrl: claimReview.caseflow_only_edit_issues_url,
+      intakeFromVbms: claimReview.intake_from_vbms
     };
 
     return accumulator;
@@ -1134,5 +1178,5 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 };
 
 export const replaceSpecialCharacters = (string_replace) => {
-  return string_replace.replace(/[^\w\s]/gi, '_')
+  return string_replace.replace(/[^\w\s]/gi, '_');
 };

@@ -120,6 +120,18 @@ class Fakes::BGSService
     end
   end
 
+  def sensitivity_level_for_user(user)
+    fail "Invalid user" if !user.instance_of?(User)
+
+    Random.new.rand(4..9)
+  end
+
+  def sensitivity_level_for_veteran(veteran)
+    fail "Invalid veteran" if !veteran.instance_of?(Veteran)
+
+    Random.new.rand(1..4)
+  end
+
   def get_end_products(file_number)
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
