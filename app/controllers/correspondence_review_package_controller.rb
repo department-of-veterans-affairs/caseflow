@@ -2,30 +2,11 @@
 
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
-    @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
-    @correspondence_types = CorrespondenceType.all
-    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
-    @correspondence = WorkQueue::CorrespondenceSerializer
-    .new(correspondence)
-    .serializable_hash[:data][:attributes]
-    .merge(general_information, display_intake_appeal: display_intake_appeal)
+    set_instance_variables
 
     respond_to do |format|
       format.html
-      format.json do
-        corres_docs = @correspondence[:correspondenceDocuments]
-        task_instructions = CorrespondenceTask.package_action_tasks.open
-          .find_by(appeal_id: @correspondence[:id])&.instructions || ""
-        response_json = {
-          correspondence: @correspondence,
-          general_information: general_information,
-          user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
-          corres_docs: corres_docs,
-          taskInstructions: task_instructions,
-          display_intake_appeal: display_intake_appeal
-        }
-        render({ json: response_json }, status: :ok)
-      end
+      format.json { render json: build_json_response, status: :ok }
     end
   end
 
@@ -74,6 +55,36 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   private
+
+  def set_instance_variables
+    @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
+    @correspondence_types = CorrespondenceType.all
+    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
+    @correspondence = serialized_correspondence
+  end
+
+  def serialized_correspondence
+    WorkQueue::CorrespondenceSerializer
+      .new(correspondence)
+      .serializable_hash[:data][:attributes]
+      .merge(general_information, display_intake_appeal: display_intake_appeal)
+  end
+
+  def build_json_response
+    {
+      correspondence: @correspondence,
+      general_information: general_information,
+      user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
+      corres_docs: @correspondence[:correspondenceDocuments],
+      taskInstructions: task_instructions,
+      display_intake_appeal: display_intake_appeal
+    }
+  end
+
+  def task_instructions
+    CorrespondenceTask.package_action_tasks.open
+      .find_by(appeal_id: @correspondence[:id])&.instructions || ""
+  end
 
   def correspondence_has_efolder_failed_task?
     correspondence.tasks.active.where(type: EfolderUploadFailedTask.name).exists?
