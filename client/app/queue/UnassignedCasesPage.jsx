@@ -31,6 +31,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
 import querystring from 'querystring';
 import { columnsFromConfig } from './queueTableUtils';
+import { DEFAULT_QUEUE_TABLE_SORT } from './constants';
 
 const assignSectionStyling = css({ marginTop: '30px' });
 const loadingContainerStyling = css({ marginTop: '-2em' });
@@ -145,6 +146,7 @@ class UnassignedCasesPage extends React.PureComponent {
               {...(userIsSCTCoordinator && { ...specialtyCaseTeamProps })}
               tasks={userIsSCTCoordinator ? [] : this.props.tasks}
               userId={userId}
+              defaultSort={DEFAULT_QUEUE_TABLE_SORT}
               {...(userIsCamoEmployee ? { preserveQueueFilter: true } : {})}
             />
           }
