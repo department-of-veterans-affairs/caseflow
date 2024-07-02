@@ -28,7 +28,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     before do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
-      get :review_package, params: { correspondence_uuid: correspondence.uuid }
+      get :review_package, params: { correspondence_uuid: correspondence.uuid }, format: :json
     end
 
     it "returns a successful response" do
@@ -51,11 +51,11 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
   end
 
-  describe "GET #show" do
+  describe "GET #review_package" do
     before do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
-      get :show, params: { correspondence_uuid: correspondence.uuid }
+      get :review_package, params: { correspondence_uuid: correspondence.uuid }, format: :json
     end
 
     it "returns a successful response" do
@@ -77,9 +77,9 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
     end
   end
 
-  describe "GET #show" do
+  describe "GET #review_package" do
     it "returns an unauthorized response" do
-      get :show, params: { correspondence_uuid: correspondence.uuid }
+      get :review_package, params: { correspondence_uuid: correspondence.uuid }, format: :json
       expect(response.status).to eq 302
       expect(response.body).to match(/unauthorized/)
     end
@@ -88,7 +88,7 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       InboundOpsTeam.singleton.add_user(mail_team_supervisor_user)
       User.authenticate!(user: mail_team_supervisor_user)
       correspondence.save(validate: false)
-      get :show, params: { correspondence_uuid: correspondence.uuid }
+      get :review_package, params: { correspondence_uuid: correspondence.uuid }, format: :json
       expect(response).to have_http_status(:ok)
       json_response = JSON.parse(response.body)
       expect(json_response["display_intake_appeal"]).to eq(false)
