@@ -22,6 +22,8 @@ export default function TestUsers(props) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [reseedingError, setReseedingError] = useState(null);
   const [isReseeding, setIsReseeding] = useState(false);
+  const [optionalSeedingError, setOptionalSeedingError] = useState(null);
+  const [isOptionalSeeding, setIsOptionalSeeding] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
@@ -80,6 +82,18 @@ export default function TestUsers(props) {
     });
   };
 
+  const optionalSeed = () => {
+    setIsOptionalSeeding(true);
+    ApiUtil.post('/test/optional_seed').then(() => {
+      setOptionalSeedingError(null);
+      setIsOptionalSeeding(false);
+    }, (err) => {
+      console.warn(err);
+      setOptionalSeedingError(err);
+      setIsOptionalSeeding(false);
+    });
+  };
+
   const filteredUserOptions = useMemo(() => {
     const userOptions = props.testUsersList.map((user) => ({
       value: user.id,
@@ -130,9 +144,13 @@ export default function TestUsers(props) {
       <ul>
         {Object.keys(app.links).map((name) => {
           let readableName = StringUtil.snakeCaseToCapitalized(name);
+          let linkRoute = app.links[name];
+
+          // If it exists, Replaces any placeholder USER CSS ID values in the array with the proper css id
+          linkRoute = linkRoute.replace('USER_CSS_ID', `${props.currentUser.css_id}`);
 
           return <li key={name} aria-labelledby={name}>
-            <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
+            <a href={linkRoute} id={name} role="link" aria-label={readableName}>{readableName}</a>
           </li>;
         })}
       </ul>
@@ -211,9 +229,9 @@ export default function TestUsers(props) {
                 Not all applications are available to every user. Additionally,
                 some users have access to different parts of the same application.
                   <br />This button reseeds the database with default values.</p>
-                {reseedingError &&
+                {(reseedingError || optionalSeedingError) &&
                   <Alert
-                    message={reseedingError.toString()}
+                    message={reseedingError ? reseedingError.toString() : optionalSeedingError.toString()}
                     type="error"
                   />
                 }
@@ -222,6 +240,12 @@ export default function TestUsers(props) {
                   name="Reseed the DB"
                   loading={isReseeding}
                   loadingText="Reseeding the DB" />
+                <br />
+                <Button
+                  onClick={optionalSeed}
+                  name="Run optional seeds"
+                  loading={isOptionalSeeding}
+                  loadingText="Running optional seed" />
                 <br /> <br />
                 <h3>Global Feature Toggles Enabled:</h3>
                 <SearchableDropdown

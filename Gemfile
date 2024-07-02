@@ -10,14 +10,14 @@ gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
+gem "aws-sdk"
 # BGS
-
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5f47e7b2656ef347d314ef43c93d38a9f20816ec"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "716b58caf2116da5fca21c3b3aeea6c9712f3b9d"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -66,6 +66,8 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rswag-api"
+gem "rswag-ui"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -75,8 +77,6 @@ gem "statsd-instrument"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-# execjs runtime
-gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
 gem "tzinfo", "1.2.10"
@@ -100,13 +100,12 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record", "2.0.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
   # Linters
-  gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -117,6 +116,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
+  gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"

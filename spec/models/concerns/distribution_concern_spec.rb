@@ -28,64 +28,86 @@ describe DistributionConcern do
     end
     let(:appeal_no_open_dist_task) { create(:appeal, :assigned_to_judge, associated_judge: judge) }
 
-    subject { @concern_test_class }
-
-    context "for appeals with an open distribution task" do
-      context "if can_redistribute_appeal? is true" do
-        let!(:appeals) { [appeal_open_dist_task, appeal_open_dist_and_non_blocking_task] }
-
-        it "a JudgeAssignTask is created" do
-          result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
-
-          expect(result[0].is_a?(JudgeAssignTask)).to be true
-          expect(result[1].is_a?(JudgeAssignTask)).to be true
-        end
-      end
-    end
+    subject { @concern_test_class.send :assign_judge_tasks_for_appeals, appeals, judge }
 
     context "for appeals with no open distribution task" do
-      context "if can_redistribute_appeal? is true" do
-        let!(:appeals) { [appeal_no_open_dist_task] }
+      let!(:appeals) { [appeal_no_open_dist_task] }
 
-        it "appeals are skipped and return nil " do
-          result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
+      it "appeals are skipped and return nil " do
+        result = subject
 
-          expect(result.first).to be nil
+        expect(result.first).to be nil
+      end
+    end
+
+    context "for appeals with an open distribution task" do
+      let!(:mocked_slack_service) { instance_double(SlackService) }
+      before do
+        allow(SlackService).to receive(:new).and_return(mocked_slack_service)
+      end
+
+      context "when an appeal has another open task in allowable list" do
+        let!(:appeals) do
+          appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+
+          VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
+                                       status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
+
+          [appeal.reload]
+        end
+
+        it "a JudgeAssignTask is created and no slack notification is sent" do
+          expect(mocked_slack_service).not_to receive(:send_notification)
+
+          result = subject
+
+          expect(result[0].is_a?(JudgeAssignTask)).to be true
         end
       end
-    end
 
-    context "when an appeal has an assigned DistributionTask and open VeteranRecordRequest task" do
-      let!(:appeals) do
-        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+      context "when an appeal has another open task not in allowable list" do
+        let!(:appeals) do
+          appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
 
-        VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
-                                     status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
+          VeteranRecordRequest.create!(appeal: appeal, parent: appeal.root_task,
+                                       status: Constants.TASK_STATUSES.assigned, assigned_to: create(:field_vso))
+          QualityReviewTask.create!(appeal: appeal, parent: appeal.root_task,
+                                    status: Constants.TASK_STATUSES.assigned, assigned_to: QualityReview.singleton)
 
-        [appeal.reload]
+          [appeal.reload]
+        end
+
+        it "a JudgeAssignTask is created and slack notification is sent" do
+          expect(mocked_slack_service).to receive(:send_notification).exactly(1).times
+
+          result = subject
+
+          expect(result[0].is_a?(JudgeAssignTask)).to be true
+        end
       end
 
-      it "a JudgeAssignTask is created" do
-        result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
+      context "when an appeal has a closed RootTask" do
+        let(:appeal_cancelled_root_task) do
+          appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+          appeal.root_task.cancelled!
+          appeal
+        end
+        let(:appeal_completed_root_task) do
+          appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+          appeal.root_task.completed!
+          appeal
+        end
+        let(:appeal_distributable) { create(:appeal, :direct_review_docket, :ready_for_distribution) }
+        let!(:appeals) { [appeal_cancelled_root_task, appeal_completed_root_task, appeal_distributable] }
 
-        expect(result[0].is_a?(JudgeAssignTask)).to be true
-      end
-    end
+        it "does not distribute and sends a slack notification" do
+          expect(mocked_slack_service).to receive(:send_notification).exactly(2).times
 
-    context "when an appeal has an assigned DistributionTask and open QualityReviewTask task" do
-      let!(:appeals) do
-        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+          result = subject
 
-        QualityReviewTask.create!(appeal: appeal, parent: appeal.root_task,
-                                  status: Constants.TASK_STATUSES.assigned, assigned_to: QualityReview.singleton)
-
-        [appeal.reload]
-      end
-
-      it "a JudgeAssignTask is created" do
-        result = subject.send :assign_judge_tasks_for_appeals, appeals, judge
-
-        expect(result[0].is_a?(JudgeAssignTask)).to be true
+          expect(result.compact.count).to eq 1
+          expect(result.compact[0].is_a?(JudgeAssignTask)).to be true
+        end
       end
     end
   end
