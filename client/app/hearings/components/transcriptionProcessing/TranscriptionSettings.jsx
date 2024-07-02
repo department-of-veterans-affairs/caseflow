@@ -172,7 +172,7 @@ export default class TranscriptionSettings extends React.PureComponent {
         name={COPY.TRANSCRIPTION_SETTINGS_ADD}
         id="Add-contractor"
         classNames={['usa-button-primary']}
-        onClick={() => this.toggleAddEditModal()}
+        onClick={() => this.addContractor()}
       />
     </div>
   );
