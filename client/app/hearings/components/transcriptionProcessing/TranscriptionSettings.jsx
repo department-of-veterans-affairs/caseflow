@@ -22,7 +22,7 @@ const buttonStyle = css({
   paddingLeft: '2rem'
 });
 
-const headerContainerStyling = css({
+const headerContainerStyle = css({
   padding: '4rem 0 2.5rem',
   '& h2': {
     display: 'inline-block',
@@ -73,10 +73,22 @@ const alertStyle = css({
   }
 });
 
-const editTotalStyling = css({
+const editTotalStyle = css({
   position: 'relative',
-  left: '5px',
-  top: '-5px'
+  left: '10px',
+  top: '-4px',
+  '& button span:last-child': {
+    position: 'absolute',
+  }
+});
+
+const editContractorStyle = css({
+  position: 'relative',
+  left: '10px',
+  top: '-2px',
+  '& button span:last-child': {
+    position: 'absolute'
+  }
 });
 
 export default class TranscriptionSettings extends React.PureComponent {
@@ -177,12 +189,12 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   editContractorLink = (id) => (
-    <div>
+    <div {...editContractorStyle}>
       <Button linkStyling onClick={() => this.editContractor(id)}>
-        <span {...css({ marginRight: '1px', marginLeft: '5px' })}>
+        <span>
           Edit Information
         </span>
-        <span {...css({ position: 'absolute' })}>
+        <span>
           <PencilIcon size={25} />
         </span>
       </Button>
@@ -190,12 +202,12 @@ export default class TranscriptionSettings extends React.PureComponent {
   );
 
   editTotalHearingsLink = (id) => (
-    <div {...editTotalStyling}>
+    <div {...editTotalStyle}>
       <Button linkStyling onClick={() => this.editTotalHearings(id)}>
         <span>
           Edit Total
         </span>
-        <span {...css({ position: 'absolute' })}>
+        <span>
           <PencilIcon size={25} />
         </span>
       </Button>
@@ -305,7 +317,7 @@ export default class TranscriptionSettings extends React.PureComponent {
           <h1 className="cf-margin-bottom-0">
             {COPY.TRANSCRIPTION_SETTINGS_HEADER}
           </h1>
-          <div {...headerContainerStyling}>
+          <div {...headerContainerStyle}>
             <h2>
               {COPY.TRANSCRIPTION_SETTINGS_SUBHEADER}
             </h2>
