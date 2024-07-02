@@ -49,7 +49,7 @@ for commit in $rbCommits; do
 
   # run rubocop
   echo "running rubocop"; echo "";
-  bundle exec rubocop $commit
+  bundle exec rubocop -a $commit
 
   # run fasterer
   echo "running fasterer"; echo "";
