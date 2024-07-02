@@ -110,7 +110,7 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
 
   attribute :edited_by_css_id do |object|
     if object&.edited_description.present?
-      object&.end_product_establishment&.user&.station_id
+      object&.end_product_establishment&.user&.css_id
     end
   end
 
