@@ -104,15 +104,19 @@ class TranscriptionTransformer
   def format_transcript(transcript)
     compressed_transcript = []
     prev_id = "<PLACEHOLDER> This is not anyones name."
-    index = -1
+    prev_index = -1
     transcript.cues.each do |cue|
       identifier = cue.identifier&.strip&.scan(/[a-zA-Z]+/)&.join(" ") || ""
       name = (identifier == "") ? "Unknown" : identifier
-      original_text = cue.text
-      @error_count += original_text.scan("[...]").size
-      prev_id = name
-      compressed_transcript.push(identifier: name, text: original_text)
-      index += 1
+      if name.match?(/#{prev_id}/)
+        compressed_transcript[prev_index][:text] += " " + cue.text
+      else
+        original_text = cue.text
+        @error_count += original_text.scan("[...]").size
+        prev_id = name
+        compressed_transcript.push(identifier: name, text: original_text)
+        prev_index += 1
+      end
     end
 
     compressed_transcript
