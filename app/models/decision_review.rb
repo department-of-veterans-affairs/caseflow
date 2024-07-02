@@ -128,11 +128,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def issue_categories
-    active_nonrating_issue_categories = []
-    request_issues.each do |issue|
-      active_nonrating_issue_categories << issue.nonrating_issue_category if issue.active?
-    end
-    active_nonrating_issue_categories
+    request_issues.select(&:active?).map(&:nonrating_issue_category)
   end
 
   def external_id

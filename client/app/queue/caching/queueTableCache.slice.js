@@ -96,11 +96,6 @@ const queueTableCacheSlice = createSlice({
 
       const urlsWithRemovedTaskCount = createUrlCountObject(groupedKeys);
 
-      // TODO: Also need to verify that there isn't an unreachable page anymore.
-      // So need to do a calculation based on the total number of tasks to remove the last page.
-      // However, this could result in unreachable tasks that are cached which is not great.
-      // This could have already happened very infrequently in queue table though if tasks were updated and moved.
-      // You just have to hope that the last page wasn't already cached.
       Object.keys(state.cachedResponses).forEach((key) => {
         const cachedResponse = state.cachedResponses[key];
         const itemsPerPage = cachedResponse.tasks_per_page;
@@ -109,9 +104,6 @@ const queueTableCacheSlice = createSlice({
           state.cachedResponses[key].total_task_count -= urlsWithRemovedTaskCount[key];
           state.task_page_count = calculatePages(itemsPerPage, state.cachedResponses[key].total_task_count);
         }
-
-        // TODO: could remove the cachedResponse if it has a page key that is equal to the new page count
-
       });
 
     }
