@@ -8,7 +8,7 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
@@ -105,7 +105,10 @@ export const CorrespondenceReviewPackage = (props) => {
       correspondence_type_id: props.correspondence.correspondence_type_id
     });
     setReviewPackageDetails((prev) => {
-      return { ...prev, veteranName: `${props.correspondence.veteran_name.first_name} ${props.correspondence.veteran_name.last_name}` };
+      return {
+        ...prev,
+        veteranName: `${props.correspondence.veteran_name.first_name}
+      ${props.correspondence.veteran_name.last_name}` };
     }
     );
 
@@ -156,7 +159,8 @@ export const CorrespondenceReviewPackage = (props) => {
     const notesChanged = editableData.notes !== props.correspondence.notes;
     const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
     const selectValueChanged = editableData.default_select_value !== reviewDetails.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+    const selectDateChanged = editableData.va_date_of_receipt !==
+      moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };

@@ -1,7 +1,7 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useState, useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import TextField from '../../../components/TextField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TextareaField from '../../../components/TextareaField';
@@ -125,7 +125,6 @@ export const ReviewForm = (props) => {
     setReturnValue(returnValueToUpdate());
 
     props.setCreateRecordIsReadOnly('');
-    console.log(props)
     const correspondence = props;
     const payloadData = {
       data: {
@@ -355,7 +354,9 @@ ReviewForm.propTypes = {
   isInboundOpsSuperuser: PropTypes.bool,
   userIsInboundOpsSupervisor: PropTypes.bool,
   correspondence: PropTypes.object,
-  setCorrTypeSelected: PropTypes.bool
+  setCorrTypeSelected: PropTypes.bool,
+  correspondenceTypes: PropTypes.array,
+  reviewPackageData: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
