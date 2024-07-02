@@ -37,7 +37,9 @@ const metricArgs = (featureValue) => {
         file: '/document/1/pdf',
         documentType: 'test',
         prefetchDisabled: undefined,
-        overscan: undefined
+        overscan: undefined,
+        isPageVisible: true,
+        name: null
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -59,7 +61,7 @@ const storeMetricsError = {
     documentType: 'test',
   },
   info: {
-    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
+    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ()]*)$/),
     product: 'browser',
     type: 'error'
   },
@@ -178,6 +180,14 @@ describe('PdfFile', () => {
               metricArgs(true)[2]
             );
           });
+      });
+
+      it('calls storeMetrics in catch block', () => {
+        expect(storeMetrics).toBeCalledWith(
+          storeMetricsError.uuid,
+          storeMetricsError.data,
+          storeMetricsError.info,
+          storeMetricsError.eventId);
       });
 
       it('clears measureTimeStartMs after unmount', () => {
