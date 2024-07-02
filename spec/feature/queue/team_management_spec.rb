@@ -153,6 +153,7 @@ RSpec.feature "Team management page", :postgres do
       before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
       after { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
+      # rubocop:disable Layout/LineLength
       scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
@@ -180,7 +181,6 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
 
-      # rubocop:disable Layout/LineLength
       scenario "user can view and change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
