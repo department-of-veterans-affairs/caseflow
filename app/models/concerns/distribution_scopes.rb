@@ -19,7 +19,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     include_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
-      .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+      .or(include_aod_motions.where("people.date_of_birth <= ? OR appeals.aod_based_on_age = ?", 75.years.ago, true))
       .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
       .group("appeals.id")
   end

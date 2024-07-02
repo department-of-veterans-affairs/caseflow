@@ -154,6 +154,16 @@ describe Docket, :all_dbs do
           expect(subject).to include aod_motion_appeal
           expect(subject).to include cavc_appeal
         end
+
+        context "when aod appeal with claimants person does not contain DOB" do
+          before do
+            aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+          end
+
+          it "returns aod appeal in priority/ready appeals" do
+            expect(subject).to include aod_age_appeal
+          end
+        end
       end
 
       context "when looking for only nonpriority appeals" do
