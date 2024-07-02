@@ -15,16 +15,13 @@ import { validateDateNotInFuture } from '../../../intake/util/issues';
 import moment from 'moment';
 
 export const ReviewForm = (props) => {
-  const correspondenceTypes = props.veteranInformation.correspondence_types;
+  const correspondenceTypes = props.correspondenceTypes;
   // eslint-disable-next-line max-len
   const [correspondenceTypeID, setCorrespondenceTypeID] = useState(props.correspondence.correspondence_type_id);
   // eslint-disable-next-line max-len
-  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD'));
+  const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
   const [saveChanges, setSaveChanges] = useState(true);
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
-  );
 
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeID < 0) {
@@ -71,16 +68,6 @@ export const ReviewForm = (props) => {
       id: option.id,
     }));
 
-  const fullName = (vetaranName) => {
-    const {
-      first_name: firstName = '',
-      middle_initial: middleInitial = '',
-      last_name: lastName = '',
-    } = vetaranName;
-
-    return `${firstName} ${middleInitial} ${lastName}`;
-  };
-
   const handleSelectCorrespondenceType = (val) => {
     setSaveChanges(false);
     props.setIsReturnToQueue(true);
@@ -126,6 +113,7 @@ export const ReviewForm = (props) => {
   const handleSubmit = async () => {
     setSaveChanges(true);
     props.setCreateRecordIsReadOnly('');
+    console.log(props)
     const correspondence = props;
     const payloadData = {
       data: {
@@ -135,7 +123,7 @@ export const ReviewForm = (props) => {
           va_date_of_receipt: vaDORDate
         },
         veteran: {
-          file_number: props.editableData.veteran_file_number,
+          file_number: props.reviewPackageData.fileNumber,
         }
       },
     };
@@ -214,7 +202,7 @@ export const ReviewForm = (props) => {
         name="date"
         type="date"
         onChange={handleSelectVADOR}
-        value={vaDORDate}
+        value={props.reviewPackageData.vaDor}
         errorMessage={dateError}
         readOnly = {vaDORReadOnly() || props.isReadOnly}
       />;
@@ -253,7 +241,7 @@ export const ReviewForm = (props) => {
               <div className="veternal-name-styling-review-form ">
                 <TextField
                   label="Veteran name"
-                  value={fullName(props.reviewDetails.veteran_name)}
+                  value={props.reviewPackageData.veteranFullName}
                   readOnly
                   name="Veteran-name-display"
                   useAriaLabel
@@ -264,7 +252,7 @@ export const ReviewForm = (props) => {
               <TextField
                 name="correspondence-package-document-type"
                 label="Package document type"
-                value = {stateCorrespondence?.nod ? 'NOD' : 'Non-NOD'}
+                value = {props.correspondence?.nod ? 'NOD' : 'Non-NOD'}
                 readOnly
               />
             </div>
@@ -288,7 +276,7 @@ export const ReviewForm = (props) => {
               <SearchableDropdown
                 name="correspondence-dropdown"
                 label="Correspondence type"
-                options={generateOptions(props.reviewDetails.dropdown_values)}
+                options={generateOptions(props.reviewPackageData.correspondenceTypes)}
                 onChange={handleSelectCorrespondenceType}
                 readOnly={props.isReadOnly}
                 placeholder= {correspondenceTypeID < 0 ? 'Select...' :
@@ -338,7 +326,7 @@ ReviewForm.propTypes = {
     default_select_value: PropTypes.number,
   }),
   veteranInformation: PropTypes.shape({
-    correspondence_types: PropTypes.array,
+    correspondenceTypes: PropTypes.array,
   }),
   disableButton: PropTypes.bool,
   setIsReturnToQueue: PropTypes.bool,
@@ -349,7 +337,6 @@ ReviewForm.propTypes = {
   fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
-  correspondenceDocuments: PropTypes.array,
   handleReview: PropTypes.func,
   errorMessage: PropTypes.any,
   isReadOnly: PropTypes.bool,
@@ -361,7 +348,6 @@ ReviewForm.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
 });

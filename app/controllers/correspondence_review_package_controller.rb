@@ -3,24 +3,30 @@
 class CorrespondenceReviewPackageController < CorrespondenceController
   def review_package
     @inbound_ops_team_users = User.inbound_ops_team_users.select(:css_id).pluck(:css_id)
-  end
+    @correspondence_types = CorrespondenceType.all
+    @has_efolder_failed_task = correspondence_has_efolder_failed_task?
+    @correspondence = WorkQueue::CorrespondenceSerializer
+    .new(correspondence)
+    .serializable_hash[:data][:attributes]
+    .merge(general_information, display_intake_appeal: display_intake_appeal)
 
-  def show
-    corres_docs = correspondence.correspondence_documents
-    task_instructions = CorrespondenceTask.package_action_tasks.open
-      .find_by(appeal_id: correspondence.id)&.instructions || ""
-    response_json = {
-      correspondence: correspondence,
-      general_information: general_information,
-      user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
-      correspondence_documents: corres_docs.map do |doc|
-        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-      end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id),
-      taskInstructions: task_instructions,
-      display_intake_appeal: display_intake_appeal
-    }
-    render({ json: response_json }, status: :ok)
+    respond_to do |format|
+      format.html
+      format.json do
+        corres_docs = @correspondence[:correspondenceDocuments]
+        task_instructions = CorrespondenceTask.package_action_tasks.open
+          .find_by(appeal_id: @correspondence[:id])&.instructions || ""
+        response_json = {
+          correspondence: @correspondence,
+          general_information: general_information,
+          user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
+          corres_docs: corres_docs,
+          taskInstructions: task_instructions,
+          display_intake_appeal: display_intake_appeal
+        }
+        render({ json: response_json }, status: :ok)
+      end
+    end
   end
 
   def update
@@ -69,13 +75,17 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   private
 
+  def correspondence_has_efolder_failed_task?
+    correspondence.tasks.active.where(type: EfolderUploadFailedTask.name).exists?
+  end
+
   def correspondence_params
     params.require(:correspondence).permit(:correspondence, :notes, :correspondence_type_id, :va_date_of_receipt)
       .merge(params.require(:veteran).permit(:file_number))
   end
 
   def pdf_params
-    params.permit(params.permit(:pdf_id, :type, :id, :download))
+    params.permit(pdf: [:pdf_id, :type, :id, :download])
   end
 
   def display_intake_appeal

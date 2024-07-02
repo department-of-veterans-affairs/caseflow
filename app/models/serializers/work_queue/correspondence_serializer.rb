@@ -10,6 +10,11 @@ class WorkQueue::CorrespondenceSerializer
   attribute :notes
   attribute :va_date_of_receipt
   attribute :nod
+  attribute :correspondence_documents do |object|
+    object.correspondence_documents.map do |document|
+      WorkQueue::CorrespondenceDocumentSerializer.new(document).serializable_hash[:data][:attributes]
+    end
+  end
 
   attribute :correspondence_type do |object|
     object.correspondence_type&.name

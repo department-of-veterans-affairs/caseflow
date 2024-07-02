@@ -33,20 +33,17 @@ export const CorrespondenceReviewPackage = (props) => {
     default_select_value: null,
     va_date_of_receipt: '',
   });
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
-  );
+
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
-  const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
+  const [apiResponse, setApiResponse] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
-  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
   const [reviewPackageDetails, setReviewPackageDetails] = useState({
     veteranName: '',
@@ -57,117 +54,87 @@ export const CorrespondenceReviewPackage = (props) => {
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
-  const fetchData = async () => {
-    const correspondence = props;
-    // When a remove package task is active and pending review, the page is read-only
-    const isPageReadOnly = (tasks) => {
-      const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+  // When a remove package task is active and pending review, the page is read-only
+  const isPageReadOnly = (tasks) => {
+    const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
-      if (assignedRemoveTask) {
-        setReviewPackageDetails((prev) => {
-          return { ...prev, taskId: assignedRemoveTask.id };
-        }
-        );
+    if (assignedRemoveTask) {
+      setReviewPackageDetails((prev) => {
+        return { ...prev, taskId: assignedRemoveTask.id };
       }
+      );
+    }
 
-      // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined');
-    };
+    // Return true if a removePackageTask that is currently assigned is found, else false
+    return (typeof assignedRemoveTask !== 'undefined');
+  };
 
-    // When a reassign package task is active and pending review, the page is read-only
-    const hasAssignedReassignPackageTask = (tasks) => {
-      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+  // When a reassign package task is active and pending review, the page is read-only
+  const hasAssignedReassignPackageTask = (tasks) => {
+    const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
           task.type === 'ReassignPackageTask');
 
-      if (assignedReassignTask) {
-        setReviewPackageDetails({ taskId: assignedReassignTask.id });
-      }
-
-      // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (
-        (typeof assignedReassignTask !== 'undefined')
-      );
-    };
-
-    const hasEfolderUploadTask = (tasks) => {
-      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
-      task.type === 'EfolderUploadFailedTask');
-
-      if (existEfolderUploadTask) {
-        setIsEfolderUploadFailedTask(false);
-      }
-    };
-
-    try {
-      const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondence_uuid}`
-      );
-      // API Response Without VA DOR
-      const apiResWithVADOR = response.body.general_information;
-
-      // Appended API Response VA DOR to
-      // eslint-disable-next-line max-len
-      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
-
-      setApiResponse(apiResWithVADOR);
-      const data = apiResWithVADOR;
-
-      hasEfolderUploadTask(data.correspondence_tasks);
-
-      setDisplayIntakeAppeal(response.body.display_intake_appeal);
-
-      if (response.body.efolder_upload_failed_before.length > 0) {
-        setBannerInformation({
-          title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
-          message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
-          bannerType: 'error'
-        });
-      }
-
-      setReviewDetails({
-        veteran_name: data.veteran_name || {},
-        dropdown_values: data.correspondence_types || [],
-        correspondence_type_id: data.correspondence_type_id
-      });
-
-      setReviewPackageDetails((prev) => {
-        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
-      }
-      );
-
-      setEditableData({
-        notes: data.notes,
-        veteran_file_number: data.file_number,
-        default_select_value: data.correspondence_type_id,
-        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-      });
-
-      if (isPageReadOnly(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-      }
-
-      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-        setIsReassignPackage(true);
-      }
-    } catch (error) {
-      console.error(error);
+    if (assignedReassignTask) {
+      setReviewPackageDetails({ taskId: assignedReassignTask.id });
     }
+
+    // Return true if a reassignPackageTask that is currently assigned is found, else false
+    return (
+      (typeof assignedReassignTask !== 'undefined')
+    );
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const apiResWithVADOR = moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
+
+    setApiResponse(apiResWithVADOR);
+    setDisplayIntakeAppeal(props.correspondence.display_intake_appeal);
+
+    // Check for eFolder upload failure
+    if (props.hasEfolderFailedTask) {
+      setBannerInformation({
+        title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+        message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+        bannerType: 'error'
+      });
+    }
+
+    setReviewDetails({
+      veteran_name: props.correspondence.veteran_name || {},
+      dropdown_values: props.correspondence.correspondenceTypes || [],
+      correspondence_type_id: props.correspondence.correspondence_type_id
+    });
+    setReviewPackageDetails((prev) => {
+      return { ...prev, veteranName: `${props.correspondence.veteran_name.first_name} ${props.correspondence.veteran_name.last_name}` };
+    }
+    );
+
+    setEditableData({
+      notes: props.correspondence.notes,
+      veteran_file_number: props.correspondence.file_number,
+      default_select_value: props.correspondence.correspondence_type_id,
+      va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
+    });
+
+    if (isPageReadOnly(props.correspondence.correspondence_tasks)) {
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
+    }
+
+    if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
+      setIsReassignPackage(true);
+    }
+  }, [props.hasEfolderFailedTask]);
 
   const handleModalClose = () => {
     if (isReturnToQueue) {
@@ -186,10 +153,10 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== apiResponse.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
-    const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
+    const notesChanged = editableData.notes !== props.correspondence.notes;
+    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
+    const selectValueChanged = editableData.default_select_value !== reviewDetails.correspondence_type_id;
+    const selectDateChanged = editableData.va_date_of_receipt !== moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
 
     return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
   };
@@ -232,6 +199,16 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   }, [editableData, apiResponse]);
 
+  const reviewPackageData = {
+    notes: props.correspondence.notes,
+    veteranFullName: props.correspondence.veteranFullName,
+    fileNumber: props.correspondence.file_number,
+    packageDocumentType: props.correspondence.correspondenceDocuments.length &&
+     props.correspondence.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
+    vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
+    correspondenceTypes: props.correspondenceTypes
+  };
+
   return (
     <div>
       { bannerInformation && (
@@ -245,7 +222,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             reviewDetails={reviewPackageDetails}
-            efolder={isEfolderUploadFailedTask}
+            efolder={props.hasEfolderFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
@@ -265,6 +242,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
+              reviewPackageData,
               reviewDetails,
               setReviewDetails,
               editableData,
@@ -272,7 +250,6 @@ export const CorrespondenceReviewPackage = (props) => {
               disableButton,
               setDisableButton,
               setIsReturnToQueue,
-              fetchData,
               showModal,
               handleModalClose,
               handleReview,
@@ -287,7 +264,7 @@ export const CorrespondenceReviewPackage = (props) => {
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <CmpDocuments
-            documents={props.correspondenceDocuments}
+            documents={props.correspondence.correspondenceDocuments}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
             isReadOnly={isReadOnly}
@@ -303,12 +280,13 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (displayIntakeAppeal || stateCorrespondence.nod) && (
+            { (displayIntakeAppeal || props.correspondence.nod) && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
                 disabled={disableButton || isReadOnly}
+
               />
             )}
             <a href={intakeLink}>
@@ -330,7 +308,8 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
-  correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
+  correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTask: PropTypes.bool,
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
@@ -342,7 +321,6 @@ CorrespondenceReviewPackage.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
   createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
