@@ -36,7 +36,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: 11.months.ago,
+      created_at: 11.months.ago.at_noon,
       previous_value: 10,
       update_value: 42,
       case_distribution_lever: lever2
@@ -49,7 +49,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: 10.months.ago,
+      created_at: 10.months.ago.at_noon,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
@@ -62,7 +62,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     create(
       :case_distribution_audit_lever_entry,
       user: lever_user,
-      created_at: 13.months.ago,
+      created_at: 13.months.ago.at_noon,
       previous_value: 42,
       update_value: 55,
       case_distribution_lever: lever2
