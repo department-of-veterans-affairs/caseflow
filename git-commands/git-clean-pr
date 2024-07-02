@@ -21,6 +21,7 @@ else
   jsxCommits=$(git diff --name-only | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
   rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
+  scssCommits=$(git diff --name-only | grep -E '.scss$')
 fi
 
 # cycle through ruby suite of tests
@@ -37,7 +38,8 @@ for commit in $rbCommits; do
 
   # check that there is a path
   if [ ! -z "$testFile" ]; then
-    echo "running spec test for $testFile path"
+    echo "running spec test for $testFile path"; echo "";
+
     # run spec if there is a corresponding spec test for the file
     bundle exec rspec $testFile --format progress
   else
@@ -45,18 +47,43 @@ for commit in $rbCommits; do
   fi
 
   # run rubocop
+  echo "running rubocop"; echo "";
   bundle exec rubocop $commit
+
+  # run fasterer
+  echo "running fasterer"; echo "";
+  bundle exec fasterer $commit
 
   # return to current path
   cd $CURRENT_DIR
+  echo "Relevant spec, rubocop, and fasterer tests have been run"; echo "";
 done
+
+# run scss commits if file committed
+if [[ ! -z "$scssCommits" ]]; then
+  echo "running scss-lint --color"; echo ""
+  scss-lint --color
+fi
 
 # if there is a jsx or js file, use jest -o to run tests that cover file
 if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
-  echo "running jest tests for $jsxCommits $jsCommits"
+  echo "running jest tests for $jsxCommits $jsCommits"; echo "";
   # use SCRIPT_DIR to get to appeals/client/test
   cd "$SCRIPT_DIR"
   cd ../client && yarn jest -o
+
+  # run lint:fix
+  echo "running yarn lint"; echo "";
+  yarn run lint:fix
+
+  # run prettier
+  echo "running yarn pretty:format"; echo "";
+  yarn run pretty:format
+
+  # return to current path
+  cd $CURRENT_DIR
+
+  echo "Relevant jest, lint, and prettier tests have been run"; echo "";
 fi
 
-echo "Tests relevant to current code changes have been run"
+echo "All tests relevant to current code changes have been run"
