@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationController
+  # Checks if API is disabled
+  before_action do
+    if FeatureToggle.enabled?(:disable_ama_eventing)
+      render json: {
+        errors: [
+          {
+            status: "501",
+            title: "API is disabled",
+            detail: "This endpoint is not supported."
+          }
+        ]
+      },
+             status: :not_implemented
+    end
+  end
+
   # rubocop:disable Layout/LineLength
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
