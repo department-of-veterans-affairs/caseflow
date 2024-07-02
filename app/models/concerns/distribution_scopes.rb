@@ -53,7 +53,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
           OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
         CaseDistributionLever.cavc_affinity_days.days.ago,
-        JudgeTeam.judges_with_exclude_appeals_from_affinity
+        JudgeTeam.judge_ids_with_exclude_appeals_from_affinity
       )
   end
 
@@ -133,7 +133,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def tied_to_judges_with_exclude_appeals_from_affinity
     with_appeal_affinities
-      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judge_ids_with_exclude_appeals_from_affinity })
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.

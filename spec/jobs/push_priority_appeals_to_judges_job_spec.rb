@@ -519,6 +519,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
+      excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
 
       [
         "*Number of cases tied to judges distributed*: 10",
@@ -536,6 +537,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
         "",
         "*Debugging information*",
+        "*Excluded Judges: #{excluded_judges}",
         "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       ].each_with_index do | line, index |
         expect(subject[index]).to eq line
@@ -550,6 +552,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       direct_review_days_waiting = (today - ready_priority_direct_case.receipt_date).to_i
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.receipt_date).to_i
       hearing_days_waiting = (today - ready_priority_hearing_case.receipt_date).to_i
+      excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
 
       [
         "*Number of cases distributed*: 10",
@@ -566,6 +569,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
         "",
         "*Debugging information*",
+        "*Excluded Judges: #{excluded_judges}",
         "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       ].each_with_index do | line, index |
         expect(subject[index]).to eq line
