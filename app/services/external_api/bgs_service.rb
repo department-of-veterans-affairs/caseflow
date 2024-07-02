@@ -46,6 +46,7 @@ class ExternalApi::BGSService
     end
   end
 
+  # :reek:FeatureEnvy
   def sensitivity_level_for_veteran(veteran)
     fail "Invalid veteran" if !veteran.instance_of?(Veteran)
 

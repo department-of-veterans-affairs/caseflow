@@ -28,6 +28,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents, as: :appeal
   has_many :correspondence_appeals
   has_many :correspondences, through: :correspondence_appeals
+  has_many :notifications, as: :notifiable
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -35,6 +36,8 @@ class Appeal < DecisionReview
   has_many :nod_date_updates
   has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
+
+  has_one :appeal_affinity, as: :case, primary_key: "uuid"
 
   # Each appeal has one appeal_state that is used for tracking quarterly notifications
   has_one :appeal_state, as: :appeal
@@ -508,7 +511,6 @@ class Appeal < DecisionReview
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
     # define hash to store parent/child relationship values
     task_parent_to_child_hash = {}
-
     while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
       # cycle each task in the parent
       parent_ordered_tasks.each do |task|
@@ -698,6 +700,10 @@ class Appeal < DecisionReview
   # matches Legacy behavior
   def cavc
     court_remand?
+  end
+
+  def predocketed?
+    tasks.select { |task| task.class.name == "PreDocketTask" && task.open? }
   end
 
   def vha_predocket_needed?
@@ -957,6 +963,10 @@ class Appeal < DecisionReview
 
   def is_legacy?
     false
+  end
+
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
   end
 
   private

@@ -651,6 +651,7 @@ class QueueApp extends React.PureComponent {
         inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
+        configUrl={this.props.configUrl}
         {...props.match.params} />
     </ReviewPackageLoadingScreen>
   );
@@ -716,8 +717,10 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedCorrespondenceCases = () => (
-    <CorrespondenceCases {...this.props} />
+  routedCorrespondenceCases = (props) => (
+    <CorrespondenceCases {...props.match.params}
+      {...this.props}
+    />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
@@ -1576,7 +1579,8 @@ QueueApp.propTypes = {
   autoTexts: PropTypes.array,
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
-  userPermissions: PropTypes.array
+  userPermissions: PropTypes.array,
+  configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

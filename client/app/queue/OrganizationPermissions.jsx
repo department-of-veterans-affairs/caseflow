@@ -89,6 +89,8 @@ const OrganizationPermissions = (props) => {
     return result;
   };
 
+  // Correspondence: Refactor Candidate
+  // CodeClimate: Avoid too many return statements within this function.
   const getCheckboxEnabled = (user, orgUserData, permission) => {
 
     // uses the local state over what comes in over props
@@ -122,7 +124,6 @@ const OrganizationPermissions = (props) => {
     }
 
     return false;
-
   };
 
   const permissionAdminCheck = (user, permission) => {

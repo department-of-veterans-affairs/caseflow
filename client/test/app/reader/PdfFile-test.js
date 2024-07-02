@@ -33,7 +33,9 @@ const metricArgs = (featureValue) => {
         file: '/document/1/pdf',
         documentType: 'test',
         prefetchDisabled: undefined,
-        overscan: undefined
+        overscan: undefined,
+        isPageVisible: true,
+        name: null
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -55,7 +57,7 @@ const storeMetricsError = {
     documentType: 'test',
   },
   info: {
-    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
+    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ()]*)$/),
     product: 'browser',
     type: 'error'
   },
@@ -79,7 +81,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
+            isVisible
             scale="test"
             documentType="test"
             featureToggles={{
@@ -120,7 +122,7 @@ describe('PdfFile', () => {
             key={`${documents[0].content_url}`}
             file={documents[0].content_url}
             onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
+            isVisible
             scale="test"
             documentType="test"
             featureToggles={{
@@ -169,7 +171,8 @@ describe('PdfFile', () => {
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+        expect(storeMetrics).toBeCalledWith(
+          storeMetricsError.uuid,
           storeMetricsError.data,
           storeMetricsError.info,
           storeMetricsError.eventId);
