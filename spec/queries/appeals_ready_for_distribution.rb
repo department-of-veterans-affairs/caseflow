@@ -7,14 +7,20 @@ describe AppealsReadyForDistribution do
   context "#process and #ready_appeals" do
     let!(:not_ready_ama_original_appeal) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
     let!(:ama_original_direct_review_appeal) { create(:appeal, :direct_review_docket, :ready_for_distribution) }
-    let!(:ama_original_evidence_submission_appeal) { create(:appeal, :evidence_submission_docket, :ready_for_distribution) }
+    let!(:ama_original_evidence_submission_appeal) do
+      create(:appeal, :evidence_submission_docket, :ready_for_distribution)
+    end
     let!(:ama_original_hearing_appeal) do
       create(:appeal, :hearing_docket, :held_hearing_and_ready_to_distribute, tied_judge: hearing_judge)
     end
     let!(:ama_cavc_direct_review_appeal) { create_realistic_cavc_case(Constants.AMA_DOCKETS.direct_review) }
-    let!(:ama_cavc_evidence_submission_appeal) { create_realistic_cavc_case(Constants.AMA_DOCKETS.evidence_submission) }
+    let!(:ama_cavc_evidence_submission_appeal) do
+      create_realistic_cavc_case(Constants.AMA_DOCKETS.evidence_submission)
+    end
     let!(:ama_cavc_hearing_appeal) { create_realistic_cavc_case(Constants.AMA_DOCKETS.hearing) }
-    let!(:not_ready_legacy_original_appeal) { create(:case_with_form_9, :type_original, :travel_board_hearing_requested) }
+    let!(:not_ready_legacy_original_appeal) do
+      create(:case_with_form_9, :type_original, :travel_board_hearing_requested)
+    end
     let!(:legacy_original_appeal_no_hearing) { create(:case, :type_original, :ready_for_distribution) }
     let!(:legacy_original_appeal_with_hearing) do
       create(:case, :type_original, :ready_for_distribution, case_hearings: [legacy_original_appeal_case_hearing])
@@ -46,6 +52,8 @@ describe AppealsReadyForDistribution do
     subject { described_class.legacy_rows(query_result, :legacy).first }
 
     it "correctly uses attributes to create a hash for the row" do
+      corres = legacy_appeal_with_attributes.reload.correspondent
+
       expect(subject[:docket_number]).to eq legacy_appeal_with_attributes.folder.tinum
       expect(subject[:docket]).to eq "legacy"
       expect(subject[:aod]).to be true
@@ -55,7 +63,7 @@ describe AppealsReadyForDistribution do
       expect(subject[:hearing_judge]).to eq hearing_judge.full_name
       expect(subject[:original_judge]).to be nil
       expect(subject[:veteran_file_number]).to eq legacy_appeal_with_attributes.bfcorlid
-      expect(subject[:veteran_name]).to eq "#{legacy_appeal_with_attributes.correspondent.snamef} #{legacy_appeal_with_attributes.correspondent.snamel}"
+      expect(subject[:veteran_name]).to eq "#{corres.snamef} #{corres.snamel}"
       expect(subject[:affinity_start_date]).to eq legacy_appeal_with_attributes.appeal_affinity.affinity_start_date
     end
   end
@@ -68,7 +76,8 @@ describe AppealsReadyForDistribution do
         :advanced_on_docket_due_to_motion,
         :held_hearing_and_ready_to_distribute,
         :with_appeal_affinity,
-        tied_judge: hearing_judge)
+        tied_judge: hearing_judge
+      )
     end
     let(:query_result) { HearingRequestDocket.new.ready_to_distribute_appeals }
 

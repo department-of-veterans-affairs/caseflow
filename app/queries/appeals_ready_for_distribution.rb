@@ -77,16 +77,13 @@ class AppealsReadyForDistribution
   def self.ama_rows(appeals, docket)
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
-      ready_for_distribution_at = appeal.tasks
-        .filter { |task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
-        .first&.assigned_at
+      ready_for_distribution_at =
+        DistributionTask.assigned.where(appeal_id: appeal.id, appeal_type: Appeal.name).first&.assigned_at
 
       # only look for hearings that were held
       hearing_judge = appeal.hearings
         .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
         .first&.judge&.full_name
-
-      original_judge = appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil
 
       {
         docket_number: appeal.docket_number,
@@ -96,7 +93,7 @@ class AppealsReadyForDistribution
         receipt_date: appeal.receipt_date,
         ready_for_distribution_at: ready_for_distribution_at,
         hearing_judge: hearing_judge,
-        original_judge: original_judge,
+        original_judge: appeal.cavc? ? ama_cavc_original_deciding_judge(appeal) : nil,
         veteran_file_number: appeal.veteran_file_number,
         veteran_name: appeal.veteran&.name.to_s,
         affinity_start_date: appeal.appeal_affinity&.affinity_start_date
