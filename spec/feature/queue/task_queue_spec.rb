@@ -341,10 +341,14 @@ feature "Task queue", :all_dbs do
       expect(mail_task.class).to eq(task_class)
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
-      sleep 1
+
+      User.unauthenticate!
+      User.authenticate!(user: pulac_user)
+      visit "/queue"
+      expect(page).to have_content("Assigned (1)")
+      expect(page).to have_content(appeal.veteran_file_number)
 
       child_task = mail_task.children[0]
-
       pulac_cerullo_task = child_task.children[0]
       pulac_cerullo_user_task = pulac_cerullo_task.children[0]
       expect(child_task.class).to eq(task_class)
@@ -352,12 +356,6 @@ feature "Task queue", :all_dbs do
       expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
       expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
       expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
-
-      User.unauthenticate!
-      User.authenticate!(user: pulac_user)
-      visit "/queue"
-      expect(page).to have_content("Assigned (1)")
-      expect(page).to have_content(appeal.veteran_file_number)
     end
     # rubocop:enable Metrics/AbcSize
 
