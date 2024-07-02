@@ -21,7 +21,7 @@ export const ReviewForm = (props) => {
   // eslint-disable-next-line max-len
   const [vaDORDate, setVADORDate] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [dateError, setDateError] = useState(false);
-  const [saveChanges, setSaveChanges] = useState(true);
+  const [returnValue, setReturnValue] = useState(false);
 
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeID < 0) {
@@ -32,11 +32,16 @@ export const ReviewForm = (props) => {
   };
 
   const saveButtonDisabled = () => {
-    return props.isReadOnly || dateError || saveChanges;
+    return returnValue;
+  };
+
+  const returnValueToUpdate = () => {
+    return Boolean(dateError);
   };
 
   const handleFileNumber = (value) => {
-    setSaveChanges(false);
+    setReturnValue(returnValueToUpdate());
+
     props.setIsReturnToQueue(true);
     const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
@@ -51,7 +56,8 @@ export const ReviewForm = (props) => {
   };
 
   const handleChangeNotes = (value) => {
-    setSaveChanges(false);
+    setReturnValue(returnValueToUpdate());
+
     props.setIsReturnToQueue(true);
     const updatedNotes = {
       ...props.editableData,
@@ -69,7 +75,7 @@ export const ReviewForm = (props) => {
     }));
 
   const handleSelectCorrespondenceType = (val) => {
-    setSaveChanges(false);
+    setReturnValue(returnValueToUpdate());
     props.setIsReturnToQueue(true);
     setCorrespondenceTypeID(val.id);
     const updatedSelectedValue = {
@@ -100,7 +106,12 @@ export const ReviewForm = (props) => {
   };
 
   const handleSelectVADOR = (val) => {
-    setDateError(errorOnVADORDate(val));
+    const errorOutput = errorOnVADORDate(val);
+    const returnVal = errorOutput !== null;
+
+    setDateError(errorOutput);
+    setReturnValue(returnVal);
+
     setVADORDate(val);
     const updatedSelectedDate = {
       ...props.editableData,
@@ -111,7 +122,8 @@ export const ReviewForm = (props) => {
   };
 
   const handleSubmit = async () => {
-    setSaveChanges(true);
+    setReturnValue(returnValueToUpdate());
+
     props.setCreateRecordIsReadOnly('');
     console.log(props)
     const correspondence = props;
@@ -155,7 +167,7 @@ export const ReviewForm = (props) => {
     if (props.errorMessage) {
       return;
     }
-    setSaveChanges(true);
+    setReturnValue(true);
   }, []);
 
   // disable the create record button if the save button is active
