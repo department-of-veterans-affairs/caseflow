@@ -127,6 +127,9 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "Saving the VA DOR and Package document type values in modal" do
       fill_in "VA DOR", with: 6.days.ago.strftime("%m/%d/%Y")
+      fill_in "Correspondence type", with: "a correspondence type."
+      options = find_all("div", class: "cf-select__option", text: "a correspondence type.")
+      options[1].click
       expect(page).to have_button("Save changes", disabled: false)
       click_button "Save changes"
       expect(page).to have_content("NOD")
