@@ -11,6 +11,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY';
 import Alert from 'app/components/Alert';
+import Checkbox from 'app/components/Checkbox';
 
 export default function TestCorrespondence(props) {
   const [correspondenceCount, setCorrespondenceCount] = useState(null);
@@ -21,6 +22,7 @@ export default function TestCorrespondence(props) {
   const [validFileNumbers, setValidFileNumbers] = useState('');
   const [correspondenceSize, setCorrespondenceSize] = useState(0);
   const [disabled, setDisabled] = useState(true);
+  const [autoAssign, setAutoAssign] = useState(true);
 
   const handleVeteranFileNumbers = (inputValue) => {
     // Allow only digits and commas
@@ -144,6 +146,15 @@ export default function TestCorrespondence(props) {
               min={1}
               max={40}
             />
+            <div className="auto-assign-container">
+              <h3>{COPY.CORRESPONDENCE_ADMIN.AUTO_ASSIGN_HEADER}</h3>
+              <Checkbox
+                name="autoAssign"
+                label={COPY.CORRESPONDENCE_ADMIN.AUTO_ASSIGN_LABEL}
+                onChange={(val) => setAutoAssign(val)}
+                value={autoAssign}
+              />
+            </div>
             <Button
               name="Generate correspondence"
               onClick={handleSubmit}
