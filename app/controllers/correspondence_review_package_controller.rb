@@ -65,7 +65,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
 
     # The line below enables document caching for a month.
-    puts "document.serve: #{document.inspect}"
     expires_in 30.days, public: true
     send_file(
       document.serve,
