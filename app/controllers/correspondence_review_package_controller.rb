@@ -109,12 +109,8 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_veteran_on_correspondence
-    veteran = Veteran.find_or_initialize_by(file_number: correspondence_params[:file_number])
-    veteran.update!(file_number: correspondence_params[:file_number],
-                    first_name: correspondence_params[:first_name],
-                    last_name: correspondence_params[:last_name]) # Update file number
-
-    if veteran.persisted? || veteran.save
+    veteran = Veteran.find_by(file_number: correspondence_params[:file_number])
+    if veteran
       correspondence.update!(
         veteran_id: veteran.id,
         notes: correspondence_params[:notes],

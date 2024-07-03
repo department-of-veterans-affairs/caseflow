@@ -134,9 +134,7 @@ export const ReviewForm = (props) => {
           va_date_of_receipt: vaDORDate
         },
         veteran: {
-          file_number: props.editableData.veteran_file_number,
-          first_name: props.correspondence.veteran_name.first_name,
-          last_name: props.correspondence.veteran_name.last_name
+          file_number: props.editableData.veteran_file_number
         }
       },
     };
