@@ -84,7 +84,6 @@ module Seeds
       end
     end
 
-<<<<<<< HEAD
     def create_hearing_docket_cavc_cases
       judges_with_attorneys.each do |judge|
         # Case in affinity window for both levers where new hearing and previous deciding judge are the same
@@ -109,8 +108,6 @@ module Seeds
       end
     end
 
-=======
->>>>>>> feature/APPEALS-36234
     def judges_with_attorneys
       # use judges with attorneys to minimize how many cases are distributed when testing because the
       # alternative_batch_size is higher than the batch_size for most judge teams
@@ -118,14 +115,11 @@ module Seeds
         JudgeTeam.all.reject { |jt| jt.attorneys.empty? }.map(&:judge).compact.filter(&:vacols_attorney_id)
     end
 
-<<<<<<< HEAD
     def hearing_judge
       @hearing_judge ||= User.find_by_css_id("HRNG_JUDGE") ||
         create(:user, :judge, :with_vacols_judge_record, css_id: "HRNG_JUDGE", full_name: "Judge HeldHearing")
     end
 
-=======
->>>>>>> feature/APPEALS-36234
     # rubocop:disable Metrics/AbcSize
     def create_case_ready_for_less_than_cavc_affinty_days(judge)
       attorney = JudgeTeam.for_judge(judge).attorneys&.filter(&:attorney_in_vacols?)&.first ||
@@ -379,7 +373,6 @@ module Seeds
       evidence_submission_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
       hearing_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
     end
-<<<<<<< HEAD
 
     def create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge:, hearing_judge:, days_ago:)
       # Go back to when we want the original appeal to have been decided
@@ -418,8 +411,6 @@ module Seeds
       # Return the remand appeal to let us track which appeals were created when run from a rails console
       remand
     end
-=======
->>>>>>> feature/APPEALS-36234
     # rubocop:enable Metrics/AbcSize
   end
 end
