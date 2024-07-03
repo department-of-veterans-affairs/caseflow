@@ -44,7 +44,6 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
 
   private
 
-  # :reek:DuplicatedCode
   def fetch_recordings_list(id)
     max = 100
     meeting_id = id
