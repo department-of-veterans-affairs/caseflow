@@ -51,7 +51,7 @@ class CorrespondenceController < ApplicationController
   private
 
   def corr_controller_params
-    params.permit[:batch_auto_assignment_attempt_id]
+    params.permit(:batch_auto_assignment_attempt_id)
   end
 
   def verify_correspondence_access
