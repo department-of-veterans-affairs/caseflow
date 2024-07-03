@@ -156,12 +156,22 @@ describe Docket, :all_dbs do
         end
 
         context "when aod appeal with claimants person does not contain DOB" do
+          let!(:other_aod_age_appeal) do
+            create(:appeal,
+                   :advanced_on_docket_due_to_age,
+                   :with_post_intake_tasks,
+                   docket_type: Constants.AMA_DOCKETS.direct_review,
+                   aod_based_on_age: false)
+          end
+
           before do
             aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+            other_aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
           end
 
           it "returns aod appeal in priority/ready appeals" do
             expect(subject).to include aod_age_appeal
+            expect(subject).to_not include inapplicable_aod_motion_appeal
           end
         end
       end
@@ -175,6 +185,26 @@ describe Docket, :all_dbs do
           expect(subject).to_not include aod_age_appeal
           expect(subject).to_not include aod_motion_appeal
           expect(subject).to_not include cavc_appeal
+        end
+
+        context "when aod appeal with claimants person does not contain DOB" do
+          let!(:other_aod_age_appeal) do
+            create(:appeal,
+                   :advanced_on_docket_due_to_age,
+                   :with_post_intake_tasks,
+                   docket_type: Constants.AMA_DOCKETS.direct_review,
+                   aod_based_on_age: false)
+          end
+
+          before do
+            aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+            other_aod_age_appeal.claimants.first.person.update!(date_of_birth: nil)
+          end
+
+          it "returns aod nonpriority appeals" do
+            expect(subject).not_to include aod_age_appeal
+            expect(subject).to include inapplicable_aod_motion_appeal
+          end
         end
       end
 

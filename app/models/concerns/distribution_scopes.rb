@@ -26,7 +26,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def nonpriority
     include_aod_motions
-      .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
+      .where("people.date_of_birth > ? or (appeals.aod_based_on_age in (?) AND people.date_of_birth is null)",
+             75.years.ago, [false, nil])
       .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
       .group("appeals.id")
       .having("count(case when advance_on_docket_motions.granted "\
