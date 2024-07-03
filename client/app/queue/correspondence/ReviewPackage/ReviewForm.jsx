@@ -239,7 +239,7 @@ export const ReviewForm = (props) => {
           name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
-          disabled={saveButtonDisabled()}
+          disabled={!props.disableButton}
           onClick={handleSubmit}
         />
       </div>
