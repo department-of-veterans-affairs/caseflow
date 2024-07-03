@@ -150,7 +150,6 @@ export const ReviewForm = (props) => {
       props.setDisableButton((current) => !current);
       props.setIsReturnToQueue(false);
       if (body.status === 'ok') {
-        props.fetchData();
         props.setErrorMessage('');
       }
     } catch (error) {
@@ -345,7 +344,6 @@ ReviewForm.propTypes = {
   setCreateRecordIsReadOnly: PropTypes.func,
   setDisableButton: PropTypes.func,
   setErrorMessage: PropTypes.func,
-  fetchData: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,

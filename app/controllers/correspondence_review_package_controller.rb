@@ -15,8 +15,13 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       return render(json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity)
     end
 
-    update_open_review_package_tasks ? render(json: { status: :ok }) : render(json: { status: 500 })
+    if update_open_review_package_tasks
+      render json: { status: :ok }
+    else
+      render json: { error: "Failed to update tasks" }, status: :internal_server_error
+    end
   end
+
 
   def update_cmp
     correspondence.update(
@@ -104,19 +109,36 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_veteran_on_correspondence
-    veteran = Veteran.find_by(file_number: correspondence_params["file_number"])
-    veteran && correspondence.update!(
-      veteran_id: veteran.id,
-      notes: correspondence_params[:notes],
-      correspondence_type_id: correspondence_params[:correspondence_type_id]
-    )
-  end
-
-  def update_open_review_package_tasks
-    correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
-      task.update(status: Constants.TASK_STATUSES.in_progress)
+    veteran = Veteran.find_by(file_number: correspondence_params[:file_number])
+    if veteran
+      correspondence.update!(
+        veteran_id: veteran.id,
+        notes: correspondence_params[:notes],
+        correspondence_type_id: correspondence_params[:correspondence_type_id],
+        va_date_of_receipt: correspondence_params[:va_date_of_receipt]
+      )
+      true
+    else
+      false
     end
   end
+
+def update_open_review_package_tasks
+  begin
+    ActiveRecord::Base.transaction do
+      correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
+        task.update!(status: Constants.TASK_STATUSES.in_progress)
+      end
+    end
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.error "Failed to update task due to validation error: #{e.message}"
+    false
+  rescue => e
+    Rails.logger.error "Failed to update tasks due to an unexpected error: #{e.message}"
+    false
+  end
+end
 
   # :reek:FeatureEnvy
   def vbms_document_types
