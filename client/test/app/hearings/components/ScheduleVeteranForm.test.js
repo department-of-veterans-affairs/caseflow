@@ -4,7 +4,8 @@ import { mount } from 'enzyme';
 import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
+import { amaAppeal } from 'test/data';
+import { defaultHearing, virtualHearing } from 'test/data/hearings';
 import { generateAmaTask } from 'test/data/tasks';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
@@ -220,6 +221,7 @@ describe('ScheduleVeteranForm', () => {
   test('Displays ReadOnlyHearingTimeWithZone when video is selected and halfDay is true', () => {
     const hearing = {
       ...defaultHearing,
+      requestType: 'Video',
       regionalOffice: defaultHearing.regionalOfficeKey,
       hearingDay: {
         hearingId: 1,
