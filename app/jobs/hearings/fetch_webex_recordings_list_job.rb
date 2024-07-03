@@ -5,6 +5,7 @@
 class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include Hearings::SendTranscriptionIssuesEmail
+  include WebexConcern
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -48,14 +49,6 @@ class Hearings::FetchWebexRecordingsListJob < CaseflowJob
     max = 100
     meeting_id = id
     query = { "max": max, "meetingId": meeting_id }
-    WebexService.new(
-      host: ENV["WEBEX_HOST_MAIN"],
-      port: ENV["WEBEX_PORT"],
-      aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: WebexService.access_token,
-      domain: ENV["WEBEX_DOMAIN_MAIN"],
-      api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: query
-    ).fetch_recordings_list
+    WebexService.new(recordings_config(query)).fetch_recordings_list
   end
 end

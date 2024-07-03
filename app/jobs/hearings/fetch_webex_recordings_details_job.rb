@@ -6,6 +6,7 @@
 class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include Hearings::SendTranscriptionIssuesEmail
+  include WebexConcern
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -59,15 +60,7 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   def fetch_recording_details(id, email)
     query = { "hostEmail": email }
-    WebexService.new(
-      host: ENV["WEBEX_HOST_MAIN"],
-      port: ENV["WEBEX_PORT"],
-      aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: WebexService.access_token,
-      domain: ENV["WEBEX_DOMAIN_MAIN"],
-      api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: query
-    ).fetch_recording_details(id)
+    WebexService.new(recordings_config(query)).fetch_recording_details(id)
   end
 
   def create_file_name(topic, extension, meeting_title)
