@@ -1513,8 +1513,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT)
         click_intake_confirm
 
+        expect(page).to have_content("Edit Completed", wait: 10)
         expect(current_path).to eq("/decision_reviews/education")
-        expect(page).to have_content("Edit Completed")
       end
     end
 
