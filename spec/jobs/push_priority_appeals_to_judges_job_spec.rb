@@ -21,7 +21,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_genpop_priority_appeals).and_return([])
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:send_job_report).and_return([])
+        .to receive(:slack_report).and_return([])
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
