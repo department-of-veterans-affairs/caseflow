@@ -290,7 +290,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
       # to the next page. I think it's related to how we're using continue to load the next
       # section of the remand reason screen.
-      sleep 1
+      # sleep 1
 
       click_on "Continue"
 
@@ -429,7 +429,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           click_dropdown(index: 0)
           click_label "private_attorney_or_agent"
           click_on "Continue"
-          expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+          # expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+          expect(page.has_no_content?(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)).to eq(true)
         end
       end
 
@@ -481,7 +482,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # Otherwise, it's not always able to click on the right checkboxes. If
         # someone knows a better way to wait for the page to stop moving, please
         # change this.
-        sleep 1
+        # sleep 1
 
         all("label", text: "Current findings", count: 2)[1].click
         all("label", text: "Nexus opinion", count: 2)[1].click
