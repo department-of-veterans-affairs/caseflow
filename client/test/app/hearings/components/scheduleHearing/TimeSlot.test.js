@@ -196,7 +196,7 @@ describe('TimeSlot', () => {
           const timeString = `${moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
             format('h:mm A')} ${tzName}`;
 
-          // Expect that we called onChange with 12:30pm ro timezone
+          // Expect that we called onChange with ro timezone
           expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', timeString);
         });
 
