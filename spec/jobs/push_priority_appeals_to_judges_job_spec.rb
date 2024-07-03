@@ -190,7 +190,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
           :with_appeal_affinity,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          uuid: ready_priority_uuid2,
           docket_type: Constants.AMA_DOCKETS.hearing,
           receipt_date: receipt_date
         )
