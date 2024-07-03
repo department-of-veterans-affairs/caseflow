@@ -281,9 +281,11 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       it "sends proper notifications", skip: "test is failing in local env and github actions" do
-        scheduled_payload = AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
+        scheduled_payload = AppellantNotification.create_payload(appeal,
+                                                                 Constants.EVENT_TYPE_FILTERS.hearing_scheduled).to_json
         if appeal.hearings.any?
-          postpone_payload = AppellantNotification.create_payload(appeal, "Postponement of hearing")
+          postpone_payload = AppellantNotification.create_payload(appeal,
+                                                                  Constants.EVENT_TYPE_FILTERS.postponement_of_hearing)
             .to_json
           expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
         end
@@ -745,7 +747,9 @@ RSpec.feature "MailTasks", :postgres do
       shared_context "async actions" do
         context "async actions" do
           it "sends withdrawal of hearing notification" do
-            withdrawal_payload = AppellantNotification.create_payload(appeal, "Withdrawal of hearing").to_json
+            withdrawal_payload =
+              AppellantNotification.create_payload(appeal,
+                                                   Constants.EVENT_TYPE_FILTERS.withdrawal_of_hearing).to_json
             expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
 
             perform_enqueued_jobs do
