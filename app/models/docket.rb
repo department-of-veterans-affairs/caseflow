@@ -3,21 +3,27 @@
 class Docket
   include ActiveModel::Model
   include DistributionConcern
+  include DistributionScopes
 
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
-    scope = docket_appeals.active
+    scope = docket_appeals
+
+    # The `ready_for_distribution` scope will functionally add a filter for active appeals, and adding it here first
+    # will cause that scope to always return zero appeals.
+    scope = scope.active unless ready
 
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
+      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -26,7 +32,7 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
@@ -38,7 +44,7 @@ class Docket
 
   # currently this is used for reporting needs
   def ready_to_distribute_appeals
-    docket_appeals.active.ready_for_distribution
+    docket_appeals.ready_for_distribution
   end
 
   def genpop_priority_count
@@ -57,14 +63,12 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
-    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    appeals(priority: true, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
-  # but the judge that is passed in isn't relevant here
-  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    appeals(priority: false, ready: true, judge: judge).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
@@ -86,12 +90,21 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
+  # rubocop:disable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
-    appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+    if sct_distribution_enabled?
+      query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
+      appeals, sct_appeals = create_sct_appeals(query_args, limit)
+    else
+      appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+      sct_appeals = []
+    end
+
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-    tasks.map do |task|
+    sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
+    tasks_array = tasks + sct_tasks
+    tasks_array.map do |task|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -100,28 +113,20 @@ class Docket
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        new_dist_case = distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                                               docket: docket_type,
-                                                               priority: priority,
-                                                               ready_at: task.appeal.ready_for_distribution_at,
-                                                               task: task)
+        new_dist_case = create_distribution_case_for_task(distribution, task, priority)
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
-        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                               docket: docket_type,
-                                               priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
-                                               task: task)
+        create_distribution_case_for_task(distribution, task, priority)
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
+  # rubocop:enable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
 
   def self.nonpriority_decisions_per_year
-    Appeal.extending(Scopes).nonpriority
+    Appeal.extending(DistributionScopes).nonpriority
       .joins(:decision_documents)
       .where("decision_date > ?", 1.year.ago)
       .pluck(:id).size
@@ -134,6 +139,10 @@ class Docket
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
+  def adjust_for_affinity(scope, judge)
+    scope.genpop.or(scope.non_genpop_for_judge(judge))
+  end
+
   def scoped_for_priority(scope)
     if use_by_docket_date?
       scope.priority.order("appeals.receipt_date")
@@ -143,87 +152,24 @@ class Docket
   end
 
   def docket_appeals
-    Appeal.where(docket_type: docket_type).extending(Scopes)
+    Appeal.where(docket_type: docket_type).extending(DistributionScopes)
   end
 
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  module Scopes
-    include DistributionScopes
+  def sct_distribution_enabled?
+    FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
+  end
 
-    def priority
-      include_aod_motions
-        .where("advance_on_docket_motions.created_at > appeals.established_at")
-        .where("advance_on_docket_motions.granted = ?", true)
-        .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
-        .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
-        .group("appeals.id")
-    end
-
-    def nonpriority
-      include_aod_motions
-        .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
-        .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
-        .group("appeals.id")
-        .having("count(case when advance_on_docket_motions.granted "\
-          "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
-    end
-
-    def include_aod_motions
-      joins(:claimants)
-        .joins("LEFT OUTER JOIN people on people.participant_id = claimants.participant_id")
-        .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-    end
-
-    def ready_for_distribution
-      joins(:tasks)
-        .group("appeals.id")
-        .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-                DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-    end
-
-    def genpop
-      joins(with_assigned_distribution_task_sql)
-        .where(
-          "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
-          Constants.AMA_STREAM_TYPES.court_remand,
-          CaseDistributionLever.cavc_affinity_days.days.ago
-        )
-    end
-
-    def with_original_appeal_and_judge_task
-      joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
-        .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
-        .joins(
-          "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
-           AND original_judge_task.type = 'JudgeDecisionReviewTask'
-           AND original_judge_task.status = 'completed'"
-        )
-    end
-
-    # Within the first 21 days, the appeal should be distributed only to the issuing judge.
-    def non_genpop_for_judge(judge)
-      joins(with_assigned_distribution_task_sql)
-        .with_original_appeal_and_judge_task
-        .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
-        .where(original_judge_task: { assigned_to_id: judge.id })
-    end
-
-    def ordered_by_distribution_ready_date
-      joins(:tasks)
-        .group("appeals.id")
-        .order(
-          Arel.sql("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
-        )
-    end
-
-    def non_ihp
-      joins(:tasks)
-        .group("appeals.id")
-        .having("count(case when tasks.type = ? then 1 end) = ?",
-                InformalHearingPresentationTask.name, 0)
-    end
+  # :reek:FeatureEnvy
+  def create_distribution_case_for_task(distribution, task, priority)
+    distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+                                           docket: docket_type,
+                                           priority: priority,
+                                           ready_at: task.appeal.ready_for_distribution_at,
+                                           task: task,
+                                           sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
   end
 end

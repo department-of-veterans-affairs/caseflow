@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -27,6 +29,9 @@ Rails.application.routes.draw do
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
     get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
     get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -44,6 +49,7 @@ Rails.application.routes.draw do
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
       post 'va_notify_update', to: 'va_notify#notifications_update'
+      post 'cmp', to: 'cmp#upload'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -77,9 +83,9 @@ Rails.application.routes.draw do
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-        get "ama_issues", to: "docs#ama_issues"
-        get "vacols_issues", to: "docs#vacols_issues"
+        get 'decision_reviews', to: redirect('api-docs/v3/decision_reviews.yaml')
+        get "ama_issues", to: redirect('api-docs/v3/ama_issues.yaml')
+        get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
     get "metadata", to: 'metadata#index'
@@ -370,6 +376,7 @@ Rails.application.routes.draw do
   end
 
   resources :judge_assign_tasks, only: [:create]
+  resources :specialty_case_team_assign_tasks, only: [:create]
 
   resources :bulk_task_assignments, only: [:create]
 
@@ -431,6 +438,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      post "/optional_seed", to: "users#optional_seed", as: "optional_seed"
       get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"

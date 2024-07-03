@@ -31,18 +31,17 @@ describe MetricsService do
       it "records metrics" do
         allow(Rails.logger).to receive(:info)
 
-        expect(DataDogService).to receive(:emit_gauge).with(
+        expect(MetricsService).to receive(:emit_gauge).with(
           metric_group: "service",
           metric_name: "request_latency",
           metric_value: anything,
           app_name: "other",
           attrs: {
             service: service,
-            endpoint: name,
-            uuid: anything
+            endpoint: name
           }
         )
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_attempt",
@@ -64,7 +63,7 @@ describe MetricsService do
               service: service,
               endpoint: name
             },
-            sent_to: [["rails_console"], "datadog"],
+            sent_to: [["rails_console"], "datadog", "dynatrace"],
             sent_to_info: {
               metric_group: "service",
               metric_name: "request_latency",
@@ -72,8 +71,7 @@ describe MetricsService do
               app_name: "other",
               attrs: {
                 service: service,
-                endpoint: name,
-                uuid: anything
+                endpoint: name
               }
             },
             start: anything,
@@ -95,7 +93,7 @@ describe MetricsService do
         allow(Benchmark).to receive(:measure).and_raise(StandardError)
 
         expect(Rails.logger).to receive(:error)
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_error",
@@ -104,7 +102,7 @@ describe MetricsService do
             endpoint: name
           }
         )
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_attempt",

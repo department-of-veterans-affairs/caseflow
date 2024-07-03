@@ -128,9 +128,6 @@ Rails.application.configure do
   # One time Appeal States migration for Legacy & AMA Appeal Batch Sizes
   ENV["STATE_MIGRATION_JOB_BATCH_SIZE"] ||= "1000"
 
-  # Quarterly Notifications Batch Sizes
-  ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
-
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
@@ -149,4 +146,7 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_SECRET"] ||= "client-secret"
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
+
+  # Dynatrace variables
+  ENV["STATSD_ENV"] = "test"
 end

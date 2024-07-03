@@ -4,10 +4,16 @@ FactoryBot.define do
   factory :hearing do
     transient do
       regional_office { nil }
-      adding_user { create(:user) }
+      adding_user do
+        User.find_by(css_id: "HR_FCT_USER") ||
+          create(:user, css_id: "HR_FCT_USER", full_name: "Hearing Factory AddingUser")
+      end
     end
     appeal { association(:appeal, :hearing_docket) }
-    judge { create(:user, roles: ["Hearing Prep"]) }
+    judge do
+      User.find_by(css_id: "HR_FCT_JUDGE") ||
+        create(:user, css_id: "HR_FCT_JUDGE", full_name: "Hearing Factory JudgeUser", roles: ["Hearing Prep"])
+    end
     uuid { SecureRandom.uuid }
     hearing_day do
       association(
@@ -16,8 +22,8 @@ FactoryBot.define do
         scheduled_for: Time.zone.today,
         judge: judge,
         request_type: regional_office.nil? ? "C" : "V",
-        created_by: adding_user,
-        updated_by: adding_user
+        created_by: adding_user || User.system_user,
+        updated_by: adding_user || User.system_user
       )
     end
     hearing_location do

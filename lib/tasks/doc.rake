@@ -41,7 +41,7 @@ namespace :doc do
     end
 
     def exec_sql(sql)
-      db_connection.exec_query(sql).to_hash
+      db_connection.exec_query(sql).to_a
     end
 
     def db_connection

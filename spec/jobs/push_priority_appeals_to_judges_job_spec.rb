@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
+  before do
+    create(:case_distribution_lever, :request_more_cases_minimum)
+    create(:case_distribution_lever, :alternative_batch_size)
+    create(:case_distribution_lever, :nod_adjustment)
+    create(:case_distribution_lever, :batch_size_per_attorney)
+    create(:case_distribution_lever, :cavc_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_affinity_days)
+    create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
+    create(:case_distribution_lever, :ama_direct_review_start_distribution_prior_to_goals)
+  end
+
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
@@ -28,6 +39,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to_not receive(:distribute_non_genpop_priority_appeals).and_return([])
+
+      subject
+    end
+
+    it "queues the UpdateAppealAffinityDatesJob" do
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(no_args)
 
       subject
     end
@@ -64,6 +81,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          :with_appeal_affinity,
           uuid: ready_priority_uuid,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
@@ -96,6 +114,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
+          :with_appeal_affinity,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -162,7 +181,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
+          :with_appeal_affinity,
+          uuid: ready_priority_uuid2,
           docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
@@ -216,15 +236,17 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "using By Docket Date Distribution module" do
       before do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
-
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
-
-      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+      after do
+        FeatureToggle.disable!(:acd_distribute_by_docket_date)
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+      end
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
@@ -290,8 +312,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.hearing)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
     end
@@ -300,8 +323,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
+                        :with_appeal_affinity,
+                        affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
     end
@@ -468,7 +492,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
             case_id: SecureRandom.uuid,
             docket: Constants.AMA_DOCKETS.direct_review,
             ready_at: Time.zone.now,
-            priority: true
+            priority: true,
+            sct_appeal: false
           )
         end
         distribution
@@ -1142,10 +1167,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
       allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
+      allow(Raven).to receive(:capture_exception) { @raven_called = true }
+
       described_class.perform_now
 
       expected_msg = "<!here>\n .ERROR. after running for .*: #{error_msg}"
       expect(slack_msg).to match(/^#{expected_msg}/)
+      expect(@raven_called).to eq true
     end
   end
 end

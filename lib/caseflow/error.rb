@@ -463,6 +463,13 @@ module Caseflow::Error
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
   class InvalidNotificationStatusFormat < StandardError; end
+  class NotificationInitializationError < SerializableError
+    attr_accessor :message
+
+    def initialize(args = {})
+      @message = args[:message]
+    end
+  end
 
   # Pacman errors
   class PacmanApiError < StandardError
@@ -477,6 +484,12 @@ module Caseflow::Error
   class SyncLockFailed < StandardError
     def ignorable?
       true
+    end
+  end
+
+  class MaximumBatchSizeViolationError < StandardError
+    def initialize(msg = "The batch size of jobs must not exceed 10")
+      super(msg)
     end
   end
 end
