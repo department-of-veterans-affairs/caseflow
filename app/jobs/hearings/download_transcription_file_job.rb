@@ -83,8 +83,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: The hash for details on the error
   def build_error_details(error, details_hash)
     details_hash.merge(
-      docket_number: !error.is_a?(FileNameError) ? hearing.docket_number : nil,
-      appeal_id: !error.is_a?(FileNameError) ? hearing.appeal.external_id : nil,
+      docket_number: !file_name_error?(error) ? hearing.docket_number : nil,
+      appeal_id: !file_name_error?(error) ? hearing.appeal.external_id : nil,
       error: details_hash[:error].merge(
         explanation: build_error_explanation(details_hash)
       )
@@ -99,7 +99,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def log_download_error(error)
     extra = {
       application: self.class.name,
-      hearing_id: !error.is_a?(FileNameError) ? hearing.id : nil,
+      hearing_id: !file_name_error?(error) ? hearing.id : nil,
       file_name: file_name,
       job_id: job_id
     }
@@ -232,5 +232,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     file_type = @transcription_file ? "#{@transcription_file.file_type} " : ""
 
     "#{action[:verb]} a #{file_type}file #{action[:direction]} #{action_recipient}"
+  end
+
+  def file_name_error?(error)
+    error.is_a?(FileNameError)
   end
 end
