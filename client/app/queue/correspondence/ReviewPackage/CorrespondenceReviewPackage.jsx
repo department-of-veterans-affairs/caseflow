@@ -298,7 +298,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={corrTypeSelected}
+                disabled={disableButton}
               />
             </a>
           </div>
