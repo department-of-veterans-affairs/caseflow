@@ -97,7 +97,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def correspondence_params
     params.require(:correspondence).permit(:correspondence, :notes, :correspondence_type_id, :va_date_of_receipt)
-      .merge(params.require(:veteran).permit(:file_number))
+      .merge(params.require(:veteran).permit(:file_number, :first_name, :last_name))
   end
 
   def pdf_params
@@ -109,8 +109,12 @@ class CorrespondenceReviewPackageController < CorrespondenceController
   end
 
   def update_veteran_on_correspondence
-    veteran = Veteran.find_by(file_number: correspondence_params[:file_number])
-    if veteran
+    veteran = Veteran.find_or_initialize_by(file_number: correspondence_params[:file_number])
+    veteran.update!(file_number: correspondence_params[:file_number],
+                    first_name: correspondence_params[:first_name],
+                    last_name: correspondence_params[:last_name]) # Update file number
+
+    if veteran.persisted? || veteran.save
       correspondence.update!(
         veteran_id: veteran.id,
         notes: correspondence_params[:notes],
@@ -122,6 +126,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       false
     end
   end
+
 
 def update_open_review_package_tasks
   begin
