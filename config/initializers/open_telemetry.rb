@@ -15,7 +15,7 @@ require 'opentelemetry/instrumentation/active_job'
 require 'opentelemetry/instrumentation/action_pack'
 require 'opentelemetry/instrumentation/action_view'
 require 'opentelemetry/instrumentation/active_model_serializers'
-require 'opentelemetry/instrumentation/aws_sdk'
+# require 'opentelemetry/instrumentation/aws_sdk'
 require 'opentelemetry/instrumentation/concurrent_ruby'
 require 'opentelemetry/instrumentation/faraday'
 require 'opentelemetry/instrumentation/http'
@@ -40,18 +40,29 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     # c.use 'OpenTelemetry::Instrumentation::Rails'
     # c.use 'OpenTelemetry::Instrumentation::Rack'
     # c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
-    config = {
-      'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
-      'OpenTelemetry::Instrumentation::PG' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Rack' => {
-        use_rack_events: false,
-        untraced_endpoints: ['/health-check', '/sample', '/logs'],
-      },
-      'OpenTelemetry::Instrumentation::AwsSdk' => {
-        suppress_internal_instrumentation: true
-      }
-    }
-    c.use_all(config)
+    # Rack may need to be initialized before ActionPack, or an ENV var set.
+    c.use 'OpenTelemetry::Instrumentation::Rack', {
+          use_rack_events: false,
+          untraced_endpoints: ['/health-check', '/sample', '/logs']
+        }
+    c.use 'OpenTelemetry::Instrumentation::Rails'
+    c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
+    c.use 'OpenTelemetry::Instrumentation::ActionPack'
+    c.use 'OpenTelemetry::Instrumentation::Faraday'
+    c.use 'OpenTelemetry::Instrumentation::HTTP'
+    c.use 'OpenTelemetry::Instrumentation::HttpClient'
+    c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
+
+    # config = {
+    #   'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
+    #   'OpenTelemetry::Instrumentation::PG' => { enabled: false },
+    #   'OpenTelemetry::Instrumentation::Rack' => {
+    #     use_rack_events: false,
+    #     untraced_endpoints: ['/health-check', '/sample', '/logs'],
+    #     allowed_request_headers: ['']
+    #   }
+    # }
+    # c.use_all(config)
 
     %w[dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties /var/lib/dynatrace/enrichment/dt_host_metadata.properties].each { |name|
       begin
