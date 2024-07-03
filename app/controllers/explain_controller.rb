@@ -36,7 +36,7 @@ class ExplainController < ApplicationController
       Rails.env.development?
   end
 
-  helper_method :legacy_appeal?, :appeal, :appeal_affinity, :correspondence?,
+  helper_method :legacy_appeal?, :appeal, :appeal_affinity,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
