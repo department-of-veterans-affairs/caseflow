@@ -369,11 +369,10 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "appellant receives email notification" do
-          sleep 5
-
-          hearing = video_appeal.reload.hearings.first
-
-          expect(hearing.email_events.count).to eq 1
+          using_wait_time(5) do
+            hearing = video_appeal.reload.hearings.first
+            expect(hearing.email_events.count).to eq 1
+          end
         end
 
         step "update hearing to have a representative email address" do
