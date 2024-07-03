@@ -210,6 +210,7 @@ detectors:
       - LegacyDocket
       - Test::UsersController
       - Fakes::WebexService
+      - Hearings::DownloadTranscriptionFileJob
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
