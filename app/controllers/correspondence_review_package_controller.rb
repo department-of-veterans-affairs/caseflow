@@ -22,11 +22,11 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
   end
 
-
   def update_cmp
     correspondence.update(
       va_date_of_receipt: params["VADORDate"].in_time_zone
     )
+
     correspondence.tasks.map do |task|
       if task.type == "ReviewPackageTask"
         task.status = "in_progress"
@@ -123,23 +123,22 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
   end
 
-
-def update_open_review_package_tasks
-  begin
-    ActiveRecord::Base.transaction do
-      correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
-        task.update!(status: Constants.TASK_STATUSES.in_progress)
+  def update_open_review_package_tasks
+    begin
+      ActiveRecord::Base.transaction do
+        correspondence.tasks.open.where(type: ReviewPackageTask.name).find_each do |task|
+          task.update!(status: Constants.TASK_STATUSES.in_progress)
+        end
       end
+      true
+    rescue ActiveRecord::RecordInvalid => error
+      Rails.logger.error "Failed to update task due to validation error: #{error.message}"
+      false
+    rescue StandardError => error
+      Rails.logger.error "Failed to update tasks due to an unexpected error: #{error.message}"
+      false
     end
-    true
-  rescue ActiveRecord::RecordInvalid => e
-    Rails.logger.error "Failed to update task due to validation error: #{e.message}"
-    false
-  rescue => e
-    Rails.logger.error "Failed to update tasks due to an unexpected error: #{e.message}"
-    false
   end
-end
 
   # :reek:FeatureEnvy
   def vbms_document_types
