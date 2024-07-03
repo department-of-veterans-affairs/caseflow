@@ -57,7 +57,6 @@ class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
 
   private
 
-  # :reek:IdenticalCode
   def fetch_recording_details(id, email)
     query = { "hostEmail": email }
     WebexService.new(

@@ -37,6 +37,8 @@ checks:
       threshold: # language-specific defaults. an override will affect all languages.
     exclude_patterns:
     - 'client/app/queue/cavc/utils.js'
+    - 'app/jobs/hearings/fetch_webex_recordings_list_job.rb'
+    - 'app/jobs/hearings/fetch_webex_recordings_details_job.rb'
 
 plugins:
   brakeman:
