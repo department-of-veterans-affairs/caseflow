@@ -354,7 +354,9 @@ ReviewForm.propTypes = {
   correspondence: PropTypes.object,
   setCorrTypeSelected: PropTypes.bool,
   correspondenceTypes: PropTypes.array,
-  reviewPackageData: PropTypes.object,
+  reviewPackageData: PropTypes.shape({
+    veteranFullName: PropTypes.string
+  }),
 };
 
 const mapStateToProps = (state) => ({
