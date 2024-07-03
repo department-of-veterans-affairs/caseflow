@@ -15,8 +15,7 @@ module VirtualHearings::SequenceConferenceId
       create_sequence_if_not_exists
       result = ActiveRecord::Base.connection.execute("SELECT nextval('#{SEQUENCE_NAME}')")
       format("%07<id>d", id: result.first["nextval"])
-    end
-
+  
     private
 
     # The sequence is created by a migration, but it isn't recorded in
