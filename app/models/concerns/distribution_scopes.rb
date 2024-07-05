@@ -57,6 +57,24 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
+  def genpop_by_affinity_start_date
+    with_appeal_affinities
+      .with_original_appeal_and_judge_task
+      .where(
+        "appeal_affinities.affinity_start_date <= ?",
+        CaseDistributionLever.cavc_affinity_days.days.ago,
+      )
+  end
+
+  def genpop_by_judge_exclusion
+    with_appeal_affinities
+      .with_original_appeal_and_judge_task
+      .where(
+        "original_judge_task.assigned_to_id in (?)",
+        JudgeTeam.judge_ids_with_exclude_appeals_from_affinity
+      )
+  end
+
   def ama_non_aod_hearing_appeals
     where("advance_on_docket_motions.person_id IS NULL")
       .where("people.date_of_birth > ?", 75.years.ago)
@@ -86,6 +104,14 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
              CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
+  end
+
+  def non_genpop_by_affinity_start_date
+    with_appeal_affinities
+      .with_original_appeal_and_judge_task
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+             CaseDistributionLever.cavc_affinity_days.days.ago)
+      .where.not(original_judge_task: { assigned_to_id: nil })
   end
 
   def ordered_by_distribution_ready_date
