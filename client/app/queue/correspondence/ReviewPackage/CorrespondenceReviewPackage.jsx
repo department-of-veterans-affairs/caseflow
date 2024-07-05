@@ -27,15 +27,18 @@ export const CorrespondenceReviewPackage = (props) => {
     veteran_name: {},
     dropdown_values: [],
   });
-  const [editableData, setEditableData] = useState({
-    notes: '',
-    veteran_file_number: '',
-    default_select_value: null,
-    va_date_of_receipt: '',
-  });
+
+  // state variables for editable portions of the form that can be passed to child components
+  const [notes, setNotes] = useState(props.correspondence.notes);
+  const [veteranFileNumber, setVeteranFileNumber] = useState(props.correspondence.veteranFileNumber);
+  const [correspondenceTypeId, setCorrespondenceTypeId] = useState(
+    props.correspondence.correspondence_type_id
+  );
+  const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
 
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
+  const [disableSaveButton, setDisableSaveButton] = useState(true);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -112,13 +115,6 @@ export const CorrespondenceReviewPackage = (props) => {
     }
     );
 
-    setEditableData({
-      notes: props.correspondence.notes,
-      veteran_file_number: props.correspondence.file_number,
-      default_select_value: props.correspondence.correspondence_type_id,
-      va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-    });
-
     if (isPageReadOnly(props.correspondence.correspondence_tasks)) {
       setBannerInformation({
         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -155,20 +151,26 @@ export const CorrespondenceReviewPackage = (props) => {
     history.push('/queue/correspondence');
   };
 
+  // used to track in-flight changes between frontend/backend
   const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== props.correspondence.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
-    const selectValueChanged = editableData.default_select_value !== reviewDetails.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !==
-      moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
+    const notesChanged = notes !== props.correspondence.notes;
+    const fileNumberChanged = veteranFileNumber !== props.correspondence.veteranFileNumber;
+    const typeChanged = correspondenceTypeId !== props.correspondence.correspondence_type_id;
+    const selectDateChanged = vaDor !==
+      moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
 
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
+    return notesChanged || fileNumberChanged || typeChanged || selectDateChanged;
+  };
+
+  // used to validate there are no non-null values
+  const nullValuesPresent = () => {
+    return !notes || !veteranFileNumber || !correspondenceTypeId || !vaDor;
   };
 
   const intakeAppeal = async () => {
-    props.setFileNumberSearch(editableData.veteran_file_number);
+    props.setFileNumberSearch(veteranFileNumber);
     try {
-      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await props.doFileNumberSearch('appeal', veteranFileNumber, true);
       await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
     } catch (error) {
@@ -194,24 +196,14 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   };
 
+  // check for in-flight changes to disable the button
   useEffect(() => {
-    if (apiResponse) {
-      const hasChanged = isEditableDataChanged();
-
-      setDisableButton(hasChanged);
-      setErrorMessage('');
-    }
-  }, [editableData, apiResponse]);
-
-  const reviewPackageData = {
-    notes: props.correspondence.notes,
-    veteranFullName: props.correspondence.veteranFullName,
-    fileNumber: props.correspondence.file_number,
-    packageDocumentType: props.correspondence.correspondenceDocuments.length &&
-     props.correspondence.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
-    vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
-    correspondenceTypes: props.correspondenceTypes
-  };
+    // disable create record button if changes in flight or null values
+    setDisableButton(isEditableDataChanged() || nullValuesPresent());
+    // disable save button if no edits in flight
+    setDisableSaveButton(!isEditableDataChanged());
+    setErrorMessage('');
+  }, [notes, veteranFileNumber, correspondenceTypeId, vaDor]);
 
   return (
     <div>
@@ -246,13 +238,11 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
-              reviewPackageData,
               reviewDetails,
               setReviewDetails,
-              editableData,
-              setEditableData,
               disableButton,
               setDisableButton,
+              disableSaveButton,
               setIsReturnToQueue,
               showModal,
               handleModalClose,
@@ -261,7 +251,15 @@ export const CorrespondenceReviewPackage = (props) => {
               setErrorMessage,
               isReadOnly,
               corrTypeSelected,
-              setCorrTypeSelected
+              setCorrTypeSelected,
+              notes,
+              setNotes,
+              veteranFileNumber,
+              setVeteranFileNumber,
+              correspondenceTypeId,
+              setCorrespondenceTypeId,
+              vaDor,
+              setVaDor
             }}
             {...props}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
