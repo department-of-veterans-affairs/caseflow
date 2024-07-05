@@ -26,6 +26,7 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :notifications, as: :notifiable
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -33,6 +34,8 @@ class Appeal < DecisionReview
   has_many :nod_date_updates
   has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
+
+  has_one :appeal_affinity, as: :case, primary_key: "uuid"
 
   # Each appeal has one appeal_state that is used for tracking quarterly notifications
   has_one :appeal_state, as: :appeal
@@ -954,6 +957,10 @@ class Appeal < DecisionReview
 
   def is_legacy?
     false
+  end
+
+  def appeal_state
+    super || AppealState.find_or_create_by(appeal: self)
   end
 
   private
