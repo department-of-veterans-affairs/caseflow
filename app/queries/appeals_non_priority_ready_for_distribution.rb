@@ -41,7 +41,7 @@ class AppealsNonPriorityReadyForDistribution < AppealsReadyForDistribution
     docket_coordinator.dockets
       .flat_map do |sym, docket|
         if sym == :legacy
-          [] # TODO Add this back
+          [] # TODO: Add this back
           # appeals = docket.ready_to_distribute_appeals.select { |appeal| appeal["aod"] == 0 }
           # legacy_rows(appeals, docket, sym)
         else
