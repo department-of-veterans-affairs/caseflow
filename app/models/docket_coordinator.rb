@@ -9,10 +9,6 @@ class DocketCoordinator
       hearing: HearingRequestDocket.new
     }
 
-    if FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
-      all_dockets.delete(:legacy)
-    end
-
     @dockets ||= all_dockets
   end
 
