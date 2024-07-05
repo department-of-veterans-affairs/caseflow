@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# Create Users/Organizations used by other seed classes.
+# Create Users/Organizations used by other seed classes. Some users which exist that are not created in this file are
+# created using the seed file populate_caseflow_from_vacols.rb, which mimics Caseflow's creation of some users from
+# the VACOLS DB if they do not yet exist in the Caseflow DB.
 
 module Seeds
   # rubocop:disable Metrics/AbcSize
@@ -82,6 +84,12 @@ module Seeds
       create_lit_support_user
       create_oai_team_user
       create_occ_team_user
+      create_inbound_ops_team_user
+      create_inbound_ops_team_auto_assign_user
+      create_inbound_ops_team_user_with_no_permissions
+      create_inbound_ops_team_supervisor
+      create_inbound_ops_team_superuser
+      create_inbound_ops_team_nod_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -96,6 +104,7 @@ module Seeds
       add_mail_intake_to_all_bva_intake_users
       create_and_add_cda_control_group_users
       add_users_to_bva_dispatch
+      create_qa_test_users
 
       # Below originated in the VeteransHealthAdministration seed file
       setup_camo_org
@@ -107,6 +116,8 @@ module Seeds
       # Below originated in Education seed file
       setup_emo_org
       setup_rpo_orgs
+
+      create_qa_test_users
     end
 
     def create_bva_dispatch_admin
@@ -364,6 +375,162 @@ module Seeds
       OaiTeam.singleton.add_user(user2)
     end
 
+    def create_auto_assign_permissions
+      OrganizationPermission.valid_permission_names.each do |permission|
+        OrganizationPermission.find_or_create_by(
+          permission: permission,
+          organization: InboundOpsTeam.singleton
+        ) do |perm|
+          perm.enabled = true
+          perm.description = Faker::Hipster.sentence
+        end
+      end
+      OrganizationPermission.find_by(permission: "superuser").update!(
+        description: "Superuser: Split, Merge, and Reassign",
+        default_for_admin: true,
+      )
+      OrganizationPermission.find_by(permission: "auto_assign").update!(description: "Auto-Assignment")
+      OrganizationPermission.find_by(permission: "receive_nod_mail").update!(
+        description: "Receieve \"NOD Mail\"",
+        parent_permission: OrganizationPermission.find_by(permission: "auto_assign")
+      )
+    end
+
+    def create_inbound_ops_team_user
+      # create the necessary permissions first
+      create_auto_assign_permissions
+      # Admin user
+      admin_user_info = [
+       { css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin", admin: true }
+      ]
+      # Non-admin users
+      non_admin_users_info = [
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"] },
+        { css_id: "INBOUND_OPS_TEAM_USER_U1", full_name: "Cedar Rain", roles: ["Mail Intake"] }
+      ]
+
+      users_info = admin_user_info + non_admin_users_info
+      # Create users
+      users_info.each do |user_info|
+        new_user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: user_info[:roles] || []
+        )
+        InboundOpsTeam.singleton.add_user(new_user)
+        OrganizationsUser.make_user_admin(new_user, InboundOpsTeam.singleton) if user_info[:admin]
+      end
+    end
+
+    def create_inbound_ops_team_auto_assign_user
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A1", full_name: "Ember Sky" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A2", full_name: "Aspen Ridge" }
+      ]
+      users_info.map do |user_info|
+        new_user = create_user(user_info)
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
+        auto_assign = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "auto_assign")
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: auto_assign,
+          organizations_user: org_user
+        ) do |op|
+          op.permitted = true
+        end
+      end
+    end
+
+    def create_inbound_ops_team_user_with_no_permissions
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP1", full_name: "Noah Taylor" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP2", full_name: "Emma Brown" }
+      ]
+      users_info.map do |user_info|
+        new_user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: ["Mail Intake"]
+        )
+        OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
+      end
+    end
+
+    def create_inbound_ops_team_supervisor
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S1", full_name: "Caleb Mitchell" },
+        { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S2", full_name: "Scarlett Reed" }
+      ]
+      users_info.map do |user_info|
+        user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: ["Mail Intake"]
+        )
+        InboundOpsTeam.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, InboundOpsTeam.singleton)
+      end
+    end
+
+    def create_inbound_ops_team_superuser
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_SUPERUSER1", full_name: "Willow Green" },
+        { css_id: "INBOUND_OPS_TEAM_SUPERUSER2", full_name: "Jasper Bloom" }
+      ]
+      users_info.map do |user_info|
+        new_user = User.find_or_create_by!(
+          station_id: 101,
+          css_id: user_info[:css_id],
+          full_name: user_info[:full_name],
+          roles: ["Mail Intake"]
+        )
+        InboundOpsTeam.singleton.add_user(new_user)
+        superuser_permission = OrganizationPermission.find_by(permission: 'superuser', organization_id: InboundOpsTeam.singleton.id)
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: superuser_permission,
+          organizations_user: OrganizationsUser.find_by(user_id: new_user.id),
+          permitted: true
+        )
+      end
+    end
+
+    def create_inbound_ops_team_nod_user
+      create_auto_assign_permissions
+      users_info = [
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD1", full_name: "Alexandr Johnson" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD2", full_name: "Sopia Williams" }
+      ]
+      users_info.map do |user_info|
+        new_user = create_user(user_info)
+        org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: new_user)
+        receive_nod_mail = OrganizationPermission.find_by(
+          organization: InboundOpsTeam.singleton,
+          permission: "receive_nod_mail"
+        )
+        OrganizationUserPermission.find_or_create_by!(
+          organization_permission: receive_nod_mail,
+          organizations_user: org_user
+        ) do |op|
+          op.permitted = true
+        end
+      end
+    end
+
+    def create_user(user_info)
+      User.find_or_create_by!(
+        station_id: 101,
+        css_id: user_info[:css_id],
+        full_name: user_info[:full_name],
+        roles: ["Mail Intake"]
+      )
+    end
+
     def create_cavc_lit_support_user
       users_info = [
         { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
@@ -552,9 +719,9 @@ module Seeds
     end
 
     def create_qa_test_users
-      create(:user, css_id: "QATTY1", full_name: "QA Attorney_1")
-      create(:user, css_id: "QATTY2", full_name: "QA Attorney_2")
-      create(:user, css_id: "QATTY3", full_name: "QA Attorney_3")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY1", full_name: "QA Attorney_1")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY2", full_name: "QA Attorney_2")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY3", full_name: "QA Attorney_3")
       create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
              css_id: "QINELIGVLJ", full_name: "QA Ineligible Judge")
       create(:user, :judge, :with_vacols_judge_record,
