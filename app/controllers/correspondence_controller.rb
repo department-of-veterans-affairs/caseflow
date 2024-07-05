@@ -30,6 +30,7 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  # :reek:FeatureEnvy
   def auto_assign_status
     batch = BatchAutoAssignmentAttempt.includes(:individual_auto_assignment_attempts)
       .find_by!(user: current_user, id: corr_controller_params[:batch_auto_assignment_attempt_id])
@@ -50,7 +51,7 @@ class CorrespondenceController < ApplicationController
   private
 
   def corr_controller_params
-    params.permit[:batch_auto_assignment_attempt_id]
+    params.permit(:batch_auto_assignment_attempt_id)
   end
 
   def verify_correspondence_access

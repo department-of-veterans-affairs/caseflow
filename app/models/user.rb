@@ -119,6 +119,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     administered_teams.include?(InboundOpsTeam.singleton)
   end
 
+  # :reek:UtilityFunction
   def organization_permissions(org)
     # get organization user from the org relationship
     org_user = OrganizationsUser.find_by(organization_id: org.id)

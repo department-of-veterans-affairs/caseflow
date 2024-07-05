@@ -84,8 +84,8 @@ class CorrespondenceTaskFilter < TaskFilter
     # used to store the results of each task query
     collection = nil
     task_types.each do |task_type|
-      t = tasks.where(type: task_type)
-      collection = collection.nil? ? tasks.merge(t) : collection.or(tasks.merge(t))
+      task_type_match = tasks.where(type: task_type)
+      collection = collection.nil? ? tasks.merge(task_type_match) : collection.or(tasks.merge(task_type_match))
     end
     collection
   end

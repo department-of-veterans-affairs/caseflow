@@ -150,5 +150,16 @@ module CorrespondenceHelpers
     correspondence.tasks.find_by(type: CorrespondenceIntakeTask.name).reload
     visit "/queue/correspondence/#{correspondence.uuid}/intake"
   end
+
+  def inbound_ops_team_admin_setup
+    InboundOpsTeam.singleton.add_user(current_user)
+    MailTeam.singleton.add_user(current_user)
+    OrganizationsUser.find_or_create_by!(
+      organization: InboundOpsTeam.singleton,
+      user: current_user
+    ).update!(admin: true)
+    User.authenticate!(user: current_user)
+  end
+
   # rubocop:enable Metrics/ModuleLength
 end

@@ -10,14 +10,6 @@ class CorrespondenceQueueColumn < QueueColumn
     @filterable ||= false
   end
 
-  def to_hash(tasks)
-    {
-      name: name,
-      filterable: filterable,
-      filter_options: filterable ? filter_options(tasks) : []
-    }
-  end
-
   FILTER_OPTIONS = {
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
     Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name => :va_dor_options,
@@ -27,13 +19,6 @@ class CorrespondenceQueueColumn < QueueColumn
   }.freeze
 
   private
-
-  def task_type_options(tasks)
-    tasks.group(:type).count.each_pair.map do |option, count|
-      label = self.class.format_option_label(Object.const_get(option).label, count)
-      self.class.filter_option_hash(option, label)
-    end
-  end
 
   def package_document_type_options(tasks)
     tasks.joins(:appeal).group(:nod).count.each_pair.map do |option, count|

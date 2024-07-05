@@ -303,7 +303,7 @@ export const vaDor = () => {
     enableFilter: true,
     getSortValue: (task) => task.vaDor,
     name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
-    label: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    label: 'Filter by VA Date of Receipt',
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
@@ -321,7 +321,7 @@ export const packageDocumentType = (filterOptions) => {
     anyFiltersAreSet: true,
     getSortValue: (task) => task.nod,
     name: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
-    label: QUEUE_CONFIG.COLUMNS.PACKAGE_DOCUMENT_TYPE.name,
+    label: 'Filter by Package Document Type',
     valueFunction: (task) => {
       return task.nod ? 'NOD' : 'Non-NOD';
     }

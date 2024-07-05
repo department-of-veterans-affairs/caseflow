@@ -212,9 +212,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       20.times do
-        correspondence = create(:correspondence)
-        correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
-                                         closed_at: rand(6 * 24 * 60).minutes.ago)
+        correspondence_root_task_completion
       end
     end
 
@@ -1324,9 +1322,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       20.times do
-        correspondence = create(:correspondence)
-        correspondence.root_task.update!(status: Constants.TASK_STATUSES.completed,
-                                         closed_at: rand(6 * 24 * 60).minutes.ago)
+        correspondence_root_task_completion
       end
     end
 
@@ -1453,17 +1449,17 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       5.times do
-        corres_array = (1..2).map { |index| create(:correspondence, nod: index == 1) }
+        correspondence_array = (1..2).map { |index| create(:correspondence, nod: index == 1) }
         task_array = [ReassignPackageTask, RemovePackageTask]
 
-        corres_array.each_with_index do |corres, index|
-          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+        correspondence_array.each_with_index do |correspondence, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
           task_array[index].create!(
             parent_id: rpt.id,
             appeal_type: "Correspondence",
-            appeal_id: corres.id,
+            appeal_id: correspondence.id,
             assigned_to: InboundOpsTeam.singleton,
-            instructions: ["This was the default"],
+            instructions: ["Default for type column"],
             assigned_by_id: rpt.assigned_to_id
           )
         end
@@ -1507,13 +1503,13 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "correctly filters NOD type" do
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
+      find("[aria-label='Filter by Package Document Type']").click
       all(".cf-filter-option-row")[1].click
       expect(page).to_not have_content("Non-NOD")
       visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-      find("[aria-label='packageDocTypeColumn']").click
+      find("[aria-label='Filter by Package Document Type']").click
       all(".cf-filter-option-row")[1].click
-      find("[aria-label='packageDocTypeColumn. Filtering by true']").click
+      find("[aria-label='Filter by Package Document Type. Filtering by true']").click
       all(".cf-filter-option-row")[2].click
       expect(page).to have_content("Package Document Type (2)")
       expect(page).to have_content("Viewing 1-10 of 10 total")

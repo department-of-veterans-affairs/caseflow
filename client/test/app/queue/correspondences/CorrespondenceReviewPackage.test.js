@@ -10,6 +10,12 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from 'app/queue/reducers';
+import {
+  correspondenceData,
+  correspondenceDocumentsData,
+  packageDocumentTypeData,
+  veteranInformation
+} from 'test/data/correspondence';
 
 jest.mock('redux', () => ({
   ...jest.requireActual('redux'),
@@ -27,7 +33,16 @@ const createSpyGet = () => {
   );
 };
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+let initialState = {
+  reviewPackage: {
+    correspondence: correspondenceData,
+    packageDocumentType: packageDocumentTypeData,
+    correspondenceDocuments: correspondenceDocumentsData,
+    veteranInformation
+  }
+};
+
+const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
 
 const LocationDisplay = () => {
   const history = useHistory();
