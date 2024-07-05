@@ -67,12 +67,7 @@ describe('Details', () => {
     expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-      null
-    );
-    // VirtualHearingFields will always show for any virtual or non virtual hearing
-    // as we move forward with Webex integration
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
@@ -292,37 +287,35 @@ describe('Details', () => {
         expect(details.find(TranscriptionFilesTable)).toHaveLength(0);
       });
 
-      test('Does not display transcription section for legacy hearings', () => {
-        const details = mount(
-          <Details
-            hearing={legacyHearing}
-            saveHearing={saveHearingSpy}
-            setHearing={setHearingSpy}
-            goBack={goBackSpy}
-            onReceiveAlerts={onReceiveAlertsSpy}
-            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-            transitionAlert={transitionAlertSpy}
-          />,
-          {
-            wrappingComponent: hearingDetailsWrapper(
-              anyUser,
-              legacyHearing
-            ),
-            wrappingComponentProps: { store: detailsStore },
-          }
-        );
+  test('Does not display transcription section for legacy hearings', () => {
+    const {asFragment} = customRender(
+      <Details
+        hearing={legacyHearing}
+        saveHearing={saveHearingSpy}
+        setHearing={setHearingSpy}
+        goBack={goBackSpy}
+        onReceiveAlerts={onReceiveAlertsSpy}
+        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+        transitionAlert={transitionAlertSpy}
+      />,
+      {
+        wrapper: Wrapper,
+        wrapperProps: {
+          store: detailsStore,
+          user: anyUser,
+          hearing: legacyHearing
+        },
+      }
+    );
 
-        // Assertions
-        expect(details.find(DetailsHeader)).toHaveLength(1);
-        expect(details.find(DetailsForm)).toHaveLength(1);
+    const veteranName = `${legacyHearing.veteranFirstName} ${legacyHearing.veteranLastName}`;
 
-        // Ensure that the virtualHearing form is not displayed by default
-        expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-          null
-        );
-        // VirtualHearingFields will always show for any virtual or non virtual hearing
-        // as we move forward with Webex integration
-        expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+    // // Assertions
+    expect(screen.getByRole('heading', {name: `${veteranName}'s Hearing Details`})).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: "Hearing Details"})).toBeInTheDocument();
+
+    // Ensure that the virtualHearing form is not displayed by default
+    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
 
         // Ensure the transcription form is not displayed for legacy hearings
         expect(screen.queryByRole('heading', {name: "Transcription Details"})).not.toBeInTheDocument();
