@@ -105,7 +105,7 @@ class RemovePackageModal extends React.Component {
           decision_reason: this.state.reasonReject,
         };
 
-        ApiUtil.patch(`/queue/correspondence/tasks/${this.props.reviewDetails.taskId}/update`, { data }).
+        ApiUtil.patch(`/queue/correspondence/tasks/${this.props.blockingTaskId}/update`, { data }).
           then(() => {
             window.location.href = '/queue/correspondence/team';
           });
@@ -168,7 +168,7 @@ const mapStateToProps = (state) => {
 };
 
 RemovePackageModal.propTypes = {
-  reviewDetails: PropTypes.object,
+  blockingTaskId: PropTypes.number,
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   setModalState: PropTypes.func,

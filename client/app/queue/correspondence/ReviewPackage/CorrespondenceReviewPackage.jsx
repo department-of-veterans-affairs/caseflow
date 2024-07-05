@@ -23,10 +23,6 @@ import {
 
 export const CorrespondenceReviewPackage = (props) => {
   const history = useHistory();
-  const [reviewDetails, setReviewDetails] = useState({
-    veteran_name: {},
-    dropdown_values: [],
-  });
 
   // state variables for editable portions of the form that can be passed to child components
   const [notes, setNotes] = useState(props.correspondence.notes);
@@ -48,7 +44,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
-  const [reviewPackageDetails, setReviewPackageDetails] = useState({
+  const [blockingTaskId, setBlockingTaskId] = useState({
     veteranName: '',
     taskId: [],
   });
@@ -62,10 +58,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
     if (assignedRemoveTask) {
-      setReviewPackageDetails((prev) => {
-        return { ...prev, taskId: assignedRemoveTask.id };
-      }
-      );
+      setBlockingTaskId(assignedRemoveTask.id);
     }
 
     // Return true if a removePackageTask that is currently assigned is found, else false
@@ -78,7 +71,7 @@ export const CorrespondenceReviewPackage = (props) => {
           task.type === 'ReassignPackageTask');
 
     if (assignedReassignTask) {
-      setReviewPackageDetails({ taskId: assignedReassignTask.id });
+      setBlockingTaskId(assignedReassignTask.id);
     }
 
     // Return true if a reassignPackageTask that is currently assigned is found, else false
@@ -101,19 +94,6 @@ export const CorrespondenceReviewPackage = (props) => {
         bannerType: 'error'
       });
     }
-
-    setReviewDetails({
-      veteran_name: props.correspondence.veteran_name || {},
-      dropdown_values: props.correspondence.correspondenceTypes || [],
-      correspondence_type_id: props.correspondence.correspondence_type_id
-    });
-    setReviewPackageDetails((prev) => {
-      return {
-        ...prev,
-        veteranName: `${props.correspondence.veteran_name.first_name}
-      ${props.correspondence.veteran_name.last_name}` };
-    }
-    );
 
     if (isPageReadOnly(props.correspondence.correspondence_tasks)) {
       setBannerInformation({
@@ -149,17 +129,6 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const handleReview = () => {
     history.push('/queue/correspondence');
-  };
-
-  // used to track in-flight changes between frontend/backend
-  const isEditableDataChanged = () => {
-    const notesChanged = notes !== props.correspondence.notes;
-    const fileNumberChanged = veteranFileNumber !== props.correspondence.veteranFileNumber;
-    const typeChanged = correspondenceTypeId !== props.correspondence.correspondence_type_id;
-    const selectDateChanged = vaDor !==
-      moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
-
-    return notesChanged || fileNumberChanged || typeChanged || selectDateChanged;
   };
 
   // used to validate there are no non-null values
@@ -198,12 +167,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   // check for in-flight changes to disable the button
   useEffect(() => {
-    // disable create record button if changes in flight or null values
-    setDisableButton(isEditableDataChanged() || nullValuesPresent());
-    // disable save button if no edits in flight
-    setDisableSaveButton(!isEditableDataChanged());
+    // disable create record button if save button is enabled or null values exist
+    setDisableButton(!disableSaveButton || nullValuesPresent());
     setErrorMessage('');
-  }, [notes, veteranFileNumber, correspondenceTypeId, vaDor]);
+  }, [disableSaveButton]);
 
   return (
     <div>
@@ -217,7 +184,7 @@ export const CorrespondenceReviewPackage = (props) => {
       <React.Fragment>
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
-            reviewDetails={reviewPackageDetails}
+            blockingTaskId={blockingTaskId}
             efolder={props.hasEfolderFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
@@ -238,11 +205,10 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
-              reviewDetails,
-              setReviewDetails,
               disableButton,
               setDisableButton,
               disableSaveButton,
+              setDisableSaveButton,
               setIsReturnToQueue,
               showModal,
               handleModalClose,

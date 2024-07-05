@@ -24,10 +24,7 @@ describe('ReviewForm', () => {
     props = {
       veteranFileNumber: '500000004',
       notes: 'This is a note from CMP',
-      reviewDetails: {
-        veteran_name: 'Bob  Smithbaumbach',
-        dropdown_values: ['Option 1', 'Option 2'],
-      },
+      blockingTaskId: 12,
       disableButton: false,
     };
   });

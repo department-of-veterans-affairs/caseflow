@@ -47,6 +47,7 @@ export const ReviewForm = (props) => {
     // only attempt to update value if valid file number
     if (isNumeric) {
       props.setVeteranFileNumber(value);
+      props.setDisableSaveButton(false);
     }
   };
 
@@ -55,6 +56,7 @@ export const ReviewForm = (props) => {
 
     props.setIsReturnToQueue(true);
     props.setNotes(value);
+    props.setDisableSaveButton(false);
   };
 
   const generateOptions = (options) =>
@@ -71,6 +73,7 @@ export const ReviewForm = (props) => {
     // update the correspondence type id and update the correspondence type
     // in the dropdown with placeholder
     props.setCorrespondenceTypeId(val.id);
+    props.setDisableSaveButton(false);
   };
 
   const errorOnVADORDate = (val) => {
@@ -104,6 +107,9 @@ export const ReviewForm = (props) => {
   const handleSubmit = async () => {
     setReturnValue(returnValueToUpdate());
 
+    // disable the save button on submit
+    props.setDisableSaveButton(true);
+
     props.setCreateRecordIsReadOnly('');
     const correspondence = props;
     const payloadData = {
@@ -127,7 +133,6 @@ export const ReviewForm = (props) => {
 
       const { body } = response;
 
-      props.setDisableButton((current) => !current);
       props.setIsReturnToQueue(false);
       if (body.status === 'ok') {
         props.setErrorMessage('');
@@ -294,15 +299,6 @@ export const ReviewForm = (props) => {
 };
 
 ReviewForm.propTypes = {
-  reviewDetails: PropTypes.shape({
-    veteran_name: PropTypes.shape({
-      first_name: PropTypes.string,
-      middle_initial: PropTypes.string,
-      last_name: PropTypes.string,
-    }),
-    dropdown_values: PropTypes.array,
-    correspondence_type_id: PropTypes.number
-  }),
   veteranInformation: PropTypes.shape({
     correspondenceTypes: PropTypes.array,
   }),
@@ -311,11 +307,10 @@ ReviewForm.propTypes = {
   notes: PropTypes.string,
   vaDor: PropTypes.string,
   veteranFileNumber: PropTypes.string,
-  disableButton: PropTypes.bool,
   disableSaveButton: PropTypes.bool,
+  setDisableSaveButton: PropTypes.func,
   setIsReturnToQueue: PropTypes.bool,
   setCreateRecordIsReadOnly: PropTypes.func,
-  setDisableButton: PropTypes.func,
   setErrorMessage: PropTypes.func,
   setVeteranFileNumber: PropTypes.func,
   setNotes: PropTypes.func,
