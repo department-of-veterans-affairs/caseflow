@@ -69,12 +69,7 @@ describe('Details', () => {
     expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
 
     // Ensure that the virtualHearing form is not displayed by default
-    expect(details.find(VirtualHearingFields).prop('virtualHearing')).toEqual(
-      null
-    );
-    // VirtualHearingFields will always show for any virtual or non virtual hearing
-    // as we move forward with Webex integration
-    expect(details.find(VirtualHearingFields).children()).toHaveLength(1);
+    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
 
     // Ensure the transcription section is displayed by default for ama hearings
     expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
