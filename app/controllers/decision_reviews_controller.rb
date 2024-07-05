@@ -72,10 +72,6 @@ class DecisionReviewsController < ApplicationController
   end
 
   def update
-    if task.appeal.pending_issue_modification_requests.any?
-      return render json: { error_uuid: error_uuid, error_code: "pendingModificationRequests" }, status: :bad_request
-    end
-
     if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
       business_line.tasks.reload
       render json: { task_filter_details: task_filter_details }, status: :ok

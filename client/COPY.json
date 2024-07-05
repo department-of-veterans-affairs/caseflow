@@ -1578,8 +1578,6 @@
   "TEST_SEEDS_RUN_SEEDS": "Scenario Seeds",
   "TEST_SEEDS_CUSTOM_SEEDS": "Custom Seeds",
   "VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE": "This is a new issue based on a requested issue addition.",
-  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes.",
-  "VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA admin completes review of the requested changes. Click the \"Edit issues\" button above to review the issue modification requests.",
   "ISSUE_MODIFICATION_REQUESTS": {
     "ADDITION": {
       "REQUEST_TYPE": "addition",
