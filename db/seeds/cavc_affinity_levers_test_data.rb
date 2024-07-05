@@ -690,187 +690,187 @@ module Seeds
       byebug
       # cavc affinity cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                     tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                     tied_to: false, appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                     tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S",  judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                     tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                           affinity_start_date: 3.days.ago)
                                           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                           affinity_start_date: 3.days.ago)
                                           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
 
         # hearing held but no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
         .update!(bfmemid: nil)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
         .update!(bfmemid: nil)
 
         # no hearing held, no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                           tied_to: false).update!(bfmemid: nil)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                           tied_to: false).update!(bfmemid: nil)
     end
 
     def create_cases_for_cavc_affinty_days_lever_excluded_judge
       # excluded judge cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                       tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                       tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                       affinity_start_date: 3.days.ago)
                                       .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
 
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
     end
 
     def create_cases_for_cavc_affinity_days_lever_ineligible_judge
       # ineligible judge cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                       tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                       tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),
                                             affinity_start_date: 3.days.ago)
                                             .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), appeal_affinity: false)
         .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),  affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),  appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),  affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id),  appeal_affinity: false)
         # hearing held but no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id)).update!(bfmemid: nil)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id)).update!(bfmemid: nil)
     end
 
     def create_cases_for_cavc_aod_affinty_days_lever
       # cavc aod affinity cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvagsporer_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id).sattyid)
 
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvabdaniel_judge("TiedToDaniel").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaeemard_judge("TiedToEmard").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
         # hearing held but no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvabdaniel.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
         .update!(bfmemid: nil)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
         .update!(bfmemid: nil)
         # no hearing held, no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvagsporer.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
           .update!(bfmemid: nil)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaeemard.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
           .update!(bfmemid: nil)
     end
 
     def create_cases_for_cavc_aod_affinty_days_lever_excluded_judge
       # excluded judge cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id).sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_bvaawakefield_judge("TiedToWakefield").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaawakefield.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
     end
 
     def create_cases_for_cavc_aod_affinity_days_lever_ineligible_judge
       # ineligible judge cases:
         # no hearing held but has previous decision
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, tied_to: false, appeal_affinity: false)
         # hearing held with previous decision where judge is not the same
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_bvaoschowalt.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
           .update!(bfmemid: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id).sattyid)
         # hearing held with previous decision where judge is same (THIS IS TIED TO)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, affinity_start_date: 3.days.ago)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_inactivejudge_judge("TiedToInactiveJudge").file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true, appeal_affinity: false)
         # hearing held but no previous deciding judge
-        create(:legacy_cavc_appeal, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
+        create(:legacy_cavc_appeal, :with_veteran, bfcorlid: "#{create_veteran_for_genpop().file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge_inactivejudge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id), aod: true)
           .update!(bfmemid: nil)
     end
   end
