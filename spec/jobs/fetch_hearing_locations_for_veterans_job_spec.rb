@@ -150,7 +150,7 @@ describe FetchHearingLocationsForVeteransJob do
         let(:limit_error) { Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error") }
 
         # triggering code climate comment
-        # intercept sleep requests
+        # intercept sleep requests oof
         before { allow(subject).to(receive(:sleep_before_retry_on_limit_error)) }
 
         context "and limit error is always returned" do
