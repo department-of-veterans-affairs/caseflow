@@ -13,11 +13,11 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
     DistributionTask.create!(
       appeal: root_task.appeal,
       assigned_to: Bva.singleton,
-      status: 'assigned'
+      status: "assigned"
     )
   end
 
-  let(:bfcurloc_keys) { ["77", "81", "83"] }
+  let(:bfcurloc_keys) { %w[77 81 83] }
   let!(:cases) do
     bfcurloc_keys.map do |bfcurloc_key|
       create(:case, bfcurloc: bfcurloc_key)
@@ -614,31 +614,31 @@ RSpec.describe TestDocketSeedsController, :all_dbs, type: :controller do
     end
 
     it "should reset all appeals" do
-      expect(distribution_task.status).to eq('assigned')
+      expect(distribution_task.status).to eq("assigned")
       expect(VACOLS::Case.where(bfcurloc: %w[81 83]).count).to eq(2)
-      expect(VACOLS::Case.where(bfcurloc: 'testing').count).to eq(0)
+      expect(VACOLS::Case.where(bfcurloc: "testing").count).to eq(0)
       get :reset_all_appeals
       expect(response.status).to eq 200
-      expect(distribution_task.reload.status).to eq('on_hold')
+      expect(distribution_task.reload.status).to eq("on_hold")
       expect(VACOLS::Case.where(bfcurloc: %w[81 83]).count).to eq(0)
-      expect(VACOLS::Case.where(bfcurloc: 'testing').count).to eq(2)
+      expect(VACOLS::Case.where(bfcurloc: "testing").count).to eq(2)
     end
 
-    context 'check environment when non prod environments is true' do
+    context "check environment when non prod environments is true" do
       before { allow(Rails).to receive(:deploy_env?).with(:demo).and_return(true) }
 
-      it 'allows access without redirecting' do
+      it "allows access without redirecting" do
         get :reset_all_appeals
         expect(response.status).to eq 200
       end
     end
 
-    context 'check environment when in other environments' do
+    context "check environment when in other environments" do
       before { allow(Rails).to receive(:deploy_env?).and_return(false) }
 
-      it 'redirects to /unauthorized' do
+      it "redirects to /unauthorized" do
         get :reset_all_appeals
-        expect(response).to redirect_to('/unauthorized')
+        expect(response).to redirect_to("/unauthorized")
       end
     end
   end
