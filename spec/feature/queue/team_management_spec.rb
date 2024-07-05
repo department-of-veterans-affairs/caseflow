@@ -65,7 +65,6 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          # triggering code climate.
           expect(page).not_to have_content(error_message)
         end
       end
