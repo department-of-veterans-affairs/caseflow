@@ -104,9 +104,9 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     expect(page.has_no_content?(
-      "Please select the claimant listed on the form. If the claimant is not listed, " \
-      "please select \"Claimant not listed\" and add their information in the next step."
-    )).to eq(true)
+             "Please select the claimant listed on the form. If the claimant is not listed, " \
+             "please select \"Claimant not listed\" and add their information in the next step."
+           )).to eq(true)
     expect(page.has_no_content?("What is the payee code for this claimant?")).to eq(true)
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -532,8 +532,8 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content("2 issues")
       # SC is always timely
       expect(page.has_no_content?(
-        "Description for Active Duty Adjustments is ineligible because it has a prior"
-        )).to eq(true)
+               "Description for Active Duty Adjustments is ineligible because it has a prior"
+             )).to eq(true)
 
       # add unidentified issue
       click_intake_add_issue
@@ -558,8 +558,8 @@ feature "Supplemental Claim Intake", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page.has_no_content?(
-        "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
-      )).to eq(true)
+               "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+             )).to eq(true)
       expect(page).to have_content("6. Non-RAMP Issue before AMA Activation")
 
       # Eligible because it comes from a RAMP decision
@@ -569,8 +569,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         "7. Issue before AMA Activation from RAMP\nDecision date:"
       )
       expect(page.has_no_content?(
-        "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
-      )).to eq(true)
+               "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
+             )).to eq(true)
 
       click_intake_add_issue
       click_intake_no_matching_issues
@@ -580,8 +580,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         date: (profile_date - 400.days).mdY
       )
       expect(page.has_no_content?(
-        "A nonrating issue before AMA #{ineligible_constants.before_ama}"
-      )).to eq(true)
+               "A nonrating issue before AMA #{ineligible_constants.before_ama}"
+             )).to eq(true)
       expect(page).to have_content("A nonrating issue before AMA")
 
       # add old rating decision
@@ -868,8 +868,8 @@ feature "Supplemental Claim Intake", :all_dbs do
           add_intake_rating_issue("Untimely rating issue 1")
           select_intake_no_match
           expect(page.has_no_content?(
-            "The issue requested isn't usually eligible because its decision date is older"
-            )).to eq(true)
+                   "The issue requested isn't usually eligible because its decision date is older"
+                 )).to eq(true)
 
           expect(page).to have_content("Untimely rating issue 1")
 
@@ -895,8 +895,8 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page.has_no_content?(
-            "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
-          )).to eq(true)
+                   "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+                 )).to eq(true)
 
           # add eligible legacy issue
           click_intake_add_issue
@@ -937,7 +937,6 @@ feature "Supplemental Claim Intake", :all_dbs do
           # do not show inactive appeals when legacy opt in is false
           expect(page.has_no_content?("impairment of hip")).to eq(true)
           expect(page.has_no_content?("typhoid arthritis")).to eq(true)
-
 
           add_intake_rating_issue("ankylosis of hip")
 

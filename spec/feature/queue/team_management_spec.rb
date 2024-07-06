@@ -2,8 +2,9 @@
 
 RSpec.feature "Team management page", :postgres do
   let(:user) { create(:user) }
-
+  # rubocop:disable Layout/LineLength
   let(:team_management_text) { "*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value." }
+  # rubocop:enable Layout/LineLength
 
   before do
     Bva.singleton.add_user(user)
@@ -67,7 +68,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page.has_no_content?(error_message)).to be (true)
+          expect(page.has_no_content?(error_message)).to be true
         end
       end
 
@@ -103,7 +104,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page.has_no_content?(error_message)).to be (true)
+          expect(page.has_no_content?(error_message)).to be true
         end
 
         step "try to add a Private Bar with the same participant id" do
@@ -115,7 +116,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).to have_content(error_message)
 
           find("button", text: "Cancel").click
-          expect(page.has_no_content?(error_message)).to be (true)
+          expect(page.has_no_content?(error_message)).to be true
         end
       end
     end
@@ -169,7 +170,6 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
 
-      # rubocop:disable Layout/LineLength
       scenario "user can view and change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
@@ -191,13 +191,16 @@ RSpec.feature "Team management page", :postgres do
         scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
           visit("/team_management")
           expect(page).to have_content("Judge Teams")
-          expect(page.has_no_content?(team_management_text)).to be (true)
-          expect(page).not_to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
-          expect(page.has_no_content?("Exclude Judge")).to be (true)
+          expect(page.has_no_content?(team_management_text)).to be true
+          expect(page).not_to have_field(
+            "excludeJudgeFromAffinityCases-#{judge_team.id}",
+            visible: false,
+            disabled: false
+          )
+          expect(page.has_no_content?("Exclude Judge")).to be true
         end
       end
     end
-    # rubocop:enable Layout/LineLength
 
     context "when the user is a dvc" do
       before do
@@ -251,7 +254,6 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.ama_only_request).to be true
       end
 
-      # rubocop:disable Layout/LineLength
       scenario "user can toggle Exclude from Affinity Appeals" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
@@ -274,12 +276,15 @@ RSpec.feature "Team management page", :postgres do
         scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
           visit("/team_management")
           expect(page).to have_content("Judge Teams")
-          expect(page.has_no_content?(team_management_text)).to be (true)
-          expect(page).not_to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
+          expect(page.has_no_content?(team_management_text)).to be true
+          expect(page).not_to have_field(
+            "excludeJudgeFromAffinityCases-#{judge_team.id}",
+            visible: false,
+            disabled: false
+          )
           expect(page).not_to have_content("Exclude Judge")
         end
       end
-      # rubocop:enable Layout/LineLength
     end
   end
 end
