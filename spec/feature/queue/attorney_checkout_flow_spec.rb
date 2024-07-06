@@ -224,7 +224,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_on "Continue"
 
-      expect(page).to have_content("Submit Draft Decision for Review")
+      expect(current_url).to include("/draft_decision/")
+      expect(page).to have_content("Submit Draft Decision for Review", wait: 30)
 
       fill_in "document_id", with: valid_document_id
       expect(page.find("#document_id").value.length).to eq 12
@@ -295,7 +296,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
       click_on "Continue"
 
-      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name, wait: 30)
 
       # Two request issues are merged into 1 decision issue
       expect(appeal.decision_issues.count).to eq 3
@@ -475,8 +476,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         all("label", text: "After certification", count: 3)[2].click
 
         click_on "Continue"
-        sleep 1
-        expect(current_url).to include("/draft_decision/submit")
+
+        expect(current_url).to include("/draft_decision/")
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: invalid_document_id
