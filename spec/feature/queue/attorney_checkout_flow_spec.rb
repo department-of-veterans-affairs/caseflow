@@ -217,9 +217,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       find_field("Service treatment records", visible: false).sibling("label").click
 
       click_on "Continue"
-      # For some reason clicking too quickly on the next remand reason breaks the test.
-      # Adding sleeps is bad... but I'm not sure how else to get this to work.
-      sleep 1
+
+      expect(page).to have_text("Medical examination and opinion")
 
       all("label", text: "No medical examination", visible: false, count: 2)[1].click
 
@@ -287,10 +286,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       click_on "Continue"
       expect(page).to have_content("Issue 2 of 2")
       expect(find("input", id: "2-no_medical_examination", visible: false).checked?).to eq(true)
-      # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
-      # to the next page. I think it's related to how we're using continue to load the next
-      # section of the remand reason screen.
-      sleep 1
 
       click_on "Continue"
 
@@ -474,21 +469,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.second.note)
 
-        # I know we're not supposed to sleep in tests, but this is the only
-        # thing that allows the tests to pass consistently. I think the issue is
-        # that after pressing "Continue" above, the page is moving and we have
-        # to wait until it stops moving before clicking on the checkboxes.
-        # Otherwise, it's not always able to click on the right checkboxes. If
-        # someone knows a better way to wait for the page to stop moving, please
-        # change this.
-        sleep 1
-
         all("label", text: "Current findings", count: 2)[1].click
         all("label", text: "Nexus opinion", count: 2)[1].click
         all("label", text: "Before certification", count: 3)[1].click
         all("label", text: "After certification", count: 3)[2].click
 
         click_on "Continue"
+        sleep 1
+        expect(current_url).to include("/draft_decision/submit")
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "document_id", with: invalid_document_id

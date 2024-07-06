@@ -103,11 +103,11 @@ feature "Supplemental Claim Intake", :all_dbs do
       find("label", text: "Education", match: :prefer_exact).click
     end
 
-    expect(page).to_not have_content(
+    expect(page.has_no_content?(
       "Please select the claimant listed on the form. If the claimant is not listed, " \
       "please select \"Claimant not listed\" and add their information in the next step."
-    )
-    expect(page).to_not have_content("What is the payee code for this claimant?")
+    )).to eq(true)
+    expect(page.has_no_content?("What is the payee code for this claimant?")).to eq(true)
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
@@ -172,7 +172,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     click_intake_add_issue
-    expect(page).to_not have_content("Future rating issue 1")
+    expect(page.has_no_content?("Future rating issue 1")).to eq(true)
     add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
@@ -182,7 +182,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     click_remove_intake_issue(2)
     expect(page).to have_content("1 issue")
-    expect(page).to_not have_content("Left knee granted")
+    expect(page.has_no_content?("Left knee granted")).to eq(true)
 
     click_intake_add_issue
     click_intake_no_matching_issues
@@ -337,8 +337,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
     expect(page).to have_content(receipt_date.mdY)
-    expect(page).to_not have_content("Informal conference request")
-    expect(page).to_not have_content("Same office request")
+    expect(page.has_no_content?("Informal conference request")).to eq(true)
+    expect(page.has_no_content?("Same office request")).to eq(true)
     expect(page).to have_content("PTSD denied")
 
     visit "/supplemental_claims/4321/edit"
@@ -498,13 +498,13 @@ feature "Supplemental Claim Intake", :all_dbs do
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
-      expect(page).to_not have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # adding an issue should show the issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted 2")
       expect(page).to have_content("1. Left knee granted 2")
-      expect(page).to_not have_content("Notes:")
+      expect(page.has_no_content?("Notes:")).to eq(true)
 
       click_remove_intake_issue("1")
       expect(page.has_no_content?("Left knee granted 2")).to eq(true)
@@ -531,7 +531,9 @@ feature "Supplemental Claim Intake", :all_dbs do
       )
       expect(page).to have_content("2 issues")
       # SC is always timely
-      expect(page).to_not have_content("Description for Active Duty Adjustments is ineligible because it has a prior")
+      expect(page.has_no_content?(
+        "Description for Active Duty Adjustments is ineligible because it has a prior"
+        )).to eq(true)
 
       # add unidentified issue
       click_intake_add_issue
@@ -550,14 +552,14 @@ feature "Supplemental Claim Intake", :all_dbs do
       add_intake_rating_issue("Really old injury")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("5. Really old injury")
-      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page.has_no_content?("5. Really old injury #{ineligible_constants.untimely}")).to eq(true)
 
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
-      expect(page).to_not have_content(
+      expect(page.has_no_content?(
         "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
-      )
+      )).to eq(true)
       expect(page).to have_content("6. Non-RAMP Issue before AMA Activation")
 
       # Eligible because it comes from a RAMP decision
@@ -566,9 +568,9 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content(
         "7. Issue before AMA Activation from RAMP\nDecision date:"
       )
-      expect(page).to_not have_content(
+      expect(page.has_no_content?(
         "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
-      )
+      )).to eq(true)
 
       click_intake_add_issue
       click_intake_no_matching_issues
@@ -577,9 +579,9 @@ feature "Supplemental Claim Intake", :all_dbs do
         description: "A nonrating issue before AMA",
         date: (profile_date - 400.days).mdY
       )
-      expect(page).to_not have_content(
+      expect(page.has_no_content?(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
-      )
+      )).to eq(true)
       expect(page).to have_content("A nonrating issue before AMA")
 
       # add old rating decision
@@ -599,8 +601,8 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(success_checklist).to have_content("A nonrating issue before AMA")
 
       ineligible_checklist = find("ul.cf-issue-checklist")
-      expect(ineligible_checklist).to_not have_content("Non-RAMP Issue before AMA Activation is ineligible")
-      expect(ineligible_checklist).to_not have_content("A nonrating issue before AMA is ineligible")
+      expect(ineligible_checklist.has_no_content?("Non-RAMP Issue before AMA Activation is ineligible")).to eq(true)
+      expect(ineligible_checklist.has_no_content?("A nonrating issue before AMA is ineligible")).to eq(true)
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
@@ -747,7 +749,7 @@ feature "Supplemental Claim Intake", :all_dbs do
           click_intake_add_issue
 
           expect(page).to have_content("something was decided")
-          expect(page).to_not have_content("Left knee granted")
+          expect(page.has_no_content?("Left knee granted")).to eq(true)
         end
       end
 
@@ -765,7 +767,7 @@ feature "Supplemental Claim Intake", :all_dbs do
           check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
           check_row("Benefit type", "Education")
 
-          expect(page).to_not have_content("Left knee granted")
+          expect(page.has_no_content?("Left knee granted")).to eq(true)
 
           click_intake_add_issue
           add_intake_nonrating_issue(
@@ -774,7 +776,7 @@ feature "Supplemental Claim Intake", :all_dbs do
             date: profile_date.mdY
           )
 
-          expect(page).to_not have_content("Establish EP")
+          expect(page.has_no_content?("Establish EP")).to eq(true)
           expect(page).to have_content("Establish Supplemental Claim")
           expect(page).to have_content("Claimant")
 
@@ -782,7 +784,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
-          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
+          expect(page.has_no_content?("It may take up to 24 hours for the claim to establish")).to eq(true)
           expect(current_path).to eq("/decision_reviews/education")
           expect(page).to have_content("Success!")
 
@@ -853,7 +855,7 @@ feature "Supplemental Claim Intake", :all_dbs do
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
           # do not show "inactive and ineligible" issues when legacy opt in is true
-          expect(page).to_not have_content("typhoid arthritis")
+          expect(page.has_no_content?("typhoid arthritis")).to eq(true)
 
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
@@ -865,9 +867,9 @@ feature "Supplemental Claim Intake", :all_dbs do
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
           select_intake_no_match
-          expect(page).to_not have_content(
+          expect(page.has_no_content?(
             "The issue requested isn't usually eligible because its decision date is older"
-          )
+            )).to eq(true)
 
           expect(page).to have_content("Untimely rating issue 1")
 
@@ -892,9 +894,9 @@ feature "Supplemental Claim Intake", :all_dbs do
           add_intake_rating_issue("limitation of thigh motion (extension)")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
-          expect(page).to_not have_content(
+          expect(page.has_no_content?(
             "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
-          )
+          )).to eq(true)
 
           # add eligible legacy issue
           click_intake_add_issue
@@ -933,8 +935,9 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
           # do not show inactive appeals when legacy opt in is false
-          expect(page).to_not have_content("impairment of hip")
-          expect(page).to_not have_content("typhoid arthritis")
+          expect(page.has_no_content?("impairment of hip")).to eq(true)
+          expect(page.has_no_content?("typhoid arthritis")).to eq(true)
+
 
           add_intake_rating_issue("ankylosis of hip")
 
@@ -956,7 +959,7 @@ feature "Supplemental Claim Intake", :all_dbs do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+          expect(page.has_no_content?(COPY::VACOLS_OPTIN_ISSUE_CLOSED)).to eq(true)
         end
       end
     end
