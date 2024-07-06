@@ -224,7 +224,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Issue 2 of 2")
 
       within all("div.remand-reasons-options")[1] do
-        find_field("No medical examination", visible: false).sibling("label").click
+        label = find_field("No medical examination", visible: false).sibling("label")
+        safe_click_element(label)
       end
 
       safe_click "#button-next-button"
@@ -300,7 +301,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
-      click_on "Continue"
+
+      safe_click "#button-next-button"
 
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
@@ -464,7 +466,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue_dispositions[3].click
         page.find("div", class: "cf-select__option", text: "Stay").click
 
-        safe_click "#button-next-button"
+        # safe_click "#button-next-button"
+        # click_button "Continue"
+
+        find("#button-next-button").send_keys(:return)
 
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
@@ -476,7 +481,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           find_field("After certification", visible: false).sibling("label").click
         end
 
-        safe_click "#button-next-button"
+        # safe_click "#button-next-button"
+        click_button "Continue"
 
         # Should still be on remand reasons page, but should have added second issue form
         expect(page).to have_selector(".remand-reasons-options", minimum: 2)
@@ -486,10 +492,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         # Add remand reasons for issue 2
         within all("div.remand-reasons-options")[1] do
-          find_field("Current findings", visible: false).sibling("label").click
-          find_field("Before certification", visible: false).sibling("label").click
-          find_field("Nexus opinion", visible: false).sibling("label").click
-          all("label", text: "After certification", count: 2)[1].click
+          safe_click_element(find_field("Current findings", visible: false).sibling("label"))
+          safe_click_element(find_field("Before certification", visible: false).sibling("label"))
+          safe_click_element(find_field("Nexus opinion", visible: false).sibling("label"))
+          safe_click_element(all("label", text: "After certification", count: 2)[1])
         end
 
         safe_click "#button-next-button"

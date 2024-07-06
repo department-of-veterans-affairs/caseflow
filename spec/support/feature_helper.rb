@@ -69,6 +69,11 @@ module FeatureHelper
     page.first(selector).click
   end
 
+  def safe_click_element(element)
+    scroll_to(element)
+    element.click
+  end
+
   def click_label(label_for)
     safe_click("label[for='#{label_for}']")
   end
