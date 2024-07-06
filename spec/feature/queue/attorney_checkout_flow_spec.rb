@@ -296,7 +296,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
       click_on "Continue"
 
-      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name, wait: 30)
+      expect(page).to have_content(
+        COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name, wait: 30
+      )
 
       # Two request issues are merged into 1 decision issue
       expect(appeal.decision_issues.count).to eq 3
