@@ -52,7 +52,9 @@ module Caseflow::Error
 
   class NoAutoAssignableUsersError < StandardError
     def error
-      fail Caseflow::NoAutoAssignableUsersError, code: 502, message: "No assignable users have capacity for more correspondences"
+      fail Caseflow::NoAutoAssignableUsersError,
+      @code = args[:code] || 502,
+      @message = "No assignable users have capacity for more correspondences"
     end
   end
 
