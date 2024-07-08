@@ -5,12 +5,12 @@ class Docket
   include DistributionConcern
   include DistributionScopes
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
   end
-
-  PRIORITY = "priority"
-  NON_PRIORITY = "non_priority"
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
