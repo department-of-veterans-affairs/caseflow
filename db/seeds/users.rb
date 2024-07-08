@@ -98,6 +98,7 @@ module Seeds
       add_mail_intake_to_all_bva_intake_users
       create_and_add_cda_control_group_users
       add_users_to_bva_dispatch
+      create_qa_test_users
 
       # Below originated in the VeteransHealthAdministration seed file
       setup_camo_org
@@ -109,8 +110,6 @@ module Seeds
       # Below originated in Education seed file
       setup_emo_org
       setup_rpo_orgs
-
-      create_qa_test_users
     end
 
     def create_bva_dispatch_admin
