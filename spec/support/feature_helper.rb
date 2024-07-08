@@ -70,8 +70,10 @@ module FeatureHelper
   end
 
   def safe_click_element(element)
-    scroll_to(element)
+    scroll_to(element, :center)
+    # element.click(x: 0, y: 0)
     element.click
+    # element.click(x: 5, y: 10)
   end
 
   def click_label(label_for)

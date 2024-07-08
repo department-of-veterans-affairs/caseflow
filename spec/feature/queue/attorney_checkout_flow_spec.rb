@@ -482,7 +482,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         end
 
         # safe_click "#button-next-button"
-        click_button "Continue"
+        # click_button "Continue"
+        find("#button-next-button").send_keys(:return)
 
         # Should still be on remand reasons page, but should have added second issue form
         expect(page).to have_selector(".remand-reasons-options", minimum: 2)
@@ -492,13 +493,26 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         # Add remand reasons for issue 2
         within all("div.remand-reasons-options")[1] do
-          safe_click_element(find_field("Current findings", visible: false).sibling("label"))
-          safe_click_element(find_field("Before certification", visible: false).sibling("label"))
-          safe_click_element(find_field("Nexus opinion", visible: false).sibling("label"))
-          safe_click_element(all("label", text: "After certification", count: 2)[1])
+          current_findings_checkbox_text = find_field("Current findings", visible: false).sibling("label").find("span")
+          scroll_to current_findings_checkbox_text
+          # puts "screenshot before clicking current findings: #{save_screenshot}"
+          # sleep 1
+          # safe_click_element(find_field("Current findings", visible: false).sibling("label").find("span"))
+          current_findings_checkbox_text.click
+          # puts "screenshot after clicking current findings: #{save_screenshot}"
+          find_field("Nexus opinion", visible: false).sibling("label").find("span").click
+          # puts "screenshot after clicking nexus opinion: #{save_screenshot}"
+          all("label", text: "Before certification", count: 2)[0].click
+          # puts "screenshot after clicking before certification: #{save_screenshot}"
+          all("label", text: "After certification", count: 2)[1].click
+          # puts "screenshot after clicking after certification: #{save_screenshot}"
+          # safe_click_element(all("label", text: "Before certification", count: 2)[0])
+          # safe_click_element(all("label", text: "After certification", count: 2)[1])
         end
 
-        safe_click "#button-next-button"
+        find("#button-next-button").send_keys(:return)
+
+        # safe_click "#button-next-button"
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
