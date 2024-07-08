@@ -485,10 +485,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # change this.
         # sleep 1
 
-        all("label", text: "Current findings", count: 2)[1].click
-        all("label", text: "Nexus opinion", count: 2)[1].click
-        all("label", text: "Before certification", count: 3)[1].click
-        all("label", text: "After certification", count: 3)[2].click
+        all("label", text: "Current findings", count: 2, wait: 2)[1].click
+        all("label", text: "Nexus opinion", count: 2, wait: 2)[1].click
+        all("label", text: "Before certification", count: 3, wait: 2)[1].click
+        all("label", text: "After certification", count: 3, wait: 2)[2].click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
