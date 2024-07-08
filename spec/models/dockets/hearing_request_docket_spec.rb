@@ -121,9 +121,7 @@ describe HearingRequestDocket, :postgres do
         subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(requesting_judge, 3) }
 
         it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
-          expect(subject).to match_array(
-            [ready_aod_appeal_tied_to_judge.receipt_date, ready_aod_appeal_hearing_cancelled.receipt_date]
-          )
+          expect(subject).to match_array([ready_aod_appeal_hearing_cancelled.receipt_date])
         end
       end
     end
@@ -154,10 +152,7 @@ describe HearingRequestDocket, :postgres do
         end
 
         it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
-          expect(subject).to match_array(
-            [ready_nonpriority_appeal_tied_to_judge.receipt_date,
-             ready_nonpriority_appeal_hearing_cancelled.receipt_date]
-          )
+          expect(subject).to match_array([ready_nonpriority_appeal_hearing_cancelled.receipt_date])
         end
       end
     end
@@ -751,6 +746,8 @@ describe HearingRequestDocket, :postgres do
         created_date: 4.years.ago
       )
     end
+
+    before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
     subject { described_class.new }
 
