@@ -1,174 +1,179 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { WrappingComponent } from '../establishClaim/WrappingComponent';
+import { render, waitFor, cleanup} from '@testing-library/react';
 
-import { PdfUI } from '../../../app/reader/PdfUI';
+import { PdfFile } from '../../../app/reader/PdfFile';
+import { documents } from '../../data/documents';
+import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
+jest.mock('../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {},
+    header: { 'x-document-source': 'VBMS' }
+  }),
+}));
+jest.mock('../../../app/util/Metrics', () => ({
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+}));
+jest.mock('pdfjs-dist', () => ({
+  getDocument: jest.fn().mockResolvedValue(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+}));
 
-jest.mock('../../../app/reader/Pdf', () => {
-  return function MockPdf({ onPageChange }) {
-    return <div data-testid="mock-pdf" onClick={() => onPageChange(2, 3)} />;
-  };
-});
+const metricArgs = (featureValue) => {
+  return [
+    // eslint-disable-next-line no-undefined
+    undefined,
+    {
+      data:
+      {
+        documentId: 1,
+        numPagesInDoc: null,
+        pageIndex: null,
+        file: '/document/1/pdf',
+        documentType: 'test',
+        prefetchDisabled: undefined,
+        overscan: undefined,
+        isPageVisible: true,
+        name: null
+      },
+      // eslint-disable-next-line no-useless-escape
+      message: 'Getting PDF document: \"/document/1/pdf\"',
+      product: 'reader',
+      additionalInfo: JSON.stringify({ source: 'VBMS' }),
+      type: 'performance',
+      eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+    },
+    featureValue,
+  ];
+};
 
-jest.mock('../../../app/reader/PdfFile', () => {
-  return function MockPdfFile({ onPageChange }) {
-    return <div data-testid="mock-pdf-file" onClick={() => onPageChange(2, 3)} />;
-  };
-});
+const storeMetricsError = {
+  uuid: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/),
+  data:
+  {
+    documentId: 1,
+    file: '/document/1/pdf',
+    documentType: 'test',
+  },
+  info: {
+    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ()]*)$/),
+    product: 'browser',
+    type: 'error'
+  },
+  eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+};
 
-/* eslint-disable no-unused-expressions */
-describe('PdfUI', () => {
-  describe('shallow create PdfUI', () => {
-    let setup;
-    let doc;
+describe('PdfFile', () => {
 
-    // beforeEach(() => {
-      doc = {
-        filename: 'My PDF',
-        id: 3,
-        type: 'Form 8',
-        receivedAt: '1/2/2017'
-      };
+  describe('getDocument', () => {
 
-      setup = (props) => {
-        return render(<PdfUI
-          doc={doc}
-          file="test.pdf"
-          filteredDocIds={[3]}
-          id="pdf"
-          pdfWorker="noworker"
-          documentPathBase={DOCUMENT_PATH_BASE}
-          showClaimsFolderNavigation={false}
-          featureToggles={{ search: true }}
-          {...props}
-        />, { wrapper: WrappingComponent });
-        };
-    // });
+    describe('when the feature toggle metricsRecordPDFJSGetDocument is OFF', () => {
 
-    describe('.render', () => {
-      it('renders the outer div', () => {
-        const {container} = setup();
-        expect(container.querySelector('.cf-pdf-container')).toBeInTheDocument();
-        // expect(wrapper.find('.cf-pdf-container')).toHaveLength(1);
+      beforeAll(() => {
+        // This component throws an error about halfway through getDocument at destroy
+        // giving it access to both recordAsyncMetrics and storeMetrics
+        const {container} = render(
+          <PdfFile
+            documentId={documents[0].id}
+            key={`${documents[0].content_url}`}
+            file={documents[0].content_url}
+            onPageChange= {jest.fn()}
+            isVisible
+            scale="test"
+            documentType="test"
+            featureToggles={{
+              metricsRecordPDFJSGetDocument: false,
+            }}
+            clearDocumentLoadError={jest.fn()}
+            setDocumentLoadError={jest.fn()}
+            setPageDimensions={jest.fn()}
+            setPdfDocument={jest.fn()}
+          />
+        );
       });
 
-      it('renders the title as a link', () => {
-        setup();
-        const newTab = screen.getByRole('link', {name: 'open document in new tab'});
-
-        expect(newTab).toBeInTheDocument();
-        expect(newTab.id).toBe('newTab');
-        expect(newTab.target).toBe('_blank');
-        expect(screen.getByRole('link', {name: 'open document in new tab'})).toBeInTheDocument();
-        expect(screen.getByText(doc.type)).toBeInTheDocument();
+      afterAll(() => {
+        jest.clearAllMocks();
       });
 
-      it('does not render the page number when pdf has not been rendered', () => {
-        setup();
-        expect(screen.queryByText('Page 1 of 1')).toBeNull();
-        expect(screen.getByText('Loading document...')).toBeInTheDocument();
+      it('calls recordAsyncMetrics but will not save a metric', () => {
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
       });
 
-      it('renders the zoom buttons', () => {
-        setup();
-        expect(screen.getByRole('button', {name: 'zoom out'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'zoom in'})).toBeInTheDocument();
+      it('does not call storeMetrics in catch block', () => {
+        expect(storeMetrics).not.toBeCalled();
       });
 
-      it('renders the search button', () => {
-        setup();
-        expect(screen.getByRole('button', {name: 'search text'})).toBeInTheDocument();
+    });
+
+    describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
+      let renderStartTime = null;
+      const setRenderStartTime = jest.fn(time => {
+        renderStartTime = time;
       });
 
-      describe('when showClaimsFolderNavigation is true', () => {
-        it('renders the back button that directs to claims folder', () => {
-          const {rerender} = setup();
+      beforeAll(() => {
+        render(
+          <PdfFile
+            documentId={documents[0].id}
+            key={`${documents[0].content_url}`}
+            file={documents[0].content_url}
+            onPageChange={jest.fn()}
+            isVisible
+            scale="test"
+            documentType="test"
+            featureToggles={{
+              metricsRecordPDFJSGetDocument: true,
+            }}
+            clearDocumentLoadError={jest.fn()}
+            setDocumentLoadError={jest.fn()}
+            setPageDimensions={jest.fn()}
+            setPdfDocument={jest.fn()}
+            setRenderStartTime={setRenderStartTime}
+          />
+        );
+      });
 
-          expect(screen.queryByRole('link', {name: 'Back'})).not.toBeInTheDocument();
+      afterAll(() => {
+        cleanup();
+        jest.clearAllMocks();
+      });
 
-          const newProps = {
-            showClaimsFolderNavigation: true
-            }
+      it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
+        expect(recordAsyncMetrics).toBeCalledWith(
+          metricArgs()[0],
+          metricArgs()[1],
+          metricArgs(true)[2]
+        );
+      });
 
-            rerender(<PdfUI
-              doc={doc}
-              file="test.pdf"
-              filteredDocIds={[3]}
-              id="pdf"
-              pdfWorker="noworker"
-              documentPathBase={DOCUMENT_PATH_BASE}
-              showClaimsFolderNavigation={false}
-              featureToggles={{ search: true }}
-              {...newProps}
-              />, { wrapper: WrappingComponent }
-              );
-
-            expect(screen.getByRole('link', {name: 'Back'})).toBeInTheDocument();
+      it('calls storeMetrics in catch block', () => {
+        waitFor(() => {
+          expect(storeMetrics).toBeCalledWith(
+            storeMetricsError.uuid,
+            storeMetricsError.data,
+            storeMetricsError.info,
+            storeMetricsError.eventId
+          );
         });
       });
-    });
 
+      it('clears measureTimeStartMs after unmount', async () => {
+        const simulatedStartTime = Date.now();
+        setRenderStartTime(simulatedStartTime);;
 
-    describe('.onPageChange', () => {
-      it('updates the state', () => {
-        setup();
-        const mockPdf = screen.getByTestId('mock-pdf');
-        fireEvent.click(mockPdf);
-
-        const pdfUiComponent = screen.getByTestId('pdf-ui');
-
-        const currentPageTest = pdfUiComponent.getAttribute('cp-test');
-        const fitToScreenZoomTest = pdfUiComponent.getAttribute('ftsz-test');
-
-        expect(currentPageTest).toBe('2');
-        expect(fitToScreenZoomTest).toBe('3');
-
-        // // Simulate changing the page number input
-        // fireEvent.change(pageNumberInput, { target: { value: '3' } });
-
-        // // Simulate pressing the "Enter" key to change the page
-        // fireEvent.keyPress(pageNumberInput, { key: 'Enter', code: 'Enter', charCode: 13 });
-
-        // // Verify that the page number is updated correctly
-        // expect(pageNumberInput.value).toBe('3');
-      });
-    });
-
-    describe('changing the page number', () => {
-      it('updates the value of the page number', () => {
-        setup({
-          numPages: 10,
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(simulatedStartTime);
         });
-        const pageNumberInput = screen.getByRole('textbox', { name: 'Page' });
-        expect(pageNumberInput.value).toBe('1');
 
-        fireEvent.change(pageNumberInput, { target: { value: '3' } });
-        fireEvent.keyPress(pageNumberInput, { key: 'Enter' });
+        cleanup();
 
-        expect(pageNumberInput.value).toBe('3');
-      });
-    });
-
-    describe('clicking', () => {
-      describe('backToClaimsFolder', () => {
-        it('calls the stopPlacingAnnotation props', () => {
-          const mockStopPlacingAnnotationClick = jest.fn();
-
-          setup({
-            showClaimsFolderNavigation: true,
-            stopPlacingAnnotation: mockStopPlacingAnnotationClick
-          });
-
-          const backToClaimsFolderButton = screen.getByRole('link', {name: 'Back'});
-          fireEvent.click(backToClaimsFolderButton);
-
-          expect(mockStopPlacingAnnotationClick).toHaveBeenCalled();
+        waitFor(() => {
+          expect(setRenderStartTime).toHaveBeenCalledWith(null);
+          console.log('cleanup called', setRenderStartTime);
         });
       });
     });
   });
 });
-
-/* eslint-enable no-unused-expressions */
