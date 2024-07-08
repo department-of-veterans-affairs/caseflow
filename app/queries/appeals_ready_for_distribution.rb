@@ -51,7 +51,7 @@ class AppealsReadyForDistribution
       end
   end
 
-  def self.legacy_rows(appeals, docket, sym)
+  def self.legacy_rows(appeals, sym)
     appeals.map do |appeal|
       veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
