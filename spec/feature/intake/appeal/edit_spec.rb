@@ -711,7 +711,7 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_button("Back")
         expect(page).to have_button("Split appeal")
         expect(page).to have_content("Reason for new appeal stream:")
-        expect(appeal2.docket_type).not_to have_content("hearing")
+        expect(appeal2.docket_type).not_to include("hearing")
 
         # Verify table information
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
