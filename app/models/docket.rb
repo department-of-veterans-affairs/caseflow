@@ -134,7 +134,7 @@ class Docket
 
   # used for distribution_stats
   def affinity_date_count(in_window: false, priority: true)
-    scope = docket_appeals
+    scope = docket_appeals.ready_for_distribution
 
     if in_window
       scope = scope.non_genpop_by_affinity_start_date
