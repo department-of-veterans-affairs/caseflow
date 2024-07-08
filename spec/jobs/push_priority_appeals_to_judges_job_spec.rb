@@ -120,6 +120,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         appeal = create(
           :appeal,
           :ready_for_distribution,
+          :with_appeal_affinity,
           docket_type: Constants.AMA_DOCKETS.hearing,
           receipt_date: receipt_date
         )
