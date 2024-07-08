@@ -66,15 +66,6 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
-  def genpop_by_judge_exclusion
-    with_appeal_affinities
-      .with_original_appeal_and_judge_task
-      .where(
-        "original_judge_task.assigned_to_id in (?)",
-        JudgeTeam.judge_ids_with_exclude_appeals_from_affinity
-      )
-  end
-
   def ama_non_aod_hearing_appeals
     where("advance_on_docket_motions.person_id IS NULL")
       .where("people.date_of_birth > ?", 75.years.ago)
