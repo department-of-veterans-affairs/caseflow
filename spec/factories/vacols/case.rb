@@ -206,6 +206,7 @@ FactoryBot.define do
                 judge { nil }
                 attorney { nil }
                 aod { false }
+                cavc { true }
                 appeal_affinity { true }
                 affinity_start_date { 1.month.ago }
                 tied_to { true }
@@ -242,7 +243,10 @@ FactoryBot.define do
                 vacols_case.correspondent.update!(ssn: vacols_case.bfcorlid.chomp("S"))
                 vacols_case.save
 
-                unless Veteran.find_by_file_number_or_ssn(vacols_case.correspondent.ssn)
+                if Veteran.find_by_file_number_or_ssn(vacols_case.correspondent.ssn)
+                  veteran = Veteran.find_by_file_number_or_ssn(vacols_case.correspondent.ssn)
+                  vacols_case.correspondent.update!(snamef: veteran.first_name, snamel: veteran.last_name)
+                else
                   create(
                     :veteran,
                     first_name: vacols_case.correspondent.snamef,
@@ -279,6 +283,10 @@ FactoryBot.define do
                   case_issues_equal: true,
                   original_case_issues: vacols_case.case_issues
                 }
+
+                if !evaluator.cavc
+                  params[:bfac] = "1"
+                end
 
                 cavc_appeal = if evaluator.aod
                                 create(
