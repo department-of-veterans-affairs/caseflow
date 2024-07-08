@@ -123,8 +123,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    with_appeal_affinities
-      .where(hearings: { disposition: "held", judge_id: judge.id })
+    with_appeal_affinities.where(hearings: { disposition: "held", judge_id: judge.id })
+      .or(with_appeal_affinities.where(original_judge_task: { assigned_to_id: judge.id }))
   end
 
   def tied_to_ineligible_judge
