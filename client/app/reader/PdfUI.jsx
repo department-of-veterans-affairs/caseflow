@@ -79,7 +79,7 @@ export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 1
+      currentPage: 1,
     };
   }
 
