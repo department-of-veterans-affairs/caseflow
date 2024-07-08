@@ -62,7 +62,9 @@ class ExternalApi::BGSService
       ) do
         response = client.security.find_sensitivity_level_by_participant_id(participant_id)
 
-        response.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
+        return 0 if response.nil?
+
+        response&.key?(:scrty_level_type_cd) ? Integer(response[:scrty_level_type_cd]) : 0
       rescue BGS::ShareError
         0
       end
