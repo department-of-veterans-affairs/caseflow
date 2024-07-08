@@ -52,22 +52,6 @@ const metricArgs = (featureValue) => {
   ];
 };
 
-const storeMetricsError = {
-  uuid: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/),
-  data:
-  {
-    documentId: 1,
-    file: '/document/1/pdf',
-    documentType: 'test',
-  },
-  info: {
-    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ()]*)$/),
-    product: 'browser',
-    type: 'error'
-  },
-  eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
-};
-
 describe('PdfFile', () => {
 
   let wrapper;
@@ -182,14 +166,6 @@ describe('PdfFile', () => {
           });
       });
 
-      it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(
-          storeMetricsError.uuid,
-          storeMetricsError.data,
-          storeMetricsError.info,
-          storeMetricsError.eventId);
-      });
-
       it('clears measureTimeStartMs after unmount', () => {
         // Mock the ApiUtil.get function to return a Promise that resolves immediately
         ApiUtil.get.mockResolvedValue({});
@@ -200,14 +176,6 @@ describe('PdfFile', () => {
 
         // Assert that measureTimeStartMs is counting
         expect(subject.props.renderStartTime).not.toBeNull();
-      });
-      // This test was for a storemetric call that was creating a duplicate and has been removed
-      // eslint-disable-next-line jest/no-disabled-tests
-      it.skip('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toHaveBeenCalledWith(storeMetricsError.uuid,
-          storeMetricsError.data,
-          storeMetricsError.info,
-          storeMetricsError.eventId);
       });
 
       it('calls sotoreMetrics when getDocument fails', async () => {
