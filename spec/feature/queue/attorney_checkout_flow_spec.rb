@@ -292,7 +292,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # section of the remand reason screen.
       # sleep 1
 
-      click_on "Continue"
+      # click_on "Continue"
+      safe_click("#button-next-button")
 
       expect(page).to have_content("Evaluate Decision")
 
