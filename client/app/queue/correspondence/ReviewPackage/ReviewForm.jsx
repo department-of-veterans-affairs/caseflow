@@ -18,7 +18,6 @@ export const ReviewForm = (props) => {
 
   const correspondenceTypes = props.correspondenceTypes;
   const [dateError, setDateError] = useState(false);
-  const [returnValue, setReturnValue] = useState(false);
 
   const handleCorrespondenceTypeEmpty = () => {
     if (correspondenceTypeId === null) {
@@ -30,33 +29,26 @@ export const ReviewForm = (props) => {
     return type.name;
   };
 
-  const saveButtonDisabled = () => {
-    return returnValue;
-  };
-
-  const returnValueToUpdate = () => {
-    return Boolean(dateError);
+  // enable save button and enable return to queue
+  const enableSaveButton = () => {
+    props.setDisableSaveButton(false);
+    props.setIsReturnToQueue(true);
   };
 
   const handleFileNumber = (value) => {
-    setReturnValue(returnValueToUpdate());
-
-    props.setIsReturnToQueue(true);
-    const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
+    // use reg expression to check the value only contains 9 numbers
+    const isNumeric = ((/^\d{0,9}$/).test(value));
 
     // only attempt to update value if valid file number
     if (isNumeric) {
       props.setVeteranFileNumber(value);
-      props.setDisableSaveButton(false);
+      enableSaveButton();
     }
   };
 
   const handleChangeNotes = (value) => {
-    setReturnValue(returnValueToUpdate());
-
-    props.setIsReturnToQueue(true);
     props.setNotes(value);
-    props.setDisableSaveButton(false);
+    enableSaveButton();
   };
 
   const generateOptions = (options) =>
@@ -67,22 +59,10 @@ export const ReviewForm = (props) => {
     }));
 
   const handleSelectCorrespondenceType = (val) => {
-    setReturnValue(returnValueToUpdate());
-    props.setIsReturnToQueue(true);
-
     // update the correspondence type id and update the correspondence type
     // in the dropdown with placeholder
     props.setCorrespondenceTypeId(val.id);
-    props.setDisableSaveButton(false);
-  };
-
-  const errorOnVADORDate = (val) => {
-
-    if (val.length === 10) {
-      const error = validateDateNotInFuture(val) ? null : 'Receipt date cannot be in the future';
-
-      return error;
-    }
+    enableSaveButton();
   };
 
   const vaDORReadOnly = () => {
@@ -95,18 +75,19 @@ export const ReviewForm = (props) => {
   };
 
   const handleSelectVADOR = (val) => {
-    const errorOutput = errorOnVADORDate(val);
-    const returnVal = errorOutput !== null;
+    // check for future issue
+    const error = validateDateNotInFuture(val) ? false : 'Receipt date cannot be in the future';
 
-    setDateError(errorOutput);
-    setReturnValue(returnVal);
+    props.setVaDor(val);
+    setDateError(error);
 
-    props.setVador(val);
+    // if no errors, enable the save button
+    if (!error) {
+      enableSaveButton();
+    }
   };
 
   const handleSubmit = async () => {
-    setReturnValue(returnValueToUpdate());
-
     // disable the save button on submit
     props.setDisableSaveButton(true);
 
@@ -144,14 +125,14 @@ export const ReviewForm = (props) => {
     }
   };
 
-  // Prevents save action in case of errorMessage
+  // enable save button if changes happen to form (with no errors)
   useEffect(() => {
 
-    if (props.errorMessage) {
-      return;
+    // error validation
+    if (dateError || props.errorMessage) {
+      props.setDisableSaveButton(true);
     }
-    setReturnValue(true);
-  }, []);
+  }, [handleChangeNotes, handleFileNumber, handleSelectCorrespondenceType, handleSelectVADOR]);
 
   const veteranFileNumStyle = () => {
     if (props.errorMessage) {
@@ -179,7 +160,6 @@ export const ReviewForm = (props) => {
         readOnly={props.isReadOnly}
       />
     </div>;
-
   };
 
   const vaDORReadOnlyStyling = () => {
@@ -314,7 +294,7 @@ ReviewForm.propTypes = {
   setErrorMessage: PropTypes.func,
   setVeteranFileNumber: PropTypes.func,
   setNotes: PropTypes.func,
-  setVador: PropTypes.func,
+  setVaDor: PropTypes.func,
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,
