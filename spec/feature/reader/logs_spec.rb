@@ -97,7 +97,7 @@ RSpec.feature "Reader", :all_dbs do
               visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
               expect(page).to have_content("Unable to load document")
               metric = Metric.where("metric_message LIKE ?", "Getting PDF%").first
-              expect(metric.metric_message).to end_with("Mbits/s")
+              expect(metric["metric_attributes"]["bandwidth"]).to end_with("Mbits/s")
               expect(metric.metric_attributes["step"]).to eq "getDocument"
               expect(metric.metric_type).to eq "error"
             end
