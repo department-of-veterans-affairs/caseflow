@@ -70,10 +70,13 @@ module FeatureHelper
   end
 
   def safe_click_element(element)
-    scroll_to(element, :center)
-    # element.click(x: 0, y: 0)
+    scroll_to(element)
     element.click
-    # element.click(x: 5, y: 10)
+  end
+
+  # You should never use this unless you absolutely have to
+  def javascript_click(element)
+    page.execute_script("arguments[0].click();", element.native)
   end
 
   def click_label(label_for)

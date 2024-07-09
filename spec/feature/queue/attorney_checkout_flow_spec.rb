@@ -224,12 +224,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Issue 2 of 2")
 
       within all("div.remand-reasons-options")[1] do
-        no_medical_examination_label = find_field("No medical examination", visible: false).sibling("label").find("span")
-        scroll_to no_medical_examination_label
-        no_medical_examination_label.click
+        javascript_click(find_field("No medical examination", visible: false).sibling("label"))
       end
-
-      # safe_click "#button-next-button"
 
       find("#button-next-button").send_keys(:return)
 
@@ -293,19 +289,19 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Review Remand Reasons")
       expect(page).to have_content("Issue 1 of 2")
 
-      safe_click "#button-next-button"
+      find("#button-next-button").send_keys(:return)
       expect(page).to have_content("Review Remand Reasons")
       expect(page).to have_content("Issue 2 of 2")
       expect(find("input", id: "2-no_medical_examination", visible: false).checked?).to eq(true)
 
-      safe_click "#button-next-button"
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content("Evaluate Decision")
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
 
-      safe_click "#button-next-button"
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
@@ -469,9 +465,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue_dispositions[3].click
         page.find("div", class: "cf-select__option", text: "Stay").click
 
-        # safe_click "#button-next-button"
-        # click_button "Continue"
-
         find("#button-next-button").send_keys(:return)
 
         expect(page).to have_content("Select Remand Reasons")
@@ -480,12 +473,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content("Issue 1 of 2")
 
         within all("div.remand-reasons-options")[0] do
-          find_field("Current findings", visible: false).sibling("label").click
-          find_field("After certification", visible: false).sibling("label").click
+          safe_click_element(find_field("Current findings", visible: false).sibling("label"))
+          safe_click_element(find_field("After certification", visible: false).sibling("label"))
         end
 
-        # safe_click "#button-next-button"
-        # click_button "Continue"
         find("#button-next-button").send_keys(:return)
 
         # Should still be on remand reasons page, but should have added second issue form
@@ -496,26 +487,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         # Add remand reasons for issue 2
         within all("div.remand-reasons-options")[1] do
-          current_findings_checkbox_text = find_field("Current findings", visible: false).sibling("label").find("span")
-          scroll_to current_findings_checkbox_text
-          # puts "screenshot before clicking current findings: #{save_screenshot}"
-          # sleep 1
-          # safe_click_element(find_field("Current findings", visible: false).sibling("label").find("span"))
-          current_findings_checkbox_text.click
-          # puts "screenshot after clicking current findings: #{save_screenshot}"
-          find_field("Nexus opinion", visible: false).sibling("label").find("span").click
-          # puts "screenshot after clicking nexus opinion: #{save_screenshot}"
-          all("label", text: "Before certification", count: 2)[0].click
-          # puts "screenshot after clicking before certification: #{save_screenshot}"
-          all("label", text: "After certification", count: 2)[1].click
-          # puts "screenshot after clicking after certification: #{save_screenshot}"
-          # safe_click_element(all("label", text: "Before certification", count: 2)[0])
-          # safe_click_element(all("label", text: "After certification", count: 2)[1])
+          javascript_click(find_field("Current findings", visible: false).sibling("label"))
+          javascript_click(find_field("Nexus opinion", visible: false).sibling("label"))
+          javascript_click(all("label", text: "Before certification", count: 2)[0])
+          javascript_click(all("label", text: "After certification", count: 2)[1])
         end
 
         find("#button-next-button").send_keys(:return)
-
-        # safe_click "#button-next-button"
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
