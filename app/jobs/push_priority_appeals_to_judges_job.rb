@@ -21,7 +21,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     perform_later_or_now(UpdateAppealAffinityDatesJob)
 
-    send_job_report
+    slack_service.send_notification(slack_report.join("\n"), self.class.name)
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
@@ -30,57 +30,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     log_error(error)
   ensure
     metrics_service_report_runtime(metric_group_name: "priority_appeal_push_job")
-  end
-
-  def send_job_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name)
-  end
-
-  def slack_report # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    report = []
-    if use_by_docket_date?
-      total_cases = @genpop_distributions.map(&:distributed_cases_count).sum
-      report << "*Number of cases distributed*: " \
-                "#{total_cases}"
-    else
-      tied_distributions_sum = @tied_distributions.map(&:distributed_cases_count).sum
-      genpop_distributions_sum = @genpop_distributions.map(&:distributed_cases_count).sum
-      report << "*Number of cases tied to judges distributed*: " \
-                "#{tied_distributions_sum}"
-      report << "*Number of general population cases distributed*: " \
-                "#{genpop_distributions_sum}"
-    end
-
-    appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
-      report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
-      [docket_type, docket.ready_priority_appeal_ids]
-    end.to_h
-
-    report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
-    docket_coordinator.dockets.each_pair do |sym, docket|
-      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
-    end
-    unless disable_legacy?
-      report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
-    end
-
-    report << ""
-    report << "*Debugging information*"
-    report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}" # rubocop:disable Layout/LineLength
-
-    if appeals_not_distributed.values.flatten.any?
-      add_stuck_appeals_to_report(report, appeals_not_distributed)
-    end
-
-    report
-  end
-
-  def add_stuck_appeals_to_report(report, appeals)
-    report.unshift("[WARN]")
-    report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
-    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
-    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
   end
 
   # Distribute all priority cases tied to a judge without limit
@@ -188,7 +137,78 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
   end
 
+  #
+  # Reporting methods
+  #
+
+  def slack_report
+    report = []
+
+    num_of_cases_distributed(report)
+
+    report << "Priority Target: #{priority_target}"
+
+    appeals_not_distributed = age_of_oldest_by_docket(report)
+    num_of_appeals_not_distributed(report, appeals_not_distributed)
+    num_of_appeals_not_distributed_by_affinity_date(report)
+
+    report << ""
+    report << "*Debugging information*"
+
+    excluded_judges_reporting(report)
+
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}" # rubocop:disable Layout/LineLength
+    report
+  end
+
+  def num_of_cases_distributed(report)
+    if use_by_docket_date?
+      total_cases = @genpop_distributions.map(&:distributed_cases_count).sum
+      report << "*Number of cases distributed*: " \
+                "#{total_cases}"
+    else
+      tied_distributions_sum = @tied_distributions.map(&:distributed_cases_count).sum
+      genpop_distributions_sum = @genpop_distributions.map(&:distributed_cases_count).sum
+      report << "*Number of cases tied to judges distributed*: " \
+                "#{tied_distributions_sum}"
+      report << "*Number of general population cases distributed*: " \
+                "#{genpop_distributions_sum}"
+    end
+  end
+
+  def age_of_oldest_by_docket(report)
+    docket_coordinator.dockets.map do |docket_type, docket|
+      report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
+      [docket_type, docket.ready_priority_appeal_ids]
+    end.to_h
+  end
+
+  def num_of_appeals_not_distributed(report, appeals_not_distributed)
+    report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+
+    docket_coordinator.dockets.each_pair do |sym, docket|
+      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
+    end
+    unless disable_legacy?
+      report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
+    end
+  end
+
   def legacy_not_genpop_count
     docket_coordinator.dockets[:legacy].not_genpop_priority_count
+  end
+
+  def num_of_appeals_not_distributed_by_affinity_date(report)
+    docket_coordinator.dockets.each_pair do |sym, docket|
+      report << "*Number of #{sym} appeals in affinity date window: " \
+                "#{docket.affinity_date_count(in_window: true, priority: true)}"
+      report << "*Number of #{sym} appeals out of affinity date window: " \
+                "#{docket.affinity_date_count(in_window: false, priority: true)}"
+    end
+  end
+
+  def excluded_judges_reporting(report)
+    excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
+    report << "*Excluded Judges: #{excluded_judges}"
   end
 end

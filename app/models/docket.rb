@@ -132,6 +132,21 @@ class Docket
       .pluck(:id).size
   end
 
+  # used for distribution_stats
+  def affinity_date_count(in_window: false, priority: true)
+    scope = docket_appeals.ready_for_distribution
+
+    scope = if in_window
+              scope.non_genpop_by_affinity_start_date
+            else
+              scope.genpop_by_affinity_start_date
+            end
+
+    return scoped_for_priority(scope).ids.size if priority
+
+    scope.nonpriority.ids.size
+  end
+
   private
 
   # :reek:ControlParameter

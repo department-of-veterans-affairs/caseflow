@@ -73,8 +73,21 @@ module ByDocketDateDistribution
     }
 
     dockets.each_pair do |sym, docket|
-      docket_counts["#{sym}_priority_stats".to_sym][:count] = docket.count(priority: true, ready: true)
-      docket_counts["#{sym}_stats".to_sym][:count] = docket.count(priority: false, ready: true)
+      docket_counts["#{sym}_priority_stats".to_sym] = {
+        count: docket.count(priority: true, ready: true),
+        affinity_date: {
+          in_window: docket.affinity_date_count(in_window: true, priority: true),
+          out_of_window: docket.affinity_date_count(in_window: false, priority: true)
+        }
+      }
+
+      docket_counts["#{sym}_stats".to_sym] = {
+        count: docket.count(priority: false, ready: true),
+        affinity_date: {
+          in_window: docket.affinity_date_count(in_window: true, priority: false),
+          out_of_window: docket.affinity_date_count(in_window: false, priority: false)
+        }
+      }
     end
 
     unless FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])

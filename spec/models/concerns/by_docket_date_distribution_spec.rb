@@ -200,6 +200,7 @@ describe ByDocketDateDistribution, :all_dbs do
   context "#ama_statistics" do
     before do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
+      create(:case_distribution_lever, :cavc_affinity_days)
       @new_acd.instance_variable_set(:@appeals, [])
     end
 
@@ -228,8 +229,26 @@ describe ByDocketDateDistribution, :all_dbs do
       expect(judge_stats).to have_key(:settings)
 
       @new_acd.dockets.each_key do |sym|
+        # priority stats
         expect(ama_statistics).to have_key("#{sym}_priority_stats".to_sym)
+
+        priority_stats = ama_statistics["#{sym}_priority_stats".to_sym]
+        expect(priority_stats).to have_key(:count)
+        expect(priority_stats).to have_key(:affinity_date)
+
+        priority_affinity_date = priority_stats[:affinity_date]
+        expect(priority_affinity_date).to have_key(:in_window)
+        expect(priority_affinity_date).to have_key(:out_of_window)
+
+        # non priority stats
         expect(ama_statistics).to have_key("#{sym}_stats".to_sym)
+        nonpriority_stats = ama_statistics["#{sym}_stats".to_sym]
+        expect(nonpriority_stats).to have_key(:count)
+        expect(nonpriority_stats).to have_key(:affinity_date)
+
+        nonpriority_affinity_date = nonpriority_stats[:affinity_date]
+        expect(nonpriority_affinity_date).to have_key(:in_window)
+        expect(nonpriority_affinity_date).to have_key(:out_of_window)
       end
     end
 
