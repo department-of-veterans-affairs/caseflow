@@ -103,10 +103,6 @@ class CorrespondenceAutoAssigner
     @assignable_user_finder ||= AutoAssignableUserFinder.new(current_user)
   end
 
-  def error
-    @error ||= NoAutoAssignableUsersError.new
-  end
-
   def run_verifier
     @run_verifier ||= CorrespondenceAutoAssignRunVerifier.new
   end

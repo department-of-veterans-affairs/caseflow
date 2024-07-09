@@ -50,14 +50,6 @@ module Caseflow::Error
 
   class FetchHearingLocationsJobError < SerializableError; end
 
-  class NoAutoAssignableUsersError < StandardError
-    def error
-      fail Caseflow::NoAutoAssignableUsersError,
-      @code = args[:code] || 502,
-      @message = "No assignable users have capacity for more correspondences"
-    end
-  end
-
   class ActionForbiddenError < SerializableError
     def initialize(args = {})
       @code = args[:code] || 403
