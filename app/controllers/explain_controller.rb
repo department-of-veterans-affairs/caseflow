@@ -36,7 +36,7 @@ class ExplainController < ApplicationController
       Rails.env.development?
   end
 
-  helper_method :legacy_appeal?, :appeal, :appeal_affinity,
+  helper_method :legacy_appeal?, :correspondence?, :appeal, :appeal_affinity,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
@@ -160,6 +160,8 @@ class ExplainController < ApplicationController
   end
 
   def appeal_affinity
+    return if correspondence?
+
     @appeal_affinity ||= if legacy_appeal?
                            VACOLS::Case.find_by(bfkey: appeal.vacols_id)&.appeal_affinity
                          else
