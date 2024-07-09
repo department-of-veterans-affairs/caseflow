@@ -66,14 +66,14 @@ class CorrespondenceTasksController < TasksController
   end
 
   def completed_package
-    remove_package_task = RemovePackageTask.find_by(appeal_id: params[:id])
+    remove_package_task = RemovePackageTask.find_by(appeal_id: correspondence_tasks_params[:id])
     remove_package_task.update!(
       assigned_to: current_user,
       status: Constants.TASK_STATUSES.completed,
       instructions: correspondence_tasks_params[:instructions]
     )
 
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id])
+    review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence_tasks_params[:id])
     review_package_task.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 
