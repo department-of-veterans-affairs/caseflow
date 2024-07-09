@@ -6,10 +6,16 @@ import moment from 'moment-timezone/moment-timezone';
 import { uniq } from 'lodash';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
-import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from 'app/hearings/utils';
+import {
+  formatTimeSlotLabel,
+  hearingTimeOptsWithZone,
+  setTimeSlots,
+  TIMEZONES_WITH_LUNCHBREAK
+} from 'app/hearings/utils';
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
+import TIMEZONES from 'constants/TIMEZONES';
 
 const emptyHearings = [];
 const oneHearing = [{
@@ -180,17 +186,18 @@ describe('TimeSlot', () => {
         });
 
         it('slots have correct time values to submit to backend', () => {
-          const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
+          const { timeSlots } = setup({ roTimezone: ro.timezone });
 
           const roTime = timeSlots[0].hearingTime;
 
+          const tzName = Object.keys(TIMEZONES).find((key) => TIMEZONES[key] === ro.timezone);
+
           clickTimeslot(roTime, ro.timezone);
-          const easternTime = moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
-            format('HH:mm');
+          const timeString = `${moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
+            format('h:mm A')} ${tzName}`;
 
-          // Expect that we called onChange with 12:30pm ro timezone
-          expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
-
+          // Expect that we called onChange with ro timezone
+          expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', timeString);
         });
 
         it('moves following slots when there is a lunch break', () => {
