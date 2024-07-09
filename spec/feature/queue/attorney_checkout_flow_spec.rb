@@ -229,7 +229,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         no_medical_examination_label.click
       end
 
-      safe_click "#button-next-button"
+      # safe_click "#button-next-button"
 
       find("#button-next-button").send_keys(:return)
 
