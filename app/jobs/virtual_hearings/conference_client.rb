@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module VirtualHearings::ConferenceClient
+  include WebexConcern
+
   def client(virtual_hearing)
     @client ||= case virtual_hearing.conference_provider
                 when "pexip" then create_pexip_client
@@ -27,15 +29,7 @@ module VirtualHearings::ConferenceClient
   end
 
   def create_webex_client
-    WebexService.new(
-      host: ENV["WEBEX_HOST_IC"],
-      port: ENV["WEBEX_PORT"],
-      aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_BOTTOKEN"],
-      domain: ENV["WEBEX_DOMAIN_IC"],
-      api_endpoint: ENV["WEBEX_API_IC"],
-      query: nil
-    )
+    WebexService.new(instant_connect_config)
   end
 
   def create_pexip_client

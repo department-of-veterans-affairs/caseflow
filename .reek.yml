@@ -270,7 +270,7 @@ detectors:
       - VBMSCaseflowLogger#log
       - LegacyDocket
       - ExternalApi::PexipService#not_found_response
-      - WebexConcern#recordings_config
+      - WebexConcern
   UnusedParameters:
     exclude:
       - Docket#distribute_appeals
