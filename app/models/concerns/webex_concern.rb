@@ -8,7 +8,7 @@ module WebexConcern
   #
   # Params: query - additional details for how returned data should be displayed
   #
-  # Return: Object with header information for the endpoint
+  # Return: Object with header information for the endpoin
   def recordings_config(query)
     {
       host: ENV["WEBEX_HOST_MAIN"],
