@@ -88,6 +88,7 @@ class ClaimantValidator
   end
 
   def claimant_details_required?
-    decision_review&.is_a?(ClaimReview) && benefit_type_requires_payee_code?
+    decision_review&.is_a?(ClaimReview) && benefit_type_requires_payee_code? &&
+      !decision_review.from_decision_review_created_event?
   end
 end

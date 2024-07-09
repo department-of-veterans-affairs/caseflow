@@ -81,5 +81,21 @@ describe ClaimantValidator, :postgres do
         expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_city_invalid])
       end
     end
+
+    context "when decision_review is from a decision_review_created_event" do
+      let(:user) { Generators::User.build }
+      let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+      let!(:intake) { Intake.create!(veteran_file_number: veteran.file_number, user: user) }
+      let!(:intake_event_record) { EventRecord.create!(event: event2, evented_record: intake) }
+      let(:decision_review) { HigherLevelReview.new(benefit_type: "compensation", veteran_file_number: veteran.file_number) }
+      let!(:decision_review_event_record) do
+        EventRecord.create!(event: event2, evented_record: decision_review)
+      end
+      it "#claimant_details_required? returns false" do
+        intake.update!(detail: decision_review)
+        expect(decision_review.from_decision_review_created_event?).to eq(true)
+        expect(ClaimantValidator.new(claimant).send(:claimant_details_required?)).to eq(false)
+      end
+    end
   end
 end
