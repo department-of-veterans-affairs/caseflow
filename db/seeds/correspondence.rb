@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-#create queue correspondence seeds
+# create queue correspondence seeds
 require_relative "./helpers/queue_helpers"
 
 module Seeds
