@@ -38,6 +38,11 @@ module WebexConcern
     }
   end
 
+  # Purpose: Set up the configuration for calling the instant connect endpoint
+  #
+  # Params: query - additional details for how returned data should be displayed
+  #
+  # Return: Object with header information for the endpoint
   def instant_connect_config(query = nil)
     {
       host: ENV["WEBEX_HOST_IC"],
