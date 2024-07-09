@@ -43,12 +43,12 @@ export const loadVeteranInformation = (veteranInformation) =>
     });
   };
 
-export const loadVetCorrespondence = (vetCorrespondences) =>
+export const loadCorrespondence = (correspondence) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.LOAD_VET_CORRESPONDENCE,
+      type: ACTIONS.LOAD_CORRESPONDENCE,
       payload: {
-        vetCorrespondences
+        correspondence
       }
     });
   };
