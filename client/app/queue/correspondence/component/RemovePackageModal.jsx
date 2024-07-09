@@ -50,43 +50,6 @@ class RemovePackageModal extends React.Component {
     }
   }
 
-  removePackage = async () => {
-    try {
-      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/remove_package`).
-        then(() => {
-          this.setState({
-            updateCancelSuccess: true
-          });
-          this.props.updateLastAction('DeleteReviewPackage');
-        });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  completePackage = async () => {
-    try {
-      const data = {
-        correspondence_id: this.props.correspondence_id,
-        instructions: []
-      };
-
-      data.instructions.push(this.state.reasonReject);
-
-      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/completed_package`, { data }).
-        then(() => {
-          this.setState({
-            updateCancelSuccess: true
-          });
-          this.props.updateLastAction('InProgressReviewPackage');
-        });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   render() {
     const { onCancel } = this.props;
     const submit = () => {
