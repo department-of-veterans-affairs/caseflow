@@ -22,13 +22,20 @@ import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 import { ReadOnlyHearingTimeWithZone } from 'app/hearings/components/modalForms/ReadOnlyHearingTimeWithZone';
+import ApiUtil from 'app/util/ApiUtil';
 
 // Set the spies
 const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
+const fetchScheduledHearingsMock = jest.fn();
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
 describe('ScheduleVeteranForm', () => {
+  beforeEach(() => {
+    getSpy.mockImplementation(() => Promise.resolve({ body: {} }));
+  });
+
   test('Matches snapshot with default props', () => {
     // Render the address component
     const scheduleVeteran = mount(
@@ -51,13 +58,14 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Displays hearing form when regional office is selected', () => {
+  test('Displays hearing form when regional office is selected', async () => {
     // Render the address component
     const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
+        fetchScheduledVeterans={fetchScheduledHearingsMock}
         appeal={{
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
