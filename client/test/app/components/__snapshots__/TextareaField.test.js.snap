@@ -1,661 +1,299 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TextareaField Can accept input 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Displays a bold label when strongLabel prop is true 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
-  strongLabel={true}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
       <strong>
-        <FormLabel
-          name="Test Field"
-          optional={false}
-          required={false}
-        >
-          <span>
-            Test Field
-          </span>
-        </FormLabel>
+        <span>
+          Test Field
+        </span>
       </strong>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Displays character count when maxlength and value are present 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  maxlength={10}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
-  value="hello"
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
-      maxLength={10}
+      maxlength="10"
       name="Test Field"
-      onChange={[Function]}
-      value="hello"
-    />
-    <p
-      style={Object {}}
     >
+      hello
+    </textarea>
+    <p>
       <i>
-        5
-         
-        characters
-         
-        left
+        5 characters left
       </i>
     </p>
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Displays error message when present 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  errorMessage="Something went wrong"
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea usa-input-error"
+    class="cf-form-textarea usa-input-error"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <span
-      className="usa-input-error-message"
-      tabIndex={0}
+      class="usa-input-error-message"
+      tabindex="0"
     >
       Something went wrong
     </span>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Displays screen-reader only label when hideLabel prop is true 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  hideLabel={true}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="sr-only question-label"
-      htmlFor="Test Field"
+      class="sr-only question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Does not display character count when maxlength is present, but value is not present 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  maxlength={10}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
-      maxLength={10}
+      maxlength="10"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Emojis consume 2 characters 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  maxlength={2}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
-  value="😀"
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
-      maxLength={2}
+      maxlength="2"
       name="Test Field"
-      onChange={[Function]}
-      value="😀"
-    />
-    <p
-      style={Object {}}
     >
+      😀
+    </textarea>
+    <p>
       <i>
-        0
-         
-        characters
-         
-        left
+        0 characters left
       </i>
     </p>
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Matches snapshot with default props 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  name="Test Field"
-  onChange={[MockFunction]}
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Respects characterLimitTopRight prop on the textarea field 1`] = `
-<TextareaField
-  characterLimitTopRight={true}
-  disabled={false}
-  maxlength={10}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
-  value="Notes"
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <p
-      style={
-        Object {
-          "float": "right",
-          "lineHeight": "inherit",
-          "marginBottom": 0,
-        }
-      }
+      style="float: right; margin-bottom: 0px; line-height: inherit;"
     >
       <i>
-        5
-         
-        characters
-         
-        left
+        5 characters left
       </i>
     </p>
     <textarea
-      disabled={false}
       id="Test Field"
-      maxLength={10}
+      maxlength="10"
       name="Test Field"
-      onChange={[Function]}
-      value="Notes"
-    />
+    >
+      Notes
+    </textarea>
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Respects disabled prop on the textarea field 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={true}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={false}
-      >
-        <span>
-          Test Field
-        </span>
-      </FormLabel>
+      <span>
+        Test Field
+      </span>
     </label>
     <textarea
-      disabled={true}
+      disabled=""
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Respects optional prop on the textarea field 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={true}
-  required={false}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={true}
-        required={false}
-      >
-        <span>
-          Test Field
-          <span
-            className="cf-optional"
-          >
-            Optional
-          </span>
+      <span>
+        Test Field
+        <span
+          class="cf-optional"
+        >
+          Optional
         </span>
-      </FormLabel>
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
 
 exports[`TextareaField Respects required prop on the textarea field 1`] = `
-<TextareaField
-  characterLimitTopRight={false}
-  disabled={false}
-  name="Test Field"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "hello",
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
-  optional={false}
-  required={true}
->
+<DocumentFragment>
   <div
-    className="cf-form-textarea"
+    class="cf-form-textarea"
   >
     <label
-      className="question-label"
-      htmlFor="Test Field"
+      class="question-label"
+      for="Test Field"
     >
-      <FormLabel
-        name="Test Field"
-        optional={false}
-        required={true}
-      >
-        <span>
-          Test Field
-          <span
-            className="cf-required"
-          >
-            Required
-          </span>
+      <span>
+        Test Field
+        <span
+          class="cf-required"
+        >
+          Required
         </span>
-      </FormLabel>
+      </span>
     </label>
     <textarea
-      disabled={false}
       id="Test Field"
       name="Test Field"
-      onChange={[Function]}
     />
   </div>
-</TextareaField>
+</DocumentFragment>
 `;
