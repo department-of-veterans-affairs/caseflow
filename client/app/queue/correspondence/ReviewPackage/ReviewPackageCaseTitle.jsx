@@ -98,7 +98,7 @@ const CaseSubTitleScaffolding = (props) => (
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div className="correspondence-drop-down-div">
-      { (!props.isReadOnly && props.efolder) &&
+      { (!props.isReadOnly && !props.efolder) &&
       <SearchableDropdown
         options={[
           { value: 'splitPackage', label: 'Split package' },

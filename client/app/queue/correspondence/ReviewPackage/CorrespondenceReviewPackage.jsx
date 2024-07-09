@@ -36,7 +36,6 @@ export const CorrespondenceReviewPackage = (props) => {
   const [disableButton, setDisableButton] = useState(false);
   const [disableSaveButton, setDisableSaveButton] = useState(true);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
-  const [apiResponse, setApiResponse] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -81,9 +80,6 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   useEffect(() => {
-    const apiResWithVADOR = moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
-
-    setApiResponse(apiResWithVADOR);
     setDisplayIntakeAppeal(props.correspondence.display_intake_appeal);
 
     // Check for eFolder upload failure
