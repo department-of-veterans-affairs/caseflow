@@ -9,8 +9,8 @@ class CorrespondenceTasksController < TasksController
   ].freeze
 
   def create_package_action_task
-    review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id])
-    if review_package_task.children.present?
+    review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence_tasks_params[:correspondence_id])
+    if review_package_task.children.open.present?
       render json:
       { message: "Existing package action request. Only one package action request may be made at a time" },
              status: :bad_request
