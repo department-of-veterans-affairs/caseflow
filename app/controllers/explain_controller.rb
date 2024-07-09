@@ -160,6 +160,8 @@ class ExplainController < ApplicationController
   end
 
   def appeal_affinity
+    return if correspondence?
+
     @appeal_affinity ||= if legacy_appeal?
                            VACOLS::Case.find_by(bfkey: appeal.vacols_id)&.appeal_affinity
                          else

@@ -17,7 +17,7 @@ module QueueHelpers
     veteran
   end
 
-  # create correspondence for given veteran/user, or create one
+  # create correspondence for given veteran/user
   def create_correspondence(user = {}, veteran = {})
     vet = veteran
     user = user.blank? ? InboundOpsTeam.singleton.users.first : user
@@ -181,6 +181,7 @@ module QueueHelpers
       vbms_document_type_id: 18
     )
   end
+
   def generate_vbms_doc_type(nod)
     return nod_doc if nod
 
