@@ -447,9 +447,9 @@ module Seeds
       create_ama_cavc_appeals
       create_legacy_appeals_with_hearing_and_excluded_or_ineligible_judge
       ama_cavc_aod_appeals_with_no_hearing_held
-      create_legacy_appeals_with_null_judge_value
+      create_legacy_aod_appeals_with_null_judge_value
       create_ama_aod_appeals_with_null_judge_value
-      create_ama_cavc_appeals_with_null_judge_value
+      create_ama_cavc_aod_appeals_with_null_judge_value
     end
 
     def create_legacy_cavc_affinity_cases
@@ -485,8 +485,8 @@ module Seeds
       2.times do
         create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaawakefield, create_veteran_for_bvaawakefield_judge("TiedToWakefield"))
         create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvacgislason1, create_veteran_for_bvacgislason1_judge("TiedToGislason"))
-        create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_activejudgeteam, create_veteran_for_activejudgeteam_judge("TiedToActiveJudgeTeam"))
       end
+      create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_activejudgeteam, create_veteran_for_activejudgeteam_judge("TiedToActiveJudgeTeam"))
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivejudge, create_veteran_for_inactivejudge_judge("TiedToInactiveJudge"))
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivecfjudge, create_veteran_for_inactivecfjudge_judge("TiedToInactiveCFJudge"))
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivejudge101, create_veteran_for_inactivejudge101_judge("TiedToInactiveJudge101"))
@@ -548,6 +548,12 @@ module Seeds
       end
     end
 
+    def create_legacy_aod_appeals_with_null_judge_value
+      3.times do
+        create_legacy_aod_appeal_with_null_judge_value(create_veteran_for_genpop())
+      end
+    end
+
     def create_ama_aod_appeals_with_null_judge_value
       3.times do
         create_ama_aod_appeal_with_null_judge_value(create_veteran_for_genpop())
@@ -557,6 +563,12 @@ module Seeds
     def create_ama_cavc_appeals_with_null_judge_value
       3.times do
         create_ama_cavc_appeal_with_null_judge_value(create_veteran_for_genpop())
+      end
+    end
+
+    def create_ama_cavc_aod_appeals_with_null_judge_value
+      3.times do
+        create_ama_cavc_aod_appeal_with_null_judge_value(create_veteran_for_genpop())
       end
     end
 
@@ -600,6 +612,22 @@ module Seeds
       )
     end
 
+    def create_legacy_aod_appeal_with_null_judge_value(veteran)
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case:
+          create(
+          :case,
+          :aod,
+          :ready_for_distribution,
+          :type_original,
+          :with_appeal_affinity,
+          bfcorlid: "#{veteran.file_number}S",
+          )
+      )
+    end
+
     def create_ama_aod_appeal_with_null_judge_value(veteran)
         create(
           :appeal,
@@ -614,7 +642,7 @@ module Seeds
       Timecop.travel(1.day.ago)
         ama_cavc_appeal= create(
           :appeal,
-          :dispatched,
+          :cavc_ready_for_distribution,
           veteran: veteran,
           associated_attorney: attorney
         )
@@ -624,24 +652,53 @@ module Seeds
         create(:appeal_affinity, appeal: remand.remand_appeal)
     end
 
-    def create_ama_cavc_appeal(judge, veteran)
+    def create_ama_cavc_aod_appeal_with_null_judge_value(veteran)
       Timecop.travel(1.day.ago)
-        ama_hearing_cavc_appeal = create(
+        ama_cavc_aod_appeal= create(
           :appeal,
-          :hearing_docket,
-          :held_hearing,
-          :tied_to_judge,
-          :dispatched,
-          veteran: veteran,
-          tied_judge: judge,
-          associated_judge: judge,
-          adding_user: User.first,
-          associated_attorney: attorney
+          :advanced_on_docket_due_to_age,
+          :cavc_ready_for_distribution,
+          veteran: veteran
         )
       Timecop.return
-        remand = create(:cavc_remand, source_appeal: ama_hearing_cavc_appeal)
+        remand = create(:cavc_remand, source_appeal: ama_cavc_aod_appeal)
         remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
         create(:appeal_affinity, appeal: remand.remand_appeal)
+    end
+
+    def create_ama_cavc_appeal(judge, veteran)
+      # Go back to when we want the original appeal to have been decided
+      Timecop.travel(4.years.ago)
+
+      # Create a decided appeal. all tasks are marked complete at the same time which won't affect distribution
+      source = create(:appeal, :dispatched, :hearing_docket, associated_judge: judge, veteran: veteran)
+
+      Timecop.travel(1.year.from_now)
+      remand = create(:cavc_remand, source_appeal: source).remand_appeal
+      Timecop.return
+
+      # Travel to 9 mo. ago and then in smaller increments for a more "realistic" looking task tree
+      Timecop.travel(9.months.ago)
+      remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).map(&:completed!)
+      create(:appeal_affinity, appeal: remand)
+
+      Timecop.travel(1.month.from_now)
+      # Call the creator class which will handle the task manipulation normally done by a distribution
+      jat = JudgeAssignTaskCreator.new(appeal: remand, judge: judge, assigned_by_id: judge.id).call
+      # Create and complete a ScheduleHearingColocatedTask, which will create a new DistributionTask and
+      # HearingTask subtree to mimic how this would happen in a higher environment
+      create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: judge).completed!
+
+      Timecop.travel(1.month.from_now)
+      create(:hearing, :held, appeal: remand, judge: judge, adding_user: User.system_user)
+
+      Timecop.travel(3.months.from_now)
+      # Completes the remaining open HearingTask descendant tasks to make appeal ready to distribute
+      remand.tasks.where(type: AssignHearingDispositionTask.name).flat_map(&:children).map(&:completed!)
+      Timecop.return
+
+      # When a DistributionTask goes to assigned it clears the affinity start date, so restore that at the right date
+      remand.appeal_affinity.update!(affinity_start_date: Time.zone.now)
     end
 
     def ama_cavc_aod_appeal_with_no_hearing_held(judge, veteran, days)
