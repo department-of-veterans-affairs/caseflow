@@ -77,7 +77,6 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-lodash": "^3.3.4",
     "classnames": "^2.2.5",
-    "core-js": "^3.4.1",
     "css-loader": "^3.6.0",
     "date-fns": "^2.16.1",
     "detect-browser": "^2.4.0",
