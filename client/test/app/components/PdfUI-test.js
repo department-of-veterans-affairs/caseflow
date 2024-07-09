@@ -1,17 +1,32 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { render, screen, logRoles, fireEvent} from '@testing-library/react';
+import { render, screen, logRoles, fireEvent, waitFor} from '@testing-library/react';
 import sinon from 'sinon';
 import { WrappingComponent } from '../establishClaim/WrappingComponent';
 
 import { PdfUI } from '../../../app/reader/PdfUI';
 import { log } from 'console';
 import { jumpToPage } from '../../../app/reader/PdfViewer/PdfViewerActions';
-import { fi } from 'date-fns/locale';
+import { fi, te } from 'date-fns/locale';
 import { on } from 'events';
 import exp from 'constants';
+import { Pdf } from '../../../app/reader/Pdf';
+import { PdfFile } from '../../../app/reader/PdfFile';
+
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
+
+jest.mock('../../../app/reader/Pdf', () => {
+  return function MockPdf({ onPageChange }) {
+    return <div data-testid="mock-pdf" onClick={() => onPageChange(2, 3)} />;
+  };
+});
+
+jest.mock('../../../app/reader/PdfFile', () => {
+  return function MockPdfFile({ onPageChange }) {
+    return <div data-testid="mock-pdf-file" onClick={() => onPageChange(2, 3)} />;
+  };
+});
 
 /* eslint-disable no-unused-expressions */
 describe('PdfUI', () => {
@@ -106,85 +121,49 @@ describe('PdfUI', () => {
     });
 
 
-    // THIS TEST SHOULD BE REFINED or REMOVED
     describe('.onPageChange', () => {
       it('updates the state', () => {
-        const setZoomLevelMock = jest.fn();
-        const jumpToPageMock = jest.fn();
-        const onPageChangeMock = jest.fn();
-        const { container, rerender } = setup({
-          setZoomLevel: setZoomLevelMock,
-          jumpToPage: jumpToPageMock,
-        });
+        setup();
+        const mockPdf = screen.getByTestId('mock-pdf');
+        fireEvent.click(mockPdf);
 
-        let currentPage = 2;
-        let fitToScreenZoom = 3;
-        const newProps = {
+        const pdfUiComponent = screen.getByTestId('pdf-ui');
+
+        const currentPageTest = pdfUiComponent.getAttribute('cp-test');
+        const fitToScreenZoomTest = pdfUiComponent.getAttribute('ftsz-test');
+
+        expect(currentPageTest).toBe('2');
+        expect(fitToScreenZoomTest).toBe('3');
+
+        // // Simulate changing the page number input
+        // fireEvent.change(pageNumberInput, { target: { value: '3' } });
+
+        // // Simulate pressing the "Enter" key to change the page
+        // fireEvent.keyPress(pageNumberInput, { key: 'Enter', code: 'Enter', charCode: 13 });
+
+        // // Verify that the page number is updated correctly
+        // expect(pageNumberInput.value).toBe('3');
+      });
+    });
+
+    describe('changing the page number', () => {
+      it('updates the value of the page number', () => {
+        setup({
           numPages: 10,
-          scale: 1,
-        };
-
-        rerender(
-          <PdfUI
-            doc={doc}
-            file="test.pdf"
-            filteredDocIds={[3]}
-            id="pdf"
-            pdfWorker="noworker"
-            documentPathBase={DOCUMENT_PATH_BASE}
-            showClaimsFolderNavigation={false}
-            featureToggles={{ search: true }}
-            setZoomLevel={setZoomLevelMock}
-            jumpToPage={jumpToPageMock}
-            onPageChange={onPageChangeMock}
-            {...newProps}
-          />,
-          { wrapper: WrappingComponent }
-        );
-
-        console.log('fitToScreenZoom prop:', fitToScreenZoom);
+        });
         const pageNumberInput = screen.getByRole('textbox', { name: 'Page' });
         expect(pageNumberInput.value).toBe('1');
 
-        // Simulate clicking the zoom in button
-        const zoomInButton = screen.getByRole('button', { name: 'zoom in' });
-        fireEvent.click(zoomInButton);
-        fireEvent.click(zoomInButton);
-        fireEvent.click(zoomInButton);
-
-        const zoomOutButton = screen.getByRole('button', { name: 'zoom out' });
-        fireEvent.click(zoomOutButton);
-
-        // Simulate clicking the fit to screen button
-        const fitToScreenButton = screen.getByRole('button', { name: 'fit to screen' });
-        fireEvent.click(fitToScreenButton);
-
-        // Simulate changing the page number input
         fireEvent.change(pageNumberInput, { target: { value: '3' } });
+        fireEvent.keyPress(pageNumberInput, { key: 'Enter' });
 
-        // Simulate pressing the "Enter" key to change the page
-        fireEvent.keyPress(pageNumberInput, { key: 'Enter', code: 'Enter', charCode: 13 });
-
-        // Verify that the page number is updated correctly
         expect(pageNumberInput.value).toBe('3');
-
-        // Call onPageChangeMock directly with the desired arguments
-        onPageChangeMock(currentPage, fitToScreenZoom);
-        expect(onPageChangeMock).toHaveBeenCalledWith(currentPage, fitToScreenZoom);
-
-        console.log('onPageChangeMock:', onPageChangeMock.mock);
-
-        // screen.debug(null, Infinity);
-        // logRoles(container);
-        // wrapper.instance().onPageChange(currentPage, fitToScreenZoom);
-        // expect(wrapper.state('currentPage')).toBe(currentPage);
-        // expect(wrapper.state('fitToScreenZoom')).toBe(fitToScreenZoom);
       });
     });
 
     describe('clicking', () => {
       describe('backToClaimsFolder', () => {
-        it.only('calls the stopPlacingAnnotation props', () => {
+        it('calls the stopPlacingAnnotation props', () => {
           const mockStopPlacingAnnotationClick = jest.fn();
 
           setup({
