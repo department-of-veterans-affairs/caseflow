@@ -100,7 +100,7 @@ export const CorrespondenceReviewPackage = (props) => {
       setIsReadOnly(true);
     }
 
-    if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
+    if (hasAssignedReassignPackageTask(props.correspondence.correspondence_tasks)) {
       setBannerInformation({
         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
         message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
