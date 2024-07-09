@@ -224,11 +224,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Issue 2 of 2")
 
       within all("div.remand-reasons-options")[1] do
-        label = find_field("No medical examination", visible: false).sibling("label")
-        safe_click_element(label)
+        no_medical_examination_label = find_field("No medical examination", visible: false).sibling("label").find("span")
+        scroll_to no_medical_examination_label
+        no_medical_examination_label.click
       end
 
       safe_click "#button-next-button"
+
+      find("#button-next-button").send_keys(:return)
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
