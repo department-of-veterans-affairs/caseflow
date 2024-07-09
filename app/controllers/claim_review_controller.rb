@@ -12,7 +12,6 @@ class ClaimReviewController < ApplicationController
 
   def edit
     unless claim_review.veteran.accessible?
-      byebug
       return render "errors/403",
                     layout: "application",
                     status: :forbidden,
