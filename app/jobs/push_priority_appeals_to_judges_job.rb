@@ -184,6 +184,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def num_of_appeals_not_distributed(report, appeals_not_distributed)
+    report << ""
     report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
 
     docket_coordinator.dockets.each_pair do |sym, docket|
@@ -199,6 +200,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def num_of_appeals_not_distributed_by_affinity_date(report)
+    report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals in affinity date window: " \
                 "#{docket.affinity_date_count(in_window: true, priority: true)}"
