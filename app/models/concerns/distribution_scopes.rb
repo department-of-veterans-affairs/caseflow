@@ -158,8 +158,23 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     left_joins(:hearings).where(hearings: { id: nil })
   end
 
+  # if hearing held no other hearings on appeal with disposition of not held gets distributed to genpop
+  ## Find duplicate appeals and only select the held one (or ignore the postponed ones)
+  ## if there are any dispositions that are held, then do not select them in the with_no_held_hearings scope even if there are OTHER hearings that have a disposition other than held
+  ## consult HEARING_DISPOSITION_TYPES.json for other states.
+
   def with_no_held_hearings
-    left_joins(:hearings).where.not(hearings: { disposition: "held" })
+    # left_joins(:hearings).where.not(hearings: { disposition: "held" })
+    query = <<-SQL
+      SELECT "appeals".*
+      FROM "appeals"
+      LEFT OUTER JOIN "hearings"
+      ON "hearings"."appeal_id" = "appeals"."id"
+      WHERE "hearings"."disposition" != $1  [["disposition", "held"]]
+    SQL
+
+    joins(query, :hearings)
+    pry
   end
 
   def with_held_hearings
