@@ -29,7 +29,9 @@ class SlackService
       params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
       http_service.post(url, params)
     else
+      # rubocop:disable Rails/Output
       Rails.logger.info(pp(slack_msg))
+      # rubocop:enable Rails/Output
     end
   end
 
