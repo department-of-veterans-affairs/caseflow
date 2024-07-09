@@ -111,7 +111,7 @@ class Test::CorrespondenceController < ApplicationController
     correspondence = ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       va_date_of_receipt: receipt_date,
-      notes: generate_notes([corr_type, receipt_date]),
+      notes: "This is a test note",
       veteran_id: vet.id,
       nod: nod
     )
@@ -122,23 +122,6 @@ class Test::CorrespondenceController < ApplicationController
     return nod_doc if nod
 
     non_nod_docs.sample
-  end
-
-  # randomly generates notes for the correspondence
-  def generate_notes(params)
-    note_type = params.sample
-
-    note = ""
-    # generate note from value pulled
-    case note_type
-
-    when CorrespondenceType
-      note = "Correspondence Type is #{note_type&.name}"
-    when ActiveSupport::TimeWithZone
-      note = "Correspondence added to Caseflow on #{note_type&.strftime("%m/%d/%y")}"
-    end
-
-    note
   end
 
   # :reek:UtilityFunction
