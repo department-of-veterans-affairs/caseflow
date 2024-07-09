@@ -9,7 +9,6 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
       data-css-1ogvp9u=""
     >
       <div>
-        
         <div
           class="cf-loading-button-symbol cf-small-loader-symbol"
         >
@@ -4019,7 +4018,9 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
             href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0002935@care.evn.va.gov&pin=7928463#&role=host"
             target="_blank"
           >
-            <strong>
+            <strong
+              data-testid="strong-element-test-id"
+            >
               VLJ Virtual Hearing Link
             </strong>
             <span
