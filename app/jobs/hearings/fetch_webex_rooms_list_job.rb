@@ -5,6 +5,7 @@
 class Hearings::FetchWebexRoomsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
   include Hearings::SendTranscriptionIssuesEmail
+  include WebexConcern
 
   queue_with_priority :low_priority
   application_attr :hearings_schedule
@@ -48,14 +49,6 @@ class Hearings::FetchWebexRoomsListJob < CaseflowJob
     max = 1000
     query = { "sortBy": sort_by, "max": max }
 
-    WebexService.new(
-      host: ENV["WEBEX_HOST_MAIN"],
-      port: ENV["WEBEX_PORT"],
-      aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_BOTTOKEN"],
-      domain: ENV["WEBEX_DOMAIN_MAIN"],
-      api_endpoint: ENV["WEBEX_API_MAIN"],
-      query: query
-    ).fetch_rooms_list
+    WebexService.new(rooms_config(query)).fetch_rooms_list
   end
 end
