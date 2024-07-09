@@ -62,7 +62,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .with_original_appeal_and_judge_task
       .where(
         "appeal_affinities.affinity_start_date <= ?",
-        CaseDistributionLever.cavc_affinity_days.days.ago,
+        CaseDistributionLever.cavc_affinity_days.days.ago
       )
   end
 

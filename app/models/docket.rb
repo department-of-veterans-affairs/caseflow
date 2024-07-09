@@ -136,11 +136,11 @@ class Docket
   def affinity_date_count(in_window: false, priority: true)
     scope = docket_appeals.ready_for_distribution
 
-    if in_window
-      scope = scope.non_genpop_by_affinity_start_date
-    else
-      scope = scope.genpop_by_affinity_start_date
-    end
+    scope = if in_window
+              scope.non_genpop_by_affinity_start_date
+            else
+              scope.genpop_by_affinity_start_date
+            end
 
     return scoped_for_priority(scope).ids.size if priority
 

@@ -25,11 +25,11 @@ class SlackService
   def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
     slack_msg = format_slack_msg(msg, title, channel)
 
-    unless url && (Rails.deploy_env?(:uat) || Rails.deploy_env?(:prodtest) || Rails.deploy_env?(:prod))
-      Rails.logger.info(pp(slack_msg))
-    else
+    if url && (Rails.deploy_env?(:uat) || Rails.deploy_env?(:prodtest) || Rails.deploy_env?(:prod))
       params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
       http_service.post(url, params)
+    else
+      Rails.logger.info(pp(slack_msg))
     end
   end
 

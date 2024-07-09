@@ -503,6 +503,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { job.slack_report }
 
     before do
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
       job.instance_variable_set(:@distributions, distributed_cases)
@@ -535,11 +536,19 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of evidence_submission appeals _not_ distributed*: 1",
         "*Number of hearing appeals _not_ distributed*: 1",
         "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
+        "*Number of legacy appeals in affinity date window: not implemented",
+        "*Number of legacy appeals out of affinity date window: not implemented",
+        "*Number of direct_review appeals in affinity date window: 0",
+        "*Number of direct_review appeals out of affinity date window: 0",
+        "*Number of evidence_submission appeals in affinity date window: 0",
+        "*Number of evidence_submission appeals out of affinity date window: 0",
+        "*Number of hearing appeals in affinity date window: 0",
+        "*Number of hearing appeals out of affinity date window: 0",
         "",
         "*Debugging information*",
         "*Excluded Judges: #{excluded_judges}",
         "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
-      ].each_with_index do | line, index |
+      ].each_with_index do |line, index|
         expect(subject[index]).to eq line
       end
     end
@@ -567,11 +576,19 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of evidence_submission appeals _not_ distributed*: 1",
         "*Number of hearing appeals _not_ distributed*: 1",
         "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1",
+        "*Number of legacy appeals in affinity date window: not implemented",
+        "*Number of legacy appeals out of affinity date window: not implemented",
+        "*Number of direct_review appeals in affinity date window: 0",
+        "*Number of direct_review appeals out of affinity date window: 0",
+        "*Number of evidence_submission appeals in affinity date window: 0",
+        "*Number of evidence_submission appeals out of affinity date window: 0",
+        "*Number of hearing appeals in affinity date window: 0",
+        "*Number of hearing appeals out of affinity date window: 0",
         "",
         "*Debugging information*",
         "*Excluded Judges: #{excluded_judges}",
         "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
-      ].each_with_index do | line, index |
+      ].each_with_index do |line, index|
         expect(subject[index]).to eq line
       end
     end
