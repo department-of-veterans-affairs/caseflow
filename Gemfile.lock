@@ -2075,7 +2075,9 @@ DEPENDENCIES
   knapsack_pro (~> 3.8)
   logstasher
   meta_request
+  mime-types
   moment_timezone-rails
+  multipart-post
   multiverse
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
