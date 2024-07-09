@@ -51,7 +51,7 @@ class CorrespondenceAutoAssigner
         started_at: started_at,
         unassignable_reason: assignable_user_finder.unassignable_reasons.last
       )
-      return
+      return error
     end
 
     assign_task_to_user(task, assignee)
