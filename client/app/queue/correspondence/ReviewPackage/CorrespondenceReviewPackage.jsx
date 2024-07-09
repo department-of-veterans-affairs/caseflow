@@ -127,9 +127,9 @@ export const CorrespondenceReviewPackage = (props) => {
     history.push('/queue/correspondence');
   };
 
-  // used to validate there are no non-null values
+  // used to validate there are no non-null values (notes can be null)
   const nullValuesPresent = () => {
-    return !notes || !veteranFileNumber || !correspondenceTypeId || !vaDor;
+    return !veteranFileNumber || !correspondenceTypeId || !vaDor;
   };
 
   const intakeAppeal = async () => {
