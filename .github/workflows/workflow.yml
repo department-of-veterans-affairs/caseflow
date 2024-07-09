@@ -234,7 +234,9 @@ jobs:
         with:
           path: ./tmp/capybara
 
-      - run: mv ./tmp/examples.txt ./tmp/examples-${{matrix.ci_node_index}}.txt
+      - name: Rename examples.txt
+        if: success() || failure()
+        run: mv ./tmp/examples.txt ./tmp/examples-${{matrix.ci_node_index}}.txt
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         name: Upload tmp/examples.txt
@@ -250,7 +252,9 @@ jobs:
         with:
           path: ./log/test-${{matrix.ci_node_index}}.log.tar.gz
 
-      - run: mv ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
+      - name: Rename bullet.log
+        if: success() || failure()
+        run: mv ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         name: bullet-${{matrix.ci_node_index}}.log
