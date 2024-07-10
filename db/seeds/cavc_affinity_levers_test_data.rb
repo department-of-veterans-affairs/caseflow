@@ -195,8 +195,15 @@ module Seeds
     end
 
     def find_or_create_active_judge(css_id, full_name)
-      User.find_by_css_id(css_id) ||
-        create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
+        user = User.find_by_css_id(css_id)
+
+        if user && !user.judge_in_vacols?
+          create(:staff, :judge_role, slogid: user.css_id, user: user)
+        elsif !user
+          user = create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
+        end
+
+        user
     end
 
     def find_or_create_attorney(css_id, full_name)
