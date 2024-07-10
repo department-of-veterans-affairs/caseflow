@@ -26,7 +26,7 @@ const ReassignPackageModal = (props) => {
         decision_reason: decisionReason,
       };
 
-      ApiUtil.patch(`/queue/correspondence/tasks/${props.reviewDetails.taskId}/update`, { data }).
+      ApiUtil.patch(`/queue/correspondence/tasks/${props.blockingTaskId}/update`, { data }).
         then(() => {
           window.location.href = '/queue/correspondence/team';
         });
@@ -131,7 +131,7 @@ ReassignPackageModal.propTypes = {
   setModalState: PropTypes.func,
   correspondence_id: PropTypes.number,
   taskInstructions: PropTypes.array,
-  reviewDetails: PropTypes.object,
+  blockingTaskId: PropTypes.number,
   updateLastAction: PropTypes.func,
 };
 

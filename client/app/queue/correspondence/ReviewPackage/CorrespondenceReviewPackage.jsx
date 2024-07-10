@@ -23,21 +23,19 @@ import {
 
 export const CorrespondenceReviewPackage = (props) => {
   const history = useHistory();
-  const [reviewDetails, setReviewDetails] = useState({
-    veteran_name: {},
-    dropdown_values: [],
-  });
-  const [editableData, setEditableData] = useState({
-    notes: '',
-    veteran_file_number: '',
-    default_select_value: null,
-    va_date_of_receipt: '',
-  });
+
+  // state variables for editable portions of the form that can be passed to child components
+  const [notes, setNotes] = useState(props.correspondence.notes);
+  const [veteranFileNumber, setVeteranFileNumber] = useState(props.correspondence.veteranFileNumber);
+  const [correspondenceTypeId, setCorrespondenceTypeId] = useState(
+    props.correspondence.correspondence_type_id
+  );
+  const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
 
   const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
+  const [disableSaveButton, setDisableSaveButton] = useState(true);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
-  const [apiResponse, setApiResponse] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -45,7 +43,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
-  const [reviewPackageDetails, setReviewPackageDetails] = useState({
+  const [blockingTaskId, setBlockingTaskId] = useState({
     veteranName: '',
     taskId: [],
   });
@@ -59,10 +57,7 @@ export const CorrespondenceReviewPackage = (props) => {
     const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
     if (assignedRemoveTask) {
-      setReviewPackageDetails((prev) => {
-        return { ...prev, taskId: assignedRemoveTask.id };
-      }
-      );
+      setBlockingTaskId(assignedRemoveTask.id);
     }
 
     // Return true if a removePackageTask that is currently assigned is found, else false
@@ -75,7 +70,7 @@ export const CorrespondenceReviewPackage = (props) => {
           task.type === 'ReassignPackageTask');
 
     if (assignedReassignTask) {
-      setReviewPackageDetails({ taskId: assignedReassignTask.id });
+      setBlockingTaskId(assignedReassignTask.id);
     }
 
     // Return true if a reassignPackageTask that is currently assigned is found, else false
@@ -85,9 +80,6 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   useEffect(() => {
-    const apiResWithVADOR = moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD');
-
-    setApiResponse(apiResWithVADOR);
     setDisplayIntakeAppeal(props.correspondence.display_intake_appeal);
 
     // Check for eFolder upload failure
@@ -99,26 +91,6 @@ export const CorrespondenceReviewPackage = (props) => {
       });
     }
 
-    setReviewDetails({
-      veteran_name: props.correspondence.veteran_name || {},
-      dropdown_values: props.correspondence.correspondenceTypes || [],
-      correspondence_type_id: props.correspondence.correspondence_type_id
-    });
-    setReviewPackageDetails((prev) => {
-      return {
-        ...prev,
-        veteranName: `${props.correspondence.veteran_name.first_name}
-      ${props.correspondence.veteran_name.last_name}` };
-    }
-    );
-
-    setEditableData({
-      notes: props.correspondence.notes,
-      veteran_file_number: props.correspondence.file_number,
-      default_select_value: props.correspondence.correspondence_type_id,
-      va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-    });
-
     if (isPageReadOnly(props.correspondence.correspondence_tasks)) {
       setBannerInformation({
         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
@@ -128,7 +100,7 @@ export const CorrespondenceReviewPackage = (props) => {
       setIsReadOnly(true);
     }
 
-    if (hasAssignedReassignPackageTask(props.veteranInformation.correspondence_tasks)) {
+    if (hasAssignedReassignPackageTask(props.correspondence.correspondence_tasks)) {
       setBannerInformation({
         title: CORRESPONDENCE_READONLY_BANNER_HEADER,
         message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
@@ -155,20 +127,15 @@ export const CorrespondenceReviewPackage = (props) => {
     history.push('/queue/correspondence');
   };
 
-  const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== props.correspondence.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== props.correspondence.veteranFileNumber;
-    const selectValueChanged = editableData.default_select_value !== reviewDetails.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !==
-      moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
-
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
+  // used to validate there are no non-null values (notes can be null)
+  const nullValuesPresent = () => {
+    return !veteranFileNumber || !correspondenceTypeId || !vaDor;
   };
 
   const intakeAppeal = async () => {
-    props.setFileNumberSearch(editableData.veteran_file_number);
+    props.setFileNumberSearch(veteranFileNumber);
     try {
-      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await props.doFileNumberSearch('appeal', veteranFileNumber, true);
       await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
     } catch (error) {
@@ -194,24 +161,12 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   };
 
+  // check for in-flight changes to disable the button
   useEffect(() => {
-    if (apiResponse) {
-      const hasChanged = isEditableDataChanged();
-
-      setDisableButton(hasChanged);
-      setErrorMessage('');
-    }
-  }, [editableData, apiResponse]);
-
-  const reviewPackageData = {
-    notes: props.correspondence.notes,
-    veteranFullName: props.correspondence.veteranFullName,
-    fileNumber: props.correspondence.file_number,
-    packageDocumentType: props.correspondence.correspondenceDocuments.length &&
-     props.correspondence.correspondenceDocuments[0].document_title.includes('10182') ? 'NOD' : 'Non-NOD',
-    vaDor: moment.utc(props.correspondence.vaDateOfReceipt).format('YYYY-MM-DD'),
-    correspondenceTypes: props.correspondenceTypes
-  };
+    // disable create record button if save button is enabled or null values exist
+    setDisableButton(!disableSaveButton || nullValuesPresent());
+    setErrorMessage('');
+  }, [disableSaveButton]);
 
   return (
     <div>
@@ -225,7 +180,7 @@ export const CorrespondenceReviewPackage = (props) => {
       <React.Fragment>
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
-            reviewDetails={reviewPackageDetails}
+            blockingTaskId={blockingTaskId}
             efolder={props.hasEfolderFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
@@ -246,13 +201,10 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
-              reviewPackageData,
-              reviewDetails,
-              setReviewDetails,
-              editableData,
-              setEditableData,
               disableButton,
               setDisableButton,
+              disableSaveButton,
+              setDisableSaveButton,
               setIsReturnToQueue,
               showModal,
               handleModalClose,
@@ -261,7 +213,15 @@ export const CorrespondenceReviewPackage = (props) => {
               setErrorMessage,
               isReadOnly,
               corrTypeSelected,
-              setCorrTypeSelected
+              setCorrTypeSelected,
+              notes,
+              setNotes,
+              veteranFileNumber,
+              setVeteranFileNumber,
+              correspondenceTypeId,
+              setCorrespondenceTypeId,
+              vaDor,
+              setVaDor
             }}
             {...props}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}

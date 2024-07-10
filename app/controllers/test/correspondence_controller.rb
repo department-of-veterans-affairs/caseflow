@@ -103,7 +103,6 @@ class Test::CorrespondenceController < ApplicationController
   # create correspondence for given veteran
   def create_correspondence(veteran)
     vet = veteran
-    corr_type = CorrespondenceType.all.sample
     receipt_date = rand(1.month.ago..1.day.ago)
     nod = [true, false].sample
     doc_type = generate_vbms_doc_type(nod)
@@ -172,4 +171,5 @@ class Test::CorrespondenceController < ApplicationController
       }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 end

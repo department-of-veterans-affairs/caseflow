@@ -62,12 +62,3 @@ export const correspondenceDocumentsData = [
     document_title: 'Exam Request'
   }
 ];
-
-export const reviewPackageDataResponse = {
-  body: {
-    correspondence: correspondenceData,
-    package_document_type: packageDocumentTypeData,
-    correspondence_documents: correspondenceDocumentsData,
-    general_information: veteranInformation
-  }
-};

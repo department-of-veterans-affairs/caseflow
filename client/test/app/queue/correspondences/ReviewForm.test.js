@@ -22,14 +22,9 @@ describe('ReviewForm', () => {
 
   beforeEach(() => {
     props = {
-      editableData: {
-        veteran_file_number: '500000004',
-        notes: 'This is a note from CMP.',
-      },
-      reviewDetails: {
-        veteran_name: 'Bob  Smithbaumbach',
-        dropdown_values: ['Option 1', 'Option 2'],
-      },
+      veteranFileNumber: '500000004',
+      notes: 'This is a note from CMP',
+      blockingTaskId: 12,
       disableButton: false,
     };
   });
@@ -67,7 +62,6 @@ describe('ReviewForm', () => {
     const mockFunction = jest.fn();
 
     props.setCorrTypeSelected = mockFunction;
-    props.setEditableData = mockFunction;
     props.setIsReturnToQueue = mockFunction;
 
     render(
