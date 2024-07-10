@@ -37,7 +37,9 @@ class CorrespondenceDocument < CaseflowRecord
 
   def update_correspondence_nod
     documents = correspondence.correspondence_documents
-    nod = documents.any? { |doc| Caseflow::DocumentTypes::TYPES[doc["vbms_document_type_id"]].include?("10182") }
+    nod = documents.any? do |doc|
+      doc["vbms_document_type_id"] && Caseflow::DocumentTypes::TYPES[doc["vbms_document_type_id"]].include?("10182")
+    end
     correspondence.update!(
       nod: nod
     )
