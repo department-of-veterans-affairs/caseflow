@@ -51,7 +51,7 @@ class EditDocumentTypeModal extends React.Component {
           vbms_document_type_id: this.state.packageDocument.value
         }
       }).then((resp) => {
-        this.props.correspondence(resp.body.correspondence);
+        this.props.setCorrespondence(resp.body.correspondence);
       });
       this.props.updateDocumentTypeName(this.state.packageDocument, this.props.indexDoc);
       this.props.setModalState(false);
@@ -107,7 +107,6 @@ EditDocumentTypeModal.propTypes = {
   setCorrespondence: PropTypes.func,
   setModalState: PropTypes.func,
   indexDoc: PropTypes.number,
-  correspondence: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
