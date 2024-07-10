@@ -1238,6 +1238,21 @@ $color-black: #323a45;
       max-width: 300%;
       margin-bottom: 15px;
     }
+    label {
+      max-width: none;
+    }
+  }
+
+  .auto-assign-container {
+    h3 {
+      margin: 15px 0;
+    }
+    label {
+      max-width: none;
+      span {
+        margin-left: 10px;
+      }
+    }
   }
   button {
     margin-top: 10px;
