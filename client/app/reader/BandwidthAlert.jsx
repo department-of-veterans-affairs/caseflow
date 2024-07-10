@@ -44,7 +44,8 @@ class BandwidthAlert extends React.Component {
       return (
         <div {...alertStyling}>
           <Alert title="Warning" type="warning">
-            You may experience slower downloading times for certain files based on your bandwidth speed and document size.
+            You may experience slower downloading times for certain files based on your
+            bandwidth speed and document size.
             <br />
           </Alert>
         </div>
