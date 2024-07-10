@@ -98,24 +98,9 @@ class Test::CorrespondenceController < ApplicationController
       valid_file_nums.each do |file|
         veteran = Veteran.find_by_file_number(file)
         ActiveRecord::Base.transaction do
-          correspondence = Correspondence.create!(
-            uuid: SecureRandom.uuid,
-            correspondence_type_id: rand(1..8),
-            va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
-            notes: "This is a test note",
-            veteran: veteran,
-            nod: rand(2).zero?
-          )
+          correspondence = create_correspondence(veteran)
           rand(1..5).times do
-            doc_type = Caseflow::DocumentTypes::TYPES.keys.sample
-            CorrespondenceDocument.find_or_create_by(
-              document_file_number: veteran.file_number,
-              uuid: SecureRandom.uuid,
-              correspondence_id: correspondence.id,
-              document_type: doc_type,
-              vbms_document_type_id: doc_type,
-              pages: rand(1..30)
-            )
+            create_correspondence_document(veteran, correspondence)
           end
           if correspondence.nod?
             correspondence.correspondence_documents.last.update!(
@@ -127,8 +112,33 @@ class Test::CorrespondenceController < ApplicationController
       end
     end
 
+    auto_assign_correspondence
+  end
 
-    # Auto Assign Correspondences
+  def create_correspondence(veteran)
+    Correspondence.create!(
+      uuid: SecureRandom.uuid,
+      correspondence_type_id: rand(1..8),
+      va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
+      notes: "This is a test note",
+      veteran: veteran,
+      nod: rand(2).zero?
+    )
+  end
+
+  def create_correspondence_document(veteran, correspondence)
+    doc_type = Caseflow::DocumentTypes::TYPES.keys.sample
+    CorrespondenceDocument.find_or_create_by(
+      document_file_number: veteran.file_number,
+      uuid: SecureRandom.uuid,
+      correspondence_id: correspondence.id,
+      document_type: doc_type,
+      vbms_document_type_id: doc_type,
+      pages: rand(1..30)
+    )
+  end
+
+  def auto_assign_correspondence
     batch = BatchAutoAssignmentAttempt.create!(
       user: current_user,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
