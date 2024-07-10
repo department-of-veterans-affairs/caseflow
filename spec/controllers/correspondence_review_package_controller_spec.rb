@@ -70,7 +70,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(general_info["file_number"]).to eq(veteran.file_number)
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
     end
-
   end
 
   describe "GET #review_package" do

@@ -114,7 +114,7 @@ RSpec.feature("The Correspondence Review Package page") do
   end
 
   context "Review package - intake appeal" do
-    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id) }
+    let(:correspondence_2) { create(:correspondence, :nod, :with_single_doc, veteran_id: veteran.id) }
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
@@ -125,7 +125,7 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
-      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      visit "/queue/correspondence/#{correspondence_2.uuid}/review_package"
       expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
       using_wait_time(20) do

@@ -106,7 +106,7 @@ EditDocumentTypeModal.propTypes = {
   updateDocumentTypeName: PropTypes.func,
   setCorrespondence: PropTypes.func,
   setModalState: PropTypes.func,
-  indexDoc: PropTypes.number,
+  indexDoc: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
