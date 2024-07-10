@@ -451,7 +451,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_a
   end
 
-  def self.update_appeal_affinity_dates(priority, date)
+  def self.update_appeal_affinity_dates_query(priority, date)
     byebug
     if priority
       query = <<-SQL
