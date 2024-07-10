@@ -147,18 +147,50 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
     end
 
     describe "#connect_corr_with_vet" do
-      let(:valid_veterans) { ["123456789"] }
-      let(:count) { 3 }
-      let(:veteran) { create(:veteran, file_number: "123456789") }
+      let!(:valid_veterans) { create_list(:veteran, 3) }
+      let(:valid_file_nums) { valid_veterans.map(&:file_number) }
+      let(:user) { create(:user) }
+      let(:count) { 2 }
 
       before do
-        allow(Veteran).to receive(:find_by_file_number).with("123456789").and_return(veteran)
+        allow(controller).to receive(:current_user).and_return(user)
       end
 
-      it "creates correspondences for valid veterans" do
-        expect do
-          controller.send(:connect_corr_with_vet, valid_veterans, count)
-        end.to change { Correspondence.count }.by(3)
+      it "creates correspondences and associated documents for each valid file number" do
+        expect {
+          controller.send(:connect_corr_with_vet, valid_file_nums, count)
+        }.to change(Correspondence, :count).by(valid_file_nums.size * count)
+          .and change(CorrespondenceDocument, :count)
+
+        valid_veterans.each do |veteran|
+          veteran.reload
+          veteran.correspondences.each do |correspondence|
+            expect(correspondence.va_date_of_receipt).to be_between(90.days.ago.to_date, Date.yesterday)
+            expect(correspondence.notes).to eq("This is a test note")
+            expect(correspondence.correspondence_documents.size).to be_between(1, 5).inclusive
+          end
+        end
+      end
+
+      it "assigns NOD document types correctly" do
+        controller.send(:connect_corr_with_vet, valid_file_nums, count)
+
+        valid_veterans.each do |veteran|
+          veteran.reload
+          veteran.correspondences.where(nod: true).each do |correspondence|
+            expect(correspondence.correspondence_documents.last.document_type).to eq(1250)
+            expect(correspondence.correspondence_documents.last.vbms_document_type_id).to eq(1250)
+          end
+        end
+      end
+
+      it "creates a BatchAutoAssignmentAttempt and enqueues AutoAssignCorrespondenceJob" do
+        expect {
+          controller.send(:connect_corr_with_vet, valid_file_nums, count)
+        }.to change(BatchAutoAssignmentAttempt, :count).by(1)
+
+        batch = BatchAutoAssignmentAttempt.last
+        expect(batch.user).to eq(user)
       end
     end
 

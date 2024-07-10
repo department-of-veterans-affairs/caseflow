@@ -3,6 +3,8 @@
 require "rake"
 
 class Test::CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_access, only: [:index]
   before_action :verify_feature_toggle, only: [:index]
 
@@ -91,9 +93,9 @@ class Test::CorrespondenceController < ApplicationController
     { valid: valid_file_nums, invalid: invalid_file_nums }
   end
 
-  def connect_corr_with_vet(valid_veterans, count)
+  def connect_corr_with_vet(valid_file_nums, count)
     count.times do
-      valid_veterans.each do |file|
+      valid_file_nums.each do |file|
         veteran = Veteran.find_by_file_number(file)
         ActiveRecord::Base.transaction do
           correspondence = Correspondence.create!(
@@ -137,6 +139,6 @@ class Test::CorrespondenceController < ApplicationController
       batch_auto_assignment_attempt_id: batch.id
     }
 
-    perform_now(AutoAssignCorrespondenceJob, job_args)
+    perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
   end
 end
