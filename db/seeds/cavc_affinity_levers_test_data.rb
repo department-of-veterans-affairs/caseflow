@@ -2,7 +2,6 @@
 
 module Seeds
   class CavcAffinityLeversTestData < Base
-    APPEALS_LIMIT = 10
 
     def initialize
       RequestStore[:current_user] = User.system_user
@@ -607,7 +606,7 @@ module Seeds
           :ready_for_distribution,
           :type_original,
           :with_appeal_affinity,
-          bfcorlid: "#{veteran.file_number}S",
+          bfcorlid: "#{veteran.file_number}S"
           )
       )
     end
@@ -623,7 +622,7 @@ module Seeds
           :ready_for_distribution,
           :type_original,
           :with_appeal_affinity,
-          bfcorlid: "#{veteran.file_number}S",
+          bfcorlid: "#{veteran.file_number}S"
           )
       )
     end
@@ -634,7 +633,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :ready_for_distribution,
           :with_appeal_affinity,
-          veteran: veteran,
+          veteran: veteran
         )
     end
 
