@@ -27,13 +27,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.SET_CORRESPONDENCE_DOCUMENTS:
-    return update(state, {
-      correspondenceDocuments: {
-        $set: action.payload.correspondenceDocuments
-      }
-    });
-
   case ACTIONS.SET_PACKAGE_DOCUMENT_TYPE:
     return update(state, {
       packageDocumentType: {
