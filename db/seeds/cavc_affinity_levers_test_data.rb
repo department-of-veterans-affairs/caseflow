@@ -444,7 +444,7 @@ module Seeds
 
     def create_cavc_aod_affinity_days_data
       create_ama_cavc_appeals
-      create_legacy_appeals_with_hearing_and_excluded_or_ineligible_judge
+      create_legacy_aod_appeals_with_hearing_and_excluded_or_ineligible_judge
       ama_cavc_aod_appeals_with_no_hearing_held
       create_legacy_aod_appeals_with_null_judge_value
       create_ama_aod_appeals_with_null_judge_value
@@ -492,6 +492,20 @@ module Seeds
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaabode, create_veteran_for_bvaabode_judge("TiedToBode"))
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvakkeeling, create_veteran_for_bvakkeeling_judge("TiedToKeeling"))
       create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaaabshire, create_veteran_for_bvaaabshire_judge("TiedToAbshire"))
+    end
+
+    def create_legacy_aod_appeals_with_hearing_and_excluded_or_ineligible_judge
+      2.times do
+        create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaawakefield, create_veteran_for_bvaawakefield_judge("TiedToWakefield"))
+        create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvacgislason1, create_veteran_for_bvacgislason1_judge("TiedToGislason"))
+      end
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_activejudgeteam, create_veteran_for_activejudgeteam_judge("TiedToActiveJudgeTeam"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivejudge, create_veteran_for_inactivejudge_judge("TiedToInactiveJudge"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivecfjudge, create_veteran_for_inactivecfjudge_judge("TiedToInactiveCFJudge"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_inactivejudge101, create_veteran_for_inactivejudge101_judge("TiedToInactiveJudge101"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaabode, create_veteran_for_bvaabode_judge("TiedToBode"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvakkeeling, create_veteran_for_bvakkeeling_judge("TiedToKeeling"))
+      create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge_bvaaabshire, create_veteran_for_bvaaabshire_judge("TiedToAbshire"))
     end
 
     def create_ama_cavc_appeals_with_no_hearing_held
@@ -577,6 +591,10 @@ module Seeds
 
     def create_legacy_appeal_with_hearing_and_excluded_or_ineligible_judge(judge, veteran)
       create(:legacy_cavc_appeal, cavc: false, affinity_start_date: Time.zone.now, bfcorlid: "#{veteran.file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
+    end
+
+    def create_legacy_aod_appeal_with_hearing_and_excluded_or_ineligible_judge(judge, veteran)
+      create(:legacy_cavc_appeal, cavc: false, aod:true, affinity_start_date: Time.zone.now, bfcorlid: "#{veteran.file_number}S", judge: VACOLS::Staff.find_by(sdomainid: judge.css_id), attorney: VACOLS::Staff.find_by(sdomainid: attorney.css_id))
     end
 
     def create_ama_cavc_appeal_with_no_hearing_held(judge, veteran, days)
