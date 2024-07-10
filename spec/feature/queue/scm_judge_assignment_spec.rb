@@ -124,7 +124,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           visit "/queue/#{judge_one.css_id}/assign"
 
           expect(page).to have_content("Assign 1 Cases for #{judge_one.css_id}")
-          expect(page).to have_no_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+          expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
 
           click_on("Request more cases")
           expect(page).to have_content("Distribution complete")
@@ -186,7 +186,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
 
           visit "/queue/appeals/#{appeal.external_id}"
           active_tasks_section = page.find("#currently-active-tasks")
-          expect(active_tasks_section).to_not have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(active_tasks_section).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
           expect(active_tasks_section).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
           expect(active_tasks_section).to have_content("ASSIGNED BY\n#{assigner_name}")
         end
