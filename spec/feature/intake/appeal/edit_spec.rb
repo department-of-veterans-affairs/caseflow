@@ -114,6 +114,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       # should redirect to queue
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content("added 1 issue")
+      expect(page).to have_content("removed 1 issue")
 
       # going back to edit page should show those issues
       visit "appeals/#{appeal.uuid}/edit/"
@@ -976,20 +978,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "when withdraw decision reviews is enabled" do
-    scenario "remove an issue with dropdown and show alert message" do
-      visit "appeals/#{appeal.uuid}/edit/"
-      expect(page).to have_content("PTSD denied")
-      click_remove_intake_issue_dropdown("PTSD denied")
-
-      expect(page).to_not have_content("PTSD denied")
-
-      click_edit_submit_and_confirm
-
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-      expect(page).to have_content("You have successfully removed 1 issue.")
-    end
-
     let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
     let!(:in_progress_task) do
