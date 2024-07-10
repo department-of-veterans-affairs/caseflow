@@ -107,7 +107,14 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   end
 
   # To be implemented in future work
-  def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array); end
+  def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array)
+    receipt_date_hashes_array.map do |receipt_date_hash|
+      next unless receipt_date_hash[:docket] == LegacyDocket.docket_type
+
+      legacy_appeals_to_update_adjusted_for_priority = VACOLS::CaseDocket.update_appeal_affinity_dates(receipt_date_hash[:priority], receipt_date_hash[:receipt_date])
+      create_or_update_appeal_affinities(appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
+    end
+  end
 
   # The appeals arg can be an array of VACOLS::Case objects, they have the same affinity associations as Appeal objects
   def create_or_update_appeal_affinities(appeals, priority)
