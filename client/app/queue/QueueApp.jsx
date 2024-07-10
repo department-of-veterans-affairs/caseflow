@@ -802,7 +802,7 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path ="/queue/correspondence/:correspondence_uuid"
+              path ="/queue/correspondence/:correspondence_uuid/correspondence_details"
               title={`${PAGE_TITLES.CORRESPONDENCE_DETAILS}`}
               render={this.routedCorrespondenceDetails}
             />

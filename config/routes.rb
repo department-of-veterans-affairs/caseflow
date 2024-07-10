@@ -342,11 +342,11 @@ Rails.application.routes.draw do
     get '/correspondence/edit_document_type_correspondence', to: 'correspondence_review_package#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence_intake#intake_update'
     get '/correspondence/team', to: 'correspondence_queue#correspondence_team'
-    get '/correspondence/:correspondence_uuid', to: 'correspondence#correspondence_details'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence_review_package#update_cmp'
     get '/correspondence/packages', to: 'correspondence_review_package#package_documents'
     get '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#show'
     get '/correspondence/:pdf_id/pdf', to: 'correspondence_review_package#pdf'
+    get '/correspondence/:correspondence_uuid/correspondence_details', to: 'correspondence#correspondence_details'
     patch '/correspondence/:correspondence_uuid', to: 'correspondence_review_package#update'
     patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence_intake#process_intake', as: :queue_correspondence_intake_process_intake

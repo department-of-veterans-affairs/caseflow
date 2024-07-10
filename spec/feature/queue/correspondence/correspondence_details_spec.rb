@@ -5,15 +5,23 @@ RSpec.feature("The Correspondence Cases page") do
   include CorrespondenceTaskHelpers
 
   let(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
-  let!(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
+  let!(:correspondence) {
+    create(:correspondence,
+           :with_correspondence_intake_task,
+           assigned_to: current_user,
+           veteran_id: veteran.id,
+           uuid: SecureRandom.uuid,
+           va_date_of_receipt: Time.zone.local(2023, 1, 1))
+  }
 
   context "correspondence details" do
     before :each do
       setup_access
+      @correspondence = correspondence
     end
 
     it "properly loads the details page" do
-      visit "/queue/correspondence/#{correspondence.uuid}"
+      visit "/queue/correspondence/#{correspondence.uuid}/correspondence_details"
 
       binding.pry
       # Veteran Details

@@ -65,7 +65,6 @@ const CorrespondenceDetails = (props) => {
 
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
-  veteranInformation: PropTypes.object,
   correspondence: PropTypes.object
 };
 

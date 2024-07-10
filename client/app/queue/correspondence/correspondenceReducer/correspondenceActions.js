@@ -42,6 +42,7 @@ export const loadVeteranInformation = (veteranInformation) =>
       }
     });
   };
+
 export const loadVetCorrespondence = (vetCorrespondences) =>
   (dispatch) => {
     dispatch({
