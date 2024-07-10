@@ -111,7 +111,8 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     receipt_date_hashes_array.map do |receipt_date_hash|
       next unless receipt_date_hash[:docket] == LegacyDocket.docket_type
 
-      legacy_appeals_to_update_adjusted_for_priority = VACOLS::CaseDocket.update_appeal_affinity_dates(receipt_date_hash[:priority], receipt_date_hash[:receipt_date])
+      legacy_appeals_to_update_adjusted_for_priority = VACOLS::CaseDocket.update_appeal_affinity_dates_query(receipt_date_hash[:priority], receipt_date_hash[:receipt_date])
+      # TODO: legacy_appeals_to_update_adjusted_for_affinity = 
       create_or_update_appeal_affinities(legacy_appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
     end
   end
