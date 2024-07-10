@@ -71,10 +71,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
     end
 
-    it "returns the display_intake_appeal" do
-      json_response = JSON.parse(response.body)
-      expect(json_response["display_intake_appeal"]).to eq(true)
-    end
   end
 
   describe "GET #review_package" do
@@ -90,8 +86,6 @@ RSpec.describe CorrespondenceReviewPackageController, :all_dbs, type: :controlle
       correspondence.save(validate: false)
       get :review_package, params: { correspondence_uuid: correspondence.uuid }, format: :json
       expect(response).to have_http_status(:ok)
-      json_response = JSON.parse(response.body)
-      expect(json_response["display_intake_appeal"]).to eq(false)
     end
   end
 

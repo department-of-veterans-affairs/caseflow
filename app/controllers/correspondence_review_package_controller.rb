@@ -72,7 +72,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     WorkQueue::CorrespondenceSerializer
       .new(correspondence)
       .serializable_hash[:data][:attributes]
-      .merge(general_information, display_intake_appeal: display_intake_appeal)
+      .merge(general_information)
   end
 
   def build_json_response
@@ -81,8 +81,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
       general_information: general_information,
       user_can_edit_vador: current_user.inbound_ops_team_supervisor?,
       corres_docs: @correspondence[:correspondenceDocuments],
-      taskInstructions: task_instructions,
-      display_intake_appeal: display_intake_appeal
+      taskInstructions: task_instructions
     }
   end
 
@@ -102,10 +101,6 @@ class CorrespondenceReviewPackageController < CorrespondenceController
 
   def pdf_params
     params.permit(pdf: [:pdf_id, :type, :id, :download])
-  end
-
-  def display_intake_appeal
-    !(current_user.inbound_ops_team_supervisor? || current_user.inbound_ops_team_superuser?)
   end
 
   def update_veteran_on_correspondence

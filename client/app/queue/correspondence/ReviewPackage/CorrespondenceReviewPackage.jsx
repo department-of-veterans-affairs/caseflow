@@ -31,8 +31,6 @@ export const CorrespondenceReviewPackage = (props) => {
     props.correspondence.correspondence_type_id
   );
   const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
-
-  const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
   const [disableSaveButton, setDisableSaveButton] = useState(true);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
@@ -80,8 +78,6 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   useEffect(() => {
-    setDisplayIntakeAppeal(props.correspondence.display_intake_appeal);
-
     // Check for eFolder upload failure
     if (props.hasEfolderFailedTask) {
       setBannerInformation({
@@ -244,13 +240,11 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (displayIntakeAppeal || props.correspondence.nod) && (
+            { (props.correspondence.nod && !isReadOnly) && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
-                disabled={disableButton || isReadOnly}
-
               />
             )}
             <a href={intakeLink}>
