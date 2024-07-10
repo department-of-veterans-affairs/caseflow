@@ -177,7 +177,7 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
 
         valid_veterans.each do |veteran|
           veteran.reload
-          veteran.correspondences.where(nod: true).each do |correspondence|
+          veteran.correspondences.where(nod: true).find_each do |correspondence|
             expect(correspondence.correspondence_documents.last.document_type).to eq(1250)
             expect(correspondence.correspondence_documents.last.vbms_document_type_id).to eq(1250)
           end
