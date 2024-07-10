@@ -157,9 +157,9 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
       end
 
       it "creates correspondences and associated documents for each valid file number" do
-        expect {
+        expect do
           controller.send(:connect_corr_with_vet, valid_file_nums, count)
-        }.to change(Correspondence, :count).by(valid_file_nums.size * count)
+        end.to change(Correspondence, :count).by(valid_file_nums.size * count)
           .and change(CorrespondenceDocument, :count)
 
         valid_veterans.each do |veteran|
@@ -185,9 +185,9 @@ describe Test::CorrespondenceController, :postgres, type: :controller do
       end
 
       it "creates a BatchAutoAssignmentAttempt and enqueues AutoAssignCorrespondenceJob" do
-        expect {
+        expect do
           controller.send(:connect_corr_with_vet, valid_file_nums, count)
-        }.to change(BatchAutoAssignmentAttempt, :count).by(1)
+        end.to change(BatchAutoAssignmentAttempt, :count).by(1)
 
         batch = BatchAutoAssignmentAttempt.last
         expect(batch.user).to eq(user)
