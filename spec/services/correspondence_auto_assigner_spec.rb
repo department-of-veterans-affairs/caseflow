@@ -61,7 +61,7 @@ describe CorrespondenceAutoAssigner do
 
             it "assigns the correspondence with the oldest va_date_of_receipt first" do
               expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
-              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(error)
+              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(logger.error(msg: COPY::BAAA_USERS_MAX_QUEUE_REACHED))
 
               expect(mock_run_logger).to receive(:no_eligible_assignees)
                 .with(
