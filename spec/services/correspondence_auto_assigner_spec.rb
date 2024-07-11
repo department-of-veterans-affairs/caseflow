@@ -12,6 +12,7 @@ describe CorrespondenceAutoAssigner do
   let(:mock_run_verifier) { instance_double(CorrespondenceAutoAssignRunVerifier) }
 
   before do
+    FeatureToggle.disable!(:auto_assign_banner_failure)
     allow(AutoAssignableUserFinder).to receive(:new).and_return(mock_assignable_user_finder)
     allow(CorrespondenceAutoAssignRunVerifier).to receive(:new).and_return(mock_run_verifier)
   end
@@ -60,20 +61,22 @@ describe CorrespondenceAutoAssigner do
             end
 
             it "assigns the correspondence with the oldest va_date_of_receipt first" do
+              # mock successful assignment
               expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
-              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(nil)
-
-              expect(mock_run_logger).to receive(:no_eligible_assignees)
-                .with(
-                  task: new_correspondence.review_package_task,
-                  started_at: instance_of(ActiveSupport::TimeWithZone),
-                  unassignable_reason: "User is at max capacity"
-                )
               expect(mock_run_logger).to receive(:assigned)
                 .with(
                   task: old_correspondence.review_package_task,
                   started_at: instance_of(ActiveSupport::TimeWithZone),
                   assigned_to: intake_user
+                )
+
+              # mock failed assignment (i.e no user has capacity)
+              expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(nil)
+              expect(mock_run_logger).to receive(:no_eligible_assignees)
+                .with(
+                  task: new_correspondence.review_package_task,
+                  started_at: instance_of(ActiveSupport::TimeWithZone),
+                  unassignable_reason: "User is at max capacity"
                 )
 
               described.perform(

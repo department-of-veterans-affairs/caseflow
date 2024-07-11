@@ -4,6 +4,7 @@
 # (Assigning the Correspondence's ReviewPackageTask is considered assigning the Correspondence.)
 
 class CorrespondenceAutoAssigner
+  # rubocop:disable Metrics/MethodLength
   def perform(current_user_id:, batch_auto_assignment_attempt_id:)
     # Don't catch these exceptions here so that if we're being called by a job
     # the job will auto-retry with exponential back-off
@@ -29,7 +30,7 @@ class CorrespondenceAutoAssigner
         # guard clause if no assignee
         break if assignee.blank?
 
-        assign(task)
+        assign(task, assignee)
       end
 
       logger.end
@@ -39,12 +40,14 @@ class CorrespondenceAutoAssigner
       logger.error(msg: "#{COPY::BAAA_ERROR_MESSAGE} (Error code: #{error_uuid})")
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
   attr_accessor :batch, :current_user
 
   def find_auto_assign_user(task)
+    started_at = Time.current
     correspondence = task.correspondence
     assignee = assignable_user_finder.get_first_assignable_user(correspondence: correspondence)
 
