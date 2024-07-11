@@ -75,3 +75,4 @@ class SeedDB
 end
 
 SeedDB.new.seed
+
