@@ -92,7 +92,7 @@ feature "Appeal Edit issues", :all_dbs do
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
-  scenario "editing issues" do
+  scenario "Add, edit, and remove request issues" do
     step "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
@@ -184,6 +184,11 @@ feature "Appeal Edit issues", :all_dbs do
     # originally added in https://github.com/department-of-veterans-affairs/caseflow/pull/10241
     step "allows all request issues to be removed and saved and cancels all active tasks" do
       visit "appeals/#{appeal.uuid}/edit/"
+
+      # A VeteranRecordRequest task is added when the non-comp request issue is added. Complete it
+      # to ensure that cancelling the appeal does not update its status to 'cancelled' later on
+      appeal.tasks.where(type: VeteranRecordRequest.name).first.completed!
+
       # remove all issues
       click_remove_intake_issue_dropdown("PTSD denied")
       click_remove_intake_issue_dropdown("Left knee granted")
@@ -193,7 +198,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(appeal.tasks.filter(&:open?).any?).to eq false
-      # There are four tasks because a VeteranRecordRequest task is added with the non-comp request issue
+      expect(appeal.tasks.where(type: VeteranRecordRequest.name).first.status).to eq(Constants.TASK_STATUSES.completed)
       expect(appeal.tasks.map(&:closed_at)).to match_array([Time.zone.now, Time.zone.now, Time.zone.now, Time.zone.now])
     end
   end
@@ -1108,41 +1113,6 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
-    end
-  end
-
-  context "when remove decision reviews is enabled" do
-    let(:today) { Time.zone.now }
-    let!(:existing_request_issues) do
-      [create(:request_issue, :nonrating, decision_review: appeal3),
-       create(:request_issue, :nonrating, decision_review: appeal3)]
-    end
-
-    let!(:completed_task) do
-      create(:appeal_task,
-             :completed,
-             appeal: appeal3,
-             assigned_to: non_comp_org,
-             closed_at: last_week)
-    end
-
-    let!(:cancelled_task) do
-      create(:appeal_task,
-             :cancelled,
-             appeal: appeal3,
-             assigned_to: non_comp_org,
-             closed_at: Time.zone.now)
-    end
-
-    context "when review has no active tasks" do
-      scenario "no tasks are cancelled when all request issues are removed" do
-        visit "appeals/#{appeal3.uuid}/edit"
-
-        click_remove_intake_issue_dropdown("Apportionment")
-        click_remove_intake_issue_dropdown("Apportionment")
-        click_edit_submit_and_confirm
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-      end
     end
   end
 
