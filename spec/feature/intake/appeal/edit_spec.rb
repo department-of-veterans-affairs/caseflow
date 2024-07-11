@@ -1261,66 +1261,68 @@ feature "Appeal Edit issues", :all_dbs do
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
     scenario "appeal moves to sct queue when vha issue is added and moves back to distribution when removed" do
-      # add issue
-      reload_case_detail_page(appeal3.uuid)
-      click_on "Correct issues"
-      click_remove_intake_issue_dropdown("Unknown Issue Category")
-      click_intake_add_issue
-      fill_in "Benefit type", with: "Veterans Health Administration"
-      find("#issue-benefit-type").send_keys :enter
-      fill_in "Issue category", with: "Beneficiary Travel"
-      find("#issue-category").send_keys :enter
-      fill_in "Issue description", with: "I am a VHA issue"
-      fill_in "Decision date", with: 5.months.ago.mdY
-      radio_choices = page.all(".cf-form-radio-option > label")
-      radio_choices[1].click
-      safe_click ".add-issue"
+      step "add VHA issue and remove non-VHA issue" do
+        reload_case_detail_page(appeal3.uuid)
+        click_on "Correct issues"
+        click_remove_intake_issue_dropdown("Unknown Issue Category")
+        click_intake_add_issue
+        fill_in "Benefit type", with: "Veterans Health Administration"
+        find("#issue-benefit-type").send_keys :enter
+        fill_in "Issue category", with: "Beneficiary Travel"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "I am a VHA issue"
+        fill_in "Decision date", with: 5.months.ago.mdY
+        radio_choices = page.all(".cf-form-radio-option > label")
+        radio_choices[1].click
+        safe_click ".add-issue"
 
-      click_edit_submit
-      expect(page).to have_content("Move appeal to SCT queue")
-      expect(page).to have_button("Move")
-      safe_click ".confirm"
-      expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content(
-        "The appeal for #{appeal3.claimant.name} " \
-        "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
-      )
+        click_edit_submit
+        expect(page).to have_content("Move appeal to SCT queue")
+        expect(page).to have_button("Move")
+        safe_click ".confirm"
+        expect(page).to have_content("You have successfully updated issues on this appeal")
+        expect(page).to have_content(
+          "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+        )
+      end
 
-      # remove issue
-      reload_case_detail_page(appeal3.uuid)
-      click_on "Correct issues"
-      click_remove_intake_issue_dropdown("Beneficiary Travel")
-      click_intake_add_issue
-      add_intake_nonrating_issue(
-        benefit_type: "compensation",
-        category: "Unknown Issue Category",
-        description: "non vha issue",
-        date: 1.day.ago.to_date.mdY
-      )
+      step "remove VHA issue and add non-VHA issue" do
+        reload_case_detail_page(appeal3.uuid)
+        click_on "Correct issues"
+        click_remove_intake_issue_dropdown("Beneficiary Travel")
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          benefit_type: "compensation",
+          category: "Unknown Issue Category",
+          description: "non vha issue",
+          date: 1.day.ago.to_date.mdY
+        )
 
-      click_edit_submit
-      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
-      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
-      expect(page).to have_button("Move")
-      safe_click ".confirm"
-      expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content(
-        "The appeal for #{appeal3.claimant.name} " \
-        "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
-      )
-      expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
+        click_edit_submit
+        expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
+        expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
+        expect(page).to have_button("Move")
+        safe_click ".confirm"
+        expect(page).to have_content("You have successfully updated issues on this appeal")
+        expect(page).to have_content(
+          "The appeal for #{appeal3.claimant.name} " \
+          "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+        )
+        expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
 
-      # Verify task tree status
-      appeal3.reload
-      appeal3.tasks.reload
-      appeal3.request_issues.reload
-      distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
-      expect(distribution_task.assigned_by).to eq(current_user)
-      expect(distribution_task.status).to eq("assigned")
-      expect(appeal3.ready_for_distribution?).to eq(true)
-      expect(appeal3.can_redistribute_appeal?).to eq(true)
-      expect(appeal3.request_issues.active.count).to eq(1)
-      expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
+        # Verify task tree status
+        appeal3.reload
+        appeal3.tasks.reload
+        appeal3.request_issues.reload
+        distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
+        expect(distribution_task.assigned_by).to eq(current_user)
+        expect(distribution_task.status).to eq("assigned")
+        expect(appeal3.ready_for_distribution?).to eq(true)
+        expect(appeal3.can_redistribute_appeal?).to eq(true)
+        expect(appeal3.request_issues.active.count).to eq(1)
+        expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
+      end
     end
   end
 end
