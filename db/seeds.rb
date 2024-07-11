@@ -57,6 +57,7 @@ class SeedDB
     # Keep?
     # call_and_log_seed_step Seeds::TranscriptionContractor
     # call_and_log_seed_step Seeds::TranscriptionFiles
+    # 25125-test-resolution
   end
 end
 
