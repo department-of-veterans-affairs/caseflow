@@ -151,4 +151,5 @@ class Test::CorrespondenceController < ApplicationController
 
     perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
   end
+  # rubocop:enable Metrics/MethodLength
 end

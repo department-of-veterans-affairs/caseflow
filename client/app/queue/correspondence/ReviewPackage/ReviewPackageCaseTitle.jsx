@@ -75,7 +75,7 @@ const CaseTitleScaffolding = (props) => {
         modalState={modalRemoveState}
         setModalState={setRemoveModalState}
         onCancel={closeRemoveModal}
-        reviewDetails={props.reviewDetails}
+        blockingTaskId={props.blockingTaskId}
         correspondence_id = {props.correspondence_id} />
       }
       { modalReassignState &&
@@ -84,7 +84,7 @@ const CaseTitleScaffolding = (props) => {
         setModalState={setReassignModalState}
         onCancel={closeReassignModal}
         correspondence_id = {props.correspondence_id}
-        reviewDetails={props.reviewDetails}
+        blockingTaskId={props.blockingTaskId}
         inboundOpsTeamUsers={props.inboundOpsTeamUsers} />
       }
     </div>
@@ -98,7 +98,7 @@ const CaseSubTitleScaffolding = (props) => (
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div className="correspondence-drop-down-div">
-      { (!props.isReadOnly && props.efolder) &&
+      { (!props.isReadOnly && !props.efolder) &&
       <SearchableDropdown
         options={[
           { value: 'splitPackage', label: 'Split package' },
@@ -118,7 +118,6 @@ const CaseSubTitleScaffolding = (props) => (
 );
 
 ReviewPackageCaseTitle.propTypes = {
-  reviewDetails: PropTypes.object,
   handlePackageActionModal: PropTypes.func,
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
@@ -141,11 +140,11 @@ CaseSubTitleScaffolding.propTypes = {
 CaseTitleScaffolding.propTypes = {
   correspondence_id: PropTypes.number,
   inboundOpsTeamUsers: PropTypes.array,
-  reviewDetails: PropTypes.object,
   isReadOnly: PropTypes.bool,
   isReassignPackage: PropTypes.bool,
   userIsInboundOpsSupervisor: PropTypes.bool,
-  isInboundOpsSuperuser: PropTypes.bool
+  isInboundOpsSuperuser: PropTypes.bool,
+  blockingTaskId: PropTypes.number
 };
 
 export default ReviewPackageCaseTitle;
