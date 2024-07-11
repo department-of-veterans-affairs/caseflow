@@ -50,43 +50,6 @@ class RemovePackageModal extends React.Component {
     }
   }
 
-  removePackage = async () => {
-    try {
-      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/remove_package`).
-        then(() => {
-          this.setState({
-            updateCancelSuccess: true
-          });
-          this.props.updateLastAction('DeleteReviewPackage');
-        });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  completePackage = async () => {
-    try {
-      const data = {
-        correspondence_id: this.props.correspondence_id,
-        instructions: []
-      };
-
-      data.instructions.push(this.state.reasonReject);
-
-      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/completed_package`, { data }).
-        then(() => {
-          this.setState({
-            updateCancelSuccess: true
-          });
-          this.props.updateLastAction('InProgressReviewPackage');
-        });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   render() {
     const { onCancel } = this.props;
     const submit = () => {
@@ -105,7 +68,7 @@ class RemovePackageModal extends React.Component {
           decision_reason: this.state.reasonReject,
         };
 
-        ApiUtil.patch(`/queue/correspondence/tasks/${this.props.reviewDetails.taskId}/update`, { data }).
+        ApiUtil.patch(`/queue/correspondence/tasks/${this.props.blockingTaskId}/update`, { data }).
           then(() => {
             window.location.href = '/queue/correspondence/team';
           });
@@ -168,7 +131,7 @@ const mapStateToProps = (state) => {
 };
 
 RemovePackageModal.propTypes = {
-  reviewDetails: PropTypes.object,
+  blockingTaskId: PropTypes.number,
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   setModalState: PropTypes.func,

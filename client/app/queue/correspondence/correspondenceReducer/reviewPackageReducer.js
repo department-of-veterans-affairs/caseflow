@@ -27,13 +27,6 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.SET_CORRESPONDENCE_DOCUMENTS:
-    return update(state, {
-      correspondenceDocuments: {
-        $set: action.payload.correspondenceDocuments
-      }
-    });
-
   case ACTIONS.SET_PACKAGE_DOCUMENT_TYPE:
     return update(state, {
       packageDocumentType: {
@@ -76,13 +69,15 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
 
   case ACTIONS.UPDATE_DOCUMENT_TYPE_NAME:
     return update(state, {
-      correspondenceDocuments: {
-        [action.payload.index]: {
-          vbms_document_type_id: {
-            $set: action.payload.newName.value
-          },
-          document_title: {
-            $set: action.payload.newName.label
+      correspondence: {
+        correspondenceDocuments: {
+          [action.payload.index]: {
+            vbms_document_type_id: {
+              $set: action.payload.newName.value
+            },
+            document_title: {
+              $set: action.payload.newName.label
+            }
           }
         }
       }
