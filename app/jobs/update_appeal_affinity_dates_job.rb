@@ -117,7 +117,6 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     appeals_with_no_affinities
   end
 
-  # To be implemented in future work
   def process_legacy_appeals_which_need_affinity_updates(receipt_date_hashes_array)
     receipt_date_hashes_array.map do |receipt_date_hash|
       next unless receipt_date_hash[:docket] == LegacyDocket.docket_type
