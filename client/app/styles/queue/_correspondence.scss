@@ -11,6 +11,10 @@ $color-light-blue: #8ba6ca;
 $color-cream: #d6d7d9;
 $color-white: #ffffff;
 $color-black: #323a45;
+$color-background-color: #f1f1f1;
+$color-red: #cd2026;
+$color-dark-red: #ff0000;
+$color-gray-darker: #5b616b;
 
 
 .cf-pdf-preview-header {
@@ -613,9 +617,9 @@ $color-black: #323a45;
   margin-top: 7px;
 
   input {
-    background: #f1f1f1;
+    background: $color-background-color;
     opacity: 1;
-    color: #323a45;
+    color: $color-black;
   }
 }
 
@@ -1041,7 +1045,7 @@ $color-black: #323a45;
   }
 
   .cf-form-textinput.usa-input-error {
-    border-left: 4px solid #cd2026;
+    border-left: 4px solid $color-red;
     margin-top: 0;
     padding-bottom: 0;
     padding-left: 0.5rem;
@@ -1084,7 +1088,7 @@ $color-black: #323a45;
 
       .css-1pahdxg-control {
         border-color: hsl(0, 0%, 100%);
-        box-shadow: 0 0 0 1px #5b616b;
+        box-shadow: 0 0 0 1px $color-gray-darker;
         border-radius: 0;
 
         &:hover {
@@ -1106,14 +1110,14 @@ $color-black: #323a45;
     padding: 16px 10px 24px 0;
     justify-content: right;
     width: 190px;
-    border-top: 1px solid #d6d7d9;
+    border-top: 1px solid $color-cream;
   }
 
   .date-pickers-margin {
     margin: 0 5%;
 
     .error-msg {
-      color: red;
+      color: $color-dark-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
@@ -1127,7 +1131,7 @@ $color-black: #323a45;
   }
 
   .cf-form-textinput.usa-input-error {
-    border-left: 4px solid #cd2026;
+    border-left: 4px solid $color-red;
     margin-top: 0;
     padding-bottom: 0;
     padding-left: 0.5rem;
@@ -1168,7 +1172,7 @@ $color-black: #323a45;
 
     .css-1pahdxg-control {
       border-color: hsl(0, 0%, 100%);
-      box-shadow: 0 0 0 1px #5b616b;
+      box-shadow: 0 0 0 1px $color-gray-darker;
       border-radius: 0;
 
       &:hover {
@@ -1187,7 +1191,7 @@ $color-black: #323a45;
     margin: 0 5%;
 
     .error-msg {
-      color: red;
+      color: $color-dark-red;
       font-size: 13px;
       font-weight: 900;
       margin-bottom: 0;
