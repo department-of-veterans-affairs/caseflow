@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_11_165638) do
+ActiveRecord::Schema.define(version: 2024_07_11_132549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1956,7 +1956,6 @@ ActiveRecord::Schema.define(version: 2024_07_11_165638) do
     t.string "problem_type", comment: "Any problem with hearing recording; could be one of: 'No audio', 'Poor Audio Quality', 'Incomplete Hearing' or 'Other (see notes)'"
     t.string "requested_remedy", comment: "Any remedy requested by the apellant for the recording problem; could be one of: 'Proceed without transcript', 'Proceed with partial transcript' or 'New hearing'"
     t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
-    t.bigint "task_id"
     t.string "task_number", comment: "Number associated with transcription"
     t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
     t.bigint "transcription_contractor_id"
