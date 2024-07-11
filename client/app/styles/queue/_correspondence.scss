@@ -305,8 +305,9 @@ $color-black: #323a45;
 
 .nod-styling-review-form {
   margin-top: 20px;
-  & .cf-form-textinput {
-    max-width: 72rem !important;
+
+  .cf-form-textinput {
+    max-width: 72rem;
   }
 }
 
@@ -591,7 +592,8 @@ $color-black: #323a45;
   // display: flex;
   // gap: 5%;
   margin-top: 20px;
-  max-width: 100rem !important;
+  max-width: 100rem;
+
   @media (max-width: 1081px) {
     flex-direction: column;
   }
@@ -601,7 +603,7 @@ $color-black: #323a45;
   margin-top: -3px;
 }
 
-.review-package-date-input{
+.review-package-date-input {
   margin-top: 7px;
   max-width: none;
 }
@@ -609,9 +611,10 @@ $color-black: #323a45;
 .review-package-text-input-read-only {
   max-width: none;
   margin-top: 7px;
-  input{
-    background: #f1f1f1 !important;
-    opacity: 1 !important;
+
+  input {
+    background: #f1f1f1;
+    opacity: 1;
     color: #323a45;
   }
 }
@@ -627,7 +630,9 @@ $color-black: #323a45;
   padding: 0.5rem 2.5rem;
   height: 215px;
 }
+
 .corr {
+
   .td1 {
     background-color: $color-gray-inverse-base;
     border-top: 1px solid $color-bg-gray;
@@ -1030,11 +1035,12 @@ $color-black: #323a45;
   }
 
 .receipt-date-picker-container {
-  & .data-css-1co2jut {
-    margin: 0 5% 0 5%;
+
+  .data-css-1co2jut {
+    margin: 0 5%;
   }
 
-  & .cf-form-textinput.usa-input-error {
+  .cf-form-textinput.usa-input-error {
     border-left: 4px solid #cd2026;
     margin-top: 0;
     padding-bottom: 0;
@@ -1050,8 +1056,8 @@ $color-black: #323a45;
     }
   }
 
-  & .cf-form-textinput {
-    padding-top: 6.2% !important;
+  .cf-form-textinput {
+    padding-top: 6.2%;
     margin-bottom: 0;
 
     .input-container {
@@ -1061,6 +1067,7 @@ $color-black: #323a45;
       }
     }
   }
+
   .receipt-date-dropdown-div {
     margin-left: 5%;
     margin-right: 5%;
@@ -1068,17 +1075,17 @@ $color-black: #323a45;
 
     .opt-select {
       .receipt-date {
-        /* Add styles if needed */
+        //
       }
 
       .css-yk16xz-control {
-        border-radius: 0px;
+        border-radius: 0;
       }
 
       .css-1pahdxg-control {
         border-color: hsl(0, 0%, 100%);
-        box-shadow: 0 0 0 1px #5b616b !important;
-        border-radius: 0px !important;
+        box-shadow: 0 0 0 1px #5b616b;
+        border-radius: 0;
 
         &:hover {
           border-color: hsl(0, 0%, 80%);
@@ -1087,11 +1094,13 @@ $color-black: #323a45;
     }
 
   }
+
   .date-pickers-div {
     width: 100%;
     margin: auto;
     padding-bottom: 12.7%;
   }
+
   .apply-filter-div {
     display: flex;
     padding: 16px 10px 24px 0;
@@ -1099,28 +1108,30 @@ $color-black: #323a45;
     width: 190px;
     border-top: 1px solid #d6d7d9;
   }
+
   .date-pickers-margin {
     margin: 0 5%;
+
     .error-msg {
       color: red;
       font-size: 13px;
       font-weight: 900;
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
   }
 }
 
 .task-completed-date-picker-container {
   .data-css-1co2jut {
-    margin: 0 5% 0 5%;
+    margin: 0 5%;
   }
 
   .cf-form-textinput.usa-input-error {
     border-left: 4px solid #cd2026;
-    margin-top: 0px;
-    padding-bottom: 0px;
+    margin-top: 0;
+    padding-bottom: 0;
     padding-left: 0.5rem;
-    padding-top: 0px;
+    padding-top: 0;
     position: relative;
     right: 2px;
   }
@@ -1130,7 +1141,7 @@ $color-black: #323a45;
   }
 
   .cf-form-textinput {
-    padding-top: 10px !important;
+    padding-top: 10px;
     margin-bottom: 0;
 
     .input-container {
@@ -1148,35 +1159,38 @@ $color-black: #323a45;
 
   .opt-select {
     .receipt-date {
-      /* Add styles if needed */
+      //
     }
 
     .css-yk16xz-control {
-      border-radius: 0px;
+      border-radius: 0;
     }
 
     .css-1pahdxg-control {
       border-color: hsl(0, 0%, 100%);
-      box-shadow: 0 0 0 1px #5b616b !important;
-      border-radius: 0px !important;
+      box-shadow: 0 0 0 1px #5b616b;
+      border-radius: 0;
 
       &:hover {
         border-color: hsl(0, 0%, 80%);
       }
     }
   }
+
   .date-picker-margin {
     width: 100%;
     margin: auto;
     padding-bottom: 12.7%;
   }
+
   .date-selectors-margin {
     margin: 0 5%;
+
     .error-msg {
       color: red;
       font-size: 13px;
       font-weight: 900;
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
   }
 }
@@ -1199,18 +1213,21 @@ $color-black: #323a45;
 
 .new-letter-container {
   display: inline-block;
-  padding: 2rem 2rem;
+  padding: 2rem;
   margin-bottom: 3rem;
   width: 95%;
+
   .cf-select__control {
-    max-width: 60rem !important;
+    max-width: 60rem;
   }
+
   .cf-form-textinput {
-    max-width: 60rem !important;
+    max-width: 60rem;
   }
+
   .remove-button {
-    padding-left: 0rem;
-    padding-right: 0rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -1246,6 +1263,7 @@ $color-black: #323a45;
       max-width: 300%;
       margin-bottom: 15px;
     }
+
     label {
       max-width: none;
     }
@@ -1255,13 +1273,16 @@ $color-black: #323a45;
     h3 {
       margin: 15px 0;
     }
+
     label {
       max-width: none;
+
       span {
         margin-left: 10px;
       }
     }
   }
+
   button {
     margin-top: 10px;
   }
