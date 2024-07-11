@@ -152,14 +152,6 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Save", disabled: false)
     end
 
-    step "allows all request issues to be removed and saved" do
-      visit "appeals/#{appeal.uuid}/edit/"
-      # remove all issues
-      click_remove_intake_issue_dropdown("PTSD denied")
-      click_remove_intake_issue_dropdown("Left knee granted")
-      expect(page).to have_button("Save", disabled: false)
-    end
-
     # this validates a bug fix from https://github.com/department-of-veterans-affairs/caseflow/pull/10197
     step "adding an issue with a non-comp benefit type returns to case details page" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -186,6 +178,20 @@ feature "Appeal Edit issues", :all_dbs do
                benefit_type: "education",
                decision_review: appeal
              )).to_not be_nil
+    end
+
+    # originally added in https://github.com/department-of-veterans-affairs/caseflow/pull/10241
+    step "allows all request issues to be removed and saved and cancels all active tasks" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      # remove all issues
+      click_remove_intake_issue_dropdown("PTSD denied")
+      click_remove_intake_issue_dropdown("Left knee granted")
+      click_remove_intake_issue_dropdown("Accrued")
+      expect(page).to have_button("Save", disabled: false)
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{noncomp_appeal.uuid}")
+      expect(appeal.tasks.filter(&:open?).any?).to eq false
     end
   end
 
@@ -1159,24 +1165,6 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      end
-
-      context "when appeal is non-comp benefit type" do
-        let!(:request_issue) { create(:request_issue, benefit_type: "education") }
-
-        scenario "remove all non-comp decision reviews" do
-          visit "appeals/#{appeal.uuid}/edit"
-
-          # remove all request issues
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-          click_edit_submit_and_confirm
-
-          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Edit Completed")
-        end
       end
 
       context "when review has no active tasks" do
