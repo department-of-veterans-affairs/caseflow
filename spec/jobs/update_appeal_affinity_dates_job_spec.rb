@@ -189,9 +189,9 @@ describe UpdateAppealAffinityDatesJob do
        { docket: "legacy", priority: true, receipt_date: Time.zone.now }]
     end
 
-    subject { described_class.new.send(:process_ama_appeals_which_need_affinity_updates, hashes_array) }
+    subject { described_class.new.send(:process_legacy_appeals_which_need_affinity_updates, hashes_array) }
 
-    it "does process only legacy appeals" do
+    it "processes only legacy appeals" do
       expect_any_instance_of(described_class).to receive(:create_or_update_appeal_affinities).exactly(1).times
       subject
     end
