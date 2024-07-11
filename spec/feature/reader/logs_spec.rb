@@ -34,7 +34,7 @@ RSpec.feature "Reader", :all_dbs do
     ]
   end
 
-  context "log Reader Metrics" do
+  context "logs Reader Metrics" do
     scenario "create a metric for pdf_page_render_time_in_ms" do
       expect(Metric.any?).to be false # There are no metrics
       Capybara.default_max_wait_time = 5 # seconds
