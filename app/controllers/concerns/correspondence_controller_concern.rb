@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-
-# rubocop:disable Metrics/ModuleLength
 # :reek:DataClump
 
 # Contains most of the logic inside of CorrespondenceController
@@ -71,13 +69,14 @@ module CorrespondenceControllerConcern
     end
   end
 
-  def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  # :reek:FeatureEnvy
+  def single_assignment_banner_text(*args, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
-      "assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{user.css_id}"
+      "assigned #{args[2]} Correspondence to #{args[0].css_id}."
+    failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{args[0].css_id}"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
 
-    failure_message = build_single_error_message(action_prefix, error_reason(errors[0]))
+    failure_message = build_single_error_message(action_prefix, error_reason(args[1][0]))
 
     {
       header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
@@ -85,11 +84,12 @@ module CorrespondenceControllerConcern
     }
   end
 
-  def multiple_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  # :reek:FeatureEnvy
+  def multiple_assignment_banner_text(*args, action_prefix: "")
     success_header = "You have successfully #{action_prefix}"\
-    "assigned #{task_count} Correspondences to #{user.css_id}."
+    "assigned #{args[2]} Correspondences to #{args[0].css_id}."
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
-    failure_header = "Not all correspondence were #{action_prefix}assigned to #{user.css_id}"
+    failure_header = "Not all correspondence were #{action_prefix}assigned to #{args[0].css_id}"
 
     failure_message = build_multi_error_message(errors, action_prefix)
 
@@ -100,6 +100,7 @@ module CorrespondenceControllerConcern
     }
   end
 
+  # :reek:FeatureEnvy
   def build_multi_error_message(errors, action_prefix)
     failure_message = []
 
@@ -126,12 +127,14 @@ module CorrespondenceControllerConcern
     failure_message
   end
 
+
   def error_reason(error)
+    return 'None' unless error
+
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
-    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR
-      .CAPACITY_ERROR then "maximum capacity has been reached for user's queue"
+    when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.CAPACITY_ERROR "maximum capacity has been reached for user's queue"
     end
   end
 
@@ -141,11 +144,10 @@ module CorrespondenceControllerConcern
     message
   end
 
-  def build_error_message(count, action_prefix, reason, use_bullet)
+  def build_error_message(*args)
     # Build error message for multiple correspondence based on error types
-    message = "#{count} cases were not #{action_prefix}assigned to user"
-    message = "• #{message}" if use_bullet
-    message += " because #{reason}." unless count.zero?
+    message = args[03] ? "• #{message}" : "#{args[0]} cases were not #{args[1]}assigned to user"
+    message += " because #{args[2]}." unless count.zero?
     message
   end
 
