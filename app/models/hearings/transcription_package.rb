@@ -7,6 +7,14 @@ class TranscriptionPackage < CaseflowRecord
   has_many :transcription_package_legacy_hearings
   has_many :legacy_hearings, through: :transcription_package_legacy_hearings
 
+  def self.ensure_sequence_exists
+    ActiveRecord::Base.connection.execute(<<-SQL)
+      CREATE SEQUENCE IF NOT EXISTS task_id_seq
+      START WITH 1
+      INCREMENT BY 1;
+    SQL
+  end
+
   def contractor_name
     contractor&.name
   end
