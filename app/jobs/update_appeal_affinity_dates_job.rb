@@ -101,7 +101,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     end
   end
 
-  # Returns only legacy appeals with no affinity record
+  # Returns only legacy appeals with no affinity record or affinity start date
   def legacy_appeals_with_no_appeal_affinities(appeals_hash)
     appeals_with_no_affinities = []
 
