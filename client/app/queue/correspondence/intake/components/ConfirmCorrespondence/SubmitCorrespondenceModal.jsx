@@ -75,7 +75,7 @@ export const SubmitCorrespondenceModal = ({
     // Where data goes to be submitted before redirecting back to correspondence queue
     let status;
 
-    await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}`, { data: submitData }).
+    await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/intake`, { data: submitData }).
       then((response) => {
         status = response.status;
       }).
