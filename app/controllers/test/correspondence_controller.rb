@@ -3,6 +3,8 @@
 require "rake"
 
 class Test::CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_access, only: [:index]
   before_action :verify_feature_toggle, only: [:index]
 
@@ -91,85 +93,63 @@ class Test::CorrespondenceController < ApplicationController
     { valid: valid_file_nums, invalid: invalid_file_nums }
   end
 
-  def connect_corr_with_vet(valid_veterans, count)
+  def connect_corr_with_vet(valid_file_nums, count)
     count.times do
-      valid_veterans.each do |file|
+      valid_file_nums.each do |file|
         veteran = Veteran.find_by_file_number(file)
-        create_correspondence(veteran)
+        ActiveRecord::Base.transaction do
+          correspondence = create_correspondence(veteran)
+          rand(1..5).times do
+            create_correspondence_document(veteran, correspondence)
+          end
+          if correspondence.nod?
+            correspondence.correspondence_documents.last.update!(
+              document_type: 1250,
+              vbms_document_type_id: 1250
+            )
+          end
+        end
       end
     end
+
+    auto_assign_correspondence
   end
 
-  # create correspondence for given veteran
   def create_correspondence(veteran)
-    vet = veteran
-    corr_type = CorrespondenceType.all.sample
-    receipt_date = rand(1.month.ago..1.day.ago)
-    nod = [true, false].sample
-    doc_type = generate_vbms_doc_type(nod)
-
-    correspondence = ::Correspondence.create!(
+    Correspondence.create!(
       uuid: SecureRandom.uuid,
-      va_date_of_receipt: receipt_date,
+      correspondence_type_id: rand(1..8),
+      va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
       notes: "This is a test note",
-      veteran_id: vet.id,
-      nod: nod
+      veteran: veteran,
+      nod: rand(2).zero?
     )
-    create_correspondence_document(correspondence, vet, doc_type)
   end
 
-  def generate_vbms_doc_type(nod)
-    return nod_doc if nod
-
-    non_nod_docs.sample
-  end
-
-  # :reek:UtilityFunction
-  def create_correspondence_document(correspondence, veteran, doc_type)
-    CorrespondenceDocument.find_or_create_by!(
+  def create_correspondence_document(veteran, correspondence)
+    doc_type = Caseflow::DocumentTypes::TYPES.keys.sample
+    CorrespondenceDocument.find_or_create_by(
       document_file_number: veteran.file_number,
       uuid: SecureRandom.uuid,
-      vbms_document_type_id: doc_type[:id],
-      document_type: doc_type[:id],
-      pages: rand(1..30),
-      correspondence_id: correspondence.id
+      correspondence_id: correspondence.id,
+      document_type: doc_type,
+      vbms_document_type_id: doc_type,
+      pages: rand(1..30)
     )
   end
 
-  def nod_doc
-    {
-      id: 1250,
-      description: "VA Form 10182, Decision Review Request: Board Appeal (Notice of Disagreement)"
-    }
-  end
+  def auto_assign_correspondence
+    batch = BatchAutoAssignmentAttempt.create!(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
 
-  # rubocop:disable Metrics/MethodLength
-  def non_nod_docs
-    [
-      {
-        id: 1419,
-        description: "Reissuance Beneficiary Notification Letter"
-      },
-      {
-        id: 1430,
-        description: "Bank Letter Beneficiary"
-      },
-      {
-        id: 1448,
-        description: "VR-69 Chapter 36 Decision Letter"
-      },
-      {
-        id: 1452,
-        description: "Apportionment - notice to claimant"
-      },
-      {
-        id: 1505,
-        description: "Higher-Level Review (HLR) Not Timely Letter"
-      },
-      {
-        id: 1578,
-        description: "Pension End of Day Letter"
-      }
-    ]
+    job_args = {
+      current_user_id: current_user.id,
+      batch_auto_assignment_attempt_id: batch.id
+    }
+
+    perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
   end
+  # rubocop:enable Metrics/MethodLength
 end

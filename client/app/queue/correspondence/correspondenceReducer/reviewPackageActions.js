@@ -10,16 +10,6 @@ export const setCorrespondence = (correspondence) =>
     });
   };
 
-export const setCorrespondenceDocuments = (correspondenceDocuments) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_CORRESPONDENCE_DOCUMENTS,
-      payload: {
-        correspondenceDocuments
-      }
-    });
-  };
-
 export const setVeteranInformation = (veteranInfo) =>
   (dispatch) => {
     dispatch({
