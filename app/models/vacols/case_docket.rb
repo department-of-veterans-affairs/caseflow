@@ -452,7 +452,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.update_appeal_affinity_dates_query(priority, date)
-    byebug
     if priority
       query = <<-SQL
         select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
