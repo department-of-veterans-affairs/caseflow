@@ -539,27 +539,24 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
           </svg>
         </button>
         <div
-          style="display: flex;"
+          style="display: flex; flex-wrap: wrap;"
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
+            style="flex: 1;"
           >
-            <h1
-              id="modal_id-title"
-            >
-              Update Timezone
-            </h1>
+            Update Timezone
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              An email notification for the hearing will be sent to:
+            </p>
             <div
-              data-css-o98ubo=""
-            >
-              <p>
-                An email notification for the hearing will be sent to:
-              </p>
-              <div
-                data-css-18v9q72=""
-                data-testid="read-only-emails-testid"
-              />
-            </div>
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            />
           </div>
         </div>
         <div
@@ -647,95 +644,92 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
           </svg>
         </button>
         <div
-          style="display: flex;"
+          style="display: flex; flex-wrap: wrap;"
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
+            style="flex: 1;"
           >
-            <h1
-              id="modal_id-title"
-            >
-              Change to Video Hearing
-            </h1>
+            Change to Video Hearing
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Emails will be sent to the Veteran and POA/Representative to notify them that:
+            </p>
+            <ul>
+              <li>
+                The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid
+              </li>
+              <li>
+                They must appear in-person at their designated Regional Office or alternate hearing location
+              </li>
+            </ul>
+            <p />
             <div
-              data-css-o98ubo=""
+              data-testid="datetime-testid"
             >
-              <p>
-                Emails will be sent to the Veteran and POA/Representative to notify them that:
-              </p>
-              <ul>
-                <li>
-                  The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid
-                </li>
-                <li>
-                  They must appear in-person at their designated Regional Office or alternate hearing location
-                </li>
-              </ul>
-              <p />
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
+            </div>
+            <div
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            >
               <div
-                data-testid="datetime-testid"
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
                 <strong>
-                  Hearing Date: 
+                  Veteran Hearing Time
                 </strong>
-                07/06/2020
-                <br />
-                <strong>
-                  Hearing Time: 
-                </strong>
-                6:00 AM Eastern Time (US & Canada)
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
               </div>
               <div
-                data-css-18v9q72=""
-                data-testid="read-only-emails-testid"
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    Veteran Hearing Time
-                  </strong>
-                  <pre>
-                    3:00 AM Pacific Time (US & Canada)
-                  </pre>
-                </div>
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    Veteran Email
-                  </strong>
-                  <pre>
-                    tom.brady@caseflow.gov
-                  </pre>
-                </div>
-                <div
-                  class="cf-help-divider"
-                />
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    POA/Representative Hearing Time
-                  </strong>
-                  <pre>
-                    3:00 AM Pacific Time (US & Canada)
-                  </pre>
-                </div>
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    POA/Representative Email
-                  </strong>
-                  <pre>
-                    tom.brady@caseflow.gov
-                  </pre>
-                </div>
+                <strong>
+                  Veteran Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
+              <div
+                class="cf-help-divider"
+              />
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
               </div>
             </div>
           </div>
@@ -825,86 +819,83 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
           </svg>
         </button>
         <div
-          style="display: flex;"
+          style="display: flex; flex-wrap: wrap;"
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
+            style="flex: 1;"
           >
-            <h1
-              id="modal_id-title"
-            >
-              Update Hearing Time
-            </h1>
+            Update Hearing Time
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
+            </p>
             <div
-              data-css-o98ubo=""
+              data-testid="datetime-testid"
             >
-              <p>
-                Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
-              </p>
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
+            </div>
+            <div
+              data-css-18v9q72=""
+              data-testid="read-only-emails-testid"
+            >
               <div
-                data-testid="datetime-testid"
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
                 <strong>
-                  Hearing Date: 
+                  Veteran Hearing Time
                 </strong>
-                07/06/2020
-                <br />
-                <strong>
-                  Hearing Time: 
-                </strong>
-                6:00 AM Eastern Time (US & Canada)
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
               </div>
               <div
-                data-css-18v9q72=""
-                data-testid="read-only-emails-testid"
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
               >
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    Veteran Hearing Time
-                  </strong>
-                  <pre>
-                    3:00 AM Pacific Time (US & Canada)
-                  </pre>
-                </div>
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    Veteran Email
-                  </strong>
-                  <pre>
-                    tom.brady@caseflow.gov
-                  </pre>
-                </div>
-                <div
-                  class="cf-help-divider"
-                />
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    POA/Representative Hearing Time
-                  </strong>
-                  <pre>
-                    3:00 AM Pacific Time (US & Canada)
-                  </pre>
-                </div>
-                <div
-                  data-css-acl5jg=""
-                  data-testid="read-only-testid"
-                >
-                  <strong>
-                    POA/Representative Email
-                  </strong>
-                  <pre>
-                    tom.brady@caseflow.gov
-                  </pre>
-                </div>
+                <strong>
+                  Veteran Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
+              </div>
+              <div
+                class="cf-help-divider"
+              />
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Hearing Time
+                </strong>
+                <pre>
+                  3:00 AM Pacific Time (US & Canada)
+                </pre>
+              </div>
+              <div
+                data-css-acl5jg=""
+                data-testid="read-only-testid"
+              >
+                <strong>
+                  POA/Representative Email
+                </strong>
+                <pre>
+                  tom.brady@caseflow.gov
+                </pre>
               </div>
             </div>
           </div>
@@ -994,93 +985,90 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
           </svg>
         </button>
         <div
-          style="display: flex;"
+          style="display: flex; flex-wrap: wrap;"
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
+            style="flex: 1;"
           >
-            <h1
-              id="modal_id-title"
-            >
-              Change to Virtual Hearing
-            </h1>
+            Change to Virtual Hearing
+          </h1>
+          <div
+            data-css-2flkvz=""
+          >
+            <p>
+              Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
+            </p>
             <div
-              data-css-o98ubo=""
+              data-testid="datetime-testid"
             >
-              <p>
-                Email notifications will be sent to the Veteran, POA / Representative, and VLJ.
-              </p>
-              <div
-                data-testid="datetime-testid"
-              >
-                <strong>
-                  Hearing Date: 
-                </strong>
-                07/06/2020
-                <br />
-                <strong>
-                  Hearing Time: 
-                </strong>
-                6:00 AM Eastern Time (US & Canada)
-              </div>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="appellant-email"
-                >
-                  <strong>
-                    <span>
-                      Veteran Email
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    aria-readonly="false"
-                    class="cf-form-textinput"
-                    id="appellant-email"
-                    name="appellant-email"
-                    type="text"
-                    value="Bob.Smith@test.com"
-                  />
-                </div>
-              </div>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="representative-email"
-                >
-                  <strong>
-                    <span>
-                      POA/Representative Email
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    aria-readonly="false"
-                    class="cf-form-textinput"
-                    id="representative-email"
-                    name="representative-email"
-                    type="text"
-                    value="tom.brady@caseflow.gov"
-                  />
-                </div>
-              </div>
-              <p>
-                Changes to the Veteran and POA / Representative emails will be used to send notifications 
-                <strong>
-                  for this hearing only
-                </strong>
-                .
-              </p>
+              <strong>
+                Hearing Date: 
+              </strong>
+              07/06/2020
+              <br />
+              <strong>
+                Hearing Time: 
+              </strong>
+              6:00 AM Eastern Time (US & Canada)
             </div>
+            <div
+              class="cf-form-textinput   "
+            >
+              <label
+                for="appellant-email"
+              >
+                <strong>
+                  <span>
+                    Veteran Email
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  aria-readonly="false"
+                  class="cf-form-textinput"
+                  id="appellant-email"
+                  name="appellant-email"
+                  type="text"
+                  value="Bob.Smith@test.com"
+                />
+              </div>
+            </div>
+            <div
+              class="cf-form-textinput   "
+            >
+              <label
+                for="representative-email"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Email
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="input-container"
+              >
+                <input
+                  aria-readonly="false"
+                  class="cf-form-textinput"
+                  id="representative-email"
+                  name="representative-email"
+                  type="text"
+                  value="tom.brady@caseflow.gov"
+                />
+              </div>
+            </div>
+            <p>
+              Changes to the Veteran and POA / Representative emails will be used to send notifications 
+              <strong>
+                for this hearing only
+              </strong>
+              .
+            </p>
           </div>
         </div>
         <div

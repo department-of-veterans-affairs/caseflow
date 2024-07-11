@@ -43,94 +43,91 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
+          Review extension request
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <fieldset
+            class="usa-fieldset-inputs cf-form-radio-inline "
           >
-            Review extension request
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <fieldset
-              class="usa-fieldset-inputs cf-form-radio-inline "
+            <legend
+              class=""
             >
-              <legend
-                class=""
-              >
-                <strong>
-                  <span>
-                    How will you proceed? 
-                  </span>
-                </strong>
-              </legend>
+              <strong>
+                <span>
+                  How will you proceed? 
+                </span>
+              </strong>
+            </legend>
+            <div
+              class="cf-form-radio-options"
+            >
               <div
-                class="cf-form-radio-options"
+                class="cf-form-radio-option"
               >
-                <div
-                  class="cf-form-radio-option"
+                <input
+                  id="decision_grant"
+                  name="decision"
+                  type="radio"
+                  value="grant"
+                />
+                <label
+                  class=""
+                  for="decision_grant"
                 >
-                  <input
-                    id="decision_grant"
-                    name="decision"
-                    type="radio"
-                    value="grant"
-                  />
-                  <label
-                    class=""
-                    for="decision_grant"
-                  >
-                    Grant
-                  </label>
-                  <div
-                    class="cf-form-radio-help helpText"
-                  >
-                    Task will go on hold for selected number of days
-                  </div>
-                </div>
+                  Grant
+                </label>
                 <div
-                  class="cf-form-radio-option"
+                  class="cf-form-radio-help helpText"
                 >
-                  <input
-                    id="decision_deny"
-                    name="decision"
-                    type="radio"
-                    value="deny"
-                  />
-                  <label
-                    class=""
-                    for="decision_deny"
-                  >
-                    Deny
-                  </label>
-                  <div
-                    class="cf-form-radio-help helpText"
-                  >
-                    Marks the extension request as denied
-                  </div>
+                  Task will go on hold for selected number of days
                 </div>
               </div>
-            </fieldset>
-            <div
-              class="cf-form-textarea"
-            >
-              <label
-                class="question-label"
-                for="instructions"
+              <div
+                class="cf-form-radio-option"
               >
-                <span>
-                  Provide instructions and context for this action
-                </span>
-              </label>
-              <textarea
-                id="instructions"
-                name="instructions"
-              />
+                <input
+                  id="decision_deny"
+                  name="decision"
+                  type="radio"
+                  value="deny"
+                />
+                <label
+                  class=""
+                  for="decision_deny"
+                >
+                  Deny
+                </label>
+                <div
+                  class="cf-form-radio-help helpText"
+                >
+                  Marks the extension request as denied
+                </div>
+              </div>
             </div>
+          </fieldset>
+          <div
+            class="cf-form-textarea"
+          >
+            <label
+              class="question-label"
+              for="instructions"
+            >
+              <span>
+                Provide instructions and context for this action
+              </span>
+            </label>
+            <textarea
+              id="instructions"
+              name="instructions"
+            />
           </div>
         </div>
       </div>

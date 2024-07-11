@@ -82,7 +82,7 @@ describe('Docket Time Goals Lever', () => {
       </Provider>
     );
 
-    const leverTimeGoal = container.querySelector('input[name="ama_hearings_docket_time_goals"]');
+    const leverTimeGoal = container.querySelector('input[name="ama_hearing_docket_time_goals"]');
 
     // Calls simulate change to set value outside of min/max range
     await waitFor(() => fireEvent.change(leverTimeGoal, eventForError));

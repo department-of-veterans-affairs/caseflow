@@ -43,27 +43,24 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Convert Hearing To Central
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              The hearing request will appear in the scheduling queue for the 
-              <strong>
-                Central Office
-              </strong>
-              .
-            </p>
-          </div>
+          Convert Hearing To Central
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            The hearing request will appear in the scheduling queue for the 
+            <strong>
+              Central Office
+            </strong>
+            .
+          </p>
         </div>
       </div>
       <div
@@ -148,23 +145,20 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Convert Hearing To Video
-          </h1>
-          <div
-            data-css-o98ubo=""
-          >
-            <p>
-              The hearing request will appear in the scheduling queue for the appropriate regional office.
-            </p>
-          </div>
+          Convert Hearing To Video
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
+          <p>
+            The hearing request will appear in the scheduling queue for the appropriate regional office.
+          </p>
         </div>
       </div>
       <div

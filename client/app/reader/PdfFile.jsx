@@ -25,6 +25,7 @@ import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
+import networkUtil from '../util/NetworkUtil';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -44,6 +45,8 @@ export class PdfFile extends React.PureComponent {
     this.columnCount = 1;
     this.metricsIdentifier = null;
     this.scrollTimer = null;
+    this.connectionInfo = null;
+    this.firstRejectionLogged = false;
 
     this.metricsAttributes = {
       documentId: this.props.documentId,
@@ -58,7 +61,7 @@ export class PdfFile extends React.PureComponent {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -70,6 +73,7 @@ export class PdfFile extends React.PureComponent {
     };
 
     window.addEventListener('keydown', this.keyListener);
+    this.connectionInfo = await networkUtil.connectionInfo();
 
     this.props.clearDocumentLoadError(this.props.file);
 
@@ -147,26 +151,6 @@ export class PdfFile extends React.PureComponent {
 
         console.error(message);
 
-        const documentData = {
-          documentId: this.props.documentId,
-          documentType: this.props.documentType,
-          file: this.props.file,
-          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-        };
-
-        if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
-          storeMetrics(
-            logId,
-            documentData,
-            { message,
-              type: 'error',
-              product: 'browser',
-              prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            },
-            this.metricsIdentifier
-          );
-        }
-
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -180,18 +164,22 @@ export class PdfFile extends React.PureComponent {
 
     console.error(`${logId} : GET ${file} : STEP ${step} : ${reason}`);
 
-    if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
+    if (this.props.featureToggles.metricsRecordPDFJSGetDocument && !this.firstRejectionLogged) {
+      this.firstRejectionLogged = true;
       const documentData = {
         documentId,
         documentType,
         file,
         step,
         reason,
-        prefetchDisabled: this.props.featureToggles.prefetchDisabled
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+        bandwidth: this.connectionInfo
       };
 
+      let message = `Getting PDF document: "${file}"`;
+
       storeMetrics(logId, documentData, {
-        message: `Getting PDF document: "${file}"`,
+        message,
         type: 'error',
         product: 'reader'
       },

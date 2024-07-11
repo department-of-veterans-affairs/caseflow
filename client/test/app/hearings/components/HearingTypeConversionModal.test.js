@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { appealData } from '../../../data/appeals';
 import { queueWrapper } from '../../../data/stores/queueStore';
 import HearingTypeConversionModal from '../../../../app/hearings/components/HearingTypeConversionModal';
-import Modal from '../../../../app/components/Modal';
 import COPY from 'COPY';
 
 const Wrapper = ({ children }) => {
@@ -30,11 +29,10 @@ describe('HearingTypeConversion', () => {
     expect(
       screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))
     ).toBeInTheDocument();
-    console.log(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
     expect(container).toMatchSnapshot();
   });
 
-  test.only('Displays convert to Central text when converting from Central', () => {
+  test('Displays convert to Central text when converting from Central', () => {
     const { container } = render(
       <HearingTypeConversionModal
         appeal={appealData}
@@ -47,7 +45,6 @@ describe('HearingTypeConversion', () => {
 
     const heading = screen.getByRole('heading', { name: /Convert Hearing To Central/i });
     expect(heading).toBeInTheDocument();
-    logRoles(container);
 
     expect(screen.queryByText(/Central Office/i)).toBeInTheDocument();
     expect(screen.queryByText((content) => content.includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT))

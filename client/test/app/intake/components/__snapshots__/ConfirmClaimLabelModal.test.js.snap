@@ -43,34 +43,31 @@ exports[`ConfirmClaimLabelModal renders correctly 1`] = `
         </svg>
       </button>
       <div
-        style="display: flex;"
+        style="display: flex; flex-wrap: wrap;"
       >
-        <div
-          data-css-1gs0ko2=""
+        <h1
+          id="modal_id-title"
+          style="flex: 1;"
         >
-          <h1
-            id="modal_id-title"
-          >
-            Confirm new claim label
-          </h1>
+          Confirm new claim label
+        </h1>
+        <div
+          data-css-2flkvz=""
+        >
           <div
-            data-css-o98ubo=""
+            style="margin-bottom: 24px;"
           >
-            <div
-              style="margin-bottom: 24px;"
-            >
-              <strong>
-                Previous label: 
-                Higher-Level Review Rating
-                <br />
-                New label: 
-                Higher-Level Review Non-Rating
-              </strong>
-            </div>
-            <p>
-              Select "confirm" to save and complete editing this claim label. If the claim label is not updated in VBMS in 24 hours, please submit a YourIT ticket.
-            </p>
+            <strong>
+              Previous label: 
+              Higher-Level Review Rating
+              <br />
+              New label: 
+              Higher-Level Review Non-Rating
+            </strong>
           </div>
+          <p>
+            Select "confirm" to save and complete editing this claim label. If the claim label is not updated in VBMS in 24 hours, please submit a YourIT ticket.
+          </p>
         </div>
       </div>
       <div
