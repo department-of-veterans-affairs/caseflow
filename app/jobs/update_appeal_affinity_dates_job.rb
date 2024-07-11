@@ -102,8 +102,19 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
   end
 
   # Returns only legacy appeals with no affinity record
-  def legacy_appeals_with_no_appeal_affinities(appeals)
-    appeals.select { |appeal| appeal.appeal_affinity.present? }
+  def legacy_appeals_with_no_appeal_affinities(appeals_hash)
+    appeals_with_no_affinities = []
+
+    appeals_hash.each do |appeal|
+      key = appeal[:bfkey]
+      appeal_record = VACOLS::Case.find_by(bfkey: key)
+  
+      if appeal_record && (appeal_record.appeal_affinity.blank? || appeal_record.appeal_affinity.affinity_start_date.blank?)
+        appeals_with_no_affinities << appeal_record
+      end
+    end
+  
+    appeals_with_no_affinities
   end
 
   # To be implemented in future work
@@ -111,9 +122,9 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     receipt_date_hashes_array.map do |receipt_date_hash|
       next unless receipt_date_hash[:docket] == LegacyDocket.docket_type
 
-      legacy_appeals_to_update_adjusted_for_priority = VACOLS::CaseDocket.update_appeal_affinity_dates_query(receipt_date_hash[:priority], receipt_date_hash[:receipt_date])
-      # TODO: legacy_appeals_to_update_adjusted_for_affinity = 
-      create_or_update_appeal_affinities(legacy_appeals_to_update_adjusted_for_priority, receipt_date_hash[:priority])
+      legacy_appeals_hash = VACOLS::CaseDocket.update_appeal_affinity_dates_query(receipt_date_hash[:priority], receipt_date_hash[:receipt_date])
+      legacy_appeals_to_update_adjusted_for_affinity = legacy_appeals_with_no_appeal_affinities(legacy_appeals_hash)
+      create_or_update_appeal_affinities(legacy_appeals_to_update_adjusted_for_affinity, receipt_date_hash[:priority])
     end
   end
 
