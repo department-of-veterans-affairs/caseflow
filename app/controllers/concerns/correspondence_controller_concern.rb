@@ -137,8 +137,7 @@ module CorrespondenceControllerConcern
 
   def build_single_error_message(action_prefix, reason)
     # Build error message for single correspondence based on error types
-    message = "Case was not #{action_prefix}assigned to user because #{reason}."
-    message
+    "Case was not #{action_prefix}assigned to user because #{reason}."
   end
 
   def build_error_message(count, action_prefix, reason, use_bullet)
