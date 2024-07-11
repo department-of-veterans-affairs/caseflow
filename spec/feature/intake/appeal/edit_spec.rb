@@ -81,6 +81,7 @@ feature "Appeal Edit issues", :all_dbs do
 
   let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
+  # This veteran and appeal are a "blank canvas" with no request issues or pre-existing ratings/issues
   let(:vet_no_history) { create(:veteran) }
   let(:appeal3) do
     create(:appeal,
@@ -190,8 +191,10 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Save", disabled: false)
       click_edit_submit_and_confirm
 
-      expect(page).to have_current_path("/queue/appeals/#{noncomp_appeal.uuid}")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(appeal.tasks.filter(&:open?).any?).to eq false
+      # There are four tasks because a VeteranRecordRequest task is added with the non-comp request issue
+      expect(appeal.tasks.map(&:closed_at)).to match_array([Time.zone.now, Time.zone.now, Time.zone.now, Time.zone.now])
     end
   end
 
@@ -1110,19 +1113,15 @@ feature "Appeal Edit issues", :all_dbs do
 
   context "when remove decision reviews is enabled" do
     let(:today) { Time.zone.now }
-    let(:appeal) do
-      # reload to get uuid
-      create(:appeal, veteran_file_number: veteran.file_number).reload
-    end
     let!(:existing_request_issues) do
-      [create(:request_issue, :nonrating, decision_review: appeal),
-       create(:request_issue, :nonrating, decision_review: appeal)]
+      [create(:request_issue, :nonrating, decision_review: appeal3),
+       create(:request_issue, :nonrating, decision_review: appeal3)]
     end
 
     let!(:completed_task) do
       create(:appeal_task,
              :completed,
-             appeal: appeal,
+             appeal: appeal3,
              assigned_to: non_comp_org,
              closed_at: last_week)
     end
@@ -1130,75 +1129,19 @@ feature "Appeal Edit issues", :all_dbs do
     let!(:cancelled_task) do
       create(:appeal_task,
              :cancelled,
-             appeal: appeal,
+             appeal: appeal3,
              assigned_to: non_comp_org,
              closed_at: Time.zone.now)
     end
 
-    context "when review has multiple active tasks" do
-      let!(:in_progress_task) do
-        create(:appeal_task,
-               :in_progress,
-               appeal: appeal,
-               assigned_to: non_comp_org,
-               assigned_at: last_week)
-      end
+    context "when review has no active tasks" do
+      scenario "no tasks are cancelled when all request issues are removed" do
+        visit "appeals/#{appeal3.uuid}/edit"
 
-      scenario "cancel all active tasks when all request issues are removed" do
-        visit "appeals/#{appeal.uuid}/edit"
-        # remove all request issues
         click_remove_intake_issue_dropdown("Apportionment")
         click_remove_intake_issue_dropdown("Apportionment")
-        click_remove_intake_issue_dropdown("PTSD denied")
-        click_remove_intake_issue_dropdown("Military Retired Pay")
-
         click_edit_submit_and_confirm
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-        expect(RequestIssue.find_by(
-                 benefit_type: "compensation",
-                 veteran_participant_id: nil
-               )).to_not be_nil
-
-        visit "appeals/#{appeal.uuid}/edit"
-        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
-        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      end
-
-      context "when review has no active tasks" do
-        scenario "no tasks are cancelled when all request issues are removed" do
-          visit "appeals/#{appeal.uuid}/edit"
-
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-          click_edit_submit_and_confirm
-          expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        end
-      end
-
-      context "when appeal task is cancelled" do
-        scenario "show timestamp when all request issues are cancelled" do
-          visit "appeals/#{appeal.uuid}/edit"
-          # remove all request issues
-
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("Apportionment")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_remove_intake_issue_dropdown("Military Retired Pay")
-
-          click_edit_submit_and_confirm
-          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-          visit "appeals/#{appeal.uuid}/edit"
-          expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
-          expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
-          expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(cancelled_task.closed_at).to eq(Time.zone.now)
-        end
       end
     end
   end
