@@ -15,7 +15,6 @@ module Seeds
       create_priority_affinity_cases
       create_nonpriority_affinity_cases
       create_set_of_affinity_cases
-      create_hearing_docket_cavc_cases
     end
 
     private
@@ -84,40 +83,10 @@ module Seeds
       end
     end
 
-    def create_hearing_docket_cavc_cases
-      judges_with_attorneys.each do |judge|
-        # Case in affinity window for both levers where new hearing and previous deciding judge are the same
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
-                                                     days_ago:CaseDistributionLever.cavc_affinity_days - 7)
-        # Case with affinity between the two levers where new hearing and previous deciding judge are the same
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
-                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days - 7)
-        # Case outside of affinity window for both levers where new hearing and previous deciding judge are the same
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: judge,
-                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days + 7)
-
-        # Case in affinity window for both levers where new hearing and previous deciding judge are different
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
-                                                     days_ago:CaseDistributionLever.cavc_affinity_days - 7)
-        # Case with affinity between the two levers where new hearing and previous deciding judge are different
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
-                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days - 7)
-        # Case outside of affinity window for both levers where new hearing and previous deciding judge are different\
-        create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge: judge, hearing_judge: hearing_judge,
-                                                     days_ago:CaseDistributionLever.ama_hearing_case_affinity_days + 7)
-      end
-    end
-
     def judges_with_attorneys
       # use judges with attorneys to minimize how many cases are distributed when testing because the
       # alternative_batch_size is higher than the batch_size for most judge teams
-      @judges_with_attorneys ||=
-        JudgeTeam.all.reject { |jt| jt.attorneys.empty? }.map(&:judge).compact.filter(&:vacols_attorney_id)
-    end
-
-    def hearing_judge
-      @hearing_judge ||= User.find_by_css_id("HRNG_JUDGE") ||
-        create(:user, :judge, :with_vacols_judge_record, css_id: "HRNG_JUDGE", full_name: "Judge HeldHearing")
+      @judges_with_attorneys ||= JudgeTeam.all.reject { |jt| jt.attorneys.empty? }.map(&:judge).compact
     end
 
     # rubocop:disable Metrics/AbcSize
@@ -372,44 +341,6 @@ module Seeds
       direct_review_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
       evidence_submission_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
       hearing_cavc_remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
-    end
-
-    def create_hearing_cavc_case_ready_at_n_days_ago(affinity_judge:, hearing_judge:, days_ago:)
-      # Go back to when we want the original appeal to have been decided
-      Timecop.travel(4.years.ago)
-
-      # Create a decided appeal. all tasks are marked complete at the same time which won't affect distribution
-      source = create(:appeal, :dispatched, :hearing_docket, associated_judge: affinity_judge)
-
-      Timecop.travel(1.year.from_now)
-      remand = create(:cavc_remand, source_appeal: source).remand_appeal
-      Timecop.return
-
-      # Travel to 9 mo. ago and then in smaller increments for a more "realistic" looking task tree
-      Timecop.travel(9.months.ago)
-      remand.tasks.where(type: SendCavcRemandProcessedLetterTask.name).map(&:completed!)
-      create(:appeal_affinity, appeal: remand)
-
-      Timecop.travel(1.month.from_now)
-      # Call the creator class which will handle the task manipulation normally done by a distribution
-      jat = JudgeAssignTaskCreator.new(appeal: remand, judge: affinity_judge, assigned_by_id: affinity_judge.id).call
-      # Create and complete a ScheduleHearingColocatedTask, which will create a new DistributionTask and
-      # HearingTask subtree to mimic how this would happen in a higher environment
-      create(:colocated_task, :schedule_hearing, parent: jat, assigned_by: affinity_judge).completed!
-
-      Timecop.travel(1.month.from_now)
-      create(:hearing, :held, appeal: remand, judge: hearing_judge, adding_user: User.system_user)
-
-      Timecop.travel(3.months.from_now)
-      # Completes the remaining open HearingTask descendant tasks to make appeal ready to distribute
-      remand.tasks.where(type: AssignHearingDispositionTask.name).flat_map(&:children).map(&:completed!)
-      Timecop.return
-
-      # When a DistributionTask goes to assigned it clears the affinity start date, so restore that at the right date
-      Timecop.travel(days_ago.days.ago) { remand.appeal_affinity.update!(affinity_start_date: Time.zone.now) }
-
-      # Return the remand appeal to let us track which appeals were created when run from a rails console
-      remand
     end
     # rubocop:enable Metrics/AbcSize
   end

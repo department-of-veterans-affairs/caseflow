@@ -59,8 +59,8 @@ describe('Docket Time Goals Lever', () => {
         <DocketTimeGoals />
       </Provider>);
 
-    let leverTimeGoal = wrapper.find('input[name="ama_hearing_docket_time_goals"]');
-    let leverDistPrior = wrapper.find('input[name="ama_hearing_start_distribution_prior_to_goals"]');
+    let leverTimeGoal = wrapper.find('input[name="ama_hearings_docket_time_goals"]');
+    let leverDistPrior = wrapper.find('input[name="ama_hearings_start_distribution_prior_to_goals"]');
 
     waitFor(() => expect(leverTimeGoal).toHaveTextContent(testTimeGoalLever.value));
     waitFor(() => expect(leverDistPrior).toHaveTextContent(testDistPriorLever.value));

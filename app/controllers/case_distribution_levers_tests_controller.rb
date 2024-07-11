@@ -26,20 +26,6 @@ class CaseDistributionLeversTestsController < ApplicationController
     head :ok
   end
 
-  def run_demo_ama_docket_goals
-    Rake::Task["db:seed:demo_ama_docket_goals_lever_test_data"].reenable
-    Rake::Task["db:seed:demo_ama_docket_goals_lever_test_data"].invoke
-
-    head :ok
-  end
-
-  def run_demo_docket_priority
-    Rake::Task["db:seed:demo_docket_priority_lever_test_data"].reenable
-    Rake::Task["db:seed:demo_docket_priority_lever_test_data"].invoke
-
-    head :ok
-  end
-
   def appeals_ready_to_distribute
     csv_data = AppealsReadyForDistribution.process
 
@@ -48,19 +34,6 @@ class CaseDistributionLeversTestsController < ApplicationController
 
     # Set dynamic filename with current date and time
     filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
-
-    # Send CSV as a response with dynamic filename
-    send_data csv_data, filename: filename
-  end
-
-  def appeals_non_priority_ready_to_distribute
-    csv_data = AppealsNonPriorityReadyForDistribution.process
-
-    # Get the current date and time for dynamic filename
-    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
-
-    # Set dynamic filename with current date and time
-    filename = "AMA_Non_priority_distributable_#{current_datetime}.csv"
 
     # Send CSV as a response with dynamic filename
     send_data csv_data, filename: filename

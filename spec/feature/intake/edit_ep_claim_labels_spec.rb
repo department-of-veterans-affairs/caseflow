@@ -109,7 +109,10 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(nr_row).to have_button("Edit claim label", disabled: false)
 
         # make issue update - remove issue
-        click_remove_intake_issue_dropdown_by_number(3)
+        within "#issue-2" do
+          select("Remove issue", from: "issue-action-0")
+        end
+        click_on("Yes, remove issue")
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)
