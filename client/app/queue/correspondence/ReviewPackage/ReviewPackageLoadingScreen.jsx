@@ -18,7 +18,7 @@ class ReviewPackageLoadingScreen extends React.PureComponent {
 
   createLoadPromise = async () => {
     return await ApiUtil.get(
-      `/queue/correspondence/${this.props.correspondence_uuid}`).then(
+      `/queue/correspondence/${this.props.correspondence_uuid}/review_package`).then(
       (response) => {
         /* eslint-disable no-unused-vars, camelcase */
         const {
