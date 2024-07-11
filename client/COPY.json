@@ -1479,5 +1479,11 @@
   "CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT": "Data Element Changed",
   "CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE": "Previous Value",
   "CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE": "Updated Value",
-  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values"
+  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
+  "BACKFILL_EARLY_AMA_APPEALS_DESCRIPTION": [
+    "Decision for insomnia disorder issue is denied. <Pasted decision from decision doc>",
+    "Service connection for eczema is denied. <Pasted decision from decision doc>",
+    "Service connection for gastroesophageal reflux disease (GERD) is granted. <Pasted decision from decision doc>",
+    "Service connection for sleep apnea disorder is remanded. <Pasted decision from decision doc>"
+  ]
 }
