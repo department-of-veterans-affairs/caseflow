@@ -55,7 +55,7 @@ class SeedDB
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
     call_and_log_seed_step Seeds::TranscriptionContractor
     call_and_log_seed_step Seeds::TranscriptionFiles
-<<<<<<< HEAD
+
     # Case Distribution Seed Data
     # Creates 300+ priority cases ready for distribution
     # Warning a number are not setup correctly so cannot be used beyond
@@ -72,8 +72,7 @@ class SeedDB
     call_and_log_seed_step Seeds::AmaAffinityCases
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
-=======
->>>>>>> 02277604ec686bd22de5e5370507044b90f76bdb
+
   end
 end
 
