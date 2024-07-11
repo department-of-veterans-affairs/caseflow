@@ -27,13 +27,13 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "routes unauthorized user to /unauthorized if feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      visit "/queue/correspondence/#{correspondence.uuid}/intake"
       expect(page).to have_current_path("/unauthorized")
     end
 
     it "routes unauthorized user to /unauthorized if feature toggle enabled" do
       FeatureToggle.disable!(:correspondence_queue)
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      visit "/queue/correspondence/#{correspondence.uuid}/intake"
       expect(page).to have_current_path("/unauthorized")
     end
   end
@@ -49,14 +49,14 @@ RSpec.feature("The Correspondence Intake page") do
     it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       User.authenticate!(user: mail_user)
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      visit "/queue/correspondence/#{correspondence.uuid}/intake"
       expect(page).to have_current_path("/under_construction")
     end
 
     it "routes to intake if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+      visit "/queue/correspondence/#{correspondence.uuid}/intake"
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/intake")
     end
   end
 
@@ -67,7 +67,7 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     it "the intake page exists" do
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/intake")
     end
 
     it "successfully navigates on return to queue and save intake" do
