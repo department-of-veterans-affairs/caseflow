@@ -23,6 +23,12 @@ class CorrespondenceAutoAssigner
 
     begin
       unassigned_review_package_tasks.each do |task|
+        # validate a user is able to work the task
+        assignee = find_auto_assign_user(task)
+
+        # guard clause if no assignee
+        break if assignee.blank?
+
         assign(task)
       end
 
@@ -38,9 +44,7 @@ class CorrespondenceAutoAssigner
 
   attr_accessor :batch, :current_user
 
-  def assign(task)
-    started_at = Time.current
-
+  def find_auto_assign_user(task)
     correspondence = task.correspondence
     assignee = assignable_user_finder.get_first_assignable_user(correspondence: correspondence)
 
@@ -51,9 +55,12 @@ class CorrespondenceAutoAssigner
         started_at: started_at,
         unassignable_reason: assignable_user_finder.unassignable_reasons.last
       )
-      return logger.error(msg: COPY::BAAA_USERS_MAX_QUEUE_REACHED)
     end
+    assignee
+  end
 
+  def assign(task, assignee)
+    started_at = Time.current
     assign_task_to_user(task, assignee)
     logger.assigned(task: task, started_at: started_at, assigned_to: assignee)
   end
