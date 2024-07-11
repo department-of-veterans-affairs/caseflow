@@ -342,9 +342,8 @@ Rails.application.routes.draw do
     get "/correspondence/team", to: "correspondence_queue#correspondence_team"
     put "/correspondence/:correspondence_uuid/update_cmp", to: "correspondence_review_package#update_cmp"
     get "/correspondence/packages", to: "correspondence_review_package#package_documents"
-    get "/correspondence/:correspondence_uuid", to: "correspondence_review_package#review_package"
     get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
-    patch "/correspondence/:correspondence_uuid", to: "correspondence_review_package#update"
+    patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
     post "/correspondence/:correspondence_uuid", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake

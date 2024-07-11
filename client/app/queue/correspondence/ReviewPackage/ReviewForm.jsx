@@ -108,7 +108,7 @@ export const ReviewForm = (props) => {
 
     try {
       const response = await ApiUtil.patch(
-        `/queue/correspondence/${correspondence.correspondence_uuid}`,
+        `/queue/correspondence/${correspondence.correspondence_uuid}/review_package`,
         payloadData
       );
 
