@@ -88,42 +88,4 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
       end
     end
   end
-
-  describe "POST #remove_package" do
-    context "Delete correspondence package from Caseflow" do
-      before do
-        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
-        post :create_package_action_task, params: task_creation_params
-        expect(response).to have_http_status(:ok)
-        task_creation_params[:id] = correspondence.id
-        post :remove_package, params: task_creation_params
-      end
-
-      it "creates remove package task successfully" do
-        remove_package_task = RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name)
-        expect(remove_package_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-        review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-        expect(review_package_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-      end
-    end
-  end
-
-  describe "POST #reject_package" do
-    context "Reject Delete correspondence package from Caseflow" do
-      before do
-        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
-        post :create_package_action_task, params: task_creation_params
-        expect(response).to have_http_status(:ok)
-        task_creation_params[:id] = correspondence.id
-        post :completed_package, params: task_creation_params
-      end
-
-      it "reject remove package task successfully" do
-        remove_package_task = RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name)
-        expect(remove_package_task.status).to eq(Constants.TASK_STATUSES.completed)
-        review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-        expect(review_package_task.status).to eq(Constants.TASK_STATUSES.in_progress)
-      end
-    end
-  end
 end

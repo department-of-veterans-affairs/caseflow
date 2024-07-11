@@ -14,7 +14,8 @@ import {
   correspondenceData,
   correspondenceDocumentsData,
   packageDocumentTypeData,
-  veteranInformation
+  veteranInformation,
+  correspondenceTypes
 } from 'test/data/correspondence';
 
 jest.mock('redux', () => ({
@@ -38,7 +39,9 @@ let initialState = {
     correspondence: correspondenceData,
     packageDocumentType: packageDocumentTypeData,
     correspondenceDocuments: correspondenceDocumentsData,
-    veteranInformation
+    correspondenceTypes,
+    veteranInformation,
+    correspondenceTypeId: 1
   }
 };
 
@@ -55,8 +58,13 @@ describe('CorrespondenceReviewPackage', () => {
 
   beforeEach(() => {
     createSpyGet();
+
     props = {
       correspondenceId: '123',
+      correspondenceData,
+      correspondenceTypes,
+      correspondenceTypeId: 1
+
     };
   });
 

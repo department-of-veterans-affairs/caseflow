@@ -8,7 +8,7 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
@@ -23,22 +23,16 @@ import {
 
 export const CorrespondenceReviewPackage = (props) => {
   const history = useHistory();
-  const [reviewDetails, setReviewDetails] = useState({
-    veteran_name: {},
-    dropdown_values: [],
-  });
-  const [editableData, setEditableData] = useState({
-    notes: '',
-    veteran_file_number: '',
-    default_select_value: null,
-    va_date_of_receipt: '',
-  });
-  const stateCorrespondence = useSelector(
-    (state) => state.reviewPackage.correspondence
+
+  // state variables for editable portions of the form that can be passed to child components
+  const [notes, setNotes] = useState(props.correspondence.notes);
+  const [veteranFileNumber, setVeteranFileNumber] = useState(props.correspondence.veteranFileNumber);
+  const [correspondenceTypeId, setCorrespondenceTypeId] = useState(
+    props.correspondence.correspondence_type_id
   );
-  const [displayIntakeAppeal, setDisplayIntakeAppeal] = useState(true);
-  const [apiResponse, setApiResponse] = useState(null);
+  const [vaDor, setVaDor] = useState(moment.utc((props.correspondence.vaDateOfReceipt)).format('YYYY-MM-DD'));
   const [disableButton, setDisableButton] = useState(false);
+  const [disableSaveButton, setDisableSaveButton] = useState(true);
   const [isReturnToQueue, setIsReturnToQueue] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
@@ -46,9 +40,8 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedId, setSelectedId] = useState(0);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isReassignPackage, setIsReassignPackage] = useState(false);
-  const [isEfolderUploadFailedTask, setIsEfolderUploadFailedTask] = useState(true);
   const [corrTypeSelected, setCorrTypeSelected] = useState(true);
-  const [reviewPackageDetails, setReviewPackageDetails] = useState({
+  const [blockingTaskId, setBlockingTaskId] = useState({
     veteranName: '',
     taskId: [],
   });
@@ -57,117 +50,62 @@ export const CorrespondenceReviewPackage = (props) => {
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
-  const fetchData = async () => {
-    const correspondence = props;
-    // When a remove package task is active and pending review, the page is read-only
-    const isPageReadOnly = (tasks) => {
-      const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+  // When a remove package task is active and pending review, the page is read-only
+  const isPageReadOnly = (tasks) => {
+    const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
 
-      if (assignedRemoveTask) {
-        setReviewPackageDetails((prev) => {
-          return { ...prev, taskId: assignedRemoveTask.id };
-        }
-        );
-      }
+    if (assignedRemoveTask) {
+      setBlockingTaskId(assignedRemoveTask.id);
+    }
 
-      // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined');
-    };
+    // Return true if a removePackageTask that is currently assigned is found, else false
+    return (typeof assignedRemoveTask !== 'undefined');
+  };
 
-    // When a reassign package task is active and pending review, the page is read-only
-    const hasAssignedReassignPackageTask = (tasks) => {
-      const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
+  // When a reassign package task is active and pending review, the page is read-only
+  const hasAssignedReassignPackageTask = (tasks) => {
+    const assignedReassignTask = tasks.find((task) => task.status === 'assigned' &&
           task.type === 'ReassignPackageTask');
 
-      if (assignedReassignTask) {
-        setReviewPackageDetails({ taskId: assignedReassignTask.id });
-      }
-
-      // Return true if a reassignPackageTask that is currently assigned is found, else false
-      return (
-        (typeof assignedReassignTask !== 'undefined')
-      );
-    };
-
-    const hasEfolderUploadTask = (tasks) => {
-      const existEfolderUploadTask = tasks.find((task) => task.status === 'in_progress' &&
-      task.type === 'EfolderUploadFailedTask');
-
-      if (existEfolderUploadTask) {
-        setIsEfolderUploadFailedTask(false);
-      }
-    };
-
-    try {
-      const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondence_uuid}`
-      );
-      // API Response Without VA DOR
-      const apiResWithVADOR = response.body.general_information;
-
-      // Appended API Response VA DOR to
-      // eslint-disable-next-line max-len
-      apiResWithVADOR.va_date_of_receipt = moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD');
-
-      setApiResponse(apiResWithVADOR);
-      const data = apiResWithVADOR;
-
-      hasEfolderUploadTask(data.correspondence_tasks);
-
-      setDisplayIntakeAppeal(response.body.display_intake_appeal);
-
-      if (response.body.efolder_upload_failed_before.length > 0) {
-        setBannerInformation({
-          title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
-          message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
-          bannerType: 'error'
-        });
-      }
-
-      setReviewDetails({
-        veteran_name: data.veteran_name || {},
-        dropdown_values: data.correspondence_types || [],
-        correspondence_type_id: data.correspondence_type_id
-      });
-
-      setReviewPackageDetails((prev) => {
-        return { ...prev, veteranName: `${data.veteran_name.first_name} ${data.veteran_name.last_name}` };
-      }
-      );
-
-      setEditableData({
-        notes: data.notes,
-        veteran_file_number: data.file_number,
-        default_select_value: data.correspondence_type_id,
-        va_date_of_receipt: moment.utc((props.correspondence.va_date_of_receipt)).format('YYYY-MM-DD')
-      });
-
-      if (isPageReadOnly(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-      }
-
-      if (hasAssignedReassignPackageTask(data.correspondence_tasks)) {
-        setBannerInformation({
-          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
-          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
-          bannerType: 'info'
-        });
-        setIsReadOnly(true);
-        setIsReassignPackage(true);
-      }
-    } catch (error) {
-      console.error(error);
+    if (assignedReassignTask) {
+      setBlockingTaskId(assignedReassignTask.id);
     }
+
+    // Return true if a reassignPackageTask that is currently assigned is found, else false
+    return (
+      (typeof assignedReassignTask !== 'undefined')
+    );
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    // Check for eFolder upload failure
+    if (props.hasEfolderFailedTask) {
+      setBannerInformation({
+        title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+        message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+        bannerType: 'error'
+      });
+    }
+
+    if (isPageReadOnly(props.correspondence.correspondence_tasks)) {
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_SUPERVISOR_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
+    }
+
+    if (hasAssignedReassignPackageTask(props.correspondence.correspondence_tasks)) {
+      setBannerInformation({
+        title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+        message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+        bannerType: 'info'
+      });
+      setIsReadOnly(true);
+      setIsReassignPackage(true);
+    }
+  }, [props.hasEfolderFailedTask]);
 
   const handleModalClose = () => {
     if (isReturnToQueue) {
@@ -185,19 +123,15 @@ export const CorrespondenceReviewPackage = (props) => {
     history.push('/queue/correspondence');
   };
 
-  const isEditableDataChanged = () => {
-    const notesChanged = editableData.notes !== apiResponse.notes;
-    const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
-    const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
-    const selectDateChanged = editableData.va_date_of_receipt !== apiResponse.va_date_of_receipt;
-
-    return notesChanged || fileNumberChanged || selectValueChanged || selectDateChanged;
+  // used to validate there are no non-null values (notes can be null)
+  const nullValuesPresent = () => {
+    return !veteranFileNumber || !correspondenceTypeId || !vaDor;
   };
 
   const intakeAppeal = async () => {
-    props.setFileNumberSearch(editableData.veteran_file_number);
+    props.setFileNumberSearch(veteranFileNumber);
     try {
-      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await props.doFileNumberSearch('appeal', veteranFileNumber, true);
       await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
     } catch (error) {
@@ -223,14 +157,12 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   };
 
+  // check for in-flight changes to disable the button
   useEffect(() => {
-    if (apiResponse) {
-      const hasChanged = isEditableDataChanged();
-
-      setDisableButton(hasChanged);
-      setErrorMessage('');
-    }
-  }, [editableData, apiResponse]);
+    // disable create record button if save button is enabled or null values exist
+    setDisableButton(!disableSaveButton || nullValuesPresent());
+    setErrorMessage('');
+  }, [disableSaveButton]);
 
   return (
     <div>
@@ -244,8 +176,8 @@ export const CorrespondenceReviewPackage = (props) => {
       <React.Fragment>
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
-            reviewDetails={reviewPackageDetails}
-            efolder={isEfolderUploadFailedTask}
+            blockingTaskId={blockingTaskId}
+            efolder={props.hasEfolderFailedTask}
             handlePackageActionModal={handlePackageActionModal}
             correspondence={props.correspondence}
             packageActionModal={packageActionModal}
@@ -265,14 +197,11 @@ export const CorrespondenceReviewPackage = (props) => {
           }
           <ReviewForm
             {...{
-              reviewDetails,
-              setReviewDetails,
-              editableData,
-              setEditableData,
               disableButton,
               setDisableButton,
+              disableSaveButton,
+              setDisableSaveButton,
               setIsReturnToQueue,
-              fetchData,
               showModal,
               handleModalClose,
               handleReview,
@@ -280,14 +209,22 @@ export const CorrespondenceReviewPackage = (props) => {
               setErrorMessage,
               isReadOnly,
               corrTypeSelected,
-              setCorrTypeSelected
+              setCorrTypeSelected,
+              notes,
+              setNotes,
+              veteranFileNumber,
+              setVeteranFileNumber,
+              correspondenceTypeId,
+              setCorrespondenceTypeId,
+              vaDor,
+              setVaDor
             }}
             {...props}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
             isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <CmpDocuments
-            documents={props.correspondenceDocuments}
+            documents={props.correspondence.correspondenceDocuments}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
             isReadOnly={isReadOnly}
@@ -303,12 +240,11 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </div>
           <div className="cf-push-right">
-            { (displayIntakeAppeal || stateCorrespondence.nod) && (
+            { (props.correspondence.nod && !isReadOnly) && (
               <Button
                 name="Intake appeal"
                 classNames={['usa-button-secondary', 'correspondence-intake-appeal-button']}
                 onClick={intakeAppeal}
-                disabled={disableButton || isReadOnly}
               />
             )}
             <a href={intakeLink}>
@@ -316,7 +252,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={corrTypeSelected}
+                disabled={disableButton}
               />
             </a>
           </div>
@@ -330,7 +266,8 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence_uuid: PropTypes.string,
   inboundOpsTeamUsers: PropTypes.array,
   correspondence: PropTypes.object,
-  correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
+  correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTask: PropTypes.bool,
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
@@ -342,7 +279,6 @@ CorrespondenceReviewPackage.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
   veteranInformation: state.reviewPackage.veteranInformation,
   createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
