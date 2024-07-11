@@ -5,8 +5,8 @@ class SupervisorySeniorCouncil < Organization
 
   def self.singleton
     SupervisorySeniorCouncil.first || SupervisorySeniorCouncil.create(
-      name: "Supervisory Senior Council",
-      url: "supervisory-senior-council"
+      name: "Supervisory Senior Counsel",
+      url: "supervisory-senior-counsel"
     )
   end
 

@@ -3,17 +3,17 @@
 describe SupervisorySeniorCouncil do
   describe ".singleton" do
     it "is named correctly" do
-      expect(SupervisorySeniorCouncil.singleton).to have_attributes(name: "Supervisory Senior Council")
+      expect(SupervisorySeniorCouncil.singleton).to have_attributes(name: "Supervisory Senior Counsel")
     end
 
-    it "will only have one SupervisorySeniorCouncil no matter how many times it is run" do
+    it "will only have one SupervisorySeniorCounsel no matter how many times it is run" do
       SupervisorySeniorCouncil.singleton
       SupervisorySeniorCouncil.singleton
-      expect(Organization.where(name: "Supervisory Senior Council").count).to eq(1)
+      expect(Organization.where(name: "Supervisory Senior Counsel").count).to eq(1)
     end
 
     it "will have the correct url name" do
-      expect(SupervisorySeniorCouncil.singleton).to have_attributes(url: "supervisory-senior-council")
+      expect(SupervisorySeniorCouncil.singleton).to have_attributes(url: "supervisory-senior-counsel")
     end
   end
 
