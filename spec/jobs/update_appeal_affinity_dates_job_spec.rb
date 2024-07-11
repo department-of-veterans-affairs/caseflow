@@ -234,6 +234,7 @@ describe UpdateAppealAffinityDatesJob do
     let(:distribution) { create(:distribution, :completed, judge: judge) }
     let(:appeal_no_appeal_affinity) { create(:case) }
     let(:appeal_with_appeal_affinity) { create(:case, :with_appeal_affinity) }
+    let(:appeal_with_appeal_affinity_no_start_date) { create(:case, :with_appeal_affinity, affinity_start_date: nil) }
     let(:job) { described_class.new }
     let(:appeal_no_affinity_hash) do
       { bfkey: appeal_no_appeal_affinity.bfkey,
@@ -245,14 +246,19 @@ describe UpdateAppealAffinityDatesJob do
         bfd19: appeal_with_appeal_affinity.bfd19
       }
     end
+    let(:appeal_with_affinity_no_start_date_hash) do
+      { bfkey: appeal_with_appeal_affinity_no_start_date.bfkey,
+        bfd19: appeal_with_appeal_affinity_no_start_date.bfd19
+      }
+    end
 
     before { job.instance_variable_set(:@distribution_id, distribution.id) }
 
-    it "only returns appeals with no affinity records" do
-      appeals = [appeal_with_affinity_hash, appeal_no_affinity_hash]
+    it "only returns appeals with no affinity records or affinity start dates" do
+      appeals = [appeal_with_affinity_hash, appeal_no_affinity_hash, appeal_with_affinity_no_start_date_hash]
       result = job.send(:legacy_appeals_with_no_appeal_affinities, appeals)
 
-      expect(result.count).to eq 1
+      expect(result.count).to eq 2
     end
   end
 
