@@ -49,7 +49,7 @@ class ClaimantValidator
   end
 
   def validate_claimant_address
-    if claimant.address_line_1.nil?
+    if claimant.address_line_1.nil? && !claimant.from_decision_review_created_event?
       errors[:address] << ERRORS[:blank]
       decision_review.errors[:claimant] << ERRORS[:claimant_address_required]
     elsif !claimant_address_lines_valid?
@@ -88,7 +88,6 @@ class ClaimantValidator
   end
 
   def claimant_details_required?
-    decision_review&.is_a?(ClaimReview) && benefit_type_requires_payee_code? &&
-      !decision_review.from_decision_review_created_event?
+    decision_review&.is_a?(ClaimReview) && benefit_type_requires_payee_code?
   end
 end

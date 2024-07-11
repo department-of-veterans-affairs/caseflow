@@ -81,24 +81,30 @@ describe ClaimantValidator, :postgres do
         expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_city_invalid])
       end
     end
-
-    context "when decision_review is from a decision_review_created_event" do
-      let(:user) { Generators::User.build }
-      let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
-      let!(:intake) { Intake.create!(veteran_file_number: veteran.file_number, user: user) }
-      let!(:intake_event_record) { EventRecord.create!(event: event2, evented_record: intake) }
-      let(:decision_review) do
+    context "decision_review_created_event claimant is missing address" do
+      let(:decision_review2) do
         HigherLevelReview.new(benefit_type: "compensation", veteran_file_number: veteran.file_number)
       end
-      let!(:decision_review_event_record) do
-        EventRecord.create!(event: event2, evented_record: decision_review)
+      let(:person) { Person.find_or_create_by_participant_id("12345678") }
+      let(:person_event_record) do
+        EventRecord.create!(event: event2, evented_record: person)
+      end
+      let(:claimant2) do
+        Claimant.new(
+          decision_review: decision_review2,
+          participant_id: "12345678",
+          payee_code: payee_code,
+          type: type
+        )
       end
       let(:address_line_1) { nil }
-      it "#claimant_details_required? returns false and sets no error" do
-        intake.update!(detail: decision_review)
-        expect(decision_review.from_decision_review_created_event?).to eq(true)
-        expect(ClaimantValidator.new(claimant).send(:claimant_details_required?)).to eq(false)
-        expect(subject[:claimant]).to be_empty
+      let(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+      let(:decision_review_event_record) do
+        EventRecord.create!(event: event2, evented_record: decision_review2)
+      end
+
+      it "creates no error" do
+        expect(subject[:claimant2]).to be_empty
       end
     end
   end
