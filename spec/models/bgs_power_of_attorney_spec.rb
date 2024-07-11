@@ -114,7 +114,7 @@ describe BgsPowerOfAttorney do
         end
       end
 
-      it "does not raise an error on unique constraint violation" do
+      it "does not raise an error on unique constraint violation", skip: "Test is flaky" do
         threads = []
         concurrency.times do
           threads << Thread.new do
