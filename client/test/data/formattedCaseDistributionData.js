@@ -650,7 +650,7 @@ export const updatedLevers = [
   },
   {
     id: 17,
-    item: DISTRIBUTION.ama_hearing_start_distribution_prior_to_goals,
+    item: DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: ACD_LEVERS.data_types.combination,
@@ -719,7 +719,7 @@ export const updatedLevers = [
   },
   {
     id: 20,
-    item: DISTRIBUTION.ama_hearing_docket_time_goals,
+    item: DISTRIBUTION.ama_hearings_docket_time_goals,
     title: 'AMA Hearings Docket Time Goals',
     data_type: ACD_LEVERS.data_types.number,
     value: 435,

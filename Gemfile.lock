@@ -66,20 +66,6 @@ GIT
       savon (~> 2.12)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: fed623802afe7303f4b8b5fe27cff0e903699873
-  ref: fed623802afe7303f4b8b5fe27cff0e903699873
-  specs:
-    ruby_claim_evidence_api (0.0.1)
-      activesupport
-      base64
-      faraday
-      faraday-multipart
-      httpi
-      railties
-      webmock (~> 3.6.2)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
   revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
@@ -1454,7 +1440,6 @@ GEM
     aws-sigv4 (1.8.0)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
-    base64 (0.2.0)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -1595,8 +1580,6 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
-    faraday-multipart (1.0.4)
-      multipart-post (~> 2)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     fast_jsonapi (1.5)
@@ -2132,7 +2115,6 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
-  ruby_claim_evidence_api!
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
@@ -2157,4 +2139,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.22
+   2.4.17

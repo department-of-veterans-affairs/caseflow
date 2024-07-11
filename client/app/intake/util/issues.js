@@ -141,8 +141,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isRating: !issue.category,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
-      ratingIssueProfileDate:
-        issue.rating_issue_profile_date && new Date(issue.rating_issue_profile_date).toISOString(),
+      ratingIssueProfileDate: issue.rating_issue_profile_date && new Date(issue.rating_issue_profile_date).toISOString(),
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
@@ -152,8 +151,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       pactChecked: issue.pact_status,
       vbmsMstChecked: issue.vbms_mst_status,
       vbmsPactChecked: issue.vbms_pact_status,
-      mst_status_update_reason_notes: issue.mstJustification,
-      pact_status_update_reason_notes: issue.pactJustification
+      mst_status_update_reason_notes: issue?.mstJustification,
+      pact_status_update_reason_notes: issue?.pactJustification
     };
   }
   );
@@ -531,9 +530,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       vbmsMstChecked: issue.vbmsMstChecked,
       vbmsPactChecked: issue.vbmsPactChecked,
       mst_status_update_reason_notes: issue?.mstJustification,
-      pact_status_update_reason_notes: issue?.pactJustification,
-      pendingWithdrawalDate: issue.pendingWithdrawalDate,
-      addedFromApprovedRequest: issue.addedFromApprovedRequest
+      pact_status_update_reason_notes: issue?.pactJustification
     };
   });
 };
