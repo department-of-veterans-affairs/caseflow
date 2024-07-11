@@ -153,6 +153,33 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Save", disabled: false)
     end
 
+    step "when selecting a new benefit type the issue category dropdown should return to a default state" do
+      visit "appeals/#{appeal3.uuid}/edit/"
+
+      click_intake_add_issue
+
+      dropdown_select_string = "Select or enter..."
+      benefit_text = "Compensation"
+
+      # Select the first benefit type
+      all(".cf-select__control", text: dropdown_select_string).first.click
+      find("div", class: "cf-select__option", text: benefit_text).click
+
+      # Select the first issue category
+      find(".cf-select__control", text: dropdown_select_string).click
+      find("div", class: "cf-select__option", text: "Unknown Issue Category").click
+
+      # Verify that the default dropdown text is missing from the page
+      expect(page).to_not have_content(dropdown_select_string)
+
+      # Select a different benefit type
+      find(".cf-select__control", text: benefit_text).click
+      find("div", class: "cf-select__option", text: "Education").click
+
+      # Verify that the default dropdown text once again present on the page
+      expect(page).to have_content(dropdown_select_string)
+    end
+
     # this validates a bug fix from https://github.com/department-of-veterans-affairs/caseflow/pull/10197
     step "adding an issue with a non-comp benefit type returns to case details page" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -201,33 +228,6 @@ feature "Appeal Edit issues", :all_dbs do
       expect(appeal.tasks.where(type: VeteranRecordRequest.name).first.status).to eq(Constants.TASK_STATUSES.completed)
       expect(appeal.tasks.map(&:closed_at)).to match_array([Time.zone.now, Time.zone.now, Time.zone.now, Time.zone.now])
     end
-  end
-
-  scenario "when selecting a new benefit type the issue category dropdown should return to a default state" do
-    visit "appeals/#{appeal3.uuid}/edit/"
-
-    click_intake_add_issue
-
-    dropdown_select_string = "Select or enter..."
-    benefit_text = "Compensation"
-
-    # Select the first benefit type
-    all(".cf-select__control", text: dropdown_select_string).first.click
-    find("div", class: "cf-select__option", text: benefit_text).click
-
-    # Select the first issue category
-    find(".cf-select__control", text: dropdown_select_string).click
-    find("div", class: "cf-select__option", text: "Unknown Issue Category").click
-
-    # Verify that the default dropdown text is missing from the page
-    expect(page).to_not have_content(dropdown_select_string)
-
-    # Select a different benefit type
-    find(".cf-select__control", text: benefit_text).click
-    find("div", class: "cf-select__option", text: "Education").click
-
-    # Verify that the default dropdown text once again present on the page
-    expect(page).to have_content(dropdown_select_string)
   end
 
   context "ratings with disabiliity codes" do
