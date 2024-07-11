@@ -345,7 +345,7 @@ Rails.application.routes.draw do
     get "/correspondence/:pdf_id/pdf", to: "correspondence_review_package#pdf"
     patch "/correspondence/:correspondence_uuid/review_package", to: "correspondence_review_package#update"
     patch "/correspondence/:id/update_document", to: "correspondence_document#update_document"
-    post "/correspondence/:correspondence_uuid", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
+    post "/correspondence/:correspondence_uuid/intake", to: "correspondence_intake#process_intake", as: :queue_correspondence_intake_process_intake
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
