@@ -48,7 +48,6 @@ class SendNotificationJob < CaseflowJob
   end
 
   # Must receive JSON string as argument
-
   def perform(message_json)
     ensure_current_user_is_set
 
