@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+
+# rubocop:disable Metrics/ModuleLength
 # :reek:DataClump
 
 # Contains most of the logic inside of CorrespondenceController
