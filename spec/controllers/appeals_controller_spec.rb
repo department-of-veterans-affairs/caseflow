@@ -1001,7 +1001,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   end
 
   describe "POST update" do
-    context "AMA Appeal" do
+    context "AMA Appeal updates for MST/PACT issues" do
       before do
         User.authenticate!(roles: ["System Admin"])
         Fakes::Initializer.load!
@@ -1057,6 +1057,163 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
         subject
         expect(response).to be_successful
+      end
+    end
+
+    context "when adding a contested claim issue" do
+      let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
+      let!(:appeal) do
+        create(:appeal, :with_post_intake_tasks, docket_type: docket)
+      end
+      let(:docket) { nil }
+
+      before do
+        User.authenticate!(user: current_user)
+        # Fakes::Initializer.load!
+      end
+
+      subject do
+        post :update, params: {
+          request_issues: [
+            {
+              benefit_type: "compensation",
+              nonrating_issue_category: "Contested Claims - Attorney Fees",
+              decision_text: "Test Issue",
+              decision_date: 1.week.ago.to_date,
+              ineligible_due_to_id: nil,
+              ineligible_reason: nil,
+              withdrawal_date: nil,
+              is_predocket_needed: nil,
+              mst_status: false,
+              pact_status: false
+            }
+          ],
+          controller: "appeals",
+          action: "update",
+          appeal_id: appeal.uuid
+        }
+      end
+
+      context "with the feature toggle off" do
+        let(:docket) { Constants.AMA_DOCKETS.direct_review }
+
+        it "does not create a SendInitialNotificationLetterTask" do
+          expect_any_instance_of(AppealsController).to_not receive(:send_initial_notification_letter)
+
+          subject
+          task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
+
+          expect(task).to be nil
+        end
+      end
+
+      context "with the feature toggle on" do
+        before do
+          # User.authenticate!(roles: ["Mail Intake"])
+          FeatureToggle.enable!(:cc_appeal_workflow)
+          FeatureToggle.enable!(:indicator_for_contested_claims)
+          ClerkOfTheBoard.singleton
+        end
+
+        after do
+          FeatureToggle.disable!(:cc_appeal_workflow)
+          FeatureToggle.disable!(:indicator_for_contested_claims)
+        end
+
+        context "to a direct review docket appeal" do
+          let(:docket) { Constants.AMA_DOCKETS.direct_review }
+
+          it "creates SendInitialNotificationLetterTask as child of DistributionTask" do
+            subject
+            task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
+
+            expect(response).to be_successful
+            expect(task.present?).to be true
+            expect(task.parent.type).to eq DistributionTask.name
+            expect(task.assigned_to).to eq ClerkOfTheBoard.singleton
+            expect(task.assigned_by).to eq current_user
+          end
+        end
+
+        context "to an evidence submission docket appeal" do
+          let(:docket) { Constants.AMA_DOCKETS.evidence_submission }
+
+          it "creates SendInitialNotificationLetterTask as child of EvidenceSubmissionWindowTask" do
+            subject
+            task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
+
+            expect(response).to be_successful
+            expect(task.present?).to be true
+            expect(task.parent.type).to eq EvidenceSubmissionWindowTask.name
+            expect(task.assigned_to).to eq ClerkOfTheBoard.singleton
+            expect(task.assigned_by).to eq current_user
+          end
+        end
+
+        context "to a hearing docket appeal" do
+          let(:docket) { Constants.AMA_DOCKETS.hearing }
+
+          it "creates SendInitialNotificationLetterTask as child of ScheduleHearingTask" do
+            subject
+            task = Task.find_by(type: SendInitialNotificationLetterTask.name, appeal: appeal)
+
+            expect(response).to be_successful
+            expect(task.present?).to be true
+            expect(task.parent.type).to eq ScheduleHearingTask.name
+            expect(task.assigned_to).to eq ClerkOfTheBoard.singleton
+            expect(task.assigned_by).to eq current_user
+          end
+        end
+
+        context "when an appeal already has a SendInitialNotificationLetterTask" do
+          let(:docket) { Constants.AMA_DOCKETS.direct_review }
+          let!(:inital_letter_task) do
+            build(:task,
+                  type: SendInitialNotificationLetterTask.name,
+                  assigned_to: ClerkOfTheBoard.singleton,
+                  assigned_by: current_user,
+                  assigned_at: Time.zone.now,
+                  appeal: appeal,
+                  parent: appeal.tasks.where(type: DistributionTask.name).first,
+                  status: task_status,
+                  updated_at: Time.zone.now).tap { |t| t.save(validate: false) }
+          end
+
+          context "which is active" do
+            let(:task_status) { Constants.TASK_STATUSES.assigned }
+
+            it "does not create a new SendInitialNotificationLetterTask" do
+              subject
+
+              expect(response).to be_successful
+              expect(Task.where(appeal: appeal, type: SendInitialNotificationLetterTask.name).count).to eq 1
+            end
+          end
+
+          context "which is completed" do
+            let(:task_status) { Constants.TASK_STATUSES.completed }
+
+            it "creates a new SendInitialNotificationLetterTask" do
+              subject
+
+              expect(response).to be_successful
+              expect(Task.where(appeal: appeal, type: SendInitialNotificationLetterTask.name).count).to eq 2
+              expect(Task.active.where(appeal: appeal, type: SendInitialNotificationLetterTask.name).count).to eq 1
+            end
+          end
+
+          context "which is cancelled" do
+            let(:task_status) { Constants.TASK_STATUSES.cancelled }
+
+            it "creates a new SendInitialNotificationLetterTask" do
+              subject
+
+              expect(response).to be_successful
+              expect(Task.where(appeal: appeal, type: SendInitialNotificationLetterTask.name).count).to eq 2
+              expect(Task.active.where(appeal: appeal, type: SendInitialNotificationLetterTask.name).count).to eq 1
+            end
+          end
+        end
       end
     end
   end
