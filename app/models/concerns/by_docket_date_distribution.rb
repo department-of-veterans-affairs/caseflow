@@ -57,7 +57,7 @@ module ByDocketDateDistribution
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def ama_statistics
     docket_counts = {
       direct_review_priority_stats: {},
@@ -74,16 +74,16 @@ module ByDocketDateDistribution
       docket_counts["#{sym}_priority_stats".to_sym] = {
         count: docket.count(priority: true, ready: true),
         affinity_date: {
-          in_window: docket.affinity_date_count(in_window: true, priority: true),
-          out_of_window: docket.affinity_date_count(in_window: false, priority: true)
+          in_window: docket.affinity_date_count(true, true),
+          out_of_window: docket.affinity_date_count(false, true)
         }
       }
 
       docket_counts["#{sym}_stats".to_sym] = {
         count: docket.count(priority: false, ready: true),
         affinity_date: {
-          in_window: docket.affinity_date_count(in_window: true, priority: false),
-          out_of_window: docket.affinity_date_count(in_window: false, priority: false)
+          in_window: docket.affinity_date_count(true, false),
+          out_of_window: docket.affinity_date_count(false, false)
         }
       }
     end
@@ -138,7 +138,7 @@ module ByDocketDateDistribution
       }
     }
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|

@@ -21,7 +21,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     perform_later_or_now(UpdateAppealAffinityDatesJob)
 
-    slack_service.send_notification(slack_report.join("\n"), self.class.name)
+    slack_service.send_notification(generate_report.join("\n"), self.class.name)
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
@@ -137,7 +137,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Reporting methods
   #
 
-  def slack_report
+  def generate_report
     report = []
 
     num_of_cases_distributed(report)
@@ -198,9 +198,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals in affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: true, priority: true)}"
+                "#{docket.affinity_date_count(true, true)}"
       report << "*Number of #{sym} appeals out of affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: false, priority: true)}"
+                "#{docket.affinity_date_count(false, true)}"
     end
   end
 

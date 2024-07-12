@@ -138,7 +138,7 @@ class LegacyDocket < Docket
   # rubocop:enable Metrics/ParameterLists
 
   # used for distribution_stats
-  # change parameters to in_window: false, priority: true once implemented
+  # change parameters to in_window, priority once implemented
   def affinity_date_count(*)
     "not implemented"
   end
