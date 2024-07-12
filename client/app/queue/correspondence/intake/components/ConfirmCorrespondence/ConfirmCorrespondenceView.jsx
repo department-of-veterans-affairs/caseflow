@@ -1,5 +1,4 @@
 import React from 'react';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { PencilIcon } from '../../../../../components/icons/PencilIcon';
 import Button from '../../../../../components/Button';
@@ -154,8 +153,8 @@ export const ConfirmCorrespondenceView = (props) => {
             </Button>
           </div>
         </div>
-        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
-          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '20px', paddingBottom: '20px' })}>
+        <div className="correspondence-response-letter-container">
+          <div className="correspondense-response">
             <table className="correspondence-response-letters-table">
               <tbody>
                 <tr>
