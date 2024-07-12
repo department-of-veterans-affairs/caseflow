@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class LegacyDocket < Docket
-  def docket_type
+  def self.docket_type
     "legacy"
+  end
+
+  def docket_type
+    self.class.docket_type
   end
 
   # currently this is used for reporting needs
@@ -57,14 +61,20 @@ class LegacyDocket < Docket
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
+
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
+
     LegacyAppeal.repository.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
   end
 
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
+
     LegacyAppeal.repository.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
   end
 
@@ -74,13 +84,22 @@ class LegacyDocket < Docket
       (style == "request" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_request)
   end
 
+  def ready_priority_nonpriority_legacy_appeals(priority: false)
+    value = priority ? CaseDistributionLever.disable_legacy_priority : CaseDistributionLever.disable_legacy_non_priority
+    !value
+  end
+
   # rubocop:disable Metrics/ParameterLists
   def distribute_appeals(distribution, style: "push", priority: false, genpop: "any", limit: 1, range: nil)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
     if priority
+      return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
+
       distribute_priority_appeals(distribution, style: style, genpop: genpop, limit: limit)
     else
+      return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
+
       distribute_nonpriority_appeals(distribution, style: style, genpop: genpop, limit: limit, range: range)
     end
   end
@@ -88,6 +107,7 @@ class LegacyDocket < Docket
 
   def distribute_priority_appeals(distribution, style: "push", genpop: "any", limit: 1)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: true)
 
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       next unless existing_distribution_case_may_be_redistributed?(record["bfkey"], distribution)
@@ -106,7 +126,7 @@ class LegacyDocket < Docket
                                      limit: 1,
                                      bust_backlog: false)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
-
+    return [] unless ready_priority_nonpriority_legacy_appeals(priority: false)
     return [] if !range.nil? && range <= 0
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(

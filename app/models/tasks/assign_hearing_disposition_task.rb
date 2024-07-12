@@ -23,6 +23,7 @@ class AssignHearingDispositionTask < Task
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
+  prepend HearingHeld
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true

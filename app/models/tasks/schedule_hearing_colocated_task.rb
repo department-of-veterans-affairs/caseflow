@@ -51,10 +51,18 @@ class ScheduleHearingColocatedTask < ColocatedTask
       assigned_to.is_a?(Organization)
   end
 
+  # Selects all judge tasks that are NOT QualityReviewJudgeTasks
+  def handle_judge_tasks!
+    judge_tasks = JudgeTask.open.where(appeal: appeal)
+    non_quality_review_judge_tasks = judge_tasks.to_a.reject { |task| task.type == "JudgeQualityReviewTask" }
+    # Converts array to active record association and runs cancel_task_and_child_subtasks
+    JudgeTask.where(id: non_quality_review_judge_tasks.map(&:id)).find_each(&:cancel_task_and_child_subtasks)
+  end
+
   def send_to_hearings_branch
     parent = DistributionTask.create!(appeal: appeal, parent: appeal.root_task)
     ScheduleHearingTask.create!(appeal: appeal, parent: parent)
-    JudgeTask.open.where(appeal: appeal).find_each(&:cancel_task_and_child_subtasks)
+    handle_judge_tasks!
     DistributedCase.find_by(case_id: appeal.uuid)&.rename_for_redistribution!
   end
 end

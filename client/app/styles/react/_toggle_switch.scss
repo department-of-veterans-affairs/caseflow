@@ -18,6 +18,10 @@
     background: $color-gray-lighter;
   }
 
+  &:has(.switchIdle) {
+    background: $color-gray-lighter;
+  }
+
   :not(:focus) {
     outline: none;
   }
@@ -43,6 +47,10 @@
 }
 
 .switchDisabled {
+  background: $color-gray-lighter;
+}
+
+.switchIdle {
   background: $color-gray-lighter;
 }
 
