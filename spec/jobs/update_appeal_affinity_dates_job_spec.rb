@@ -237,18 +237,18 @@ describe UpdateAppealAffinityDatesJob do
     let(:appeal_with_appeal_affinity_no_start_date) { create(:case, :with_appeal_affinity, affinity_start_date: nil) }
     let(:job) { described_class.new }
     let(:appeal_no_affinity_hash) do
-      { bfkey: appeal_no_appeal_affinity.bfkey,
-        bfd19: appeal_no_appeal_affinity.bfd19
+      { "bfkey" => appeal_no_appeal_affinity.bfkey,
+        "bfd19" => appeal_no_appeal_affinity.bfd19
       }
     end
     let(:appeal_with_affinity_hash) do
-      { bfkey: appeal_with_appeal_affinity.bfkey,
-        bfd19: appeal_with_appeal_affinity.bfd19
+      { "bfkey" => appeal_with_appeal_affinity.bfkey,
+        "bfd19" =>  appeal_with_appeal_affinity.bfd19
       }
     end
     let(:appeal_with_affinity_no_start_date_hash) do
-      { bfkey: appeal_with_appeal_affinity_no_start_date.bfkey,
-        bfd19: appeal_with_appeal_affinity_no_start_date.bfd19
+      { "bfkey" => appeal_with_appeal_affinity_no_start_date.bfkey,
+        "bfd19" => appeal_with_appeal_affinity_no_start_date.bfd19
       }
     end
 
