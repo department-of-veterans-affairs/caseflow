@@ -197,15 +197,15 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def num_of_appeals_not_distributed_by_affinity_date(report)
     report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
-      report << "*Number of #{sym} appeals in affinity date window: " \
+      report << "*Number of #{sym} appeals in affinity date window*: " \
                 "#{docket.affinity_date_count(in_window: true, priority: true)}"
-      report << "*Number of #{sym} appeals out of affinity date window: " \
+      report << "*Number of #{sym} appeals out of affinity date window*: " \
                 "#{docket.affinity_date_count(in_window: false, priority: true)}"
     end
   end
 
   def excluded_judges_reporting(report)
     excluded_judges = JudgeTeam.judges_with_exclude_appeals_from_affinity.pluck(:css_id)
-    report << "*Excluded Judges: #{excluded_judges}"
+    report << "*Excluded Judges*: #{excluded_judges}"
   end
 end
