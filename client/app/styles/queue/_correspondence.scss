@@ -1076,10 +1076,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-top: 2.7%;
 
     .opt-select {
-      .receipt-date {
-        //
-      }
-
       .css-yk16xz-control {
         border-radius: 0;
       }
@@ -1150,10 +1146,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .opt-select {
-    .receipt-date {
-      //
-    }
-
     .css-yk16xz-control {
       border-radius: 0;
     }
@@ -1279,5 +1271,34 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-top: 10px;
   }
 
+}
+
+.correspondence-details-header {
+  background-color: $color-gray-inverse-base;
+  // background-color: red;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  h1 {
+    float: left;
+    align-self: center;
+    font-weight: bold;
+    margin-bottom: 0px;
+  }
+  p {
+    font-size: 18px;
+    color: $color-black;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .copy-id {
+    display: inline-flex;
+    float:left;
+    align-items: center;
+  }
+  .last-item {
+    margin-left: auto;
+  }
 }
 

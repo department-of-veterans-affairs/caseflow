@@ -53,6 +53,16 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
     });
   };
 
+export const loadCorrespondence = (correspondence) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_CORRESPONDENCE,
+      payload: {
+        correspondence
+      }
+    });
+  };
+
 export const loadCorrespondenceConfig = (configUrl) =>
   (dispatch) => {
     ApiUtil.get(configUrl).then(
