@@ -106,7 +106,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     appeals_with_no_affinities = []
 
     appeals_hash.each do |appeal|
-      key = appeal[:bfkey]
+      key = appeal["bfkey"]
       appeal_record = VACOLS::Case.find_by(bfkey: key)
   
       if appeal_record && (appeal_record.appeal_affinity.blank? || appeal_record.appeal_affinity.affinity_start_date.blank?)
