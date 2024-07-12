@@ -217,11 +217,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       find_field("Service treatment records", visible: false).sibling("label").click
 
       click_on "Continue"
-      # For some reason clicking too quickly on the next remand reason breaks the test.
-      # Adding sleeps is bad... but I'm not sure how else to get this to work.
-      sleep 1
 
-      all("label", text: "No medical examination", visible: false, count: 2)[1].click
+      all("label", text: "No medical examination", visible: false, count: 2, wait: 2)[1].click
 
       click_on "Continue"
 
@@ -474,16 +471,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.second.note)
 
-        # I know we're not supposed to sleep in tests, but this is the only
-        # thing that allows the tests to pass consistently. I think the issue is
-        # that after pressing "Continue" above, the page is moving and we have
-        # to wait until it stops moving before clicking on the checkboxes.
-        # Otherwise, it's not always able to click on the right checkboxes. If
-        # someone knows a better way to wait for the page to stop moving, please
-        # change this.
-        sleep 1
-
-        all("label", text: "Current findings", count: 2)[1].click
+        all("label", text: "Current findings", count: 2, wait: 2)[1].click
         all("label", text: "Nexus opinion", count: 2)[1].click
         all("label", text: "Before certification", count: 3)[1].click
         all("label", text: "After certification", count: 3)[2].click

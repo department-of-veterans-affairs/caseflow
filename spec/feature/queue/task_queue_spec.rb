@@ -341,7 +341,6 @@ feature "Task queue", :all_dbs do
       expect(mail_task.class).to eq(task_class)
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
-      sleep 1
 
       child_task = mail_task.children[0]
 
