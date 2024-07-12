@@ -1,5 +1,6 @@
-require 'rails_helper'
-require Rails.root.join('db', 'migrate', '20240712140629_create_task_id_seq')
+# frozen_string_literal: true
+require "rails_helper"
+require Rails.root.join("db", "migrate", "20240712140629_create_task_id_seq")
 
 describe CreateTaskIdSeq do
   let(:migration) { CreateTaskIdSeq.new }
@@ -16,8 +17,8 @@ describe CreateTaskIdSeq do
     end
   end
 
-  describe '#down' do
-    it 'drops the task_id_seq sequence' do
+  describe "#down" do
+    it "drops the task_id_seq sequence" do
       migration.up
 
       expect(sequence_exists?).to be true
@@ -29,6 +30,8 @@ describe CreateTaskIdSeq do
   end
 
   def sequence_exists?
-    ActiveRecord::Base.connection.execute("SELECT EXISTS (SELECT FROM pg_class WHERE relkind = 'S' AND relname = 'task_id_seq')").values[0][0]
+    ActiveRecord::Base.connection
+      .execute("SELECT EXISTS (SELECT FROM pg_class WHERE relkind = 'S' AND relname = 'task_id_seq')")
+      .values[0][0]
   end
 end
