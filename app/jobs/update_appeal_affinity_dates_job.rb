@@ -63,9 +63,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     legacy_nonpriority_hash = { docket: "legacy", priority: false, receipt_date: legacy_nonpriority_receipt_date }
     legacy_priority_hash = { docket: "legacy", priority: true, receipt_date: legacy_priority_receipt_date }
 
-    distrubuted_case_hash << legacy_nonpriority_hash << legacy_priority_hash
-
-    format_distributed_case_hash(distributed_cases_hash)
+    format_distributed_case_hash(distributed_cases_hash) << legacy_nonpriority_hash << legacy_priority_hash
   end
 
   def latest_receipt_dates_from_push_job
