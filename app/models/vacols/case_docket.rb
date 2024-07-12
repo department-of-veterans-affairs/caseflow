@@ -453,10 +453,10 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.update_appeal_affinity_dates_query(priority, date)
     priority_condition = if priority
-                  "and (BFAC = '7' or AOD = '1')"
-                else
-                  "and BFAC <> '7' and AOD = '0'"
-                end
+                          "and (BFAC = '7' or AOD = '1')"
+                         else
+                          "and BFAC <> '7' and AOD = '0'"
+                         end
 
     query = <<-SQL
       select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
