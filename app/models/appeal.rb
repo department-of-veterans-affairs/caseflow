@@ -509,7 +509,6 @@ class Appeal < DecisionReview
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
     # define hash to store parent/child relationship values
     task_parent_to_child_hash = {}
-
     while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
       # cycle each task in the parent
       parent_ordered_tasks.each do |task|
@@ -699,6 +698,10 @@ class Appeal < DecisionReview
   # matches Legacy behavior
   def cavc
     court_remand?
+  end
+
+  def predocketed?
+    tasks.select { |task| task.class.name == "PreDocketTask" && task.open? }
   end
 
   def vha_predocket_needed?
@@ -904,6 +907,10 @@ class Appeal < DecisionReview
         assigned_to: business_line
       )
     end
+  end
+
+  def task_in_progress?
+    nil
   end
 
   def stuck?

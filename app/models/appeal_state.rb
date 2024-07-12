@@ -16,14 +16,11 @@ class AppealState < CaseflowRecord
   # Purpose: Default state of a hash of attributes for an appeal_state, all set to false.
   #          This will be used in the `update_appeal_state` method.
   DEFAULT_STATE = ActiveSupport::HashWithIndifferentAccess.new(decision_mailed: false,
-                                                               appeal_docketed: false,
                                                                hearing_postponed: false,
                                                                hearing_withdrawn: false,
                                                                hearing_scheduled: false,
                                                                vso_ihp_pending: false,
                                                                vso_ihp_complete: false,
-                                                               privacy_act_pending: false,
-                                                               privacy_act_complete: false,
                                                                scheduled_in_error: false,
                                                                appeal_cancelled: false).freeze
 
@@ -79,29 +76,27 @@ class AppealState < CaseflowRecord
 
   # Locates appeal states related to appeals whose hearings have been scheduled and waiting to be held.
   #
-  # @return [ActiveRecord::Relation]
+  # @return [Array<AppealState>]
   #   Appeal states for appeals with scheduled hearings without dispositions
   scope :hearing_scheduled, lambda {
-    where(
-      hearing_scheduled: true,
-      privacy_act_pending: false,
-      hearing_postponed: false,
-      scheduled_in_error: false
+    hearing_scheduled_ama.where(
+      privacy_act_pending: false
+    ) + validated_hearing_scheduled_legacy_states.where(
+      privacy_act_pending: false
     )
   }
 
   # Locates appeal states related to appeals whose hearings have been scheduled and waiting to be held.
   #  In addition, these appeals have an active Privacy Act/FOIA request in their trees.
   #
-  # @return [ActiveRecord::Relation]
+  # @return [Array<AppealState>]
   #   Appeal states for appeals with scheduled hearings without dispositions, and those appeals
   #     have open Privacy Act/FOIA-related tasks in their task trees.
   scope :hearing_scheduled_privacy_pending, lambda {
-    where(
-      hearing_scheduled: true,
-      privacy_act_pending: true,
-      hearing_postponed: false,
-      scheduled_in_error: false
+    hearing_scheduled_ama.where(
+      privacy_act_pending: true
+    ) + validated_hearing_scheduled_legacy_states.where(
+      privacy_act_pending: true
     )
   }
 
@@ -219,8 +214,8 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_complete_appeal_state_update_action!
-    if !appeal.active_foia_task?
-      update_appeal_state_action!(:privacy_act_complete)
+    unless appeal.active_foia_task?
+      update!(privacy_act_pending: false, privacy_act_complete: true)
     end
   end
 
@@ -232,7 +227,7 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_cancelled_appeal_state_update_action!
-    if !appeal.active_foia_task?
+    unless appeal.active_foia_task?
       update!(privacy_act_pending: false)
     end
   end
@@ -255,6 +250,16 @@ class AppealState < CaseflowRecord
   # Response: None
   def hearing_postponed_appeal_state_update_action!
     update_appeal_state_action!(:hearing_postponed)
+  end
+
+  # Purpose: Method to update appeal_state in the case of
+  # a hearing being marked as having been held.
+  #
+  # Params: None
+  #
+  # Response: None
+  def hearing_held_appeal_state_update_action!
+    update!(hearing_scheduled: false)
   end
 
   # Purpose: Method to update appeal_state in the case of
@@ -317,12 +322,130 @@ class AppealState < CaseflowRecord
   #
   # Response: None
   def privacy_act_pending_appeal_state_update_action!
-    update_appeal_state_action!(:privacy_act_pending)
+    update!(privacy_act_pending: true, privacy_act_complete: false)
   end
 
   private
 
-  def update_appeal_state_action!(new_state)
-    update!({}.merge(DEFAULT_STATE).tap { |state| state[new_state] = true })
+  # A base set of conditions for identifying if an appeal's most recent milestone was its
+  #  hearing being scheduled. This scope can be utilized for any variation on this
+  #  status, such as whether or not certain mail or FOIA tasks also exist for the appeal.
+  #
+  # @return [AppealState::ActiveRecord_Relation]
+  #   An ActiveRecord_Relation that can be changes with other AR scopes, clauses, methods, etc..
+  #     in order to construct a SQL query.
+  scope :hearing_scheduled_base, lambda {
+    where(
+      hearing_scheduled: true,
+      hearing_postponed: false,
+      scheduled_in_error: false
+    )
+  }
+
+  # @return [AppealState::ActiveRecord_Relation]
+  #   The base hearing scheduled status query scoped only to AMA appeals.
+  scope :hearing_scheduled_ama, lambda {
+    task_join.hearing_scheduled_base.where(appeal_type: "Appeal").with_assigned_assign_hearing_disposition_task
+  }
+
+  # @return [AppealState::ActiveRecord_Relation]
+  #   The base hearing scheduled status query scoped only to legacy appeals.
+  scope :hearing_scheduled_legacy_base, lambda {
+    hearing_scheduled_base.where(appeal_type: "LegacyAppeal")
+  }
+
+  # Represents an inner join between the appeal_states and tasks tables. This allows for utilizing
+  #   tasks to further inform us of where an appeal is in its lifecycle.
+  #
+  # @return [AppealState::ActiveRecord_Relation]
+  #   An ActiveRecord_Relation that can be changes with other AR scopes, clauses, methods, etc..
+  #     in order to construct a SQL query.
+  scope :task_join, lambda {
+    joins(
+      "join tasks on tasks.appeal_id = appeal_states.appeal_id and tasks.appeal_type = appeal_states.appeal_type"
+    )
+  }
+
+  # Represents an inner join between the appeal_states and legacy_appeals tables.
+  #  This association is used to then pull relevant data from VACOLS to validate an appeal's state.
+  #
+  # @return [AppealState::ActiveRecord_Relation]
+  #   An ActiveRecord_Relation that can be changes with other AR scopes, clauses, methods, etc..
+  #     in order to construct a SQL query.
+  scope :legacy_appeals_join, lambda {
+    joins(
+      "join legacy_appeals on legacy_appeals.id = appeal_states.appeal_id " \
+      "and appeal_states.appeal_type = 'LegacyAppeal'"
+    )
+  }
+
+  # A clause to enforce the need for an assigned AssignHearingDispositionTask to be
+  #   associated with the same appeal as an appeal state record.
+  #
+  # If constraints are met, then it should mean that there is a pending hearing for the appeal
+  #  that is waiting for a disposition, and therefore has not been held. This is key
+  #  for us in determining which appeals are in a state of hearing_scheduled.
+  #
+  # At this time this task is not possible to be placed into a status of in_progress, and on_hold
+  #   often means that it has a child EvidenceSubmissionWindowTask (as long as the evidence submission wasn't waived)
+  #   and/or TranscriptionTask. This occurs after a hearing is held.
+  #
+  # @return [AppealState::ActiveRecord_Relation]
+  #   An ActiveRecord_Relation that can be changes with other AR scopes, clauses, methods, etc..
+  #     in order to construct a SQL query.
+  scope :with_assigned_assign_hearing_disposition_task, lambda {
+    where(
+      "tasks.type = ? and tasks.status = ?",
+      AssignHearingDispositionTask.name,
+      Constants.TASK_STATUSES.assigned
+    )
+  }
+
+  class << self
+    # Utilizes the appeal states that we have recorded as being hearing_scheduled = true
+    #  and then reaches out to VACOLS to validate that the related hearings do not yet have
+    #  a disposition.
+    #
+    # This is to combat instances where VACOLS is updated without Caseflow's knowledge and other
+    #   difficulties around synchronizing the appeals states table for legacy appeals and hearings.
+    #
+    # @note The in_groups_of size must not exceed 1k due to Oracle database limitations.
+    #
+    # @return [AppealState::ActiveRecord_Relation]
+    #   Either an AR relation signifying appeal states where the hearing has been confirmed to have a pending
+    #   disposition in VACOLS, or simply nothing (none). Regardless, the relation returned can be safely chained to
+    #   other ActiveRecord query building methods.
+    def validated_hearing_scheduled_legacy_states
+      ids_to_validate = hearing_scheduled_legacy_base.legacy_appeals_join.pluck(:vacols_id)
+      validated_vacols_ids = []
+
+      ids_to_validate.in_groups_of(500, false) do |ids_to_examine|
+        validated_vacols_ids.concat(VACOLS::CaseHearing.where(
+          folder_nr: ids_to_examine,
+          hearing_disp: nil
+        ).pluck(:folder_nr))
+      end
+
+      return none if validated_vacols_ids.empty?
+
+      where(
+        appeal_type: "LegacyAppeal",
+        appeal_id: LegacyAppeal.where(vacols_id: validated_vacols_ids).pluck(:id)
+      )
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def update_appeal_state_action!(status_to_update)
+    update!({}.merge(DEFAULT_STATE).tap do |existing_statuses|
+      existing_statuses[status_to_update] = true
+
+      if status_to_update == :appeal_cancelled
+        existing_statuses.merge!({
+                                   privacy_act_complete: false,
+                                   privacy_act_pending: false
+                                 })
+      end
+    end)
   end
 end

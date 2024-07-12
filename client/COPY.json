@@ -40,6 +40,7 @@
   "CASE_LIST_TABLE_TASK_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_TASK_VETERAN_PARTICIPANT_ID_COLUMN_TITLE": "Veteran Participant Id",
   "CASE_LIST_TABLE_TASK_VETERAN_SSN_COLUMN_TITLE": "Veteran SSN",
+  "CASE_LIST_TABLE_TASK_PENDING_REQUESTS_COLUMN_TITLE": "Pending Requests",
   "CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE": "Sent to",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Tasks",
   "CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE": "Assigned By",
@@ -60,6 +61,10 @@
   },
   "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
   "EIN_INVALID_ERR": "Please enter a valid employer identification number that follows the format: 12-3456789 or 123456789",
+  "ERROR_CREATING_NEW_REQUEST": "Issue status must be in an assigned state",
+  "ERROR_MODIFYING_EXISTING_REQUEST": "Must be the same requestor or request must be in assigned state",
+  "ERROR_OPEN_MODIFICATION_EXISTING_REQUEST": "Cannot exceed more than one issue modification request at a time",
+  "ERROR_DECIDING_ISSUE_MODIFICATION_REQUEST": "Must be an admin to approve or deny requests",
   "NULL_FILTER_LABEL": "<<blank>>",
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",
@@ -391,12 +396,10 @@
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION": "Use this action to return the Motion to Vacate task to your judge if you believe there is an error in the issues that have been marked for vacatur.\n\nIf your judge is unavailable, this will return to the Litigation Support team queue for reassignment.",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
-
   "MTV_TASK_INSTRUCTIONS": "**Motion To Vacate:**  \n",
   "MTV_TASK_INSTRUCTIONS_TYPE": "**Type:**  ",
   "MTV_TASK_INSTRUCTIONS_DETAIL": "**Detail:**  ",
   "MTV_TASK_INSTRUCTIONS_HYPERLINK": "**Hyperlink:**  ",
-
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
   "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
@@ -642,7 +645,6 @@
   "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
   "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
   "SPECIAL_ISSUES_BANNER_TEXT": "Military Sexual Trauma and PACT Act will be identified at the issue level. If you need to add these issues, please add them on the next page by editing the applicable issue(s)",
-
   "SPECIAL_ISSUES_NONE_CHOSEN_TITLE": "Choose at least one.",
   "SPECIAL_ISSUES_NONE_CHOSEN_DETAIL": "If no special issues apply to this case, please confirm by selecting \"No special issues\"",
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
@@ -900,10 +902,9 @@
   "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
-  "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Withdraw appeal and cancel all tasks",
-  "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT": "Removing the last issue will cancel all tasks, close the case, and remove it from your active queue. You will no longer be able to modify or reopen the case.",
-  "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM": "Are you sure you want to do this?",
-  "CORRECT_REQUEST_ISSUES_REMOVE_MODAL_BUTTON": "Yes, remove",
+  "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Delete appeal and cancel all tasks",
+  "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT": "Removing the last issue will cancel all tasks, delete the case, and remove it from your active queue. You will no longer be able to modify, search for or reopen the case.",
+  "CORRECT_REQUEST_ISSUES_REMOVE_MODAL_BUTTON": "Remove",
   "CORRECT_REQUEST_ISSUES_ORIGINAL_NUMBER": "The review originally had %s %s but now has %s.",
   "CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE": "Number of issues has changed",
   "CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TEXT": "Please check that this is the correct number.",
@@ -977,12 +978,11 @@
   "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
   "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",
   "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
-
+  "VHA_ADMIN_DECISION_DATE_REQUIRED_BANNER": "Issues without decision dates cannot be added to this decision review. Please intake a new decision review for any issues without an identified prior decision date.",
   "MST_SHORT_LABEL": "MST",
   "PACT_SHORT_LABEL": "PACT",
   "MST_LABEL": "Military Sexual Trauma (MST)",
   "PACT_LABEL": "PACT Act",
-
   "VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA CAMO for document assessment",
   "VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA Caregiver for document assessment",
   "VHA_NO_DECISION_DATE_BANNER": "This claim will be saved, but cannot be worked on until a decision date is added to this issue.",
@@ -1233,6 +1233,10 @@
   "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN": "VISN",
   "VHA_CAREGIVER_LABEL": "CSP",
   "VHA_INCOMPLETE_TAB_DESCRIPTION": "Cases that have been only saved and not yet established. Select the claimant name if you need to edit issues.",
+  "VHA_PENDING_REQUESTS_TAB_ADMIN_DESCRIPTION": "Cases below have requests for issue modification and require action. Please review each case and take the appropriate action for each. Once the issue modification is complete, each case will return to the appropriate queue tab for work by the VHA team.",
+  "VHA_PENDING_REQUESTS_TAB_DESCRIPTION": "Cases below have requests for issue modification and are waiting Admin review. Once the Admin has taken action on the requested changes, the cases will be returned to the proper queue tab for work by the VHA team. Select the Claimant name if you need to edit a modification request.",
+  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_TITLE": "This case has pending issue modification requests",
+  "PENDING_ISSUE_MODIFICATION_REQUESTS_BANNER_MESSAGE": "Requests for issue modifications have been submitted for this case. Dispositions cannot be made until a VHA Admin completes review of the requested changes.",
   "EDUCATION_LABEL": "Education Service",
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
@@ -1414,6 +1418,8 @@
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
   "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
+  "DISPOSITION_DECISION_HEADER_ADMIN": "Review each issue and assign the appropriate dispositions.",
+  "DISPOSITION_DECISION_HEADER_NONADMIN": "Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within this claim, please request a modification via the button above.",
   "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date.",
   "PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL": "Provide instructions and context for this action",
   "VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE": "You have successfully updated an issue's decision date",
@@ -1446,10 +1452,10 @@
   "CASE_DISTRIBUTION_HISTORY_DESCRIPTION": "Change history for Case Distribution Admin shows changes made in the last 365 days.",
   "CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION": "* Denotes a variable that is also relevant to the currently inactive distribution algorithm",
   "CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE": "AMA Non-priority Distribution Goals by Docket",
-  "CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT" : "Docket Time Goal",
+  "CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT": "Docket Time Goal",
   "CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_LEFT": " set the completion target for AMA non-priority appeals by docket type. It represents the number of calendar days that are added to the receipt date of the appeal to establish the decision target date.",
-  "CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT" : "Start Distribution Prior to Docket Time Goal",
-  "CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT" : " days sets the number of calendar days prior to the Docket Time Goal for that docket type when appeals become eligible for distribution.",
+  "CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT": "Start Distribution Prior to Docket Time Goal",
+  "CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT": " days sets the number of calendar days prior to the Docket Time Goal for that docket type when appeals become eligible for distribution.",
   "CASE_DISTRIBUTION_DOCKET_TIME_NOTE": "Please note, if turned on, non-priority appeals of that docket type will not be distributed until eligible, which may disrupt strict docket-date-order distribution across dockets.",
   "CASE_DISTRIBUTION_MODAL_TITLE": "Confirm Case Distribution Algorithm Changes",
   "CASE_DISTRIBUTION_MODAL_DESCRIPTION": "Please confirm the following changes to the Case Distribution algorithm below. Once saved, these changes will apply to the next case distribution event.",
@@ -1480,5 +1486,29 @@
   "CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT": "Data Element Changed",
   "CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE": "Previous Value",
   "CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE": "Updated Value",
-  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values"
+  "CASE_DISTRIBUTION_STATIC_LEVERS_VALUES": "Values",
+  "VHA_BANNER_FOR_NEWLY_APPROVED_REQUESTED_ISSUE": "This is a new issue based on a requested issue addition.",
+  "ISSUE_MODIFICATION_REQUESTS": {
+    "ADDITION": {
+      "REQUEST_TYPE": "addition",
+      "SECTION_TITLE": "Requested Additional Issues",
+      "DETAILS": "Reason for requested issue addition"
+    },
+    "MODIFICATION": {
+      "REQUEST_TYPE": "modification",
+      "SECTION_TITLE": "Requested Changes",
+      "DETAILS": "Reason for requested modification"
+    },
+    "REMOVAL": {
+      "REQUEST_TYPE": "removal",
+      "SECTION_TITLE": "Requested Issue Removal",
+      "DETAILS": "Reason for requested removal of issue"
+    },
+    "WITHDRAWAL": {
+      "REQUEST_TYPE": "withdrawal",
+      "SECTION_TITLE": "Requested Issue Withdrawal",
+      "DETAILS": "Reason for requested withdrawal of issue",
+      "DATE": "Requested date for withdrawal"
+    }
+  }
 }

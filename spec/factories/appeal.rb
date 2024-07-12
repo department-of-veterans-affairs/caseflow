@@ -372,6 +372,14 @@ FactoryBot.define do
       end
     end
 
+    trait :with_distribution_task_and_schedule_hearing_child_task do
+      after(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distribution_task = create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distribution_task)
+      end
+    end
+
     trait :with_evidence_submission_window_task do
       after(:create) do |appeal, _evaluator|
         parent = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
@@ -448,11 +456,6 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         appeal.reload
       end
-    end
-
-    trait :ready_for_distribution_with_appeal_affinity do
-      ready_for_distribution
-      with_appeal_affinity
     end
 
     trait :ready_for_distribution_with_appeal_affinity do

@@ -109,10 +109,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(nr_row).to have_button("Edit claim label", disabled: false)
 
         # make issue update - remove issue
-        within "#issue-2" do
-          select("Remove issue", from: "issue-action-0")
-        end
-        click_on("Yes, remove issue")
+        click_remove_intake_issue_dropdown_by_number(3)
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)
@@ -142,6 +139,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
     it "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
+      expect(page).to have_content("Intake System")
+
       # First shows issues on end products, in ascending order by EP code (nonrating before rating)
       # Note for these, there's a row for the EP label, and a subsequent row for the issues
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
@@ -158,11 +157,11 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
 
       # Shows issues not on end products (single row)
-      row = find("#table-row-12")
+      row = find("#table-row-13")
       expect(row).to have_content(/Requested issues\n3. #{ineligible_request_issue.description}/i)
 
       # Shows withdrawn issues last (single row)
-      row = find("#table-row-13")
+      row = find("#table-row-14")
       expect(row).to have_content(
         /Withdrawn issues\n4. #{withdrawn_request_issue.description}/i
       )

@@ -38,6 +38,11 @@ module Caseflow::Error
   end
 
   class VaDotGovAPIError < SerializableError; end
+  class ErrorCreatingNewRequest < SerializableError; end
+  class ErrorModifyingExistingRequest < SerializableError; end
+  class ErrorOpenModifyingExistingRequest < SerializableError; end
+  class ErrorApprovingExistingRequest < SerializableError; end
+  class ErrorDenyingExistingRequest < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
@@ -482,7 +487,6 @@ module Caseflow::Error
   class PacmanInternalServerError < PacmanApiError; end
 
   # Redis Lock errors
-  # Redis Lock errors
   class SyncLockFailed < StandardError
     def ignorable?
       true
@@ -499,4 +503,10 @@ module Caseflow::Error
   class DecisionReviewCreatedCreateClaimReviewError < StandardError; end
   class DecisionReviewCreatedEpEstablishmentError < StandardError; end
   class DecisionReviewCreatedRequestIssuesError < StandardError; end
+
+  class MaximumBatchSizeViolationError < StandardError
+    def initialize(msg = "The batch size of jobs must not exceed 10")
+      super(msg)
+    end
+  end
 end

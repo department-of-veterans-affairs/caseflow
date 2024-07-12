@@ -19,18 +19,21 @@ describe QuarterlyNotificationsJob, type: :job do
           decision_mailed: true
         )
       end
+
       it "does not push a new message" do
         expect_message_to_not_be_enqueued
 
         subject
       end
     end
+
     context "job setup" do
       it "sets the current user for BGS calls" do
         subject
         expect(RequestStore[:current_user]).to eq(User.system_user)
       end
     end
+
     context "Appeal Docketed" do
       let!(:appeal_state) do
         create(
@@ -42,12 +45,14 @@ describe QuarterlyNotificationsJob, type: :job do
           appeal_docketed: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Appeal Docketed with withdrawn hearing" do
       let!(:appeal_state) do
         create(
@@ -60,12 +65,14 @@ describe QuarterlyNotificationsJob, type: :job do
           hearing_withdrawn: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing to be Rescheduled / Privacy Act Pending for hearing postponed" do
       let!(:appeal_state) do
         create(
@@ -79,12 +86,14 @@ describe QuarterlyNotificationsJob, type: :job do
           privacy_act_pending: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing to be Rescheduled for hearing postponed" do
       let!(:appeal_state) do
         create(
@@ -97,12 +106,14 @@ describe QuarterlyNotificationsJob, type: :job do
           hearing_postponed: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing to be Rescheduled / Privacy Act Pending for scheduled in error" do
       let!(:appeal_state) do
         create(
@@ -116,12 +127,14 @@ describe QuarterlyNotificationsJob, type: :job do
           scheduled_in_error: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing to be Rescheduled for scheduled in error" do
       let!(:appeal_state) do
         create(
@@ -134,32 +147,34 @@ describe QuarterlyNotificationsJob, type: :job do
           scheduled_in_error: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing Scheduled / Privacy Act Pending with ihp task" do
+      let(:hearing) { create(:hearing, :with_tasks) }
       let!(:appeal_state) do
-        create(
-          :appeal_state,
-          appeal_id: appeal.id,
-          appeal_type: "Appeal",
-          created_by_id: user.id,
-          updated_by_id: user.id,
-          appeal_docketed: true,
-          hearing_scheduled: true,
-          privacy_act_pending: true,
-          vso_ihp_pending: true
-        )
+        hearing.appeal.appeal_state.tap do
+          _1.update!(
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            privacy_act_pending: true,
+            vso_ihp_pending: true
+          )
+        end
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "VSO IHP Pending / Privacy Act Pending" do
       let!(:appeal_state) do
         create(
@@ -173,50 +188,52 @@ describe QuarterlyNotificationsJob, type: :job do
           vso_ihp_pending: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing Scheduled with ihp task pending" do
+      let(:hearing) { create(:hearing, :with_tasks) }
       let!(:appeal_state) do
-        create(
-          :appeal_state,
-          appeal_id: appeal.id,
-          appeal_type: "Appeal",
-          created_by_id: user.id,
-          updated_by_id: user.id,
-          appeal_docketed: true,
-          hearing_scheduled: true,
-          vso_ihp_pending: true
-        )
+        hearing.appeal.appeal_state.tap do
+          _1.update!(
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            vso_ihp_pending: true
+          )
+        end
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing Scheduled / Privacy Act Pending" do
+      let(:hearing) { create(:hearing, :with_tasks) }
       let!(:appeal_state) do
-        create(
-          :appeal_state,
-          appeal_id: appeal.id,
-          appeal_type: "Appeal",
-          created_by_id: user.id,
-          updated_by_id: user.id,
-          appeal_docketed: true,
-          hearing_scheduled: true,
-          privacy_act_pending: true
-        )
+        hearing.appeal.appeal_state.tap do
+          _1.update!(
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            privacy_act_pending: true
+          )
+        end
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Privacy Act Pending" do
       let!(:appeal_state) do
         create(
@@ -229,12 +246,14 @@ describe QuarterlyNotificationsJob, type: :job do
           privacy_act_pending: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "VSO IHP Pending" do
       let!(:appeal_state) do
         create(
@@ -247,30 +266,32 @@ describe QuarterlyNotificationsJob, type: :job do
           vso_ihp_pending: true
         )
       end
+
       it "pushes a new message" do
         expect_message_to_be_queued
 
         subject
       end
     end
+
     context "Hearing Scheduled" do
+      let(:legacy_hearing) { create(:legacy_hearing) }
       let!(:appeal_state) do
-        create(
-          :appeal_state,
-          appeal_id: legacy_appeal.id,
-          appeal_type: "LegacyAppeal",
-          created_by_id: user.id,
-          updated_by_id: user.id,
-          appeal_docketed: true,
-          hearing_scheduled: true
-        )
-      end
-      it "pushes a new message" do
-        expect_message_to_be_queued
+        legacy_hearing.appeal.appeal_state.tap do
+          _1.update!(
+            appeal_docketed: true,
+            hearing_scheduled: true
+          )
+        end
 
-        subject
+        it "pushes a new message" do
+          expect_message_to_be_queued
+
+          subject
+        end
       end
     end
+
     context "cancelled appeal" do
       let!(:appeal_state) do
         create(
@@ -282,11 +303,13 @@ describe QuarterlyNotificationsJob, type: :job do
           appeal_cancelled: true
         )
       end
+
       it "does not push a new message" do
         subject
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
+
     context "decision mailed" do
       let!(:appeal_state) do
         create(
