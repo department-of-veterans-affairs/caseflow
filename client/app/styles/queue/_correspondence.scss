@@ -1128,16 +1128,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
   }
 
-  .cf-form-textinput.usa-input-error {
-    border-left: 4px solid $color-red;
-    margin-top: 0;
-    padding-bottom: 0;
-    padding-left: 0.5rem;
-    padding-top: 0;
-    position: relative;
-    right: 2px;
-  }
-
   .usa-input-error input {
     width: inherit;
   }
