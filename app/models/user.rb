@@ -213,6 +213,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
   end
 
+  def vha_business_line_admin_user?
+    VhaBusinessLine.singleton.admins.include?(self)
+  end
+
+  def can_request_for_issue_updates?
+    VhaBusinessLine.singleton.non_admins.include?(self)
+  end
+
   def can_view_overtime_status?
     (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
   end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# Create Users/Organizations used by other seed classes.
+# Create Users/Organizations used by other seed classes. Some users which exist that are not created in this file are
+# created using the seed file populate_caseflow_from_vacols.rb, which mimics Caseflow's creation of some users from
+# the VACOLS DB if they do not yet exist in the Caseflow DB.
 
 module Seeds
   # rubocop:disable Metrics/AbcSize
@@ -102,6 +104,7 @@ module Seeds
       add_mail_intake_to_all_bva_intake_users
       create_and_add_cda_control_group_users
       add_users_to_bva_dispatch
+      create_qa_test_users
 
       # Below originated in the VeteransHealthAdministration seed file
       setup_camo_org
@@ -714,9 +717,9 @@ module Seeds
     end
 
     def create_qa_test_users
-      create(:user, css_id: "QATTY1", full_name: "QA Attorney_1")
-      create(:user, css_id: "QATTY2", full_name: "QA Attorney_2")
-      create(:user, css_id: "QATTY3", full_name: "QA Attorney_3")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY1", full_name: "QA Attorney_1")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY2", full_name: "QA Attorney_2")
+      create(:user, :with_vacols_titled_attorney_record, css_id: "QATTY3", full_name: "QA Attorney_3")
       create(:user, :judge_inactive, :with_inactive_vacols_judge_record,
              css_id: "QINELIGVLJ", full_name: "QA Ineligible Judge")
       create(:user, :judge, :with_vacols_judge_record,
