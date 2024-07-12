@@ -1249,20 +1249,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
       max-width: 300%;
       margin-bottom: 15px;
     }
-    label {
-      max-width: none;
-    }
-  }
 
-  .auto-assign-container {
-    h3 {
-      margin: 15px 0;
-    }
     label {
       max-width: none;
-      span {
-        margin-left: 10px;
-      }
     }
   }
 
@@ -1293,23 +1282,27 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   display: inline-flex;
   align-items: center;
   gap: 20px;
+
   h1 {
     float: left;
     align-self: center;
     font-weight: bold;
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
+
   p {
     font-size: 18px;
     color: $color-black;
     margin-top: 20px;
     margin-bottom: 20px;
   }
+
   .copy-id {
     display: inline-flex;
-    float:left;
+    float: left;
     align-items: center;
   }
+
   .last-item {
     margin-left: auto;
   }
