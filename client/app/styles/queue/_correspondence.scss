@@ -1042,29 +1042,23 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin: 0 5%;
   }
 
-  .cf-form-textinput.usa-input-error {
-    border-left: 4px solid $color-red;
-    margin-top: 0;
-    padding-bottom: 0;
-    padding-left: 0.5rem;
-    padding-top: 0;
-    position: relative;
-    right: 2px;
-
-    .input-container {
-      input {
-        width: inherit;
-      }
-    }
-  }
-
   .cf-form-textinput {
     padding-top: 6.2%;
     margin-bottom: 0;
 
+    &.usa-input-error {
+      border-left: 4px solid $color-red;
+      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: 0.5rem;
+      position: relative;
+      right: 2px;
+    }
+
     .input-container {
       input {
-        margin: 0;
+        width: inherit;
         height: 37.5px;
       }
     }
