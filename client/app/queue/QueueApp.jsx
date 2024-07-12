@@ -117,7 +117,6 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
-import CorrespondenceDetails from './correspondence/details/CorrespondenceDetails';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -723,12 +722,6 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedCorrespondenceDetails = (props) => (
-    <CorrespondenceDetails {...props.match.params}
-      {...this.props}
-    />
-  );
-
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
@@ -800,13 +793,6 @@ class QueueApp extends React.PureComponent {
               path="/queue/correspondence"
               title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
               render={this.routedCorrespondenceCases}
-            />
-
-            <PageRoute
-              exact
-              path ="/queue/correspondence/:correspondence_uuid"
-              title={`${PAGE_TITLES.CORRESPONDENCE_DETAILS}`}
-              render={this.routedCorrespondenceDetails}
             />
 
             <PageRoute
