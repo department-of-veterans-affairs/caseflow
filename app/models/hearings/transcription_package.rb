@@ -7,6 +7,8 @@ class TranscriptionPackage < CaseflowRecord
   has_many :transcription_package_legacy_hearings
   has_many :legacy_hearings, through: :transcription_package_legacy_hearings
 
+  
+
   def contractor_name
     contractor&.name
   end
