@@ -58,6 +58,7 @@ class SeedDB
     call_and_log_seed_step Seeds::UpdateCorrespondenceNod
     Judge.list_all
     Attorney.list_all
+    call_and_log_seed_step Seeds::IssueModificationRequest
   end
 end
 
