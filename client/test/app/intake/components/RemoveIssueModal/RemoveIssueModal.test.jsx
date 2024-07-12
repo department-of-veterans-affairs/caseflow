@@ -40,7 +40,7 @@ describe('RemoveIssueModal', () => {
 
   it('calls the removeIssue function when button is clicked', () => {
     setup(mockProps);
-    screen.getByText('Remove').click();
+    screen.getByText('Yes, remove issue').click();
 
     expect(mockOnClickIssueAction).toHaveBeenCalled();
   });

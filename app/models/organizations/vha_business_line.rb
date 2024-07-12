@@ -6,15 +6,14 @@ class VhaBusinessLine < BusinessLine
   end
 
   def included_tabs
-    [:incomplete, :pending, :in_progress, :completed]
+    [:incomplete, :in_progress, :completed]
   end
 
   def tasks_query_type
     {
       incomplete: "on_hold",
       in_progress: "active",
-      completed: "recently_completed",
-      pending: "active"
+      completed: "recently_completed"
     }
   end
 

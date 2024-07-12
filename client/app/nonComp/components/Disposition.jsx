@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import moment from 'moment';
-import { css } from 'glamor';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -21,12 +20,6 @@ import {
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission
 } from '../util';
-import Link from 'app/components/Link';
-import Alert from '../../components/Alert';
-
-const messageStyling = css({
-  fontSize: '17px !important',
-});
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -164,7 +157,6 @@ class NonCompDispositions extends React.PureComponent {
     const {
       appeal,
       decisionIssuesStatus,
-      isBusinessLineAdmin,
       task
     } = this.props;
 
@@ -177,10 +169,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    const displayPOAComponent = task.business_line === 'vha';
-    const displayRequestIssueModification = (!displayPOAComponent || isBusinessLineAdmin);
-
-    const decisionHasPendingRequestIssues = task.pending_issue_modification_count > 0;
+    let displayPOAComponent = this.props.task.business_line === 'vha';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -193,22 +182,10 @@ class NonCompDispositions extends React.PureComponent {
         </div>
       </React.Fragment>;
 
-      editIssuesLink = (displayRequestIssueModification) ? <React.Fragment>
-        <Link button="secondary" href={appeal.editIssuesUrl}>Edit Issues</Link>
-      </React.Fragment> : <React.Fragment>
-        <Link button="secondary" href={appeal.editIssuesUrl}>Request issue modification</Link>
-        <Button disabled>Edit Issues</Button>
+      editIssuesLink = <React.Fragment>
+        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
       </React.Fragment>;
     }
-
-    const decisionHeaderText = displayRequestIssueModification ? COPY.DISPOSITION_DECISION_HEADER_ADMIN :
-      COPY.DISPOSITION_DECISION_HEADER_NONADMIN;
-
-    const bannerDecisionBannerText = (decisionHasPendingRequestIssues && isBusinessLineAdmin) ?
-      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_ADMIN :
-      COPY.VHA_BANNER_DISPOSITIONS_CANNOT_BE_UPDATED_NON_ADMIN;
-
-    const disableIssueFields = Boolean(task.closed_at) || decisionHasPendingRequestIssues;
 
     return <div>
       {displayPOAComponent && <div className="cf-decisions">
@@ -227,23 +204,15 @@ class NonCompDispositions extends React.PureComponent {
           {displayPOAComponent && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
-              <h2 style={{ marginBottom: '30px' }}>Decision</h2>
+              <h2>Decision</h2>
+              <div>Review each issue and assign the appropriate dispositions.</div>
             </div>
             <div className="usa-width-one-half cf-txt-r">
               {editIssuesLink}
             </div>
           </div>
-          <div className="usa-grid-full">
-            {isBusinessLineAdmin && decisionHasPendingRequestIssues ? null :
-              <div className="usa-width-one-whole" style={{ paddingBottom: '30px' }} >{decisionHeaderText}</div>
-            }
-            {decisionHasPendingRequestIssues ?
-              <div className="usa-width-one-whole">
-                <Alert type="info" messageStyling={messageStyling} message={bannerDecisionBannerText} />
-              </div> :
-              null}
-          </div>
         </div>
+
         <div className="cf-decision-list">
           {
             this.state.requestIssues.map((issue, index) => {
@@ -252,7 +221,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={disableIssueFields}
+                disabled={Boolean(task.closed_at)}
               />;
             })
           }
@@ -266,7 +235,7 @@ class NonCompDispositions extends React.PureComponent {
               name="decision-date"
               value={decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={disableIssueFields}
+              readOnly={Boolean(task.closed_at)}
               type="date"
             />
           </InlineForm>
@@ -292,7 +261,6 @@ NonCompDispositions.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
-  isBusinessLineAdmin: PropTypes.bool,
   handleSave: PropTypes.func
 };
 
@@ -300,7 +268,6 @@ export default connect(
   (state) => ({
     appeal: state.nonComp.appeal,
     task: state.nonComp.task,
-    decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
-    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   })
 )(NonCompDispositions);
