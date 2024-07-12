@@ -79,8 +79,14 @@ class HearingRequestDistributionQuery
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
     # yet, so we add with_no_hearings to retrieve those appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+    no_hearings_or_only_no_held_hearings = []
+    no_hearings_or_no_held_hearings.each do |appeal|
+      if appeal.hearings.blank? || appeal.hearings.pluck(:disposition).exclude?("held")
+        no_hearings_or_only_no_held_hearings << appeal
+      end
+    end
 
-    [*result, *no_hearings_or_no_held_hearings].uniq
+    [*result, *no_hearings_or_only_no_held_hearings].uniq
   end
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
