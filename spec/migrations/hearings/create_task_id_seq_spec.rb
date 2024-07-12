@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails_helper"
 require Rails.root.join("db", "migrate", "20240712140629_create_task_id_seq")
 

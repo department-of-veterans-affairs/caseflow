@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails_helper"
 require Rails.root.join("db", "migrate", "20240712142557_add_task_id_to_transcriptions")
 
