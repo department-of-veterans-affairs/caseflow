@@ -28,9 +28,8 @@ jest.mock('app/components/Alert', () => ({ type, title, message }) => (
 // Mock the ApiUtil.post method
 jest.spyOn(ApiUtil, 'post').mockImplementation(() => Promise.resolve({
   body: {
-    invalid_file_numbers: '001',
-    valid_file_nums: '002',
-    correspondence_size: 5
+    invalid_file_numbers: [],
+    valid_file_nums: ['002']
   }
 }));
 
@@ -72,13 +71,42 @@ describe('TestCorrespondence', () => {
 
   it('displays success and warning alerts on form submission', async () => {
     render(<TestCorrespondence {...props} />);
+    const textarea = screen.getByRole('textbox');
+    const numberField = screen.getByRole('spinbutton');
     const button = screen.getByRole('button', { name: /Generate correspondence/i });
+
+    fireEvent.change(textarea, { target: { value: '123,456' } });
+    fireEvent.change(numberField, { target: { value: '5' } });
 
     fireEvent.click(button);
 
     await waitFor(() => {
       expect(screen.getByText(COPY.CORRESPONDENCE_ADMIN.SUCCESS.TITLE)).toBeInTheDocument();
+      expect(screen.queryByText(COPY.CORRESPONDENCE_ADMIN.INVALID_ERROR.TITLE)).not.toBeInTheDocument();
+    });
+  });
+
+  it('displays invalid veterans banner on API response with invalid file numbers', async () => {
+    ApiUtil.post.mockResolvedValueOnce({
+      body: {
+        invalid_file_numbers: ['invalid1'],
+        valid_file_nums: []
+      }
+    });
+
+    render(<TestCorrespondence {...props} />);
+    const textarea = screen.getByRole('textbox');
+    const numberField = screen.getByRole('spinbutton');
+    const button = screen.getByRole('button', { name: /Generate correspondence/i });
+
+    fireEvent.change(textarea, { target: { value: 'invalid1' } });
+    fireEvent.change(numberField, { target: { value: '5' } });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
       expect(screen.getByText(COPY.CORRESPONDENCE_ADMIN.INVALID_ERROR.TITLE)).toBeInTheDocument();
+      expect(screen.queryByText(COPY.CORRESPONDENCE_ADMIN.SUCCESS.TITLE)).not.toBeInTheDocument();
     });
   });
 });

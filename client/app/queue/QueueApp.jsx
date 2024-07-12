@@ -645,6 +645,8 @@ class QueueApp extends React.PureComponent {
     <ReviewPackageLoadingScreen
       {...props.match.params}>
       <CorrespondenceReviewPackage
+        correspondenceTypes={this.props.correspondenceTypes}
+        hasEfolderFailedTask={this.props.hasEfolderFailedTask}
         inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
         isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
         userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
@@ -1569,6 +1571,8 @@ QueueApp.propTypes = {
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
   correspondence: PropTypes.object,
+  correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTask: PropTypes.bool,
   priorMail: PropTypes.array,
   veteranInformation: PropTypes.string,
   autoTexts: PropTypes.array,
