@@ -48,18 +48,6 @@ class CorrespondenceController < ApplicationController
     render json: status_details, status: :ok
   end
 
-  def correspondence_details
-    @correspondence = WorkQueue::CorrespondenceSerializer
-      .new(correspondence)
-      .serializable_hash[:data][:attributes]
-    respond_to do |format|
-      format.html {}
-      format.json do
-        render json: { correspondence: correspondence }
-      end
-    end
-  end
-
   private
 
   def corr_controller_params

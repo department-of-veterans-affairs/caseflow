@@ -1,29 +1,23 @@
 # frozen_string_literal: true
 
-RSpec.feature("The Correspondence Cases page") do
+RSpec.feature("The Correspondence Details page") do
   include CorrespondenceHelpers
   include CorrespondenceTaskHelpers
 
-  let(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
-  let!(:correspondence) {
-    create(:correspondence,
-           :with_correspondence_intake_task,
-           assigned_to: current_user,
-           veteran_id: veteran.id,
-           uuid: SecureRandom.uuid,
-           va_date_of_receipt: Time.zone.local(2023, 1, 1))
-  }
+  let(:current_user) { create(:user) }
+  let!(:veteran) { create(:veteran, first_name: "John", last_name: "Testingman", file_number: "8675309") }
+  let!(:correspondence) { create(:correspondence, veteran: veteran) }
 
   context "correspondence details" do
     before :each do
-      setup_access
-      @correspondence = correspondence
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "properly loads the details page" do
-      visit "/queue/correspondence/#{correspondence.uuid}/correspondence_details"
+      visit "/queue/correspondence/#{correspondence.uuid}"
 
-      binding.pry
       # Veteran Details
       expect(page).to have_content("8675309")
       expect(page).to have_content("John Testingman")
