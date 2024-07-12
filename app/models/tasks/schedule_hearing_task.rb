@@ -189,10 +189,10 @@ class ScheduleHearingTask < Task
     if params[:status] == Constants.TASK_STATUSES.completed
       # Extract the schedule hearing task values and create a hearing from them
       task_values = params.delete(:business_payloads)[:values]
-      hearing = create_hearing(task_values)
 
       # Convert scheduled_time_string to a UTC time string
       task_values[:scheduled_time_string] = convert_scheduled_time_to_utc(task_values[:scheduled_time_string])
+      hearing = create_hearing(task_values)
 
       # Create the virtual hearing if the attributes have been passed
       if task_values[:virtual_hearing_attributes].present?
