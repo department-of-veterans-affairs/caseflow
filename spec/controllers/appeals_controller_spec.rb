@@ -1060,7 +1060,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when adding a contested claim issue" do
+    context "Adding a contested claim issue" do
       let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
       let!(:appeal) do
         create(:appeal, :with_post_intake_tasks, docket_type: docket)
@@ -1069,7 +1069,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       before do
         User.authenticate!(user: current_user)
-        # Fakes::Initializer.load!
       end
 
       subject do
@@ -1109,7 +1108,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "with the feature toggle on" do
         before do
-          # User.authenticate!(roles: ["Mail Intake"])
           FeatureToggle.enable!(:cc_appeal_workflow)
           FeatureToggle.enable!(:indicator_for_contested_claims)
           ClerkOfTheBoard.singleton
