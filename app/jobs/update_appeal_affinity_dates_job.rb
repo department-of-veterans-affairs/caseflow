@@ -51,11 +51,11 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         .where(distribution_id: @distribution_id)
         .group("docket", "priority")
         .maximum("receipt_date")
-    
+
     legacy_nonpriority_receipt_date = 
       DistributedCase.where(docket: "legacy", priority: false, distribution_id: distribution.id)
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
-    
+   
     legacy_priority_receipt_date = 
       DistributedCase.where(docket: "legacy", priority: true, distribution_id: distribution.id)
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
@@ -75,7 +75,22 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         .group("docket", "priority")
         .maximum("receipt_date")
 
-    format_distributed_case_hash(distributed_cases_hash)
+    legacy_nonpriority_receipt_date =  
+      DistributeCase
+        .includes(:distribution)
+        .where(docket: "legacy", priority: false, distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
+        .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
+
+    legacy_priority_receipt_date =
+      DistributeCase
+        .includes(:distribution)
+        .where(docket: "legacy", priority: true, distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
+        .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
+
+    legacy_nonpriority_hash = { docket: "legacy", priority: false, receipt_date: legacy_nonpriority_receipt_date }
+    legacy_priority_hash = { docket: "legacy", priority: true, receipt_date: legacy_priority_receipt_date }
+
+    format_distributed_case_hash(distributed_cases_hash) << legacy_nonpriority_hash << legacy_priority_hash
   end
 
   def format_distributed_case_hash(distributed_cases_hash)
