@@ -10,12 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_21_083822) do
+ActiveRecord::Schema.define(version: 2024_07_12_140629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
-  
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
     t.integer "appeal_id", comment: "The ID of the appeal this motion is associated with"
