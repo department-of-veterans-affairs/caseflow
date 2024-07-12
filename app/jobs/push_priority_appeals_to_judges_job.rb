@@ -133,10 +133,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  def disable_legacy?
-    FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
-  end
-
   #
   # Reporting methods
   #
@@ -190,9 +186,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
     end
-    unless disable_legacy?
-      report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
-    end
+
+    report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
   end
 
   def legacy_not_genpop_count
