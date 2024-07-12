@@ -49,10 +49,10 @@ class ClaimantValidator
   end
 
   def validate_claimant_address
-    if claimant.address_line_1.nil? && !claimant.from_decision_review_created_event?
+    if claimant.address_line_1.nil? && !claimant&.from_decision_review_created_event?
       errors[:address] << ERRORS[:blank]
       decision_review.errors[:claimant] << ERRORS[:claimant_address_required]
-    elsif !claimant_address_lines_valid?
+    elsif !claimant_address_lines_valid? && !claimant&.from_decision_review_created_event?
       errors[:address] << ERRORS[:invalid]
       decision_review.errors[:claimant] << ERRORS[:claimant_address_invalid]
     end
