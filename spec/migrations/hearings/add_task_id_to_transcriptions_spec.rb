@@ -1,5 +1,5 @@
-require 'test_helper'
-require '20240711165638_add_task_id_to_transcriptions'
+# require 'test_helper'
+require Rails.root.join('db', 'migrate', '20240712001117_add_task_id_to_transcriptions')
 
 class AddTaskIdToTranscriptionsTest < ActiveSupport::TestCase
   # Setup the migration instance
