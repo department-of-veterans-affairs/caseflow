@@ -7,7 +7,6 @@ import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
-import { COLORS } from '../../../../../constants/AppConstants';
 import { formatDateStr } from 'app/util/DateUtil';
 
 export const ConfirmCorrespondenceView = (props) => {
