@@ -118,6 +118,7 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
   end
 
+  # :reek:FeatureEnvy
   def update_open_review_package_tasks
     begin
       ActiveRecord::Base.transaction do
