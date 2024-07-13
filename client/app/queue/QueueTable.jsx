@@ -646,7 +646,7 @@ export default class QueueTable extends React.PureComponent {
           preparedTasks = tasksWithAppealsFromRawTasks(tasks);
         }
 
-        const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
+        const preparedResponse = Object.assign({ ...response.body }, { tasks: preparedTasks });
 
         this.setState({
           cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
