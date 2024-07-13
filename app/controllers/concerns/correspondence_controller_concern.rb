@@ -71,6 +71,7 @@ module CorrespondenceControllerConcern
     end
   end
 
+  # :reek:FeatureEnvy
   def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
       "assigned #{task_count} Correspondence to #{user.css_id}."
@@ -85,6 +86,7 @@ module CorrespondenceControllerConcern
     }
   end
 
+  # :reek:FeatureEnvy
   def multiple_assignment_banner_text(user, errors, task_count, action_prefix: "")
     success_header = "You have successfully #{action_prefix}"\
     "assigned #{task_count} Correspondences to #{user.css_id}."
@@ -100,6 +102,7 @@ module CorrespondenceControllerConcern
     }
   end
 
+  # :reek:FeatureEnvy
   def build_multi_error_message(errors, action_prefix)
     failure_message = []
 
