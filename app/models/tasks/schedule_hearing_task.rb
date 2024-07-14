@@ -189,9 +189,6 @@ class ScheduleHearingTask < Task
     if params[:status] == Constants.TASK_STATUSES.completed
       # Extract the schedule hearing task values and create a hearing from them
       task_values = params.delete(:business_payloads)[:values]
-
-      # Convert scheduled_time_string to a UTC time string
-      task_values[:processed_scheduled_time] = convert_scheduled_time_to_utc(task_values[:scheduled_time_string])
       hearing = create_hearing(task_values)
 
       # Create the virtual hearing if the attributes have been passed
@@ -217,19 +214,6 @@ class ScheduleHearingTask < Task
 
     # Return the created tasks
     created_tasks
-  end
-
-  def convert_scheduled_time_to_utc(time_string)
-    if time_string.present?
-      # Find the AM/PM index value in the string
-      index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
-
-      # Generate the scheduled_time in UTC and update the scheduled_time_string
-      scheduled_time = time_string[0..index].strip
-      timezone = time_string[index..-1].strip
-      return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
-    end
-    nil
   end
 
   # Method to change the hearing request type on an appeal
@@ -283,8 +267,7 @@ class ScheduleHearingTask < Task
         appeal: appeal,
         hearing_location_attrs: task_values[:hearing_location]&.to_hash,
         scheduled_time_string: task_values[:scheduled_time_string],
-        notes: task_values[:notes],
-        processed_scheduled_time: task_values[:processed_scheduled_time]
+        notes: task_values[:notes]
       },
       override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
     )

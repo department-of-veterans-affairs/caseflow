@@ -60,6 +60,19 @@ class HearingTimeService
     def remove_time_string_params(params)
       params.reject { |param| param.to_sym == :scheduled_time_string }
     end
+
+    def convert_scheduled_time_to_utc(time_string)
+      if time_string.present?
+        # Find the AM/PM index value in the string
+        index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
+
+        # Generate the scheduled_time in UTC and update the scheduled_time_string
+        scheduled_time = time_string[0..index].strip
+        timezone = time_string[index..-1].strip
+        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+      end
+      nil
+    end
   end
 
   def initialize(hearing:)
