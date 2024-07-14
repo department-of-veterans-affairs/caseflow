@@ -130,6 +130,8 @@ module CorrespondenceControllerConcern
   end
 
   def error_reason(error)
+    return 'None' unless error
+    
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.SENSITIVITY_ERROR then "of sensitivity level mismatch"
