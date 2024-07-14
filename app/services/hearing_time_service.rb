@@ -51,16 +51,6 @@ class HearingTimeService
       "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
     end
 
-    private
-
-    def pad_time(time)
-      "0#{time}".chars.last(2).join
-    end
-
-    def remove_time_string_params(params)
-      params.reject { |param| param.to_sym == :scheduled_time_string }
-    end
-
     def convert_scheduled_time_to_utc(time_string)
       if time_string.present?
         # Find the AM/PM index value in the string
@@ -72,6 +62,16 @@ class HearingTimeService
         return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
       end
       nil
+    end
+
+    private
+
+    def pad_time(time)
+      "0#{time}".chars.last(2).join
+    end
+
+    def remove_time_string_params(params)
+      params.reject { |param| param.to_sym == :scheduled_time_string }
     end
   end
 
