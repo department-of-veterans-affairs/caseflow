@@ -30,7 +30,11 @@ class HearingTimeService
 
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = Time.zone.parse(scheduled_time_string).utc
+      scheduled_time_in_utc = if scheduled_time_string.is_a?(String)
+                                Time.zone.parse(scheduled_time_string).utc
+                              else
+                                scheduled_time_string
+                              end
 
       time = scheduled_for.to_datetime
       Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
