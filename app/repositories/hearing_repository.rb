@@ -58,7 +58,7 @@ class HearingRepository
       if attrs[:appeal].is_a?(LegacyAppeal)
         scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
           scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: attrs[:scheduled_time_string]
+          scheduled_time_string: attrs[:processed_scheduled_time]
         )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
@@ -75,7 +75,7 @@ class HearingRepository
           appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
-          scheduled_time: attrs[:scheduled_time_string],
+          scheduled_time: attrs[:processed_scheduled_time],
           scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
           override_full_hearing_day_validation: override_full_hearing_day_validation,
           notes: attrs[:notes]
