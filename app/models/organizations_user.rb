@@ -28,6 +28,15 @@ class OrganizationsUser < CaseflowRecord
       existing_record(user, organization)&.update!(admin: false)
     end
 
+    def update_user_conference_provider(user, new_service_name)
+      # This could be an upsert once we get to Rails 6
+      if user.meeting_type
+        user.meeting_type.update!(service_name: new_service_name)
+      else
+        MeetingType.create!(service_name: new_service_name, conferenceable: user)
+      end
+    end
+
     def remove_user_from_organization(user, organization)
       if user_is_judge_of_team?(user, organization)
         fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR

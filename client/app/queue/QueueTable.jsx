@@ -161,6 +161,7 @@ export const HeaderRow = (props) => {
                 valueTransform={column.filterValueTransform}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                dateFilter={column.enableFilter === 'date'}
               />
             );
           } else if (props.useTaskPagesApi && column.filterOptions) {
@@ -624,7 +625,7 @@ export default class QueueTable extends React.PureComponent {
     // If we already have the tasks cached then we set the state and return early.
     const responseFromCache = this.state.cachedResponses[endpointUrl];
 
-    if (responseFromCache) {
+    if (responseFromCache && !this.props.skipCache) {
       this.setState({ tasksFromApi: responseFromCache.tasks });
 
       return Promise.resolve(true);
@@ -638,7 +639,12 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        let preparedTasks = tasks;
+
+        // modify data from raw tasks if prepareTasks is true
+        if (this.props.prepareTasks) {
+          preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        }
 
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
@@ -647,6 +653,10 @@ export default class QueueTable extends React.PureComponent {
           tasksFromApi: preparedTasks,
           loadingComponent: null
         });
+
+        if (this.props.onTableDataUpdated) {
+          this.props.onTableDataUpdated(preparedTasks);
+        }
 
         this.updateAddressBar();
       }).
@@ -843,6 +853,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  prepareTasks: PropTypes.bool,
+  onTableDataUpdated: PropTypes.func,
+  skipCache: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
