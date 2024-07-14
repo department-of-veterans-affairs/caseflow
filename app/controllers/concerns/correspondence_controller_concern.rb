@@ -72,33 +72,33 @@ module CorrespondenceControllerConcern
   end
 
   # :reek:FeatureEnvy
-  def single_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  def single_assignment_banner_text(*args, action_prefix: "")
     success_header_unassigned = "You have successfully #{action_prefix}"\
-      "assigned #{task_count} Correspondence to #{user.css_id}."
-    failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{user.css_id}"
+      "assigned #{args[2]} Correspondence to #{args[0].css_id}."
+    failure_header_unassigned = "Correspondence was not #{action_prefix}assigned to #{args[0].css_id}"
     success_message = "Please go to your individual queue to see any self-assigned correspondence."
 
-    failure_message = build_single_error_message(action_prefix, error_reason(errors[0]))
+    failure_message = build_single_error_message(action_prefix, error_reason(args[1][0]))
 
     {
-      header: errors.empty? ? success_header_unassigned : failure_header_unassigned,
-      message: errors.empty? ? success_message : failure_message
+      header: args[1].empty? ? success_header_unassigned : failure_header_unassigned,
+      message: args[1].empty? ? success_message : failure_message
     }
   end
 
   # :reek:FeatureEnvy
-  def multiple_assignment_banner_text(user, errors, task_count, action_prefix: "")
+  def multiple_assignment_banner_text(*args, action_prefix: "")
     success_header = "You have successfully #{action_prefix}"\
-    "assigned #{task_count} Correspondences to #{user.css_id}."
+    "assigned #{args[2]} Correspondences to #{args[0].css_id}."
     success_message = "Please go to your individual queue to see any self-assigned correspondences."
-    failure_header = "Not all correspondence were #{action_prefix}assigned to #{user.css_id}"
+    failure_header = "Not all correspondence were #{action_prefix}assigned to #{args[0].css_id}"
 
-    failure_message = build_multi_error_message(errors, action_prefix)
+    failure_message = build_multi_error_message(args[1], action_prefix)
 
     # return JSON message
     {
-      header: errors.blank? ? success_header : failure_header,
-      message: errors.blank? ? success_message : failure_message.join(" \n")
+      header: args[1].blank? ? success_header : failure_header,
+      message: args[1].blank? ? success_message : failure_message.join(" \n")
     }
   end
 
@@ -143,11 +143,11 @@ module CorrespondenceControllerConcern
     "Case was not #{action_prefix}assigned to user because #{reason}."
   end
 
-  def build_error_message(count, action_prefix, reason, use_bullet)
+  def build_error_message(*args)
     # Build error message for multiple correspondence based on error types
-    message = "#{count} cases were not #{action_prefix}assigned to user"
+    message = "#{args[0]} cases were not #{args[1]}assigned to user"
     message = "• #{message}" if use_bullet
-    message += " because #{reason}." unless count.zero?
+    message += " because #{args[2]}." unless args[0].zero?
     message
   end
 
