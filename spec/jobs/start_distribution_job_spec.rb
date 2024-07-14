@@ -7,8 +7,9 @@ describe StartDistributionJob do
 
   context ".perform" do
     subject { StartDistributionJob.perform_now(distribution) }
-    it "calls distribute!" do
+    it "calls distribute! and queues the UpdateAppealAffinityDatesJob" do
       expect(distribution).to receive(:distribute!)
+      expect_any_instance_of(UpdateAppealAffinityDatesJob).to receive(:perform).with(distribution.id)
       subject
     end
 

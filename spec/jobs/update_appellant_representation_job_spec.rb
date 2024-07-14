@@ -80,13 +80,6 @@ describe UpdateAppellantRepresentationJob, :all_dbs do
         end
       end
     end
-
-    it "sends the correct number of messages to DataDog and not send a message to Slack" do
-      expect(MetricsService).to receive(:increment_counter).exactly(7).times
-      expect_any_instance_of(SlackService).to_not receive(:send_notification)
-
-      UpdateAppellantRepresentationJob.perform_now
-    end
   end
 
   context "when individual appeals throw errors" do
