@@ -164,12 +164,14 @@ feature "Attorney checkout flow", :all_dbs do
     # joins the user with the organization to grant access to role and org permissions
     FeatureToggle.enable!(:mst_identification)
     FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
 
   after do
     FeatureToggle.disable!(:mst_identification)
     FeatureToggle.disable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
     FeatureToggle.disable!(:acd_distribute_by_docket_date)
   end
 
