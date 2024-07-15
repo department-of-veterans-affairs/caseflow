@@ -138,6 +138,8 @@ RSpec.feature "Admin UI" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
+      empty_error_message = "Please enter a value greater than or equal to 0"
+
       step "enabled and disabled levers display correctly" do
         # From affinity_days_levers_spec.rb
         option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
@@ -166,9 +168,8 @@ RSpec.feature "Admin UI" do
         expect(page).to have_button("toggle-switch-#{ama_evidence_submissions}", disabled: false)
       end
 
-      step "error displays for invalid input" do
+      step "error displays for invalid input on time goals section" do
         # From ama_np_dist_goals_by_docket_lever_spec.rb
-        empty_error_message = "Please enter a value greater than or equal to 0"
 
         fill_in ama_direct_reviews_field, with: "ABC"
         expect(page).to have_field(ama_direct_reviews_field, with: "")
@@ -179,7 +180,7 @@ RSpec.feature "Admin UI" do
         expect(find("##{ama_direct_reviews_field}-lever").has_no_content?(empty_error_message)).to eq(true)
       end
 
-      step "error clears with valid input" do
+      step "time goals section error clears with valid input" do
         # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
@@ -188,6 +189,33 @@ RSpec.feature "Admin UI" do
         fill_in ama_direct_reviews_field, with: "123"
         click_save_button
         click_modal_confirm_button
+      end
+
+      step "batch size lever section errors display with invalid inputs" do
+        # From batch_size_levers_spec.rb
+        expect(page).to have_field("#{alternate_batch_size}-field", readonly: false)
+        expect(page).to have_field("#{batch_size_per_attorney}-field", readonly: false)
+        expect(page).to have_field("#{request_more_cases_minimum}-field", readonly: false)
+
+        fill_in "#{alternate_batch_size}-field", with: "ABC"
+        fill_in "#{batch_size_per_attorney}-field", with: "-1"
+        fill_in "#{request_more_cases_minimum}-field", with: "(*&)"
+
+        expect(page).to have_field("#{alternate_batch_size}-field", with: "")
+        expect(page).to have_field("#{batch_size_per_attorney}-field", with: "1")
+        expect(page).to have_field("#{request_more_cases_minimum}-field", with: "")
+
+        expect(find("##{alternate_batch_size} > div > div > span")).to have_content(empty_error_message)
+        expect(find("##{request_more_cases_minimum} > div > div > span")).to have_content(empty_error_message)
+      end
+
+      step "batch size lever section errors clear with valid inputs" do
+        # From batch_size_levers_spec.rb
+        fill_in "#{alternate_batch_size}-field", with: "42"
+        fill_in "#{batch_size_per_attorney}-field", with: "32"
+        fill_in "#{request_more_cases_minimum}-field", with: "25"
+
+        expect(page).not_to have_content(empty_error_message)
       end
 
       step "lever history displays on page" do
