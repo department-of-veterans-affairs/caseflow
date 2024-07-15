@@ -553,8 +553,8 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "User is a member of the Supervisory Senior Council" do
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
+  context "User is a member of the Supervisory Senior Counsel" do
+    let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     scenario "less than 2 request issues on the appeal, the split appeal button doesn't show" do
@@ -565,8 +565,8 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
+  context "The user is a member of Supervisory Senior Counsel and the appeal has 2 or more tasks" do
+    let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let!(:request_issue_1) do
