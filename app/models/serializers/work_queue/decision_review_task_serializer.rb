@@ -47,11 +47,11 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   def self.representative_tz(object)
-    decision_review(object)&.representative_tz
+    object[:claimant_name] || decision_review(object)&.representative_tz
   end
 
   attribute :has_poa do |object|
-    decision_review(object).claimant&.power_of_attorney.present?
+    object[:claimant_name] || decision_review(object).claimant&.power_of_attorney.present?
   end
 
   attribute :claimant do |object|
@@ -79,7 +79,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :power_of_attorney do |object|
-    if power_of_attorney(object).nil?
+    if object[:claimant_name] || power_of_attorney(object).nil?
       nil
     else
       {
@@ -103,6 +103,11 @@ class WorkQueue::DecisionReviewTaskSerializer
 
   attribute :issue_types do |object|
     object[:issue_types] || request_issues(object).active.pluck(:nonrating_issue_category).join(",")
+  end
+
+  attribute :pending_issue_modification_count do |object|
+    object[:pending_issue_count] ||
+      decision_review(object).pending_issue_modification_requests.size
   end
 
   attribute :tasks_url do |object|
