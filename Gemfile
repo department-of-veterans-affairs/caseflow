@@ -10,14 +10,14 @@ gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
+gem "aws-sdk"
 # BGS
-
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "871f7034c502f8d7101bde74e58606716b601c70"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "716b58caf2116da5fca21c3b3aeea6c9712f3b9d"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -91,6 +91,9 @@ gem "redis-namespace", "~> 1.11.0"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rswag-api"
+gem "rswag-ui"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -139,6 +142,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
+  gem "rswag-specs"
   gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
