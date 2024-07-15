@@ -160,12 +160,21 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         existing_affinity.update!(affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
         existing_affinity
       else
-        appeal.create_appeal_affinity!(
-          docket: appeal.docket_type,
-          priority: priority,
-          affinity_start_date: Time.zone.now,
-          distribution_id: @distribution_id
-        )
+        if appeal.is_a?(VACOLS::Case)
+          appeal.create_appeal_affinity!(
+            docket: LegacyDocket.docket_type,
+            priority: priority,
+            affinity_start_date: Time.zone.now,
+            distribution_id: @distribution_id
+          )
+        else
+          appeal.create_appeal_affinity!(
+            docket: appeal.docket_type,
+            priority: priority,
+            affinity_start_date: Time.zone.now,
+            distribution_id: @distribution_id
+          )         
+        end
       end
     end
   end
