@@ -47,7 +47,7 @@ RSpec.feature "Admin UI" do
   let(:nod_adjustment) { Constants.DISTRIBUTION.nod_adjustment }
   let(:bust_backlog) { Constants.DISTRIBUTION.bust_backlog }
 
-  let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
+  let(:alternative_batch_size_field) { "#{Constants.DISTRIBUTION.alternative_batch_size}-field" }
 
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     let!(:audit_lever_entry_1) do
@@ -77,7 +77,7 @@ RSpec.feature "Admin UI" do
       end
     end
 
-    it "the lever control page renders correctly", :aggregate_failures do
+    it "the lever control page renders correctly and has no options to change/save values", :aggregate_failures do
       step "page renders" do
         visit "case-distribution-controls"
         confirm_page_and_section_loaded
@@ -193,6 +193,42 @@ RSpec.feature "Admin UI" do
         expect(find("##{bust_backlog}-value")).to have_content(bust_backlog_value + bust_backlog_lever.unit)
       end
 
+      step "cancelling changes resets values" do
+        # Capybara locally is not setting clearing the field prior to entering the new value so fill with ""
+        fill_in ama_direct_reviews_field, with: ""
+
+        # From lever_buttons_spec.rb
+        fill_in ama_direct_reviews_field, with: "123"
+        expect(page).to have_field(ama_direct_reviews_field, with: "123")
+        click_cancel_button
+        expect(page).to have_field(ama_direct_reviews_field, with: "365")
+
+        fill_in ama_direct_reviews_field, with: "123"
+        fill_in alternative_batch_size_field, with: ""
+        fill_in alternative_batch_size_field, with: "12"
+        expect(page).to have_field(ama_direct_reviews_field, with: "123")
+        expect(page).to have_field(alternative_batch_size_field, with: "12")
+
+        click_cancel_button
+        expect(page).to have_field(ama_direct_reviews_field, with: "365")
+        expect(page).to have_field(alternative_batch_size_field, with: "15")
+      end
+
+      step "cancelling changes on confirm modal returns user to page without resetting the values in the fields" do
+        fill_in ama_direct_reviews_field, with: "123"
+        fill_in alternative_batch_size_field, with: "13"
+        expect(page).to have_field(ama_direct_reviews_field, with: "123")
+        expect(page).to have_field(alternative_batch_size_field, with: "13")
+
+        click_save_button
+        expect(find("#case-distribution-control-modal-table-0")).to have_content("13")
+        expect(find("#case-distribution-control-modal-table-1")).to have_content("123")
+
+        click_modal_cancel_button
+        expect(page).to have_field(ama_direct_reviews_field, with: "123")
+        expect(page).to have_field(alternative_batch_size_field, with: "13")
+      end
+
       step "error displays for invalid input on time goals section" do
         # From ama_np_dist_goals_by_docket_lever_spec.rb
 
@@ -210,8 +246,10 @@ RSpec.feature "Admin UI" do
         expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
+        # Change two levers at once to satisfy lever_buttons_spec.rb
         fill_in ama_direct_reviews_field, with: ""
         fill_in ama_direct_reviews_field, with: "123"
+        fill_in ama_evidence_submissions_field, with: "456"
         click_save_button
         click_modal_confirm_button
       end
@@ -253,6 +291,7 @@ RSpec.feature "Admin UI" do
         click_modal_confirm_button
 
         expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
+        expect(find("#lever-history-table").has_content?("456 days")).to eq(true)
         expect(find("#lever-history-table").has_content?("300 days")).to eq(true)
       end
     end
@@ -260,6 +299,7 @@ RSpec.feature "Admin UI" do
 
   # rubocop:disable Metrics/AbcSize
   def confirm_page_and_section_loaded
+    expect(page).to have_content(COPY::CASE_DISTRIBUTION_TITLE)
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE)
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE)
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_BATCH_SIZE_H2_TITLE)
@@ -302,5 +342,13 @@ RSpec.feature "Admin UI" do
 
   def click_modal_confirm_button
     find("#save-modal-confirm").click
+  end
+
+  def click_cancel_button
+    find("#CancelLeversButton").click
+  end
+
+  def click_modal_cancel_button
+    find("#save-modal-cancel").click
   end
 end
