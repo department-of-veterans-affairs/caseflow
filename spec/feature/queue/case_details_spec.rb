@@ -1115,7 +1115,7 @@ RSpec.feature "Case details", :all_dbs do
   context "When a current user is a member of Supervisory Senior Council organization" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
-    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let(:receipt_date) { Time.zone.today - 20.days }
     let(:profile_date) { (receipt_date - 30.days).to_datetime }
