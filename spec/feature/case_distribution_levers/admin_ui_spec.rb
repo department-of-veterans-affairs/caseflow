@@ -31,6 +31,10 @@ RSpec.feature "Admin UI" do
   let(:ama_direct_reviews) { Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals }
   let(:ama_evidence_submissions) { Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals }
 
+  let(:ama_hearings_field) { Constants.DISTRIBUTION.ama_hearing_docket_time_goals }
+  let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
+  let(:ama_evidence_submissions_field) { Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals }
+
   let(:alternate_batch_size) { Constants.DISTRIBUTION.alternative_batch_size }
   let(:batch_size_per_attorney) { Constants.DISTRIBUTION.batch_size_per_attorney }
   let(:request_more_cases_minimum) { Constants.DISTRIBUTION.request_more_cases_minimum }
@@ -151,22 +155,31 @@ RSpec.feature "Admin UI" do
         end
       end
 
-      step "lever history displays on page" do
-        # From affinity_days_levers_spec.rb
-        option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
+      step "levers initally display correctly" do
+        # From ama_np_dist_goals_by_docket_lever_spec.rb
+        expect(page).to have_field(ama_hearings_field.to_s, disabled: false)
+        expect(page).to have_field(ama_direct_reviews_field.to_s)
+        expect(page).to have_field(ama_evidence_submissions_field.to_s, disabled: false)
 
-        disabled_lever_list.each do |disabled_lever|
-          option_list.each do |option|
-            expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
-          end
-        end
+        expect(page).to have_button("toggle-switch-#{ama_hearings}", disabled: false)
+        expect(page).to have_button("toggle-switch-#{ama_direct_reviews}", disabled: false)
+        expect(page).to have_button("toggle-switch-#{ama_evidence_submissions}", disabled: false)
+      end
 
-        enabled_lever_list.each do |enabled_lever|
-          option_list.each do |option|
-            expect(find("##{enabled_lever}-#{option}", visible: false)).not_to be_disabled
-          end
-        end
+      step "error displays for invalid input" do
+        # From ama_np_dist_goals_by_docket_lever_spec.rb
+        empty_error_message = "Please enter a value greater than or equal to 0"
 
+        fill_in ama_direct_reviews_field, with: "ABC"
+        expect(page).to have_field(ama_direct_reviews_field, with: "")
+        expect(find("##{ama_direct_reviews_field}-lever")).to have_content(empty_error_message)
+
+        fill_in ama_direct_reviews_field, with: "-1"
+        expect(page).to have_field(ama_direct_reviews_field, with: "1")
+        expect(find("##{ama_direct_reviews_field}-lever").has_no_content?(empty_error_message)).to eq(true)
+      end
+
+      step "error clears with valid input" do
         # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
@@ -175,7 +188,10 @@ RSpec.feature "Admin UI" do
         fill_in ama_direct_reviews_field, with: "123"
         click_save_button
         click_modal_confirm_button
+      end
 
+      step "lever history displays on page" do
+        # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
