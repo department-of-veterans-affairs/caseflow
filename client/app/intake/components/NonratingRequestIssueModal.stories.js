@@ -51,3 +51,15 @@ VhaBenefitType.args = {
     benefitType: 'vha'
   }
 };
+
+export const withDecisionDateRequiredBanner = Template.bind({});
+withDecisionDateRequiredBanner.args = {
+  ...defaultArgs,
+  intakeData: {
+    activeNonratingRequestIssues: [],
+    benefitType: 'vha',
+    taskInProgress: true
+  },
+  userIsVhaAdmin: true,
+  formType: 'higher_level_review'
+};
