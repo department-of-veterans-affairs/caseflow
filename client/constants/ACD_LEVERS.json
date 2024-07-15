@@ -4,8 +4,6 @@
   "value": "value",
   "days": "days",
   "cases": "cases",
-  "priority": "priority",
-  "non_priority": "non-priority",
   "DUPLICATE": "DUPLICATE",
   "ERROR": "ERROR",
   "data_types": {

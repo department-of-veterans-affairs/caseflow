@@ -1085,7 +1085,7 @@
       "address_1" : "913 Northwest Garden Valley Boulevard",
       "address_2" : null,
       "address_3" : null,
-      "city" : "Roseburg",
+      "city" : "Rosenburg",
       "state" : "OR",
       "zip" : "97471-6523",
       "timezone" : "America/Los_Angeles"
@@ -1100,7 +1100,7 @@
       "timezone" : "America/Los_Angeles"
    },
    "vha_653GA" : {
-      "address_1" : "2191 Marion Ave",
+      "address_1" : "2191 Marion Street",
       "address_2" : "",
       "address_3" : null,
       "city" : "North Bend",
@@ -1115,15 +1115,6 @@
       "city" : "Brookings",
       "state" : "OR",
       "zip" : "97415-9702",
-      "timezone" : "America/Los_Angeles"
-   },
-   "vha_653QA" : {
-      "address_1" : "211 E 7th Ave",
-      "address_2" : null,
-      "address_3" : "Suite 118",
-      "city" : "Eugene",
-      "state" : "OR",
-      "zip" : "97401",
       "timezone" : "America/Los_Angeles"
    },
    "vha_657GJ" : {
@@ -1304,15 +1295,6 @@
       "city" : "Klamath Falls",
       "state" : "OR",
       "zip" : "97601-6417",
-      "timezone" : "America/Los_Angeles"
-   },
-   "vha_692GB" : {
-      "address_1" : "1877 Williams Hwy",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "Grants Pass",
-      "state" : "OR",
-      "zip" : "97527",
       "timezone" : "America/Los_Angeles"
    },
    "vha_693" : {

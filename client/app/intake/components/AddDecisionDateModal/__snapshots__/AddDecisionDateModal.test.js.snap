@@ -47,66 +47,69 @@ Object {
               </svg>
             </button>
             <div
-              style="display: flex; flex-wrap: wrap;"
+              style="display: flex;"
             >
-              <h1
-                id="modal_id-title"
-                style="flex: 1;"
-              >
-                Add Decision Date
-              </h1>
               <div
-                data-css-2flkvz=""
+                data-css-1gs0ko2=""
               >
-                <div>
-                  <strong
-                    data-css-1qn6dtd=""
-                  >
-                    Issue:
-                  </strong>
-                  Beneficiary Travel
-                </div>
-                <div>
-                  <strong
-                    data-css-1qn6dtd=""
-                  >
-                    Benefit type:
-                  </strong>
-                  Veterans Health Administration
-                </div>
-                <div>
-                  <strong
-                    data-css-1qn6dtd=""
-                  >
-                    Issue description:
-                  </strong>
-                  Beneficiary Travel - Issue Description
-                </div>
-                <div
-                  data-css-xsot8h=""
+                <h1
+                  id="modal_id-title"
                 >
+                  Add Decision Date
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <div>
+                    <strong
+                      data-css-1qn6dtd=""
+                    >
+                      Issue:
+                    </strong>
+                    Beneficiary Travel
+                  </div>
+                  <div>
+                    <strong
+                      data-css-1qn6dtd=""
+                    >
+                      Benefit type:
+                    </strong>
+                    Veterans Health Administration
+                  </div>
+                  <div>
+                    <strong
+                      data-css-1qn6dtd=""
+                    >
+                      Issue description:
+                    </strong>
+                    Beneficiary Travel - Issue Description
+                  </div>
                   <div
-                    class="cf-form-textinput   "
+                    data-css-xsot8h=""
                   >
-                    <label
-                      for="decision-date"
-                    >
-                      <span>
-                        Decision date
-                      </span>
-                    </label>
                     <div
-                      class="input-container"
+                      class="cf-form-textinput   "
                     >
-                      <input
-                        class="cf-form-textinput"
-                        id="decision-date"
-                        max="2023-08-10"
-                        name="decision-date"
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
-                      />
+                      <label
+                        for="decision-date"
+                      >
+                        <span>
+                          Decision date
+                        </span>
+                      </label>
+                      <div
+                        class="input-container"
+                      >
+                        <input
+                          class="cf-form-textinput"
+                          id="decision-date"
+                          max="2023-08-10"
+                          name="decision-date"
+                          placeholder="mm/dd/yyyy"
+                          type="date"
+                          value=""
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -186,66 +189,69 @@ Object {
             </svg>
           </button>
           <div
-            style="display: flex; flex-wrap: wrap;"
+            style="display: flex;"
           >
-            <h1
-              id="modal_id-title"
-              style="flex: 1;"
-            >
-              Add Decision Date
-            </h1>
             <div
-              data-css-2flkvz=""
+              data-css-1gs0ko2=""
             >
-              <div>
-                <strong
-                  data-css-1qn6dtd=""
-                >
-                  Issue:
-                </strong>
-                Beneficiary Travel
-              </div>
-              <div>
-                <strong
-                  data-css-1qn6dtd=""
-                >
-                  Benefit type:
-                </strong>
-                Veterans Health Administration
-              </div>
-              <div>
-                <strong
-                  data-css-1qn6dtd=""
-                >
-                  Issue description:
-                </strong>
-                Beneficiary Travel - Issue Description
-              </div>
-              <div
-                data-css-xsot8h=""
+              <h1
+                id="modal_id-title"
               >
+                Add Decision Date
+              </h1>
+              <div
+                data-css-o98ubo=""
+              >
+                <div>
+                  <strong
+                    data-css-1qn6dtd=""
+                  >
+                    Issue:
+                  </strong>
+                  Beneficiary Travel
+                </div>
+                <div>
+                  <strong
+                    data-css-1qn6dtd=""
+                  >
+                    Benefit type:
+                  </strong>
+                  Veterans Health Administration
+                </div>
+                <div>
+                  <strong
+                    data-css-1qn6dtd=""
+                  >
+                    Issue description:
+                  </strong>
+                  Beneficiary Travel - Issue Description
+                </div>
                 <div
-                  class="cf-form-textinput   "
+                  data-css-xsot8h=""
                 >
-                  <label
-                    for="decision-date"
-                  >
-                    <span>
-                      Decision date
-                    </span>
-                  </label>
                   <div
-                    class="input-container"
+                    class="cf-form-textinput   "
                   >
-                    <input
-                      class="cf-form-textinput"
-                      id="decision-date"
-                      max="2023-08-10"
-                      name="decision-date"
-                      placeholder="mm/dd/yyyy"
-                      type="date"
-                      value=""
-                    />
+                    <label
+                      for="decision-date"
+                    >
+                      <span>
+                        Decision date
+                      </span>
+                    </label>
+                    <div
+                      class="input-container"
+                    >
+                      <input
+                        class="cf-form-textinput"
+                        id="decision-date"
+                        max="2023-08-10"
+                        name="decision-date"
+                        placeholder="mm/dd/yyyy"
+                        type="date"
+                        value=""
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

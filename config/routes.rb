@@ -27,17 +27,11 @@ Rails.application.routes.draw do
   constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
     get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
     get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
-
-    namespace :case_distribution_levers_tests do
-      get 'appeals_ready_to_distribute'
-      get 'appeals_non_priority_ready_to_distribute'
-      get 'appeals_distributed'
-      get 'ineligible_judge_list'
-      post 'run_demo_aod_hearing_seeds'
-      post 'run_demo_non_aod_hearing_seeds'
-      post 'run-demo-ama-docket-goals'
-      post 'run-demo-docket-priority'
-    end
+    get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
+    get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+    get 'ineligible-judge-list', to: 'case_distribution_levers_tests#ineligible_judge_list'
+    post 'run-demo-aod-seeds', to: 'case_distribution_levers_tests#run_demo_aod_hearing_seeds', as: "run-demo-aod-seeds"
+    post 'run-demo-non-aod-seeds', to: 'case_distribution_levers_tests#run_demo_non_aod_hearing_seeds', as: "run-demo-non-aod-seeds"
   end
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
@@ -94,6 +88,14 @@ Rails.application.routes.draw do
         get "vacols_issues", to: redirect('api-docs/v3/vacols_issues.yaml')
       end
     end
+
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
+      end
+    end
+
     get "metadata", to: 'metadata#index'
   end
 
@@ -433,15 +435,9 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
-  scope path: 'seeds', as: 'seeds' do
-    post 'run-demo', to: 'test_docket_seeds#seed_dockets'
-    get 'reset_all_appeals', to: 'test_docket_seeds#reset_all_appeals'
-  end
-
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
-    get "/seeds", to: "test_seeds#seeds" # test seed buttons routes
 
     resources :hearings, only: [:index]
 

@@ -195,7 +195,6 @@ const appealAttributesFromRawTask = (task) => ({
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   issueTypes: task.attributes.issue_types,
-  pendingIssueModificationCount: task.attributes.pending_issue_modification_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
@@ -403,6 +402,7 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
+
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -572,6 +572,7 @@ export const prepareAppealForSearchStore = (appeals) => {
     return accumulator;
   }, {});
 
+
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
@@ -624,6 +625,7 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
       editIssuesUrl: claimReview.caseflow_only_edit_issues_url,
+      intakeFromVbms: claimReview.intake_from_vbms
     };
 
     return accumulator;
@@ -1133,5 +1135,5 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 };
 
 export const replaceSpecialCharacters = (string_replace) => {
-  return string_replace.replace(/[^\w\s]/gi, '_');
+  return string_replace.replace(/[^\w\s]/gi, '_')
 };
