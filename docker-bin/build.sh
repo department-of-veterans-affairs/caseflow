@@ -15,9 +15,9 @@ echo -e "\tChecking if Oracle Instant client files exist"
 if [ ! -f instantclient-basic-linux.x64-12.2.0.1.0.zip ]; then
 
   echo -e "\t\tDownloading Oracle Instant Client and SQLPlus"
-  aws s3 cp --region us-gov-west-1  s3://shared-s3/dsva-appeals/instantclient-basic-linux.x64-12.2.0.1.0.zip instantclient-basic-linux.x64-12.2.0.1.0.zip
-  aws s3 cp --region us-gov-west-1 s3://shared-s3/dsva-appeals/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
-  aws s3 cp --region us-gov-west-1 s3://shared-s3/dsva-appeals/instantclient-sdk-linux.x64-12.2.0.1.0.zip instantclient-sdk-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-basic-linux.x64-12.2.0.1.0.zip instantclient-basic-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
+  aws s3 cp --region us-gov-west-1 s3://vaec-nonprod-shared-s3/vaec-appeals/instantclient-sdk-linux.x64-12.2.0.1.0.zip instantclient-sdk-linux.x64-12.2.0.1.0.zip
 
 fi
 

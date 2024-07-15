@@ -30,7 +30,11 @@ class HearingTimeService
 
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = Time.zone.parse(scheduled_time_string).utc
+      scheduled_time_in_utc = if scheduled_time_string.is_a?(String)
+                                Time.zone.parse(scheduled_time_string).utc
+                              else
+                                scheduled_time_string
+                              end
 
       time = scheduled_for.to_datetime
       Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
@@ -45,6 +49,19 @@ class HearingTimeService
 
       datetime = time.to_datetime
       "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
+    end
+
+    def convert_scheduled_time_to_utc(time_string)
+      if time_string.present?
+        # Find the AM/PM index value in the string
+        index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
+
+        # Generate the scheduled_time in UTC and update the scheduled_time_string
+        scheduled_time = time_string[0..index].strip
+        timezone = time_string[index..-1].strip
+        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+      end
+      nil
     end
 
     private
