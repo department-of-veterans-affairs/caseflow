@@ -64,6 +64,9 @@ HearingTimeScheduledInTimezone.defaultProps = {
   showRegionalOfficeName: false,
   showRequestType: false,
   breakCharacter: ' /',
+  labelClasses: '',
+  paragraphClasses: '',
+  primaryLabel: '',
 };
 
 HearingTimeScheduledInTimezone.propTypes = {
