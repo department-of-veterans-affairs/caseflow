@@ -42,6 +42,13 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
+const OuterContainerStyling = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingLeft: '30px',
+  paddingRight: '25rem',
+});
+
 const specificEventTypeSchema = yup.lazy((value) => {
   // eslint-disable-next-line no-undefined
   if (value === undefined) {
@@ -49,16 +56,31 @@ const specificEventTypeSchema = yup.lazy((value) => {
   }
 
   return yup.object({
-    added_decision_date: yup.boolean(),
-    added_issue: yup.boolean(),
-    added_issue_no_decision_date: yup.boolean(),
-    claim_created: yup.boolean(),
-    claim_closed: yup.boolean(),
-    claim_status_incomplete: yup.boolean(),
-    claim_status_inprogress: yup.boolean(),
-    completed_disposition: yup.boolean(),
-    removed_issue: yup.boolean(),
-    withdrew_issue: yup.boolean(),
+    general: {
+      added_decision_date: yup.boolean(),
+      added_issue: yup.boolean(),
+      added_issue_no_decision_date: yup.boolean(),
+      removed_issue: yup.boolean(),
+      withdrew_issue: yup.boolean(),
+      completed_disposition: yup.boolean(),
+    },
+    system: {
+      claim_created: yup.boolean(),
+      claim_closed: yup.boolean(),
+      claim_status_incomplete: yup.boolean(),
+      claim_status_pending: yup.boolean(),
+      claim_status_inprogress: yup.boolean(),
+    },
+    requests: {
+      requested_issue_modification: yup.boolean(),
+      requested_issue_addition: yup.boolean(),
+      requested_issue_removal: yup.boolean(),
+      requested_issue_withdrawal: yup.boolean(),
+      approval_of_request: yup.boolean(),
+      rejection_of_request: yup.boolean(),
+      cancellation_of_request: yup.boolean(),
+      edit_of_request: yup.boolean(),
+    }
   }).test('at-least-one-true', ERRORS.AT_LEAST_ONE_OPTION, (obj) => {
     return Object.values(obj).some((val) => val === true);
   });
@@ -150,25 +172,88 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
   }
 
   return (
-    <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
-      {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-      {options.map((option) => (
-        <div key={option.id}>
-          <Checkbox
-            name={`${name}.${option.id}`}
-            key={`${name}.${option.id}`}
-            label={option.label}
-            stronglabel
-            onChange={(val) => {
-              value[option.id] = val;
-              field.onChange(value);
-              setValue(value);
-            }}
-            unpadded
-          />
+    name === 'specificEventType' ?
+      <fieldset {...OuterContainerStyling}>
+        <div className={fieldClasses}>
+          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
+          <h4>System</h4>
+          {options[0].system.map((option) => (
+            <div key={option.id}>
+              <Checkbox
+                name={`${name}.${option.id}`}
+                key={`${name}.${option.id}`}
+                label={option.label}
+                stronglabel
+                onChange={(val) => {
+                  value[option.id] = val;
+                  field.onChange(value);
+                  setValue(value);
+                }}
+                unpadded
+              />
+            </div>
+          ))}
         </div>
-      ))}
-    </fieldset>
+        <div className={fieldClasses}>
+          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
+          <h4>General</h4>
+          {options[0].general.map((option) => (
+            <div key={option.id}>
+              <Checkbox
+                name={`${name}.${option.id}`}
+                key={`${name}.${option.id}`}
+                label={option.label}
+                stronglabel
+                onChange={(val) => {
+                  value[option.id] = val;
+                  field.onChange(value);
+                  setValue(value);
+                }}
+                unpadded
+              />
+            </div>
+          ))}
+        </div>
+        <div className={fieldClasses}>
+          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
+          <h4>Requests</h4>
+          {options[0].requests.map((option) => (
+            <div key={option.id}>
+              <Checkbox
+                name={`${name}.${option.id}`}
+                key={`${name}.${option.id}`}
+                label={option.label}
+                stronglabel
+                onChange={(val) => {
+                  value[option.id] = val;
+                  field.onChange(value);
+                  setValue(value);
+                }}
+                unpadded
+              />
+            </div>
+          ))}
+        </div>
+      </fieldset> :
+      <fieldset style={{ paddingLeft: "30px" }}>
+        {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
+        {options.map((option) => (
+          <div key={option.id}>
+            <Checkbox
+              name={`${name}.${option.id}`}
+              key={`${name}.${option.id}`}
+              label={option.label}
+              stronglabel
+              onChange={(val) => {
+                value[option.id] = val;
+                field.onChange(value);
+                setValue(value);
+              }}
+              unpadded
+            />
+          </div>
+        ))}
+      </fieldset>
   );
 };
 
@@ -214,16 +299,31 @@ const ReportPage = ({ history }) => {
       cancelled: ''
     },
     specificEventType: {
-      added_decision_date: '',
-      added_issue: '',
-      added_issue_no_decision_date: '',
-      claim_created: '',
-      claim_closed: '',
-      claim_status_incomplete: '',
-      claim_status_inprogress: '',
-      completed_disposition: '',
-      removed_issue: '',
-      withdrew_issue: '',
+      system: {
+        claim_created: '',
+        claim_closed: '',
+        claim_status_incomplete: '',
+        claim_status_pending: '',
+        claim_status_inprogress: '',
+      },
+      general: {
+        added_decision_date: '',
+        added_issue: '',
+        added_issue_no_decision_date: '',
+        removed_issue: '',
+        withdrew_issue: '',
+        completed_disposition: '',
+      },
+      requests: {
+        requested_issue_modification: '',
+        requested_issue_addition: '',
+        requested_issue_removal: '',
+        requested_issue_withdrawal: '',
+        approval_of_request: '',
+        rejection_of_request: '',
+        cancellation_of_request: '',
+        edit_of_request: '',
+      }
     }
   };
 
