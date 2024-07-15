@@ -101,41 +101,6 @@ RSpec.feature "Admin UI" do
       end
 
       step "lever history displays correctly" do
-      #   expect(find("#lever-history-table")).to have_content(current_user.css_id)
-      #   expect(find("#lever-history-table")).to have_content(ama_direct_reviews_lever.title)
-      #   expect(find("#lever-history-table")).to have_content("10 #{ama_direct_reviews_lever.unit}")
-      #   expect(find("#lever-history-table")).to have_content("15 #{ama_direct_reviews_lever.unit}")
-
-      #   create(:case_distribution_audit_lever_entry,
-      #          case_distribution_lever: alternate_batch_size_lever,
-      #          previous_value: 7,
-      #          update_value: 6)
-
-      #   visit "case-distribution-controls"
-
-      #   expect(find("#lever-history-table-row-0")).to have_content(current_user.css_id)
-      #   expect(find("#lever-history-table-row-0")).to have_content(alternate_batch_size_lever.title)
-      #   expect(find("#lever-history-table-row-0")).to have_content("7 #{alternate_batch_size_lever.unit}")
-      #   expect(find("#lever-history-table-row-0")).to have_content("6 #{alternate_batch_size_lever.unit}")
-
-      #   expect(find("#lever-history-table-row-1")).to have_content(current_user.css_id)
-      #   expect(find("#lever-history-table-row-1")).to have_content(ama_direct_reviews_lever.title)
-      #   expect(find("#lever-history-table-row-1")).to have_content("10 #{ama_direct_reviews_lever.unit}")
-      #   expect(find("#lever-history-table-row-1")).to have_content("15 #{ama_direct_reviews_lever.unit}")
-
-      #   Timecop.freeze do
-      #     create(:case_distribution_audit_lever_entry,
-      #            case_distribution_lever: ama_direct_reviews_lever,
-      #            previous_value: 15,
-      #            update_value: 5)
-      #     create(:case_distribution_audit_lever_entry,
-      #            case_distribution_lever: alternate_batch_size_lever,
-      #            previous_value: 2,
-      #            update_value: 4)
-      #   end
-
-        # visit "case-distribution-controls"
-        byebug
         expect(find("#lever-history-table-row-0")).to have_content(current_user.css_id)
         expect(find("#lever-history-table-row-0")).to have_content(alternate_batch_size_lever.title)
         expect(find("#lever-history-table-row-0")).to have_content("2 #{alternate_batch_size_lever.unit}")
