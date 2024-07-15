@@ -20,7 +20,7 @@ module Hearings
       hearing_lookup_hashes.each do |hearing_lookup_hash|
         process_hearing(hearing_lookup_hash)
       end
-      true
+      cleanup_tmp_files
     end
 
     def cleanup_tmp_files
