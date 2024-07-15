@@ -130,7 +130,7 @@ module CorrespondenceControllerConcern
   end
 
   def error_reason(error)
-    return '' unless error
+    return "" unless error
 
     case error
     when Constants.CORRESPONDENCE_AUTO_ASSIGN_ERROR.NOD_ERROR then "of NOD permissions settings"
