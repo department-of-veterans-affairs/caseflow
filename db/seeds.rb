@@ -37,7 +37,6 @@ class SeedDB
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
-    call_and_log_seed_step Seeds::ConsumerApiKey
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     # These must be ran before others
@@ -54,6 +53,7 @@ class SeedDB
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+    call_and_log_seed_step Seeds::IssueModificationRequest
   end
 end
 

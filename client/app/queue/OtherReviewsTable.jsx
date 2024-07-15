@@ -7,7 +7,6 @@ import { css } from 'glamor';
 
 import Table from '../components/Table';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
-import BadgeArea from '../components/badges/BadgeArea';
 
 import COPY from '../../COPY';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT';
@@ -64,9 +63,6 @@ class OtherReviewsTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => `${object.reviewType}-${object.claimId}`;
 
   getColumns = () => [
-    {
-      valueFunction: (review) => <BadgeArea review={review} />
-    },
     {
       header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
       valueFunction: (review) => review.claimantNames.length > 0 ?
