@@ -192,12 +192,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacols_titled_attorney_record do
-      after(:create) do |user|
-        create(:staff, :titled_attorney_role, user: user)
-      end
-    end
-
     trait :vlj_support_user do
       after(:create) do |user|
         Colocated.singleton.add_user(user)
@@ -208,19 +202,6 @@ FactoryBot.define do
       after(:create) do |user|
         CDAControlGroup.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, CDAControlGroup.singleton)
-      end
-    end
-
-    trait :vha_admin_user do
-      after(:create) do |user|
-        VhaBusinessLine.singleton.add_user(user)
-        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
-      end
-    end
-
-    trait :vha_default_user do
-      after(:create) do |user|
-        VhaBusinessLine.singleton.add_user(user)
       end
     end
 

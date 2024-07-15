@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "models/concerns/has_virtual_hearing_examples"
+require "models/hearings_shared_examples"
 
 describe LegacyHearing, :all_dbs do
   it_should_behave_like "a model that can have a virtual hearing" do
@@ -378,12 +379,14 @@ describe LegacyHearing, :all_dbs do
 
   context "#hearing_day" do
     context "associated hearing day exists" do
+      let!(:user) { User.create(css_id: "1111", station_id: "123") }
       let(:hearing_day) { create(:hearing_day) }
+      let(:regional_office) { "C" }
       let(:legacy_hearing) do
         # hearing_day_id is set to nil because the tests are testing if it
         # gets populated correctly. hearing_day is used by the factory to initialize
         # a case hearing in vacols.
-        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil)
+        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil, regional_office: regional_office)
       end
 
       context "and hearing day id refers to a row in Caseflow" do
@@ -392,8 +395,11 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls update once" do
-          expect(legacy_hearing).to receive(:update!).at_least(:once)
-
+          # orginally was expected to receive `update`, but with the addition of the
+          # `scheduled_in_timezone` attr within the factory, we're now checking for the full method instead of
+          # a call to `update!`
+          expect(legacy_hearing.hearing_day_id).to eq(legacy_hearing.hearing_day_vacols_id.to_i)
+          expect(legacy_hearing).to receive(:hearing_day_id).at_least(:once)
           legacy_hearing.hearing_day
         end
 
@@ -778,5 +784,13 @@ describe LegacyHearing, :all_dbs do
         include_context "returns existing recipient"
       end
     end
+  end
+
+  context "#conference_provider" do
+    let(:hearing_type) { :legacy_hearing }
+
+    include_context "Pexip and Webex Users"
+
+    include_examples "Conference provider values are transferred between base entity and new hearings"
   end
 end

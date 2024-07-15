@@ -497,15 +497,13 @@
       "state": "OR",
       "alternate_locations": [
         "vba_347",
-        "vha_653QA",
         "vha_653GB",
         "vha_648GA",
         "vha_692GA",
         "vha_687GC",
         "vha_653GA",
         "vba_346",
-        "vha_692",
-        "vha_692GB"
+        "vha_692"
       ],
       "facility_locator_id": "vba_348",
       "city": "Portland"

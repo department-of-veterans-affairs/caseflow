@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "models/concerns/has_virtual_hearing_examples"
+require "models/hearings_shared_examples"
 
 describe Hearing, :postgres do
   it_should_behave_like "a model that can have a virtual hearing" do
@@ -301,6 +302,101 @@ describe Hearing, :postgres do
     include_context "hearing associated with an appeal with an unrecognized claimant"
     it "returns false if the appeals claimant is an unrecognized claimant" do
       expect(hearing.aod?).to eq(false)
+    end
+  end
+
+  context "#conference_provider" do
+    let(:hearing_type) { :hearing }
+
+    include_context "Pexip and Webex Users"
+
+    include_examples "Conference provider values are transferred between base entity and new hearings"
+  end
+
+  context "#daily_docket_conference_link" do
+    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let(:conference_link) { "https://example.com" }
+
+    before do
+      allow(hearing_day).to receive(:conference_link).and_return(conference_link)
+    end
+
+    it "returns the conference links of the hearing day" do
+      expect(hearing.daily_docket_conference_link).to eq(conference_link)
+    end
+  end
+
+  context "correct subject nbf and exp" do
+    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+    it "sub nbf and exp are correct" do
+      expect(hearing.subject_for_conference).to eq("#{hearing.docket_number}_#{hearing.id}_#{hearing.class}")
+      expect(hearing.nbf).to eq(hearing.scheduled_for.beginning_of_day.to_i)
+      expect(hearing.exp).to eq(hearing.scheduled_for.end_of_day.to_i)
+    end
+  end
+
+  context "regional_office_timezone" do
+    subject { hearing.regional_office_timezone }
+
+    context "When the hearing's RO is nil" do
+      let(:hearing) do
+        create(:hearing).tap { |hear| hear.hearing_day.update!(regional_office: nil) }
+      end
+
+      it "returns the CENTRAL_OFFICE_TIMEZONE" do
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's RO's time zone is nil" do
+      let(:hearing) { create(:hearing) }
+
+      before do
+        allow_any_instance_of(RegionalOffice).to receive(:timezone).and_return(nil)
+      end
+
+      it "returns the CENTRAL_OFFICE_TIMEZONE" do
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is nil" do
+      let(:hearing) do
+        create(:hearing, scheduled_in_timezone: nil, regional_office: "RO82")
+      end
+
+      it "returns the RO's timezone associated with the hearing day/docket" do
+        is_expected.to eq "America/Chicago"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is invalid" do
+      let(:hearing) { create(:hearing, scheduled_in_timezone: "Mars/Olympus_Mons") }
+
+      it "raises an error and defaults to the RO timezone" do
+        expect(ActiveSupport::TimeZone)
+          .to receive(:find_tzinfo)
+          .with("Mars/Olympus_Mons")
+          .and_raise(TZInfo::InvalidTimezoneIdentifier)
+
+        # Although an exception is encounted, it should be handled and not raised up the stack
+        expect { subject }.not_to raise_error(TZInfo::InvalidTimezoneIdentifier)
+
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is valid and differs from RO" do
+      let(:hearing) do
+        create(:hearing, scheduled_in_timezone: "America/Los_Angeles", regional_office: "RO82")
+      end
+
+      it "returns scheduled_in_timezone instead of RO's timezone" do
+        is_expected.to eq "America/Los_Angeles"
+      end
     end
   end
 end

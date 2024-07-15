@@ -20,11 +20,6 @@ describe ByDocketDateDistribution, :all_dbs do
     create(:case_distribution_lever, :batch_size_per_attorney)
     create(:case_distribution_lever, :ama_hearing_case_affinity_days)
     create(:case_distribution_lever, :ama_hearing_case_aod_affinity_days)
-    create(:case_distribution_lever, :ama_direct_review_docket_time_goals)
-    create(:case_distribution_lever, :ama_evidence_submission_docket_time_goals)
-    create(:case_distribution_lever, :ama_hearing_docket_time_goals)
-    create(:case_distribution_lever, :disable_legacy_non_priority)
-    create(:case_distribution_lever, :disable_legacy_priority)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution

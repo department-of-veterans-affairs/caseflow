@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_13_202232) do
+ActiveRecord::Schema.define(version: 2024_05_25_120005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -391,7 +391,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
@@ -636,20 +636,28 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   create_table "conference_links", force: :cascade do |t|
     t.string "alias", comment: "Alias of the conference"
     t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.string "co_host_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
-    t.integer "conference_id", comment: "Id of the conference"
+    t.string "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.datetime "deleted_at", comment: "Needed column to make use of the paranoia gem."
     t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
     t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
-    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
+    t.bigint "hearing_day_id", comment: "The associated hearing day id"
+    t.bigint "hearing_id", comment: "ID of the hearing associated with this record"
+    t.string "hearing_type", comment: "Type of hearing associated with this record"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.string "type", comment: "Pexip or Webex conference link"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
     t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["deleted_at"], name: "index_conference_links_on_deleted_at"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["hearing_id", "hearing_type"], name: "index_conference_links_on_hearing_id_and_hearing_type"
+    t.index ["type"], name: "index_conference_links_on_type"
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
@@ -973,6 +981,26 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
   end
 
+  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.bigint "evented_record_id", null: false
+    t.string "evented_record_type", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["evented_record_type", "evented_record_id"], name: "index_event_record_on_evented_record"
+  end
+
+  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.string "error", comment: "Error message captured during a failed event"
+    t.jsonb "info", default: {}
+    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_events_on_info", using: :gin
+  end
+
   create_table "form8s", id: :serial, force: :cascade do |t|
     t.string "_initial_appellant_name"
     t.string "_initial_appellant_relationship"
@@ -1174,6 +1202,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the hearing will have to provide accurate hearing times."
     t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
@@ -1264,32 +1293,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
-  end
-
-  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
-    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
-    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
-    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
-    t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
-    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
-    t.string "decision_review_type"
-    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
-    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
-    t.string "nonrating_issue_description", comment: "The nonrating issue description of the request issue that is being modified or added by the request"
-    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
-    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
-    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
-    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
-    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
-    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
-    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
-    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
-    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
-    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
   end
 
   create_table "job_execution_times", id: :serial, force: :cascade do |t|
@@ -1390,6 +1393,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.string "military_service", comment: "Periods and circumstances of military service"
     t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "scheduled_in_timezone", comment: "Named TZ string that the legacy hearing will have to provide accurate hearing times."
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
@@ -1430,6 +1434,13 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that the legacy issue is part of."
     t.integer "vacols_sequence_id", null: false, comment: "The sequence ID of the legacy issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific legacy issue."
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
+  end
+
+  create_table "meeting_types", force: :cascade do |t|
+    t.bigint "conferenceable_id"
+    t.string "conferenceable_type"
+    t.integer "service_name", default: 0, comment: "Pexip or Webex Instant Connect"
+    t.index ["conferenceable_type", "conferenceable_id"], name: "conferenceable_association_idx"
   end
 
   create_table "membership_requests", force: :cascade do |t|
@@ -1791,6 +1802,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_bgs_id", comment: "If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.string "nonrating_issue_bgs_source", comment: "Name of Table in Corporate Database where the nonrating issue is stored. This datapoint is correlated with the nonrating_issue_bgs_id."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -2053,6 +2065,30 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
+  end
+
+  create_table "transcription_files", force: :cascade do |t|
+    t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.datetime "date_converted", comment: "Timestamp when file was converted from vtt to rtf"
+    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
+    t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
+    t.string "docket_number", null: false, comment: "Docket number of associated hearing"
+    t.string "file_name", null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
+    t.string "file_status", comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
+    t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
+    t.bigint "hearing_id", null: false, comment: "ID of the hearing associated with this record"
+    t.string "hearing_type", null: false, comment: "Type of hearing associated with this record"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["aws_link"], name: "index_transcription_files_on_aws_link"
+    t.index ["docket_number"], name: "index_transcription_files_on_docket_number"
+    t.index ["file_name", "docket_number", "hearing_id", "hearing_type"], name: "idx_transcription_files_on_file_name_and_docket_num_and_hearing", unique: true
+    t.index ["file_type"], name: "index_transcription_files_on_file_type"
+    t.index ["hearing_id", "hearing_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_hearing"
+    t.index ["hearing_id", "hearing_type"], name: "index_transcription_files_on_hearing_id_and_hearing_type"
   end
 
   create_table "transcriptions", force: :cascade do |t|
@@ -2323,8 +2359,9 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
+    t.string "co_host_hearing_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
-    t.integer "conference_id", comment: "ID of conference from Pexip"
+    t.string "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
@@ -2468,6 +2505,7 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
@@ -2488,9 +2526,6 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
   add_foreign_key "individual_auto_assignment_attempts", "users"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
-  add_foreign_key "issue_modification_requests", "request_issues"
-  add_foreign_key "issue_modification_requests", "users", column: "decider_id"
-  add_foreign_key "issue_modification_requests", "users", column: "requestor_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"

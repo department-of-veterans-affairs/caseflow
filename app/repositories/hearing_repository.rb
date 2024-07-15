@@ -36,21 +36,36 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
+    def fix_hearings_timezone(scheduled_time_string)
+      time_str_split = scheduled_time_string.split(" ", 3)
+      tz_str = time_str_split[2]
+      begin
+        new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
+      rescue TZInfo::InvalidTimezoneIdentifier => error
+        Raven.capture_exception(error)
+        Rails.logger.info("#{error}: Invalid timezone #{tz_str} for hearing day")
+        raise error
+      end
+      new_tz.name
+    end
+
     # rubocop:disable Metrics/MethodLength
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
+      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string])
 
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
       if attrs[:appeal].is_a?(LegacyAppeal)
         scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
           scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: attrs[:scheduled_time_string]
+          scheduled_time_string: processed_scheduled_time
         )
         vacols_hearing = create_vacols_hearing(
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
           scheduled_for: scheduled_for,
+          scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
           hearing_location_attrs: attrs[:hearing_location_attrs],
           notes: attrs[:notes]
         )
@@ -61,7 +76,8 @@ class HearingRepository
           appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: attrs[:hearing_location_attrs] || {},
-          scheduled_time: attrs[:scheduled_time_string],
+          scheduled_time: processed_scheduled_time,
+          scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
           override_full_hearing_day_validation: override_full_hearing_day_validation,
           notes: attrs[:notes]
         )
@@ -348,6 +364,7 @@ class HearingRepository
 
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
       hearing.hearing_location_attributes = attrs[:hearing_location_attrs] unless attrs[:hearing_location_attrs].nil?
+      hearing.scheduled_in_timezone = attrs[:scheduled_in_timezone]
       hearing.save!
       hearing
     end

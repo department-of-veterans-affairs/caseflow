@@ -370,7 +370,7 @@ feature "Appeal Edit issues", :all_dbs do
     # click buttons
     click_on "Add this issue"
     click_on "Save"
-    click_on "Confirm"
+    click_on "Yes, save"
   end
 
   context "A contested claim is added to an evidence submission appeal" do
@@ -1340,7 +1340,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add MST/PACT to issues" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
@@ -1352,7 +1353,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can remove MST/PACT issues" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
@@ -1364,7 +1366,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add and remove only PACT to an issue" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1372,7 +1375,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content("SPECIAL ISSUES\nPACT")
 
         click_on "Correct issues"
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1382,7 +1386,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       scenario "can add and remove only MST to an issue" do
         go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         click_on "Save"
 
@@ -1390,7 +1395,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_content("SPECIAL ISSUES\nMST")
 
         click_on "Correct issues"
-        click_edit_intake_issue_dropdown_by_number(1)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         click_on "Save"
 
