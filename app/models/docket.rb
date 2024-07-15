@@ -162,6 +162,8 @@ class Docket
   end
 
   # used for distribution_stats
+  # :reek:ControlParameter
+  # :reek:FeatureEnvy
   def affinity_date_count(in_window, priority)
     scope = docket_appeals.ready_for_distribution
 

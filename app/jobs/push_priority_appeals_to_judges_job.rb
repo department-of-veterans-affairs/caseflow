@@ -172,6 +172,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def age_of_oldest_by_docket(report)
     docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
@@ -179,6 +180,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end.to_h
   end
 
+  # :reek:FeatureEnvy
   def num_of_appeals_not_distributed(report, appeals_not_distributed)
     report << ""
     report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
@@ -194,6 +196,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     docket_coordinator.dockets[:legacy].not_genpop_priority_count
   end
 
+  # :reek:FeatureEnvy
   def num_of_appeals_not_distributed_by_affinity_date(report)
     report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
