@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: VACOLS Issues
+  description: >+
+    The VACOLS Issues API allows you to interact with a veteran’s VACOLS Issues. This API provides all VACOLS Issues per Veteran File Number.
+
+
+    For more information on the Legacy Appeal process, including Legacy Issues, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/legacy-appeals/).
+
+
+
+    ## Technical Summary
+
+    The VACOLS Issues API interacts with VA's internal system, called Caseflow, that manages all benefit appeals.
+
+    * The VACOLS API accepts the veteran file number identification that is supplied in the request header.
+
+    * The VACOLS Issue request will be validated to ensure the Veteran information matches VA records and that the appeal information sent is valid.
+
+    * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the VACOLS Issue request.
+
+    * The VACOLS Issues are paginated in the response. The page paramenter must be a integer greater than or equal to 1. 0 and negative numbers are defaulted to page 1.
+
+    ## Authorization
+
+    API requests are authorized through a token, provided in an HTTP header.
+    Example _curl_ (assuming you're running Caseflow locally, and the `api_v3` feature toggle has been enabled):
+
+    ```
+     curl -v -H 'Authorization: Token {{YourApiKeyHere}}'\
+    'http://localhost:3000/api/v3/issues/vacols/find_by_veteran/?page=2'
+
+    ```
+
+  version: 3.0.0
+security:
+  - bearerAuth: []
+servers:
+- url: /api/v3/issues/vacols/
+paths:
+  /find_by_veteran:
+    get:
+      tags:
+        - VACOLS Issues
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: The page of request issues for the supplied veteran. Positive greater than 0. 0 or negative numbers are defaulted to 1.
+      summary: Retrieve all VACOLS issues from Veteran.
+      description: >+
+        Will return a paginated response of VACOLS Issues for the Veteran.
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/vnd.api+json:
+              examples:
+                veteran_returned_1_page:
+                  value:
+                    page: 1
+                    total_number_of_pages: 1
+                    total_vacols_issues_for_vet: 6
+                    max_vacols_issues_per_page: 10
+                    veteran_participant_id: '1826209'
+                    veteran_file_number: '872958715'
+                    vacols_issues:
+                      - id: '2760964'
+                        notice_of_disagreement_date: '2019-03-09T00:00:00.000Z'
+                        legacy_appeal_status: Remand
+                        legacy_appeal_soc_date: '2019-12-25T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates:
+                          - '2023-01-31T00:00:00.000Z'
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: '2760964'
+                        vacols_sequence_id: 1
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: Service connection, pancreatitis
+                        disposition: remanded
+                        close_date: '2023-06-16T00:00:00.000Z'
+                        note: Itaque adipisci aut ullam voluptas recusandae possimus facilis.
+                      - id: LEGACYID
+                        notice_of_disagreement_date: '2022-09-18T00:00:00.000Z'
+                        legacy_appeal_status: Advance
+                        legacy_appeal_soc_date: '2023-03-18T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates: []
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: LEGACYID
+                        vacols_sequence_id: 1
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: New and material evidence to reopen claim for service connection, ankylosing spondylitis
+                        disposition: null
+                        close_date: null
+                        note: null
+                      - id: LEGACYID
+                        notice_of_disagreement_date: '2022-09-18T00:00:00.000Z'
+                        legacy_appeal_status: Advance
+                        legacy_appeal_soc_date: '2023-03-18T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates: []
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: LEGACYID
+                        vacols_sequence_id: 2
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: New and material evidence to reopen claim for service connection, spinal fusion
+                        disposition: null
+                        close_date: null
+                        note: null
+                      - id: LEGACYID
+                        notice_of_disagreement_date: '2022-09-18T00:00:00.000Z'
+                        legacy_appeal_status: Advance
+                        legacy_appeal_soc_date: '2023-03-18T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates: []
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: LEGACYID
+                        vacols_sequence_id: 3
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: New and material evidence to reopen claim for service connection, degenerative arthritis of the spine
+                        disposition: null
+                        close_date: null
+                        note: null
+                      - id: LEGACYID
+                        notice_of_disagreement_date: '2022-09-18T00:00:00.000Z'
+                        legacy_appeal_status: Advance
+                        legacy_appeal_soc_date: '2023-03-18T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates: []
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: LEGACYID
+                        vacols_sequence_id: 4
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: New and material evidence to reopen claim for service connection, intervertebral disc syndrome
+                        disposition: null
+                        close_date: null
+                        note: null
+                      - id: LEGACYID
+                        notice_of_disagreement_date: '2022-09-18T00:00:00.000Z'
+                        legacy_appeal_status: Advance
+                        legacy_appeal_soc_date: '2023-03-18T00:00:00.000Z'
+                        legacy_appeal_ssoc_dates: []
+                        legacy_appeal_eligible_for_opt_in: false
+                        legacy_appeal_eligible_for_soc_opt_in_with_exemption: true
+                        vacols_id: LEGACYID
+                        vacols_sequence_id: 5
+                        eligible_for_soc_opt_in: true
+                        eligible_for_soc_opt_in_with_exemption: true
+                        description: New and material evidence to reopen claim for service connection, ankylosis of hip
+                        disposition: null
+                        close_date: null
+                        note: null
+        '401':
+          description: 401 Unauthorized
+          content:
+            application/vnd.api+json:
+              examples:
+                invalid_api_key:
+                  value:
+                    status: unauthorized
+                missing_api_key:
+                  value:
+                    status: unauthorized
+        '404':
+          description: 404 Veteran not found
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    errors:
+                    - status: 404
+                      code: "veteran_not_found"
+                      detail: "No Veteran found for the given identifier."
+        '500':
+          description: 500 Unexpected Error
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    errors:
+                    - status: 500
+                      code: "Unknown error occured"
+                      detail: "Message: There was a server error. Use the error uuid to submit a support ticket: {id}"
+        '501':
+          description: 501 Not Implemented
+          content:
+            application/vnd.api+json:
+              examples:
+                not_implemented:
+                  value:
+                    -
+                      status: 501
+                      title: "Not Implemented"
+                      detail: "This endpoint is not yet supported."
+components:
+  schemas:
+    VeteranParticipantId:
+      type: string
+    Errors:
+      type: array
+      items:
+        type: object
+        properties:
+          status:
+            type: string
+          code:
+            type: string
+          title:
+            type: string
+    VacolsIssue:
+      description: Issues that are attached to a Legacy Appeal within VACOLS. There can be multiple VACOLS Issues attached to a Legacy Appeal. VACOLS Issues are eligible for AMA if they meet the Legacy Issue opt-in eligibility requirements
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: "The unique identifier for an issue"
+            notice_of_disagreement_date:
+              type: string
+              format: date
+              description: "Receipt date of the appeal form. Used to determine which VACOLS issues are within the timeliness window to be appealed. Only VACOLS issues decided prior to the receipt date will show up as contestable issues."
+            legacy_appeal_status:
+              type: boolean
+              description: "Indicates the status of the Legacy Appeal."
+            legacy_appeal_soc_date:
+              type: string
+              format: date
+              description: "Date/Time Statement of the Case Issued"
+            legacy_appeal_ssoc_dates:
+              type: array
+              description: "Date/Time Supplemental Statement of the Cases Issued"
+              items:
+                type: string
+                format: date
+            legacy_appeal_eligible_for_opt_in:
+              type: boolean
+              description: "Indicates whether a Legacy Appeal is eligible to withdraw matching issues from the Legacy process."
+            legacy_appeal_eligible_for_soc_opt_in_with_exemption:
+              type: boolean
+              description: "Indicates whether a Legacy Appeal is eligible to withdraw matching issues from the Legacy process due to an exemption."
+            vacols_id:
+              type: string
+              description: "The VACOLS ID (primary key) of the Legacy appeal that the VACOLS issue is part of."
+            vacols_sequence_id:
+              type: integer
+              description: "The sequence ID of the VACOLS issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific VACOLS issue."
+            issue_eligible_for_soc_opt_in:
+              type: boolean
+              description: "Indicates whether a VACOLS Issue is eligible to withdraw matching issues from the Legacy process."
+            issue_eligible_for_soc_opt_in_with_exemption:
+              type: boolean
+              description:  "Indicates whether a VACOLS Issue is eligible to withdraw matching issues from the Legacy process due to an exemption."
+            issue_close_date:
+              type: string
+              format: date
+              description: "The date the VACOLS issue received a disposition."
+            issue_description:
+              type: string
+              description: "The description for the VACOLS issue."
+            issue_disposition:
+              type: string
+              description: "The disposition for each issue on the Legacy appeal. There are fourteen dispositions in total:  some controlled by BVA and others controlled by the field."
+            issue_note:
+              type: string
+              description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API Key provided by Caseflow

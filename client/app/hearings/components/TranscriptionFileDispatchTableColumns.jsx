@@ -39,9 +39,11 @@ const styles = {
 };
 
 export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptionFiles) => {
-  const selectedFileIds = selectedFiles.map((file) => file.id);
-  const selectedTransscriptionFiles = transcriptionFiles.filter((file) => selectedFileIds.includes(file.id));
-  const selectAllChecked = selectedTransscriptionFiles.length === transcriptionFiles.length ? 'selected' : '';
+  const selectedFileIds = selectedFiles ? selectedFiles.map((file) => file.id) : [];
+  const selectedTransscriptionFiles =
+    transcriptionFiles ? transcriptionFiles.filter((file) => selectedFileIds.includes(file.id)) : [];
+  const selectAllChecked = selectedTransscriptionFiles && transcriptionFiles &&
+    selectedTransscriptionFiles.length === transcriptionFiles.length ? 'selected' : '';
 
   return {
     header:
@@ -67,7 +69,7 @@ export const selectColumn = (selectFiles, selectAll, selectedFiles, transcriptio
       const title = selectedFile && selectedFile.message ? selectedFile.message : transcriptionFile.id;
 
       return (
-        <div {...styles.checkBoxStyles} title={title}>
+        <div {...styles.checkBoxStyles} title={title} className="select-file">
           <Checkbox
             ariaLabel="select file checkbox"
             name={`select-file-${ transcriptionFile.id}`}

@@ -19,9 +19,6 @@
 # Module to notify appellant when an appeal gets docketed
 module AppealDocketed
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Appeal docketed"
-  # rubocop:enable all
 
   # original method defined in app/models/appeal.rb
 
@@ -39,7 +36,7 @@ module AppealDocketed
         "for #{self.class} ID #{self.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
-        AppellantNotification.notify_appellant(self, @@template_name)
+        AppellantNotification.notify_appellant(self, Constants.EVENT_TYPE_FILTERS.appeal_docketed)
       end
     end
     super_return_value
@@ -59,7 +56,7 @@ module AppealDocketed
       "for #{appeal.class} ID #{appeal.id}",
                           service: nil,
                           name: "AppellantNotification.notify_appellant") do
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.appeal_docketed)
     end
     super_return_value
   end
@@ -73,12 +70,7 @@ module AppealDocketed
   # Response: Update 'appeal_docketed' column to True
   def update_appeal_state_when_appeal_docketed
     if type == "DistributionTask"
-      MetricsService.record("Updating APPEAL_DOCKETED column in Appeal States Table to TRUE for #{appeal.class} "\
-        "ID #{appeal.id}",
-                            service: nil,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "appeal_docketed")
-      end
+      appeal.appeal_state.appeal_docketed_appeal_state_update_action!
     end
   end
 end

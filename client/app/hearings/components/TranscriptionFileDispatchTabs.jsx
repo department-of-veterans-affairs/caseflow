@@ -102,7 +102,7 @@ export const tabConfig = (buildPackage, selectFilesForPackage, files) => [
         </div>
       </div>
       <div className="file-select" style={{ marginTop: '-2em' }}>
-        <h2>{files} files selected</h2>
+        <h2>{files} file{files === 1 ? '' : 's'} selected</h2>
         <div className="button-row" style={styles.buttonStyles}>
           <Button disabled={files === 0} onClick={buildPackage}>Package files</Button>
           <Button linkStyling>Cancel</Button>
