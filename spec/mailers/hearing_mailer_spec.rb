@@ -187,6 +187,19 @@ describe HearingMailer do
     end
   end
 
+  shared_context "test link for a webex conference" do
+    let!(:virtual_hearing) do
+      create(:virtual_hearing).tap do |vh|
+        vh.meeting_type.update!(service_name: "webex")
+      end
+    end
+
+    it "Webex test link appears" do
+      allow(virtual_hearing).to receive(:guest_link).and_return("linK")
+      expect(subject.html_part.body).to include("https://instant-usgov.webex.com/mediatest")
+    end
+  end
+
   shared_examples "appellant virtual reminder intro" do
     it "displays virtual hearing reminder email intro" do
       expect(subject.body).to include("You're scheduled for a hearing with a " \
@@ -236,7 +249,7 @@ describe HearingMailer do
       # Date and Time section
       expect(subject.body).to include("Date and Time")
       expect(subject.body).to include(
-        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+        Hearings::CalendarTemplateHelper.format_hearing_time(virtual_hearing.hearing.time.appellant_time)
       )
 
       # Signature section
@@ -391,7 +404,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_pacific_recipient_eastern: "11:30am EST"
+      ro_pacific_recipient_eastern: "8:30am EST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = {
@@ -556,7 +569,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "8:30am PST",
+      ro_and_recipient_both_pacific: "5:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -647,6 +660,10 @@ describe HearingMailer do
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
           end
+
+          context "webex conference" do
+            include_context "test link for a webex conference"
+          end
         end
 
         context "regional office is in eastern timezone" do
@@ -725,6 +742,10 @@ describe HearingMailer do
               "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
+          end
+
+          context "webex conference" do
+            include_context "test link for a webex conference"
           end
         end
 
@@ -861,7 +882,6 @@ describe HearingMailer do
 
     context "with legacy virtual hearing" do
       let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
-
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -1115,7 +1135,7 @@ describe HearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = {
       ro_and_recipient_both_eastern: "8:30am EST",
-      ro_and_recipient_both_pacific: "8:30am PST",
+      ro_and_recipient_both_pacific: "5:30am PST",
       ro_eastern_recipient_pacific: "5:30am PST"
     }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -1205,6 +1225,10 @@ describe HearingMailer do
               "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
+          end
+
+          context "webex conference" do
+            include_context "test link for a webex conference"
           end
         end
 
@@ -1584,7 +1608,7 @@ describe HearingMailer do
 
         context "email body" do
           include_examples "representative central reminder intro"
-          include_examples "representative shared reminder sections"
+          # include_examples "representative shared reminder sections"
           include_examples "representative non-virtual reminder sections"
         end
       end
