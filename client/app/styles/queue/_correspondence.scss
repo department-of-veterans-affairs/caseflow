@@ -1260,6 +1260,16 @@ $color-black: #323a45;
 
 }
 
+.test {
+  color: green
+}
+
+.tasks-related-to-an-appeal-container {
+  background-color: $color-gray-inverse-base;
+  border-top: none;
+  border-bottom: none;
+}
+
 .correspondence-response-letter-container {
   background-color: $color-gray-inverse-base;
 }

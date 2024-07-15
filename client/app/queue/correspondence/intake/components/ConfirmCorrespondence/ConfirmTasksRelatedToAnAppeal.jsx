@@ -1,15 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { COLORS } from 'app/constants/AppConstants';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
 import PropTypes from 'prop-types';
-
-const borderlessTd = {
-  borderTop: 'none',
-  borderBottom: 'none',
-  backgroundColor: COLORS.GREY_BACKGROUND,
-};
 
 const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
@@ -80,7 +73,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
           </td>
         </tr>
         <tr>
-          <td style={borderlessTd}>
+          <td className="tasks-related-to-an-appeal-container">
             <div className="linked-appeal-link-button">
               <a
                 href={`/queue/appeals/${fetchedAppeals.find((appeal) => appeal.id === task).externalId}`}
@@ -88,7 +81,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
                 rel="noopener noreferrer">
                 <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
                 <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
-                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
+                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" />
               </a>
             </div>
           </td>
