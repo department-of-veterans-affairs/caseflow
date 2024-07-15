@@ -1575,7 +1575,6 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
-<<<<<<< HEAD
   correspondence: PropTypes.object,
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
@@ -1585,11 +1584,9 @@ QueueApp.propTypes = {
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
   userPermissions: PropTypes.array,
-  configUrl: PropTypes.string
-=======
+  configUrl: PropTypes.string,
   conferenceProvider: PropTypes.string,
   setMeetingType: PropTypes.string
->>>>>>> c614bdc58ffa2d4960168ca46bb768ebe91ba61e
 };
 
 const mapStateToProps = (state) => ({
