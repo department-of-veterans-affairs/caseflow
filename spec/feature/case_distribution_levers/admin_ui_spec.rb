@@ -168,6 +168,31 @@ RSpec.feature "Admin UI" do
         expect(page).to have_button("toggle-switch-#{ama_evidence_submissions}", disabled: false)
       end
 
+      step "inactive levers are displayed with values" do
+        # From inactive_data_elements_levers_spec.rb
+        maximum_direct_review_proportion_lever = CaseDistributionLever.find_by_item(maximum_direct_review_proportion)
+        minimum_legacy_proportion_lever = CaseDistributionLever.find_by_item(minimum_legacy_proportion)
+        nod_adjustment_lever = CaseDistributionLever.find_by_item(nod_adjustment)
+        bust_backlog_lever = CaseDistributionLever.find_by_item(bust_backlog)
+
+        converted_maximum_direct_review_proportion_value =
+          (maximum_direct_review_proportion_lever.value.to_f * 100).to_i.to_s
+        converted_minimum_legacy_proportion_value = (minimum_legacy_proportion_lever.value.to_f * 100).to_i.to_s
+        converted_nod_adjustment_value = (nod_adjustment_lever.value.to_f * 100).to_i.to_s
+        bust_backlog_value = bust_backlog_lever.value.humanize
+
+        expect(find("##{maximum_direct_review_proportion}-value")).to have_content(
+          converted_maximum_direct_review_proportion_value + maximum_direct_review_proportion_lever.unit
+        )
+        expect(find("##{minimum_legacy_proportion}-value")).to have_content(
+          converted_minimum_legacy_proportion_value + minimum_legacy_proportion_lever.unit
+        )
+        expect(find("##{nod_adjustment}-value")).to have_content(
+          converted_nod_adjustment_value + nod_adjustment_lever.unit
+        )
+        expect(find("##{bust_backlog}-value")).to have_content(bust_backlog_value + bust_backlog_lever.unit)
+      end
+
       step "error displays for invalid input on time goals section" do
         # From ama_np_dist_goals_by_docket_lever_spec.rb
 
@@ -240,6 +265,7 @@ RSpec.feature "Admin UI" do
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_BATCH_SIZE_H2_TITLE)
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_HISTORY_TITLE)
     expect(page).to have_content(COPY::CASE_DISTRIBUTION_HISTORY_DESCRIPTION)
+    expect(page).to have_content(COPY::CASE_DISTRIBUTION_STATIC_LEVERS_TITLE)
     expect(page).to have_content(Constants.DISTRIBUTION.ama_hearing_case_affinity_days_title)
     expect(page).to have_content(Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days_title)
     expect(page).to have_content(Constants.DISTRIBUTION.cavc_affinity_days_title)
@@ -254,15 +280,17 @@ RSpec.feature "Admin UI" do
     expect(page).to have_content(Constants.DISTRIBUTION.batch_size_per_attorney_title)
     expect(page).to have_content(Constants.DISTRIBUTION.request_more_cases_minimum_title)
 
+    # From inactive_data_elements_levers_spec.rb
+    expect(page).to have_content(Constants.DISTRIBUTION.maximum_direct_review_proportion_title)
+    expect(page).to have_content(Constants.DISTRIBUTION.minimum_legacy_proportion_title)
+    expect(page).to have_content(Constants.DISTRIBUTION.nod_adjustment_title)
+    expect(page).to have_content(Constants.DISTRIBUTION.bust_backlog_title)
     expect(find("##{maximum_direct_review_proportion}-description")).to match_css(".description-styling")
     expect(find("##{maximum_direct_review_proportion}-product")).to match_css(".value-styling")
-
     expect(find("##{minimum_legacy_proportion}-description")).to match_css(".description-styling")
     expect(find("##{minimum_legacy_proportion}-product")).to match_css(".value-styling")
-
     expect(find("##{nod_adjustment}-description")).to match_css(".description-styling")
     expect(find("##{nod_adjustment}-product")).to match_css(".value-styling")
-
     expect(find("##{bust_backlog}-description")).to match_css(".description-styling")
     expect(find("##{bust_backlog}-product")).to match_css(".value-styling")
   end
