@@ -132,33 +132,6 @@ class DocketCoordinator
     VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(judge)
   end
 
-  #
-  # Push priority job reporting methods
-  #
-
-  def age_of_oldest_by_docket_report(report)
-    dockets.map do |docket_type, docket|
-      report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
-      [docket_type, docket.ready_priority_appeal_ids]
-    end.to_h
-  end
-
-  def num_of_appeals_not_distributed_report(report)
-    dockets.each_pair do |sym, docket|
-      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
-    end
-  end
-
-  def num_of_appeals_not_distributed_by_affinity_date_report(report)
-    report << ""
-    dockets.each_pair do |sym, docket|
-      report << "*Number of #{sym} appeals in affinity date window*: " \
-                "#{docket.affinity_date_count(true, true)}"
-      report << "*Number of #{sym} appeals out of affinity date window*: " \
-                "#{docket.affinity_date_count(false, true)}"
-    end
-  end
-
   private
 
   def docket_margin_net_of_priority
