@@ -38,11 +38,12 @@ RSpec.feature "Admin UI" do
   let(:ama_direct_reviews_lever) { CaseDistributionLever.find_by_item(ama_direct_reviews) }
   let(:alternate_batch_size_lever) { CaseDistributionLever.find_by_item(alternate_batch_size) }
 
-
   let(:maximum_direct_review_proportion) { Constants.DISTRIBUTION.maximum_direct_review_proportion }
   let(:minimum_legacy_proportion) { Constants.DISTRIBUTION.minimum_legacy_proportion }
   let(:nod_adjustment) { Constants.DISTRIBUTION.nod_adjustment }
   let(:bust_backlog) { Constants.DISTRIBUTION.bust_backlog }
+
+  let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
 
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     let!(:audit_lever_entry_1) do
@@ -72,10 +73,12 @@ RSpec.feature "Admin UI" do
       end
     end
 
-    scenario "the lever control page operates correctly", :aggregate_failures do
+    it "the lever control page renders correctly", :aggregate_failures do
       step "page renders" do
         visit "case-distribution-controls"
         confirm_page_and_section_loaded
+        expect(page).not_to have_button("Cancel")
+        expect(page).not_to have_button("Save")
 
         disabled_lever_list.each do |item|
           expect(find("#lever-wrapper-#{item}")).to match_css(".lever-disabled")
@@ -126,6 +129,31 @@ RSpec.feature "Admin UI" do
     before do
       OrganizationsUser.make_user_admin(current_user, CDAControlGroup.singleton)
     end
+
+    it "the lever control page operates correctly" do
+      step "lever history displays on page" do
+        visit "case-distribution-controls"
+        confirm_page_and_section_loaded
+
+        expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
+        expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
+
+        fill_in ama_direct_reviews_field, with: ""
+        fill_in ama_direct_reviews_field, with: "123"
+        click_save_button
+        click_modal_confirm_button
+
+        expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
+        expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
+
+        fill_in ama_direct_reviews_field, with: "300"
+        click_save_button
+        click_modal_confirm_button
+
+        expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
+        expect(find("#lever-history-table").has_content?("300 days")).to eq(true)
+      end
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -160,9 +188,14 @@ RSpec.feature "Admin UI" do
 
     expect(find("##{bust_backlog}-description")).to match_css(".description-styling")
     expect(find("##{bust_backlog}-product")).to match_css(".value-styling")
-
-    expect(page).not_to have_button("Cancel")
-    expect(page).not_to have_button("Save")
   end
   # rubocop:enable Metrics/AbcSize
+
+  def click_save_button
+    find("#LeversSaveButton").click
+  end
+
+  def click_modal_confirm_button
+    find("#save-modal-confirm").click
+  end
 end
