@@ -3,6 +3,7 @@
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
   include EventConcern
+  include ConferenceableConcern
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
