@@ -1181,6 +1181,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.select-container-styles {
+  width: 100%;
+  display: inline-block;
+}
+
+.non-related-task {
+margin-bottom: 150px;
+padding-top: 10px;
+font-weight: bold;
+}
+
+.correspondence-letters-table-container {
+  background-color: $color-gray-inverse-base;
+}
+
+.correspondence-letters-table {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 .myletters {
   width: 100%;
   display: inline-block;
