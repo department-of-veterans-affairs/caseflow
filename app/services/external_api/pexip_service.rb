@@ -13,7 +13,12 @@ class ExternalApi::PexipService
     @client_host = client_host
   end
 
-  def create_conference(host_pin:, guest_pin:, name:)
+  # :reek:FeatureEnvy
+  def create_conference(virtual_hearing)
+    host_pin = virtual_hearing.host_pin
+    guest_pin = virtual_hearing.guest_pin
+    name = virtual_hearing.alias
+
     body = {
       "aliases": [{ "alias": "BVA#{name}" }, { "alias": VirtualHearing.formatted_alias(name) }, { "alias": name }],
       "allow_guests": true,
@@ -35,17 +40,27 @@ class ExternalApi::PexipService
     ExternalApi::PexipService::CreateResponse.new(resp)
   end
 
-  def delete_conference(conference_id:)
-    return if conference_id.nil?
+  def delete_conference(virtual_hearing)
+    if virtual_hearing.conference_id.nil?
+      return ExternalApi::PexipService::DeleteResponse.new(not_found_response)
+    end
 
-    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
+    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{virtual_hearing.conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
-    return if resp.nil?
+    return lack_of_connectivity_response if resp.nil?
 
     ExternalApi::PexipService::DeleteResponse.new(resp)
   end
 
+  def not_found_response
+    HTTPI::Response.new(404, {}, {})
+  end
+
   private
+
+  def lack_of_connectivity_response
+    HTTPI::Response.new(503, {}, {})
+  end
 
   attr_reader :host, :port, :user_name, :password, :client_host
 
