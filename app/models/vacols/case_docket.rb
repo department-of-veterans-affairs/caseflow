@@ -460,7 +460,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.appeals_tied_to_non_ssc_avljs
-    query =  <<-SQL
+    query = <<-SQL
       with non_ssc_avljs as (
         #{VACOLS::Staff::NON_SSC_AVLJS}
       )
