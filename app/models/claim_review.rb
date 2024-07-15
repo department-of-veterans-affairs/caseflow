@@ -8,7 +8,7 @@ class ClaimReview < DecisionReview
 
   has_many :end_product_establishments, as: :source
   has_many :messages, as: :detail
-
+  has_one :event_record, as: :evented_record
   with_options if: :saving_review do
     validate :validate_receipt_date
     validate :validate_veteran
@@ -126,10 +126,8 @@ class ClaimReview < DecisionReview
   end
 
   def redirect_url
-    if vha_claim? && request_issues_without_decision_dates?
+    if benefit_type == "vha" && request_issues_without_decision_dates?
       "#{business_line.tasks_url}?tab=incomplete"
-    elsif vha_claim? && pending_issue_modification_requests.any?
-      "#{business_line.tasks_url}?tab=pending"
     else
       business_line.tasks_url
     end
@@ -208,10 +206,6 @@ class ClaimReview < DecisionReview
     active?
   end
 
-  def vha_claim?
-    benefit_type == "vha"
-  end
-
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
@@ -223,7 +217,8 @@ class ClaimReview < DecisionReview
       receipt_date: receipt_date,
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url
+      caseflow_only_edit_issues_url: caseflow_only_edit_issues_url,
+      intake_from_vbms: from_decision_review_created_event?
     }
   end
 
@@ -307,12 +302,13 @@ class ClaimReview < DecisionReview
     processed? && cleared_end_products.any?(&:nonrating?)
   end
 
-  def sct_appeal?
-    false
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    intake ? intake.from_decision_review_created_event? : false
   end
 
-  def task_in_progress?
-    tasks.any?(&:active?)
+  def sct_appeal?
+    false
   end
 
   private

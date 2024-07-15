@@ -8,7 +8,7 @@ describe BusinessLine do
   end
 
   describe ".included_tabs" do
-    it { expect(subject.included_tabs).to match_array [:incomplete, :in_progress, :completed, :pending] }
+    it { expect(subject.included_tabs).to match_array [:incomplete, :in_progress, :completed] }
   end
 
   describe ".singleton" do
@@ -22,8 +22,7 @@ describe BusinessLine do
       expect(subject.tasks_query_type).to eq(
         incomplete: "on_hold",
         in_progress: "active",
-        completed: "recently_completed",
-        pending: "active"
+        completed: "recently_completed"
       )
     end
   end
