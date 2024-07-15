@@ -76,7 +76,7 @@ namespace :add_admins do
     ussc = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLJERRY",
-      full_name: "Jerry SupervisorySeniorCouncilUser",
+      full_name: "Jerry SupervisorySeniorCounselUser",
       roles: ["Hearing Prep"]
     )
     SupervisorySeniorCounsel.singleton.add_user(ussc)
@@ -84,7 +84,7 @@ namespace :add_admins do
     ussc2 = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLTOM",
-      full_name: "Tom SupervisorySeniorCouncilUser",
+      full_name: "Tom SupervisorySeniorCounselUser",
       roles: ["Hearing Prep"]
     )
     SupervisorySeniorCounsel.singleton.add_user(ussc2)
@@ -92,7 +92,7 @@ namespace :add_admins do
     ussccr = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLBILLY",
-      full_name: "Billy SupervisorySeniorCouncilCaseReviewUser",
+      full_name: "Billy SupervisorySeniorCounselCaseReviewUser",
       roles: ["Hearing Prep"]
     )
     SupervisorySeniorCounsel.singleton.add_user(ussccr)
@@ -101,7 +101,7 @@ namespace :add_admins do
     ussccr2 = User.create!(
       station_id: 101,
       css_id: "SPLTAPPLSUSAN",
-      full_name: "Susan SupervisorySeniorCouncilCaseReviewUser",
+      full_name: "Susan SupervisorySeniorCounselCaseReviewUser",
       roles: ["Hearing Prep"]
     )
     SupervisorySeniorCounsel.singleton.add_user(ussccr2)
