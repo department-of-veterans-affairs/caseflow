@@ -51,9 +51,9 @@ export const ScheduleVeteranForm = ({
     isEmpty(appeal?.availableHearingLocations);
 
   const unscheduledNotes = hearing?.notes;
-  const hearingDayIsVirtual = hearing?.hearingDay?.readableRequestType === 'Virtual';
+  const hearingDayIsVirtual = hearing?.requestType === 'Virtual';
 
-  const hearingDayIsVideo = hearing?.hearingDay?.readableRequestType === 'Video';
+  const hearingDayIsVideo = hearing?.requestType === 'Video';
 
   // Set the section props
   const sectionProps = {
