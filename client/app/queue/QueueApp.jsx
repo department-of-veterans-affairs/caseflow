@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
+import CorrespondenceCases from './correspondence/CorrespondenceCases';
 
 import {
   setCanEditAod,
@@ -26,6 +27,9 @@ import {
   setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
+  setMailTeamUser,
+  setMailSupervisor,
+  setInboundOpsSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -36,6 +40,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/ReviewPackage/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -86,6 +91,8 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+import CorrespondenceReviewPackage from './correspondence/ReviewPackage/CorrespondenceReviewPackage';
+import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -94,6 +101,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
@@ -126,6 +134,9 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
+    this.props.setMailTeamUser(this.props.isInboundOpsTeamUser);
+    this.props.setMailSupervisor(this.props.isInboundOpsSupervisor);
+    this.props.setInboundOpsSuperUser(this.props.isInboundOpsSuperuser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
@@ -605,6 +616,8 @@ class QueueApp extends React.PureComponent {
 
   routedOrganizationUsers = (props) => (
     <OrganizationUsers {...props.match.params}
+      organizationPermissions={this.props.organizationPermissions}
+      orgnizationUserPermissions={this.props.userPermissions}
       conferenceSelectionVisibility = {this.props.featureToggles.conference_selection_visibility}
     />
   );
@@ -629,6 +642,20 @@ class QueueApp extends React.PureComponent {
 
   routedPostponeHearingTaskModal = (props) => (
     <PostponeHearingTaskModal {...props.match.params} />
+  );
+
+  routedReviewPackage = (props) => (
+    <ReviewPackageLoadingScreen
+      {...props.match.params}>
+      <CorrespondenceReviewPackage
+        correspondenceTypes={this.props.correspondenceTypes}
+        hasEfolderFailedTask={this.props.hasEfolderFailedTask}
+        inboundOpsTeamUsers={this.props.inboundOpsTeamUsers}
+        isInboundOpsSuperuser={this.props.isInboundOpsSuperuser}
+        userIsInboundOpsSupervisor={this.props.userIsInboundOpsSupervisor}
+        configUrl={this.props.configUrl}
+        {...props.match.params} />
+    </ReviewPackageLoadingScreen>
   );
 
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
@@ -678,6 +705,24 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingPostponementRequest = (props) => (
     <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
+  routedCorrespondenceIntake = (props) => (
+    <CorrespondenceIntake
+      {...props.match.params}
+      reduxStore={this.props.reduxStore}
+      autoTexts={this.props.autoTexts}
+      correspondence={this.props.correspondence}
+      priorMail={this.props.priorMail}
+      veteranInformation={this.props.veteranInformation}
+      isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
+    />
+  );
+
+  routedCorrespondenceCases = (props) => (
+    <CorrespondenceCases {...props.match.params}
+      {...this.props}
+    />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
@@ -738,6 +783,21 @@ class QueueApp extends React.PureComponent {
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
             />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/team"
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
+              render={this.routedCorrespondenceCases}
+            />
+
             <PageRoute
               exact
               path="/queue/:userId"
@@ -896,6 +956,13 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
+              path="/queue/correspondence/:correspondence_uuid/review_package"
+              title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
+              render={this.routedReviewPackage}
+            />
+
+            <PageRoute
+              exact
               path="/queue/appeals/:appealId/edit_poa_information"
               title={`${PAGE_TITLES.EDIT_POA_INFORMATION} | Caseflow`}
               render={this.routedEditPOAInformation}
@@ -910,6 +977,17 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
+            />
+
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
+              render={this.routedCorrespondenceIntake}
             />
 
             {motionToVacateRoutes.page}
@@ -1431,7 +1509,6 @@ class QueueApp extends React.PureComponent {
               path="/team_management/lookup_participant_id"
               render={this.routedLookupParticipantIdModal}
             />
-
             {motionToVacateRoutes.modal}
           </Switch>
         </div>
@@ -1468,6 +1545,13 @@ QueueApp.propTypes = {
   setUserCssId: PropTypes.func,
   setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
+  setMailTeamUser: PropTypes.func,
+  setMailSupervisor: PropTypes.func,
+  setInboundOpsSuperUser: PropTypes.func,
+  isInboundOpsTeamUser: PropTypes.bool,
+  isInboundOpsSupervisor: PropTypes.bool,
+  isInboundOpsSuperuser: PropTypes.bool,
+  inboundOpsTeamUsers: PropTypes.array,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
@@ -1486,10 +1570,21 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  userIsInboundOpsSupervisor: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  correspondence: PropTypes.object,
+  correspondenceTypes: PropTypes.array,
+  hasEfolderFailedTask: PropTypes.bool,
+  priorMail: PropTypes.array,
+  veteranInformation: PropTypes.string,
+  autoTexts: PropTypes.array,
+  reduxStore: PropTypes.object,
+  organizationPermissions: PropTypes.array,
+  userPermissions: PropTypes.array,
+  configUrl: PropTypes.string,
   conferenceProvider: PropTypes.string,
   setMeetingType: PropTypes.string
 };
@@ -1518,6 +1613,9 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
+      setMailTeamUser,
+      setMailSupervisor,
+      setInboundOpsSuperUser,
     },
     dispatch
   );

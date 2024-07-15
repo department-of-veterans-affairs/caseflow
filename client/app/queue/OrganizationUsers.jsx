@@ -3,6 +3,7 @@
 /* eslint-disable max-len */
 
 import React from 'react';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -18,6 +19,14 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
+import OrganizationPermissions from './OrganizationPermissions';
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
+});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -170,6 +179,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
+
     const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
@@ -182,7 +192,6 @@ export default class OrganizationUsers extends React.PureComponent {
       this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -257,23 +266,35 @@ getFilteredUsers = () => {
               }
 
             </div>
-            {this.state.organizationName === 'Hearings Management' &&
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
-              <div className="button-style">
-                <div>
-                  <SelectConferenceTypeRadioField
-                    key={`${user.id}-conference-selection`}
-                    name={user.id}
-                    conferenceProvider={
-                      user.attributes.conference_provider
-                    }
-                    organization={this.props.organization}
-                    user={user}
-                  />
+                <div className="button-style">
+                  <div>
+                    <SelectConferenceTypeRadioField
+                      key={`${user.id}-conference-selection`}
+                      name={user.id}
+                      conferenceProvider={
+                        user.attributes.conference_provider
+                      }
+                      organization={this.props.organization}
+                      user={user}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
+              {(this.props.organizationPermissions.length > 0) &&
+            <div className={['team-member-permission-toggles-container']}>
+              <OrganizationPermissions
+                organization={this.props.organization}
+                permissions={this.props.organizationPermissions}
+                user={user}
+                orgUserData={this.state.organizationUsers.find((orgUser) => orgUser.id === user.id)}
+                orgnizationUserPermissions={this.props.orgnizationUserPermissions} />
+            </div>
+              }
+            </div>
           </li>
         </React.Fragment>
       );
@@ -416,5 +437,7 @@ getFilteredUsers = () => {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string,
-  conferenceSelectionVisibility: PropTypes.bool
+  conferenceSelectionVisibility: PropTypes.bool,
+  organizationPermissions: PropTypes.array,
+  orgnizationUserPermissions: PropTypes.array
 };
