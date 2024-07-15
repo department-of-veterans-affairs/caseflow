@@ -22,7 +22,7 @@ module DistributionConcern
       # If an appeal does not have an open DistributionTask, then it has already been distributed by automatic
       # case distribution and a new JudgeAssignTask should not be created. This should only occur if two users
       # request a distribution simultaneously.
-      next nil unless appeal.tasks.open.of_type(:DistributionTask).any?
+      next nil unless appeal.tasks.open.of_type(:DistributionTask).any? && appeal.active?
 
       distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
       Rails.logger.info("Calling JudgeAssignTaskCreator for appeal #{appeal.id} with judge #{judge.css_id}")
@@ -35,7 +35,7 @@ module DistributionConcern
   # Check for tasks which are open that we would not expect to see at the time of distribution. Send a slack
   # message for notification of a potential bug in part of the application, but do not stop the distribution
   def check_for_unexpected_tasks(appeal)
-    unless appeal.tasks.open.reject { |task| ALLOWABLE_TASKS.include?(task.class.name) }.empty?
+    unless appeal.tasks.open.reject { |task| ALLOWABLE_TASKS.include?(task.class.name) }.empty? && appeal.active?
       send_slack_notification(appeal)
     end
   end
@@ -64,7 +64,7 @@ module DistributionConcern
   # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
-    appeals = appeals(appeals_args)
+    appeals = ready_priority_nonpriority_appeals(appeals_args)
       .limit(limit)
       .includes(:request_issues)
 

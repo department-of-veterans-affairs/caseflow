@@ -307,6 +307,72 @@ describe BusinessLine do
     end
   end
 
+  describe ".pending_tasks" do
+    let!(:requestor) { create(:user) }
+    let!(:decider) { create(:user) }
+    let!(:hlr_pending_tasks) do
+      create_list(:issue_modification_request,
+                  3,
+                  :with_higher_level_review,
+                  status: "assigned",
+                  requestor: requestor,
+                  decider: decider)
+    end
+
+    let!(:sc_pending_tasks) do
+      create_list(:issue_modification_request,
+                  3,
+                  :with_supplemental_claim,
+                  status: "assigned",
+                  requestor: requestor,
+                  decider: decider)
+    end
+
+    let!(:extra_modification_request) do
+      create(:issue_modification_request,
+             :with_higher_level_review,
+             status: "assigned",
+             requestor: requestor,
+             decider: decider)
+    end
+
+    let(:extra_decision_review) do
+      extra_modification_request.decision_review
+    end
+
+    let!(:extra_modification_request2) do
+      create(:issue_modification_request,
+             status: "assigned",
+             requestor: requestor,
+             decider: decider,
+             decision_review: extra_decision_review)
+    end
+
+    subject { business_line.pending_tasks(filters: task_filters) }
+
+    include_examples "task filtration"
+
+    context "With an empty task filter" do
+      let(:task_filters) { nil }
+
+      it "All pending tasks are included in the results" do
+        expect(subject.size).to eq(7)
+
+        expect(subject.map(&:appeal_id)).to match_array(
+          (hlr_pending_tasks + sc_pending_tasks + [extra_modification_request]).pluck(:decision_review_id)
+        )
+
+        # Verify the issue count and issue modfication count is correct for the extra task
+        extra_task = subject.find do |task|
+          task.appeal_id == extra_modification_request.decision_review_id &&
+            task.appeal_type == "HigherLevelReview"
+        end
+        expect(extra_task[:issue_count]).to eq(1)
+        expect(extra_task[:pending_issue_count]).to eq(2)
+      end
+    end
+  end
+
   describe "Generic Non Comp Org Businessline" do
     include_context :business_line, "NONCOMPORG", "nco"
 
