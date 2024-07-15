@@ -43,7 +43,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       priority_target,
       priority_distributions_this_month_for_eligible_judges
     )
-    .generate
+      .generate
   end
 
   # Distribute all priority cases tied to a judge without limit

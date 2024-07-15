@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class PushPriorityReport
-
   def initialize(genpop_distributions,
-    tied_distributions,
-    priority_target,
-    priority_distributions_this_month_for_eligible_judges
-  )
+                 tied_distributions,
+                 priority_target,
+                 priority_distributions_this_month_for_eligible_judges)
     @report = []
     @genpop_distributions = genpop_distributions
     @tied_distributions = tied_distributions
