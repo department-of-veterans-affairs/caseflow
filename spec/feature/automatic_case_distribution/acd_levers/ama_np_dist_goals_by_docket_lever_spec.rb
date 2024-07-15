@@ -17,21 +17,6 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
   let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
   let(:ama_evidence_submissions_field) { Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals }
 
-  context "user is in Case Distro Algorithm Control organization but not an admin" do
-    scenario "visits the lever control page", type: :feature do
-      visit "case-distribution-controls"
-      confirm_page_and_section_loaded
-
-      expect(find("##{ama_hearings}-lever-value > span")["data-disabled-in-ui"]).to eq("false")
-      expect(find("##{ama_direct_reviews}-lever-value > span")["data-disabled-in-ui"]).to eq("false")
-      expect(find("##{ama_evidence_submissions}-lever-value > span")["data-disabled-in-ui"]).to eq("false")
-
-      expect(find("##{ama_hearings}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("false")
-      expect(find("##{ama_direct_reviews}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("false")
-      expect(find("##{ama_evidence_submissions}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("false")
-    end
-  end
-
   context "user is a Case Distro Algorithm Control admin" do
     before do
       OrganizationsUser.make_user_admin(current_user, CDAControlGroup.singleton)

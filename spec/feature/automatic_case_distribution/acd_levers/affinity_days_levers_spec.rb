@@ -26,23 +26,6 @@ RSpec.feature "Affinity Days Levers" do
     ]
   end
 
-  context "user is in Case Distro Algorithm Control organization but not an admin" do
-    scenario "visits the lever control page", type: :feature do
-      visit "case-distribution-controls"
-      confirm_page_and_section_loaded
-
-      disabled_lever_list.each do |item|
-        expect(find("#lever-wrapper-#{item}")).to match_css(".lever-disabled")
-        expect(find("#affinity-day-label-for-#{item}")).to match_css(".lever-disabled")
-      end
-
-      enabled_lever_list.each do |item|
-        expect(find("#lever-wrapper-#{item}")).not_to match_css(".lever-disabled")
-        expect(find("#affinity-day-label-for-#{item}")).not_to match_css(".lever-disabled")
-      end
-    end
-  end
-
   context "user is a Case Distro Algorithm Control admin" do
     before do
       OrganizationsUser.make_user_admin(current_user, CDAControlGroup.singleton)

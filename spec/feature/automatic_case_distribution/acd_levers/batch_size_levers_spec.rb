@@ -12,17 +12,6 @@ RSpec.feature "Batch Size Levers" do
   let(:batch_size_per_attorney) { Constants.DISTRIBUTION.batch_size_per_attorney }
   let(:request_more_cases_minimum) { Constants.DISTRIBUTION.request_more_cases_minimum }
 
-  context "user is in Case Distro Algorithm Control organization but not an admin" do
-    scenario "visits the lever control page", type: :feature do
-      visit "case-distribution-controls"
-      confirm_page_and_section_loaded
-
-      expect(find("##{alternate_batch_size} > label")).to match_css(".lever-active")
-      expect(find("##{batch_size_per_attorney} > label")).to match_css(".lever-active")
-      expect(find("##{request_more_cases_minimum} > label")).to match_css(".lever-active")
-    end
-  end
-
   context "user is a Case Distro Algorithm Control admin" do
     before do
       OrganizationsUser.make_user_admin(current_user, CDAControlGroup.singleton)

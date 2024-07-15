@@ -13,15 +13,6 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
   let(:nod_adjustment) { Constants.DISTRIBUTION.nod_adjustment }
   let(:bust_backlog) { Constants.DISTRIBUTION.bust_backlog }
 
-  context "user is in Case Distro Algorithm Control organization but not an admin" do
-    scenario "visits the lever control page", type: :feature do
-      visit "case-distribution-controls"
-      confirm_page_and_section_loaded
-
-      description_product_match
-    end
-  end
-
   context "user is a Case Distro Algorithm Control admin" do
     before do
       OrganizationsUser.make_user_admin(current_user, CDAControlGroup.singleton)

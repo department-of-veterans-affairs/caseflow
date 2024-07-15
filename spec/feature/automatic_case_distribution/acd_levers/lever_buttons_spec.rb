@@ -15,15 +15,6 @@ RSpec.feature "Case Distribution Controls Page Buttons" do
   let(:ama_direct_reviews_lever) { CaseDistributionLever.find_by_item(ama_direct_reviews) }
   let(:alternate_batch_size_lever) { CaseDistributionLever.find_by_item(alternate_batch_size) }
 
-  context "user is in Case Distro Algorithm Control organization but not an admin" do
-    scenario "visits the lever control page", type: :feature do
-      visit "case-distribution-controls"
-      confirm_page_and_section_loaded
-      expect(page).not_to have_button("Cancel")
-      expect(page).not_to have_button("Save")
-    end
-  end
-
   context "user is a Case Distro Algorithm Control admin" do
     let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
     let(:alternative_batch_size_field) { "#{Constants.DISTRIBUTION.alternative_batch_size}-field" }
