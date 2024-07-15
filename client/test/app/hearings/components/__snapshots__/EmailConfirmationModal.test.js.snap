@@ -158,6 +158,8 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -319,6 +321,8 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -490,6 +494,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -653,6 +659,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -835,6 +843,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1072,6 +1082,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -1233,6 +1245,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1407,6 +1421,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1644,6 +1660,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -1805,6 +1823,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1979,6 +1999,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -2207,6 +2229,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -2359,6 +2383,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -2638,6 +2664,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -2779,6 +2807,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -3072,6 +3102,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3234,6 +3266,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -3521,6 +3555,8 @@ exports[`EmailConfirmationModal DateTime sub-component Displays divider for form
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3700,6 +3736,8 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3847,6 +3885,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -4113,6 +4153,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -4248,6 +4290,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -4465,6 +4509,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -4731,6 +4777,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -4866,6 +4914,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -5014,6 +5064,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -5299,6 +5351,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -5565,6 +5619,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -5700,6 +5756,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -5848,6 +5906,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -6133,6 +6193,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -6399,6 +6461,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -6534,6 +6598,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                         "representativeEmail": "tom.brady@caseflow.gov",
                         "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
+                        "scheduledInTimezone": "America/Chicago",
+                        "scheduledTimeString": "03:30",
                         "status": "active",
                       }
                     }
@@ -6901,6 +6967,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7127,6 +7195,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7353,6 +7423,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7578,6 +7650,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7803,6 +7877,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7993,6 +8069,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8183,6 +8261,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8373,6 +8453,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8576,6 +8658,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8814,6 +8898,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9052,6 +9138,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9289,6 +9377,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9526,6 +9616,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9728,6 +9820,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9930,6 +10024,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -10132,6 +10228,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
