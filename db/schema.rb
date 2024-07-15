@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_25_120005) do
+ActiveRecord::Schema.define(version: 2024_06_13_202232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -370,7 +370,7 @@ ActiveRecord::Schema.define(version: 2024_05_25_120005) do
 
   create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
-    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.string "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
@@ -1164,6 +1164,32 @@ ActiveRecord::Schema.define(version: 2024_05_25_120005) do
     t.index ["user_id"], name: "unique_index_to_avoid_multiple_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["veteran_file_number"], name: "index_intakes_on_veteran_file_number"
     t.index ["veteran_id"], name: "index_intakes_on_veteran_id"
+  end
+
+  create_table "issue_modification_requests", comment: "A database table to store issue modification requests for a decision review for altering or adding additional request_issues", force: :cascade do |t|
+    t.string "benefit_type", comment: "This will primarily apply when the request type is an addition, indicating the benefit type of the issue that will be created if the modification request is approved."
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "decided_at", comment: "Timestamp when the decision was made by the decider/admin. it can be approved or denied date."
+    t.bigint "decider_id", comment: "The user who decides approval/denial of the issue modification request."
+    t.date "decision_date", comment: "The decision date of the request issue that is being modified"
+    t.text "decision_reason", comment: "The reason behind the approve/denial of the modification request provided by the user (admin) that is acting on the request."
+    t.bigint "decision_review_id", comment: "The decision review that this issue modification request belongs to"
+    t.string "decision_review_type"
+    t.datetime "edited_at", comment: "Timestamp when the requestor or decider edits the issue modification request."
+    t.string "nonrating_issue_category", comment: "The nonrating issue category of the request issue that is being modified or added by the request"
+    t.string "nonrating_issue_description", comment: "The nonrating issue description of the request issue that is being modified or added by the request"
+    t.boolean "remove_original_issue", default: false, comment: "flag to indicate if the original issue was removed or not."
+    t.bigint "request_issue_id", comment: "Specifies the request issue targeted by the modification request."
+    t.text "request_reason", comment: "The reason behind the modification request provided by the user initiating it."
+    t.string "request_type", default: "addition", comment: "The type of issue modification request. The possible types are addition, modification, withdrawal and cancelled."
+    t.bigint "requestor_id", comment: "The user who requests modification or addition of request issues"
+    t.string "status", default: "assigned", comment: "The status of the issue modifications request. The possible status values are assigned, approved, denied, and cancelled"
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "withdrawal_date", comment: "The withdrawal date for issue modification requests with a request type of withdrawal"
+    t.index ["decider_id"], name: "index_issue_modification_requests_on_decider_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_issue_modification_requests_decision_review"
+    t.index ["request_issue_id"], name: "index_issue_modification_requests_on_request_issue_id"
+    t.index ["requestor_id"], name: "index_issue_modification_requests_on_requestor_id"
   end
 
   create_table "job_execution_times", id: :serial, force: :cascade do |t|
@@ -2283,6 +2309,9 @@ ActiveRecord::Schema.define(version: 2024_05_25_120005) do
   add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
+  add_foreign_key "issue_modification_requests", "request_issues"
+  add_foreign_key "issue_modification_requests", "users", column: "decider_id"
+  add_foreign_key "issue_modification_requests", "users", column: "requestor_id"
   add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"
