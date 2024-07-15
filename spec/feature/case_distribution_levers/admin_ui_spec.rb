@@ -131,10 +131,43 @@ RSpec.feature "Admin UI" do
     end
 
     it "the lever control page operates correctly" do
-      step "lever history displays on page" do
-        visit "case-distribution-controls"
-        confirm_page_and_section_loaded
+      visit "case-distribution-controls"
+      confirm_page_and_section_loaded
 
+      step "enabled and disabled levers display correctly" do
+        # From affinity_days_levers_spec.rb
+        option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
+
+        disabled_lever_list.each do |disabled_lever|
+          option_list.each do |option|
+            expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
+          end
+        end
+
+        enabled_lever_list.each do |enabled_lever|
+          option_list.each do |option|
+            expect(find("##{enabled_lever}-#{option}", visible: false)).not_to be_disabled
+          end
+        end
+      end
+
+      step "lever history displays on page" do
+        # From affinity_days_levers_spec.rb
+        option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
+
+        disabled_lever_list.each do |disabled_lever|
+          option_list.each do |option|
+            expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
+          end
+        end
+
+        enabled_lever_list.each do |enabled_lever|
+          option_list.each do |option|
+            expect(find("##{enabled_lever}-#{option}", visible: false)).not_to be_disabled
+          end
+        end
+
+        # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
