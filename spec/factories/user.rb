@@ -169,6 +169,12 @@ FactoryBot.define do
       end
     end
 
+    trait :non_ssc_avlj do
+      after(:create) do |user|
+        create(:staff, sattyid: "9999", smemgrp: "9998", svlj: "A", sactive: "A", user: user)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
