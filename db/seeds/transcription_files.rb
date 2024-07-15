@@ -35,14 +35,16 @@ module Seeds
             hearing = hearings[index]
           end
 
-          TranscriptionFile.find_or_create_by(
-            hearing: hearing,
-            file_name: file[:fileName],
-            file_status: file[:fileStatus],
-            file_type: file[:fileType],
-            docket_number: hearing.docket_number,
-            aws_link: "aws-link/#{hearing.docket_number}_#{hearing.id}_Hearing.vtt",
-          )
+          if hearing
+            TranscriptionFile.find_or_create_by(
+              hearing: hearing,
+              file_name: file[:fileName],
+              file_status: file[:fileStatus],
+              file_type: file[:fileType],
+              docket_number: hearing.docket_number,
+              aws_link: "aws-link/#{hearing.docket_number}_#{hearing.id}_Hearing.vtt",
+            )
+          end
         end
       end
     end
