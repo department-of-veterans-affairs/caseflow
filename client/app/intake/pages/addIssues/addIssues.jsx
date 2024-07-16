@@ -331,7 +331,7 @@ class AddIssuesPage extends React.Component {
       userCanSplitAppeal,
       userCanRequestIssueUpdates,
       isLegacy,
-      pendingIssueModificationRequests,,
+      pendingIssueModificationRequests,
       intakeFromVbms
     } = this.props;
 
@@ -969,7 +969,7 @@ export const EditAddIssuesPage = connect(
     userIsVhaAdmin: state.userIsVhaAdmin,
     userCanSplitAppeal: state.userCanSplitAppeal,
     userCanRequestIssueUpdates: state.userCanRequestIssueUpdates,
-    isLegacy: state.isLegacy,,
+    isLegacy: state.isLegacy,
     intakeFromVbms: state.intakeFromVbms
   }),
   (dispatch) =>
