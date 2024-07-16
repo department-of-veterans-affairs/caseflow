@@ -105,6 +105,9 @@ class BusinessLine < Organization
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name)),
       "SupplementalClaim" => Task.arel_table[:appeal_type]
         .eq("SupplementalClaim")
+        .and(Task.arel_table[:type].eq(DecisionReviewTask.name)),
+      "Remand" => Task.arel_table[:appeal_type]
+        .eq("Remand")
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
@@ -147,28 +150,21 @@ class BusinessLine < Organization
         .count
     end
 
+    def issue_type_query_helper(join_association)
+      Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .joins(join_association)
+        .joins(issue_modification_request_join)
+        .where(query_constraints)
+        .where(issue_modification_request_filter)
+    end
+
     # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
     def issue_type_count
-      shared_select_statement = "tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category"
-      appeals_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(ama_appeal: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      hlr_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(supplemental_claim: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      sc_query = Task.send(parent.tasks_query_type[query_type])
-        .select(shared_select_statement)
-        .joins(higher_level_review: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
+      appeals_query = issue_type_query_helper(ama_appeal: :request_issues)
+      hlr_query = issue_type_query_helper(higher_level_review: :request_issues)
+      sc_query = issue_type_query_helper(supplemental_claim: :request_issues)
+      remand_query = issue_type_query_helper(remand: :request_issues)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
@@ -177,6 +173,8 @@ class BusinessLine < Organization
             #{sc_query.to_sql}
           UNION ALL
             #{appeals_query.to_sql}
+          UNION ALL
+            #{remand_query.to_sql}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
         FROM task_review_issues
@@ -197,7 +195,6 @@ class BusinessLine < Organization
 
       issue_count_options
     end
-    # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
       # Generate all of the filter queries to be used in both the HLR and SC block
@@ -649,6 +646,10 @@ class BusinessLine < Organization
       decision_reviews_on_request_issues(ama_appeal: :request_issues)
     end
 
+    def remands_on_request_issues
+      decision_reviews_on_request_issues(remand: :request_issues)
+    end
+
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
@@ -683,8 +684,11 @@ class BusinessLine < Organization
     def combined_decision_review_tasks_query
       union_query = Arel::Nodes::UnionAll.new(
         Arel::Nodes::UnionAll.new(
-          higher_level_reviews_on_request_issues,
-          supplemental_claims_on_request_issues
+          Arel::Nodes::UnionAll.new(
+            higher_level_reviews_on_request_issues,
+            supplemental_claims_on_request_issues
+          ),
+          remands_on_request_issues
         ),
         ama_appeals_query
       )
