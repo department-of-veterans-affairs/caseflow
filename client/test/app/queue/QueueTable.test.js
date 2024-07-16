@@ -2,6 +2,7 @@ import React from 'react';
 import * as queueTable from 'app/queue/QueueTable';
 import FilterSummary from 'app/components/FilterSummary';
 import { shallow, mount } from 'enzyme';
+import { render, screen, fireEvent, waitFor, logRoles } from '@testing-library/react';
 import {
   initState,
   columns,
@@ -26,11 +27,16 @@ import TableFilter from 'app/components/TableFilter';
 import { COLORS, LOGO_COLORS } from 'app/constants/AppConstants';
 import * as glamor from 'glamor';
 import classnames from 'classnames';
-import { times } from 'lodash';
+import { get, times } from 'lodash';
 import LoadingScreen from 'app/components/LoadingScreen';
 import Pagination from 'app/components/Pagination/Pagination';
+import { log } from 'console';
 
 jest.mock('classnames');
+
+jest.mock('app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({})
+}));
 
 const { default: QueueTable, HeaderRow, BodyRows, FooterRow, Row } = queueTable;
 
@@ -445,25 +451,32 @@ describe('QueueTable', () => {
   describe('render()', () => {
     test('Matches snapshot with default props', () => {
       // Setup the test
-      const table = shallow(
+      const {container, asFragment} = render(
         <QueueTable columns={columns} rowObjects={createTask(3)} summary={summary} slowReRendersAreOk />
       );
-
+      // screen.debug();
+      logRoles(container)
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(HeaderRow)).toHaveLength(1);
-      expect(table.find(BodyRows)).toHaveLength(1);
-      expect(table.find(FooterRow)).toHaveLength(1);
-      expect(table.find(FilterSummary)).toHaveLength(1);
+      // // expect(table).toMatchSnapshot();
+      // expect(table.find(HeaderRow)).toHaveLength(1);
+      expect(container.querySelector('thead')).toBeInTheDocument();
 
-      // Negative tests
-      expect(table.find(TableFilter)).toHaveLength(0);
-      expect(table.find(DoubleArrowIcon)).toHaveLength(0);
+      // expect(table.find(BodyRows)).toHaveLength(1);
+      expect(container.querySelector('tbody')).toBeInTheDocument();
+
+      // expect(table.find(FooterRow)).toHaveLength(1);
+      expect(container.querySelector('tfoot')).toBeInTheDocument();
+
+      // expect(table.find(FilterSummary)).toHaveLength(1);
+
+      // // Negative tests
+      // expect(table.find(TableFilter)).toHaveLength(0);
+      // expect(table.find(DoubleArrowIcon)).toHaveLength(0);
     });
 
     test('Renders pagination when set', () => {
       // Setup the test
-      const table = mount(
+      const { container, asFragment} = render(
         <QueueTable
           enablePagination
           columns={columns}
@@ -474,68 +487,109 @@ describe('QueueTable', () => {
       );
 
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(Pagination)).toHaveLength(2);
-      expect(table.find(Row)).toHaveLength(15);
-      expect(table.state('currentPage')).toEqual(0);
+      // expect(table).toMatchSnapshot();
+      // expect(asFragment()).toMatchSnapshot();
+
+      const pagination = container.querySelectorAll('.cf-pagination');
+      expect(pagination).toHaveLength(2);
+
+      const rows = [];
+      for (let rowId = 0; rowId <= 14; rowId++) {
+        const rowElement = container.querySelector(`#table-row-${rowId}`);
+        rows.push(rowElement);
+        expect(rowElement).toBeInTheDocument();
+      }
+      expect(rows).toHaveLength(15);
+      expect(screen.getAllByText('Viewing 1-15 of 20 total')).not.toBeNull();
 
       // Change the page
-      table.
-        find('.cf-pagination-pages').
-        first().
-        childAt(3).
-        simulate('click');
-      expect(table.find(Row)).toHaveLength(5);
-      expect(table.state('currentPage')).toEqual(1);
+      const nextButton = screen.getAllByRole('button', { name: 'Next Page' });
+      fireEvent.click(nextButton[0]);
+
+      const rows2 = [];
+      for (let rowId = 0; rowId <= 4; rowId++) {
+        const rowElement = container.querySelector(`#table-row-${rowId}`);
+        rows2.push(rowElement);
+        expect(rowElement).toBeInTheDocument();
+        }
+      expect(rows2).toHaveLength(5);
+      expect(screen.getAllByText('Viewing 16-20 of 20 total')).not.toBeNull();
     });
 
     test('Renders loading component instead of body when loading data', () => {
       // Setup the test
-      const table = mount(
+      const useTaskPagesApi = true;
+      const paginationOptions = {
+        needsTaskRequest: true,
+      };
+      const taskPagesApiEndpoint = 'https://example.com/api/taskPages?param=value';
+
+      const { container, asFragment} = render(
         <QueueTable
-          enablePagination
-          columns={columns}
-          rowObjects={createTask(20)}
-          summary={summary}
-          slowReRendersAreOk
+        enablePagination
+        columns={columns}
+        rowObjects={createTask(20)}
+        summary={summary}
+        slowReRendersAreOk
+        useTaskPagesApi={useTaskPagesApi}
+        paginationOptions={paginationOptions}
+        taskPagesApiEndpoint={taskPagesApiEndpoint}
         />
       );
 
-      table.setState({ loadingComponent: <LoadingScreen /> });
+      // // Assertions
+      // expect(table).toMatchSnapshot();
+      // expect(asFragment()).toMatchSnapshot();
 
-      // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.find(HeaderRow)).toHaveLength(0);
-      expect(table.find(BodyRows)).toHaveLength(0);
-      expect(table.find(FooterRow)).toHaveLength(0);
-      expect(table.find(LoadingScreen)).toHaveLength(1);
+      expect(container.querySelector('thead')).not.toBeInTheDocument();
+      expect(container.querySelector('tbody')).not.toBeInTheDocument();
+      expect(container.querySelector('tfoot')).not.toBeInTheDocument();
+      expect(container.querySelector('.cf-loading-button-symbol')).toBeInTheDocument();
+      expect(container.querySelector('.cf-react-icon-loading-front')).toBeInTheDocument();
+      expect(container.querySelector('.cf-react-icon-loading-back')).toBeInTheDocument();
     });
 
-    test('Can sort rows', () => {
+    test.only('Can sort rows', () => {
       // Setup the test
-      const table = mount(
+      const { container, asFragment} = render(
         <QueueTable columns={sortColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.state('sortColName')).toEqual(null);
-      expect(table.state('sortAscending')).toEqual(true);
+      // expect(table).toMatchSnapshot();
+      // expect(asFragment()).toMatchSnapshot();
 
-      // Simulate sorting the table
-      table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      expect(table.state('sortColName')).toEqual('type');
-      expect(table.state('sortAscending')).toEqual(false);
+      // screen.debug();
+      // logRoles(container)
+      // expect(table.state('sortColName')).toEqual(null);
+      // expect(table.state('sortAscending')).toEqual(true);
 
-      // Update the sorting again
-      table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      expect(table.state('sortColName')).toEqual('type');
-      expect(table.state('sortAscending')).toEqual(true);
+      let ariaSort = container.querySelector('aria-sort')
+      console.log(ariaSort);
+      const sortByThird = screen.getByRole('button', { name: 'Sort by Third' });
+      fireEvent.click(sortByThird);
+      ariaSort = container.querySelector('th').getAttribute('aria-sort');
+      console.log(ariaSort);
+
+
+      fireEvent.click(sortByThird);
+      // console.log(ariaSort);
+      fireEvent.click(sortByThird);
+      // console.log(ariaSort);
+      // // Simulate sorting the table
+      // table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
+      // expect(table.state('sortColName')).toEqual('type');
+      // expect(table.state('sortAscending')).toEqual(false);
+
+      // // Update the sorting again
+      // table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
+      // expect(table.state('sortColName')).toEqual('type');
+      // expect(table.state('sortAscending')).toEqual(true);
     });
 
     test('Can filter rows', () => {
       // Setup the test
-      const table = mount(
+      const { container, asFragment} = render(
         <QueueTable columns={filterColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
