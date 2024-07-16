@@ -21,7 +21,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     perform_later_or_now(UpdateAppealAffinityDatesJob)
 
-    slack_service.send_notification(slack_report.join("\n"), self.class.name)
+    slack_service.send_notification(generate_report.join("\n"), self.class.name)
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
@@ -137,7 +137,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Reporting methods
   #
 
-  def slack_report
+  def generate_report
     report = []
 
     num_of_cases_distributed(report)
@@ -172,6 +172,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def age_of_oldest_by_docket(report)
     docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
@@ -179,6 +180,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end.to_h
   end
 
+  # :reek:FeatureEnvy
   def num_of_appeals_not_distributed(report, appeals_not_distributed)
     report << ""
     report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
@@ -194,13 +196,14 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     docket_coordinator.dockets[:legacy].not_genpop_priority_count
   end
 
+  # :reek:FeatureEnvy
   def num_of_appeals_not_distributed_by_affinity_date(report)
     report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals in affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: true, priority: true)}"
+                "#{docket.affinity_date_count(true, true)}"
       report << "*Number of #{sym} appeals out of affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: false, priority: true)}"
+                "#{docket.affinity_date_count(false, true)}"
     end
   end
 

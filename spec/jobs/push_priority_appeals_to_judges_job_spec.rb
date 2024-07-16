@@ -25,7 +25,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:distribute_genpop_priority_appeals).and_return([])
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:slack_report).and_return([])
+        .to receive(:generate_report).and_return([])
     end
 
     after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
@@ -435,7 +435,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".slack_report" do
+  context ".generate_report" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
@@ -517,7 +517,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    subject { job.slack_report }
+    subject { job.generate_report }
 
     before do
       FeatureToggle.disable!(:acd_distribute_by_docket_date)
@@ -608,7 +608,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         "*Number of hearing appeals out of affinity date window*: 0",
         "",
         "*Debugging information*",
-        "*Excluded Judges: #{excluded_judges}",
+        "*Excluded Judges*: #{excluded_judges}",
         "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       ].each_with_index do |line, index|
         expect(subject[index]).to eq line
