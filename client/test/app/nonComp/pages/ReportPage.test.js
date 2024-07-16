@@ -375,7 +375,7 @@ describe('ReportPage', () => {
 
     });
 
-    it('should add 10 checkboxes when radio Specific Events/ Actions is clicked', async () => {
+    it('should add 19 checkboxes when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -389,7 +389,9 @@ describe('ReportPage', () => {
       expect(screen.getAllByRole('checkbox').length).toBe(19);
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
-        expect(screen.getAllByText(option.label)).toBeTruthy();
+        expect(screen.getAllByText(option.system)).toBeTruthy();
+        expect(screen.getAllByText(option.general)).toBeTruthy();
+        expect(screen.getAllByText(option.requests)).toBeTruthy();
       });
     });
 
