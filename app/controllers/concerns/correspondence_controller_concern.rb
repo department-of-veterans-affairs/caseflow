@@ -209,6 +209,10 @@ module CorrespondenceControllerConcern
     @auto_texts ||= AutoText.all.pluck(:name)
   end
 
+  def mail_tasks
+    @mail_tasks ||= CorrespondenceMailTask.completed.where(appeal_id: @correspondence.id)
+  end
+
   def vet_info_serializer(veteran, correspondence)
     {
       firstName: veteran.first_name,

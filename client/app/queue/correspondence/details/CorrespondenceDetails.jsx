@@ -14,11 +14,22 @@ const CorrespondenceDetails = (props) => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
+  const correspondenceTasks = () => {
+    return (
+      <React.Fragment>
+        <h2>Completed Mail Tasks</h2>
+        <AppSegment filledBackground noMarginTop>
+            Table comes here
+        </AppSegment>
+      </React.Fragment>
+    );
+  };
+
   const tabList = [
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: 'Information about Correspondence/Appeal Tasks'
+      page: correspondenceTasks()
     },
     {
       disable: false,
