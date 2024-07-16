@@ -3,7 +3,6 @@ import TextareaField from '../../../../../components/TextareaField';
 import CheckboxModal from '../CheckboxModal';
 import Button from '../../../../../components/Button';
 import Select from 'react-select';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 const customSelectStyless = {
@@ -62,10 +61,6 @@ const customSelectStyless = {
     }
   })
 };
-const selectContainerStyless = css({
-  width: '100%',
-  display: 'inline-block',
-});
 
 const AddTaskView = (props) => {
   const task = props.task;
@@ -127,7 +122,7 @@ const AddTaskView = (props) => {
           <div className=" task-selection-box-for-new-tasks">
             <div className="task-selection-dropdown-box">
               <div id="reactSelectContainer"
-                {...selectContainerStyless}>
+                className="select-container-styles">
                 <label className="task-selection-title">Task</label>
                 <Select
                   placeholder="Select..."
