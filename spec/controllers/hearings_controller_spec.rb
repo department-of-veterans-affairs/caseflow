@@ -519,7 +519,8 @@ RSpec.describe HearingsController, type: :controller do
     let(:is_daylight_savings_on) { Time.zone.now.in_time_zone(expected_time_zone).zone == "EDT" }
 
     let!(:hearing) do
-      create(:hearing, :with_tasks, scheduled_time: is_daylight_savings_on ? "7:30 AM" : "8:30 AM",
+      create(:hearing, :with_tasks, scheduled_time: is_daylight_savings_on ?
+                                    "7:30 AM Eastern Time (US & Canada)" : "8:30 AM Eastern Time (US & Canada)",
                                     scheduled_in_timezone: "Eastern Time (US & Canada)")
     end
 
