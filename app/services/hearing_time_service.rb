@@ -49,8 +49,6 @@ class HearingTimeService
 
       tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
 
-      puts("THISISAFLAGTOSEARCHFOR #{datetime.strftime("%I:%M %p")} #{tz}")
-
       "#{datetime.strftime("%I:%M %p")} #{tz}"
     end
 
