@@ -44,7 +44,7 @@ class AppealsReadyForDistribution
       .flat_map do |sym, docket|
         appeals = docket.ready_to_distribute_appeals
         if sym == :legacy
-          legacy_rows(appeals, docket, sym)
+          legacy_rows(appeals, sym)
         else
           ama_rows(appeals, docket, sym)
         end
