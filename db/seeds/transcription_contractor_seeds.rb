@@ -3,6 +3,16 @@ module Seeds
 
     def seed!
       transcription_contractors = [
+        { name: "The Ravens Group, Inc.",
+          directory: "BVA Hearing Transcripts/The Ravens Group, Inc.",
+          poc: "Johnny Bravo",
+          email: "theravensgroup@test.com",
+          phone: "888-888-8888"},
+        { name: "Very Real Contractors, Inc.",
+          directory: "BVA Hearing Transcripts/Very Real Contractors, Inc.",
+          poc: "Real Person",
+          email: "veryrealcontractors@test.com",
+          phone: "888-888-8888"},
         { name: "Genesis Government Solutions, Inc.",
           directory: "BVA Hearing Transcripts/Genesis Government Solutions, Inc.",
           poc: "John Doe",
@@ -13,10 +23,10 @@ module Seeds
           poc: "Jane Doe",
           email: "jamisonprofessionalservices@test.com",
           phone: "888-888-8888"},
-        { name: "The Ravens Group, Inc.",
-          directory: "BVA Hearing Transcripts/The Ravens Group, Inc.",
-          poc: "Johnny Bravo",
-          email: "theravensgroup@test.com",
+        { name: "Actual Contractor, Inc.",
+          directory: "BVA Hearing Transcripts/Actual Contractor, Inc.",
+          poc: "Johnny Cash",
+          email: "actualcontractor@test.com",
           phone: "888-888-8888"}
       ]
 
@@ -29,7 +39,7 @@ module Seeds
           current_goal: 0,
           poc: contractor[:poc],
           email: contractor[:email],
-          phone:contractor[:phone],
+          phone: contractor[:phone],
         )
       end
     end

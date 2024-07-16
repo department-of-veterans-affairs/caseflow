@@ -121,8 +121,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :with_appeal_affinity,
-          docket_type: Constants.AMA_DOCKETS.hearing,
-          receipt_date: receipt_date
+          receipt_date: receipt_date,
+          docket_type: Constants.AMA_DOCKETS.hearing
         )
         most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
         hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)

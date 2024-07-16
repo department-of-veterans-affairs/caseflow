@@ -9,6 +9,8 @@ RSpec.feature "Hearing Details", :all_dbs do
     )
 
     vso_org.add_user(vso_user)
+
+    Seeds::TranscriptionContractor.new.seed!
   end
 
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
