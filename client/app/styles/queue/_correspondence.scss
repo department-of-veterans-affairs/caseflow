@@ -1310,7 +1310,9 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   a {
-    font-weight: bold;
+    padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+    border-right: 1px solid $color-gray-lighter;
+    border-left: 1px solid $color-gray-lighter;
   }
 
   p {
