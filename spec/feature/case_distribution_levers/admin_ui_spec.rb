@@ -58,7 +58,7 @@ RSpec.feature "Admin UI" do
       visit "case-distribution-controls"
       expect(page).to have_content("Case Distribution Algorithm Values")
 
-      empty_error_message = "Please enter a value greater than or equal to 0"
+      EMPTY_ERROR_MESSAGE = "Please enter a value greater than or equal to 0"
 
       step "enabled and disabled levers display correctly" do
         # From affinity_days_levers_spec.rb
@@ -77,8 +77,7 @@ RSpec.feature "Admin UI" do
         end
       end
 
-      step "levers initally display correctly" do
-        # From ama_np_dist_goals_by_docket_lever_spec.rb
+      step "levers initally are enabled and display correctly" do
         expect(page).to have_field(ama_hearings_field.to_s, disabled: false)
         expect(page).to have_field(ama_direct_reviews_field.to_s)
         expect(page).to have_field(ama_evidence_submissions_field.to_s, disabled: false)
@@ -89,18 +88,16 @@ RSpec.feature "Admin UI" do
       end
 
       step "inactive levers are displayed with values" do
-        # From inactive_data_elements_levers_spec.rb
         expect(find("##{maximum_direct_review_proportion}-value")).to have_content("7%")
         expect(find("##{minimum_legacy_proportion}-value")).to have_content("90%")
         expect(find("##{nod_adjustment}-value")).to have_content("40%")
         expect(find("##{bust_backlog}-value")).to have_content("True")
       end
 
-      step "cancelling changes resets values" do
+      step "cancelling lever changes resets values" do
         # Capybara locally is not setting clearing the field prior to entering the new value so fill with ""
         fill_in ama_direct_reviews_field, with: ""
 
-        # From lever_buttons_spec.rb
         fill_in ama_direct_reviews_field, with: "123"
         expect(page).to have_field(ama_direct_reviews_field, with: "123")
         click_cancel_button
@@ -133,23 +130,20 @@ RSpec.feature "Admin UI" do
       end
 
       step "error displays for invalid input on time goals section" do
-        # From ama_np_dist_goals_by_docket_lever_spec.rb
-
         fill_in ama_direct_reviews_field, with: "ABC"
         expect(page).to have_field(ama_direct_reviews_field, with: "")
-        expect(find("##{ama_direct_reviews_field}-lever")).to have_content(empty_error_message)
+        expect(find("##{ama_direct_reviews_field}-lever")).to have_content(EMPTY_ERROR_MESSAGE)
 
         fill_in ama_direct_reviews_field, with: "-1"
         expect(page).to have_field(ama_direct_reviews_field, with: "1")
-        expect(find("##{ama_direct_reviews_field}-lever").has_no_content?(empty_error_message)).to eq(true)
+        expect(find("##{ama_direct_reviews_field}-lever").has_no_content?(EMPTY_ERROR_MESSAGE)).to eq(true)
       end
 
       step "time goals section error clears with valid input" do
-        # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
-        # Change two levers at once to satisfy lever_buttons_spec.rb
+        # Change two levers at once to satisfy a previously separate test
         fill_in ama_direct_reviews_field, with: ""
         fill_in ama_direct_reviews_field, with: "123"
         fill_in ama_evidence_submissions_field, with: "456"
@@ -158,7 +152,6 @@ RSpec.feature "Admin UI" do
       end
 
       step "batch size lever section errors display with invalid inputs" do
-        # From batch_size_levers_spec.rb
         expect(page).to have_field("#{alternate_batch_size}-field", readonly: false)
         expect(page).to have_field("#{batch_size_per_attorney}-field", readonly: false)
         expect(page).to have_field("#{request_more_cases_minimum}-field", readonly: false)
@@ -171,21 +164,19 @@ RSpec.feature "Admin UI" do
         expect(page).to have_field("#{batch_size_per_attorney}-field", with: "1")
         expect(page).to have_field("#{request_more_cases_minimum}-field", with: "")
 
-        expect(find("##{alternate_batch_size} > div > div > span")).to have_content(empty_error_message)
-        expect(find("##{request_more_cases_minimum} > div > div > span")).to have_content(empty_error_message)
+        expect(find("##{alternate_batch_size} > div > div > span")).to have_content(EMPTY_ERROR_MESSAGE)
+        expect(find("##{request_more_cases_minimum} > div > div > span")).to have_content(EMPTY_ERROR_MESSAGE)
       end
 
       step "batch size lever section errors clear with valid inputs" do
-        # From batch_size_levers_spec.rb
         fill_in "#{alternate_batch_size}-field", with: "42"
         fill_in "#{batch_size_per_attorney}-field", with: "32"
         fill_in "#{request_more_cases_minimum}-field", with: "25"
 
-        expect(page).not_to have_content(empty_error_message)
+        expect(page).not_to have_content(EMPTY_ERROR_MESSAGE)
       end
 
       step "lever history displays on page" do
-        # From ../acd_audit_history/audit_lever_history_table_spec.rb
         expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
         expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
