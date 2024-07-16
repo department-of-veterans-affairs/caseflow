@@ -276,20 +276,16 @@ export default class TranscriptionSettings extends React.PureComponent {
 
   toggleWorkAssignment = (contractor) => {
     const contractorData = { data: { transcription_contractor: { is_available_for_work: !contractor.is_available_for_work } } };
-    console.log('current contractor data:', this.state.contractors)
-    console.log('request:', contractorData)
 
     ApiUtil.patch(`/hearings/find_by_contractor/${contractor.id}`, contractorData).
       then((res) => {
-        const contractors = this.state.contractors;
+        const contractors = [...this.state.contractors];
 
-
-        console.log('response', res.body)
+        const index = contractors.findIndex((updatedContractor) => updatedContractor.id === contractor.id);
 
         // eslint-disable-next-line camelcase
-        contractors[contractor.id - 1] = res.body?.transcription_contractor;
+        contractors[index] = res.body?.transcription_contractor;
         this.setState({ contractors });
-        console.log('updated contractor data', this.state.contractors)
       });
   }
 
