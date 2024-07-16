@@ -61,6 +61,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     result = format_distributed_case_hash(distributed_cases_hash)
     result << legacy_nonpriority_hash unless legacy_nonpriority_receipt_date.nil?
     result << legacy_priority_hash unless legacy_priority_receipt_date.nil?
+    result
   end
 
   def latest_receipt_dates_from_push_job
@@ -90,6 +91,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     result = format_distributed_case_hash(distributed_cases_hash)
     result << legacy_nonpriority_hash unless legacy_nonpriority_receipt_date.nil?
     result << legacy_priority_hash unless legacy_priority_receipt_date.nil?
+    result
   end
 
   def format_distributed_case_hash(distributed_cases_hash)
