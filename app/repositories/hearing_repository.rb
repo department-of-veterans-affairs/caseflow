@@ -38,7 +38,7 @@ class HearingRepository
 
     def fix_hearings_timezone(scheduled_time_string)
       time_str_split = scheduled_time_string.split(" ", 3)
-      tz_str = time_str_split[2]
+      tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
       tz_str = 'Asia/Manila' if tz_str == 'Philippine Standard Time'
       begin
         new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
@@ -73,7 +73,6 @@ class HearingRepository
         AppealRepository.update_location!(attrs[:appeal], LegacyAppeal::LOCATION_CODES[:caseflow])
         vacols_hearing
       else
-        puts ("SEARCH FOR THIS FLAG #{processed_scheduled_time}, #{fix_hearings_timezone(attrs[:scheduled_time_string])}")
         Hearing.create!(
           appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,

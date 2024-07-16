@@ -57,7 +57,7 @@ describe HearingRepository, :all_dbs do
     it "slots hearing at correct time" do
       HearingRepository.slot_new_hearing(
         hearing_day_id: hearing_day.id,
-        scheduled_time_string: "09:00 AM EST",
+        scheduled_time_string: "09:00 AM Eastern Time (US & Canada)",
         appeal: legacy_appeal
       )
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)

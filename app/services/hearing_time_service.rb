@@ -60,11 +60,10 @@ class HearingTimeService
         # Generate the scheduled_time in UTC and update the scheduled_time_string
         scheduled_time = time_string[0..index].strip
         timezone = time_string[index..-1].strip
-
+        
         ### This is hardcoded. We do not want this hardcoded in the future
         timezone = ActiveSupport::TimeZone::MAPPING[timezone]
         return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
-        return Time.use_zone('America/New_York') { Time.zone.parse('03:00') }.utc
       end
       nil
     end
