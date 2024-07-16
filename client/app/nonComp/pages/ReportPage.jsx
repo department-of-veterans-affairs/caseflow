@@ -56,31 +56,25 @@ const specificEventTypeSchema = yup.lazy((value) => {
   }
 
   return yup.object({
-    general: {
-      added_decision_date: yup.boolean(),
-      added_issue: yup.boolean(),
-      added_issue_no_decision_date: yup.boolean(),
-      removed_issue: yup.boolean(),
-      withdrew_issue: yup.boolean(),
-      completed_disposition: yup.boolean(),
-    },
-    system: {
-      claim_created: yup.boolean(),
-      claim_closed: yup.boolean(),
-      claim_status_incomplete: yup.boolean(),
-      claim_status_pending: yup.boolean(),
-      claim_status_inprogress: yup.boolean(),
-    },
-    requests: {
-      requested_issue_modification: yup.boolean(),
-      requested_issue_addition: yup.boolean(),
-      requested_issue_removal: yup.boolean(),
-      requested_issue_withdrawal: yup.boolean(),
-      approval_of_request: yup.boolean(),
-      rejection_of_request: yup.boolean(),
-      cancellation_of_request: yup.boolean(),
-      edit_of_request: yup.boolean(),
-    }
+    added_decision_date: yup.boolean(),
+    added_issue: yup.boolean(),
+    added_issue_no_decision_date: yup.boolean(),
+    removed_issue: yup.boolean(),
+    withdrew_issue: yup.boolean(),
+    completed_disposition: yup.boolean(),
+    claim_created: yup.boolean(),
+    claim_closed: yup.boolean(),
+    claim_status_incomplete: yup.boolean(),
+    claim_status_pending: yup.boolean(),
+    claim_status_inprogress: yup.boolean(),
+    requested_issue_modification: yup.boolean(),
+    requested_issue_addition: yup.boolean(),
+    requested_issue_removal: yup.boolean(),
+    requested_issue_withdrawal: yup.boolean(),
+    approval_of_request: yup.boolean(),
+    rejection_of_request: yup.boolean(),
+    cancellation_of_request: yup.boolean(),
+    edit_of_request: yup.boolean(),
   }).test('at-least-one-true', ERRORS.AT_LEAST_ONE_OPTION, (obj) => {
     return Object.values(obj).some((val) => val === true);
   });
@@ -235,7 +229,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
           ))}
         </div>
       </fieldset> :
-      <fieldset style={{ paddingLeft: "30px" }}>
+      <fieldset style={{ paddingLeft: '30px' }}>
         {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
         {options.map((option) => (
           <div key={option.id}>
@@ -295,35 +289,30 @@ const ReportPage = ({ history }) => {
     specificStatus: {
       incomplete: '',
       in_progress: '',
+      pending: '',
       completed: '',
       cancelled: ''
     },
     specificEventType: {
-      system: {
-        claim_created: '',
-        claim_closed: '',
-        claim_status_incomplete: '',
-        claim_status_pending: '',
-        claim_status_inprogress: '',
-      },
-      general: {
-        added_decision_date: '',
-        added_issue: '',
-        added_issue_no_decision_date: '',
-        removed_issue: '',
-        withdrew_issue: '',
-        completed_disposition: '',
-      },
-      requests: {
-        requested_issue_modification: '',
-        requested_issue_addition: '',
-        requested_issue_removal: '',
-        requested_issue_withdrawal: '',
-        approval_of_request: '',
-        rejection_of_request: '',
-        cancellation_of_request: '',
-        edit_of_request: '',
-      }
+      claim_created: '',
+      claim_closed: '',
+      claim_status_incomplete: '',
+      claim_status_pending: '',
+      claim_status_inprogress: '',
+      added_decision_date: '',
+      added_issue: '',
+      added_issue_no_decision_date: '',
+      removed_issue: '',
+      withdrew_issue: '',
+      completed_disposition: '',
+      requested_issue_modification: '',
+      requested_issue_addition: '',
+      requested_issue_removal: '',
+      requested_issue_withdrawal: '',
+      approval_of_request: '',
+      rejection_of_request: '',
+      cancellation_of_request: '',
+      edit_of_request: '',
     }
   };
 

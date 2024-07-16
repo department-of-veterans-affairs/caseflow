@@ -386,7 +386,7 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
-      expect(screen.getAllByRole('checkbox').length).toBe(10);
+      expect(screen.getAllByRole('checkbox').length).toBe(19);
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
@@ -407,7 +407,7 @@ describe('ReportPage', () => {
 
         fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
 
-        expect(screen.getAllByRole('checkbox').length).toBe(10);
+        expect(screen.getAllByRole('checkbox').length).toBe(19);
 
         const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
@@ -430,7 +430,7 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Status'));
-      expect(screen.getAllByRole('checkbox').length).toBe(4);
+      expect(screen.getAllByRole('checkbox').length).toBe(5);
 
       REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
         expect(screen.getAllByText(option.label)).toBeTruthy()
