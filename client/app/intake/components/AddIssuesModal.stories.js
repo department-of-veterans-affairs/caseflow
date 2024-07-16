@@ -19,7 +19,8 @@ const ReduxDecorator = (Story) => (<ReduxBase reducer={reducer} initialState={ge
 );
 
 const defaultArgs = {
-  intakeData: sample1.intakeData
+  intakeData: sample1.intakeData,
+  featureToggles: sample1.intakeData.featureToggles
 };
 
 export default {
