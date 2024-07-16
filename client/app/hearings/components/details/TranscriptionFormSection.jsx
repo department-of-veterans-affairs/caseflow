@@ -12,6 +12,7 @@ export const TranscriptionFormSection = (
   { hearing, transcription, readOnly, update, isLegacy }
 ) => (
   <ContentSection header="Transcription Details">
+
     {/* If Legacy Hearing and conference provider Webex, only render Transcription Files table */}
     {!isLegacy && (
       <>
@@ -20,6 +21,7 @@ export const TranscriptionFormSection = (
           transcription={transcription}
           update={(values) => update('transcription', values)}
           readOnly={readOnly}
+          transcriptionContractors={hearing.transcriptionContractors}
         />
         <div className="cf-help-divider" />
 

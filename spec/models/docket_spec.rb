@@ -491,11 +491,6 @@ describe Docket, :all_dbs do
         FeatureToggle.enable!(:acd_distribute_by_docket_date)
       end
 
-      before do
-        FeatureToggle.enable!(:acd_exclude_from_affinity)
-        FeatureToggle.enable!(:acd_distribute_by_docket_date)
-      end
-
       subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
 
       it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do

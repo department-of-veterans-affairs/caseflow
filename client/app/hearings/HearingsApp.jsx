@@ -14,6 +14,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
+import { TranscriptionSettingsContainer } from './containers/TranscriptionSettingsContainer';
 import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
@@ -23,6 +24,7 @@ import PageRoute from '../components/PageRoute';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
+import { TranscriptionFileDispatchView } from './components/TranscriptionFileDispatchView';
 
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
@@ -119,6 +121,15 @@ export default class HearingsApp extends React.PureComponent {
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
+  routeForTranscriptionFileDispatch = () =>
+    <TranscriptionFileDispatchView />
+
+  routeForTranscriptionSettings = ({ match: history }) => (
+    <HearingsUserContext.Provider value={this.userPermissionProps()}>
+      <TranscriptionSettingsContainer history={history} />
+    </HearingsUserContext.Provider>
+  );
+
   render = () => <BrowserRouter basename="/hearings">
     <Switch>
       <PageRoute
@@ -210,6 +221,18 @@ export default class HearingsApp extends React.PureComponent {
               title="Assign Hearings"
               breadcrumb="Assign"
               component={this.routeForAssignHearingsContainer}
+            />
+            <PageRoute
+              exact
+              path="/transcription_files"
+              title="Transcription File Dispatch"
+              component={this.routeForTranscriptionFileDispatch}
+            />
+            <PageRoute
+              exact
+              path="/find_by_contractor"
+              title="Transcription Settings"
+              component={this.routeForTranscriptionSettings}
             />
           </div>
         </AppFrame>

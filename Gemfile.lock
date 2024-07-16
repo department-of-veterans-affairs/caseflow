@@ -1456,6 +1456,7 @@ GEM
     backport (1.2.0)
     base64 (0.2.0)
     benchmark-ips (2.7.2)
+    bigdecimal (3.1.7)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
     bourbon (4.2.7)
@@ -1920,6 +1921,7 @@ GEM
       rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
     ruby-oci8 (2.2.7)
+    ruby-ole (1.2.13.1)
     ruby-plsql (0.8.0)
     ruby-prof (1.4.1)
     ruby-progressbar (1.13.0)
@@ -1983,6 +1985,9 @@ GEM
       thor (~> 0.19, >= 0.19.4)
       tilt (~> 2.0)
       yard (~> 0.9)
+    spreadsheet (1.3.1)
+      bigdecimal
+      ruby-ole
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -2051,6 +2056,7 @@ GEM
 PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -2152,6 +2158,7 @@ DEPENDENCIES
   single_cov
   sniffybara!
   solargraph
+  spreadsheet (~> 1.3)
   sql_tracker
   statsd-instrument
   stringex
@@ -2168,4 +2175,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.19
+   2.4.22
