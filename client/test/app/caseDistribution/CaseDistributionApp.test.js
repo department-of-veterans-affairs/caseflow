@@ -33,7 +33,7 @@ describe('render Case Distribution Application', () => {
     jest.clearAllMocks();
   });
 
-  it('renders Case Distribution App', () => {
+  it('renders Case Distribution App as editable for an admin', () => {
     const store = getStore();
 
     let wrapper = mount(
@@ -52,6 +52,33 @@ describe('render Case Distribution Application', () => {
     expect(wrapper.find('#lever-history-table').exists()).toBeTruthy();
     expect(wrapper.find('.inactive-data-content').exists()).toBeTruthy();
     expect(wrapper.find('.lever-content').exists()).toBeTruthy();
+    // the buttons and inputs will only render for admin users
+    expect(wrapper.find('button').exists()).toBe(true);
+    expect(wrapper.find('input').length > 0).toBe(true);
+  });
+
+  it('renders Case Distribution App as read-only for a non admin', () => {
+    const store = getStore();
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <CaseDistributionApp
+          acdLeversForStore={testLevers}
+          acd_levers={testLevers}
+          acd_history={leverHistory}
+          user_is_an_acd_admin={false}
+        />
+      </Provider>
+    );
+
+    wrapper.update();
+
+    expect(wrapper.find('#lever-history-table').exists()).toBeTruthy();
+    expect(wrapper.find('.inactive-data-content').exists()).toBeTruthy();
+    expect(wrapper.find('.lever-content').exists()).toBeTruthy();
+    // the buttons and inputs will only render for admin users
+    expect(wrapper.find('button').exists()).toBe(false);
+    expect(wrapper.find('input').length === 0).toBe(true);
   });
 
   it('matches snapshot', () => {
