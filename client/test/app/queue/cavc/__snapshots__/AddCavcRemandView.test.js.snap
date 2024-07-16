@@ -1,791 +1,459 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddCavcDatesModal renders correctly 1`] = `
-Object {
-  "asFragment": [Function],
-  "baseElement": <body>
-    <div>
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        class="cf-modal active "
-        id="modal_id"
-        role="dialog"
-      >
-        <div
-          class="cf-modal-body"
-          id=""
-        >
-          <button
-            class="cf-modal-close"
-            id="Add-Court-dates-button-id-close"
-            type="button"
-          >
-            <span
-              class="usa-sr-only"
-            >
-              Close
-            </span>
-            <svg
-              class="cf-icon-close"
-              height="55"
-              viewBox="0 0 55 55"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>
-                close
-              </title>
-              <g
-                fill="#212121"
-              >
-                <path
-                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                />
-              </g>
-            </svg>
-          </button>
-          <div
-            style="display: flex; flex-wrap: wrap;"
-          >
-            <h1
-              id="modal_id-title"
-              style="flex: 1;"
-            >
-              Add Court dates
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p>
-                Complete the details below to intake this Court remand for further processing
-              </p>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="judgement-date"
-                >
-                  <strong>
-                    <span>
-                      What is the Court's judgement date?
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    class="cf-form-textinput"
-                    id="judgement-date"
-                    max="9999-12-31"
-                    name="judgement-date"
-                    placeholder="mm/dd/yyyy"
-                    type="date"
-                    value=""
-                  />
-                </div>
-              </div>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="mandate-date"
-                >
-                  <strong>
-                    <span>
-                      What is the Court's mandate date?
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    class="cf-form-textinput"
-                    id="mandate-date"
-                    max="9999-12-31"
-                    name="mandate-date"
-                    placeholder="mm/dd/yyyy"
-                    type="date"
-                    value=""
-                  />
-                </div>
-              </div>
-              <div
-                class="cf-form-textarea"
-              >
-                <label
-                  class="question-label"
-                  for="context-and-instructions-textBox"
-                >
-                  <strong>
-                    <span>
-                      Provide instructions and context for this action
-                    </span>
-                  </strong>
-                </label>
-                <textarea
-                  id="context-and-instructions-textBox"
-                  name="context-and-instructions-textBox"
-                />
-              </div>
-            </div>
-          </div>
-          <div
-            class="cf-modal-divider"
-          />
-          <div
-            class="cf-modal-controls"
-          >
-            <span>
-              <button
-                class="usa-button cf-btn-link cf-push-left usa-button"
-                id="Add-Court-dates-button-id-0"
-                type="button"
-              >
-                Cancel
-              </button>
-            </span>
-            <span>
-              <button
-                class="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
-                id="Add-Court-dates-button-id-1"
-                type="button"
-              >
-                Submit
-              </button>
-            </span>
-          </div>
-        </div>
-      </section>
-    </div>
-  </body>,
-  "container": <div>
-    <section
-      aria-describedby="modal_id-desc"
-      aria-labelledby="modal_id-title"
-      aria-modal="true"
-      class="cf-modal active "
-      id="modal_id"
-      role="dialog"
+exports[`AddCavcRemandView renders correctly 1`] = `
+<DocumentFragment>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+  >
+    <h1>
+      Add a Court remand
+    </h1>
+    <p>
+      Complete the details below to intake this Court remand for further processing
+    </p>
+    <div
+      class="cf-form-textinput   "
     >
-      <div
-        class="cf-modal-body"
-        id=""
+      <label
+        for="docket-number"
       >
-        <button
-          class="cf-modal-close"
-          id="Add-Court-dates-button-id-close"
-          type="button"
-        >
-          <span
-            class="usa-sr-only"
-          >
-            Close
+        <strong>
+          <span>
+            What is the court docket number?
           </span>
-          <svg
-            class="cf-icon-close"
-            height="55"
-            viewBox="0 0 55 55"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>
-              close
-            </title>
-            <g
-              fill="#212121"
-            >
-              <path
-                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-              />
-            </g>
-          </svg>
-        </button>
+        </strong>
+      </label>
+      <div
+        class="input-container"
+      >
+        <input
+          class="cf-form-textinput"
+          id="docket-number"
+          name="docket-number"
+          type="text"
+          value=""
+        />
+      </div>
+    </div>
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio-inline "
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            Was the appellant represented by an attorney? 
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
         <div
-          style="display: flex; flex-wrap: wrap;"
+          class="cf-form-radio-option"
         >
-          <h1
-            id="modal_id-title"
-            style="flex: 1;"
+          <input
+            checked=""
+            id="attorney-options_1"
+            name="attorney-options"
+            type="radio"
+            value="1"
+          />
+          <label
+            class=""
+            for="attorney-options_1"
           >
-            Add Court dates
-          </h1>
-          <div
-            data-css-2flkvz=""
-          >
-            <p>
-              Complete the details below to intake this Court remand for further processing
-            </p>
-            <div
-              class="cf-form-textinput   "
-            >
-              <label
-                for="judgement-date"
-              >
-                <strong>
-                  <span>
-                    What is the Court's judgement date?
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="judgement-date"
-                  max="9999-12-31"
-                  name="judgement-date"
-                  placeholder="mm/dd/yyyy"
-                  type="date"
-                  value=""
-                />
-              </div>
-            </div>
-            <div
-              class="cf-form-textinput   "
-            >
-              <label
-                for="mandate-date"
-              >
-                <strong>
-                  <span>
-                    What is the Court's mandate date?
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="mandate-date"
-                  max="9999-12-31"
-                  name="mandate-date"
-                  placeholder="mm/dd/yyyy"
-                  type="date"
-                  value=""
-                />
-              </div>
-            </div>
-            <div
-              class="cf-form-textarea"
-            >
-              <label
-                class="question-label"
-                for="context-and-instructions-textBox"
-              >
-                <strong>
-                  <span>
-                    Provide instructions and context for this action
-                  </span>
-                </strong>
-              </label>
-              <textarea
-                id="context-and-instructions-textBox"
-                name="context-and-instructions-textBox"
-              />
-            </div>
-          </div>
+            Yes
+          </label>
         </div>
         <div
-          class="cf-modal-divider"
-        />
-        <div
-          class="cf-modal-controls"
+          class="cf-form-radio-option"
         >
-          <span>
-            <button
-              class="usa-button cf-btn-link cf-push-left usa-button"
-              id="Add-Court-dates-button-id-0"
-              type="button"
-            >
-              Cancel
-            </button>
-          </span>
-          <span>
-            <button
-              class="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
-              id="Add-Court-dates-button-id-1"
-              type="button"
-            >
-              Submit
-            </button>
-          </span>
+          <input
+            id="attorney-options_2"
+            name="attorney-options"
+            type="radio"
+            value="2"
+          />
+          <label
+            class=""
+            for="attorney-options_2"
+          >
+            No
+          </label>
         </div>
       </div>
-    </section>
-  </div>,
-  "debug": [Function],
-  "findAllByAltText": [Function],
-  "findAllByDisplayValue": [Function],
-  "findAllByLabelText": [Function],
-  "findAllByPlaceholderText": [Function],
-  "findAllByRole": [Function],
-  "findAllByTestId": [Function],
-  "findAllByText": [Function],
-  "findAllByTitle": [Function],
-  "findByAltText": [Function],
-  "findByDisplayValue": [Function],
-  "findByLabelText": [Function],
-  "findByPlaceholderText": [Function],
-  "findByRole": [Function],
-  "findByTestId": [Function],
-  "findByText": [Function],
-  "findByTitle": [Function],
-  "getAllByAltText": [Function],
-  "getAllByDisplayValue": [Function],
-  "getAllByLabelText": [Function],
-  "getAllByPlaceholderText": [Function],
-  "getAllByRole": [Function],
-  "getAllByTestId": [Function],
-  "getAllByText": [Function],
-  "getAllByTitle": [Function],
-  "getByAltText": [Function],
-  "getByDisplayValue": [Function],
-  "getByLabelText": [Function],
-  "getByPlaceholderText": [Function],
-  "getByRole": [Function],
-  "getByTestId": [Function],
-  "getByText": [Function],
-  "getByTitle": [Function],
-  "queryAllByAltText": [Function],
-  "queryAllByDisplayValue": [Function],
-  "queryAllByLabelText": [Function],
-  "queryAllByPlaceholderText": [Function],
-  "queryAllByRole": [Function],
-  "queryAllByTestId": [Function],
-  "queryAllByText": [Function],
-  "queryAllByTitle": [Function],
-  "queryByAltText": [Function],
-  "queryByDisplayValue": [Function],
-  "queryByLabelText": [Function],
-  "queryByPlaceholderText": [Function],
-  "queryByRole": [Function],
-  "queryByTestId": [Function],
-  "queryByText": [Function],
-  "queryByTitle": [Function],
-  "rerender": [Function],
-  "unmount": [Function],
-}
-`;
-
-exports[`AddCavcDatesModal submits successfully 1`] = `
-Object {
-  "asFragment": [Function],
-  "baseElement": <body>
-    <div>
-      <section
-        aria-describedby="modal_id-desc"
-        aria-labelledby="modal_id-title"
-        aria-modal="true"
-        class="cf-modal active "
-        id="modal_id"
-        role="dialog"
-      >
-        <div
-          class="cf-modal-body"
-          id=""
-        >
-          <button
-            class="cf-modal-close"
-            id="Add-Court-dates-button-id-close"
-            type="button"
-          >
-            <span
-              class="usa-sr-only"
-            >
-              Close
-            </span>
-            <svg
-              class="cf-icon-close"
-              height="55"
-              viewBox="0 0 55 55"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>
-                close
-              </title>
-              <g
-                fill="#212121"
-              >
-                <path
-                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-                />
-              </g>
-            </svg>
-          </button>
-          <div
-            style="display: flex; flex-wrap: wrap;"
-          >
-            <h1
-              id="modal_id-title"
-              style="flex: 1;"
-            >
-              Add Court dates
-            </h1>
-            <div
-              data-css-2flkvz=""
-            >
-              <p>
-                Complete the details below to intake this Court remand for further processing
-              </p>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="judgement-date"
-                >
-                  <strong>
-                    <span>
-                      What is the Court's judgement date?
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    class="cf-form-textinput"
-                    id="judgement-date"
-                    max="9999-12-31"
-                    name="judgement-date"
-                    placeholder="mm/dd/yyyy"
-                    type="date"
-                    value="2020-03-27"
-                  />
-                </div>
-              </div>
-              <div
-                class="cf-form-textinput   "
-              >
-                <label
-                  for="mandate-date"
-                >
-                  <strong>
-                    <span>
-                      What is the Court's mandate date?
-                    </span>
-                  </strong>
-                </label>
-                <div
-                  class="input-container"
-                >
-                  <input
-                    class="cf-form-textinput"
-                    id="mandate-date"
-                    max="9999-12-31"
-                    name="mandate-date"
-                    placeholder="mm/dd/yyyy"
-                    type="date"
-                    value="2019-03-31"
-                  />
-                </div>
-              </div>
-              <div
-                class="cf-form-textarea"
-              >
-                <label
-                  class="question-label"
-                  for="context-and-instructions-textBox"
-                >
-                  <strong>
-                    <span>
-                      Provide instructions and context for this action
-                    </span>
-                  </strong>
-                </label>
-                <textarea
-                  id="context-and-instructions-textBox"
-                  name="context-and-instructions-textBox"
-                >
-                  test instructions
-                </textarea>
-              </div>
-            </div>
-          </div>
-          <div
-            class="cf-modal-divider"
-          />
-          <div
-            class="cf-modal-controls"
-          >
-            <span>
-              <button
-                class="usa-button cf-btn-link cf-push-left usa-button"
-                id="Add-Court-dates-button-id-0"
-                type="button"
-              >
-                Cancel
-              </button>
-            </span>
-            <span>
-              <button
-                class="cf-push-right usa-button-disabled hidden-field usa-button"
-                id="Add-Court-dates-button-id-1"
-                type="button"
-              >
-                Submit
-              </button>
-              <span>
-                <button
-                  class="cf-push-right usa-button-disabled cf-default cf-loading"
-                  disabled=""
-                  id="Add-Court-dates-button-id-1-loading"
-                  type="button"
-                >
-                  <span
-                    class="cf-loading-icon-container"
-                  >
-                    <span
-                      class="cf-loading-icon-front"
-                    >
-                      <span
-                        class="cf-loading-icon-back"
-                      >
-                        Loading...
-                      </span>
-                    </span>
-                  </span>
-                </button>
-              </span>
-            </span>
-          </div>
-        </div>
-      </section>
-    </div>
-  </body>,
-  "container": <div>
-    <section
-      aria-describedby="modal_id-desc"
-      aria-labelledby="modal_id-title"
-      aria-modal="true"
-      class="cf-modal active "
-      id="modal_id"
-      role="dialog"
+    </fieldset>
+    <div
+      class=""
     >
       <div
-        class="cf-modal-body"
-        id=""
+        class="cf-form-dropdown dropdown-judge-dropdown"
       >
-        <button
-          class="cf-modal-close"
-          id="Add-Court-dates-button-id-close"
-          type="button"
+        <label
+          class="question-label"
+          for="judge-dropdown"
+          id="judge-dropdown-label"
         >
-          <span
-            class="usa-sr-only"
-          >
-            Close
-          </span>
-          <svg
-            class="cf-icon-close"
-            height="55"
-            viewBox="0 0 55 55"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>
-              close
-            </title>
-            <g
-              fill="#212121"
-            >
-              <path
-                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-              />
-            </g>
-          </svg>
-        </button>
-        <div
-          style="display: flex; flex-wrap: wrap;"
-        >
-          <h1
-            id="modal_id-title"
-            style="flex: 1;"
-          >
-            Add Court dates
-          </h1>
-          <div
-            data-css-2flkvz=""
-          >
-            <p>
-              Complete the details below to intake this Court remand for further processing
-            </p>
-            <div
-              class="cf-form-textinput   "
-            >
-              <label
-                for="judgement-date"
-              >
-                <strong>
-                  <span>
-                    What is the Court's judgement date?
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="judgement-date"
-                  max="9999-12-31"
-                  name="judgement-date"
-                  placeholder="mm/dd/yyyy"
-                  type="date"
-                  value="2020-03-27"
-                />
-              </div>
-            </div>
-            <div
-              class="cf-form-textinput   "
-            >
-              <label
-                for="mandate-date"
-              >
-                <strong>
-                  <span>
-                    What is the Court's mandate date?
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="mandate-date"
-                  max="9999-12-31"
-                  name="mandate-date"
-                  placeholder="mm/dd/yyyy"
-                  type="date"
-                  value="2019-03-31"
-                />
-              </div>
-            </div>
-            <div
-              class="cf-form-textarea"
-            >
-              <label
-                class="question-label"
-                for="context-and-instructions-textBox"
-              >
-                <strong>
-                  <span>
-                    Provide instructions and context for this action
-                  </span>
-                </strong>
-              </label>
-              <textarea
-                id="context-and-instructions-textBox"
-                name="context-and-instructions-textBox"
-              >
-                test instructions
-              </textarea>
-            </div>
-          </div>
-        </div>
-        <div
-          class="cf-modal-divider"
-        />
-        <div
-          class="cf-modal-controls"
-        >
-          <span>
-            <button
-              class="usa-button cf-btn-link cf-push-left usa-button"
-              id="Add-Court-dates-button-id-0"
-              type="button"
-            >
-              Cancel
-            </button>
-          </span>
-          <span>
-            <button
-              class="cf-push-right usa-button-disabled hidden-field usa-button"
-              id="Add-Court-dates-button-id-1"
-              type="button"
-            >
-              Submit
-            </button>
+          <strong>
             <span>
-              <button
-                class="cf-push-right usa-button-disabled cf-default cf-loading"
-                disabled=""
-                id="Add-Court-dates-button-id-1-loading"
-                type="button"
+              What is the CAVC judge's name?
+            </span>
+          </strong>
+        </label>
+        <div
+          class="cf-select"
+        >
+          <div
+            class=" css-2b097c-container"
+          >
+            <div
+              class="cf-select__control css-yk16xz-control"
+            >
+              <div
+                class="cf-select__value-container css-g1d714-ValueContainer"
+              >
+                <div
+                  class="cf-select__placeholder css-1wa3eu0-placeholder"
+                >
+                  Select...
+                </div>
+                <div
+                  class="css-81nyic-Input"
+                >
+                  <div
+                    class="cf-select__input"
+                    style="display: inline-block;"
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-labelledby="judge-dropdown-label"
+                      aria-owns="judge-dropdown-listbox"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      id="judge-dropdown"
+                      role="combobox"
+                      spellcheck="false"
+                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
               >
                 <span
-                  class="cf-loading-icon-container"
+                  class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
                 >
-                  <span
-                    class="cf-loading-icon-front"
+                  <svg
+                    aria-hidden="true"
+                    class="css-6q0nyr-Svg"
+                    focusable="false"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    width="20"
                   >
-                    <span
-                      class="cf-loading-icon-back"
-                    >
-                      Loading...
-                    </span>
-                  </span>
-                </span>
-              </button>
-            </span>
-          </span>
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <input
+              name="judge-dropdown"
+              type="hidden"
+              value=""
+            />
+          </div>
         </div>
       </div>
-    </section>
-  </div>,
-  "debug": [Function],
-  "findAllByAltText": [Function],
-  "findAllByDisplayValue": [Function],
-  "findAllByLabelText": [Function],
-  "findAllByPlaceholderText": [Function],
-  "findAllByRole": [Function],
-  "findAllByTestId": [Function],
-  "findAllByText": [Function],
-  "findAllByTitle": [Function],
-  "findByAltText": [Function],
-  "findByDisplayValue": [Function],
-  "findByLabelText": [Function],
-  "findByPlaceholderText": [Function],
-  "findByRole": [Function],
-  "findByTestId": [Function],
-  "findByText": [Function],
-  "findByTitle": [Function],
-  "getAllByAltText": [Function],
-  "getAllByDisplayValue": [Function],
-  "getAllByLabelText": [Function],
-  "getAllByPlaceholderText": [Function],
-  "getAllByRole": [Function],
-  "getAllByTestId": [Function],
-  "getAllByText": [Function],
-  "getAllByTitle": [Function],
-  "getByAltText": [Function],
-  "getByDisplayValue": [Function],
-  "getByLabelText": [Function],
-  "getByPlaceholderText": [Function],
-  "getByRole": [Function],
-  "getByTestId": [Function],
-  "getByText": [Function],
-  "getByTitle": [Function],
-  "queryAllByAltText": [Function],
-  "queryAllByDisplayValue": [Function],
-  "queryAllByLabelText": [Function],
-  "queryAllByPlaceholderText": [Function],
-  "queryAllByRole": [Function],
-  "queryAllByTestId": [Function],
-  "queryAllByText": [Function],
-  "queryAllByTitle": [Function],
-  "queryByAltText": [Function],
-  "queryByDisplayValue": [Function],
-  "queryByLabelText": [Function],
-  "queryByPlaceholderText": [Function],
-  "queryByRole": [Function],
-  "queryByTestId": [Function],
-  "queryByText": [Function],
-  "queryByTitle": [Function],
-  "rerender": [Function],
-  "unmount": [Function],
-}
+    </div>
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+      data-css-1m3edv2=""
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            How are you proceeding? 
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            checked=""
+            id="type-options_remand"
+            name="type-options"
+            type="radio"
+            value="remand"
+          />
+          <label
+            class=""
+            for="type-options_remand"
+          >
+            Remand
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="type-options_other_dismissal"
+            name="type-options"
+            type="radio"
+            value="other_dismissal"
+          />
+          <label
+            class=""
+            for="type-options_other_dismissal"
+          >
+            Dismissal, other than Death
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="type-options_affirmed"
+            name="type-options"
+            type="radio"
+            value="affirmed"
+          />
+          <label
+            class=""
+            for="type-options_affirmed"
+          >
+            Affirmed
+          </label>
+        </div>
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            id="type-options_settlement"
+            name="type-options"
+            type="radio"
+            value="settlement"
+          />
+          <label
+            class=""
+            for="type-options_settlement"
+          >
+            Settlement
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset
+      class="usa-fieldset-inputs cf-form-radio "
+      data-css-1m3edv2=""
+    >
+      <legend
+        class=""
+      >
+        <strong>
+          <span>
+            What type of remand is this? 
+          </span>
+        </strong>
+      </legend>
+      <div
+        class="cf-form-radio-options"
+      >
+        <div
+          class="cf-form-radio-option"
+        >
+          <input
+            checked=""
+            id="sub-type-options_jmr_jmpr"
+            name="sub-type-options"
+            type="radio"
+            value="jmr_jmpr"
+          />
+          <label
+            class=""
+            for="sub-type-options_jmr_jmpr"
+          >
+            Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <div
+      class="cf-form-textinput   "
+    >
+      <label
+        for="decision-date"
+      >
+        <strong>
+          <span>
+            What is the Court's decision date?
+          </span>
+        </strong>
+      </label>
+      <div
+        class="input-container"
+      >
+        <input
+          class="cf-form-textinput"
+          id="decision-date"
+          max="9999-12-31"
+          name="decision-date"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+    </div>
+    <legend>
+      <strong>
+        Judgement and mandate date
+      </strong>
+    </legend>
+    <div
+      class="checkbox-wrapper-mandate-dates-same-toggle cf-form-checkboxes"
+    >
+      <div
+        class="cf-form-checkbox"
+      >
+        <input
+          aria-label="mandate-dates-same-toggle"
+          checked=""
+          id="mandate-dates-same-toggle"
+          name="mandate-dates-same-toggle"
+          type="checkbox"
+        />
+        <label
+          for="mandate-dates-same-toggle"
+        >
+          <span
+            class=""
+          >
+            Same as Court's decision date
+          </span>
+           
+        </label>
+      </div>
+    </div>
+    <legend>
+      <strong>
+        Which issues are being addressed by the court?
+      </strong>
+    </legend>
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        data-css-prix5f=""
+        id="button-Unselect-all"
+        type="button"
+      >
+        Unselect all
+      </button>
+    </span>
+    <fieldset
+      class="checkbox-wrapper-issuesList cf-form-checkboxes cf-checkbox-group-inline"
+      data-css-13g2xn1=""
+    >
+      <legend
+        class="hidden-field"
+      >
+        <span>
+          issuesList
+        </span>
+      </legend>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="1"
+          name="1"
+          type="checkbox"
+        />
+        <label
+          for="1"
+        >
+          This is a description of the decision
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="2"
+          name="2"
+          type="checkbox"
+        />
+        <label
+          for="2"
+        >
+          This is a description of another decision
+        </label>
+      </div>
+    </fieldset>
+    <div
+      class="cf-form-textarea"
+    >
+      <label
+        class="question-label"
+        for="context-and-instructions-textBox"
+      >
+        <strong>
+          <span>
+            Provide instructions and context for this action
+          </span>
+        </strong>
+      </label>
+      <textarea
+        id="context-and-instructions-textBox"
+        name="context-and-instructions-textBox"
+      />
+    </div>
+    <h1>
+      THIS IS TYPE: remand
+    </h1>
+  </section>
+  <div
+    data-css-63oe3q=""
+  >
+    <button
+      class="cf-prev-step usa-button-secondary button-back-button usa-button"
+      id="button-back-button"
+      type="button"
+    >
+      Cancel
+    </button>
+    <span>
+      <button
+        class="cf-right-side usa-button"
+        data-css-wn5k45=""
+        id="button-next-button"
+        type="button"
+      >
+        Submit
+      </button>
+    </span>
+  </div>
+</DocumentFragment>
 `;
