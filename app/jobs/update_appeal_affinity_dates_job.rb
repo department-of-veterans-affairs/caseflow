@@ -58,10 +58,9 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
       DistributedCase.where(docket: "legacy", priority: true, distribution_id: @distribution_id)
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
 
-    legacy_nonpriority_hash = { docket: "legacy", priority: false, receipt_date: legacy_nonpriority_receipt_date }
-    legacy_priority_hash = { docket: "legacy", priority: true, receipt_date: legacy_priority_receipt_date }
-
-    format_distributed_case_hash(distributed_cases_hash) << legacy_nonpriority_hash << legacy_priority_hash
+    result = format_distributed_case_hash(distributed_cases_hash)
+    result << legacy_nonpriority_hash unless legacy_nonpriority_receipt_date.nil?
+    result << legacy_priority_hash unless legacy_priority_receipt_date.nil?
   end
 
   def latest_receipt_dates_from_push_job
@@ -88,7 +87,9 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     legacy_nonpriority_hash = { docket: "legacy", priority: false, receipt_date: legacy_nonpriority_receipt_date }
     legacy_priority_hash = { docket: "legacy", priority: true, receipt_date: legacy_priority_receipt_date }
 
-    format_distributed_case_hash(distributed_cases_hash) << legacy_nonpriority_hash << legacy_priority_hash
+    result = format_distributed_case_hash(distributed_cases_hash)
+    result << legacy_nonpriority_hash unless legacy_nonpriority_receipt_date.nil?
+    result << legacy_priority_hash unless legacy_priority_receipt_date.nil?
   end
 
   def format_distributed_case_hash(distributed_cases_hash)

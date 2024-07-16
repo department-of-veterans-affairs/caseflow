@@ -395,11 +395,14 @@ describe UpdateAppealAffinityDatesJob do
         create(:appeal, :hearing_docket, :with_post_intake_tasks)
       end
 
+      let!(:legacy_appeal_no_appeal_affinity) { create(:case) }
+      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :with_appeal_affinity) }
+
       it "is successful and adds expected appeal affinity records or values" do
         described_class.perform_now(previous_distribution.id)
 
-        # Only 8 of the staged appeals should have an affinity
-        expect(AppealAffinity.count).to eq 8
+        # Only 9 of the staged appeals should have an affinity
+        expect(AppealAffinity.count).to eq 9
 
         # Validate that only the expected appeals are the ones that were updated
         expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
@@ -410,6 +413,7 @@ describe UpdateAppealAffinityDatesJob do
         expect(ready_appeal_esd_priority_no_start_date.appeal_affinity).to_not be nil
         expect(ready_appeal_hrd_priority_no_start_date.appeal_affinity).to_not be nil
         expect(ready_appeal_hrd_nonpriority_no_start_date.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity.appeal_affinity).to_not be nil
       end
     end
   end
