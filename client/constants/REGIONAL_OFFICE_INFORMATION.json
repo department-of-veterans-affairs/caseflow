@@ -477,6 +477,7 @@
     "alternate_locations": [
       "vha_653",
       "vha_653BY",
+      "vha_653QA",
       "vba_347",
       "vha_653GB",
       "vha_648GA",
@@ -484,7 +485,8 @@
       "vha_687GC",
       "vha_653GA",
       "vba_346",
-      "vha_692"
+      "vha_692",
+      "vha_692GB"
     ]
   },
   "RO49": {
