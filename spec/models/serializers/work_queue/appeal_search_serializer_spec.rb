@@ -21,8 +21,8 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
       end
 
       context "when user is a vso representative" do
-        let(:vso_user) { create(:user, :vso_role) }
         let(:appeal) { create(:appeal, :at_attorney_drafting) }
+        let(:vso_user) { create(:user, :vso_role) }
 
         before do
           User.authenticate!(user: vso_user)
@@ -46,7 +46,7 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
 
       subject { described_class.new(appeal, params: { user: vso_user }) }
 
-      it "shows Judge CSS ID to VSO user" do
+      it "shows CSS ID to VSO user" do
         expect(subject.serializable_hash[:data][:attributes][:assigned_to_location]).to eq(appeal.assigned_to_location)
       end
     end
