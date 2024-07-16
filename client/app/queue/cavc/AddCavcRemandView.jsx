@@ -563,6 +563,7 @@ const AddCavcRemandView = (props) => {
       {mdrSubtype() && allIssuesUnselected && <MdrIssuesBanner />}
       {mdrSubtype() && federalCircuitField }
       {instructionsField}
+      <h1>THIS IS TYPE: {type}</h1>
     </QueueFlowPage>
   );
 };

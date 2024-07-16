@@ -48,6 +48,7 @@ import {
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { _ } from 'core-js';
 
 export const ScheduleVeteran = ({
   history,
@@ -237,6 +238,14 @@ export const ScheduleVeteran = ({
     const emailRecipients = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
     const recipients = emailRecipients ? ApiUtil.convertToSnakeCase(emailRecipients) : null;
 
+    console.log('emailRecipients', ApiUtil.convertToSnakeCase(emailRecipients));
+
+    const test = {thisThingIHave: 'thisThingIHave'};
+
+    console.log('test', convertToSnakeCase(test));
+
+    console.log('recipients', convertToSnakeCase(recipients));
+
     // Format the shared hearing values
     const hearingValues = {
       email_recipients: recipients,
@@ -282,6 +291,45 @@ export const ScheduleVeteran = ({
     return { data: { task } };
   };
 
+  const convertToSnakeCase = (data) => {
+    if (!isObject(data)) {
+      return data;
+    }
+
+    const snakeCaseObject = {};
+
+    for (let key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        let snakeKey = camelCaseToSnakeCase(key);
+        let value = data[key];
+
+        // Check if the current value is a Date object
+        if (value instanceof Date) {
+          snakeCaseObject[snakeKey] = value.toISOString();
+        } else if (isObject(value)) {
+          // Recursively convert nested objects
+          snakeCaseObject[snakeKey] = convertToSnakeCase(value);
+        } else if (Array.isArray(value)) {
+          // Handle arrays of objects
+          snakeCaseObject[snakeKey] = value.map(item => convertToSnakeCase(item));
+        } else {
+          // Otherwise, keep the value as is
+          snakeCaseObject[snakeKey] = value;
+        }
+      }
+    }
+
+    return snakeCaseObject;
+  };
+
+  const camelCaseToSnakeCase = (str) => {
+    return str.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+  };
+
+  const isObject = (obj) => {
+    return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
+  };
+
   // Submit the data to create the hearing
   const submit = async () => {
     try {
@@ -320,6 +368,8 @@ export const ScheduleVeteran = ({
 
       // Format the payload to send to the API
       const payload = getPayload();
+
+      console.log('payload', JSON.stringify(payload, null, 2));
 
       // Patch the hearing task with the form data
       const { body } = await ApiUtil.patch(`/tasks/${taskId}`, payload);
@@ -411,7 +461,7 @@ export const ScheduleVeteran = ({
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (
-    <div {...regionalOfficeSection}>
+    <div {...regionalOfficeSection} data-testid="schedule-veteran-wrapper" errors-test={JSON.stringify(errors)}>
       <AppSegment filledBackground extraClassNames="schedule-veteran-page">
         <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}

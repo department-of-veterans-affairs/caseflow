@@ -54,10 +54,11 @@ export const CavcReviewExtensionRequestModalUnconnected = ({ onCancel, onSubmit,
   const validInstructions = () => Boolean(instructions);
   const validateForm = () => validDecision() && validHoldDuration() && validCustomHoldDuration() && validInstructions();
 
+
   const cancel = () => onCancel();
   const submit = () => {
     if (validateForm()) {
-      const selectedHoldDuration = usingCustomHold() ? customHoldDuration : holdDuration?.value;
+      const selectedHoldDuration = usingCustomHold() ? parseInt(customHoldDuration, 10) : holdDuration?.value;
 
       onSubmit(decision, instructions, granted() ? selectedHoldDuration : null);
     } else {
