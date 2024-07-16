@@ -28,7 +28,8 @@ describe HearingTimeService, :all_dbs do
       end
 
       it "returns scheduled_time string parameter and removes scheduled_time_string param" do
-        expect(HearingTimeService.build_params_with_time(hearing, params)).to eq(scheduled_time: "01:30 PM Pacific Time (US & Canada)")
+        expect(HearingTimeService.build_params_with_time(hearing, params))
+               .to eq(scheduled_time: "01:30 PM Pacific Time (US & Canada)")
         expect(params).to eq(scheduled_time_string: "01:30 PM Pacific Time (US & Canada)")
       end
     end
