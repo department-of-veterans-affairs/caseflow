@@ -22,5 +22,6 @@ if [ ! -z "$1" ]; then
   echo "running codeClimate CLI for $file"
   codeclimate analyze $file
 else
+  echo "running CodeClimate CLI for entire project"
   codeclimate analyze
 fi
