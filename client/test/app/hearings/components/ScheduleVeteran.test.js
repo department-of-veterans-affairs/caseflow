@@ -1,10 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import { mount } from 'enzyme';
-import { render, screen, fireEvent, waitFor, logRoles } from '@testing-library/react';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { omit } from 'lodash';
-
 import {
   amaAppeal,
   defaultHearing,
@@ -18,29 +15,13 @@ import {
   legacyAppealForTravelBoard
 } from 'test/data';
 import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
-import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { formatDateStr } from 'app/util/DateUtil';
-import Alert from 'app/components/Alert';
-import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
-import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
-import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import ScheduleVeteran from 'app/hearings/components/ScheduleVeteran';
-import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
-import { SearchableDropdown } from 'app/components/SearchableDropdown';
-
 import ApiUtil from 'app/util/ApiUtil';
-
 import * as uiActions from 'app/queue/uiReducer/uiActions';
-
 import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
-
 import * as utils from 'app/hearings/utils';
-import { act } from 'react-dom/test-utils';
-import { createMemoryHistory } from 'history';
-import { log } from 'console';
-import { patch } from 'superagent';
-import { title } from 'process';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -57,12 +38,11 @@ const defaultError = {
   },
 };
 
-jest.mock('app/util/ApiUtil', () => ({
-  convertToSnakeCase: jest.fn(obj => obj),
-  convertToCamelCase: jest.fn(obj => obj),
-  get: jest.fn().mockResolvedValue({}),
-  patch: jest.fn()
-}));
+// jest.mock('app/util/ApiUtil', () => ({
+//   ...jest.requireActual('app/util/ApiUtil'), // Use the actual ApiUtil module for other functions
+//   get: jest.fn(), // Mock the `get` function
+// }));
+
 
 jest.spyOn(window, 'analyticsEvent').mockImplementation(() => {});
 
@@ -84,13 +64,11 @@ const Wrapper = ({ children, ...props }) => {
 };
 
 let patchSpy;
-// const setState = jest.fn();
-// const useStateMock = (initState) => [initState, setState];
 const setScheduledHearingMock = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
 const errorMessageSpy = jest.spyOn(uiActions, 'showErrorMessage');
 const showSuccessMessageSpy = jest.spyOn(uiActions, 'showSuccessMessage');
-// const getSpy = jest.spyOn(ApiUtil, 'get');
+const getSpy = jest.spyOn(ApiUtil, 'get');
 
 const scheduleVeteranProps = {
   showSuccessMessage: jest.fn(),
@@ -103,11 +81,6 @@ const scheduleVeteranProps = {
 };
 
 describe('ScheduleVeteran', () => {
-  // beforeEach(() => {
-    // jest.
-    //   spyOn(document, 'getElementById').
-    //   mockReturnValue({ scrollIntoView: jest.fn() });
-  // jest.spyOn(utils, 'processAlerts');
   jest.spyOn(document, 'getElementById').mockImplementation((id) => {
     if (id === 'email-section') {
       return { scrollIntoView: jest.fn() };
@@ -115,9 +88,7 @@ describe('ScheduleVeteran', () => {
     return null; // Or you can return the original implementation
   });
     patchSpy = jest.spyOn(ApiUtil, 'patch');
-  //   jest.spyOn(React, 'useState').mockImplementation(useStateMock);
-  //   getSpy.mockImplementation(() => Promise.resolve({ body: {}}));
-  // });
+    getSpy.mockImplementation(() => Promise.resolve({ body: {}}));
 
   beforeAll(() => {
     // Necessary because the list of timezones changes depending on the date
@@ -152,26 +123,17 @@ describe('ScheduleVeteran', () => {
     // Assertions
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Schedule' })).toBeInTheDocument();
-    // expect(scheduleVeteran.find(Alert)).toHaveLength(0);
     expect(container.querySelector('.usa-alert')).toBeNull();
     expect(container.querySelector('.cf-app-segment')).toBeInTheDocument();
     expect(container.querySelector('.schedule-veteran-details')).toBeInTheDocument();
     expect(screen.queryByText('will receive an email with connection information for the virtual hearing.')).toBeNull();
     // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Displays form validation errors when present and does not submit form', async () => {
-    // Setup the test
-    const errors = {
-      hearingLocation: null,
-      scheduledTimeString: null,
-      regionalOffice: null,
-      hearingDay: 'Please select a hearing date',
-    };
-
+  test('Displays form validation errors when present and does not submit form', () => {
     // Render the scheduleVeteran component
-    const {container} = customRender(
+    const {asFragment} = customRender(
       <ScheduleVeteran
         scheduledHearing={scheduledHearing}
         onChangeFormData={changeSpy}
@@ -196,22 +158,12 @@ describe('ScheduleVeteran', () => {
     // Run the test
     const scheduleVeteran = screen.getByRole('button', { name: 'Schedule' });
     expect(scheduleVeteran).toBeInTheDocument();
+
     fireEvent.click(scheduleVeteran);
 
-    screen.debug(null, Infinity);
-    // logRoles(container);
-    // scheduleVeteran.
-    //   find(Button).
-    //   at(1).
-    //   find('button').
-    //   simulate('click');
-    // expect(patchSpy).toHaveBeenCalledTimes(0);
-    // expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual(
-    //   errors
-    // );
+    expect(patchSpy).toHaveBeenCalledTimes(0);
     expect(screen.getByText('Please select a hearing date')).toBeInTheDocument();
-    // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
   test('Can handle backend validation errors for Legacy Appeals', () => {
     // Setup the test
@@ -220,7 +172,7 @@ describe('ScheduleVeteran', () => {
     });
 
     // Render the scheduleVeteran component
-    customRender(
+    const {asFragment}=customRender(
       <ScheduleVeteran
         onChangeFormData={changeSpy}
         appeals={appealsData}
@@ -253,8 +205,8 @@ describe('ScheduleVeteran', () => {
 
     expect(screen.getByText('No Available Slots')).toBeInTheDocument();
     expect(screen.getByText('Could not find any available slots for this regional office and hearing day combination. Please select a different date.')).toBeInTheDocument();
-    // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays error message title when present', () => {
@@ -277,7 +229,7 @@ describe('ScheduleVeteran', () => {
     });
 
     // Render the scheduleVeteran component
-    customRender(
+    const {asFragment}=customRender(
       <ScheduleVeteran
         onChangeFormData={changeSpy}
         appeals={appealsData}
@@ -305,12 +257,10 @@ describe('ScheduleVeteran', () => {
       titleError.response.body.errors[0]
     );
 
-    screen.debug(null, Infinity);
     expect(screen.getByText('Error')).toBeInTheDocument();
     expect(screen.getByText('message')).toBeInTheDocument();
 
-    // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays email errors when present', async () => {
@@ -352,7 +302,7 @@ describe('ScheduleVeteran', () => {
     );
 
     // Run the test
-    const scheduleVeteranInstance = screen.getByTestId('schedule-veteran-wrapper');
+    const scheduleVeteranInstance = screen.getByTestId('schedule-veteran-testid');
 
     let errorsTestAttribute = scheduleVeteranInstance.getAttribute('errors-test');
     const parsedTestAttribute = JSON.parse(errorsTestAttribute);
@@ -370,8 +320,7 @@ describe('ScheduleVeteran', () => {
       appellantEmailAddress: ' Veteran email malformed',
     });
 
-    // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Can handle backend validation errors for AMA Appeals', () => {
@@ -413,8 +362,7 @@ describe('ScheduleVeteran', () => {
         'Until April 1st hearing days for AMA appeals need to be created manually. ' +
         'Please contact the Caseflow Team for assistance.',
     });
-    // expect(asFragment()).toMatchSnapshot();
-    // expect(scheduleVeteran).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Can cancel the form', () => {
@@ -438,8 +386,7 @@ describe('ScheduleVeteran', () => {
     fireEvent.click(cancelButton);
 
     expect(cancelSpy).toHaveBeenCalledTimes(1);
-    // expect(scheduleVeteran).toMatchSnapshot();
-    // expect(asFragment()).toMatchSnapshot();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays virtual hearing alerts when present', async () => {
@@ -457,7 +404,7 @@ describe('ScheduleVeteran', () => {
     });
 
     // Render the scheduleVeteran component
-    const {container, asFragment}=customRender(
+    const {asFragment}=customRender(
       <ScheduleVeteran {...scheduleVeteranProps} />,
       {
         wrapper: Wrapper,
@@ -482,45 +429,36 @@ describe('ScheduleVeteran', () => {
 
     fireEvent.click(scheduleVeteran);
 
-    const { ...otherValues } = scheduleHearingDetails.apiFormattedValues;
-    const hearing_location = scheduleHearingDetails.hearingLocation;
-
-    // Convert other values to snake case and maintan hearing location
-    const convertedValues = {
-      ...ApiUtil.convertToSnakeCase(otherValues),
-      virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
-        omit(virtualHearing.virtualHearing, ['status'])
-      ),
-      email_recipients: ApiUtil.convertToSnakeCase(
-        omit(virtualHearing.virtualHearing, ['status'])
-      ),
-      hearing_location,
-      override_full_hearing_day_validation: false,
-    };
-
-    const expectedData = {
+    expect(patchSpy).toHaveBeenCalledWith(`/tasks/${scheduledHearing.taskId}`, {
       data: {
         task: {
           status: 'completed',
           business_payloads: {
             description: 'Update Task',
-            values: convertedValues,
+            values: {
+              ...scheduleHearingDetails.apiFormattedValues,
+              virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
+                omit(virtualHearing.virtualHearing, ['status'])
+              ),
+              email_recipients: ApiUtil.convertToSnakeCase(
+                omit(virtualHearing.virtualHearing, ['status'])
+              ),
+              override_full_hearing_day_validation: false,
+            },
           },
         },
       },
-    };
+    }
+  );
 
-    // Assertions
-    expect(patchSpy).toHaveBeenCalledWith(`/tasks/${scheduledHearing.taskId}`, expectedData);
-    expect(showSuccessMessageSpy).not.toHaveBeenCalled();
-    await waitFor(() => {
-      expect(utils.processAlerts).toHaveBeenCalled();
-    });
-  //   expect(scheduleVeteran).toMatchSnapshot();
-  //   expect(asFragment()).toMatchSnapshot();
+  expect(showSuccessMessageSpy).not.toHaveBeenCalled();
+  await waitFor(() => {
+    expect(utils.processAlerts).toHaveBeenCalled();
+  });
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test.only('Can submit the form', async () => {
+  test('Can submit the form', async () => {
     // Setup the test
     patchSpy.mockReturnValue(scheduleVeteranResponse);
     const successMsg = {
@@ -566,40 +504,10 @@ describe('ScheduleVeteran', () => {
     );
 
     // Run the test
-    // await scheduleVeteran.
-    //   find(Button).
-    //   at(1).
-    //   find('button').
-    //   simulate('click');
     const scheduleVeteran = screen.getByRole('button', { name: 'Schedule' });
     expect(scheduleVeteran).toBeInTheDocument();
 
     fireEvent.click(scheduleVeteran);
-
-    const data = {
-      data: {
-        task: {
-          status: 'completed',
-          business_payloads: {
-            description: 'Update Task',
-            values: {
-              ...scheduleHearingDetails.apiFormattedValues,
-              email_recipients: {
-                appellant_tz: 'America/New_York',
-                representative_tz: 'America/New_York',
-              },
-              virtual_hearing_attributes: false,
-              override_full_hearing_day_validation: false,
-            },
-          },
-        },
-      },
-    };
-
-    // Log the object with indentation for better readability
-    console.log(JSON.stringify(data, null, 2));
-
-    console.log('Patch Spy Calls:', JSON.stringify(patchSpy.mock.calls, null, 2));
 
     // Assertions
     expect(patchSpy).toHaveBeenCalledWith(`/tasks/${scheduledHearing.taskId}`, {
@@ -625,12 +533,12 @@ describe('ScheduleVeteran', () => {
     await waitFor(() => {
       expect(uiActions.showSuccessMessage).toHaveBeenCalledWith(successMsg);
     });
-    // expect(scheduleVeteran).toMatchSnapshot();
+    expect(scheduleVeteran).toMatchSnapshot();
   });
 
   test('Displays warning message for full hearing days', () => {
     // Render the scheduleVeteran component
-    const scheduleVeteran = mount(
+    const {container, asFragment}=customRender(
       <ScheduleVeteran
         fetchScheduledHearings={fetchScheduledHearingsMock}
         scheduledHearing={scheduledHearing}
@@ -639,8 +547,8 @@ describe('ScheduleVeteran', () => {
         appealId={amaAppeal.externalId}
       />,
       {
-        wrappingComponent: queueWrapper,
-        wrappingComponentProps: {
+        wrapper: Wrapper,
+        wrapperProps: {
           components: {
             forms: {
               assignHearing: {
@@ -655,14 +563,17 @@ describe('ScheduleVeteran', () => {
       }
     );
 
-    expect(scheduleVeteran.find(Alert)).toHaveLength(1);
-    expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
-    expect(scheduleVeteran).toMatchSnapshot();
+    // Assertions
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText('You are about to schedule this Veteran on a full docket. Please verify before scheduling.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'This hearing day is full' })).toBeInTheDocument();
+    expect(screen.getByTestId('schedule-veteran-form')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays only an error when there is an open hearing on the selected appeal', () => {
     // Render the scheduleVeteran component
-    const scheduleVeteran = mount(
+    const {asFragment}=customRender(
       <ScheduleVeteran
         appeals={appealsData}
         appealId={openHearingAppeal.externalId}
@@ -672,8 +583,8 @@ describe('ScheduleVeteran', () => {
         onChangeFormData={changeSpy}
       />,
       {
-        wrappingComponent: queueWrapper,
-        wrappingComponentProps: {
+        wrapper: Wrapper,
+        wrapperProps: {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
@@ -684,14 +595,16 @@ describe('ScheduleVeteran', () => {
     );
 
     // Assertions
-    expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(0);
-    expect(scheduleVeteran.find(Alert)).toHaveLength(1);
-    expect(scheduleVeteran).toMatchSnapshot();
+    expect(screen.queryByTestId('schedule-veteran-form')).toBeNull();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Open Hearing' })).toBeInTheDocument();
+    expect(screen.getByText('This appeal has an open hearing on 08/07/2020. You cannot schedule another hearing.')).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Displays virtual hearing form details for virtual hearings', () => {
     // Render the scheduleVeteran component
-    const scheduleVeteran = mount(
+    const {asFragment}=customRender(
       <ScheduleVeteran
         fetchScheduledHearings={fetchScheduledHearingsMock}
         scheduledHearing={scheduledHearing}
@@ -702,8 +615,8 @@ describe('ScheduleVeteran', () => {
         hearing={defaultHearing}
       />,
       {
-        wrappingComponent: queueWrapper,
-        wrappingComponentProps: {
+        wrapper: Wrapper,
+        wrapperProps: {
           components: {
             forms: {
               assignHearing: {
@@ -718,17 +631,21 @@ describe('ScheduleVeteran', () => {
     );
 
     // Assertions
-    expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppSegment).text()).toContain(
-      'will receive an email with connection information for the virtual hearing.'
-    );
-    expect(scheduleVeteran).toMatchSnapshot();
+    // RepresentativeSection present
+    expect(screen.getByText('The Veteran does not have a representative recorded in VBMS')).toBeInTheDocument();
+
+    // AppellantSection present
+    expect(screen.getByRole('combobox', {name: 'Veteran Timezone Required'})).toBeInTheDocument();
+    expect(screen.getByRole('textbox', {name: 'Veteran Email (for these notifications only) Required'})).toBeInTheDocument();
+
+    // AppSegment present
+    expect(screen.getByText('When you schedule the hearing, the Veteran and Judge will receive an email with connection information for the virtual hearing.')).toBeInTheDocument();
+
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test('Auto-selects virtual if a virtual hearing was requested', () => {
-    act(() => {
-      const scheduleVeteran = mount(
+      const {container, asFragment}=customRender(
         <ScheduleVeteran
           appeal={{
             ...legacyAppealForTravelBoard,
@@ -738,8 +655,8 @@ describe('ScheduleVeteran', () => {
           appealId={legacyAppealForTravelBoard.externalId}
         />,
         {
-          wrappingComponent: queueWrapper,
-          wrappingComponentProps: {
+         wrapper: Wrapper,
+          wrapperProps: {
             components: {
               forms: {
                 assignHearing: {
@@ -753,16 +670,10 @@ describe('ScheduleVeteran', () => {
         }
       );
 
-      expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
-      expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
-      expect(
-        scheduleVeteran.
-          find(ScheduleVeteranForm).
-          find(HearingTypeDropdown).
-          find(SearchableDropdown).
-          prop('value')
-      ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
-      expect(scheduleVeteran).toMatchSnapshot();
-    });
+      // Assertions
+      expect(screen.getByRole('combobox', {name: 'Hearing Type'})).toBeInTheDocument();
+      expect(screen.getByTestId('schedule-veteran-form')).toBeInTheDocument();
+      expect(screen.getAllByText('Virtual')[0]).toBeInTheDocument();
+      expect(asFragment()).toMatchSnapshot();
   });
 });
