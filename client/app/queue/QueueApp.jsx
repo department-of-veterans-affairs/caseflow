@@ -1591,8 +1591,7 @@ QueueApp.propTypes = {
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
   userPermissions: PropTypes.array,
-  configUrl: PropTypes.string,
-  completedMailTasks: PropTypes.array,
+  configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
