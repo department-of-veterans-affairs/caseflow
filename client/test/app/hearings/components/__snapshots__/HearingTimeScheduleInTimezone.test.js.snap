@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingTimeScheduleInTimezone Display HearingTimeScheduleInTimezone 1`] = `
+<div>
+  <div>
+    <p
+      class="hearing-time-scheduled-in-timezone"
+    >
+      <b />
+    </p>
+    <p>
+      <span>
+        3:30 AM EDT
+      </span>
+       /
+      <br />
+      2:30 AM CDT
+      <br />
+    </p>
+    <p>
+       issues
+    </p>
+  </div>
+</div>
+`;

@@ -69,17 +69,16 @@
 
 .search-bar-styling-for-filter {
   padding-left: 80px;
-  margin-top: 20px;
   margin-bottom: 15px;
-  justify-self: right;
-  display: block;
+  width: calc(100% + 45px);
 }
 
 .text-styling-for-filter-search-bar {
   padding-left: 80px;
+  margin-top: 20px;
   justify-self: flex-end;
   display: flex;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .no-results-found-styling {
@@ -89,6 +88,7 @@
 }
 
 .reenter-valid-username-styling {
+  padding-left: 60rem;
   padding-bottom: 60rem;
   text-align: center;
 }
@@ -100,4 +100,40 @@
   flex-direction: column;
   padding-left: 55vw;
   margin-right: 15vw;
+}
+
+.add-dropdown {
+  padding: 3rem 0 4rem;
+}
+
+.instruction-list {
+  list-style: none;
+  margin: 0 0 0 3rem;
+  padding: 1.5rem 0 2rem;
+  font-size: 19px;
+}
+
+.user-list {
+  margin: 0;
+}
+
+.user-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: .1rem solid $color-black;
+  padding: 4rem 0 2rem;
+  margin: 0;
+
+  &:first-child {
+    margin-top: 30px;
+  }
+}
+
+.title-buttons {
+  width: 60rem;
+}
+
+.button-style {
+  padding: 1rem 2.5rem 2rem 0;
+  display: inline-block;
 }

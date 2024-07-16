@@ -24,6 +24,7 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -148,6 +149,7 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -156,6 +158,8 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -183,6 +187,7 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -307,6 +312,7 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -315,6 +321,8 @@ exports[`EmailConfirmationModal ChangeEmailOrTimezone sub-component Displays Rea
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -350,6 +358,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -476,6 +485,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -484,6 +494,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -511,6 +523,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -637,6 +650,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -645,6 +659,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -690,6 +706,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -817,6 +834,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -825,6 +843,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays Hearing
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -928,6 +948,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -1052,6 +1073,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1060,6 +1082,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -1087,6 +1111,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -1211,6 +1236,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1219,6 +1245,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1258,6 +1286,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -1383,6 +1412,7 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1391,6 +1421,8 @@ exports[`EmailConfirmationModal ChangeFromVirtual sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1494,6 +1526,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -1618,6 +1651,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1626,6 +1660,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -1653,6 +1689,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -1777,6 +1814,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1785,6 +1823,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -1824,6 +1864,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -1949,6 +1990,7 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1957,6 +1999,8 @@ exports[`EmailConfirmationModal ChangeHearingTime sub-component Displays ReadOnl
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -2061,6 +2105,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -2175,6 +2220,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2183,6 +2229,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -2211,6 +2259,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -2325,6 +2374,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2333,6 +2383,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -2498,6 +2550,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -2602,6 +2655,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2610,6 +2664,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -2637,6 +2693,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -2741,6 +2798,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2749,6 +2807,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -2907,6 +2967,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -3032,6 +3093,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3040,6 +3102,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3067,6 +3131,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
+        "conferenceProvider": "pexip",
         "currentIssueCount": 0,
         "disposition": null,
         "dispositionEditable": true,
@@ -3192,6 +3257,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3200,6 +3266,8 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         "representativeEmail": "tom.brady@caseflow.gov",
         "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
+        "scheduledInTimezone": "America/Chicago",
+        "scheduledTimeString": "03:30",
         "status": "active",
       }
     }
@@ -3363,6 +3431,7 @@ exports[`EmailConfirmationModal DateTime sub-component Displays divider for form
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -3477,6 +3546,7 @@ exports[`EmailConfirmationModal DateTime sub-component Displays divider for form
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3485,6 +3555,8 @@ exports[`EmailConfirmationModal DateTime sub-component Displays divider for form
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3530,6 +3602,7 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -3654,6 +3727,7 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3662,6 +3736,8 @@ exports[`EmailConfirmationModal DateTime sub-component Displays formatted hearin
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3704,6 +3780,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -3799,6 +3876,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3807,6 +3885,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -3969,6 +4049,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                     "centralOfficeTimeString": "04:00",
                     "claimantId": 604,
                     "closestRegionalOffice": null,
+                    "conferenceProvider": "pexip",
                     "currentIssueCount": 0,
                     "disposition": null,
                     "dispositionEditable": true,
@@ -4066,6 +4147,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                     "appellantEmail": "Bob.Smith@test.com",
                     "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
+                    "conferenceProvider": "pexip",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
                     "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4074,6 +4156,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   }
                 }
@@ -4102,6 +4186,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -4199,6 +4284,7 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4207,6 +4293,8 @@ exports[`EmailConfirmationModal Displays ChangeEmailOrTimezone component when ty
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -4318,6 +4406,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -4413,6 +4502,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4421,6 +4511,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -4583,6 +4675,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                     "centralOfficeTimeString": "04:00",
                     "claimantId": 604,
                     "closestRegionalOffice": null,
+                    "conferenceProvider": "pexip",
                     "currentIssueCount": 0,
                     "disposition": null,
                     "dispositionEditable": true,
@@ -4680,6 +4773,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                     "appellantEmail": "Bob.Smith@test.com",
                     "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
+                    "conferenceProvider": "pexip",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
                     "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4688,6 +4782,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   }
                 }
@@ -4716,6 +4812,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -4813,6 +4910,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4821,6 +4919,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -4861,6 +4961,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -4959,6 +5060,7 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4967,6 +5069,8 @@ exports[`EmailConfirmationModal Displays ChangeFromVirtual component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -5146,6 +5250,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -5241,6 +5346,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5249,6 +5355,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -5411,6 +5519,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                     "centralOfficeTimeString": "04:00",
                     "claimantId": 604,
                     "closestRegionalOffice": null,
+                    "conferenceProvider": "pexip",
                     "currentIssueCount": 0,
                     "disposition": null,
                     "dispositionEditable": true,
@@ -5508,6 +5617,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                     "appellantEmail": "Bob.Smith@test.com",
                     "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
+                    "conferenceProvider": "pexip",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
                     "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5516,6 +5626,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   }
                 }
@@ -5544,6 +5656,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -5641,6 +5754,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5649,6 +5763,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -5689,6 +5805,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -5787,6 +5904,7 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5795,6 +5913,8 @@ exports[`EmailConfirmationModal Displays ChangeHearingTime component when type i
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -5974,6 +6094,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -6069,6 +6190,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6077,6 +6199,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -6239,6 +6363,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                     "centralOfficeTimeString": "04:00",
                     "claimantId": 604,
                     "closestRegionalOffice": null,
+                    "conferenceProvider": "pexip",
                     "currentIssueCount": 0,
                     "disposition": null,
                     "dispositionEditable": true,
@@ -6336,6 +6461,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                     "appellantEmail": "Bob.Smith@test.com",
                     "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
+                    "conferenceProvider": "pexip",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
                     "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6344,6 +6470,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                     "representativeEmail": "tom.brady@caseflow.gov",
                     "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
+                    "scheduledInTimezone": "America/Chicago",
+                    "scheduledTimeString": "03:30",
                     "status": "active",
                   }
                 }
@@ -6372,6 +6500,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                       "centralOfficeTimeString": "04:00",
                       "claimantId": 604,
                       "closestRegionalOffice": null,
+                      "conferenceProvider": "pexip",
                       "currentIssueCount": 0,
                       "disposition": null,
                       "dispositionEditable": true,
@@ -6469,6 +6598,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
+                      "conferenceProvider": "pexip",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6477,6 +6607,8 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                       "representativeEmail": "tom.brady@caseflow.gov",
                       "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
+                      "scheduledInTimezone": "America/Chicago",
+                      "scheduledTimeString": "03:30",
                       "status": "active",
                     }
                   }
@@ -6718,6 +6850,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -6833,6 +6966,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6841,6 +6975,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -6942,6 +7078,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -7057,6 +7194,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7065,6 +7203,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7166,6 +7306,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -7281,6 +7422,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7289,6 +7431,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7389,6 +7533,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -7504,6 +7649,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7512,6 +7658,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7613,6 +7761,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -7727,6 +7876,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7735,6 +7885,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7800,6 +7952,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -7915,6 +8068,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7923,6 +8077,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -7988,6 +8144,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -8103,6 +8260,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8111,6 +8269,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8177,6 +8337,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "centralOfficeTimeString": "08:30",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -8291,6 +8452,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8299,6 +8461,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Central Vi
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8367,6 +8531,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -8492,6 +8657,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8500,6 +8666,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8603,6 +8771,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -8728,6 +8897,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8736,6 +8906,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -8839,6 +9011,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -8964,6 +9137,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8972,6 +9146,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9074,6 +9250,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -9199,6 +9376,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -9207,6 +9385,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9310,6 +9490,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -9434,6 +9615,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -9442,6 +9624,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9509,6 +9693,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -9634,6 +9819,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -9642,6 +9828,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9709,6 +9897,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -9834,6 +10023,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -9842,6 +10032,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }
@@ -9910,6 +10102,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 0,
       "disposition": null,
       "dispositionEditable": true,
@@ -10034,6 +10227,7 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -10042,6 +10236,8 @@ exports[`EmailConfirmationModal ReadOnlyEmails sub-component Formerly Video Virt
       "representativeEmail": "tom.brady@caseflow.gov",
       "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
+      "scheduledInTimezone": "America/Chicago",
+      "scheduledTimeString": "03:30",
       "status": "active",
     }
   }

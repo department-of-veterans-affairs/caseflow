@@ -12,6 +12,8 @@ RSpec.describe HearingsController, type: :controller do
   let(:disposition) { nil }
   let!(:vso_participant_id) { "12345" }
 
+  include_context "Enable both conference services"
+
   describe "PATCH update" do
     let(:legacy_appeal_state) { legacy_hearing.appeal.appeal_state.tap { _1.update!(hearing_scheduled: true) } }
 
@@ -231,7 +233,6 @@ RSpec.describe HearingsController, type: :controller do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
           expect(VirtualHearing.first.status).to eq(:active)
-          expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.appellant_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
@@ -273,6 +274,7 @@ RSpec.describe HearingsController, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            :initialized,
             status: :active,
             hearing: hearing,
             conference_id: "000000"
@@ -509,13 +511,18 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing, :with_tasks, scheduled_time: "8:30AM") }
     let(:expected_time_zone) { "America/New_York" }
     # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
     let(:utc_offset) do
       hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
       hour_string = (hours < 0) ? format("%<hours>03i", hours: hours) : format("+%<hours>02i", hours: hours)
       "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
+    end
+    let(:is_daylight_savings_on) { Time.zone.now.in_time_zone(expected_time_zone).zone == "EDT" }
+
+    let!(:hearing) do
+      create(:hearing, :with_tasks, scheduled_time: is_daylight_savings_on ? "7:30 AM" : "8:30 AM",
+                                    scheduled_in_timezone: "Eastern Time (US & Canada)")
     end
 
     subject { get :show, as: :json, params: { id: hearing.external_id } }
@@ -545,7 +552,7 @@ RSpec.describe HearingsController, type: :controller do
         )
       end
 
-      it_should_behave_like "returns the correct hearing time in EST", "05:30"
+      it_should_behave_like "returns the correct hearing time in EST", "08:30"
     end
 
     def check_for_current_user_info_in_response(user)

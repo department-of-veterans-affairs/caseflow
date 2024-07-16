@@ -4,6 +4,9 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
+  attribute :daily_docket_conference_link do |hearing|
+    HearingDaySerializer.serialize_conference_link(hearing.daily_docket_conference_link)
+  end
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?
@@ -46,6 +49,7 @@ class HearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim?
   end
+  attribute :conference_provider
   attribute :mst do |hearing|
     hearing.appeal.mst?
   end
@@ -65,6 +69,11 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
+  attribute :non_virtual_conference_link do |object|
+    if !object.non_virtual_conference_link.nil?
+      ConferenceLinkSerializer.new(object.non_virtual_conference_link).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :notes
   attribute :paper_case do
     false
@@ -96,6 +105,11 @@ class HearingSerializer
   attribute :transcript_requested
   attribute :transcript_sent_date
   attribute :transcription
+  attribute :transcription_files, if: for_worksheet do |hearing|
+    if hearing.conference_provider == "webex"
+      hearing.serialized_transcription_files
+    end
+  end
   attribute :uuid
   attribute :veteran_age, if: for_full
   attribute :veteran_file_number
@@ -123,4 +137,5 @@ class HearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+  attribute :scheduled_in_timezone
 end
