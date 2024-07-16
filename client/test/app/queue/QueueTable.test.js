@@ -576,7 +576,8 @@ describe('QueueTable', () => {
       const {container, asFragment} = render(
         <QueueTable columns={columns} rowObjects={createTask(3)} summary={summary} slowReRendersAreOk />
       );
-
+      // screen.debug();
+      logRoles(container)
       // Assertions
       expect(asFragment()).toMatchSnapshot();
       expect(container.querySelector('thead')).toBeInTheDocument();
@@ -660,7 +661,7 @@ describe('QueueTable', () => {
       expect(container.querySelector('.cf-react-icon-loading-back')).toBeInTheDocument();
     });
 
-    test('Can sort rows', () => {
+    test.only('Can sort rows', () => {
       // Setup the test
       const {container, asFragment} = render(
         <QueueTable columns={sortColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
