@@ -398,8 +398,8 @@ describe UpdateAppealAffinityDatesJob do
       # legacy appeal distributed
       let!(:distributed_legacy_case) do
         legacy_appeal = create(:case, :tied_to_judge, tied_judge: judge)
-        create(:legacy_distributed_case, appeal: legacy_appeal, distribution: previous_distribution)
-        appeal
+        create(:legacy_distributed_case, appeal: legacy_appeal, distribution: previous_distribution, priority: false)
+        legacy_appeal
       end
 
       # legacy appeals ready for distribution

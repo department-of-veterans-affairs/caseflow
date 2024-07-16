@@ -23,12 +23,13 @@ FactoryBot.define do
       case_id { appeal.bfkey }
       distribution { create(:distribution, judge: create(:user, :judge, :with_vacols_judge_record)) }
       docket { LegacyDocket.docket_type }
-      docket_index { nil }
-      priority 
-      ready_at { appeal.tasks.find_by(type: DistributionTask.name).assigned_at }
-      sct_appeal
-      task 
+      docket_index { rand(1..100) }
+      priority { nil }
+      ready_at { appeal.bfdloout }
+      sct_appeal { false }
+      task { nil }
       genpop { false }
+      genpop_query { "any" }
     end
   end
 end
