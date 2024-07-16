@@ -274,6 +274,25 @@ export default class TranscriptionSettings extends React.PureComponent {
     return group;
   };
 
+  toggleWorkAssignment = (contractor) => {
+    const contractorData = { data: { transcription_contractor: { is_available_for_work: !contractor.is_available_for_work } } };
+    console.log('current contractor data:', this.state.contractors)
+    console.log('request:', contractorData)
+
+    ApiUtil.patch(`/hearings/find_by_contractor/${contractor.id}`, contractorData).
+      then((res) => {
+        const contractors = this.state.contractors;
+
+
+        console.log('response', res.body)
+
+        // eslint-disable-next-line camelcase
+        contractors[contractor.id - 1] = res.body?.transcription_contractor;
+        this.setState({ contractors });
+        console.log('updated contractor data', this.state.contractors)
+      });
+  }
+
   mainContent = () => {
     const listOfContractors = this.sortedContractors().map((contractor) => {
       return (
@@ -304,7 +323,9 @@ export default class TranscriptionSettings extends React.PureComponent {
             </div>
             <span {...toggleStyle}>
               <h3>Temporarily stop<br /> work assignment</h3>
-              <ToggleSwitch selected={contractor.is_available_for_work} />
+              <ToggleSwitch
+                selected={!contractor.is_available_for_work}
+                toggleSelected={() => this.toggleWorkAssignment(contractor)} />
             </span>
           </div>
         </React.Fragment>
