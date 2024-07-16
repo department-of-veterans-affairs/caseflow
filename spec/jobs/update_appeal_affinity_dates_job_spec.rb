@@ -395,8 +395,13 @@ describe UpdateAppealAffinityDatesJob do
         create(:appeal, :hearing_docket, :with_post_intake_tasks)
       end
 
-      let!(:legacy_appeal_no_appeal_affinity) { create(:case) }
-      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :with_appeal_affinity) }
+      # legacy appeals distributed and tied to judge
+      let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
+      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :status_complete, :tied_to_judge, tied_judge: vacols_judge) }
+
+      # legacy appeals ready for distribution
+      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution) }
+      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :ready_for_distribution, :with_appeal_affinity) }
 
       it "is successful and adds expected appeal affinity records or values" do
         described_class.perform_now(previous_distribution.id)
