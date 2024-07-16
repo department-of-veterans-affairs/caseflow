@@ -43,7 +43,7 @@ const CorrespondenceDetails = (props) => {
         <div className="correspondence-details-header">
           <h1> {props.correspondence.veteranFullName} </h1>
           <div className="copy-id">
-            <p>Veteran ID:</p>&nbsp;
+            <p className="vet-id-margin">Veteran ID:</p>
             <CopyTextButton
               label="copy-id"
               text={props.correspondence.veteranFileNumber}
