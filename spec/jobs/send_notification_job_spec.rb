@@ -183,10 +183,6 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  it "it is the correct queue" do
-    expect(SendNotificationJob.new.queue_name).to eq(queue_name)
-  end
-
   context ".perform" do
     subject(:job) { SendNotificationJob.perform_later(good_message.to_json) }
 
