@@ -43,7 +43,7 @@ class SendNotificationJob < CaseflowJob
 
   class << self
     def queue_name_suffix
-      ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
+      :"send_notifications.fifo"
     end
   end
 
