@@ -269,6 +269,38 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
+  context "no_held_hearings" do
+    before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+    let!(:judge_1) { create(:user, :judge, :with_vacols_judge_record) }
+    let!(:judge_2) { create(:user, :judge, :with_vacols_judge_record) }
+
+    let!(:appeal_1_hearing) do
+      create(:appeal,
+             :hearing_docket,
+             :with_post_intake_tasks,
+             :held_hearing_and_ready_to_distribute,
+             tied_judge: judge_1)
+    end
+
+    let!(:appeal_2_hearing) do
+      create(:appeal,
+             :hearing_docket,
+             :with_post_intake_tasks,
+             :held_hearing_and_ready_to_distribute,
+             tied_judge: judge_1)
+    end
+
+    let!(:hearing) { create(:hearing, :postponed, appeal: appeal_2_hearing)}
+
+    it "appeals with a held hearing aren't distributed to genpop" do
+      one_result = HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge_1, 3)
+      expect(one_result.count).to eq(2)
+      two_result = HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge_2, 3)
+      expect(two_result.count).to eq(0)
+    end
+  end
+
   context "limit appeals class methods" do
     let(:appeal_1_week_old) { create_ready_aod_appeal(created_date: 1.week.ago) }
     let(:appeal_4_weeks_old) { create_ready_aod_appeal(created_date: 4.weeks.ago) }

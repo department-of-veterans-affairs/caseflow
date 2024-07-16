@@ -53,6 +53,7 @@ class HearingRequestDistributionQuery
     ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def only_genpop_appeals
     ama_non_aod_hearing_query = generate_ama_only_genpop_non_aod_hearing_query(base_relation)
     ama_aod_hearing_query = generate_ama_only_genpop_aod_hearing_query(base_relation)
@@ -88,6 +89,7 @@ class HearingRequestDistributionQuery
 
     [*result, *no_hearings_or_only_no_held_hearings].uniq
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def generate_ama_not_genpop_non_aod_hearing_query(base_relation)
     query =
