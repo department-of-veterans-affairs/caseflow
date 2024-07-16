@@ -560,7 +560,7 @@ const mapDispatchToProps = (dispatch) =>
       onReceiveAppealDetails,
       setScheduledHearing
     },
-  dispatch
+    dispatch
   );
 
 export default withRouter(
