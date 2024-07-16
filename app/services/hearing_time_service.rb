@@ -49,10 +49,10 @@ class HearingTimeService
 
       tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
 
-      "#{datetime.strftime("%I:%M %p")} #{tz}"
+      "#{datetime.strftime('%I:%M %p')} #{tz}"
     end
 
-    def convert_scheduled_time_to_utc(time_string)
+    def convert_scheduled_time_to_utc(time_string, date_string)
       if time_string.present?
         # Find the AM/PM index value in the string
         index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
@@ -63,7 +63,7 @@ class HearingTimeService
 
         ### This is hardcoded. We do not want this hardcoded in the future
         timezone = ActiveSupport::TimeZone::MAPPING[timezone]
-        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+        return Time.use_zone(timezone) { Time.zone.parse("#{date_string} #{scheduled_time}") }.utc
       end
       nil
     end

@@ -41,7 +41,7 @@ class HearingRepository
 
       tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
       tz_str = ActiveSupport::TimeZone::MAPPING.key(time_str_split[2]) if tz_str.nil?
-      tz_str = 'Asia/Manila' if tz_str == 'Philippine Standard Time'
+      tz_str = "Asia/Manila" if tz_str == "Philippine Standard Time"
 
       begin
         new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
@@ -56,7 +56,10 @@ class HearingRepository
     # rubocop:disable Metrics/MethodLength
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
-      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string])
+      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(
+        attrs[:scheduled_time_string],
+        hearing_day.scheduled_for.to_s
+      )
 
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
