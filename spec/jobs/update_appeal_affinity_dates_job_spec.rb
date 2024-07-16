@@ -397,7 +397,13 @@ describe UpdateAppealAffinityDatesJob do
 
       # legacy appeals distributed and tied to judge
       let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
-      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :status_complete, :tied_to_judge, tied_judge: vacols_judge) }
+
+      # legacy appeal distributed
+      let!(:distributed_legacy_case) do
+        legacy_appeal = create(:case, :tied_to_judge, tied_judge: vacols_judge)
+        create(:distributed_case, appeal: legacy_appeal, distribution: previous_distribution)
+        appeal
+      end
 
       # legacy appeals ready for distribution
       let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution) }
