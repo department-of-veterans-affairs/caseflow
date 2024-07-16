@@ -73,13 +73,13 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         .maximum("receipt_date")
 
     legacy_nonpriority_receipt_date =  
-      DistributeCase
+      DistributedCase
         .includes(:distribution)
         .where(docket: "legacy", priority: false, distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
 
     legacy_priority_receipt_date =
-      DistributeCase
+      DistributedCase
         .includes(:distribution)
         .where(docket: "legacy", priority: true, distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
