@@ -18,5 +18,17 @@ FactoryBot.define do
     transient do
       appeal { create(:appeal, :assigned_to_judge) }
     end
+
+    factory :legacy_distributed_case do
+      case_id { appeal.bfkey }
+      distribution { create(:distribution, judge: create(:user, :judge, :with_vacols_judge_record)) }
+      docket { LegacyDocket.docket_type }
+      docket_index { nil }
+      priority 
+      ready_at { appeal.tasks.find_by(type: DistributionTask.name).assigned_at }
+      sct_appeal
+      task 
+      genpop { false }
+    end
   end
 end
