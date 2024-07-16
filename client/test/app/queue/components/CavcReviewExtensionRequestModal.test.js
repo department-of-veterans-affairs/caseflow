@@ -106,7 +106,7 @@ describe('CavcReviewExtensionRequestModal', () => {
   });
 
   it('calls onSubmit with selected values when "Confirm" is pressed and form is valid', () => {
-    const {container} = setup();
+    setup();
 
     clickDeny(screen);
     populateInstructions(screen, 'instructions');
