@@ -1,8 +1,8 @@
 unless Rails.env.test?
   Datadog.configure do |c|
-    options = { analytics_enabled: false }
+    options = { analytics_enabled: true }
 
-    c.analytics_enabled = false
+    c.analytics_enabled = true
     c.use :rails, options
     c.use :active_record, options
     c.use :rack, options

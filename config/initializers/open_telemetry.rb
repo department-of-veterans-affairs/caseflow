@@ -44,10 +44,9 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
       'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
       'OpenTelemetry::Instrumentation::PG' => { enabled: false },
       'OpenTelemetry::Instrumentation::AwsSdk' => { enabled: false },
-      'OpenTelemetry::Instrumentation::Rack' => {
-        use_rack_events: false,
-        untraced_endpoints: ['/health-check', '/sample', '/logs'],
-      }
+      'OpenTelemetry::Instrumentation::Net::HTTP' => { enabled: false },
+      'OpenTelemetry::Instrumentation::ActionPack' => { enabled: false },
+      'OpenTelemetry::Instrumentation::Rack' => { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
     }
     c.use_all(config)
 
