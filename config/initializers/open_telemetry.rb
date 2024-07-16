@@ -37,7 +37,7 @@ if !Rails.env.development? && !Rails.env.test? && !Rails.env.demo?
     c.service_name = 'ruby-quickstart'
     c.service_version = '1.0.1'
     # c.use_all # application will be using all instrumentation provided by OpenTelemetry
-    c.use 'OpenTelemetry::Instrumentation::Rack', untraced_endpoints: ['/health-check', '/sample', '/logs']
+    c.use 'OpenTelemetry::Instrumentation::Rack', { untraced_endpoints: ['/health-check', '/sample', '/logs'] }
     c.use 'OpenTelemetry::Instrumentation::Rails'
     c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
     # config = {
