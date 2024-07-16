@@ -1,6 +1,28 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { mount } from 'enzyme';
+import { render, screen, fireEvent, waitFor, logRoles } from '@testing-library/react';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { omit } from 'lodash';
+
+import {
+  amaAppeal,
+  defaultHearing,
+  scheduleHearingDetails,
+  virtualHearing,
+  hearingDateOptions,
+  scheduledHearing,
+  scheduleVeteranResponse,
+  openHearingAppeal,
+  legacyAppeal,
+  legacyAppealForTravelBoard
+} from 'test/data';
+import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
+import Button from 'app/components/Button';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { formatDateStr } from 'app/util/DateUtil';
+import Alert from 'app/components/Alert';
+import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
+import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
 import { generateAmaTask } from 'test/data/tasks';
@@ -9,6 +31,17 @@ import {
   VIRTUAL_HEARING_LABEL
 } from 'app/hearings/constants';
 import ApiUtil from 'app/util/ApiUtil';
+
+import * as uiActions from 'app/queue/uiReducer/uiActions';
+
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
+
+import * as utils from 'app/hearings/utils';
+import { act } from 'react-dom/test-utils';
+import { createMemoryHistory } from 'history';
+import { log } from 'console';
+import { patch } from 'superagent';
+import { title } from 'process';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -54,6 +87,9 @@ const Wrapper = ({ children, ...props }) => {
 let patchSpy;
 const setScheduledHearingMock = jest.fn();
 const fetchScheduledHearingsMock = jest.fn();
+const errorMessageSpy = jest.spyOn(uiActions, 'showErrorMessage');
+const showSuccessMessageSpy = jest.spyOn(uiActions, 'showSuccessMessage');
+// const getSpy = jest.spyOn(ApiUtil, 'get');
 
 jest.mock('app/util/ApiUtil', () => ({
   convertToSnakeCase: jest.fn((obj) => obj),
@@ -84,9 +120,22 @@ const mockResponse = {
   }
 };
 
-const convertRegex = (str) => {
-  return new RegExp(str, 'i');
-};
+describe('ScheduleVeteran', () => {
+  // beforeEach(() => {
+    // jest.
+    //   spyOn(document, 'getElementById').
+    //   mockReturnValue({ scrollIntoView: jest.fn() });
+  // jest.spyOn(utils, 'processAlerts');
+  jest.spyOn(document, 'getElementById').mockImplementation((id) => {
+    if (id === 'email-section') {
+      return { scrollIntoView: jest.fn() };
+    }
+    return null; // Or you can return the original implementation
+  });
+    patchSpy = jest.spyOn(ApiUtil, 'patch');
+  //   jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+  //   getSpy.mockImplementation(() => Promise.resolve({ body: {}}));
+  // });
 
   beforeAll(() => {
     // Necessary because the list of timezones changes depending on the date
