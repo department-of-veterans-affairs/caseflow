@@ -395,9 +395,6 @@ describe UpdateAppealAffinityDatesJob do
         create(:appeal, :hearing_docket, :with_post_intake_tasks)
       end
 
-      # legacy appeals distributed and tied to judge
-      let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
-
       # legacy appeal distributed
       let!(:distributed_legacy_case) do
         legacy_appeal = create(:case, :tied_to_judge, tied_judge: judge)
