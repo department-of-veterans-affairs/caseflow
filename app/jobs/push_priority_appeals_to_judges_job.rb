@@ -201,9 +201,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << ""
     docket_coordinator.dockets.each_pair do |sym, docket|
       report << "*Number of #{sym} appeals in affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: true, priority: true)}"
+                "#{docket.affinity_date_count(true, true)}"
       report << "*Number of #{sym} appeals out of affinity date window*: " \
-                "#{docket.affinity_date_count(in_window: false, priority: true)}"
+                "#{docket.affinity_date_count(false, true)}"
     end
   end
 
