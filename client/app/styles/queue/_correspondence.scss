@@ -1296,18 +1296,21 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .correspondence-details-header {
-  background-color: $color-gray-inverse-base;
-  // background-color: red;
   width: 100%;
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  margin-top: -20px;
 
   h1 {
     float: left;
     align-self: center;
     font-weight: bold;
     margin-bottom: 0;
+  }
+
+  a {
+    font-weight: bold;
   }
 
   p {
@@ -1328,3 +1331,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.app-segment-cd-details{
+  box-shadow: inset 0px 90px 0 0 $color-gray-inverse-base;
+}

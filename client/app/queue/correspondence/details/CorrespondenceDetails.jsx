@@ -39,11 +39,11 @@ const CorrespondenceDetails = (props) => {
 
   return (
     <>
-      <AppSegment filledBackground>
+      <AppSegment filledBackground extraClassNames="app-segment-cd-details">
         <div className="correspondence-details-header">
           <h1> {props.correspondence.veteranFullName} </h1>
           <div className="copy-id">
-            <p>Veteran ID:  </p>
+            <p>Veteran ID:</p>&nbsp;
             <CopyTextButton
               label="copy-id"
               text={props.correspondence.veteranFileNumber}
