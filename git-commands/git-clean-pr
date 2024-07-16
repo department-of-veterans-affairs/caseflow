@@ -9,7 +9,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CURRENT_DIR=$(pwd)
 
 # determine if branch param was passed
-if [ ! -z "$1"] && ["$1" != "with-codeclimate"]; then
+if [ ! -z "$1" ] && [ "$1" != "with-codeclimate" ]; then
   # get the list of files changed that are eligible for testing
   jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
@@ -99,6 +99,8 @@ if [ "$1" == "with-codeclimate" ] || [ "$2" == "with-codeclimate" ]; then
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --volume /tmp/cc:/tmp/cc \
     codeclimate/codeclimate help
+
+  codeclimate engines:install
 
   # analyze each of the commits
   for commit in $allCommits; do
