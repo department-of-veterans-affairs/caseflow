@@ -169,9 +169,9 @@ FactoryBot.define do
       end
     end
 
-    trait :non_ssc_avlj do
+    trait :non_ssc_avlj_user do
       after(:create) do |user|
-        create(:staff, sattyid: "9999", smemgrp: "9998", svlj: "A", sactive: "A", user: user)
+        create(:staff, :non_ssc_avlj, user: user)
       end
     end
 

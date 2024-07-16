@@ -12,6 +12,11 @@ FactoryBot.define do
 
         new_sattyid
       end
+
+      generated_smemgrp_not_equal_to_sattyid do
+        new_smemgrp = generated_sattyid + 1
+        new_smemgrp
+      end
     end
 
     sequence(:stafkey) do |n|
@@ -115,6 +120,12 @@ FactoryBot.define do
     trait :has_sattyid do
       svlj { nil }
       sattyid { generated_sattyid }
+    end
+
+    trait :non_ssc_avlj do
+      svlj { "A" }
+      sattyid { generated_sattyid }
+      smemgrp { generated_smemgrp_not_equal_to_sattyid }
     end
 
     after(:build) do |staff, evaluator|
