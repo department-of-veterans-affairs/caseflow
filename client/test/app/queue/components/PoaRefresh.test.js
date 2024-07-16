@@ -76,7 +76,6 @@ describe('PoaRefresh', () => {
 
       it('shows PoaRefresh text when toggled', () => {
         const { asFragment } = setup({ poaToggled: true });
-        screen.debug();
 
         expect(screen.getByText(COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION)).toBeInTheDocument();
         const expectedSyncDate = formatDateStr(powerOfAttorney.poa_last_synced_at);
