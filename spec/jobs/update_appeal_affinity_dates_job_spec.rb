@@ -397,20 +397,22 @@ describe UpdateAppealAffinityDatesJob do
 
       # legacy appeal distributed
       let!(:distributed_legacy_case) do
-        legacy_appeal = create(:case, :tied_to_judge, tied_judge: judge)
+        legacy_appeal = create(:case, :tied_to_judge, :type_original, tied_judge: judge, bfd19: 3.weeks.ago)
         create(:legacy_distributed_case, appeal: legacy_appeal, distribution: previous_distribution, priority: false)
         legacy_appeal
       end
 
       # legacy appeals ready for distribution
-      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution) }
-      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :ready_for_distribution, :with_appeal_affinity) }
+      let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution, :type_original) }
+      let!(:legacy_appeal_no_appeal_affinity_no_start_date) { create(:case, :ready_for_distribution, :type_original, :with_appeal_affinity, affinity_start_date: nil) }
+      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :ready_for_distribution, :with_appeal_affinity, :type_original) }
+      let!(:legacy_appeal_no_appeal_affinity_later_bfd19) { create(:case, :ready_for_distribution, :type_original, bfd19: 1.week.ago) }
 
       it "is successful and adds expected appeal affinity records or values" do
         described_class.perform_now(previous_distribution.id)
 
-        # Only 9 of the staged appeals should have an affinity
-        expect(AppealAffinity.count).to eq 9
+        # Only 11 of the staged appeals should have an affinity
+        expect(AppealAffinity.count).to eq 11
 
         # Validate that only the expected appeals are the ones that were updated
         expect(ready_appeal_drd_priority.appeal_affinity).to_not be nil
@@ -422,6 +424,8 @@ describe UpdateAppealAffinityDatesJob do
         expect(ready_appeal_hrd_priority_no_start_date.appeal_affinity).to_not be nil
         expect(ready_appeal_hrd_nonpriority_no_start_date.appeal_affinity).to_not be nil
         expect(legacy_appeal_no_appeal_affinity.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity_no_start_date.appeal_affinity).to_not be nil
+        expect(legacy_appeal_no_appeal_affinity_later_bfd19.appeal_affinity).to be nil
       end
     end
   end
