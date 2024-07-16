@@ -38,8 +38,11 @@ class HearingRepository
 
     def fix_hearings_timezone(scheduled_time_string)
       time_str_split = scheduled_time_string.split(" ", 3)
+
       tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
+      tz_str = ActiveSupport::TimeZone::MAPPING.key(time_str_split[2]) if tz_str.nil?
       tz_str = 'Asia/Manila' if tz_str == 'Philippine Standard Time'
+
       begin
         new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
       rescue TZInfo::InvalidTimezoneIdentifier => error
