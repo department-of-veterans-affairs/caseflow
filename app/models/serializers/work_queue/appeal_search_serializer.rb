@@ -73,7 +73,17 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location do |object, params|
-    if object&.status&.status == :distributed_to_judge
+    restricted_statuses =
+      [
+        :distributed_to_judge,
+        :ready_for_signature,
+        :on_hold,
+        :misc,
+        :unknown,
+        :assigned_to_attorney
+      ]
+
+    if restricted_statuses.include?(object&.status&.status)
       if params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user])
         object.assigned_to_location
       end
