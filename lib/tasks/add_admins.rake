@@ -189,7 +189,7 @@ namespace :add_admins do
     ihp = IhpDraft.create!(
       appeal_id: appeal.id,
       appeal_type: "Appeal",
-      organization_id: Organization.find_by(name: "Supervisory Senior Council").id,
+      organization_id: Organization.find_by(name: "Supervisory Senior Counsel").id,
       path: path
     )
 
