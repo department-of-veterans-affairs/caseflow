@@ -102,7 +102,11 @@ class CorrespondenceTask < Task
 
   def task_url
     # route to the Correspondence Details Page.
-    Constants.CORRESPONDENCE_TASK_URL.CORRESPONDENCE_TASK_DETAIL_URL.sub("uuid", correspondence.uuid)
+    if !FeatureToggle.enabled?(:correspondence_queue)
+      "/under_construction"
+    else
+      Constants.CORRESPONDENCE_TASK_URL.CORRESPONDENCE_TASK_DETAIL_URL.sub("uuid", correspondence.uuid)
+    end
   end
 
   private
