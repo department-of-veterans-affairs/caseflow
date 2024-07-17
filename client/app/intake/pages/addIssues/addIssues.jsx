@@ -337,7 +337,7 @@ class AddIssuesPage extends React.Component {
 
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
+    const { useAmaActivationDate, hlrScUnrecognizedClaimants, disableAmaEventing } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -639,7 +639,9 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    if (!disableAmaEventing) {
+      rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    }
 
     Object.keys(issuesBySection).sort().
       map((key) => {
