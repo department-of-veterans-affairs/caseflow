@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { zoneName } from '../utils';
+import { timeWithTimeZone, zoneName } from '../utils';
 import momentTimezone from 'moment-timezone';
 import moment from 'moment';
 
@@ -15,21 +15,12 @@ export const HearingTimeScheduledInTimezone = ({
   primaryLabel,
   showRegionalOfficeName,
 }) => {
-  const timeInScheduledTimezone = zoneName(hearing.scheduledTimeString, hearing.scheduledInTimezone, 'z');
+  const timeInScheduledTimezone = timeWithTimeZone(hearing.scheduledFor, hearing.scheduledInTimezone);
 
-  // Calculate the central office time
-  // scheduledTime received from BE is 1hr ahead of the values selected in radio options(which is incorrect)
-  // To fix it, display the time in EST always
-  const estTime = moment(hearing.scheduledFor).utcOffset('-05:00').
-    format('h:mm A');
-  const tz = momentTimezone().tz('America/New_York').
-    format('z');
+  const coTime = timeWithTimeZone(hearing.scheduledFor, 'America/New_York');
 
-  const coTime = `${estTime} ${tz}`;
   const primaryTime = primaryLabel === 'RO' ? timeInScheduledTimezone : coTime;
   const secondaryTime = primaryLabel === 'RO' ? coTime : timeInScheduledTimezone;
-
-  const isTimeZoneDifferent = hearing.scheduledInTimezone !== 'America/New_York';
 
   return (
     <div>
@@ -40,7 +31,7 @@ export const HearingTimeScheduledInTimezone = ({
       )}
       <p className={paragraphClasses}>
         <span className={labelClasses}>{primaryTime}</span>
-        {isTimeZoneDifferent && (
+        {primaryTime !== secondaryTime && (
           <>
             {breakCharacter}
             <br />
