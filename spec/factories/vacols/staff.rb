@@ -14,12 +14,13 @@ FactoryBot.define do
       end
 
       judge do
-        User.find_by(css_id: "STAFF_FCT_JUDGE") ||
-          create(:user, css_id: "STAFF_FCT_JUDGE", full_name: "Staff Factory JudgeUser")
+        judge_staff = VACOLS::Staff.find_by(slogid: "test2_FCT_JUDGE") ||
+                      create(:staff, :judge_role, slogid: "test2_FCT_JUDGE")
+        judge_staff
       end
 
       generated_smemgrp_not_equal_to_sattyid do
-        judge.id
+        judge.sattyid
       end
     end
 
