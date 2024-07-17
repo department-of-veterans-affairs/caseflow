@@ -60,7 +60,7 @@ describe WorkQueue::AppealSerializer, :all_dbs do
     end
   end
 
-  context "when an appeal has a user that is part of the Supervisory Senior Council" do
+  context "when an appeal has a user that is part of the Supervisory Senior Counsel" do
     let!(:appeal) { create(:appeal) }
     let!(:current_user) { create(:user) }
     let!(:organization) { SupervisorySeniorCounsel.singleton }

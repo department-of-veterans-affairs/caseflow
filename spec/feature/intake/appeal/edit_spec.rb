@@ -553,7 +553,7 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "User is a member of the Supervisory Senior Council" do
+  context "User is a member of the Supervisory Senior Counsel" do
     let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
@@ -565,7 +565,7 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
+  context "The user is a member of Supervisory Senior Counsel and the appeal has 2 or more tasks" do
     let!(:organization) { SupervisorySeniorCounsel.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }

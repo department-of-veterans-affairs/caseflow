@@ -10,7 +10,7 @@ namespace :db do
             "UPDATE organizations SET type = 'SupervisorySeniorCounsel' WHERE name = 'Supervisory Senior Council'"
           )
 
-          organization = Organization.find_by(type: "SupervisorySeniorCounsel")
+          organization = Organization.find_by(type: SupervisorySeniorCounsel.first.type)
 
           organization.update!(
             name: "Supervisory Senior Counsel",

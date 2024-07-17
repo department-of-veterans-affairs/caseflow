@@ -1112,7 +1112,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a current user is a member of Supervisory Senior Council organization" do
+  context "When a current user is a member of Supervisory Senior Counsel organization" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
     let!(:organization) { SupervisorySeniorCounsel.singleton }
@@ -1143,7 +1143,7 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  context "When a user isn't a member of the Supervisory Senior Council" do
+  context "When a user isn't a member of the Supervisory Senior Counsel" do
     let(:appeal) { create(:appeal) }
     let(:current_user) { create(:user) }
     let(:receipt_date) { Time.zone.today - 20.days }
