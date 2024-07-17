@@ -9,13 +9,13 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 CURRENT_DIR=$(pwd)
 
 # determine if branch param was passed
-if [ ! -z "$1" ]; then
+if [ ! -z "$1" ] && [ "$1" != "with-codeclimate" ]; then
   # get the list of files changed that are eligible for testing
   jsxCommits=$(git diff --name-only "$1" | grep -E '.jsx$') # get the list of jsx files
   jsCommits=$(git diff --name-only "$1" | grep -E '.js$') # get the list of js files
   rbCommits=$(git diff --name-only "$1" | grep -E '.rb$') # get the list of ruby files
   scssCommits=$(git diff --name-only "$1" | grep -E '.scss$') # get the list of scss files
-
+  allCommits=$(git diff --name-only "$1")
 else
   # else default to no branch comparison
   # get the list of files changed that are eligible for testing
@@ -23,6 +23,7 @@ else
   jsCommits=$(git diff --name-only | grep -E '.js$') # get the list of js files
   rbCommits=$(git diff --name-only | grep -E '.rb$') # get the list of ruby files
   scssCommits=$(git diff --name-only | grep -E '.scss$') # get the list of scss files
+  allCommits=$(git diff --name-only)
 fi
 
 # cycle through ruby suite of tests
@@ -85,6 +86,27 @@ if [[ ! -z "$jsxCommits" || ! -z "$jsCommits" ]]; then
   cd $CURRENT_DIR
 
   echo "Relevant jest, lint, and prettier tests have been run"; echo "";
+fi
+
+# run code climate for all changed files
+if [ "$1" == "with-codeclimate" ] || [ "$2" == "with-codeclimate" ]; then
+  docker pull codeclimate/codeclimate
+
+  docker run \
+    --interactive --tty --rm \
+    --env CODECLIMATE_CODE="$PWD" \
+    --volume "$PWD":/code \
+    --volume /var/run/docker.sock:/var/run/docker.sock \
+    --volume /tmp/cc:/tmp/cc \
+    codeclimate/codeclimate help
+
+  codeclimate engines:install
+
+  # analyze each of the commits
+  for commit in $allCommits; do
+    echo "running codeClimate CLI for $commit"
+    codeclimate analyze $commit
+  done
 fi
 
 echo "All tests relevant to current code changes have been run"
