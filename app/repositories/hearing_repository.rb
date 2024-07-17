@@ -41,16 +41,14 @@ class HearingRepository
 
       tz_str = ActiveSupport::TimeZone::MAPPING[time_str_split[2]]
       tz_str = ActiveSupport::TimeZone::MAPPING.key(time_str_split[2]) if tz_str.nil?
-      tz_str = "Asia/Manila" if tz_str == "Philippine Standard Time"
 
       begin
-        new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
+        ActiveSupport::TimeZone.find_tzinfo(tz_str).name
       rescue TZInfo::InvalidTimezoneIdentifier => error
         Raven.capture_exception(error)
         Rails.logger.info("#{error}: Invalid timezone #{tz_str} for hearing day")
         raise error
       end
-      new_tz.name
     end
 
     # rubocop:disable Metrics/MethodLength
