@@ -1,12 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import { EmailNotificationFields } from 'app/hearings/components/details/EmailNotificationFields';
 import { defaultHearing as hearing } from 'test/data/hearings';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
-import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
-import { HearingEmail } from 'app/hearings/components/details/HearingEmail';
 
 describe('Fields', () => {
 
