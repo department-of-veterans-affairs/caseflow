@@ -5,7 +5,7 @@ require "rails_helper"
 describe WorkQueue::AppealSearchSerializer, :all_dbs do
   describe "#assigned_to_location" do
     context "when appeal status is restricted" do
-      let(:appeal) { create(:appeal, :at_attorney_drafting) }
+      let(:appeal) { create(:appeal, :assigned_to_judge) }
       let!(:judge_user) { create(:user, :with_vacols_judge_record, full_name: "Judge Judy", css_id: "JUDGE_J") }
 
       before do
