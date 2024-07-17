@@ -388,10 +388,16 @@ describe('ReportPage', () => {
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
       expect(screen.getAllByRole('checkbox').length).toBe(19);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
-        expect(screen.getAllByText(option.system)).toBeTruthy();
-        expect(screen.getAllByText(option.general)).toBeTruthy();
-        expect(screen.getAllByText(option.requests)).toBeTruthy();
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS[0].system.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS[0].general.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS[0].requests.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
       });
     });
 

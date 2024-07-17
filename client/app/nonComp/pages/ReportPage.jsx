@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -167,66 +168,66 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
 
   return (
     name === 'specificEventType' ?
-      <fieldset {...OuterContainerStyling}>
-        <div className={fieldClasses}>
-          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-          <h4>System</h4>
-          {options[0].system.map((option) => (
-            <div key={option.id}>
-              <Checkbox
-                name={`${name}.${option.id}`}
-                key={`${name}.${option.id}`}
-                label={option.label}
-                stronglabel
-                onChange={(val) => {
-                  value[option.id] = val;
-                  field.onChange(value);
-                  setValue(value);
-                }}
-                unpadded
-              />
-            </div>
-          ))}
-        </div>
-        <div className={fieldClasses}>
-          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-          <h4>General</h4>
-          {options[0].general.map((option) => (
-            <div key={option.id}>
-              <Checkbox
-                name={`${name}.${option.id}`}
-                key={`${name}.${option.id}`}
-                label={option.label}
-                stronglabel
-                onChange={(val) => {
-                  value[option.id] = val;
-                  field.onChange(value);
-                  setValue(value);
-                }}
-                unpadded
-              />
-            </div>
-          ))}
-        </div>
-        <div className={fieldClasses}>
-          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-          <h4>Requests</h4>
-          {options[0].requests.map((option) => (
-            <div key={option.id}>
-              <Checkbox
-                name={`${name}.${option.id}`}
-                key={`${name}.${option.id}`}
-                label={option.label}
-                stronglabel
-                onChange={(val) => {
-                  value[option.id] = val;
-                  field.onChange(value);
-                  setValue(value);
-                }}
-                unpadded
-              />
-            </div>
-          ))}
+      <fieldset>
+        {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
+        <div {...OuterContainerStyling}>
+          <div className={fieldClasses}>
+            <h4>System</h4>
+            {options[0].system.map((option) => (
+              <div key={option.id}>
+                <Checkbox
+                  name={`${name}.${option.id}`}
+                  key={`${name}.${option.id}`}
+                  label={option.label}
+                  stronglabel
+                  onChange={(val) => {
+                    value[option.id] = val;
+                    field.onChange(value);
+                    setValue(value);
+                  }}
+                  unpadded
+                />
+              </div>
+            ))}
+          </div>
+          <div className={fieldClasses}>
+            <h4>General</h4>
+            {options[0].general.map((option) => (
+              <div key={option.id}>
+                <Checkbox
+                  name={`${name}.${option.id}`}
+                  key={`${name}.${option.id}`}
+                  label={option.label}
+                  stronglabel
+                  onChange={(val) => {
+                    value[option.id] = val;
+                    field.onChange(value);
+                    setValue(value);
+                  }}
+                  unpadded
+                />
+              </div>
+            ))}
+          </div>
+          <div className={fieldClasses}>
+            <h4>Requests</h4>
+            {options[0].requests.map((option) => (
+              <div key={option.id}>
+                <Checkbox
+                  name={`${name}.${option.id}`}
+                  key={`${name}.${option.id}`}
+                  label={option.label}
+                  stronglabel
+                  onChange={(val) => {
+                    value[option.id] = val;
+                    field.onChange(value);
+                    setValue(value);
+                  }}
+                  unpadded
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </fieldset> :
       <fieldset style={{ paddingLeft: '30px' }}>
@@ -508,3 +509,4 @@ RHFRadioButton.propTypes = {
 };
 
 export default ReportPage;
+/* eslint-enable max-lines */
