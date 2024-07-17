@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# This factory will create a DistributedCase with the required fields based on an appeal
-# It is currently only compatible with AMA appeals
 FactoryBot.define do
   factory :distributed_case do
     case_id { appeal.uuid }
