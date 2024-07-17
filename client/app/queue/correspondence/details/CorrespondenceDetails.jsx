@@ -9,6 +9,7 @@ import { loadCorrespondence } from '../correspondenceReducer/correspondenceActio
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
+  const mailTasks = props.correspondence.mailTasks;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
@@ -19,7 +20,13 @@ const CorrespondenceDetails = (props) => {
       <React.Fragment>
         <h2>Completed Mail Tasks</h2>
         <AppSegment filledBackground noMarginTop>
-            Table comes here
+          <ul className="correspondence-mail-tasks">
+            {
+              mailTasks.map((item) => (
+                <li>{item}</li>
+              ))
+            }
+          </ul>
         </AppSegment>
       </React.Fragment>
     );

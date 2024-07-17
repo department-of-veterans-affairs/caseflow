@@ -1328,6 +1328,20 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-left: auto;
   }
 }
+.correspondence-mail-tasks {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    border-bottom:  1px solid $color-cream;
+    padding: 10px 0;
+
+    &:last-child {
+      border: none;
+    }
+  }
+}
 
 .app-segment-cd-details {
   box-shadow: inset 0 90px 0 0 $color-gray-inverse-base;
