@@ -16,7 +16,8 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
 
       context "and user is a board judge" do
         it "shows CSS ID" do
-          expect(subject.serializable_hash[:data][:attributes][:assigned_to_location]).to eq(appeal.assigned_to_location)
+          expect(subject.serializable_hash[:data][:attributes][:assigned_to_location])
+            .to eq(appeal.assigned_to_location)
         end
       end
 
@@ -33,7 +34,8 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
 
         context "and user is a board attorney" do
           it "shows CSS ID" do
-            expect(subject.serializable_hash[:data][:attributes][:assigned_to_location]).to eq(appeal.assigned_to_location)
+            expect(subject.serializable_hash[:data][:attributes][:assigned_to_location])
+              .to eq(appeal.assigned_to_location)
           end
         end
       end
@@ -54,7 +56,8 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
 
         context "and user is a hearings coordinator" do
           it "shows CSS ID" do
-            expect(subject.serializable_hash[:data][:attributes][:assigned_to_location]).to eq(appeal.assigned_to_location)
+            expect(subject.serializable_hash[:data][:attributes][:assigned_to_location])
+              .to eq(appeal.assigned_to_location)
           end
         end
       end
@@ -86,7 +89,8 @@ describe WorkQueue::AppealSearchSerializer, :all_dbs do
       subject { described_class.new(appeal, params: { user: vso_user }) }
 
       it "shows CSS ID to VSO user" do
-        expect(subject.serializable_hash[:data][:attributes][:assigned_to_location]).to eq(appeal.assigned_to_location)
+        expect(subject.serializable_hash[:data][:attributes][:assigned_to_location])
+          .to eq(appeal.assigned_to_location)
       end
     end
   end
