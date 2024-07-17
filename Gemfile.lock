@@ -1805,10 +1805,6 @@ GEM
       opentelemetry-api (~> 1.0)
       opentelemetry-common (~> 0.19.3)
       opentelemetry-instrumentation-base (~> 0.21.0)
-    opentelemetry-instrumentation-net_http (0.21.1)
-      opentelemetry-api (~> 1.0)
-      opentelemetry-common (~> 0.19.3)
-      opentelemetry-instrumentation-base (~> 0.21.0)
     opentelemetry-instrumentation-rack (0.22.1)
       opentelemetry-api (~> 1.0)
       opentelemetry-common (~> 0.19.3)
@@ -2187,7 +2183,6 @@ DEPENDENCIES
   opentelemetry-instrumentation-faraday
   opentelemetry-instrumentation-http
   opentelemetry-instrumentation-http_client
-  opentelemetry-instrumentation-net_http
   opentelemetry-instrumentation-rack
   opentelemetry-instrumentation-rails
   opentelemetry-sdk
@@ -2252,4 +2247,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.22
+   2.4.19
