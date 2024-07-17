@@ -14,8 +14,8 @@ FactoryBot.define do
       end
 
       judge do
-        judge_staff = VACOLS::Staff.find_by(slogid: "test2_FCT_JUDGE") ||
-                      create(:staff, :judge_role, slogid: "test2_FCT_JUDGE")
+        judge_staff = VACOLS::Staff.find_by(slogid: "STAFF_FCT_JUDGE") ||
+                      create(:staff, :judge_role, slogid: "STAFF_FCT_JUDGE")
         judge_staff
       end
 
