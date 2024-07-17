@@ -13,9 +13,13 @@ FactoryBot.define do
         new_sattyid
       end
 
+      judge do
+        User.find_by(css_id: "STAFF_FCT_JUDGE") ||
+          create(:user, css_id: "STAFF_FCT_JUDGE", full_name: "Staff Factory JudgeUser")
+      end
+
       generated_smemgrp_not_equal_to_sattyid do
-        new_smemgrp = generated_sattyid + 1
-        new_smemgrp
+        judge.id
       end
     end
 
