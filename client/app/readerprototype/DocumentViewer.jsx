@@ -60,7 +60,10 @@ const DocumentViewer = (props) => {
     <div>
       <div className="cf-pdf-page-container-prototype">
         <div className="sidebarContainer" {...docViewerStyles.sidebarContainer}>
-          <ReaderSidebar doc={doc} />
+          <ReaderSidebar
+            doc={doc}
+            documents={props.allDocuments}
+          />
         </div>
         <div className="cf-pdf-container" {...docViewerStyles.documentContainer}>
           <div className="cf-pdf-toolbar-prototype">
