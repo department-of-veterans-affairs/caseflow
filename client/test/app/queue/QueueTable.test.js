@@ -1,8 +1,7 @@
 import React from 'react';
 import * as queueTable from 'app/queue/QueueTable';
-import FilterSummary from 'app/components/FilterSummary';
-import { shallow, mount } from 'enzyme';
-import { render, screen, fireEvent, waitFor, logRoles } from '@testing-library/react';
+import { shallow } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import {
   initState,
   columns,
@@ -29,8 +28,6 @@ import * as glamor from 'glamor';
 import classnames from 'classnames';
 import { get, times } from 'lodash';
 import LoadingScreen from 'app/components/LoadingScreen';
-import Pagination from 'app/components/Pagination/Pagination';
-import { log } from 'console';
 
 jest.mock('classnames');
 
@@ -454,24 +451,16 @@ describe('QueueTable', () => {
       const {container, asFragment} = render(
         <QueueTable columns={columns} rowObjects={createTask(3)} summary={summary} slowReRendersAreOk />
       );
-      // screen.debug();
-      logRoles(container)
+
       // Assertions
-      // // expect(table).toMatchSnapshot();
-      // expect(table.find(HeaderRow)).toHaveLength(1);
+      expect(asFragment()).toMatchSnapshot();
       expect(container.querySelector('thead')).toBeInTheDocument();
-
-      // expect(table.find(BodyRows)).toHaveLength(1);
       expect(container.querySelector('tbody')).toBeInTheDocument();
-
-      // expect(table.find(FooterRow)).toHaveLength(1);
       expect(container.querySelector('tfoot')).toBeInTheDocument();
 
-      // expect(table.find(FilterSummary)).toHaveLength(1);
-
       // // Negative tests
-      // expect(table.find(TableFilter)).toHaveLength(0);
-      // expect(table.find(DoubleArrowIcon)).toHaveLength(0);
+      expect(screen.queryByTestId('table-filter-testid')).not.toBeInTheDocument();
+      expect(container.querySelector('.table-icon')).not.toBeInTheDocument();
     });
 
     test('Renders pagination when set', () => {
@@ -487,8 +476,7 @@ describe('QueueTable', () => {
       );
 
       // Assertions
-      // expect(table).toMatchSnapshot();
-      // expect(asFragment()).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
 
       const pagination = container.querySelectorAll('.cf-pagination');
       expect(pagination).toHaveLength(2);
@@ -538,9 +526,7 @@ describe('QueueTable', () => {
       );
 
       // // Assertions
-      // expect(table).toMatchSnapshot();
-      // expect(asFragment()).toMatchSnapshot();
-
+      expect(asFragment()).toMatchSnapshot();
       expect(container.querySelector('thead')).not.toBeInTheDocument();
       expect(container.querySelector('tbody')).not.toBeInTheDocument();
       expect(container.querySelector('tfoot')).not.toBeInTheDocument();
@@ -549,42 +535,29 @@ describe('QueueTable', () => {
       expect(container.querySelector('.cf-react-icon-loading-back')).toBeInTheDocument();
     });
 
-    test.only('Can sort rows', () => {
+    test('Can sort rows', () => {
       // Setup the test
-      const { container, asFragment} = render(
+      const {container, asFragment} = render(
         <QueueTable columns={sortColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
       // Assertions
-      // expect(table).toMatchSnapshot();
-      // expect(asFragment()).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
+      expect(container.querySelector('.table-icon')).toBeInTheDocument();
 
-      // screen.debug();
-      // logRoles(container)
-      // expect(table.state('sortColName')).toEqual(null);
-      // expect(table.state('sortAscending')).toEqual(true);
+      const thirdColumn = screen.getByRole('columnheader', { name: 'Third' });
+      expect(thirdColumn).toBeInTheDocument();
+      expect(thirdColumn.getAttribute('aria-sort')).toBeNull();
 
-      let ariaSort = container.querySelector('aria-sort')
-      console.log(ariaSort);
       const sortByThird = screen.getByRole('button', { name: 'Sort by Third' });
       fireEvent.click(sortByThird);
-      ariaSort = container.querySelector('th').getAttribute('aria-sort');
-      console.log(ariaSort);
-
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('descending');
 
       fireEvent.click(sortByThird);
-      // console.log(ariaSort);
-      fireEvent.click(sortByThird);
-      // console.log(ariaSort);
-      // // Simulate sorting the table
-      // table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      // expect(table.state('sortColName')).toEqual('type');
-      // expect(table.state('sortAscending')).toEqual(false);
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('ascending');
 
-      // // Update the sorting again
-      // table.find({ 'aria-label': 'Sort by Third' }).simulate('click');
-      // expect(table.state('sortColName')).toEqual('type');
-      // expect(table.state('sortAscending')).toEqual(true);
+      fireEvent.click(sortByThird);
+      expect(thirdColumn.getAttribute('aria-sort')).toEqual('descending');
     });
 
     test('Can filter rows', () => {
@@ -593,9 +566,18 @@ describe('QueueTable', () => {
         <QueueTable columns={filterColumns} rowObjects={tableData} summary={summary} slowReRendersAreOk />
       );
 
+      const filterButton = screen.getByRole('button');
       // Assertions
-      expect(table).toMatchSnapshot();
-      expect(table.state('filterByList')).toEqual(undefined);
+      expect(asFragment()).toMatchSnapshot();
+      expect(screen.getByTestId('table-filter-testid')).toBeInTheDocument();
+      expect(filterButton).toBeInTheDocument();
+      expect(container.querySelector('.cf-dropdown-filter')).toBeNull();
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+
+      fireEvent.click(filterButton);
+
+      expect(container.querySelector('.cf-dropdown-filter')).toBeInTheDocument();
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(3);
     });
   });
 });

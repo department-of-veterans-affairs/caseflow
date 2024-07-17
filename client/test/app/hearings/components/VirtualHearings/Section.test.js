@@ -1,5 +1,4 @@
 import React from "react";
-import { shallow } from "enzyme";
 import { render, screen } from "@testing-library/react";
 
 import { VirtualHearingSection } from "app/hearings/components/VirtualHearings/Section";
