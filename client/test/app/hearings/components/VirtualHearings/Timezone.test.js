@@ -1,420 +1,274 @@
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Wrapper, customRender } from '../../../../helpers/testHelpers';
-import { detailsStore } from 'test/data/stores/hearingsStore';
-import {
-  anyUser,
-  legacyHearing,
-  amaHearing,
-  defaultHearing,
-  virtualHearing,
-  amaWebexHearing,
-  legacyWebexHearing
-} from 'test/data';
-import Details from 'app/hearings/components/Details';
+import { render, screen, fireEvent } from '@testing-library/react';
+import moment from 'moment-timezone';
+import { invert } from 'lodash';
 
-// Define the function spies
-const saveHearingSpy = jest.fn();
-const setHearingSpy = jest.fn();
-const goBackSpy = jest.fn();
-const onReceiveAlertsSpy = jest.fn();
-const onReceiveTransitioningAlertSpy = jest.fn();
-const transitionAlertSpy = jest.fn();
-const mockSubmit = jest.fn(() => Promise.resolve());
 
-const convertRegex = (str) => {
-  return new RegExp(str, 'i');
-}
+import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
+import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
+import TIMEZONES from 'constants/TIMEZONES';
+import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
+import { timezones, roTimezones } from 'app/hearings/utils';
 
-describe('Details', () => {
-  test('Matches snapshot with default props', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={defaultHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: defaultHearing
-        },
-      }
+// Set the test Constants
+const defaultTime = '08:15';
+const defaultRoTimezone = 'America/New_York';
+const defaults = timezones(defaultTime, defaultRoTimezone, '2025-01-01');
+const REGIONAL_OFFICE_TIMEZONES = roTimezones();
+
+// Remove missing Regional Office zones from the count
+const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TIMEZONES).includes(zone)).length;
+
+// Reverse the commons array but don't mutate to move EST to the top for comparison
+const commons = COMMON_TIMEZONES.slice().reverse();
+
+const hearingDayDate = '2025-01-01';
+
+const changeSpy = jest.fn();
+
+describe('Timezone', () => {
+  test('Matches snapshot with default props', async () => {
+    const timeZoneLength = Object.keys(TIMEZONES).length + 1;
+
+    // Setup the test
+    const {asFragment, container} = render(
+    <Timezone
+      time={HEARING_TIME_OPTIONS[0].value}
+      roTimezone={defaultRoTimezone}/>
     );
 
-    const veteranName = `${defaultHearing.veteranFirstName} ${defaultHearing.veteranLastName}`;
-    // Assertions
-    expect(screen.getByText(convertRegex(veteranName))).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: convertRegex(veteranName)})).toBeInTheDocument();
-    expect(screen.getAllByText(convertRegex("Hearing Details")).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole('heading', {name: convertRegex("Hearing Details")}).length).toBeGreaterThan(0);
+    // Dropdown is closed
+    expect(screen.queryAllByRole('listbox')).toHaveLength(0);
+    expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
 
-    // Ensure that the virtualHearing form is not displayed by default
-    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
+    // Find the dropdown
+    const dropdown = screen.getByRole('combobox');
+    expect(dropdown).toBeInTheDocument();
+    expect(dropdown.value).toEqual('');
 
-    // Ensure the transcription section is displayed by default for ama hearings
-    expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Transcription Problem"})).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Transcription Request"})).toBeInTheDocument();
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown'});
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
 
-    // Ensure the save and cancel buttons are present
-    expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: "Save"})).toBeInTheDocument();
+    // Dropdown is open
+    expect(container.querySelector('.cf-select__menu')).toBeInTheDocument();
 
-    // expect(details).toMatchSnapshot();
-    expect(asFragment()).toMatchSnapshot();
-  });
-
-  test('Displays HearingConversion when converting from central', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={amaHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: amaHearing
-        },
-      }
-    );
-
-    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
-
-    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: "Convert to Central Hearing"})).not.toBeInTheDocument()
-
-    // Change the value of the hearing type
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'Enter' });
-
-    // Ensure the modal is displayed
-    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Convert to Central Hearing"})).toBeInTheDocument();
-    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
-    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
+    const options = screen.getAllByRole('option');
+    expect(options.length).toEqual(timeZoneLength);
 
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Displays HearingConversion when converting from video', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={defaultHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: defaultHearing
-        },
-      }
+  test('Can set timezone', () => {
+    // Run the test
+    const {asFragment, container} = render(
+      <Timezone
+        onChange={changeSpy}
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}
+        hearingDayDate={hearingDayDate}
+      />
     );
 
-    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
+    // Find the dropdown
+    const dropdown = screen.getByRole('combobox');
+    expect(dropdown).toBeInTheDocument();
 
-    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: "Convert to Virtual Hearing"})).not.toBeInTheDocument()
+    // Initial state, Dropdown is closed
+     expect(screen.queryAllByRole('listbox')).toHaveLength(0);
+     expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
+     expect(dropdown.value).toEqual('');
 
-    // Change the value of the hearing type
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'Enter' });
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
+    expect(container.querySelector('.cf-select__menu')).toBeInTheDocument();
 
-    // Ensure the modal is displayed
-    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Convert to Virtual Hearing"})).toBeInTheDocument()
-    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
-    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
+    // Change the value
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' });
 
-    // expect(details).toMatchSnapshot();
-    expect(asFragment()).toMatchSnapshot();
-  });
-
-
-  test('Displays HearingConversion when converting from virtual', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={virtualHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: defaultHearing
-        },
-      }
-    );
-
-    const dropdown = screen.getByRole('combobox', {name: "Hearing Type"});
-
-    expect(screen.getByRole('heading', {name: "Email Notifications"})).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: "Convert to Virtual Hearing"})).not.toBeInTheDocument()
-
-    // Change the value of the hearing type
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'ArrowDown' });
-    fireEvent.keyDown(dropdown, { key: 'Enter' });
-
-    expect(screen.queryByRole('heading', {name: "Email Notifications"})).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: "Convert to Virtual Hearing"})).toBeInTheDocument()
+    // New State
+    expect(container.querySelector('.cf-select__menu')).not.toBeInTheDocument();
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[1].value);
+    const hiddenInput = container.querySelector('[type="hidden"]');
+    expect(hiddenInput).toHaveAttribute('value', defaults.options[1].value);
 
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Does not display EmailConfirmationModal when updating transcription details with AMA virtual hearing', async () => {
-    const {container, asFragment} = customRender(
-      <Details
-        hearing={amaHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-        submit={mockSubmit}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: amaHearing
-        },
-      }
+  test('Displays Regional Office timezones first', () => {
+    // Run the test
+    const {asFragment, container} = render(
+    <Timezone
+      time={HEARING_TIME_OPTIONS[0].value}
+      onChange={changeSpy}
+      roTimezone={defaultRoTimezone}/>
     );
 
-    // Update the transcription sent date field
-    let dateSelector = container.querySelector('#copySentDate');
-    fireEvent.change(dateSelector, { target: { value: '2020-07-25' } });
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    expect(screen.queryAllByRole('listbox')).toHaveLength(1);
 
-    // Verify the date change
-    dateSelector = container.querySelector('#copySentDate');
-    expect(dateSelector.value).toBe('2020-07-25');
+    // Ensure the first option is empty and the second exists
+    let options = screen.getAllByRole('option');
+    expect(options.length).toBeGreaterThan(0);
+    expect(options[0].textContent).toEqual('');
+    expect(options[1].textContent).
+    toEqual(`Eastern Time (US & Canada)`);
 
-    // Click the save button
-    const saveButton = screen.getByRole('button', { name: /Save/i });
-    userEvent.click(saveButton);
 
-    // Wait for and check the loading state of saving the hearing
-    await waitFor(() => {
-      const loadingButtonDecision = screen.getByRole('button', { name: /Loading.../i });
-      expect(loadingButtonDecision).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Loading...' })).toBeInTheDocument();
-      expect(loadingButtonDecision).toBeDisabled();
+    // Ensure the common zones are the first 4
+    let hiddenInput = container.querySelector('[type="hidden"]');
+
+    // 1st option
+    fireEvent.click(options[1])
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[1].value);
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Second click
+    fireEvent.click(options[2]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[2].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Third click
+    fireEvent.click(options[3]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[3].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Fourth click
+    fireEvent.click(options[4]);
+    expect(changeSpy).toHaveBeenCalledWith(defaults.options[4].value);
+    hiddenInput = container.querySelector('[type="hidden"]');
+    expect(commons).toContain(hiddenInput.value);
+
+    // Reopen the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    options = screen.getAllByRole('option');
+
+    // Ensure Regional Office timezones move to the top
+    const optionTexts = options
+      .map(option => option.textContent.trim())
+      .filter(text => text !== '')
+      .slice(0, commonsCount)
+      .map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
+
+    // Map the option texts to their values by finding the key that contains the text
+    const optionValues = optionTexts.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
     });
 
-    dateSelector = container.querySelector('#copySentDate');
-    expect(dateSelector.value).toBe('2020-07-25');
+    const sortedOptionValues = optionValues.slice().sort();
+    const sortedRegionalOfficeTimezones = REGIONAL_OFFICE_TIMEZONES.slice().sort();
+    expect(sortedOptionValues).toEqual(sortedRegionalOfficeTimezones);
 
-    // Ensure EmailConfirmationModal is not displayed
-    expect(screen.queryByLabelText("POA/Representative Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("POA/Representative Email")).toBeNull();
-    expect(screen.queryByLabelText("Veteran Hearing Time")).toBeNull();
-    expect(screen.queryByLabelText("Appellant Hearing Time")).toBeNull();
+    // For all other cases ensure the timezone is one of the available and not a duplicate
+    const remainingOptions = options
+      .map(option => option.textContent.trim())
+      .filter(text => text !== '')
+      .slice(commonsCount)
+      .map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
 
+    const remainingOptionValues = remainingOptions.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
+    });
+
+    remainingOptionValues.forEach(item => {
+      expect(REGIONAL_OFFICE_TIMEZONES).not.toContain(item);
+      expect(COMMON_TIMEZONES).not.toContain(item);
+    });
+
+    expect(asFragment()).toMatchSnapshot();
+    // expect(tz).toMatchSnapshot();
+  });
+
+  test('Respects required prop', () => {
+    // Run the test
+    const {asFragment, container} = render(
+      <Timezone
+        required
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}/>
+      );
+
+    expect(container.querySelector('.cf-required')).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 
-  describe('TranscriptiomFormSection', () => {
-    describe('pexip hearing', () => {
-      test('Displays transcription section but not transcription files table for AMA hearings', () => {
-        const {container} = customRender(
-          <Details
-            hearing={amaHearing}
-            saveHearing={saveHearingSpy}
-            setHearing={setHearingSpy}
-            goBack={goBackSpy}
-            onReceiveAlerts={onReceiveAlertsSpy}
-            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-            transitionAlert={transitionAlertSpy}
-          />,
-          {
-            wrapper: Wrapper,
-            wrapperProps: {
-              store: detailsStore,
-              user: anyUser,
-              hearing: amaHearing
-            },
-          }
-        );
+  test('Does not show required when ReadOnly', () => {
+    // Run the test
+    const {asFragment, container} = render(
+      <Timezone
+        required
+        readOnly
+        time={HEARING_TIME_OPTIONS[0].value}
+        roTimezone={defaultRoTimezone}/>
+      );
 
-        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-details-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-details-date-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-problem-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-request-inputs')).toBeInTheDocument();
-        expect(container.querySelector('.transcription-files-table')).toBeNull();
-      });
-
-      test('Does not display transcription section for legacy hearings', () => {
-        const {asFragment, container} = customRender(
-          <Details
-            hearing={legacyHearing}
-            saveHearing={saveHearingSpy}
-            setHearing={setHearingSpy}
-            goBack={goBackSpy}
-            onReceiveAlerts={onReceiveAlertsSpy}
-            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-            transitionAlert={transitionAlertSpy}
-          />,
-          {
-            wrapper: Wrapper,
-            wrapperProps: {
-              store: detailsStore,
-              user: anyUser,
-              hearing: legacyHearing
-            },
-          }
-        );
-
-        // Assertions
-        expect(screen.getByTestId('details-header')).toBeInTheDocument();
-        expect(screen.getByRole('heading', {name: "Hearing Details"})).toBeInTheDocument();
-
-
-        // Ensure that the virtualHearing form is not displayed by default
-        expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
-
-        // VirtualHearingFields will always show for any virtual or non virtual hearing
-        // as we move forward with Webex integration
-        expect(screen.getByText(convertRegex("Pexip Hearing"))).toBeInTheDocument();
-
-        // Ensure the transcription form is not displayed for legacy hearings
-        expect(screen.queryByRole('heading', {name: "Transcription Details"})).toBeNull();
-        expect(container.querySelector('.transcription-files-table')).toBeNull();
-
-        // Ensure the save and cancel buttons are present
-        expect(screen.getByRole('button', {name: "Cancel"})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: "Save"})).toBeInTheDocument();
-
-        expect(asFragment()).toMatchSnapshot();
-      });
-    });
-
-
-    describe('webex hearing', () => {
-      test('Displays transcription section, including transcription files table, for AMA hearings', () => {
-        const {container} = customRender(
-          <Details
-            hearing={defaultHearing}
-            saveHearing={saveHearingSpy}
-            setHearing={setHearingSpy}
-            goBack={goBackSpy}
-            onReceiveAlerts={onReceiveAlertsSpy}
-            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-            transitionAlert={transitionAlertSpy}
-          />,
-          {
-            wrapper: Wrapper,
-            wrapperProps: {
-              store: detailsStore,
-              user: anyUser,
-              hearing: amaWebexHearing
-            },
-          }
-        );
-
-        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-details-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-details-date-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-problem-inputs')).toBeInTheDocument();
-        expect(screen.getByTestId('transcription-request-inputs')).toBeInTheDocument();
-        expect(container.querySelector('.transcription-files-table')).toBeInTheDocument();
-      });
-
-      test('Only displays transcription files table, and not other transcription form inputs, for legacy hearings', () => {
-        const {container} = customRender(
-          <Details
-            hearing={defaultHearing}
-            saveHearing={saveHearingSpy}
-            setHearing={setHearingSpy}
-            goBack={goBackSpy}
-            onReceiveAlerts={onReceiveAlertsSpy}
-            onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-            transitionAlert={transitionAlertSpy}
-          />,
-          {
-            wrapper: Wrapper,
-            wrapperProps: {
-              store: detailsStore,
-              user: anyUser,
-              hearing:legacyWebexHearing
-            },
-          }
-        );
-
-        expect(screen.getByRole('heading', {name: "Transcription Details"})).toBeInTheDocument();
-        expect(screen.queryByTestId('transcription-details-inputs')).toBeNull();
-        expect(screen.queryByTestId('transcription-details-date-inputs')).toBeNull();
-        expect(screen.queryByTestId('transcription-problem-inputs')).toBeNull();
-        expect(screen.queryByTestId('transcription-request-inputs')).toBeNull();
-        expect(container.querySelector('.transcription-files-table')).toBeInTheDocument();
-      });
-    });
+    expect(container.querySelector('.cf-required')).not.toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  test('Displays VirtualHearing details when there is a virtual hearing', () => {
-    const {asFragment} = customRender(
-      <Details
-        hearing={amaHearing}
-        saveHearing={saveHearingSpy}
-        setHearing={setHearingSpy}
-        goBack={goBackSpy}
-        onReceiveAlerts={onReceiveAlertsSpy}
-        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
-        transitionAlert={transitionAlertSpy}
-      />,
-      {
-        wrapper: Wrapper,
-        wrapperProps: {
-          store: detailsStore,
-          user: anyUser,
-          hearing: amaHearing
-        },
+  test('Dropdown displays correct times based on props time and roTimezone', () => {
+    const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
+    const splitTimeString = timeWithTimezone.search('AM');
+    const time = `${timeWithTimezone.slice(0, splitTimeString).trim()} am`;
+
+    const roTimezone = 'America/Los_Angeles';
+    const dateTime = moment.tz(`${hearingDayDate} ${time}`, 'YYYY-MM-DD h:mm a', roTimezone);
+    const roTzValueToLabelMapping = invert(TIMEZONES);
+
+    // Run the test
+    const {asFragment} = render(
+      <Timezone
+        time={time}
+        onChange={changeSpy}
+        roTimezone={roTimezone}/>
+      );
+
+    expect( screen.getByRole('combobox')).toBeInTheDocument();
+
+    // Open the menu
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' });
+    const options = screen.getAllByRole('option');
+
+    const allOptions = options
+    .map(option => option.textContent.trim())
+    .filter(text => text !== '');
+
+    const allOptionsRegex = allOptions.map(text => text.replace(/\s*\(.*?\)\s*/g, ''));
+
+    const allOptionValues = allOptionsRegex.map(text => {
+      const matchedKey = Object.keys(TIMEZONES).find(key => key.includes(text));
+      return TIMEZONES[matchedKey];
+    });
+
+    allOptionValues.forEach(item => {
+      if (REGIONAL_OFFICE_TIMEZONES.includes(item)) {
+        const label = `${roTzValueToLabelMapping[item]} (${moment(dateTime, 'HH:mm').format('h:mm A')})`;
+        allOptions.map(opt => {
+          if (opt.value === item) {
+            expect(opt.label).toEqual(label);
+          }
+        });
       }
-    );
-
-    // Ensure that the virtualHearing form is not displayed by default
-    expect(screen.queryByRole('heading', {name: "Virtual Hearing Links"})).toBeNull();
-    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.appellantEmail))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.representativeEmail))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.aliasWithHost))).toBeInTheDocument();
-    expect(screen.getByText(convertRegex(amaHearing.virtualHearing.guestPin))).toBeInTheDocument();
+    });
     expect(asFragment()).toMatchSnapshot();
-  });
+  })
 });
