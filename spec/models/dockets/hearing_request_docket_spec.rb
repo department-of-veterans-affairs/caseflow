@@ -291,7 +291,7 @@ describe HearingRequestDocket, :postgres do
              tied_judge: judge_1)
     end
 
-    let!(:hearing) { create(:hearing, :postponed, appeal: appeal_2_hearing)}
+    let!(:hearing) { create(:hearing, :postponed, appeal: appeal_2_hearing) }
 
     it "appeals with a held hearing aren't distributed to genpop" do
       one_result = HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge_1, 3)
