@@ -44,7 +44,7 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   def mail_tasks
     {
-      mailTasks: @correspondence.tasks.completed.map(&:type)
+      mailTasks: @correspondence.tasks.completed.map(&:label)
     }
   end
 end
