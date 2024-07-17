@@ -4,6 +4,8 @@ class WorkQueue::AppealSearchSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  set_type :appeal
+
   restricted_statuses =
     [
       :distributed_to_judge,
@@ -13,8 +15,6 @@ class WorkQueue::AppealSearchSerializer
       :unknown,
       :assigned_to_attorney
     ]
-
-  set_type :appeal
 
   attribute :contested_claim, &:contested_claim?
 
