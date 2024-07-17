@@ -6,6 +6,7 @@ import AccordionSection from '../../components/AccordionSection';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
+
 import { KeyboardIcon } from '../../components/icons/KeyboardIcon';
 import {
   categoryColumns,
@@ -17,13 +18,14 @@ import {
   searchColumns,
   searchInstructions,
 } from '../../reader/PdfKeyboardInfo';
+
 import SideBarCategories from '../../reader/SideBarCategories';
 import SideBarComments from '../../reader/SideBarComments';
 import SideBarDocumentInformation from '../../reader/SideBarDocumentInformation';
-import SideBarIssueTags from '../../reader/SideBarIssueTags';
 import IssueTags from './IssueTags';
 
-const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
+
+const ReaderSidebar = (doc, documents, hideSidebar, toggleSidebar) => {
   const [isKeyboardModalOpen, setIsKeyboardModalOpen] = useState(false);
   let comments = [];
   const hiddenSidebar = hideSidebar ? 'hidden-sidebar' : '';
@@ -57,13 +59,15 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
             />
           </AccordionSection>
           <AccordionSection title="Categories">
-            <SideBarCategories doc={doc} />
+            <SideBarCategories
+              doc={doc?.doc}
+              documents={documents}
+            />
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <IssueTags doc={doc?.doc} />
           </AccordionSection>
-          <AccordionSection
-            // title={COMMENT_ACCORDION_KEY}
+          <AccordionSection title="Comments"
             id="comments-header"
           >
             <SideBarComments comments={comments} />
@@ -133,7 +137,6 @@ const ReaderSidebar = (doc, hideSidebar, toggleSidebar) => {
 };
 
 ReaderSidebar.propTypes = {
-  // appeal: PropTypes.any,
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
