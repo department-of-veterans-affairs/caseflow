@@ -1,18 +1,8 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { render, screen, logRoles, fireEvent, waitFor} from '@testing-library/react';
-import sinon from 'sinon';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { WrappingComponent } from '../establishClaim/WrappingComponent';
 
 import { PdfUI } from '../../../app/reader/PdfUI';
-import { log } from 'console';
-import { jumpToPage } from '../../../app/reader/PdfViewer/PdfViewerActions';
-import { fi, te } from 'date-fns/locale';
-import { on } from 'events';
-import exp from 'constants';
-import { Pdf } from '../../../app/reader/Pdf';
-import { PdfFile } from '../../../app/reader/PdfFile';
-
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
