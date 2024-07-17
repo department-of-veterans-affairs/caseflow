@@ -280,7 +280,6 @@ export default class TranscriptionSettings extends React.PureComponent {
     ApiUtil.patch(`/hearings/find_by_contractor/${contractor.id}`, contractorData).
       then((res) => {
         const contractors = [...this.state.contractors];
-
         const index = contractors.findIndex((updatedContractor) => updatedContractor.id === contractor.id);
 
         // eslint-disable-next-line camelcase
