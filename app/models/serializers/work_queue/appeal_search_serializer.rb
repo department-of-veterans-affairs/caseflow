@@ -84,7 +84,7 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :assigned_to_location do |object, params|
     if restricted_statuses.include?(object&.status&.status)
-      unless params[:user]&.non_board_employee?
+      unless params[:user]&.vso_employee?
         object.assigned_to_location
       end
     # if not in a restricted status, show CSS ID to all users
