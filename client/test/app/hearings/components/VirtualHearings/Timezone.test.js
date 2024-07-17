@@ -1,6 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import { logRoles, render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import moment from 'moment-timezone';
 import { drop, invert } from 'lodash';
@@ -11,9 +10,6 @@ import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
 import TIMEZONES from 'constants/TIMEZONES';
 import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
 import { timezones, roTimezones } from 'app/hearings/utils';
-import SearchableDropdown from 'app/components/SearchableDropdown';
-import { timezoneDropdownStyles, timezoneStyles } from 'app/hearings/components/details/style';
-import { log } from 'console';
 
 // Set the test Constants
 const defaultTime = '08:15';
