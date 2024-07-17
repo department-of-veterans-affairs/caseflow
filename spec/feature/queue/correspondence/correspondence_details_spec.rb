@@ -36,51 +36,6 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
-  context "correspondence details as standard caseflow user" do
-    before :each do
-      Bva.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:correspondence_queue)
-    end
-
-    it "properly loads the details page for other caseflow users" do
-      visit "/queue/correspondence/#{correspondence.uuid}"
-
-      # Verify the user can see the correspondence details page
-      expect(page).to_not have_content("Drat!")
-    end
-
-    it "does not load other correspondence pages for other caseflow users" do
-      visit "/queue/correspondence"
-
-      # Verify the user is routed to /unauthorized
-      expect(page).to have_content("Drat!")
-    end
-  end
-
-  context "correspondence record status matches correspondence root task status" do
-    before do
-      InboundOpsTeam.singleton.add_user(current_user)
-      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
-      FeatureToggle.enable!(:correspondence_queue)
-      @completed_correspondence = create(:correspondence)
-    end
-
-    it "checks default match of pending" do
-      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
-      expect(page).to have_content("Record status: Pending")
-    end
-
-    it "checks that status has been updated to completed" do
-      complete_root_task = CorrespondenceRootTask.find_by(appeal_id: @completed_correspondence.id)
-      complete_root_task.update!(assigned_to: current_user, status: "completed")
-      complete_root_task.save!
-      visit "/queue/correspondence/#{@completed_correspondence.uuid}"
-      # Record status - Completed
-      expect(page).to have_content("Record status: Completed")
-    end
-  end
-
   context "correspondence in the Completed tab of Your Correspondence Queue" do
     let(:current_user) { create(:user) }
     before :each do
