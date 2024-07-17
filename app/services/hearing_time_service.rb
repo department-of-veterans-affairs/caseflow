@@ -49,7 +49,7 @@ class HearingTimeService
 
       tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
 
-      "#{datetime.strftime("%I:%M %p")} #{tz}"
+      "#{datetime.strftime('%I:%M %p')} #{tz}"
     end
 
     def convert_scheduled_time_to_utc(time_string)
