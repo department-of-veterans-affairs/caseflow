@@ -87,7 +87,7 @@ class WorkQueue::AppealSearchSerializer
       unless params[:user]&.vso_employee?
         object.assigned_to_location
       end
-    # if not in a restricted status, show CSS ID to all users
+    # if not in a restricted status, show assigned location to all users
     else
       object.assigned_to_location
     end
