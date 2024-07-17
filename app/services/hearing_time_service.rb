@@ -13,12 +13,10 @@ class HearingTimeService
       # takes hearing update_legacy_params from controller and adds
       # vacols-formatted scheduled_for
       return update_params if update_params[:scheduled_time_string].nil?
-
       scheduled_for = legacy_formatted_scheduled_for(
-        scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
-        scheduled_time_string: update_params[:scheduled_time_string]
+        date_string: hearing&.hearing_day&.scheduled_for&.to_s,
+        time_string: update_params[:scheduled_time_string]
       )
-
       remove_time_string_params(update_params).merge(scheduled_for: scheduled_for)
     end
 
@@ -28,30 +26,24 @@ class HearingTimeService
       remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
     end
 
-    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = if scheduled_time_string.is_a?(String)
-                                Time.zone.parse(scheduled_time_string).utc
-                              else
-                                scheduled_time_string
-                              end
-
-      time = scheduled_for.to_datetime
-      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.parse(
-          "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min} UTC"
-        )
-      end
+    def legacy_formatted_scheduled_for(time_string:, date_string:)
+      date_and_time_string = "#{date_string} #{time_string}"
+      time = Time.parse(date_and_time_string).utc
+      time -= 1.hour if Time.parse(date_and_time_string).dst?
+      utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
+      formatted_string = utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %I:%M %p")
+      [formatted_string, VacolsHelper::VACOLS_DEFAULT_TIMEZONE].join(" ")
     end
 
-    def time_to_string(time)
-      return time if time.is_a?(String)
-
+    def time_to_string(time, hearing)
       datetime = time.to_datetime
-      "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
+
+      tz = ActiveSupport::TimeZone::MAPPING.key(hearing.regional_office_timezone)
+
+      "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
 
-    def convert_scheduled_time_to_utc(time_string)
+    def convert_scheduled_time_to_utc(time_string:, date_string:)
       if time_string.present?
         # Find the AM/PM index value in the string
         index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
@@ -59,7 +51,10 @@ class HearingTimeService
         # Generate the scheduled_time in UTC and update the scheduled_time_string
         scheduled_time = time_string[0..index].strip
         timezone = time_string[index..-1].strip
-        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+
+        ### This is hardcoded. We do not want this hardcoded in the future
+        timezone = ActiveSupport::TimeZone::MAPPING[timezone]
+        return Time.use_zone(timezone) { Time.zone.parse("#{date_string} #{scheduled_time}") }.utc
       end
       nil
     end
@@ -80,11 +75,11 @@ class HearingTimeService
   end
 
   def scheduled_time_string
-    self.class.time_to_string(local_time)
+    self.class.time_to_string(local_time, @hearing)
   end
 
   def central_office_time_string
-    self.class.time_to_string(central_office_time)
+    self.class.time_to_string(central_office_time, @hearing)
   end
 
   def local_time
