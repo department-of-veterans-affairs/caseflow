@@ -1,0 +1,477 @@
+# frozen_string_literal: true
+
+class VACOLS::AojCaseDocket < VACOLS::CaseDocket
+  # :nocov:
+  self.table_name = "brieff"
+
+  # {Update??}
+  LOCK_READY_APPEALS = "
+    select BFCURLOC from BRIEFF
+    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+    for update
+  "
+
+  # Distribution should be blocked by pending mail, with the exception of:
+  #
+  # 02 - Congressional interest
+  # 05 - Evidence or argument (because the attorney will pick this up)
+  # 08 - Motion to advance on the docket
+  # 13 - Status inquiry
+
+  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY MAILKEY,
+        (case when nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select MLFOLDER, count(*) CNT
+        from MAIL
+        where MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
+        group by MLFOLDER
+      ) MAIL
+      on MAIL.MLFOLDER = BRIEFF.BFKEY
+    )
+    on MAILKEY = BFKEY
+  "
+
+  # Distribution should be blocked by a pending diary of one of the following types:
+  #
+  # EXT - Extension request
+  # HCL - Hearing clarification
+  # POA - Power of attorney clarification
+
+  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY DIARYKEY,
+        (case when nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select TSKTKNM, count(*) CNT
+        from ASSIGN
+        where TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
+        group by TSKTKNM
+      ) DIARIES
+      on DIARIES.TSKTKNM = BRIEFF.BFKEY
+    )
+    on DIARYKEY = BFKEY
+  "
+  FROM_READY_APPEALS = "
+    from BRIEFF
+    #{VACOLS::Case::JOIN_AOD}
+    #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+    #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
+
+    inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+    where BRIEFF.BFMPRO = 'ACT'
+      and BRIEFF.BFCURLOC in ('81', '83')
+      and BRIEFF.BFBOX is null
+      and BRIEFF.BFAC = '3'
+      and BRIEFF.BFD19 is not null
+      and MAIL_BLOCKS_DISTRIBUTION = 0
+      and DIARY_BLOCKS_DISTRIBUTION = 0
+  "
+
+  SELECT_READY_APPEALS = "
+    select BFKEY, BFD19, BFCORLID, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD,
+    BFMEMID, BFDPDCN
+    #{FROM_READY_APPEALS}
+  "
+
+  # this version of the query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_APPEALS_ADDITIONAL_COLS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFMEMID, BFDPDCN,
+    BFCORKEY, BFCORLID
+    #{FROM_READY_APPEALS}
+  "
+
+  JOIN_PREVIOUS_APPEALS = "
+  left join (
+      select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
+      B.BFMEMID as PREV_DECIDING_JUDGE, B.BFAC as PREV_TYPE_ACTION, F.TINUM as PREV_TINUM,
+      F.TITRNUM as PREV_TITRNUM
+      from BRIEFF B
+      inner join FOLDER F on F.TICKNUM = B.BFKEY
+
+      where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+    ) PREV_APPEAL
+      on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
+      and PREV_APPEAL.PREV_TINUM = BRIEFF.TINUM and PREV_APPEAL.PREV_TITRNUM = BRIEFF.TITRNUM
+      and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN
+  "
+
+  SELECT_PRIORITY_APPEALS = "
+    select BFKEY, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+      from (
+        select BFKEY, BFDLOOUT, BFAC, AOD,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        from (
+          #{SELECT_READY_APPEALS}
+          order by BFDLOOUT
+        ) BRIEFF
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
+      )
+    "
+
+  SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19 = "
+    select BFKEY, BFD19, BFDLOOUT, BFAC, AOD, VLJ, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+      from (
+        select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        from (
+          #{SELECT_READY_APPEALS}
+        ) BRIEFF
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
+        order by BFD19
+      )
+    "
+
+  SELECT_NONPRIORITY_APPEALS = "
+    select BFKEY, BFDLOOUT, AOD, VLJ, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    from (
+      select BFKEY, BFDLOOUT, AOD, rownum DOCKET_INDEX,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+        PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+        PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+      from (
+        #{SELECT_READY_APPEALS}
+        order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+    )
+  "
+
+  SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19 = "
+    select BFKEY, BFD19, BFDLOOUT, AOD, VLJ, BFAC, DOCKET_INDEX, PREV_TYPE_ACTION, PREV_DECIDING_JUDGE
+    from (
+      select BFKEY, BFD19, BFDLOOUT, AOD, BFAC, rownum DOCKET_INDEX,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+      from (
+        #{SELECT_READY_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    )
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
+         PREV_DECIDING_JUDGE
+    from (
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+         PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+         PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+      from (
+        #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      #{JOIN_PREVIOUS_APPEALS}
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.SATTYID
+    order by BFD19
+  "
+  # rubocop:disable Metrics/MethodLength
+  def self.counts_by_priority_and_readiness
+    query = <<-SQL
+      select count(*) N, PRIORITY, READY
+      from (
+        select case when BFAC = '3' and (PREV_APPEAL.PREV_TYPE_ACTION = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0) then 1 else 0 end as PRIORITY,
+          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
+            then 1 else 0 end as READY, TITRNUM, TINUM
+        from BRIEFF
+        inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+        #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+        #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
+        left join (
+          select B.BFKEY as PREV_BFKEY, B.BFCORLID as PREV_BFCORLID, B.BFDDEC as PREV_BFDDEC,
+          B.BFMEMID as PREV_DECIDING_JUDGE, B.BFAC as PREV_TYPE_ACTION, F.TINUM as PREV_TINUM,
+          F.TITRNUM as PREV_TITRNUM
+          from BRIEFF B
+          inner join FOLDER F on F.TICKNUM = B.BFKEY
+
+          where B.BFMPRO = 'HIS' and B.BFMEMID not in ('000', '888', '999') and B.BFATTID is not null
+        ) PREV_APPEAL
+          on PREV_APPEAL.PREV_BFKEY != BRIEFF.BFKEY and PREV_APPEAL.PREV_BFCORLID = BRIEFF.BFCORLID
+          and PREV_APPEAL.PREV_TINUM = TINUM and PREV_APPEAL.PREV_TITRNUM = TITRNUM
+          and PREV_APPEAL.PREV_BFDDEC = BRIEFF.BFDPDCN
+        left join (
+          select TSKTKNM, count(*) CNT
+          from ASSIGN
+          where TSKACTCD in ('B', 'B1', 'B2')
+          group by TSKTKNM
+        ) AOD_DIARIES on AOD_DIARIES.TSKTKNM = BFKEY
+        left join (
+          select FOLDER_NR, count(*) CNT
+          from HEARSCHED
+          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
+            AND AOD IN ('G', 'Y')
+          group by FOLDER_NR
+        ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
+        where BFMPRO <> 'HIS' and BFD19 is not null
+      )
+      group by PRIORITY, READY
+    SQL
+
+    connection.exec_query(query).to_a
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def self.genpop_priority_count
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ is null or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
+    SQL
+
+    connection.exec_query(query).to_a.size
+  end
+
+  def self.not_genpop_priority_count
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where VLJ is not null and (PREV_TYPE_ACTION = '7' or AOD = '1')
+    SQL
+
+    connection.exec_query(query).to_a.size
+  end
+
+  def self.age_of_n_oldest_genpop_priority_appeals(num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ is null or #{ineligible_judges_sattyid_cache} or #{ineligible_judges_sattyid_cache(true)})
+      and (PREV_TYPE_ACTION = '7' or AOD = '1') and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, num])
+
+    appeals = conn.exec_query(fmtd_query).to_a
+    appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and (PREV_TYPE_ACTION = '7' or AOD = '1')
+    SQL
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id
+                                    ])
+
+    appeals = conn.exec_query(fmtd_query).to_a
+
+    appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
+
+    appeals = appeals.first(num) unless num.nil? # {Reestablishes the limit}
+
+    appeals.map { |appeal| appeal["bfd19"] }
+  end
+
+  def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
+      and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+      and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      num
+                                    ])
+
+    appeals = conn.exec_query(fmtd_query).to_a
+    appeals.map { |appeal| appeal["bfd19"] }
+  end
+
+  def self.age_of_oldest_priority_appeal
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (PREV_TYPE_ACTION = '7' or AOD = '1') and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, 1])
+
+    connection.exec_query(fmtd_query).to_a.first&.fetch("bfdloout")
+  end
+
+  def self.age_of_oldest_priority_appeal_by_docket_date
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+      where (PREV_TYPE_ACTION = '7' or AOD = '1') and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, 1])
+
+    connection.exec_query(fmtd_query).to_a.first&.fetch("bfd19")
+  end
+
+  def self.priority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache}) and (PREV_TYPE_ACTION = '7' or AOD = '1')
+    SQL
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id
+                                    ])
+    connection.exec_query(fmtd_query).count
+  end
+
+  def self.nonpriority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache})
+      and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+    SQL
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id
+                                    ])
+    connection.exec_query(fmtd_query).count
+  end
+
+  def self.priority_ready_appeal_vacols_ids
+    connection.exec_query(SELECT_PRIORITY_APPEALS).to_a.map { |appeal| appeal["bfkey"] }
+  end
+
+  def self.ready_to_distribute_appeals
+    query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
+    fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
+
+    if use_by_docket_date?
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+        and (DOCKET_INDEX <= ? or 1 = ?)
+      SQL
+    else
+      # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
+      # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
+      # of clear and unmistakable error, which would result in a brand new docket number being assigned.
+      # An updated docket number format will need to be in place for legacy appeals by 2030 in order
+      # to ensure that docket numbers are sorted correctly.
+
+      # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
+      # still respecting the enforced limit on how many cases can be distributed
+      if bust_backlog
+        number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
+        limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      end
+
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS}
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+        and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')
+        and (DOCKET_INDEX <= ? or 1 = ?)
+      SQL
+    end
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
+                                      range,
+                                      range.nil? ? 1 : 0
+                                    ])
+
+    distribute_appeals(fmtd_query, judge, limit, dry_run)
+  end
+
+  def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+    query = if use_by_docket_date?
+              <<-SQL
+                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
+                and (PREV_TYPE_ACTION = '7' or AOD = '1')
+              SQL
+            else
+              <<-SQL
+                #{SELECT_PRIORITY_APPEALS}
+                where ((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?)
+                and (PREV_TYPE_ACTION = '7' or AOD = '1')
+              SQL
+            end
+
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0
+                                    ])
+
+    distribute_appeals(fmtd_query, judge, limit, dry_run)
+  end
+  # :nocov:
+
+  def self.distribute_appeals(query, judge, limit, dry_run)
+    conn = connection
+
+    conn.transaction do
+      if dry_run
+        dry_appeals = conn.exec_query(query).to_a
+
+        dry_appeals
+      else
+        conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
+
+        appeals = conn.exec_query(query).to_a
+        return appeals if appeals.empty?
+
+        appeals.sort_by { |appeal| appeal[:bfd19] } if use_by_docket_date?
+
+        appeals = appeals.first(limit) unless limit.nil? # {Reestablishes the limit}
+
+        vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
+        location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+                     LegacyAppeal::LOCATION_CODES[:caseflow]
+                   else
+                     judge.vacols_uniq_id
+                   end
+        VACOLS::Case.batch_update_vacols_location(location, vacols_ids)
+        appeals
+      end
+    end
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+end
