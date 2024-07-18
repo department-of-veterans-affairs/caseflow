@@ -9,6 +9,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   HEARING_BACKLOG_LIMIT = 30
 
+  # {Update??}
   LOCK_READY_APPEALS = "
     select BFCURLOC from BRIEFF
     where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
@@ -71,7 +72,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     where BRIEFF.BFMPRO = 'ACT'
       and BRIEFF.BFCURLOC in ('81', '83')
       and BRIEFF.BFBOX is null
-      and BRIEFF.BFAC is not null
+      and BRIEFF.BFAC <> '3'
       and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
@@ -209,12 +210,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     left join STAFF on APPEALS.VLJ = STAFF.SATTYID
     order by BFD19
   "
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
       from (
-        select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
+        select case when BFAC <> '3' and (BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0) then 1 else 0 end as PRIORITY,
           case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
             then 1 else 0 end as READY
         from BRIEFF
