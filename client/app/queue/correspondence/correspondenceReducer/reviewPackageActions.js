@@ -10,16 +10,6 @@ export const setCorrespondence = (correspondence) =>
     });
   };
 
-export const setVeteranInformation = (veteranInfo) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_VETERAN_INFORMATION,
-      payload: {
-        veteranInfo
-      }
-    });
-  };
-
 export const setCreateRecordIsReadOnly = (createRecordIsReadOnly) =>
   (dispatch) => {
     dispatch({

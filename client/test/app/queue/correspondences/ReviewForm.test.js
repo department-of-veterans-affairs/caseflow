@@ -5,12 +5,11 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from 'app/queue/reducers';
-import { correspondenceData, packageDocumentTypeData, veteranInformation, correspondenceTypes } from 'test/data/correspondence';
+import { correspondenceData, packageDocumentTypeData, correspondenceTypes } from 'test/data/correspondence';
 let initialState = {
   reviewPackage: {
     correspondence: correspondenceData,
     packageDocumentType: packageDocumentTypeData,
-    veteranInformation,
     correspondenceTypes,
     correspondenceTypeId: 1
   }
