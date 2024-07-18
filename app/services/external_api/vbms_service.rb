@@ -63,7 +63,7 @@ class ExternalApi::VBMSService
 
   def self.update_document_in_vbms(appeal, uploadable_document)
     if FeatureToggle.enabled?(:use_ce_api)
-      file_update_payload = Models::FileUpdatePayload.new(
+      file_update_payload = ClaimEvidenceFileUpdatePayload.new(
         date_va_received_document: Time.zone.now,
         document_type_id: uploadable_document.document_type_id,
         file_content: File.read(uploadable_document.pdf_location),
