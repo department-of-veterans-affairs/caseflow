@@ -14,7 +14,6 @@ import {
   correspondenceData,
   correspondenceDocumentsData,
   packageDocumentTypeData,
-  veteranInformation,
   correspondenceTypes
 } from 'test/data/correspondence';
 
@@ -40,7 +39,6 @@ let initialState = {
     packageDocumentType: packageDocumentTypeData,
     correspondenceDocuments: correspondenceDocumentsData,
     correspondenceTypes,
-    veteranInformation,
     correspondenceTypeId: 1
   }
 };

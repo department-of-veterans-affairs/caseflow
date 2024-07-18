@@ -72,6 +72,7 @@ class CorrespondenceTasksController < TasksController
       :decision_reason,
       :action_type,
       :type,
+      :correspondence_uuid,
       instructions: []
     )
   end
