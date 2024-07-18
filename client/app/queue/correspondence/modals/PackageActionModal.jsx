@@ -16,7 +16,6 @@ const PackageActionModal = (props) => {
     packageActionModal,
     correspondence,
     packageDocumentType,
-    veteranInformation,
     closeHandler,
   } = props;
 
@@ -32,7 +31,6 @@ const PackageActionModal = (props) => {
     {
       correspondence,
       packageDocumentType,
-      veteranInformation
     }
   ];
 
@@ -201,7 +199,6 @@ const PackageActionModal = (props) => {
 PackageActionModal.propTypes = {
   correspondence: PropTypes.object,
   packageDocumentType: PropTypes.string,
-  veteranInformation: PropTypes.object,
   columns: PropTypes.arrayOf(PropTypes.object),
   modalInfo: PropTypes.object,
   packageActionModal: PropTypes.string,
@@ -213,7 +210,6 @@ PackageActionModal.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   packageDocumentType: state.reviewPackage.packageDocumentType.name,
-  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -16,7 +16,8 @@ class CorrespondenceReviewPackageController < CorrespondenceController
     end
 
     if update_open_review_package_tasks
-      render json: { status: :ok }
+      # return the new JSON response to update the frontend with changes
+      render json: { correspondence: serialized_correspondence, status: :ok }
     else
       render json: { error: "Failed to update tasks" }, status: :internal_server_error
     end

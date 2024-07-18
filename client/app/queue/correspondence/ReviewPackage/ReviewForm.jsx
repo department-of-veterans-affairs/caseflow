@@ -10,7 +10,11 @@ import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import DateSelector from '../../../components/DateSelector';
-import { updateCmpInformation, setCreateRecordIsReadOnly } from '../correspondenceReducer/reviewPackageActions';
+import {
+  updateCmpInformation,
+  setCreateRecordIsReadOnly,
+  setCorrespondence
+} from '../correspondenceReducer/reviewPackageActions';
 import { validateDateNotInFuture } from '../../../intake/util/issues';
 
 export const ReviewForm = (props) => {
@@ -114,9 +118,15 @@ export const ReviewForm = (props) => {
 
       const { body } = response;
 
+      // console.log(`response: ${JSON.stringify(response.body.correspondence, 1, 1)}`);
+      // console.log(`body status: ${response.body.status}`);
+
       props.setIsReturnToQueue(false);
       if (body.status === 'ok') {
+        // set error message to false and update redux stored correspondence
         props.setErrorMessage('');
+        props.setCorrespondence(response.body.correspondence);
+
       }
     } catch (error) {
       const { body } = error.response;
@@ -279,9 +289,6 @@ export const ReviewForm = (props) => {
 };
 
 ReviewForm.propTypes = {
-  veteranInformation: PropTypes.shape({
-    correspondenceTypes: PropTypes.array,
-  }),
   correspondenceTypeId: PropTypes.number,
   setCorrespondenceTypeId: PropTypes.func,
   notes: PropTypes.string,
@@ -291,6 +298,7 @@ ReviewForm.propTypes = {
   setDisableSaveButton: PropTypes.func,
   setIsReturnToQueue: PropTypes.bool,
   setCreateRecordIsReadOnly: PropTypes.func,
+  setCorrespondence: PropTypes.func,
   setErrorMessage: PropTypes.func,
   setVeteranFileNumber: PropTypes.func,
   setNotes: PropTypes.func,
@@ -309,13 +317,13 @@ ReviewForm.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  packageDocumentType: state.reviewPackage.packageDocumentType,
-  veteranInformation: state.reviewPackage.veteranInformation,
+  packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateCmpInformation,
-  setCreateRecordIsReadOnly
+  setCreateRecordIsReadOnly,
+  setCorrespondence
 }, dispatch);
 
 export default
