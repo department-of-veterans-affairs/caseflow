@@ -5,6 +5,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   include RunAsyncable
 
   before_action :correspondence
+  before_action :correspondence_status
 
   def correspondence_details
     @correspondence = WorkQueue::CorrespondenceSerializer
@@ -19,7 +20,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   end
 
   def complete?
-    # CorrespondenceRootTask.completed_by_date
+    CorrespondenceRootTask.completed
     # if children&.all?(&:completed?)
 
     # root task ids for all the assignee's tasks
@@ -44,16 +45,18 @@ class CorrespondenceDetailsController < CorrespondenceController
       .where(parent_id: ids_with_completed_child_tasks)
       .open.distinct.pluck(:parent_id)
 
-    CorrespondenceRootTask.includes(*task_includes)
-      .where(id: completed_root_task_ids + ids_with_completed_child_tasks - ids_to_exclude)
+    CorrespondenceRootTask.where(id: completed_root_task_ids + ids_with_completed_child_tasks - ids_to_exclude)
   end
 
   def pending?
-    CorrespondenceMailTask.includes(*task_includes).active
+    CorrespondenceMailTask.active
+    # CorrespondenceMailTask.includes(*task_includes).active
   end
 
-  def record_status
-    @record_status = "Complete" if complete?
-    @record_status = "Pending" if pending?
+  def correspondence_status
+    return @correspondence_status = "Complete" if complete?
+    return @correspondence_status = "Pending" if pending?
+
+    @correspondence_status = "Error"
   end
 end

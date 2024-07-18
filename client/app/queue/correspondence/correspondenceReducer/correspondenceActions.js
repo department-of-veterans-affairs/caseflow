@@ -85,6 +85,16 @@ export const loadCorrespondenceConfig = (configUrl) =>
         });
   };
 
+export const loadCorrespondenceStatus = (correspondenceStatus) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_CORRESPONDENCE_STATUS,
+      payload: {
+        correspondenceStatus
+      }
+    });
+  };
+
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({
@@ -99,16 +109,6 @@ export const saveCheckboxState = (correspondence, isChecked) =>
       type: ACTIONS.SAVE_CHECKBOX_STATE,
       payload: {
         correspondence, isChecked
-      }
-    });
-  };
-
-export const setRecordStatus = (recordStatus) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_RECORD_STATUS,
-      payload: {
-        recordStatus
       }
     });
   };

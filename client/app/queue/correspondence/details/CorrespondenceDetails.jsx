@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { loadCorrespondence, setRecordStatus } from '../correspondenceReducer/correspondenceActions';
+import { loadCorrespondence, loadCorrespondenceStatus } from '../correspondenceReducer/correspondenceActions';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
-  const correspondence = useSelector((state) => state.correspondence);
-  const recordStatus = useSelector((state) => state.recordStatus);
+  const correspondence = props.correspondence;
+  const correspondenceStatus = props.correspondenceStatus;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
   useEffect(() => {
-    dispatch(setRecordStatus(recordStatus));
+    dispatch(loadCorrespondenceStatus(correspondenceStatus));
   }, []);
 
   const tabList = [
@@ -56,7 +56,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{props.recordStatus}</p>
+          <p className="last-item"><b>Record status: </b>{props.correspondenceStatus}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"
@@ -71,7 +71,8 @@ const CorrespondenceDetails = (props) => {
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
   correspondence: PropTypes.object,
-  recordStatus: PropTypes.object
+  loadCorrespondenceStatus: PropTypes.func,
+  correspondenceStatus: PropTypes.object
 };
 
 export default CorrespondenceDetails;

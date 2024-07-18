@@ -56,6 +56,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.LOAD_CORRESPONDENCE_STATUS:
+    return update(state, {
+      correspondenceStatus: {
+        $set: action.payload.correspondenceStatus
+      }
+    });
+
   case ACTIONS.LOAD_INBOUND_OPS_TEAM_USERS:
     return update(state, {
       inboundOpsTeamUsers: {
@@ -146,13 +153,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       responseLetters: {
         $merge: action.payload.responseLetters
-      }
-    });
-
-  case ACTIONS.SET_RECORD_STATUS:
-    return update(state, {
-      status: {
-        $set: action.payload.recordStatus
       }
     });
 
