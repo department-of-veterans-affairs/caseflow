@@ -54,11 +54,8 @@ class AppealsReadyForDistribution
 
   def self.legacy_rows(appeals, docket, sym)
     appeals.map do |appeal|
-      veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
       vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
-      hearing_judge = vlj_name.empty? ? nil : vlj_name
       appeal_affinity = AppealAffinity.find_by(case_id: appeal["bfkey"], case_type: "VACOLS::Case")
-      original_judge = appeal["prev_deciding_judge"].nil? ? nil : legacy_original_deciding_judge(appeal)
 
       {
         docket_number: appeal["tinum"],
@@ -69,10 +66,10 @@ class AppealsReadyForDistribution
         ready_for_distribution_at: appeal["bfdloout"],
         target_distro_date: target_distro_date(appeal["bfd19"], docket),
         days_before_goal_date: days_before_goal_date(appeal["bfd19"], docket),
-        hearing_judge: hearing_judge,
-        original_judge: original_judge,
+        hearing_judge: vlj_name.empty? ? nil : vlj_name,
+        original_judge: appeal["prev_deciding_judge"].nil? ? nil : legacy_original_deciding_judge(appeal),
         veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
-        veteran_name: veteran_name,
+        veteran_name: FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s,
         affinity_start_date: appeal_affinity&.affinity_start_date
       }
     end
