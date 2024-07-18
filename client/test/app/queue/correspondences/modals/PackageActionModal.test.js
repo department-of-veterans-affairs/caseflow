@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import PackageActionModal from '../../../../../app/queue/correspondence/modals/PackageActionModal';
 import thunk from 'redux-thunk';
 import rootReducer from 'app/queue/reducers';
-import { correspondenceData, packageDocumentTypeData, veteranInformation } from '../../../../data/correspondence';
+import { correspondenceData, packageDocumentTypeData } from '../../../../data/correspondence';
 
 jest.mock('react-router', () => ({
   useHistory: () => ({
@@ -18,8 +18,7 @@ const mockCloseHandler = jest.fn();
 let initialState = {
   reviewPackage: {
     correspondence: correspondenceData,
-    packageDocumentType: packageDocumentTypeData,
-    veteranInformation
+    packageDocumentType: packageDocumentTypeData
   }
 };
 
@@ -35,9 +34,8 @@ const renderPackageActionModal = (dropdownType) => {
 
 describe('PackageActionModal rendering', () => {
   it('renders the remove package action modal', () => {
-    const firstName = veteranInformation.veteran_name.first_name.toString();
-    const lastName = veteranInformation.veteran_name.last_name.toString();
-    const fileNumber = veteranInformation.file_number.toString();
+    const fullName = correspondenceData.veteranFullName.toString();
+    const fileNumber = correspondenceData.veteranFileNumber.toString();
 
     renderPackageActionModal('removePackage');
 
@@ -46,7 +44,7 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Provide a reason for removal')).toBeInTheDocument();
     expect(screen.getByText('Non-NOD')).toBeInTheDocument();
     // hacky way to match multi line dynamic text
-    expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(`${fullName}`, { exact: false })).toBeInTheDocument();
     expect(screen.getByText(`${fileNumber}`, { exact: false })).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Confirm request' })).toBeDisabled();
@@ -58,9 +56,8 @@ describe('PackageActionModal rendering', () => {
   });
 
   it('renders the reassign package action modal', () => {
-    const firstName = veteranInformation.veteran_name.first_name.toString();
-    const lastName = veteranInformation.veteran_name.last_name.toString();
-    const fileNumber = veteranInformation.file_number.toString();
+    const fullName = correspondenceData.veteranFullName.toString();
+    const fileNumber = correspondenceData.veteranFileNumber.toString();
 
     renderPackageActionModal('reassignPackage');
 
@@ -69,7 +66,7 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Provide a reason for reassignment')).toBeInTheDocument();
     expect(screen.getByText('Non-NOD')).toBeInTheDocument();
     // hacky way to match multi line dynamic text
-    expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(`${fullName}`, { exact: false })).toBeInTheDocument();
     expect(screen.getByText(`${fileNumber}`, { exact: false })).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Confirm request' })).toBeDisabled();
@@ -82,9 +79,8 @@ describe('PackageActionModal rendering', () => {
 
   it('renders the split package action modal', () => {
 
-    const firstName = veteranInformation.veteran_name.first_name.toString();
-    const lastName = veteranInformation.veteran_name.last_name.toString();
-    const fileNumber = veteranInformation.file_number.toString();
+    const fullName = correspondenceData.veteranFullName.toString();
+    const fileNumber = correspondenceData.veteranFileNumber.toString();
 
     renderPackageActionModal('splitPackage');
 
@@ -93,7 +89,7 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByText('Select a reason for splitting this package')).toBeInTheDocument();
     expect(screen.getByText('Non-NOD')).toBeInTheDocument();
 
-    expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(`${fullName}`, { exact: false })).toBeInTheDocument();
     expect(screen.getByText(`${fileNumber}`, { exact: false })).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Confirm request' })).toBeDisabled();
