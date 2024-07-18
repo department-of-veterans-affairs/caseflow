@@ -80,15 +80,17 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     legacy_nonpriority_receipt_date =
       DistributedCase
         .includes(:distribution)
-        .where(docket: "legacy", priority: false, distributions: { priority_push: true, 
-               completed_at: Time.zone.today.midnight..Time.zone.now })
+        .where(docket: "legacy",
+               priority: false,
+               distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
 
     legacy_priority_receipt_date =
       DistributedCase
         .includes(:distribution)
-        .where(docket: "legacy", priority: true, distributions: { priority_push: true,
-               completed_at: Time.zone.today.midnight..Time.zone.now })
+        .where(docket: "legacy",
+               priority: true,
+               distributions: { priority_push: true, completed_at: Time.zone.today.midnight..Time.zone.now })
         .map { |c| VACOLS::Case.find_by(bfkey: c.case_id).bfd19 }.max
 
     legacy_nonpriority_hash = { docket: "legacy", priority: false, receipt_date: legacy_nonpriority_receipt_date }
@@ -99,6 +101,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     result << legacy_priority_hash unless legacy_priority_receipt_date.nil?
     result
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def format_distributed_case_hash(distributed_cases_hash)
     # If there isn't a held hearing and it isn't a CAVC remand (priority), then there will never be an affinity
@@ -141,8 +144,8 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
       key = appeal["bfkey"]
       appeal_record = VACOLS::Case.find_by(bfkey: key)
 
-      if appeal_record && 
-        (appeal_record.appeal_affinity.blank? || appeal_record.appeal_affinity.affinity_start_date.blank?)
+      if appeal_record &&
+         (appeal_record.appeal_affinity.blank? || appeal_record.appeal_affinity.affinity_start_date.blank?)
         appeals_with_no_affinities << appeal_record
       end
     end
@@ -154,7 +157,7 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
     receipt_date_hashes_array.map do |receipt_date_hash|
       next unless receipt_date_hash[:docket] == LegacyDocket.docket_type
 
-      legacy_appeals_hash = VACOLS::CaseDocket.update_appeal_affinity_dates_query(receipt_date_hash[:priority], 
+      legacy_appeals_hash = VACOLS::CaseDocket.update_appeal_affinity_dates_query(receipt_date_hash[:priority],
                                                                                   receipt_date_hash[:receipt_date])
       legacy_appeals_to_update_adjusted_for_affinity = legacy_appeals_with_no_appeal_affinities(legacy_appeals_hash)
       create_or_update_appeal_affinities(legacy_appeals_to_update_adjusted_for_affinity, receipt_date_hash[:priority])
@@ -170,19 +173,11 @@ class UpdateAppealAffinityDatesJob < CaseflowJob
         existing_affinity.update!(affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
         existing_affinity
       elsif appeal.is_a?(VACOLS::Case)
-        appeal.create_appeal_affinity!(
-          docket: LegacyDocket.docket_type,
-          priority: priority,
-          affinity_start_date: Time.zone.now,
-          distribution_id: @distribution_id
-        )
+        appeal.create_appeal_affinity!(docket: LegacyDocket.docket_type, priority: priority,
+                                       affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
       else
-        appeal.create_appeal_affinity!(
-          docket: appeal.docket_type,
-          priority: priority,
-          affinity_start_date: Time.zone.now,
-          distribution_id: @distribution_id
-        )
+        appeal.create_appeal_affinity!(docket: appeal.docket_type, priority: priority,
+                                       affinity_start_date: Time.zone.now, distribution_id: @distribution_id)
       end
     end
   end

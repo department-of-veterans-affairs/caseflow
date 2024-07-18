@@ -343,7 +343,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     priority_cdl_query = generate_priority_case_distribution_lever_query
     priority_cdl_aod_query = generate_priority_case_distribution_lever_aod_query
@@ -463,11 +462,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_a
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.update_appeal_affinity_dates_query(priority, date)
     priority_condition = if priority
-                          "and (BFAC = '7' or AOD = '1')"
+                           "and (BFAC = '7' or AOD = '1')"
                          else
-                          "and BFAC <> '7' and AOD = '0'"
+                           "and BFAC <> '7' and AOD = '0'"
                          end
 
     query = <<-SQL
@@ -499,8 +499,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_a
   end
 
-  # {UPDATE}
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -606,8 +605,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
     end
   end
-
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+
   def self.generate_priority_case_distribution_lever_query
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.cavc_affinity_days) ||
        CaseDistributionLever.cavc_affinity_days == Constants.ACD_LEVERS.omit
