@@ -52,7 +52,7 @@ class HearingTimeService
       "#{datetime.strftime('%l:%M %p')} #{tz}".lstrip
     end
 
-    def convert_scheduled_time_to_utc(time_string)
+    def convert_scheduled_time_to_utc(time_string, scheduled_date)
       if time_string.present?
         # Find the AM/PM index value in the string
         index = time_string.include?("AM") ? time_string.index("AM") + 2 : time_string.index("PM") + 2
@@ -63,7 +63,8 @@ class HearingTimeService
 
         ### This is hardcoded. We do not want this hardcoded in the future
         timezone = ActiveSupport::TimeZone::MAPPING[timezone]
-        return Time.use_zone(timezone) { Time.zone.parse(scheduled_time) }.utc
+        scheduled_date_time = "#{scheduled_date} #{scheduled_time}"
+        return Time.use_zone(timezone) { Time.zone.parse(scheduled_date_time) }.utc
       end
       nil
     end

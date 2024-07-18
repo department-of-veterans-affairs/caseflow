@@ -54,7 +54,8 @@ class HearingRepository
     # rubocop:disable Metrics/MethodLength
     def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
       hearing_day = HearingDay.find(attrs[:hearing_day_id])
-      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string])
+      processed_scheduled_time = HearingTimeService.convert_scheduled_time_to_utc(attrs[:scheduled_time_string],
+                                                                                  hearing_day.scheduled_for)
 
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
