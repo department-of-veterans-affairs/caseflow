@@ -31,7 +31,7 @@ export default class QueueOrganizationDropdown extends React.Component {
       // If the url is a specified path, use it over the organization route
       const orgHref = org.url.includes('/') ? org.url : `/organizations/${org.url}`;
 
-      const label = correspondenceTable ?
+      const label = correspondenceTable(org) ?
         org.name : sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name);
 
       return {
