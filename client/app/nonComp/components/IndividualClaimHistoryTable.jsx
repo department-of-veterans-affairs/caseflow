@@ -38,6 +38,9 @@ const IndividualClaimHistoryTable = (props) => {
     return <React.Fragment>Claim cannot be processed until decision date is entered.</React.Fragment>;
   };
 
+  const ClaimPendingFragment = () => {
+    return <React.Fragment>Claim cannot be processed until VHA admin reviews pending requests.</React.Fragment>;
+  };
   const ClaimClosedFragment = (details) => {
     return <React.Fragment>
       Claim closed.<br />
@@ -96,7 +99,7 @@ const IndividualClaimHistoryTable = (props) => {
   const DetailsFragment = (row) => {
     let component = null;
 
-    const { readableEventType, details } = row;
+    const { readableEventType, details, modificationRequestDetails } = row;
 
     const detailsExtended = { ...details, eventDate: row.eventDate };
 
@@ -113,10 +116,16 @@ const IndividualClaimHistoryTable = (props) => {
     case 'Claim status - In progress':
       component = <ClaimInProgressFragment />;
       break;
+    case 'Claim status - Pending':
+      component = <ClaimPendingFragment />;
+      break;
     case 'Claim status - Incomplete':
       component = <ClaimIncompleteFragment />;
       break;
     case 'Added issue':
+      component = <AddedIssueWithDateFragment {...detailsExtended} />;
+      break;
+    case 'Requested modification':
       component = <AddedIssueWithDateFragment {...detailsExtended} />;
       break;
     case 'Added issue - No decision date':
@@ -130,6 +139,9 @@ const IndividualClaimHistoryTable = (props) => {
       break;
     case 'Removed issue':
       component = <RemovedIssueFragment {...detailsExtended} />;
+      break;
+    case 'Cancellation of request':
+      component = <AddedIssueFragment {...modificationRequestDetails} />;
       break;
     default:
       return null;

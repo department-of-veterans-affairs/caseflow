@@ -24,4 +24,14 @@ class ChangeHistoryEventSerializer
       withdrawalRequestDate: object.withdrawal_request_date
     }
   end
+
+  attribute :modificationRequestDetails do |object|
+    {
+      benefitType: object.benefit_type,
+      newIssueType: object&.new_issue_type,
+      newissueDescription: object&.new_issue_description,
+      newDecisionDate: object&.new_decision_date,
+      modificationRequestReason: object&.modification_request_reason
+    }
+  end
 end
