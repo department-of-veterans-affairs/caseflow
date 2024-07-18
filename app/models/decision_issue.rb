@@ -250,6 +250,7 @@ class DecisionIssue < CaseflowRecord
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
+    fail "relevant?"
     sc = SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
