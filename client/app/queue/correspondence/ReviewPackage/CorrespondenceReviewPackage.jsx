@@ -221,7 +221,6 @@ export const CorrespondenceReviewPackage = (props) => {
             }}
             {...props}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
-            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <CmpDocuments
             documents={props.correspondence.correspondenceDocuments}
