@@ -13,7 +13,9 @@ class Events::DecisionReviewCreated
 
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
-    def create!(consumer_event_id, reference_id, headers, payload)
+    def create!(params, headers, payload)
+      consumer_event_id = params[:consumer_event_id]
+      reference_id = params[:reference_id]
       return if Event.exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
