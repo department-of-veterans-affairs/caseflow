@@ -289,9 +289,6 @@ export const ReviewForm = (props) => {
 };
 
 ReviewForm.propTypes = {
-  veteranInformation: PropTypes.shape({
-    correspondenceTypes: PropTypes.array,
-  }),
   correspondenceTypeId: PropTypes.number,
   setCorrespondenceTypeId: PropTypes.func,
   notes: PropTypes.string,
@@ -320,8 +317,7 @@ ReviewForm.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  packageDocumentType: state.reviewPackage.packageDocumentType,
-  veteranInformation: state.reviewPackage.veteranInformation,
+  packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
