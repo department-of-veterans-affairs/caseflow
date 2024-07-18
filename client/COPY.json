@@ -1584,7 +1584,7 @@
       "MESSAGE": "The following Veteran file number(s) were invalid. Please enter valid file number(s) and try again: "
     },
     "SUCCESS": {
-      "TITLE": "You have successfully generated correspondence for the unassigned tab",
+      "TITLE": "You have successfully generated correspondence",
       "MESSAGE": " correspondence have been created for the following Veteran file number(s): "
     }
   },

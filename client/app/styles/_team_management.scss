@@ -68,7 +68,6 @@
 }
 
 .search-bar-styling-for-filter {
-  padding-left: 80px;
   margin-bottom: 15px;
   width: calc(100% + 45px);
 }
@@ -76,9 +75,9 @@
 .text-styling-for-filter-search-bar {
   padding-left: 80px;
   margin-top: 20px;
+  margin-bottom: 5px;
   justify-self: flex-end;
   display: flex;
-  margin-bottom: 10px;
 }
 
 .no-results-found-styling {

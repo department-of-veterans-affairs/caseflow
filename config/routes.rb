@@ -363,6 +363,7 @@ Rails.application.routes.draw do
     post "/correspondence/:correspondence_uuid/cancel_intake", to: "correspondence_intake#cancel_intake", as: :queue_correspondence_intake_cancel_intake
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     post "/correspondence_response_letters", to: "correspondence_response_letters#create"
+    get "/correspondence/:correspondence_uuid", to: "correspondence_details#correspondence_details"
     get "/appeals/:vacols_id", to: "queue#index"
     get "/appeals/:appealId/notifications", to: "queue#index"
     get "/appeals/:appeal_id/cavc_dashboard", to: "cavc_dashboard#index"
