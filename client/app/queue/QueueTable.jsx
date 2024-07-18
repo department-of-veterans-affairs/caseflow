@@ -164,7 +164,7 @@ export const HeaderRow = (props) => {
                 dateFilter={column.enableFilter === 'date'}
               />
             );
-          } else if (props.useTaskPagesApi && column.filterOptions) {
+          } else if (props.useTaskPagesApi && (column.filterOptions || column.filterType)) {
             filterIcon = (
               <TableFilter
                 {...column}
@@ -172,6 +172,7 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                filterType={column.filterType ? column.filterType : ''}
               />
             );
           }

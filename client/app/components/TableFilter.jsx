@@ -9,6 +9,7 @@ import FilterIcon from './icons/FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
 import DateSelector from './DateSelector';
+import DatePicker from './DatePicker';
 
 const iconStyle = css(
   {
@@ -187,7 +188,8 @@ class TableFilter extends React.PureComponent {
       anyFiltersAreSet,
       valueName,
       getFilterValues,
-      dateFilter
+      dateFilter,
+      filterType,
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -227,19 +229,32 @@ class TableFilter extends React.PureComponent {
 
     const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 
-    return (
-      <>
-        {dateFilter ?
-          <span>
-            <DateSelector
-              type="date"
-              value=""
-              ariaLabelText="date-selector"
-              onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
-          </span> :
-          renderFilterIcon()}
-      </>
-    );
+    let filter = '';
+
+    if (dateFilter) {
+      filter = (
+        <span>
+          <DateSelector
+            type="date"
+            value=""
+            ariaLabelText="date-selector"
+            onChange={(value) => this.updateSelectedFilter(formatDate(value), columnName)} />
+        </span>
+      );
+    } else if (filterType === 'date-picker') {
+      filter = (
+        <span>
+          <DatePicker
+            value=""
+            ariaLabelText="date-picker"
+            onChange={(value) => this.updateSelectedFilter(value, columnName)} />
+        </span>
+      );
+    } else {
+      filter = renderFilterIcon();
+    }
+
+    return filter;
   }
 }
 
@@ -263,7 +278,8 @@ TableFilter.propTypes = {
   updateFilters: PropTypes.func,
   filterOptionsFromApi: PropTypes.array,
   multiValueDelimiter: PropTypes.string,
-  dateFilter: PropTypes.bool
+  dateFilter: PropTypes.bool,
+  filterType: PropTypes.string,
 };
 
 export default TableFilter;
