@@ -238,18 +238,15 @@ describe UpdateAppealAffinityDatesJob do
     let(:job) { described_class.new }
     let(:appeal_no_affinity_hash) do
       { "bfkey" => appeal_no_appeal_affinity.bfkey,
-        "bfd19" => appeal_no_appeal_affinity.bfd19
-      }
+        "bfd19" => appeal_no_appeal_affinity.bfd19 }
     end
     let(:appeal_with_affinity_hash) do
       { "bfkey" => appeal_with_appeal_affinity.bfkey,
-        "bfd19" =>  appeal_with_appeal_affinity.bfd19
-      }
+        "bfd19" => appeal_with_appeal_affinity.bfd19 }
     end
     let(:appeal_with_affinity_no_start_date_hash) do
       { "bfkey" => appeal_with_appeal_affinity_no_start_date.bfkey,
-        "bfd19" => appeal_with_appeal_affinity_no_start_date.bfd19
-      }
+        "bfd19" => appeal_with_appeal_affinity_no_start_date.bfd19 }
     end
 
     before { job.instance_variable_set(:@distribution_id, distribution.id) }
@@ -404,9 +401,15 @@ describe UpdateAppealAffinityDatesJob do
 
       # legacy appeals ready for distribution
       let!(:legacy_appeal_no_appeal_affinity) { create(:case, :ready_for_distribution, :type_original) }
-      let!(:legacy_appeal_no_appeal_affinity_no_start_date) { create(:case, :ready_for_distribution, :type_original, :with_appeal_affinity, affinity_start_date: nil) }
-      let!(:legacy_appeal_with_appeal_affinity) { create(:case, :ready_for_distribution, :with_appeal_affinity, :type_original) }
-      let!(:legacy_appeal_no_appeal_affinity_later_bfd19) { create(:case, :ready_for_distribution, :type_original, bfd19: 1.week.ago) }
+      let!(:legacy_appeal_no_appeal_affinity_no_start_date) do
+        create(:case, :ready_for_distribution, :type_original, :with_appeal_affinity, affinity_start_date: nil)
+      end
+      let!(:legacy_appeal_with_appeal_affinity) do
+        create(:case, :ready_for_distribution, :with_appeal_affinity, :type_original)
+      end
+      let!(:legacy_appeal_no_appeal_affinity_later_bfd19) do
+        create(:case, :ready_for_distribution, :type_original, bfd19: 1.week.ago)
+      end
 
       it "is successful and adds expected appeal affinity records or values" do
         described_class.perform_now(previous_distribution.id)
