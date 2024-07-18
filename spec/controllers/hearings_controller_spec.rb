@@ -539,7 +539,7 @@ RSpec.describe HearingsController, type: :controller do
         body = JSON.parse(subject.body)
 
         expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
-        expect(body["data"]["scheduled_time_string"]).to eq("08:30 AM Eastern Time (US & Canada)")
+        expect(body["data"]["scheduled_time_string"]).to eq("8:30 AM Eastern Time (US & Canada)")
         expect(body["data"]["scheduled_for"]).to eq(
           "#{hearing.hearing_day.scheduled_for}T#{expected_time}:00.000#{utc_offset}"
         )

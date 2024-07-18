@@ -84,8 +84,8 @@ describe HearingTimeService, :all_dbs do
 
     describe "#central_office_time_string" do
       it "changes to central office timezone (ET)" do
-        expect(hearing.time.central_office_time_string).to eq("03:00 PM Pacific Time (US & Canada)")
-        expect(LegacyHearing.first.time.central_office_time_string).to eq("03:00 PM Pacific Time (US & Canada)")
+        expect(hearing.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
+        expect(LegacyHearing.first.time.central_office_time_string).to eq("3:00 PM Pacific Time (US & Canada)")
       end
     end
 
