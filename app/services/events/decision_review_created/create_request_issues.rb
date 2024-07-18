@@ -4,8 +4,8 @@
 # when an Event is received using the data sent from VBMS
 class Events::DecisionReviewCreated::CreateRequestIssues
   class << self
-    def process!(event:, parser:, epe:, decision_review:)
-      create_request_issue_backfill(event, parser, epe, decision_review)
+    def process!(params)
+      create_request_issue_backfill(params)
     rescue StandardError => error
       raise Caseflow::Error::DecisionReviewCreatedRequestIssuesError, error.message
     end
@@ -14,7 +14,11 @@ class Events::DecisionReviewCreated::CreateRequestIssues
 
     # iterate through the array of issues and create backfill object from each one
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def create_request_issue_backfill(event, parser, epe, decision_review)
+    def create_request_issue_backfill(params)
+      event = params[:event]
+      epe = params[:epe]
+      parser = params[:parser]
+      decision_review = params[:decision_review]
       request_issues = parser.request_issues
       newly_created_issues = []
 
