@@ -57,7 +57,8 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-
+        <section>Tasks not related to an appeal</section>
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
     </>
   );
