@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { zoneName } from '../utils';
 import moment from 'moment-timezone';
 
 const firstParagraphStyle = css({ marginTop: 0 });
@@ -34,10 +33,12 @@ export const HearingTime = ({
       hearing.regionalOfficeTimezone || 'America/New_York';
 
   // Calculate the local time based on either Regional Office or Representative for Virtual hearings
-  const localTime = zoneName(hearing.scheduledTimeString, timezone, 'z');
+  const localTime = moment(hearing.scheduledFor).tz(timezone).
+    format('h:mm A z');
 
   // Calculate the central office time
-  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
+  const coTime = moment(hearing.scheduledFor).tz('America/New_York').
+    format('h:mm A z');
 
   // Determine whether to show the Regional Office time as the primary label
   const primaryTime = primaryLabel === 'RO' ? localTime : coTime;
@@ -88,6 +89,7 @@ HearingTime.propTypes = {
     virtualHearing: PropTypes.object,
     currentIssueCount: PropTypes.number,
     scheduledTimeString: PropTypes.string.isRequired,
+    scheduledFor: PropTypes.string,
     readableRequestType: PropTypes.string.isRequired,
     regionalOfficeName: PropTypes.string,
     regionalOfficeTimezone: PropTypes.string,
