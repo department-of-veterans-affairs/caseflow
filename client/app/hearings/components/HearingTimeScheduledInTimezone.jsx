@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { timeWithTimeZone, zoneName } from '../utils';
-import momentTimezone from 'moment-timezone';
-import moment from 'moment';
+import { timeWithTimeZone } from '../utils';
 
 export const HearingTimeScheduledInTimezone = ({
   hearing,
