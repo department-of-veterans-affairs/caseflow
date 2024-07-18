@@ -10,7 +10,6 @@ export const initialState = {
   selectedTasks: [],
   mailTasks: [],
   unrelatedTasks: [],
-  veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: {},
   correspondenceInformation: {},
@@ -27,13 +26,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
 
   case ACTIONS.SAVE_CURRENT_INTAKE:
     return action.payload.currentIntake;
-
-  case ACTIONS.LOAD_VETERAN_INFORMATION:
-    return update(state, {
-      veteranInformation: {
-        $set: action.payload.veteranInformation
-      }
-    });
 
   case ACTIONS.LOAD_VET_CORRESPONDENCE:
     return update(state, {

@@ -26,12 +26,13 @@ const CorrespondenceCases = (props) => {
 
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
 
-  const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
+  const vetName = useSelector(
+    (state) => state.reviewPackage.correspondence.veteranFullName
+  );
 
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
   const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
 
-  const [vetName, setVetName] = useState('');
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
   const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
   const [decisionReason, setDecisionReason] = useState('');
@@ -236,16 +237,6 @@ const CorrespondenceCases = (props) => {
     }
   ];
 
-  useEffect(() => {
-    if (
-      // eslint-disable-next-line camelcase
-      veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name
-    ) {
-      setVetName(
-        `${veteranInformation.veteran_name.first_name.trim()} ${veteranInformation.veteran_name.last_name.trim()}`);
-    }
-  }, [veteranInformation]);
-
   return (
     <>
       {props.responseType && (
@@ -258,7 +249,7 @@ const CorrespondenceCases = (props) => {
       )}
       <AppSegment filledBackground>
         {props.featureToggles.correspondence_queue && <AutoAssignAlertBanner />}
-        {(veteranInformation?.veteranName?.firstName && veteranInformation?.veteranName?.lastName) &&
+        {(vetName) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
           <Alert
             type="success"
@@ -328,7 +319,6 @@ CorrespondenceCases.propTypes = {
   loadCorrespondenceConfig: PropTypes.func,
   correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object,
   configUrl: PropTypes.string,
   inboundOpsTeamUsers: PropTypes.arrayOf(string),
   responseType: PropTypes.string,

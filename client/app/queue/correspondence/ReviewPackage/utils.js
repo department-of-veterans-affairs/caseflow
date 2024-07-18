@@ -42,14 +42,13 @@ export const getPackageActionColumns = (dropdownType) => {
           </span>
         ),
         valueFunction: (row) => {
-          const firstName = row.veteranInformation.veteran_name.first_name;
-          const lastName = row.veteranInformation.veteran_name.last_name;
-          const fileNumber = row.veteranInformation.file_number;
+          const vetName = row.correspondence.veteranFullName;
+          const fileNumber = row.correspondence.veteranFileNumber;
 
           return (
             <span className="veteran-info-value">
               <p>
-                {`${firstName} ${lastName}\n(${fileNumber})`}
+                {`${vetName}\n(${fileNumber})`}
               </p>
             </span>
           );
