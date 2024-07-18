@@ -1344,6 +1344,7 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
       border-bottom: 1px solid $color-cream;
       position: relative;
       padding: 10px;
+      margin-bottom: 0;
 
       &:last-child {
         border: none;
@@ -1354,7 +1355,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   .grid-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
 
     li {
       border-bottom: none;
