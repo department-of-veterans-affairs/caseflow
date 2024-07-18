@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import CorrespondenceDetails from '././CorrespondenceDetails.jsx';
+import CorrespondenceDetails from './details/CorrespondenceDetails.jsx';
 import { loadCorrespondence } from './correspondenceReducer/correspondenceActions';
 
 export const CorrespondenceCaseTimeline = ({ correspondence }) => {
