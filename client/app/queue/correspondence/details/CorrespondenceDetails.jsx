@@ -18,16 +18,20 @@ const CorrespondenceDetails = (props) => {
   const correspondenceTasks = () => {
     return (
       <React.Fragment>
-        <h2>Completed Mail Tasks</h2>
-        <AppSegment filledBackground noMarginTop>
-          <ul className="correspondence-mail-tasks">
-            {
-              mailTasks.map((item) => (
-                <li>{item}</li>
-              ))
-            }
-          </ul>
-        </AppSegment>
+        <div className="correspondence-mail-tasks">
+          <h2>Completed Mail Tasks</h2>
+          <AppSegment filledBackground noMarginTop>
+            <ul className={`${mailTasks.length > 2 ? 'grid-list' : ''}`}>
+              {
+                mailTasks.length > 0 ?
+                  mailTasks.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  )) :
+                  <li>No previously completed mail tasks prior to intake.</li>
+              }
+            </ul>
+          </AppSegment>
+        </div>
       </React.Fragment>
     );
   };
