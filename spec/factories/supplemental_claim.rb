@@ -7,7 +7,7 @@ FactoryBot.define do
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }
     veteran_is_not_claimant { true }
-    type { "supplemental claim" }
+    type { SupplementalClaim.name }
 
     transient do
       number_of_claimants { nil }
