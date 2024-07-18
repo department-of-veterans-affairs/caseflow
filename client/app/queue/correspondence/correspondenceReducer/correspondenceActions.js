@@ -103,6 +103,16 @@ export const saveCheckboxState = (correspondence, isChecked) =>
     });
   };
 
+export const setRecordStatus = (recordStatus) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RECORD_STATUS,
+      payload: {
+        recordStatus
+      }
+    });
+  };
+
 export const clearCheckboxState = () =>
   (dispatch) => {
     dispatch({

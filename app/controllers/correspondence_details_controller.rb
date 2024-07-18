@@ -17,4 +17,43 @@ class CorrespondenceDetailsController < CorrespondenceController
       end
     end
   end
+
+  def complete?
+    # CorrespondenceRootTask.completed_by_date
+    # if children&.all?(&:completed?)
+
+    # root task ids for all the assignee's tasks
+    # potential_root_task_ids = correspondence.tasks.select(:parent_id)
+    #   .where(status: Constants.TASK_STATUSES.completed).distinct.pluck(:parent_id)
+
+    # # root task ids within the subset created above with open child tasks
+    # ids_to_exclude = CorrespondenceTask.select(:parent_id)
+    #   .where(parent_id: potential_root_task_ids)
+    #   .open.distinct.pluck(:parent_id)
+
+    # CorrespondenceRootTask.includes(*task_includes).where(id: potential_root_task_ids - ids_to_exclude)
+
+    completed_root_task_ids = CorrespondenceRootTask.select(:id)
+      .where(status: Constants.TASK_STATUSES.completed).pluck(:id)
+
+    ids_with_completed_child_tasks = CorrespondenceTask.select(:parent_id)
+      .where(status: Constants.TASK_STATUSES.completed)
+      .where.not(type: CorrespondenceRootTask.name).distinct.pluck(:parent_id)
+
+    ids_to_exclude = CorrespondenceTask.select(:parent_id)
+      .where(parent_id: ids_with_completed_child_tasks)
+      .open.distinct.pluck(:parent_id)
+
+    CorrespondenceRootTask.includes(*task_includes)
+      .where(id: completed_root_task_ids + ids_with_completed_child_tasks - ids_to_exclude)
+  end
+
+  def pending?
+    CorrespondenceMailTask.includes(*task_includes).active
+  end
+
+  def record_status
+    @record_status = "Complete" if complete?
+    @record_status = "Pending" if pending?
+  end
 end

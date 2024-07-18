@@ -149,7 +149,15 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.SET_RECORD_STATUS:
+    return update(state, {
+      status: {
+        $set: action.payload.recordStatus
+      }
+    });
+
   case ACTIONS.REMOVE_RESPONSE_LETTERS:
+    // eslint-disable-next-line no-case-declarations
     const newResponseLetters = state.responseLetters;
 
     delete newResponseLetters[action.payload.index];

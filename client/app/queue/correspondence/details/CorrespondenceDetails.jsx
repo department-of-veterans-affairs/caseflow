@@ -4,14 +4,19 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
+import { loadCorrespondence, setRecordStatus } from '../correspondenceReducer/correspondenceActions';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = useSelector((state) => state.correspondence);
+  const recordStatus = useSelector((state) => state.recordStatus);
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
+  }, []);
+
+  useEffect(() => {
+    dispatch(setRecordStatus(recordStatus));
   }, []);
 
   const tabList = [
@@ -51,7 +56,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b> Pending</p>
+          <p className="last-item"><b>Record status: </b>{props.recordStatus}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"
@@ -65,7 +70,8 @@ const CorrespondenceDetails = (props) => {
 
 CorrespondenceDetails.propTypes = {
   loadCorrespondence: PropTypes.func,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  recordStatus: PropTypes.object
 };
 
 export default CorrespondenceDetails;
