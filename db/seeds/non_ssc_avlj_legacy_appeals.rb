@@ -229,9 +229,11 @@ module Seeds
     end
 
     def create_non_ssc_avlj(ccsid, full_name)
+      # create(:user, :non_ssc_avlj_user, ccs_id: ccs_id, full_name: full_name) #add in the work from https://github.com/department-of-veterans-affairs/caseflow/pull/22176/files
     end
 
     def create_ssc_avlj(ccsid, full_name)
+      # create(:user, :ssc_avlj_user, ccs_id: ccs_id, full_name: full_name) #to be devolped
     end
 
     def demo_regional_office
@@ -242,7 +244,7 @@ module Seeds
       #TODO: modify this method to work properly for this ticket's needs
       # BRIEFF.BFD19 = docket_date
       if signing_avlj
-        create_brief(signing_avlj)
+        brieff = create_brieff(signing_avlj, docket_date) #this may or may not need to be developed depending on how the factory works
       end
 
       Timecop.travel(docket_date)
@@ -252,14 +254,29 @@ module Seeds
                             snamef: veteran.first_name, snamel: veteran.last_name,
                             ssalut: "", ssn: veteran.file_number)
 
-      vacols_case = priority ? create_priority_video_vacols_case(veteran,
-                                            correspondent,
-                                            avlj,
-                                            docket_date) :
-                               create_non_priority_video_vacols_case(veteran,
-                                correspondent,
-                                avlj,
-                                docket_date)
+      if signing_avlj
+        vacols_case = priority ? create_signed_priority_video_vacols_case(veteran,
+                                          correspondent,
+                                          avlj,
+                                          docket_date,
+                                          signing_avlj,
+                                          brieff) :
+                                  create_signed_non_priority_video_vacols_case(veteran,
+                                  correspondent,
+                                  avlj,
+                                  docket_date,
+                                  signing_avlj,
+                                  brieff)
+      else
+        vacols_case = priority ? create_priority_video_vacols_case(veteran,
+                                          correspondent,
+                                          avlj,
+                                          docket_date) :
+                                  create_non_priority_video_vacols_case(veteran,
+                                  correspondent,
+                                  avlj,
+                                  docket_date)
+      end
 
       legacy_appeal = create(
         :legacy_appeal,
@@ -322,12 +339,11 @@ module Seeds
         participant_id: participant_id
       )
     end
-##########
 
     def assign_last_hearing_to_avlj #maybe needed?
     end
 
-    def create_brief(avlj)
+    def create_brieff(avlj)
       # BRIEFF
         # Provide access to legacy appeal decisions for more complete appeals history queries
   # JOIN_PREVIOUS_APPEALS = "
