@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_13_202232) do
+ActiveRecord::Schema.define(version: 2024_07_17_034659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1702,6 +1702,16 @@ ActiveRecord::Schema.define(version: 2024_06_13_202232) do
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["updated_at"], name: "index_request_issues_updates_on_updated_at"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
+  end
+
+  create_table "returned_appeal_jobs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "end"
+    t.datetime "errored"
+    t.text "returned_appeals", default: [], array: true
+    t.datetime "start"
+    t.json "stats"
+    t.datetime "updated_at", null: false
   end
 
   create_table "schedule_periods", force: :cascade do |t|
