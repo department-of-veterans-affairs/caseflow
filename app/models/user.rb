@@ -98,6 +98,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def inbound_ops_team_superuser?
+    return false unless FeatureToggle.enabled?(:correspondence_queue)
+
     member_of_organization?(InboundOpsTeam.singleton) &&
       OrganizationUserPermissionChecker.new.can?(
         permission_name: Constants.ORGANIZATION_PERMISSIONS.superuser,
@@ -108,11 +110,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # check for user that is not an admin of the inbound ops team
   def inbound_ops_team_user?
+    return false unless FeatureToggle.enabled?(:correspondence_queue)
+
     organizations.include?(InboundOpsTeam.singleton) &&
       !inbound_ops_team_supervisor?
   end
 
   def inbound_ops_team_supervisor?
+    return false unless FeatureToggle.enabled?(:correspondence_queue)
+
     administered_teams.include?(InboundOpsTeam.singleton)
   end
 
@@ -452,6 +458,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
+    handle_correspondence_teams(orgs)
+
     orgs
   end
   # rubocop:enable Metrics/MethodLength
@@ -584,6 +592,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def inactive_judge_team
     JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
+  end
+
+  def handle_correspondence_teams(orgs)
+    if inbound_ops_team_superuser? || inbound_ops_team_user?
+      orgs << {
+        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL,
+        url: "/queue/correspondence"
+      }
+    end
+
+    if inbound_ops_team_superuser? || inbound_ops_team_supervisor?
+      orgs << {
+        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES,
+        url: "/queue/correspondence/team"
+      }
+    end
+    orgs
   end
 
   def user_reactivation
