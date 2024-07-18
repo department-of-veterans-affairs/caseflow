@@ -66,7 +66,7 @@ export const ReviewForm = (props) => {
   };
 
   const vaDORReadOnly = () => {
-    if (props.isInboundOpsSuperuser || props.userIsInboundOpsSupervisor) {
+    if (props.userIsInboundOpsSupervisor) {
       return false;
     }
 
@@ -300,7 +300,6 @@ ReviewForm.propTypes = {
   handleReview: PropTypes.func,
   errorMessage: PropTypes.any,
   isReadOnly: PropTypes.bool,
-  isInboundOpsSuperuser: PropTypes.bool,
   userIsInboundOpsSupervisor: PropTypes.bool,
   correspondence: PropTypes.object,
   setCorrTypeSelected: PropTypes.bool,
