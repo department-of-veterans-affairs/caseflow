@@ -189,7 +189,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge, lever_days = CaseDistributionLever.cavc_affinity_days)
     genpop_base_query
-      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null", lever_days.days.ago)
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+             lever_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
