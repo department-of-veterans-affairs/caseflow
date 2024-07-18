@@ -195,10 +195,21 @@ class CaseDistributionLever < ApplicationRecord
         elsif BOOLEAN_LEVERS.include?(name)
           ActiveModel::Type::Boolean.new.cast(lever)
         else
+          boolean_value = boolean_lever_value(lever)
+          return boolean_value unless boolean_value.nil?
+
           lever
         end
       rescue ArgumentError
         lever
+      end
+    end
+
+    def boolean_lever_value(lever)
+      if lever == "t" || lever == "true"
+        true
+      elsif lever == "f" || lever == "false"
+        false
       end
     end
 
