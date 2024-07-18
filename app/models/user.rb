@@ -458,7 +458,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    handle_correspondence_teams(orgs)
+    # handle correspondence queue tables
+    handle_correspondence_queues(orgs) if member_of_organization?(InboundOpsTeam.singleton)
 
     orgs
   end
@@ -594,10 +595,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
   end
 
-  def handle_correspondence_teams(orgs)
+  def handle_correspondence_queues(orgs)
     if inbound_ops_team_superuser? || inbound_ops_team_user?
       orgs << {
-        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL,
+        name: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL,
         url: "/queue/correspondence"
       }
     end
