@@ -59,7 +59,10 @@ class HearingUpdateForm < BaseHearingUpdateForm
       prepped: prepped,
       representative_name: representative_name,
       room: room,
-      scheduled_time: scheduled_time_string,
+      scheduled_time: HearingTimeService.convert_scheduled_time_to_utc(
+        time_string: scheduled_time_string,
+        date_string: hearing.hearing_day.scheduled_for.to_s
+      ),
       summary: summary,
       transcript_requested: transcript_requested,
       transcript_sent_date: transcript_sent_date,
