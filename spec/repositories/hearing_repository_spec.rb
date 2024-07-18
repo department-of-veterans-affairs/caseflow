@@ -41,7 +41,7 @@ describe HearingRepository, :all_dbs do
     it "throws an error if the timezone is invalid" do
       expect do
         HearingRepository.fix_hearings_timezone(invalid_tz)
-      end.to raise_error(TZInfo::InvalidTimezoneIdentifier)
+      end.to raise_error(TZInfo::UnknownTimezone)
     end
   end
 
