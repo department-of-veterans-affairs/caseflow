@@ -3,9 +3,7 @@
 # Module to notify appellant if Privacy Act Request is Completed
 module PrivacyActComplete
   extend AppellantNotification
-  # rubocop:disable all
-  @@template_name = "Privacy Act request complete"
-  # rubocop:enable all
+
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask
                          PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
@@ -16,7 +14,7 @@ module PrivacyActComplete
        (type.to_s.include?("PrivacyAct") && !parent&.type.to_s.include?("PrivacyAct"))) &&
        status == Constants.TASK_STATUSES.completed
       # appellant notification call
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete)
     end
     super_return_value
   end
@@ -27,7 +25,7 @@ module PrivacyActComplete
     super_return_value = super
     if type.to_s == "PrivacyActTask" && assigned_to_type == "Organization" &&
        status == Constants.TASK_STATUSES.completed
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, Constants.EVENT_TYPE_FILTERS.privacy_act_request_complete)
     end
     super_return_value
   end
@@ -36,13 +34,7 @@ module PrivacyActComplete
     if PRIVACY_ACT_TASKS.include?(type) &&
        !PRIVACY_ACT_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.completed
-      MetricsService.record("updating PRIVACY_ACT_COMPLETE column to true and
-                             PRIVACY_ACT_PENDING column in Appeal States Table to FALSE "\
-        "for #{appeal.class} ID #{appeal.id} if no pending Privacy Acts exist",
-                            service: nil,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")
-      end
+      appeal.appeal_state.privacy_act_complete_appeal_state_update_action!
     end
   end
 end

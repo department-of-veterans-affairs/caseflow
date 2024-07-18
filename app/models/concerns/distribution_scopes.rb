@@ -9,7 +9,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   extend ActiveSupport::Concern
 
   def with_appeal_affinities
-    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id")
+    joins("LEFT OUTER JOIN appeal_affinities ON appeals.uuid::text = appeal_affinities.case_id
+      and appeal_affinities.case_type = 'Appeal'")
   end
 
   # From docket.rb
@@ -18,14 +19,15 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     include_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
-      .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+      .or(include_aod_motions.where("people.date_of_birth <= ? OR appeals.aod_based_on_age = ?", 75.years.ago, true))
       .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
       .group("appeals.id")
   end
 
   def nonpriority
     include_aod_motions
-      .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
+      .where("people.date_of_birth > ? or (appeals.aod_based_on_age in (?) AND people.date_of_birth is null)",
+             75.years.ago, [false, nil])
       .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
       .group("appeals.id")
       .having("count(case when advance_on_docket_motions.granted "\
@@ -40,9 +42,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def ready_for_distribution
     joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .where(tasks: { type: DistributionTask.name, status: Constants.TASK_STATUSES.assigned })
   end
 
   def genpop_base_query
@@ -53,7 +53,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def genpop_with_case_distribution_lever
     genpop_cavc_affinity_days_query = generate_genpop_cavc_affinity_days_lever_query
-    genpop_cavc_aod_affinity_days_query = generate_genpop_cavc_aod_affinity_days_lever_query
+    genpop_cavc_aod_affinity_days_query = generate_genpop_cavc_aod_affinity_days_lever_query.group("appeals.id")
 
     result = genpop_cavc_affinity_days_query.or(genpop_cavc_aod_affinity_days_query)
 
@@ -61,6 +61,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       result = result.or(
         genpop_base_query
         .where("original_judge_task.assigned_to_id in (?)", HearingRequestDistributionQuery.ineligible_judges_id_cache)
+        .group("appeals.id")
       )
     end
 
@@ -68,6 +69,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       result = result.or(
         genpop_base_query
         .where("original_judge_task.assigned_to_id in (?)", JudgeTeam.judges_with_exclude_appeals_from_affinity)
+        .group("appeals.id")
       )
     end
 
@@ -187,7 +189,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge, lever_days = CaseDistributionLever.cavc_affinity_days)
     genpop_base_query
-      .where("appeal_affinities.affinity_start_date > ?", lever_days.days.ago)
+      .where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null", lever_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
@@ -225,8 +227,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    with_appeal_affinities
-      .where(hearings: { disposition: "held", judge_id: judge.id })
+    with_appeal_affinities.where(hearings: { disposition: "held", judge_id: judge.id })
+      .or(with_appeal_affinities.where(original_judge_task: { assigned_to_id: judge.id }))
   end
 
   def tied_to_ineligible_judge
@@ -246,7 +248,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def affinitized_ama_affinity_cases(lever_days)
-    where("appeal_affinities.affinity_start_date > ?", lever_days.to_i.days.ago)
+    where("appeal_affinities.affinity_start_date > ? or appeal_affinities.affinity_start_date is null",
+          lever_days.to_i.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

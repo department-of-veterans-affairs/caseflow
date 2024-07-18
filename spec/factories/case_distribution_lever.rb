@@ -71,6 +71,42 @@ FactoryBot.define do
       lever_group_order { 1002 }
     end
 
+    trait :disable_legacy_non_priority do
+      item { "disable_legacy_non_priority" }
+      title { "ACD Disable Legacy Non-priority" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 101 }
+    end
+
+    trait :disable_legacy_priority do
+      item { "disable_legacy_priority" }
+      title { "ACD Disable Legacy Priority" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 105 }
+    end
+
+    trait :disable_ama_non_priority_direct_review do
+      item { "disable_ama_non_priority_direct_review" }
+      title { "ACD Disable AMA Non-Priority Direct Review" }
+      description { "" }
+      data_type { "boolean" }
+      value { false }
+      unit { "" }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+    end
+
     trait :ama_hearings_start_distribution_prior_to_goals do
       item { "ama_hearings_start_distribution_prior_to_goals" }
       title { "AMA Hearings Start Distribution Prior to Goals" }
@@ -197,32 +233,28 @@ FactoryBot.define do
     end
 
     trait :cavc_aod_affinity_days do
-      item { Constants.DISTRIBUTION.cavc_aod_affinity_days }
-      title { Constants.DISTRIBUTION.cavc_aod_affinity_days_title }
+      item { "cavc_aod_affinity_days" }
+      title { "CAVC AOD Affinity Days" }
       description do
-        "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding "\
-        "judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent"\
-        "hearing."
+        "Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision "\
+        "before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with "\
+        "a hearing held."
       end
-      data_type { Constants.ACD_LEVERS.data_types.radio }
+      data_type { "radio" }
       value { "14" }
       unit { "days" }
       options do
-        [{ item: Constants.ACD_LEVERS.value,
-           data_type: Constants.ACD_LEVERS.data_types.number,
+        [{ item: "value",
+           data_type: "number",
            value: 14,
            text: "Attempt distribution to current judge for max of:",
-           unit: Constants.ACD_LEVERS.days,
+           unit: "days",
            selected: true },
-         { item: Constants.ACD_LEVERS.infinite,
-           value: Constants.ACD_LEVERS.infinite,
-           text: "Always distribute to current judge" },
-         { item: Constants.ACD_LEVERS.omit,
-           value: Constants.ACD_LEVERS.omit,
-           text: "Omit variable from distribution rules" }]
+         { item: "infinite", value: "infinite", text: "Always distribute to current judge" },
+         { item: "omit", value: "omit", text: "Omit variable from distribution rules" }]
       end
-      algorithms_used { [Constants.ACD_LEVERS.algorithms.proportion] }
-      lever_group { Constants.ACD_LEVERS.lever_groups.affinity }
+      algorithms_used { %w[docket proportion] }
+      lever_group { "affinity" }
       lever_group_order { 3003 }
     end
 
@@ -249,6 +281,136 @@ FactoryBot.define do
       algorithms_used { ["docket"] }
       lever_group { "affinity" }
       lever_group_order { 3000 }
+    end
+
+    trait :ama_direct_review_docket_time_goals do
+      item { "ama_direct_review_docket_time_goals" }
+      title { "AMA Direct Review Docket Time Goals" }
+      data_type { "number" }
+      value { 365 }
+      unit { "days" }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_time_goal" }
+      lever_group_order { 4004 }
+    end
+
+    trait :ama_evidence_submission_docket_time_goals do
+      item { "ama_evidence_submission_docket_time_goals" }
+      title { "AMA Evidence Submission Docket Time Goals" }
+      data_type { "number" }
+      value { 550 }
+      unit { "days" }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_time_goal" }
+      lever_group_order { 4004 }
+    end
+
+    trait :ama_hearing_docket_time_goals do
+      item { "ama_hearing_docket_time_goals" }
+      title { "AMA Hearing Submission Docket Time Goals" }
+      data_type { "number" }
+      value { 730 }
+      unit { "days" }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_time_goal" }
+      lever_group_order { 4004 }
+    end
+
+    trait :ama_hearing_start_distribution_prior_to_goals do
+      item { "ama_hearing_start_distribution_prior_to_goals" }
+      title { "AMA Hearings Start Distribution Prior to Goals" }
+      data_type { "combination" }
+      options do
+        [
+          {
+            item: "value",
+            data_type: "boolean",
+            value: true,
+            text: "This feature is turned on or off",
+            unit: ""
+          }
+        ]
+      end
+      value { 60 }
+      unit { "days" }
+      is_toggle_active { true }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_distribution_prior" }
+      lever_group_order { 4000 }
+    end
+
+    trait :ama_direct_review_start_distribution_prior_to_goals do
+      item { "ama_direct_review_start_distribution_prior_to_goals" }
+      title { "AMA Direct Review Start Distribution Prior to Goals" }
+      data_type { "combination" }
+      options do
+        [
+          {
+            item: "value",
+            data_type: "boolean",
+            value: true,
+            text: "This feature is turned on or off",
+            unit: ""
+          }
+        ]
+      end
+      value { 365 }
+      unit { "days" }
+      is_toggle_active { true }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_distribution_prior" }
+      lever_group_order { 4000 }
+    end
+
+    trait :ama_evidence_submission_review_start_distribution_prior_to_goals do
+      item { "ama_evidence_submission_start_distribution_prior_to_goals" }
+      title { "AMA Evidence Submission Start Distribution Prior to Goals" }
+      data_type { "combination" }
+      options do
+        [
+          {
+            item: "value",
+            data_type: "boolean",
+            value: true,
+            text: "This feature is turned on or off",
+            unit: ""
+          }
+        ]
+      end
+      value { 365 }
+      unit { "days" }
+      is_toggle_active { true }
+      algorithms_used { ["docket"] }
+      lever_group { "docket_distribution_prior" }
+      lever_group_order { 4000 }
+    end
+
+    trait :disable_ama_non_priority_direct_review do
+      item { "disable_ama_non_priority_direct_review" }
+      title { "ACD Disable AMA Non-Priority Direct Review" }
+      data_type { "boolean" }
+      options do
+        [
+          {
+            displayText: "On",
+            name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+            value: "true",
+            disabled: false
+          },
+          {
+            displayText: "Off",
+            name: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+            value: "false",
+            disabled: false
+          }
+        ]
+      end
+      value { false }
+      unit { "days" }
+      algorithms_used { %w(proportion docket) }
+      lever_group { "docket_levers" }
+      lever_group_order { 103 }
+      control_group { "non_priority" }
     end
   end
 end
