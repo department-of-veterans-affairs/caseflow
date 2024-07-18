@@ -6,7 +6,7 @@ class WorkQueue::AppealSearchSerializer
 
   set_type :appeal
 
-  restricted_statuses =
+  RESTRICTED_STATUSES =
     [
       :distributed_to_judge,
       :ready_for_signature,
@@ -14,7 +14,7 @@ class WorkQueue::AppealSearchSerializer
       :misc,
       :unknown,
       :assigned_to_attorney
-    ]
+    ].freeze
 
   attribute :contested_claim, &:contested_claim?
 
@@ -83,7 +83,7 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location do |object, params|
-    if restricted_statuses.include?(object&.status&.status)
+    if RESTRICTED_STATUSES.include?(object&.status&.status)
       unless params[:user]&.vso_employee?
         object.assigned_to_location
       end
