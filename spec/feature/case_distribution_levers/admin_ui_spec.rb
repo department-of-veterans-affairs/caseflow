@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature "Admin UI" do
-  # TODO: break this out if possible
   before { Seeds::CaseDistributionLevers.new.seed! }
 
   let!(:current_user) do
