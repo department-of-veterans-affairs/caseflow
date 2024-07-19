@@ -164,7 +164,6 @@ const CorrespondenceCaseTimeline = (props) => {
         <CorrespondenceTaskRows appeal={props.correspondence}
             taskList={debugData}
             editNodDateEnabled={true}
-            timeline
             statusSplit
           />
         </tbody>
