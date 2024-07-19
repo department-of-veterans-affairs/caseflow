@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import moment from 'moment-timezone';
+import { timeWithTimeZone } from '../utils';
 
 const firstParagraphStyle = css({ marginTop: 0 });
 
@@ -33,12 +34,10 @@ export const HearingTime = ({
       hearing.regionalOfficeTimezone || 'America/New_York';
 
   // Calculate the local time based on either Regional Office or Representative for Virtual hearings
-  const localTime = moment(hearing.scheduledFor).tz(timezone).
-    format('h:mm A z');
+  const localTime = timeWithTimeZone(hearing.scheduledFor, timezone);
 
   // Calculate the central office time
-  const coTime = moment(hearing.scheduledFor).tz('America/New_York').
-    format('h:mm A z');
+  const coTime = timeWithTimeZone(hearing.scheduledFor, 'America/New_York');
 
   // Determine whether to show the Regional Office time as the primary label
   const primaryTime = primaryLabel === 'RO' ? localTime : coTime;
