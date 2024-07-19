@@ -20,6 +20,5 @@ class CorrespondenceDetailsController < CorrespondenceController
 
   # overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
-
   end
 end
