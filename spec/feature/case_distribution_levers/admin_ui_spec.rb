@@ -182,6 +182,7 @@ RSpec.feature "Admin UI" do
         fill_in ama_direct_reviews_field, with: "300"
         click_save_button
         click_modal_confirm_button
+        expect(page).to have_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
 
         # Refresh page to validate back end saved the levers correctly
         visit "case-distribution-controls"
