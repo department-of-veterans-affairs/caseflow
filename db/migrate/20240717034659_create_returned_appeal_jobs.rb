@@ -1,9 +1,9 @@
 class CreateReturnedAppealJobs < Caseflow::Migration
   def change
     create_table :returned_appeal_jobs do |t|
-      t.timestamp :start
-      t.timestamp :end
-      t.timestamp :errored
+      t.timestamp :started_at
+      t.timestamp :completed_at
+      t.timestamp :errored_at
       t.json :stats
       t.text :returned_appeals, array: true, default: []
 
