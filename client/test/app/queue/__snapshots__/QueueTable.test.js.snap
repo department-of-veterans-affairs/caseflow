@@ -1,756 +1,560 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`QueueTable BodyRows Matches snapshot with default props 1`] = `
-<tbody>
-  <Row
-    columns={
-      Array [
-        Object {
-          "header": "First",
-          "valueName": "one",
-        },
-        Object {
-          "header": "Second",
-          "valueName": "two",
-        },
-        Object {
-          "columnName": "type",
-          "enableFilter": true,
-          "header": "Third",
-          "tableData": Array [
-            Object {
-              "one": "First column",
-              "two": "Second column",
-              "type": "Something",
-            },
-            Object {
-              "one": "First column second row",
-              "two": "Second column second row",
-              "type": "Something Else",
-            },
-            Object {
-              "one": "First column third row",
-              "two": "Second column third row",
-              "type": "EstablishClaim",
-            },
-          ],
-          "valueName": "type",
-        },
-      ]
-    }
-    rowObject={
-      Object {
-        "one": "First column",
-        "two": "Second column",
-        "type": "Something",
-      }
-    }
-  />
-  <Row
-    columns={
-      Array [
-        Object {
-          "header": "First",
-          "valueName": "one",
-        },
-        Object {
-          "header": "Second",
-          "valueName": "two",
-        },
-        Object {
-          "columnName": "type",
-          "enableFilter": true,
-          "header": "Third",
-          "tableData": Array [
-            Object {
-              "one": "First column",
-              "two": "Second column",
-              "type": "Something",
-            },
-            Object {
-              "one": "First column second row",
-              "two": "Second column second row",
-              "type": "Something Else",
-            },
-            Object {
-              "one": "First column third row",
-              "two": "Second column third row",
-              "type": "EstablishClaim",
-            },
-          ],
-          "valueName": "type",
-        },
-      ]
-    }
-    rowObject={
-      Object {
-        "one": "First column second row",
-        "two": "Second column second row",
-        "type": "Something Else",
-      }
-    }
-  />
-  <Row
-    columns={
-      Array [
-        Object {
-          "header": "First",
-          "valueName": "one",
-        },
-        Object {
-          "header": "Second",
-          "valueName": "two",
-        },
-        Object {
-          "columnName": "type",
-          "enableFilter": true,
-          "header": "Third",
-          "tableData": Array [
-            Object {
-              "one": "First column",
-              "two": "Second column",
-              "type": "Something",
-            },
-            Object {
-              "one": "First column second row",
-              "two": "Second column second row",
-              "type": "Something Else",
-            },
-            Object {
-              "one": "First column third row",
-              "two": "Second column third row",
-              "type": "EstablishClaim",
-            },
-          ],
-          "valueName": "type",
-        },
-      ]
-    }
-    rowObject={
-      Object {
-        "one": "First column third row",
-        "two": "Second column third row",
-        "type": "EstablishClaim",
-      }
-    }
-  />
-</tbody>
+<DocumentFragment>
+  First columnSecond columnSomethingFirst column second rowSecond column second rowSomething ElseFirst column third rowSecond column third rowEstablishClaim
+</DocumentFragment>
 `;
 
 exports[`QueueTable FooterRow Matches snapshot with default props 1`] = `
-<tfoot>
-  <Row
-    columns={
-      Array [
-        Object {
-          "header": "First",
-          "valueName": "one",
-        },
-        Object {
-          "header": "Second",
-          "valueName": "two",
-        },
-        Object {
-          "footer": "Some Footer",
-          "header": "Second",
-          "valueName": "two",
-        },
-      ]
-    }
-    footer={true}
-  />
-</tfoot>
+<DocumentFragment>
+  Some Footer
+</DocumentFragment>
 `;
 
-exports[`QueueTable FooterRow Renders no footer when not present in the column 1`] = `<tfoot />`;
+exports[`QueueTable FooterRow Renders no footer when not present in the column 1`] = `<DocumentFragment />`;
 
 exports[`QueueTable HeaderRow Can filter when not using task pages API and filtering is enabled 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Third"
+    data-css-9shxm7=""
+  >
+    <span
+      id="header-type"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
-      >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
+      Third
+    </span>
+    <span
+      data-css-ilmt4b=""
+      data-testid="table-filter-testid"
     >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
+      <svg
+        class="table-icon unselected-filter-icon"
+        height="20"
+        role="button"
+        tabindex="0"
+        viewBox="0 0 21 21"
       >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      aria-labelledby="header-type"
-      aria-sort="descending"
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Third"
-        data-css-9shxm7=""
-      >
-        <span
-          id="header-type"
+        <g
+          fill="none"
+          fill-rule="evenodd"
+          stroke="none"
+          stroke-width="1"
         >
-          Third
-        </span>
-        <TableFilter
-          columnName="type"
-          enableFilter={true}
-          enableFilterTextTransform={true}
-          header="Third"
-          tableData={
-            Array [
-              Object {
-                "one": "First column",
-                "two": "Second column",
-                "type": "Something",
-              },
-              Object {
-                "one": "First column second row",
-                "two": "Second column second row",
-                "type": "Something Else",
-              },
-              Object {
-                "one": "First column third row",
-                "two": "Second column third row",
-                "type": "EstablishClaim",
-              },
-            ]
-          }
-          updateFilters={[Function]}
-          valueName="type"
-        />
-      </span>
-    </th>
-  </tr>
-</thead>
+          <g>
+            <rect
+              class="unselected-filter-icon-border-1"
+              fill="#fff"
+              fill-rule="nonzero"
+              height="20"
+              rx="2"
+              stroke="#212121"
+              width="20"
+              x="0.5"
+              y="0.5"
+            />
+            <path
+              class="unselected-filter-icon-inner-1"
+              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+              fill="#212121"
+            />
+          </g>
+        </g>
+      </svg>
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Can filter when not using task pages API and getting filter values 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Third"
+    data-css-9shxm7=""
+  >
+    <span
+      id="header-type"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
-      >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
+      Third
+    </span>
+    <span
+      data-css-ilmt4b=""
+      data-testid="table-filter-testid"
     >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
+      <svg
+        class="table-icon unselected-filter-icon"
+        height="20"
+        role="button"
+        tabindex="0"
+        viewBox="0 0 21 21"
       >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      aria-labelledby="header-type"
-      aria-sort="descending"
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Third"
-        data-css-9shxm7=""
-      >
-        <span
-          id="header-type"
+        <g
+          fill="none"
+          fill-rule="evenodd"
+          stroke="none"
+          stroke-width="1"
         >
-          Third
-        </span>
-        <TableFilter
-          columnName="type"
-          enableFilterTextTransform={true}
-          getFilterValues={[MockFunction]}
-          header="Third"
-          tableData={
-            Array [
-              Object {
-                "one": "First column",
-                "two": "Second column",
-                "type": "Something",
-              },
-              Object {
-                "one": "First column second row",
-                "two": "Second column second row",
-                "type": "Something Else",
-              },
-              Object {
-                "one": "First column third row",
-                "two": "Second column third row",
-                "type": "EstablishClaim",
-              },
-            ]
-          }
-          updateFilters={[Function]}
-          valueName="type"
-        />
-      </span>
-    </th>
-  </tr>
-</thead>
+          <g>
+            <rect
+              class="unselected-filter-icon-border-1"
+              fill="#fff"
+              fill-rule="nonzero"
+              height="20"
+              rx="2"
+              stroke="#212121"
+              width="20"
+              x="0.5"
+              y="0.5"
+            />
+            <path
+              class="unselected-filter-icon-inner-1"
+              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+              fill="#212121"
+            />
+          </g>
+        </g>
+      </svg>
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Can filter when using task pages API and column has filter options 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Third"
+    data-css-9shxm7=""
+  >
+    <span
+      id="header-type"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
-      >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
+      Third
+    </span>
+    <span
+      data-css-ilmt4b=""
+      data-testid="table-filter-testid"
     >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
+      <svg
+        class="table-icon unselected-filter-icon"
+        height="20"
+        role="button"
+        tabindex="0"
+        viewBox="0 0 21 21"
       >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      aria-labelledby="header-type"
-      aria-sort="descending"
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Third"
-        data-css-9shxm7=""
-      >
-        <span
-          id="header-type"
+        <g
+          fill="none"
+          fill-rule="evenodd"
+          stroke="none"
+          stroke-width="1"
         >
-          Third
-        </span>
-        <TableFilter
-          columnName="type"
-          enableFilter={true}
-          enableFilterTextTransform={true}
-          filterOptions={Array []}
-          filterOptionsFromApi={Array []}
-          header="Third"
-          tableData={
-            Array [
-              Object {
-                "one": "First column",
-                "two": "Second column",
-                "type": "Something",
-              },
-              Object {
-                "one": "First column second row",
-                "two": "Second column second row",
-                "type": "Something Else",
-              },
-              Object {
-                "one": "First column third row",
-                "two": "Second column third row",
-                "type": "EstablishClaim",
-              },
-            ]
-          }
-          updateFilters={[Function]}
-          valueName="type"
-        />
-      </span>
-    </th>
-  </tr>
-</thead>
+          <g>
+            <rect
+              class="unselected-filter-icon-border-1"
+              fill="#fff"
+              fill-rule="nonzero"
+              height="20"
+              rx="2"
+              stroke="#212121"
+              width="20"
+              x="0.5"
+              y="0.5"
+            />
+            <path
+              class="unselected-filter-icon-inner-1"
+              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+              fill="#212121"
+            />
+          </g>
+        </g>
+      </svg>
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting column sort value 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Third"
+    data-css-9shxm7=""
+  >
+    <span>
+      Third
+    </span>
+    <span
+      aria-label="Sort by Third"
+      data-css-hwg41t=""
+      role="button"
+      tabindex="0"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
+      <svg
+        class="table-icon"
+        height="17"
+        version="1.1"
+        viewBox="0 0 13 16"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
-      >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Third"
-        data-css-9shxm7=""
-      >
-        <span>
-          Third
-        </span>
-        <span
-          aria-label="Sort by Third"
-          data-css-hwg41t=""
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          role="button"
-          tabIndex="0"
+        <g
+          fill="none"
+          fill-rule="evenodd"
+          stroke="none"
+          stroke-width="1"
         >
-          <DoubleArrowIcon
-            bottomColor="#d6d7d9"
-            className="table-icon"
-            size={17}
-            topColor="#d6d7d9"
-          />
-        </span>
-      </span>
-    </th>
-  </tr>
-</thead>
+          <g
+            fill-rule="nonzero"
+          >
+            <g
+              data-testid="topColorGroup"
+              fill="#d6d7d9"
+              transform="translate(2.000000, 1.000000)"
+            >
+              <g
+                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+              >
+                <path
+                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                />
+              </g>
+            </g>
+            <g
+              data-testid="bottomColorGroup"
+              fill="#d6d7d9"
+              transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+            >
+              <g
+                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+              >
+                <path
+                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Can sort when the backend can sort and getting column sort value 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Third"
+    data-css-9shxm7=""
+  >
+    <span>
+      Third
+    </span>
+    <span
+      aria-label="Sort by Third"
+      data-css-hwg41t=""
+      role="button"
+      tabindex="0"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
+      <svg
+        class="table-icon"
+        height="17"
+        version="1.1"
+        viewBox="0 0 13 16"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
-      >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Third"
-        data-css-9shxm7=""
-      >
-        <span>
-          Third
-        </span>
-        <span
-          aria-label="Sort by Third"
-          data-css-hwg41t=""
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          role="button"
-          tabIndex="0"
+        <g
+          fill="none"
+          fill-rule="evenodd"
+          stroke="none"
+          stroke-width="1"
         >
-          <DoubleArrowIcon
-            bottomColor="#d6d7d9"
-            className="table-icon"
-            size={17}
-            topColor="#d6d7d9"
-          />
-        </span>
-      </span>
-    </th>
-  </tr>
-</thead>
+          <g
+            fill-rule="nonzero"
+          >
+            <g
+              data-testid="topColorGroup"
+              fill="#d6d7d9"
+              transform="translate(2.000000, 1.000000)"
+            >
+              <g
+                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+              >
+                <path
+                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                />
+              </g>
+            </g>
+            <g
+              data-testid="bottomColorGroup"
+              fill="#d6d7d9"
+              transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+            >
+              <g
+                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+              >
+                <path
+                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    stylename="header"
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="First"
-        styleName="header"
-      >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Second"
-        styleName="header"
-      >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Second"
-        styleName="header"
-      >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-  </tr>
-</thead>
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    stylename="header"
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    stylename="header"
+  >
+    <span>
+      Second
+    </span>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
-<thead>
-  <tr
-    role="row"
+<DocumentFragment>
+  <span
+    aria-label="First"
+    data-css-9shxm7=""
   >
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="0"
-      role="columnheader"
-      scope="col"
+    <span>
+      First
+    </span>
+  </span>
+  <span
+    aria-label="Second"
+    data-css-9shxm7=""
+  >
+    <span>
+      Second
+    </span>
+  </span>
+  <span
+    aria-describedby="tooltip-2"
+    aria-label=""
+    currentitem="false"
+    data-css-9shxm7=""
+    data-event="focus mouseenter"
+    data-event-off="mouseleave keydown"
+    data-for="tooltip-2"
+    data-tip="true"
+    tabindex="0"
+  >
+    <span>
+      Third
+    </span>
+  </span>
+  <span
+    data-css-mu3j8b=""
+    data-testid="tooltip-testid"
+  >
+    <div
+      class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
+      data-id="tooltip"
+      id="tooltip-2"
+      role="tooltip"
     >
-      <span
-        aria-label="First"
-        data-css-9shxm7=""
-      >
-        <span>
-          First
-        </span>
-      </span>
-    </th>
-    <th
-      aria-sort="descending"
-      className="testClasses"
-      key="1"
-      role="columnheader"
-      scope="col"
-    >
-      <span
-        aria-label="Second"
-        data-css-9shxm7=""
-      >
-        <span>
-          Second
-        </span>
-      </span>
-    </th>
-    <th
-      className="testClasses"
-      key="2"
-      role="columnheader"
-      scope="col"
-    >
-      <Tooltip
-        id="tooltip-2"
-        styling="flex"
-        text="Some text"
-      >
-        <span
-          aria-label="Third"
-          data-css-9shxm7=""
-        >
-          <span>
-            Third
-          </span>
-        </span>
-      </Tooltip>
-    </th>
-  </tr>
-</thead>
+      <style>
+        
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+      </style>
+      Some text
+    </div>
+  </span>
+</DocumentFragment>
 `;
 
 exports[`QueueTable Row Matches snapshot with default props 1`] = `
-<tr
-  className="testClasses"
-  id="table-row-undefined"
-  role="row"
->
-  <td
-    className="testClasses"
-    colSpan={1}
-    key="0"
-    role="gridcell"
-    tabIndex={-1}
-  >
-    First column
-  </td>
-  <td
-    className="testClasses"
-    colSpan={1}
-    key="1"
-    role="gridcell"
-    tabIndex={-1}
-  >
-    Second column
-  </td>
-</tr>
+<DocumentFragment>
+  First columnSecond column
+</DocumentFragment>
 `;
 
 exports[`QueueTable Row Renders footer when the column is set to a footer 1`] = `
-<tr
-  className="testClasses"
-  id="table-row-footer"
-  role="row"
->
-  <td
-    className="testClasses"
-    colSpan={1}
-    key="0"
-    role="gridcell"
-    tabIndex={-1}
-  />
-  <td
-    className="testClasses"
-    colSpan={1}
-    key="1"
-    role="gridcell"
-    tabIndex={-1}
-  />
-  <td
-    className="testClasses"
-    colSpan={1}
-    key="2"
-    role="gridcell"
-    tabIndex={-1}
-  >
-    Some Footer
-  </td>
-</tr>
+<DocumentFragment>
+  Some Footer
+</DocumentFragment>
 `;
 
 exports[`QueueTable render() Can filter rows 1`] = `
 <DocumentFragment>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <table
       aria-describedby="case-table-description"
@@ -958,6 +762,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
 <DocumentFragment>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <table
       aria-describedby="case-table-description"
@@ -1039,6 +844,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                       fill-rule="nonzero"
                     >
                       <g
+                        data-testid="topColorGroup"
                         fill="#d6d7d9"
                         transform="translate(2.000000, 1.000000)"
                       >
@@ -1051,6 +857,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                         </g>
                       </g>
                       <g
+                        data-testid="bottomColorGroup"
                         fill="#d6d7d9"
                         transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                       >
@@ -1174,6 +981,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
 <DocumentFragment>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <table
       aria-describedby="case-table-description"
@@ -1340,6 +1148,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
 <DocumentFragment>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <section
       class="testClasses"
@@ -1391,6 +1200,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
 <DocumentFragment>
   <div
     class="cf-table-wrapper"
+    data-testid="queue-table-data-testid"
   >
     <div
       class="cf-pagination"
