@@ -102,7 +102,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       )
     end
 
-    def fake_notification_response(email_template_id)
+    def fake_notification_response(template_id)
       HTTPI::Response.new(
         200,
         {},
@@ -111,14 +111,14 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
           "reference": "string",
           "uri": "string",
           "template": {
-            "id" => email_template_id,
+            "id" => template_id,
             "version" => 0,
             "uri" => "string"
           },
           "scheduled_for": "string",
           "content": {
             "body" => "string",
-            "subject" => "string"
+            "subject" => "Template: #{template_id} Status: #{status || 'N/A'}"
           }
         )
       )
