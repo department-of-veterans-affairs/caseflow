@@ -14,6 +14,7 @@ class CorrespondenceIntakeController < CorrespondenceController
     @correspondence = WorkQueue::CorrespondenceSerializer
       .new(correspondence)
       .serializable_hash[:data][:attributes]
+      .merge(general_information)
   end
 
   def current_step

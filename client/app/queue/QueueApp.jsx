@@ -715,7 +715,6 @@ class QueueApp extends React.PureComponent {
       autoTexts={this.props.autoTexts}
       correspondence={this.props.correspondence}
       priorMail={this.props.priorMail}
-      veteranInformation={this.props.veteranInformation}
       isInboundOpsSupervisor={this.props.isInboundOpsSupervisor}
     />
   );
@@ -1593,7 +1592,6 @@ QueueApp.propTypes = {
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
   priorMail: PropTypes.array,
-  veteranInformation: PropTypes.string,
   autoTexts: PropTypes.array,
   reduxStore: PropTypes.object,
   organizationPermissions: PropTypes.array,
