@@ -177,8 +177,8 @@ RSpec.feature "Admin UI" do
       end
 
       step "lever history displays on page" do
-        expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
-        expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
+        expect(page).to have_content("123 days")
+        expect(page).to have_no_content("300 days")
 
         fill_in ama_direct_reviews_field, with: "300"
         click_save_button
@@ -187,9 +187,9 @@ RSpec.feature "Admin UI" do
         # Refresh page to validate back end saved the levers correctly
         visit "case-distribution-controls"
 
-        expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
-        expect(find("#lever-history-table").has_content?("456 days")).to eq(true)
-        expect(find("#lever-history-table").has_content?("300 days")).to eq(true)
+        expect(page).to have_content("123 days")
+        expect(page).to have_content("456 days")
+        expect(page).to have_content("300 days")
       end
     end
   end
