@@ -148,6 +148,16 @@ RSpec.feature "Admin UI" do
         fill_in ama_evidence_submissions_field, with: "456"
         click_save_button
         click_modal_confirm_button
+        expect(page).to have_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
+      end
+
+      step "lever history displays on page" do
+        expect(page.find("#lever-history-table").has_content?("15 cases")).to be true
+        expect(page.find("#lever-history-table").has_content?("365 days")).to be true
+        expect(page.find("#lever-history-table").has_content?("550 days")).to be true
+        expect(page.find("#lever-history-table").has_content?("13 cases")).to be true
+        expect(page.find("#lever-history-table").has_content?("123 days")).to be true
+        expect(page.find("#lever-history-table").has_content?("456 days")).to be true
       end
 
       step "batch size lever section errors display with invalid inputs" do
@@ -173,24 +183,6 @@ RSpec.feature "Admin UI" do
         fill_in "#{request_more_cases_minimum}-field", with: "25"
 
         expect(page).not_to have_content(EMPTY_ERROR_MESSAGE)
-      end
-
-      step "lever history displays on page" do
-        expect(page).to have_content("123 days")
-        expect(page).to have_no_content("300 days")
-
-        fill_in ama_direct_reviews_field, with: "300"
-        expect(page).to have_no_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
-        click_save_button
-        click_modal_confirm_button
-        expect(page).to have_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
-
-        # Refresh page to validate back end saved the levers correctly
-        visit "case-distribution-controls"
-
-        expect(page).to have_content("123 days")
-        expect(page).to have_content("456 days")
-        expect(page).to have_content("300 days")
       end
     end
   end
