@@ -4,7 +4,8 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
+
 
 describe('render Case Distribution Application', () => {
 
@@ -24,10 +25,10 @@ describe('render Case Distribution Application', () => {
     jest.clearAllMocks();
   });
 
-  it('renders Case Distribution App', () => {
+  it.only('renders Case Distribution App', () => {
     const store = getStore();
 
-    let wrapper = mount(
+    const {container} = render(
       <Provider store={store}>
         <CaseDistributionApp
           acdLeversForStore={testLevers}
@@ -38,12 +39,10 @@ describe('render Case Distribution Application', () => {
       </Provider>
     );
 
-    wrapper.update();
-
-    expect(wrapper.find('#lever-history-table').exists()).toBeTruthy();
-    expect(wrapper.find('.inactive-data-content').exists()).toBeTruthy();
-    expect(wrapper.find('.lever-content').exists()).toBeTruthy();
+    // Assertions
+    expect(container.querySelector('#lever-history-table')).toBeInTheDocument();
+    expect(container.querySelector('.inactive-data-content')).toBeInTheDocument();
+    expect(container.querySelector('.lever-content')).toBeInTheDocument();
   });
-
 });
 
