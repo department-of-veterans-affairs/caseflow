@@ -449,7 +449,7 @@ class AppealState < CaseflowRecord
       end
 
       if status_to_update == :decision_mailed
-        existing_statuses.merge!({ appeal_docketed: false })
+        existing_statuses[:appeal_docketed] = false
       end
     end)
   end
