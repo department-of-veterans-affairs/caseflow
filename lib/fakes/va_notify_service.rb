@@ -117,7 +117,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
           },
           "scheduled_for": "string",
           "content": {
-            "body" => "Template: #{template_id} Status: #{status || 'N/A'}",
+            "body" => "Template: #{template_id} - Status: #{status}",
             "subject" => "Test Subject"
           }
         )
