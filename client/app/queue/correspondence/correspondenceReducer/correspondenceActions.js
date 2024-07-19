@@ -85,16 +85,6 @@ export const loadCorrespondenceConfig = (configUrl) =>
         });
   };
 
-export const loadCorrespondenceStatus = (correspondenceStatus) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCE_STATUS,
-      payload: {
-        correspondenceStatus
-      }
-    });
-  };
-
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({

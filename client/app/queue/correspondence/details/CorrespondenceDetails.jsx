@@ -4,19 +4,14 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { loadCorrespondence, loadCorrespondenceStatus } from '../correspondenceReducer/correspondenceActions';
+import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
   const correspondence = props.correspondence;
-  const correspondenceStatus = props.correspondenceStatus;
 
   useEffect(() => {
     dispatch(loadCorrespondence(correspondence));
-  }, []);
-
-  useEffect(() => {
-    dispatch(loadCorrespondenceStatus(correspondenceStatus));
   }, []);
 
   const tabList = [
@@ -56,7 +51,7 @@ const CorrespondenceDetails = (props) => {
           </div>
           <p><a href="/under_construction">View all correspondence</a></p>
           <div></div>
-          <p className="last-item"><b>Record status: </b>{props.correspondenceStatus}</p>
+          <p className="last-item"><b>Record status: </b>{props.correspondence.status}</p>
         </div>
         <TabWindow
           name="tasks-tabwindow"

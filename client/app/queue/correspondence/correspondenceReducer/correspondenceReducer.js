@@ -56,13 +56,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.LOAD_CORRESPONDENCE_STATUS:
-    return update(state, {
-      correspondenceStatus: {
-        $set: action.payload.correspondenceStatus
-      }
-    });
-
   case ACTIONS.LOAD_INBOUND_OPS_TEAM_USERS:
     return update(state, {
       inboundOpsTeamUsers: {

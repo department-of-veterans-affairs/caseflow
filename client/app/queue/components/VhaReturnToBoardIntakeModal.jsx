@@ -53,8 +53,8 @@ export const VhaReturnToBoardIntakeModal = (props) => {
               textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ?
-                  COPY.VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL :
-                  null
+                COPY.VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL :
+                null
               }
             />}
           <TextareaField
