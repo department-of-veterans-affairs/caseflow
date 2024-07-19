@@ -1119,10 +1119,6 @@ class LegacyAppeal < CaseflowRecord
       AppealRepository
     end
 
-    def aoj_appeal_repository
-      AojAppealRepository
-    end
-
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:)
