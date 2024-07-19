@@ -1070,10 +1070,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-top: 2.7%;
 
     .opt-select {
-      .receipt-date {
-        //
-      }
-
       .css-yk16xz-control {
         border-radius: 0;
       }
@@ -1144,10 +1140,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 
   .opt-select {
-    .receipt-date {
-      //
-    }
-
     .css-yk16xz-control {
       border-radius: 0;
     }
@@ -1179,6 +1171,26 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
       margin-bottom: 0;
     }
   }
+}
+
+.select-container-styles {
+  width: 100%;
+  display: inline-block;
+}
+
+.non-related-task {
+  margin-bottom: 150px;
+  padding-top: 10px;
+  font-weight: bold;
+}
+
+.correspondence-letters-table-container {
+  background-color: $color-gray-inverse-base;
+}
+
+.correspondence-letters-table {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .myletters {
@@ -1276,12 +1288,11 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
 }
 
 .correspondence-details-header {
-  background-color: $color-gray-inverse-base;
-  // background-color: red;
   width: 100%;
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  margin-top: -20px;
 
   h1 {
     float: left;
@@ -1290,11 +1301,21 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
     margin-bottom: 0;
   }
 
+  a {
+    padding: 0.5rem 1.5rem;
+    border-right: 1px solid $color-gray-lighter;
+    border-left: 1px solid $color-gray-lighter;
+  }
+
   p {
     font-size: 18px;
     color: $color-black;
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+
+  .vet-id-margin {
+    margin-right: 5px;
   }
 
   .copy-id {
@@ -1308,3 +1329,6 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.app-segment-cd-details {
+  box-shadow: inset 0 90px 0 0 $color-gray-inverse-base;
+}

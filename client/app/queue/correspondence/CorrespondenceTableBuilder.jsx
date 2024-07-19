@@ -326,11 +326,7 @@ const CorrespondenceTableBuilder = (props) => {
   return <div>
     <h1 className="correspondence-table-builder-title">{config.table_title}</h1>
     <QueueOrganizationDropdown
-      isInboundOpsTeamUser={props.isInboundOpsTeamUser}
-      isInboundOpsSupervisor={props.isInboundOpsSupervisor}
-      isInboundOpsSuperuser={props.isInboundOpsSuperuser}
       organizations={props.organizations}
-      featureToggles={props.featureToggles}
     />
     <TabWindow
       name="tasks-tabwindow"

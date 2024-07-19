@@ -35,4 +35,60 @@ RSpec.feature("The Correspondence Details page") do
       expect(page).to have_content("Associated Prior Mail")
     end
   end
+
+  context "correspondence in the Completed tab of Your Correspondence Queue" do
+    let(:current_user) { create(:user) }
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      @correspondences = Array.new(20) do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "completed")
+        rpt.save!
+        review_correspondence
+      end
+    end
+
+    it "Verify that the user is taken to the Details page of the correspondence by clicking on correspondence" do
+      visit "/queue/correspondence?tab=correspondence_completed&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Completed correspondence")
+      find_all("#task-link").first.click
+      visit "/queue/correspondence/#{@correspondences.first.uuid}"
+      expect(page).to have_content(@correspondences.first.veteran.file_number)
+    end
+  end
+
+  context "correspondence in the Completed tab of Correspondence Cases" do
+    let(:current_user) { create(:inbound_ops_team_supervisor) }
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user, roles: ["Inbound Ops Team"])
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      @correspondences = Array.new(20) do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "completed")
+        rpt.save!
+        review_correspondence
+      end
+    end
+
+    it "Verify that the user is taken to the Details page of the correspondence by clicking on correspondence" do
+      visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=vaDor&order=asc"
+      expect(page).to have_content("Completed correspondence")
+      find_all("#task-link").first.click
+      visit "/queue/correspondence/#{@correspondences.first.uuid}"
+      expect(page).to have_content(@correspondences.first.veteran.file_number)
+    end
+  end
 end

@@ -62,9 +62,6 @@ RSpec.describe CorrespondenceIntakeController, :all_dbs, type: :controller do
           id: 181,
           veteran_id: 3909
         },
-        veteranInformation: {
-          id: 3909
-        },
         waivedEvidenceTasks: []
       }.to_json
     end

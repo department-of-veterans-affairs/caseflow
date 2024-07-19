@@ -1,5 +1,4 @@
 import React from 'react';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { PencilIcon } from '../../../../../components/icons/PencilIcon';
 import Button from '../../../../../components/Button';
@@ -8,7 +7,6 @@ import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
-import { COLORS } from '../../../../../constants/AppConstants';
 import { formatDateStr } from 'app/util/DateUtil';
 
 export const ConfirmCorrespondenceView = (props) => {
@@ -154,8 +152,8 @@ export const ConfirmCorrespondenceView = (props) => {
             </Button>
           </div>
         </div>
-        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
-          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '20px', paddingBottom: '20px' })}>
+        <div className="correspondence-letters-table-container" >
+          <div className="correspondence-letters-table">
             <table className="correspondence-response-letters-table">
               <tbody>
                 <tr>

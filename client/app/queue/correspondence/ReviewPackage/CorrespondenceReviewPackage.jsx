@@ -221,7 +221,6 @@ export const CorrespondenceReviewPackage = (props) => {
             }}
             {...props}
             userIsInboundOpsSupervisor={props.userIsInboundOpsSupervisor}
-            isInboundOpsSuperuser={props.isInboundOpsSuperuser}
           />
           <CmpDocuments
             documents={props.correspondence.correspondenceDocuments}
@@ -269,7 +268,6 @@ CorrespondenceReviewPackage.propTypes = {
   correspondenceTypes: PropTypes.array,
   hasEfolderFailedTask: PropTypes.bool,
   packageDocumentType: PropTypes.object,
-  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func,
   userIsInboundOpsSupervisor: PropTypes.bool,
@@ -280,7 +278,6 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   packageDocumentType: state.reviewPackage.packageDocumentType,
-  veteranInformation: state.reviewPackage.veteranInformation,
   createRecordIsReadOnly: state.reviewPackage.createRecordIsReadOnly,
 });
 
