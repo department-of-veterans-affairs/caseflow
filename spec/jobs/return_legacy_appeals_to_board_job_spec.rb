@@ -10,8 +10,8 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       end.to change { ReturnedAppealJob.count }.by(1)
 
       returned_appeal_job = ReturnedAppealJob.last
-      expect(returned_appeal_job.start).to be_present
-      expect(returned_appeal_job.end).to be_present
+      expect(returned_appeal_job.started_at).to be_present
+      expect(returned_appeal_job.completed_at).to be_present
       expect(JSON.parse(returned_appeal_job.stats)["message"]).to eq("Job completed successfully")
     end
 
@@ -34,7 +34,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
       let(:error_message) { "Something went wrong" }
 
       before do
-        allow(job).to receive(:send_job_report).and_raise(StandardError, error_message)
+        allow(job).to receive(:send_job_slack_report).and_raise(StandardError, error_message)
       end
 
       it "updates the ReturnedAppealJob with error details" do
@@ -43,7 +43,7 @@ describe ReturnLegacyAppealsToBoardJob, :all_dbs do
         end.to change { ReturnedAppealJob.count }.by(1)
 
         returned_appeal_job = ReturnedAppealJob.last
-        expect(returned_appeal_job.errored).to be_present
+        expect(returned_appeal_job.errored_at).to be_present
         expect(JSON.parse(returned_appeal_job.stats)["message"]).to include("Job failed with error: #{error_message}")
       end
 
