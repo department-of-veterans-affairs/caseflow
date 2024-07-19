@@ -7,7 +7,6 @@ FactoryBot.define do
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }
     veteran_is_not_claimant { true }
-    type { SupplementalClaim.name }
 
     transient do
       number_of_claimants { nil }
@@ -282,11 +281,6 @@ FactoryBot.define do
                nonrating_issue_description: "#{sc.business_line.name} #{evaluator.description}",
                decision_review: sc)
       end
-    end
-
-    factory :remand, class: Remand do
-      type { Remand.name }
-      decision_review_remanded { create(:appeal) }
     end
   end
 end
