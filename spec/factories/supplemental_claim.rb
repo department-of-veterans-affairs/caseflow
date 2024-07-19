@@ -284,10 +284,9 @@ FactoryBot.define do
       end
     end
 
-    trait :remand do
-      after(:create) do |sc|
-        sc.update!(type: "remand")
-      end
+    factory :remand, class: Remand do
+      type { Remand.name }
+      decision_review_remanded { create(:appeal) }
     end
   end
 end
