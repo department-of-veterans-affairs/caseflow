@@ -30,7 +30,7 @@ class WorkQueue::CorrespondenceSerializer
     # next unless filtered_tasks.empty?
 
     tasks = []
-    if !filtered_tasks.empty?
+    if filtered_tasks.empty?
       filtered_tasks.each do |task|
         tasks <<
           {
