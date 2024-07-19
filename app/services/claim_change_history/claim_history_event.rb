@@ -17,7 +17,7 @@ class ClaimHistoryEvent
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
               :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
-              :current_claim_status
+              :current_claim_status, :issue_modification_request_withdrawal_date
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -534,9 +534,10 @@ class ClaimHistoryEvent
       removed_issue: "Removed issue",
       added_decision_date: "Added decision date",
       cancelled: "Claim closed",
-      addition: "Requested additional issues",
-      removal: "Requested removal",
-      modification: "Requested modification",
+      addition: "Requested issue addition",
+      removal: "Requested issue removal",
+      modification: "Requested issue modification",
+      withdrawal: "Requested issue withdrawal",
       request_approved: "Approval of the request - issue #{request_type}",
       request_rejected: "Rejection of the request- issue #{request_type}",
       request_cancelled: "Cancellation of request"
@@ -625,6 +626,7 @@ class ClaimHistoryEvent
       @modification_request_reason = change_data["modification_request_reason"]
       @decision_reason = change_data["decision_reason"]
       @decided_at_date = change_data["decided_at"]
+      @issue_modification_request_withdrawal_date = change_data["issue_modification_request_withdrawal_date"]
     end
   end
 

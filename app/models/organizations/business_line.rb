@@ -265,6 +265,7 @@ class BusinessLine < Organization
           imr.decider_id, imr.requestor_id, imr.decided_at, imr.created_at AS issue_modification_request_created_at,
           imr.updated_at AS issue_modification_request_updated_at,
           imr.edited_at AS issue_modification_request_edited_at,
+          imr.withdrawal_date AS issue_modification_request_withdrawal_date,
           requestor.full_name AS requestor,
           requestor.station_id AS requestor_station_id,
           requestor.css_id AS requestor_css_id,

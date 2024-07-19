@@ -11,6 +11,7 @@ class ChangeHistoryEventSerializer
   attribute :claimType, &:readable_claim_type
   attribute :readableEventType, &:readable_event_type
   attribute :claimantName, &:claimant_name
+  attribute :requestType, &:request_type
 
   attribute :details do |object|
     {
@@ -29,9 +30,10 @@ class ChangeHistoryEventSerializer
     {
       benefitType: object.benefit_type,
       newIssueType: object&.new_issue_type,
-      newissueDescription: object&.new_issue_description,
+      newIssueDescription: object&.new_issue_description,
       newDecisionDate: object&.new_decision_date,
-      modificationRequestReason: object&.modification_request_reason
+      modificationRequestReason: object&.modification_request_reason,
+      issueModificationRequestWithdrawalDate: object&.issue_modification_request_withdrawal_date
     }
   end
 end
