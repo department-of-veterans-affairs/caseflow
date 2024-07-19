@@ -25,6 +25,7 @@ class ClaimHistoryService
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
     @processed_issue_modification_request_ids = Set.new
+    @processed_issue_modification_task_ids = Set.new
     @events = []
   end
 
@@ -239,11 +240,18 @@ class ClaimHistoryService
 
   def process_request_issue_modification_events(change_data)
     issue_modification_request_id = change_data["issue_modification_request_id"]
-    if issue_modification_request_id &&
-       !@processed_issue_modification_request_ids.include?(issue_modification_request_id)
+    task_id = change_data["task_id"]
+    is_processed = @processed_issue_modification_request_ids.include?(issue_modification_request_id)
+
+    if issue_modification_request_id && !is_processed
       @processed_issue_modification_request_ids.add(issue_modification_request_id)
       save_events(ClaimHistoryEvent.create_issue_modification_request_event(change_data))
       save_events(ClaimHistoryEvent.create_issue_modification_decision_event(change_data))
+    end
+
+    if task_id && !@processed_issue_modification_task_ids.include?(task_id)
+      @processed_issue_modification_task_ids.add(task_id)
+      save_events(ClaimHistoryEvent.create_pending_status_events(change_data))
     end
   end
 

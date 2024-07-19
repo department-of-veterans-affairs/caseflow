@@ -224,9 +224,12 @@ class BusinessLine < Organization
               versions.item_id, versions.item_type
         )
         SELECT tasks.id AS task_id,
-          CASE WHEN imr.status = 'assigned' AND imr.id IS NOT NULL THEN
+          get_claim_status.current_claim_status,
+          CASE
+          WHEN imr.status = 'assigned' AND imr.id IS NOT NULL THEN
             'pending'
           ELSE tasks.status END AS task_status,
+          tasks.status AS task_status,
           request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
@@ -260,13 +263,16 @@ class BusinessLine < Organization
           imr.request_type,
           imr.status AS issue_modification_request_status, imr.decision_reason,
           imr.decider_id, imr.requestor_id, imr.decided_at, imr.created_at AS issue_modification_request_created_at,
+          imr.updated_at AS issue_modification_request_updated_at,
           imr.edited_at AS issue_modification_request_edited_at,
           requestor.full_name AS requestor,
           requestor.station_id AS requestor_station_id,
           requestor.css_id AS requestor_css_id,
           decider.full_name AS decider,
           decider.station_id AS decider_station_id,
-          decider.css_id AS decider_css_id
+          decider.css_id AS decider_css_id,
+          imr.decision_review_id,
+          imr.decision_review_type
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -294,10 +300,16 @@ class BusinessLine < Organization
         LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
         LEFT JOIN users requestor ON imr.requestor_id = requestor.id
         LEFT JOIN users decider ON imr.decider_id = decider.id
+        INNER JOIN LATERAL (
+          SELECT array_agg(status) current_claim_status FROM issue_modification_requests imr WHERE
+            imr.decision_review_id = request_issues.decision_review_id
+            AND imr.decision_review_type = request_issues.decision_review_type
+
+        ) get_claim_status on true
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
-        AND tasks.id = '78'
+        -- AND tasks.id = '81'
         #{sanitized_filters}
        -- UNION ALL
        -- SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,

@@ -16,7 +16,8 @@ class ClaimHistoryEvent
               :disposition, :decision_description, :withdrawal_request_date,
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
               :event_user_css_id, :new_issue_type, :new_issue_description, :new_decision_date,
-              :modification_request_reason, :request_type, :decision_reason, :decided_at_date
+              :modification_request_reason, :request_type, :decision_reason, :decided_at_date,
+              :current_claim_status
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -110,23 +111,17 @@ class ClaimHistoryEvent
         "event_user_css_id" => change_data["requestor_css_id"]
       }
 
-      system_hash = {
-        "event_date" => change_data["issue_modification_request_created_at"],
-        "event_user_name" => "System",
-        "event_type" => "pending"
-      }
+      change_data = issue_attributes_for_request_type_addition(request_type, change_data)
 
-      issue_modification_events.push from_change_data(:pending, change_data.merge(system_hash))
       issue_modification_events.push from_change_data(request_type.to_sym, change_data.merge(event_hash))
     end
 
     def create_issue_modification_decision_event(change_data)
       issue_modification_decision_event = []
-      issue_modification_request_status = change_data["issue_modification_request_status"]
+      return if change_data["issue_modification_request_status"] == "assigned"
 
-      return if issue_modification_request_status == "assigned"
+      request_event_type = "request_#{change_data['issue_modification_request_status']}"
 
-      request_event_type = "request_#{issue_modification_request_status}"
       # if decided date is nil and status is cancelled then we should display edited info and edited user.
       event_hash = {
         "event_date" => change_data["decided_at"] || change_data["issue_modification_request_edited_at"],
@@ -135,18 +130,41 @@ class ClaimHistoryEvent
         "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
       }
 
-      system_hash = {
-        "event_date" => change_data["decided_at"] || change_data["issue_modification_request_edited_at"],
-        "event_user_name" => "System"
-      }
-
-      # logic is needed here to remove duplication of the in_progress tab.
-      # also if more than one issue request modification are made and
-      # only one of them is cancelled then what will happen?
-      issue_modification_decision_event.push from_change_data(:in_progress, change_data.merge(system_hash))
+      change_data = issue_attributes_for_request_type_addition(change_data["request_type"], change_data)
       issue_modification_decision_event.push from_change_data(request_event_type.to_sym, change_data.merge(event_hash))
+      unless assign_status_present?(change_data)
+        pending_system_hash = {
+          "event_date" => change_data["issue_modification_request_updated_at"],
+          "event_user_name" => "System",
+          "event_type" => "pending"
+        }
+        issue_modification_decision_event.push from_change_data(:in_progress, change_data.merge(pending_system_hash))
+      end
 
       issue_modification_decision_event
+    end
+
+    # when issue_modification_request_status is anything other than assigned then we add a pending status
+    # as it was once in pending status.
+    def create_pending_status_events(change_data)
+      issue_modification_request_status = change_data["issue_modification_request_status"]
+      issue_modification_request_id = change_data["issue_modification_request_id"]
+
+      if issue_modification_request_status != "assigned" && !issue_modification_request_id.nil?
+        pending_system_hash = {
+          "event_date" => change_data["issue_modification_request_created_at"],
+          "event_user_name" => "System",
+          "event_type" => "pending"
+        }
+        from_change_data(:pending, change_data.merge(pending_system_hash))
+      end
+    end
+
+    # if current_claim_status has one or more 'assigned' then task should never be in progress state
+    def assign_status_present?(change_data)
+      return false if change_data["current_claim_status"].nil?
+
+      change_data["current_claim_status"].include?("assigned")
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -217,6 +235,19 @@ class ClaimHistoryEvent
       issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data.merge(updates_hash)))
 
       issue_events
+    end
+
+    def issue_attributes_for_request_type_addition(event_type, change_data)
+      return change_data if event_type != "addition"
+
+      # addition should not have issue_type that is pre-existing
+      issue_data = {
+        "nonrating_issue_category" => nil,
+        "nonrating_issue_description" => nil,
+        "decision_date" => nil
+      }
+
+      change_data.merge(issue_data)
     end
 
     def extract_issue_ids_from_change_data(change_data, key)
@@ -416,20 +447,6 @@ class ClaimHistoryEvent
         ]
       end
     end
-
-    # TODO: this might need to change a little bit depending how we create pending status.
-    def create_pending_status_events(change_data)
-      issue_modification_request_status = change_data["issue_modification_request_status"]
-      issue_modification_request_id = change_data["issue_modification_request_id"]
-
-      if issue_modification_request_status != "assigned" && !issue_modification_request_id.nil?
-        from_change_data(:pending, change_data.merge(
-                                     "event_date" => change_data["issue_modification_request_created_at"],
-                                     "event_user_name" => "System",
-                                     "event_type" => "pending"
-                                   ))
-      end
-    end
   end
 
   ############### End of Class methods ##################
@@ -562,10 +579,11 @@ class ClaimHistoryEvent
 
   def parse_task_attributes(change_data)
     @task_id = change_data["task_id"]
-    @task_status = change_data["task_status"]
+    @task_status = retrieve_current_claim_status(change_data)
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
     @days_waiting = change_data["days_waiting"]
+    @current_claim_status = change_data["current_claim_status"]
   end
 
   def parse_intake_attributes(change_data)
@@ -610,6 +628,14 @@ class ClaimHistoryEvent
     end
   end
 
+  def retrieve_current_claim_status(change_data)
+    return change_data["task_status"] if change_data["current_claim_status"].nil?
+
+    is_assign_present = change_data["current_claim_status"].include?("assigned")
+
+    is_assign_present ? "pending" : change_data["task_status"]
+  end
+
   ############ CSV and Serializer Helpers ############
 
   def abbreviated_user_name(name_string)
@@ -618,7 +644,7 @@ class ClaimHistoryEvent
   end
 
   def issue_information
-    if issue_event?
+    if issue_event? || event_has_modification_request?
       [issue_type, issue_description, readable_decision_date]
     end
   end
@@ -626,6 +652,8 @@ class ClaimHistoryEvent
   def issue_modification_request_information
     if event_has_modification_request?
       [new_issue_type, new_issue_description, readable_new_decision_date, modification_request_reason, decision_reason]
+    else
+      [nil, nil, nil, nil, nil]
     end
   end
 
