@@ -52,15 +52,7 @@ const CorrespondenceCaseTimeline = (props) => {
       placedOnHoldAt: null,
       status: 'completed',
       onHoldDuration: null,
-      instructions: [
-        [
-          'Edited Issue',
-          '',
-          'Benefit Type: Compensation\n\r\nIssue: TDIU\n\r\nCode: 02 - Entitlement\n\r\nNote: Provident rerum dolor temporibus.\n\r\nDisposition: \n',
-          'Special Issues: None',
-          'Special Issues: MST, PACT'
-        ]
-      ],
+      instructions: ['test2'],
       decisionPreparedBy: null,
       availableActions: [],
       timelineTitle: 'IssuesUpdateTask completed',

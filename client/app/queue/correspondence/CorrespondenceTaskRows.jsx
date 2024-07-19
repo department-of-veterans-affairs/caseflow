@@ -364,40 +364,10 @@ class CorrespondenceTaskRows extends React.PureComponent {
         //    AND mst/pact designation changes by intake user)
         // 3: Special issues (Either added by intake user or originating in VBMS - if left unaltered during intake)
           <div key={index}>
-            <div style={divStyle}>
-              <b>Added Issue:</b>
-            </div>
-            <div style={divStyle}>
-              {issue[0]}
-            </div>
-            {issue.at(1) !== '' &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  Benefit type: {issue[1]}
-                </div>
-              </React.Fragment>}
+            <p>hi</p>
             {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
-            {issue[2] ?
-              <React.Fragment>
-                <h5 style={hStyle}>ORIGINAL: </h5>
-                <small>{issue[2]}</small>
-                <h5 style={hStyle}>UPDATED: </h5>
-                <small>{issue[3]}</small>
-                <p></p>
-              </React.Fragment> :
-              <div style={divStyle}>
-                {issue[3]}
-                <p></p>
-              </div>
-            }
+
             {/* No horizontal rule after the last issue */}
-            {index !== (text.length - 1) &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  <hr />
-                </div>
-              </React.Fragment>
-            }
           </div>
         );
 
@@ -440,7 +410,8 @@ class CorrespondenceTaskRows extends React.PureComponent {
               className="task-instructions"
             >
               {
-                formatInstructions(task, text)
+                // formatInstructions(task, text)
+                <p>{text}</p>
               }
             </div>
           </React.Fragment>
