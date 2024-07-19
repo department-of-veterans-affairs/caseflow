@@ -12,8 +12,8 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { mount } from 'enzyme';
-import { render } from '@testing-library/react';
+import { logRoles, render, screen } from '@testing-library/react';
+
 
 describe('render Case Distribution Application', () => {
 
@@ -36,7 +36,7 @@ describe('render Case Distribution Application', () => {
   it('renders Case Distribution App as editable for an admin', () => {
     const store = getStore();
 
-    let wrapper = mount(
+    const {container} = render(
       <Provider store={store}>
         <CaseDistributionApp
           acdLeversForStore={testLevers}
@@ -47,20 +47,19 @@ describe('render Case Distribution Application', () => {
       </Provider>
     );
 
-    wrapper.update();
-
-    expect(wrapper.find('#lever-history-table').exists()).toBeTruthy();
-    expect(wrapper.find('.inactive-data-content').exists()).toBeTruthy();
-    expect(wrapper.find('.lever-content').exists()).toBeTruthy();
-    // the buttons and inputs will only render for admin users
-    expect(wrapper.find('button').exists()).toBe(true);
-    expect(wrapper.find('input').length > 0).toBe(true);
-  });
+      // Assertions
+      expect(container.querySelector('#lever-history-table')).toBeInTheDocument();
+      expect(container.querySelector('.inactive-data-content')).toBeInTheDocument();
+      expect(container.querySelector('.lever-content')).toBeInTheDocument();
+      // the buttons and inputs will only render for admin users
+      expect(screen.getAllByRole('button').length).toBeGreaterThan(0);
+      expect(screen.getAllByRole('textbox').length).toBeGreaterThan(0);
+    });
 
   it('renders Case Distribution App as read-only for a non admin', () => {
     const store = getStore();
 
-    let wrapper = mount(
+    const {container} = render(
       <Provider store={store}>
         <CaseDistributionApp
           acdLeversForStore={testLevers}
@@ -71,14 +70,12 @@ describe('render Case Distribution Application', () => {
       </Provider>
     );
 
-    wrapper.update();
-
-    expect(wrapper.find('#lever-history-table').exists()).toBeTruthy();
-    expect(wrapper.find('.inactive-data-content').exists()).toBeTruthy();
-    expect(wrapper.find('.lever-content').exists()).toBeTruthy();
+    expect(container.querySelector('#lever-history-table')).toBeInTheDocument();
+    expect(container.querySelector('.inactive-data-content')).toBeInTheDocument();
+    expect(container.querySelector('.lever-content')).toBeInTheDocument();
     // the buttons and inputs will only render for admin users
-    expect(wrapper.find('button').exists()).toBe(false);
-    expect(wrapper.find('input').length === 0).toBe(true);
+    expect(screen.queryAllByRole('button').length).toBe(0);
+    expect(screen.queryAllByRole('textbox').length).toBe(0);
   });
 
   it('matches snapshot', () => {
