@@ -180,6 +180,7 @@ RSpec.feature "Admin UI" do
         expect(page).to have_no_content("300 days")
 
         fill_in ama_direct_reviews_field, with: "300"
+        expect(page).to have_no_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
         click_save_button
         click_modal_confirm_button
         expect(page).to have_content(COPY::CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE)
