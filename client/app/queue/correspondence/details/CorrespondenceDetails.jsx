@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { loadCorrespondence } from '../correspondenceReducer/correspondenceActions';
-import { CorrespondenceCaseTimeline } from '../CorrespondenceCaseTimeline';
+import CorrespondenceCaseTimeline from '../CorrespondenceCaseTimeline';
+// import { CaseTimeline } from '../../CaseTimeline';
 
 const CorrespondenceDetails = (props) => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: <CorrespondenceCaseTimeline correspondence={correspondence}/>
+      page: <CorrespondenceCaseTimeline correspondence={props.correspondence} />
     },
     {
       disable: false,
