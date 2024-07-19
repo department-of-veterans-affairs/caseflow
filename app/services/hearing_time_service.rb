@@ -13,6 +13,7 @@ class HearingTimeService
       # takes hearing update_legacy_params from controller and adds
       # vacols-formatted scheduled_for
       return update_params if update_params[:scheduled_time_string].nil?
+
       scheduled_for = legacy_formatted_scheduled_for(
         date_string: hearing&.hearing_day&.scheduled_for&.to_s,
         time_string: update_params[:scheduled_time_string]
@@ -29,7 +30,7 @@ class HearingTimeService
     def legacy_formatted_scheduled_for(time_string:, date_string:)
       date_and_time_string = "#{date_string} #{time_string}"
       time = Time.parse(date_and_time_string).utc
-      time -= 1.hour if Time.parse(date_and_time_string).dst?
+      time -= 1.hour if Time.zone.parse(date_and_time_string).dst?
       utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
       formatted_string = utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %I:%M %p")
       [formatted_string, VacolsHelper::VACOLS_DEFAULT_TIMEZONE].join(" ")

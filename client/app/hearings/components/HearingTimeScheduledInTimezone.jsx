@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment-timezone';
+
+import { timeWithTimeZone } from '../utils';
 
 export const HearingTimeScheduledInTimezone = ({
   hearing,
@@ -12,12 +13,9 @@ export const HearingTimeScheduledInTimezone = ({
   primaryLabel,
   showRegionalOfficeName,
 }) => {
-  const timeInScheduledTimezone = moment(hearing.scheduledFor).tz(hearing.scheduledInTimezone).
-    format('h:mm A z');
+  const timeInScheduledTimezone = timeWithTimeZone(hearing.scheduledFor, hearing.scheduledInTimezone);
 
-  // Calculate the central office time
-  const coTime = moment(hearing.scheduledFor).tz('America/New_York').
-    format('h:mm A z');
+  const coTime = timeWithTimeZone(hearing.scheduledFor, 'America/New_York');
 
   const primaryTime = primaryLabel === 'RO' ? timeInScheduledTimezone : coTime;
   const secondaryTime = primaryLabel === 'RO' ? coTime : timeInScheduledTimezone;
@@ -55,6 +53,9 @@ HearingTimeScheduledInTimezone.defaultProps = {
   showRegionalOfficeName: false,
   showRequestType: false,
   breakCharacter: ' /',
+  labelClasses: '',
+  paragraphClasses: '',
+  primaryLabel: '',
 };
 
 HearingTimeScheduledInTimezone.propTypes = {

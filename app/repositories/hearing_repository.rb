@@ -315,12 +315,12 @@ class HearingRepository
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
       date = if hearing.scheduled_in_timezone
-              VacolsHelper.normalize_vacols_datetime(vacols_record.hearing_date)
+               VacolsHelper.normalize_vacols_datetime(vacols_record.hearing_date)
              else
                HearingMapper.datetime_based_on_type(
-                datetime: vacols_record.hearing_date,
-                regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
-                type: vacols_record.hearing_type
+                 datetime: vacols_record.hearing_date,
+                 regional_office: regional_office_for_scheduled_timezone(hearing, vacols_record),
+                 type: vacols_record.hearing_type
                )
              end
 

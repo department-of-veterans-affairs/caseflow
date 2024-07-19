@@ -8,13 +8,17 @@ exports[`HearingTimeScheduleInTimezone Display HearingTimeScheduleInTimezone 1`]
     >
       <b />
     </p>
-    <p>
-      <span>
-        3:30 AM EDT
+    <p
+      class=""
+    >
+      <span
+        class=""
+      >
+        6:00 AM EDT
       </span>
        /
       <br />
-      2:30 AM CDT
+      5:00 AM CDT
       <br />
     </p>
     <p>

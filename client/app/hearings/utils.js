@@ -358,6 +358,17 @@ export const zoneName = (time, name, format) => {
 };
 
 /**
+ * Method to get time with timezone like 12:30 PM EDT
+ * @param {string} dateTime -- DateTime stamp
+ * @param {string} timeZone -- Name of timezone. Default 'America/New_York'
+ * @returns {string} -- Formatted time in 'h:mm A z'
+ */
+export const timeWithTimeZone = (dateTime, timeZone = 'America/New_York') =>{
+  return moment(dateTime).tz(timeZone).
+    format('h:mm A z');
+};
+
+/**
  * Method to get short zone label from like 'Eastern' or 'Pacific'
  * @param {string} name -- Name of the zone, defaults to 'America/New_York'
  * @returns {string} -- The short label of the timezone
