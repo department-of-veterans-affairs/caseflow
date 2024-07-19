@@ -115,97 +115,97 @@ class AddIssuesPage extends React.Component {
     const identifier = issueModificationRequest.identifier;
 
     switch (requestType) {
-      case 'reviewIssueModificationRequest':
-        this.setState({
-          pendingIssueModification: issueModificationRequest
-        });
-        this.props.toggleRequestIssueModificationModal(identifier);
-        break;
-      case 'reviewIssueAdditionRequest':
-        this.setState({
-          pendingIssueModification: issueModificationRequest
-        });
-        this.props.toggleRequestIssueAdditionModal(identifier);
-        break;
-      case 'reviewIssueWithdrawalRequest':
-        this.setState({
-          pendingIssueModification: issueModificationRequest
-        });
-        this.props.toggleRequestIssueWithdrawalModal(identifier);
-        break;
-      case 'reviewIssueRemovalRequest':
-        this.setState({
-          pendingIssueModification: issueModificationRequest,
-        });
-        this.props.toggleRequestIssueRemovalModal(identifier);
-        break;
-      case 'cancelReviewIssueRequest':
-        this.setState({
-          pendingIssueModification: issueModificationRequest,
-        });
-        this.props.toggleCancelPendingRequestIssueModal();
-        break;
-      default:
-        // Do nothing if the dropdown option was not set or implemented.
-        break;
+    case 'reviewIssueModificationRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueModificationModal(identifier);
+      break;
+    case 'reviewIssueAdditionRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueAdditionModal(identifier);
+      break;
+    case 'reviewIssueWithdrawalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest
+      });
+      this.props.toggleRequestIssueWithdrawalModal(identifier);
+      break;
+    case 'reviewIssueRemovalRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
+      this.props.toggleRequestIssueRemovalModal(identifier);
+      break;
+    case 'cancelReviewIssueRequest':
+      this.setState({
+        pendingIssueModification: issueModificationRequest,
+      });
+      this.props.toggleCancelPendingRequestIssueModal();
+      break;
+    default:
+      // Do nothing if the dropdown option was not set or implemented.
+      break;
     }
   };
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
-      case 'add_decision_date':
-        this.props.toggleAddDecisionDateModal();
-        this.setState({ issueAddDecisionDateIndex: index });
-        break;
-      case 'remove':
-        if (this.props.toggleIssueRemoveModal) {
-          // on the edit page, so show the remove modal
-          this.setState({
-            issueRemoveIndex: index
-          });
-          this.props.toggleIssueRemoveModal();
-        } else {
-          this.props.removeIssue(index);
-        }
-        break;
-      case 'withdraw':
-        this.props.withdrawIssue(index);
-        break;
-      case 'correct':
-        this.props.toggleCorrectionTypeModal({ index });
-        break;
-      case 'undo_correction':
-        this.props.undoCorrection(index);
-        break;
-      case 'edit':
+    case 'add_decision_date':
+      this.props.toggleAddDecisionDateModal();
+      this.setState({ issueAddDecisionDateIndex: index });
+      break;
+    case 'remove':
+      if (this.props.toggleIssueRemoveModal) {
+        // on the edit page, so show the remove modal
         this.setState({
-          issueIndex: index
+          issueRemoveIndex: index
         });
-        this.props.toggleEditIntakeIssueModal({ index });
-        break;
-      case 'requestModification':
-        this.setState({
-          issueIndex: index,
-          pendingIssueModification: {}
-        });
-        this.props.toggleRequestIssueModificationModal(index);
-        break;
-      case 'requestRemoval':
-        this.setState({
-          issueIndex: index,
-          pendingIssueModification: {}
-        });
-        this.props.toggleRequestIssueRemovalModal(index);
-        break;
-      case 'requestWithdrawal':
-        this.setState({
-          issueIndex: index,
-          pendingIssueModification: {}
-        });
-        this.props.toggleRequestIssueWithdrawalModal(index);
-        break;
-      default:
-        this.props.undoCorrection(index);
+        this.props.toggleIssueRemoveModal();
+      } else {
+        this.props.removeIssue(index);
+      }
+      break;
+    case 'withdraw':
+      this.props.withdrawIssue(index);
+      break;
+    case 'correct':
+      this.props.toggleCorrectionTypeModal({ index });
+      break;
+    case 'undo_correction':
+      this.props.undoCorrection(index);
+      break;
+    case 'edit':
+      this.setState({
+        issueIndex: index
+      });
+      this.props.toggleEditIntakeIssueModal({ index });
+      break;
+    case 'requestModification':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueModificationModal(index);
+      break;
+    case 'requestRemoval':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueRemovalModal(index);
+      break;
+    case 'requestWithdrawal':
+      this.setState({
+        issueIndex: index,
+        pendingIssueModification: {}
+      });
+      this.props.toggleRequestIssueWithdrawalModal(index);
+      break;
+    default:
+      this.props.undoCorrection(index);
     }
   };
 
@@ -337,7 +337,7 @@ class AddIssuesPage extends React.Component {
 
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
+    const { useAmaActivationDate, hlrScUnrecognizedClaimants, disableAmaEventing } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -639,7 +639,9 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    if (!disableAmaEventing) {
+      rowObjects = rowObjects.concat(intakeSystemLabelRow());
+    }
 
     Object.keys(issuesBySection).sort().
       map((key) => {
