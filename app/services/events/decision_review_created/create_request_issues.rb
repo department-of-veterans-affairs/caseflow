@@ -52,7 +52,7 @@ class Events::DecisionReviewCreated::CreateRequestIssues
           nonrating_issue_bgs_id: parser_issues.ri_nonrating_issue_bgs_id,
           nonrating_issue_bgs_source: parser_issues.ri_nonrating_issue_bgs_source,
           end_product_establishment_id: epe.id,
-          veteran_participant_id: parser_issues.veteran_participant_id,
+          veteran_participant_id: parser.veteran_participant_id,
           decision_review: decision_review
         )
         create_event_record(event, ri)
