@@ -47,7 +47,7 @@ const formatTimeString = (hearing, timeWasEdited) => {
 };
 
 export const DateTime = ({ hearing, timeWasEdited }) => (
-  <div>
+  <div data-testid='datetime-testid'>
     <strong>Hearing Date:&nbsp;</strong>
     {moment(hearing.scheduledFor).format('MM/DD/YYYY')}
     <br />
@@ -92,7 +92,7 @@ export const ReadOnlyEmails = ({
   const showDivider = representativeEmailAddress && (repEdited || appellantEdited || showAllEmails);
 
   return (
-    <div {...emailConfirmationModalStyles}>
+    <div {...emailConfirmationModalStyles} data-testid='read-only-emails-testid'>
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
         <React.Fragment>
           <ReadOnly
