@@ -21,28 +21,28 @@ module Seeds
       end
     end
 
-    def create_correspondent
-      @ssn += 1
+    def create_correspondent(options = {})
+      @ssn += 1 unless options[:ssn]
 
-      correspondent = VACOLS::Correspondent.find_by(ssn: @ssn) ||
-        create(
-          :correspondent,
-          stafkey: @ssn,
-          ssn: @ssn,
-          susrtyp: "VETERAN",
-          ssalut: nil,
-          snamef: Faker::Name.first_name,
-          snamemi: Faker::Name.initials(number: 1),
-          snamel: Faker::Name.last_name,
-          saddrst1: Faker::Address.street_name,
-          saddrcty: Faker::Address.city,
-          saddrstt: Faker::Address.state_abbr,
-          saddrzip: Faker::Address.zip,
-          staduser: "FAKEUSER",
-          stadtime: 10.years.ago.to_datetime,
-          sdob: 50.years.ago,
-          sgender: Faker::Gender.short_binary_type,
-        )
+      params = {
+        stafkey: @ssn,
+        ssn: @ssn,
+        susrtyp: "VETERAN",
+        ssalut: nil,
+        snamef: Faker::Name.first_name,
+        snamemi: Faker::Name.initials(number: 1),
+        snamel: Faker::Name.last_name,
+        saddrst1: Faker::Address.street_name,
+        saddrcty: Faker::Address.city,
+        saddrstt: Faker::Address.state_abbr,
+        saddrzip: Faker::Address.zip,
+        staduser: "FAKEUSER",
+        stadtime: 10.years.ago.to_datetime,
+        sdob: 50.years.ago,
+        sgender: Faker::Gender.short_binary_type
+      }
+
+      correspondent = VACOLS::Correspondent.find_by(ssn: options[:ssn] || @ssn) || create(:correspondent, params.merge(options))
 
       unless Veteran.find_by(ssn: @ssn)
         create(
