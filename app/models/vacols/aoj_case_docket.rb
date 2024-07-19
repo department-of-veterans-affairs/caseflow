@@ -372,6 +372,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     connection.exec_query(fmtd_query).to_a
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.update_appeal_affinity_dates_query(priority, date)
     priority_condition = if priority
                            "and (PREV_TYPE_ACTION = '7' or AOD = '1')"
@@ -408,7 +409,7 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     connection.exec_query(fmtd_query).to_a
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
