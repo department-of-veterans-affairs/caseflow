@@ -36,6 +36,28 @@ RSpec.feature("The Correspondence Details page") do
     end
   end
 
+  context "correspondence details as standard caseflow user" do
+    before :each do
+      Bva.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "properly loads the details page for other caseflow users" do
+      visit "/queue/correspondence/#{correspondence.uuid}"
+
+      # Verify the user can see the correspondence details page
+      expect(page).to_not have_content("Drat!")
+    end
+
+    it "does not load other correspondence pages for other caseflow users" do
+      visit "/queue/correspondence"
+
+      # Verify the user is routed to /unauthorized
+      expect(page).to have_content("Drat!")
+    end
+  end
+
   context "correspondence in the Completed tab of Your Correspondence Queue" do
     let(:current_user) { create(:user) }
     before :each do
