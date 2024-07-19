@@ -63,7 +63,7 @@
       "id": "cancelled"
     }
   ],
-  "SPECTIFIC_EVENT_OPTIONS": [
+  "SPECIFIC_EVENT_OPTIONS": [
     {
       "system": [
         {
@@ -115,35 +115,35 @@
       ],
       "requests": [
         {
-          "label": "Requested Issue Modification",
+          "label": "Requested issue modification",
           "id":"requested_issue_modification"
         },
         {
-          "label": "Requested Issue Addition",
+          "label": "Requested issue addition",
           "id":"requested_issue_addition"
         },
         {
-          "label": "Requested Issue Removal",
+          "label": "Requested issue removal",
           "id":"requested_issue_removal"
         },
         {
-          "label": "Requested Issue withdrawal",
+          "label": "Requested issue withdrawal",
           "id":"requested_issue_withdrawal"
         },
         {
-          "label": "Approval Of Request",
+          "label": "Approval of request",
           "id":"approval_of_request"
         },
         {
-          "label": "Rejection Of Request",
+          "label": "Rejection of request",
           "id":"rejection_of_request"
         },
         {
-          "label": "Cancellation Of Request",
+          "label": "Cancellation of request",
           "id":"cancellation_of_request"
         },
         {
-          "label": "Edit Of Request",
+          "label": "Edit of request",
           "id":"edit_of_request"
         }
       ]

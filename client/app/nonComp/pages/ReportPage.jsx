@@ -6,6 +6,7 @@ import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
+import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
@@ -28,7 +29,7 @@ import {
   RADIO_STATUS_OPTIONS,
   RADIO_STATUS_REPORT_TYPE_OPTIONS,
   SPECIFIC_STATUS_OPTIONS,
-  SPECTIFIC_EVENT_OPTIONS
+  SPECIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
@@ -43,11 +44,11 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const OuterContainerStyling = css({
+const outerContainerStyling = css({
   display: 'flex',
   justifyContent: 'space-between',
   paddingLeft: '30px',
-  paddingRight: '25rem',
+  gap: '3em',
 });
 
 const specificEventTypeSchema = yup.lazy((value) => {
@@ -147,108 +148,72 @@ const ReportPageButtons = ({
   );
 };
 
-const RHFCheckboxGroup = ({ options, name, control }) => {
+const CheckBoxes = ({ header, options, name }) => {
   const { field } = useController({
-    control,
     name
   });
-
-  const { errors } = useFormContext();
-
   const [value, setValue] = React.useState({});
+
+  return (
+    <div>
+      <h4>{header}</h4>
+      {options.map((option) => (
+        <div key={option.id}>
+          <Checkbox
+            name={`${name}.${option.id}`}
+            key={`${name}.${option.id}`}
+            label={option.label}
+            stronglabel
+            onChange={(val) => {
+              value[option.id] = val;
+              field.onChange(value);
+              setValue(value);
+            }}
+            unpadded
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const RHFCheckboxGroup = ({ options, name }) => {
+  const { errors } = useFormContext();
 
   let fieldClasses = 'checkbox';
 
   const errorMessage = get(errors, name)?.message;
-
-  if (errorMessage) {
-    fieldClasses += ' usa-input-error';
-    fieldClasses += ' less-error-padding';
-  }
+  const errorSubMessage = 'Please select a checkbox from one of the sections below';
 
   return (
-    name === 'specificEventType' ?
-      <fieldset>
-        {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-        <div {...OuterContainerStyling}>
-          <div className={fieldClasses}>
-            <h4>System</h4>
-            {options[0].system.map((option) => (
-              <div key={option.id}>
-                <Checkbox
-                  name={`${name}.${option.id}`}
-                  key={`${name}.${option.id}`}
-                  label={option.label}
-                  stronglabel
-                  onChange={(val) => {
-                    value[option.id] = val;
-                    field.onChange(value);
-                    setValue(value);
-                  }}
-                  unpadded
-                />
-              </div>
-            ))}
-          </div>
-          <div className={fieldClasses}>
-            <h4>General</h4>
-            {options[0].general.map((option) => (
-              <div key={option.id}>
-                <Checkbox
-                  name={`${name}.${option.id}`}
-                  key={`${name}.${option.id}`}
-                  label={option.label}
-                  stronglabel
-                  onChange={(val) => {
-                    value[option.id] = val;
-                    field.onChange(value);
-                    setValue(value);
-                  }}
-                  unpadded
-                />
-              </div>
-            ))}
-          </div>
-          <div className={fieldClasses}>
-            <h4>Requests</h4>
-            {options[0].requests.map((option) => (
-              <div key={option.id}>
-                <Checkbox
-                  name={`${name}.${option.id}`}
-                  key={`${name}.${option.id}`}
-                  label={option.label}
-                  stronglabel
-                  onChange={(val) => {
-                    value[option.id] = val;
-                    field.onChange(value);
-                    setValue(value);
-                  }}
-                  unpadded
-                />
-              </div>
-            ))}
-          </div>
+    <fieldset>
+      {errorMessage && <Alert type="error" title={errorMessage} message={errorSubMessage} />}
+      {name === 'specificEventType' ?
+        <div {...outerContainerStyling} className={fieldClasses}>
+          <CheckBoxes
+            header= "System"
+            options={options[0].system}
+            name={name}
+          />
+          <CheckBoxes
+            header= "General"
+            options={options[0].general}
+            name={name}
+          />
+          <CheckBoxes
+            header= "Requests"
+            options={options[0].requests}
+            name={name}
+          />
+        </div> :
+        <div {...outerContainerStyling} className={fieldClasses}>
+          <CheckBoxes
+            options={options}
+            name={name}
+          />
         </div>
-      </fieldset> :
-      <fieldset style={{ paddingLeft: '30px' }}>
-        {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-        {options.map((option) => (
-          <div key={option.id}>
-            <Checkbox
-              name={`${name}.${option.id}`}
-              key={`${name}.${option.id}`}
-              label={option.label}
-              stronglabel
-              onChange={(val) => {
-                value[option.id] = val;
-                field.onChange(value);
-                setValue(value);
-              }}
-              unpadded
-            />
-          </div>
-        ))}
-      </fieldset>
+      }
+    </fieldset>
   );
 };
 
@@ -464,7 +429,7 @@ const ReportPage = ({ history }) => {
           {watchReportType === 'event_type_action' &&
           watchRadioEventAction === 'specific_events_action' ? (
               <RHFCheckboxGroup
-                options={SPECTIFIC_EVENT_OPTIONS}
+                options={SPECIFIC_EVENT_OPTIONS}
                 control={control}
                 name="specificEventType"
               />
@@ -499,6 +464,12 @@ RHFCheckboxGroup.propTypes = {
   control: PropTypes.object,
   name: PropTypes.string,
   errorMessage: PropTypes.string
+};
+
+CheckBoxes.propTypes = {
+  header: PropTypes.string,
+  options: PropTypes.array,
+  name: PropTypes.string
 };
 
 RHFRadioButton.propTypes = {
