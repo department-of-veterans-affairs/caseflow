@@ -372,6 +372,42 @@ class VACOLS::AojCaseDocket < VACOLS::CaseDocket
     connection.exec_query(fmtd_query).to_a
   end
 
+  def self.update_appeal_affinity_dates_query(priority, date)
+    priority_condition = if priority
+                           "and (PREV_TYPE_ACTION = '7' or AOD = '1')"
+                         else
+                           "and ((PREV_TYPE_ACTION is null or PREV_TYPE_ACTION <> '7') and AOD = '0')"
+                         end
+
+    query = <<-SQL
+      select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+        CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+        STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+        case when APPEALS.BFAC = '7' then 1 else 0 end CAVC, PREV_TYPE_ACTION,
+        PREV_DECIDING_JUDGE
+      from (
+        select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ,
+          PREV_APPEAL.PREV_TYPE_ACTION PREV_TYPE_ACTION,
+          PREV_APPEAL.PREV_DECIDING_JUDGE PREV_DECIDING_JUDGE
+        from (
+          #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
+          #{priority_condition}
+        ) BRIEFF
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_PREVIOUS_APPEALS}
+        order by BFD19
+      ) APPEALS
+      left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+      left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+      where APPEALS.BFD19 <= TO_DATE('#{date}', 'YYYY-MM-DD HH24:MI:SS')
+      order by BFD19
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_a
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
