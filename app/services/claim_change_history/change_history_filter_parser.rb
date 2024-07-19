@@ -48,7 +48,8 @@ class ChangeHistoryFilterParser
       "incomplete" => "on_hold",
       "in_progress" => %w[assigned in_progress],
       "completed" => "completed",
-      "cancelled" => "cancelled"
+      "cancelled" => "cancelled",
+      "pending" => "pending"
     }
 
     filter_params[:statuses]&.values&.map { |task_status| status_mapping[task_status] }&.flatten

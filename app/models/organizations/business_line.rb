@@ -380,7 +380,7 @@ class BusinessLine < Organization
     def change_history_sql_filter_array
       [
         # Task status and claim type filtering always happens regardless of params
-        task_status_pending_filter + task_status_filter,
+        task_status_filter,
         claim_type_filter,
         # All the other filters are optional
         task_id_filter,
@@ -388,8 +388,7 @@ class BusinessLine < Organization
         issue_types_filter,
         days_waiting_filter,
         station_id_filter,
-        user_css_id_filter,
-        report_type_filter
+        user_css_id_filter
       ].compact
     end
 
@@ -401,23 +400,36 @@ class BusinessLine < Organization
       end
     end
 
-    def task_status_pending_filter
-      if query_params[:task_status].present? && query_params[:task_status].include?("pending")
-        # change pending status to assigned in the query
-        query_params[:task_status][query_params[:task_status].index("pending")] = "assigned"
-        " AND imr.id IS NOT NULL"
+    def task_specific_status_filter
+      if query_params[:task_status].include?("pending")
+        task_status_pending_filter
       else
-        ""
-        # " AND NOT EXISTS(
-        #   SELECT decision_review_id FROM issue_modification_requests WHERE
-        #   issue_modification_requests.status = 'assigned'
-        #   AND issue_modification_requests.decision_review_id = tasks.appeal_id
-        #   AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
+        task_status_without_pending_filter
       end
     end
 
-    def task_specific_status_filter
-      " AND #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}"
+    def task_status_pending_filter
+      filter_params_count = query_params[:task_status].count
+      # change pending status to assigned in the query because pending is not a thing in status column
+      query_params[:task_status][query_params[:task_status].index("pending")] = "assigned"
+      where_with_pending = " AND (imr.id IS NOT NULL AND imr.status = 'assigned')"
+
+      # when status param is pending and count is greater than one then
+      # we need to add OR statement so that both is collected.
+      if filter_params_count > 1
+        where_with_pending += " OR #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}"
+      end
+      where_with_pending
+    end
+
+    def task_status_without_pending_filter
+      where_clause_no_pending = " AND #{where_clause_from_array(Task, :status, query_params[:task_status].uniq).to_sql}"
+      where_clause_no_pending += " AND NOT EXISTS(
+            SELECT decision_review_id FROM issue_modification_requests WHERE
+            issue_modification_requests.status = 'assigned'
+            AND issue_modification_requests.decision_review_id = tasks.appeal_id
+            AND tasks.appeal_type = issue_modification_requests.decision_review_type)"
+      where_clause_no_pending
     end
 
     def claim_type_filter
@@ -475,15 +487,6 @@ class BusinessLine < Organization
           SQL
         end
       end
-    end
-
-    def report_type_filter
-    end
-
-    def issue_modification_request_status_filter
-    end
-
-    def edit_of_request_filter
     end
 
     # rubocop:disable Metrics/AbcSize

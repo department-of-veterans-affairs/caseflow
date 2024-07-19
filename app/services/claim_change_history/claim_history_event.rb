@@ -150,7 +150,7 @@ class ClaimHistoryEvent
       issue_modification_request_status = change_data["issue_modification_request_status"]
       issue_modification_request_id = change_data["issue_modification_request_id"]
 
-      if issue_modification_request_status != "assigned" && !issue_modification_request_id.nil?
+      if !issue_modification_request_id.nil? && issue_modification_request_status != "cancelled"
         pending_system_hash = {
           "event_date" => change_data["issue_modification_request_created_at"],
           "event_user_name" => "System",
