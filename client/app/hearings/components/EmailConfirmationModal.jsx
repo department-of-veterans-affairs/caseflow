@@ -45,10 +45,8 @@ const formatTimeString = (hearing, timeWasEdited, hearingDate) => {
   return timeString;
 };
 
-export const DateTime = ({ hearing, timeWasEdited }) => {
-  const unformattedHearingDate = moment(hearing.scheduledFor);
-
-  return (<div>
+export const DateTime = ({ hearing, timeWasEdited }) => (
+  <div data-testid='datetime-testid'>
     <strong>Hearing Date:&nbsp;</strong>
     {unformattedHearingDate.format('MM/DD/YYYY')}
     <br />
@@ -95,7 +93,7 @@ export const ReadOnlyEmails = ({
   const hearingDayDate = moment(hearing?.scheduledFor).format('YYYY-MM-DD');
 
   return (
-    <div {...emailConfirmationModalStyles}>
+    <div {...emailConfirmationModalStyles} data-testid='read-only-emails-testid'>
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
         <React.Fragment>
           <ReadOnly
