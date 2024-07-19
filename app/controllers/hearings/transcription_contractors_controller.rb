@@ -16,7 +16,10 @@ class Hearings::TranscriptionContractorsController < ApplicationController
 
       format.json do
         @transcription_contractors = TranscriptionContractor.all
-        render json: { transcription_contractors: @transcription_contractors }
+        counts = Transcription.group(:transcription_contractor_id).count
+        transcription_contractor_json = @transcription_contractors.as_json
+          .each { |contractor| contractor["transcription_count"] = counts[contractor["id"]] }
+        render json: { transcription_contractors: transcription_contractor_json }
       end
     end
   end
