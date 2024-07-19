@@ -27,13 +27,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SAVE_CURRENT_INTAKE:
     return action.payload.currentIntake;
 
-  case ACTIONS.LOAD_VET_CORRESPONDENCE:
-    return update(state, {
-      vetCorrespondences: {
-        $set: action.payload.vetCorrespondences
-      }
-    });
-
   case ACTIONS.LOAD_CORRESPONDENCE:
     return update(state, {
       correspondence: {
