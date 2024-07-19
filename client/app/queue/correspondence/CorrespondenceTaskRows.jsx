@@ -158,23 +158,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
     );
   };
 
-  daysWaitingListItem = (task) => {
-    if (task.closedAt) {
-      return null;
-    }
-
-    return taskIsOnHold(task) ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
-        <dd>
-          <OnHoldLabel task={task} />
-        </dd>
-      </div>
-    ) : (
-      this.daysSinceTaskAssignmentListItem(task)
-    );
-  };
-
   assignedToListItem = (task) => {
     const assignee = task.assigneeName;
 
@@ -221,16 +204,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
       <dd>{reasonLabel}</dd></div> : null;
   }
 
-  completedByListItem = (task) => {
-    const completedBy = task?.completedBy?.cssId;
 
-    return completedBy ? (
-      <div className="cf-row-wrapper">
-        <dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_BY_LABEL}</dt>
-        <dd>{completedBy}</dd>
-      </div>
-    ) : null;
-  };
 
   splitAtListItem = (task) => {
     return (
@@ -256,7 +230,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
   };
 
   splitInstruction = () => {
-    return <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_INSTRUCTION}</dt></div>;
+    // return <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_INSTRUCTION}</dt></div>;
   }
 
   splitReasonListItem = (task) => {
@@ -564,7 +538,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
         {this.assignedByListItem(task)}
         {this.cancelledByListItem(task)}
         {this.cancelReasonListItem(task)}
-        {this.completedByListItem(task)}
         {this.taskLabelListItem(task)}
         {this.taskInstructionsListItem(task)}
       </React.Fragment>
