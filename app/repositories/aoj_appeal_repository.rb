@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class AojAppealRepository < AppealRepository
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError
