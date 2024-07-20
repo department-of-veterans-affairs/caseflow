@@ -48,7 +48,7 @@ jobs:
       localstack:
         image: localstack/localstack:0.14.5
         ports:
-          - "4566:4566"
+          - 4566:4566
         env:
           SERVICES: "sqs"
 
