@@ -51,6 +51,8 @@ jobs:
           - 4566:4566
         env:
           SERVICES: "sqs"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
 
     strategy:
       fail-fast: false
