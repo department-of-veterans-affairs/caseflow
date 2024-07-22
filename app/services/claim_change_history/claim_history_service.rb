@@ -102,7 +102,9 @@ class ClaimHistoryService
   def process_event_filter(new_events)
     return new_events if @filters[:events].blank?
 
-    new_events.select { |event| event && ensure_array(@filters[:events]).include?(event.event_type) }
+    new_events.select do |event|
+      event && ensure_array(modified_event_type_filter).include?(event.event_type)
+    end
   end
 
   def process_issue_type_filter(new_events)
@@ -240,16 +242,23 @@ class ClaimHistoryService
 
   def process_request_issue_modification_events(change_data)
     issue_modification_request_id = change_data["issue_modification_request_id"]
+
+    return unless issue_modification_request_id
+
     task_id = change_data["task_id"]
     is_processed = @processed_issue_modification_request_ids.include?(issue_modification_request_id)
 
     if issue_modification_request_id && !is_processed
       @processed_issue_modification_request_ids.add(issue_modification_request_id)
       save_events(ClaimHistoryEvent.create_issue_modification_request_event(change_data))
+      save_events(ClaimHistoryEvent.create_edited_request_issue_events(change_data))
       save_events(ClaimHistoryEvent.create_issue_modification_decision_event(change_data))
     end
 
-    if task_id && !@processed_issue_modification_task_ids.include?(task_id)
+    # no matter what the status is if request_modification_request was made then pending status has to be present.
+    if task_id &&
+       !@processed_issue_modification_task_ids.include?(task_id)
+
       @processed_issue_modification_task_ids.add(task_id)
       save_events(ClaimHistoryEvent.create_pending_status_events(change_data))
     end
@@ -257,5 +266,23 @@ class ClaimHistoryService
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]
+  end
+
+  def modified_event_type_filter
+    @filters[:events].map { |ef| issue_modification_event_type_request_mapper(ef.to_s) || ef }
+  end
+
+  # this should probably be removed and event type coming from frontend can be modified.
+  def issue_modification_event_type_request_mapper(event_type)
+    {
+      "requested_issue_modification" => :modification,
+      "requested_issue_addition" => :addition,
+      "requested_issue_removal" => :removal,
+      "requested_issue_withdrawal" => :withdrawal,
+      "approval_of_request" => :request_approved,
+      "rejection_of_request" => :request_rejected,
+      "cancellation_of_request" => :request_cancelled,
+      "edit_of_request" => :request_edited
+    }[event_type]
   end
 end

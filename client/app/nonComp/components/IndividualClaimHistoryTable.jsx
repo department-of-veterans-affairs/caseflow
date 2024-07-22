@@ -44,8 +44,15 @@ const IndividualClaimHistoryTable = (props) => {
   const ClaimPendingFragment = () => {
     return <React.Fragment>Claim cannot be processed until VHA admin reviews pending requests.</React.Fragment>;
   };
-  const ClaimClosedFragment = (details) => {
+
+  const claimCancelledFragment = () => {
     return <React.Fragment>
+      Claim cancelled.<br />
+    </React.Fragment>;
+  };
+
+  const ClaimClosedFragment = (details) => {
+    return details.eventType === 'cancelled' ? claimCancelledFragment() : <React.Fragment>
       Claim closed.<br />
       <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
     </React.Fragment>;
@@ -134,7 +141,7 @@ const IndividualClaimHistoryTable = (props) => {
 
     const { readableEventType, details, modificationRequestDetails } = row;
 
-    const detailsExtended = { ...details, eventDate: row.eventDate };
+    const detailsExtended = { ...details, eventDate: row.eventDate, eventType: row.eventType };
 
     const requestDetails = { ...modificationRequestDetails, requestType: row.requestType };
     const requestModificationDetails = { ...details, ...requestDetails };

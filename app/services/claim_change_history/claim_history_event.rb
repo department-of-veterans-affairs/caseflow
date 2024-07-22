@@ -38,7 +38,8 @@ class ClaimHistoryEvent
     :removal,
     :request_approved,
     :request_rejected,
-    :request_cancelled
+    :request_cancelled,
+    :request_edited
   ].freeze
 
   ISSUE_EVENTS = [
@@ -73,7 +74,8 @@ class ClaimHistoryEvent
     :removal,
     :request_approved,
     :request_rejected,
-    :request_cancelled
+    :request_cancelled,
+    :request_edited
   ].freeze
 
   REQUEST_ISSUE_TIME_WINDOW = 15
@@ -124,7 +126,9 @@ class ClaimHistoryEvent
 
       # if decided date is nil and status is cancelled then we should display edited info and edited user.
       event_hash = {
-        "event_date" => change_data["decided_at"] || change_data["issue_modification_request_edited_at"],
+        "event_date" => change_data["decided_at"] ||
+                        change_data["issue_modification_request_edited_at"] ||
+                        change_data["issue_modification_request_updated_at"],
         "event_user_name" => change_data["decider"] || change_data["requestor"],
         "user_facility" => change_data["decider_station_id"] || change_data["requestor_station_id"],
         "event_user_css_id" => change_data["decider_css_id"] || change_data["requestor_css_id"]
@@ -132,32 +136,35 @@ class ClaimHistoryEvent
 
       change_data = issue_attributes_for_request_type_addition(change_data["request_type"], change_data)
       issue_modification_decision_event.push from_change_data(request_event_type.to_sym, change_data.merge(event_hash))
-      unless assign_status_present?(change_data)
-        pending_system_hash = {
-          "event_date" => change_data["issue_modification_request_updated_at"],
-          "event_user_name" => "System",
-          "event_type" => "pending"
-        }
-        issue_modification_decision_event.push from_change_data(:in_progress, change_data.merge(pending_system_hash))
-      end
-
       issue_modification_decision_event
     end
 
     # when issue_modification_request_status is anything other than assigned then we add a pending status
     # as it was once in pending status.
     def create_pending_status_events(change_data)
-      issue_modification_request_status = change_data["issue_modification_request_status"]
+      issue_modification_status = []
       issue_modification_request_id = change_data["issue_modification_request_id"]
 
-      if !issue_modification_request_id.nil? && issue_modification_request_status != "cancelled"
+      if !issue_modification_request_id.nil?
         pending_system_hash = {
           "event_date" => change_data["issue_modification_request_created_at"],
           "event_user_name" => "System",
           "event_type" => "pending"
         }
-        from_change_data(:pending, change_data.merge(pending_system_hash))
+        issue_modification_status.push from_change_data(:pending, change_data.merge(pending_system_hash))
       end
+
+      # if assign is present in the aggregated_claim_status it means task should still be in pending status
+      # hence, in progress status should not be added
+      unless assign_status_present?(change_data)
+        pending_system_hash = {
+          "event_date" => change_data["issue_modification_request_updated_at"],
+          "event_user_name" => "System",
+          "event_type" => "in_progress"
+        }
+        issue_modification_status.push from_change_data(:in_progress, change_data.merge(pending_system_hash))
+      end
+      issue_modification_status
     end
 
     # if current_claim_status has one or more 'assigned' then task should never be in progress state
@@ -167,13 +174,48 @@ class ClaimHistoryEvent
       change_data["current_claim_status"].include?("assigned")
     end
 
+    def create_edited_request_issue_events(change_data)
+      # return if change_data["issue_modification_request_edited_at"].nil?
+
+      edited_events = []
+      versions = parse_versions(change_data["imr_versions"])
+
+      index = 0
+      if versions.present?
+        event_type = :request_edited
+        event_date_hash = {}
+
+        versions.map do |version|
+          event_date_hash = { "event_date" => version["updated_at"][index], "event_user_name" => "System" }
+          change_data["requested_issue_type"] =
+            version["nonrating_issue_category"][index] unless version["nonrating_issue_category"].nil?
+          change_data["requested_issue_description"] =
+            version["nonrating_issue_description"][index] unless version["nonrating_issue_description"].nil?
+          change_data["remove_original_issue"] =
+            version["remove_original_issue"][index] unless version["remove_original_issue"].nil?
+          change_data["modification_request_reason"] =
+            version["request_reason"][index] unless version["request_reason"].nil?
+          change_data["requested_decision_date"] =
+            version["decision_date"][index] unless version["decision_date"].nil?
+          change_data["decision_reason"] =
+            version["decision_reason"][index] unless version["decision_reason"].nil?
+          change_data["issue_modification_request_withdrawal_date"] =
+            version["withdrawal_date"][index] unless version["withdrawal_date"].nil?
+          index += 1
+          edited_events.push from_change_data(event_type, change_data.merge(event_date_hash))
+        end
+      end
+      edited_events
+    end
+
     # rubocop:disable Metrics/MethodLength
     def create_status_events(change_data)
       status_events = []
-      versions = parse_versions(change_data)
+      # versions = parse_versions(change_data)
+      versions = parse_versions(change_data["task_versions"])
       hookless_cancelled_events = handle_hookless_cancelled_status_events(versions, change_data)
       status_events.push(*hookless_cancelled_events)
-      # status_events.push(create_pending_status_events(change_data))
+
       if versions.present?
         first_version, *rest_of_versions = versions
 
@@ -205,8 +247,8 @@ class ClaimHistoryEvent
     end
     # rubocop:enable Metrics/MethodLength
 
-    def parse_versions(change_data)
-      versions = change_data["task_versions"]
+    def parse_versions(versions)
+      # versions = change_data["task_versions"]
       if versions
         # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
         # rubocop:disable Security/YAMLLoad
@@ -540,7 +582,8 @@ class ClaimHistoryEvent
       withdrawal: "Requested issue withdrawal",
       request_approved: "Approval of the request - issue #{request_type}",
       request_rejected: "Rejection of the request- issue #{request_type}",
-      request_cancelled: "Cancellation of request"
+      request_cancelled: "Cancellation of request",
+      request_edited: "Edit of request - issue #{request_type}"
     }[event_type]
   end
 
@@ -679,7 +722,7 @@ class ClaimHistoryEvent
       incomplete: "Claim cannot be processed until decision date is entered.",
       completed: "Claim closed.",
       claim_creation: "Claim created.",
-      cancelled: "Claim closed.",
+      cancelled: "Claim cancelled.",
       pending: "Claim cannot be processed until VHA admin reviews pending requests.",
       addition: "What do we want to add here? " # Questions to be asked
     }[event_type]
