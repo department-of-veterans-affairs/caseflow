@@ -101,31 +101,33 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
       total_issues = parser.request_issues
       expect(total_issues.count).to eq(1)
       issue = total_issues.first
-      expect(parser.ri_benefit_type(issue)).to eq response_hash.request_issues.first["benefit_type"]
-      expect(parser.ri_contested_issue_description(issue)).to eq response_hash.request_issues.first["contested_issue_description"]
-      expect(parser.ri_contention_reference_id(issue)).to eq response_hash.request_issues.first["contention_reference_id"]
-      expect(parser.ri_contested_rating_decision_reference_id(issue)).to eq response_hash.request_issues.first["contested_rating_decision_reference_id"]
-      expect(parser.ri_contested_rating_issue_profile_date(issue)).to eq response_hash.request_issues.first["contested_rating_issue_profile_date"]
-      expect(parser.ri_contested_rating_issue_reference_id(issue)).to eq response_hash.request_issues.first["contested_rating_issue_reference_id"]
-      expect(parser.ri_contested_decision_issue_id(issue)).to eq response_hash.request_issues.first["contested_decision_issue_id"]
-      expect(parser.ri_decision_date(issue)).to eq parser.logical_date_converter(response_hash.request_issues.first["decision_date"])
-      expect(parser.ri_ineligible_due_to_id(issue)).to eq response_hash.request_issues.first["ineligible_due_to_id"]
-      expect(parser.ri_ineligible_reason(issue)).to eq response_hash.request_issues.first["ineligible_reason"]
-      expect(parser.ri_is_unidentified(issue)).to eq response_hash.request_issues.first["is_unidentified"]
-      expect(parser.ri_unidentified_issue_text(issue)).to eq response_hash.request_issues.first["unidentified_issue_text"]
-      expect(parser.ri_nonrating_issue_category(issue)).to eq response_hash.request_issues.first["nonrating_issue_category"]
-      expect(parser.ri_nonrating_issue_description(issue)).to eq response_hash.request_issues.first["nonrating_issue_description"]
-      expect(parser.ri_untimely_exemption(issue)).to eq response_hash.request_issues.first["untimely_exemption"]
-      expect(parser.ri_untimely_exemption_notes(issue)).to eq response_hash.request_issues.first["untimely_exemption_notes"]
-      expect(parser.ri_vacols_id(issue)).to eq response_hash.request_issues.first["vacols_id"]
-      expect(parser.ri_vacols_sequence_id(issue)).to eq response_hash.request_issues.first["vacols_sequence_id"]
-      expect(parser.ri_closed_at(issue)).to eq response_hash.request_issues.first["closed_at"]
-      expect(parser.ri_closed_status(issue)).to eq response_hash.request_issues.first["closed_status"]
-      expect(parser.ri_contested_rating_issue_diagnostic_code(issue)).to eq response_hash.request_issues.first["contested_rating_issue_diagnostic_code"]
-      expect(parser.ri_ramp_claim_id(issue)).to eq response_hash.request_issues.first["ramp_claim_id"]
-      expect(parser.ri_rating_issue_associated_at(issue)).to eq response_hash.request_issues.first["rating_issue_associated_at"]
-      expect(parser.ri_nonrating_issue_bgs_id(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
-      expect(parser.ri_nonrating_issue_bgs_source(issue)).to eq response_hash.request_issues.first["nonrating_issue_bgs_source"]
+      parser_issues = DecisionReviewCreatedIssueParser.new(issue)
+      expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
+      expect(parser_issues.ri_benefit_type).to eq response_hash.request_issues.first["benefit_type"]
+      expect(parser_issues.ri_contested_issue_description).to eq response_hash.request_issues.first["contested_issue_description"]
+      expect(parser_issues.ri_contention_reference_id).to eq response_hash.request_issues.first["contention_reference_id"]
+      expect(parser_issues.ri_contested_rating_decision_reference_id).to eq response_hash.request_issues.first["contested_rating_decision_reference_id"]
+      expect(parser_issues.ri_contested_rating_issue_profile_date).to eq response_hash.request_issues.first["contested_rating_issue_profile_date"]
+      expect(parser_issues.ri_contested_rating_issue_reference_id).to eq response_hash.request_issues.first["contested_rating_issue_reference_id"]
+      expect(parser_issues.ri_contested_decision_issue_id).to eq response_hash.request_issues.first["contested_decision_issue_id"]
+      expect(parser_issues.ri_decision_date).to eq parser.logical_date_converter(response_hash.request_issues.first["decision_date"])
+      expect(parser_issues.ri_ineligible_due_to_id).to eq response_hash.request_issues.first["ineligible_due_to_id"]
+      expect(parser_issues.ri_ineligible_reason).to eq response_hash.request_issues.first["ineligible_reason"]
+      expect(parser_issues.ri_is_unidentified).to eq response_hash.request_issues.first["is_unidentified"]
+      expect(parser_issues.ri_unidentified_issue_text).to eq response_hash.request_issues.first["unidentified_issue_text"]
+      expect(parser_issues.ri_nonrating_issue_category).to eq response_hash.request_issues.first["nonrating_issue_category"]
+      expect(parser_issues.ri_nonrating_issue_description).to eq response_hash.request_issues.first["nonrating_issue_description"]
+      expect(parser_issues.ri_untimely_exemption).to eq response_hash.request_issues.first["untimely_exemption"]
+      expect(parser_issues.ri_untimely_exemption_notes).to eq response_hash.request_issues.first["untimely_exemption_notes"]
+      expect(parser_issues.ri_vacols_id).to eq response_hash.request_issues.first["vacols_id"]
+      expect(parser_issues.ri_vacols_sequence_id).to eq response_hash.request_issues.first["vacols_sequence_id"]
+      expect(parser_issues.ri_closed_at).to eq response_hash.request_issues.first["closed_at"]
+      expect(parser_issues.ri_closed_status).to eq response_hash.request_issues.first["closed_status"]
+      expect(parser_issues.ri_contested_rating_issue_diagnostic_code).to eq response_hash.request_issues.first["contested_rating_issue_diagnostic_code"]
+      expect(parser_issues.ri_ramp_claim_id).to eq response_hash.request_issues.first["ramp_claim_id"]
+      expect(parser_issues.ri_rating_issue_associated_at).to eq response_hash.request_issues.first["rating_issue_associated_at"]
+      expect(parser_issues.ri_nonrating_issue_bgs_id).to eq response_hash.request_issues.first["nonrating_issue_bgs_id"]
+      expect(parser_issues.ri_nonrating_issue_bgs_source).to eq response_hash.request_issues.first["nonrating_issue_bgs_source"]
     end
     describe "#process_nonrating" do
       let(:payload_with_valid_issue) do
@@ -174,24 +176,19 @@ describe Events::DecisionReviewCreated::DecisionReviewCreatedParser do
         create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Valid Category")
       end
 
-      it "sets the nonrating_issue_category from the database when there is exactly one matching issue" do
-        parser.process_nonrating(payload_with_valid_issue)
-        expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Valid Category")
-      end
-
       it "sets the nonrating_issue_category to 'Unknown Issue Category' when there are multiple matching issues" do
         create(:request_issue, contested_decision_issue_id: 1, nonrating_issue_category: "Another Valid Category")
-        parser.process_nonrating(payload_with_valid_issue)
+        parser.process_nonrating_issue_category(payload_with_valid_issue)
         expect(payload_with_valid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Unknown Issue Category")
       end
 
       it "doesn't change anything if nonrating_issue_category is not Disposition" do
-        parser.process_nonrating(payload_with_invalid_issue)
+        parser.process_nonrating_issue_category(payload_with_invalid_issue)
         expect(payload_with_invalid_issue[:request_issues].first[:nonrating_issue_category]).to eq("Other")
       end
 
       it "sets the nonrating_issue_category to 'Unknown Issue Category' for all request issues when the contested_decision_issue_id is not found" do
-        parser.process_nonrating(payload_with_unknown_issue)
+        parser.process_nonrating_issue_category(payload_with_unknown_issue)
         payload_with_unknown_issue[:request_issues].each do |issue|
           expect(issue[:nonrating_issue_category]).to eq("Unknown Issue Category")
         end

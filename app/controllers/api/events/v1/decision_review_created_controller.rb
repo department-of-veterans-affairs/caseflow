@@ -25,7 +25,8 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
 
     claim_id = drc_params[:claim_id]
     headers = request.headers
-    ::Events::DecisionReviewCreated.create!(consumer_event_id, claim_id, headers, drc_params)
+    consumer_and_claim_ids = { consumer_event_id: consumer_event_id, reference_id: claim_id }
+    ::Events::DecisionReviewCreated.create!(consumer_and_claim_ids, headers, drc_params)
     render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict

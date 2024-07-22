@@ -11,7 +11,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
                     middle_name: "Goob", ssn: "989773212", name_suffix: "")
     end
 
-    def json_payload
+    def json_test_payload
       {
         "event_id": "123",
         "claim_id": "9999",
@@ -99,7 +99,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
 
     let!(:valid_params) do
-      json_payload
+      json_test_payload
     end
 
     context "with a valid token and user exists" do

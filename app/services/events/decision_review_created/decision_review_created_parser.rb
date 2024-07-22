@@ -4,6 +4,7 @@
 # DecisionReviewCreated and it's service Classes
 class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   include Events::VeteranExtractorInterface
+  include ParserHelper
 
   attr_reader :headers, :payload
 
@@ -33,41 +34,10 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def initialize(headers, payload_json)
-    process_nonrating(payload_json) if payload_json[:request_issues].present?
+    process_nonrating_issue_category(payload_json) if payload_json[:request_issues].present?
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
     @veteran = @payload.dig(:veteran)
-  end
-
-  # Checking for nonrating_issue_category is "Disposition" and processing such issues.
-  def process_nonrating(payload_json)
-    payload_json[:request_issues].each do |issue|
-      next unless issue[:nonrating_issue_category] == "Disposition"
-
-      contested_id = issue[:contested_decision_issue_id]
-      ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-      issue[:nonrating_issue_category] = if contested_id.present? && ri.length == 1
-                                           ri.first.nonrating_issue_category
-                                         else
-                                           "Unknown Issue Category"
-                                         end
-    end
-  end
-
-  # Generic/universal methods
-  # rubocop:disable Rails/TimeZone
-  def convert_milliseconds_to_datetime(milliseconds)
-    milliseconds.nil? ? nil : Time.at(milliseconds.to_i / 1000).to_datetime
-  end
-  # rubocop:enable Rails/TimeZone
-
-  # convert logical date int to date
-  def logical_date_converter(logical_date_int)
-    return nil if logical_date_int.nil? || logical_date_int.to_i.days == 0
-
-    base_date = Date.new(1970, 1, 1)
-    converted_date = base_date + logical_date_int.to_i.days
-    converted_date
   end
 
   def css_id
@@ -330,109 +300,5 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   # return the array of RI objects
   def request_issues
     @payload.dig(:request_issues)
-  end
-
-  # Individual RequestIssue parsing methods
-  # An RI instance will be passed in as you iterate through the array
-  def ri_benefit_type(issue)
-    issue.dig(:benefit_type)
-  end
-
-  def ri_contested_issue_description(issue)
-    issue.dig(:contested_issue_description)
-  end
-
-  def ri_contention_reference_id(issue)
-    issue.dig(:contention_reference_id)
-  end
-
-  def ri_contested_rating_decision_reference_id(issue)
-    issue.dig(:contested_rating_decision_reference_id)
-  end
-
-  def ri_contested_rating_issue_profile_date(issue)
-    issue.dig(:contested_rating_issue_profile_date)
-  end
-
-  def ri_contested_rating_issue_reference_id(issue)
-    issue.dig(:contested_rating_issue_reference_id)
-  end
-
-  def ri_contested_decision_issue_id(issue)
-    issue.dig(:contested_decision_issue_id)
-  end
-
-  def ri_decision_date(issue)
-    decision_date_int = issue.dig(:decision_date)
-    logical_date_converter(decision_date_int)
-  end
-
-  def ri_ineligible_due_to_id(issue)
-    issue.dig(:ineligible_due_to_id)
-  end
-
-  def ri_ineligible_reason(issue)
-    issue.dig(:ineligible_reason)
-  end
-
-  def ri_is_unidentified(issue)
-    issue.dig(:is_unidentified)
-  end
-
-  def ri_unidentified_issue_text(issue)
-    issue.dig(:unidentified_issue_text)
-  end
-
-  def ri_nonrating_issue_category(issue)
-    issue.dig(:nonrating_issue_category)
-  end
-
-  def ri_nonrating_issue_description(issue)
-    issue.dig(:nonrating_issue_description)
-  end
-
-  def ri_untimely_exemption(issue)
-    issue.dig(:untimely_exemption)
-  end
-
-  def ri_untimely_exemption_notes(issue)
-    issue.dig(:untimely_exemption_notes)
-  end
-
-  def ri_vacols_id(issue)
-    issue.dig(:vacols_id)
-  end
-
-  def ri_vacols_sequence_id(issue)
-    issue.dig(:vacols_sequence_id)
-  end
-
-  def ri_closed_at(issue)
-    issue.dig(:closed_at)
-  end
-
-  def ri_closed_status(issue)
-    issue.dig(:closed_status)
-  end
-
-  def ri_contested_rating_issue_diagnostic_code(issue)
-    issue.dig(:contested_rating_issue_diagnostic_code)
-  end
-
-  def ri_ramp_claim_id(issue)
-    issue.dig(:ramp_claim_id)
-  end
-
-  def ri_rating_issue_associated_at(issue)
-    ri_rating_issue_associated_at_in_ms = issue.dig(:rating_issue_associated_at)
-    convert_milliseconds_to_datetime(ri_rating_issue_associated_at_in_ms)
-  end
-
-  def ri_nonrating_issue_bgs_id(issue)
-    issue.dig(:nonrating_issue_bgs_id)
-  end
-
-  def ri_nonrating_issue_bgs_source(issue)
-    issue.dig(:nonrating_issue_bgs_source)
   end
 end
