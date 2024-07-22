@@ -13,7 +13,9 @@ class Events::DecisionReviewCreated
 
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Lint/UselessAssignment
-    def create!(consumer_event_id, reference_id, headers, payload)
+    def create!(params, headers, payload)
+      consumer_event_id = params[:consumer_event_id]
+      reference_id = params[:reference_id]
       return if Event.exists_and_is_completed?(consumer_event_id)
 
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -48,8 +50,10 @@ class Events::DecisionReviewCreated
                                                  decision_review: decision_review)
 
           # NOTE: event, user, and veteran need to be before this call.
-          Events::DecisionReviewCreated::CreateIntake.process!(event: event, user: user, veteran: vet, parser: parser,
-                                                               decision_review: decision_review)
+          Events::DecisionReviewCreated::CreateIntake.process!(
+            { event: event, user: user, veteran: vet,
+              parser: parser, decision_review: decision_review }
+          )
 
           # NOTE: end_product_establishment & station_id is coming from the payload
           # claim_review can either be a higher_level_revew or supplemental_claim
@@ -58,8 +62,10 @@ class Events::DecisionReviewCreated
                                                                               user: user)
 
           # NOTE: 'epe' arg is the obj created as a result of the CreateEpEstablishment service class
-          Events::DecisionReviewCreated::CreateRequestIssues.process!(event: event, parser: parser, epe: epe,
-                                                                      decision_review: decision_review)
+          Events::DecisionReviewCreated::CreateRequestIssues.process!(
+            { event: event, parser: parser, epe: epe,
+              decision_review: decision_review }
+          )
 
           # NOTE: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
