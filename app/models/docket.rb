@@ -5,6 +5,9 @@ class Docket
   include DistributionConcern
   include DistributionScopes
 
+  PRIORITY = "priority"
+  NON_PRIORITY = "non_priority"
+
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
   end

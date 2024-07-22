@@ -374,6 +374,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
                         :with_appeal_affinity,
+                        docket_type: Constants.AMA_DOCKETS.hearing,
                         affinity_start_date: i.months.ago,
                         docket_type: Constants.AMA_DOCKETS.hearing,
                         receipt_date: 1.month.ago)
