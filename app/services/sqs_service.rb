@@ -9,11 +9,11 @@ class SqsService
     def find_queue_url_by_name(name:, check_fifo: false)
       url = sqs_client.list_queues.queue_urls.find { _1.include? name }
 
-      fail StandardError, "The #{name} SQS queue is missing in this environment." unless url
+      fail Caseflow::Error::SqsQueueNotFoundError, "The #{name} SQS queue is missing in this environment." unless url
 
       # Optional validation check
       if check_fifo && !url.include?(".fifo")
-        fail StandardError, "No FIFO queue with name #{name} could be located."
+        fail Caseflow::Error::SqsUnexpectedQueueTypeError, "No FIFO queue with name #{name} could be located."
       end
 
       url
