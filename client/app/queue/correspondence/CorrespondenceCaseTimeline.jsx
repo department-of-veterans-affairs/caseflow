@@ -4,30 +4,27 @@ import CorrespondenceTaskRows from './CorrespondenceTaskRows.jsx';
 const CorrespondenceCaseTimeline = (props) => {
 
   const actions = [
-    {value: "changeTask", label:"Change task type"},
-    {value: "changeTask", label:"Assign to team"},
-    {value: "changeTask", label:"Assign to person"},
-    {value: "changeTask", label:"Mark task complete"},
-    {value: "changeTask", label:"Return to Inbound Ops"},
-    {value: "changeTask", label:"Cancel task"},
+    { value: 'changeTask', label: 'Change task type' },
+    { value: 'changeTask', label: 'Assign to team' },
+    { value: 'changeTask', label: 'Assign to person' },
+    { value: 'changeTask', label: 'Mark task complete' },
+    { value: 'changeTask', label: 'Return to Inbound Ops' },
+    { value: 'changeTask', label: 'Cancel task' },
   ];
 
   const getAvailableActions = (task) => {
-    // console.log(task.assigned_to)
-    // console.log(props.organizations)
-    if(props.organizations.includes(task.assigned_to)) {
+    if (props.organizations.includes(task.assigned_to)) {
       return actions;
     }
 
-    if(props.userCssId === task.assigned_to) {
+    if (props.userCssId === task.assigned_to) {
 
       return actions;
     }
 
     return [];
 
-  }
-
+  };
 
   const formatTaskData = () => {
     return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
@@ -46,11 +43,11 @@ const CorrespondenceCaseTimeline = (props) => {
     <React.Fragment>
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-        <CorrespondenceTaskRows
+          <CorrespondenceTaskRows
             organizations={props.organizations}
             appeal={props.correspondence}
             taskList={formatTaskData()}
-            editNodDateEnabled={true}
+            editNodDateEnabled
             statusSplit
           />
         </tbody>
