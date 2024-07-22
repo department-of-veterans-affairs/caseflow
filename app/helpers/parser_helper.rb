@@ -2,17 +2,11 @@
 
 module ParserHelper
   # Checking for nonrating_issue_category is "Disposition" and processing such issues.
-  def process_nonrating(payload_json)
+  def process_nonrating_issue_category(payload_json)
     payload_json[:request_issues].each do |issue|
       next unless issue[:nonrating_issue_category] == "Disposition"
 
-      contested_id = issue[:contested_decision_issue_id]
-      ri = RequestIssue.where(contested_decision_issue_id: contested_id)
-      issue[:nonrating_issue_category] = if contested_id.present? && ri.length == 1
-                                           ri.first.nonrating_issue_category
-                                         else
-                                           "Unknown Issue Category"
-                                         end
+      issue[:nonrating_issue_category] = "Unknown Issue Category"
     end
   end
 
