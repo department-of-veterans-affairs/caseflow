@@ -52,7 +52,7 @@ FactoryBot.define do
       hearing.update(
         scheduled_in_timezone: Constants::REGIONAL_OFFICE_INFORMATION.dig(
           evaluator.regional_office, "timezone"
-        ) || "America/New_York"
+        ) || nil
       )
     end
 
