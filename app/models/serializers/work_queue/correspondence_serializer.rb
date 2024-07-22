@@ -24,20 +24,23 @@ class WorkQueue::CorrespondenceSerializer
     filtered_tasks = object.tasks.reject do |task|
       task.type == "ReviewPackageTask" ||
         task.type == "CorrespondenceIntakeTask" ||
-        task.type == "CorrespondenceRootTask"
+        task.type == "CorrespondenceRootTask" ||
+        task.type == "RemovePackageTask"
     end
 
     # next unless filtered_tasks.empty?
-
     tasks = []
-    if filtered_tasks.empty?
+
+    next unless !filtered_tasks.empty?
+
+    if !filtered_tasks.empty?
       filtered_tasks.each do |task|
         tasks <<
           {
             type: task.type,
             assigned_to: task.assigned_to.name,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
-            instructions: task.instructions
+            instructions: task.instructions,
           }
       end
     end

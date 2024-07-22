@@ -12,16 +12,27 @@ const CorrespondenceCaseTimeline = (props) => {
     {value: "changeTask", label:"Mark task complete"},
     {value: "changeTask", label:"Return to Inbound Ops"},
     {value: "changeTask", label:"Cancel task"},
+  ];
 
+  const formatTaskData = () => {
+    console.log(props.correspondence.tasksUnrelatedToAppeal)
+    return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
+      return {
+        assignedOn: task.assigned_at,
+        assignedTo: task.assigned_to,
+        label: task.type,
+        instructions: task.instructions,
+        availableActions: actions,
+      }
+    }));
+  }
 
-  ]
+  formatTaskData();
+
   const debugData = [
     {
       assignedOn: '2024-07-18T15:51:22.946-04:00',
-      assignedBy: {
-        firstName: 'Deborah',
-        lastName: 'Wise',
-      },
+      assignedBy: 'test',
       instructions: ['test2'],
       availableActions: actions,
       label: 'CHANGEME',
@@ -47,12 +58,7 @@ const CorrespondenceCaseTimeline = (props) => {
         isOrganization: true,
         type: 'SpecialIssueEditTeam'
       },
-      assignedBy: {
-        firstName: 'Deborah',
-        lastName: 'Wise',
-        cssId: 'BVADWISE',
-        pgId: 18
-      },
+      assignedBy: 'test2 name',
       completedBy: {
         cssId: 'BVADWISE'
       },
@@ -105,7 +111,7 @@ const CorrespondenceCaseTimeline = (props) => {
       <table id="case-timeline-table" summary="layout table">
         <tbody>
         <CorrespondenceTaskRows appeal={props.correspondence}
-            taskList={debugData}
+            taskList={formatTaskData()}
             editNodDateEnabled={true}
             statusSplit
           />

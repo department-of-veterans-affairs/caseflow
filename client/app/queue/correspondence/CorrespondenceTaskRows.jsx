@@ -173,14 +173,11 @@ class CorrespondenceTaskRows extends React.PureComponent {
     `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
-    const assignor = task.assignedBy.firstName ?
-      this.getAbbrevName(task.assignedBy) :
-      null;
-
-    return assignor ? (
+    console.log(task)
+    return task.assignedBy ? (
       <div className="cf-row-wrapper">
         <dt>{'ASSIGNED TO(R)'}</dt>
-        <dd>{assignor}</dd>
+        <dd>{task.assignedBy}</dd>
       </div>
     ) : null;
   };
@@ -383,23 +380,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
-    // eslint-disable-next-line no-shadow
-    const formatInstructions = (task, text) => {
-      if (issueUpdateTask(task)) {
-        return (
-          <React.Fragment>{formatIssueUpdateBreaks(text)}</React.Fragment>
-        );
-      } else if (establishmentTask(task)) {
-        return (
-          <React.Fragment>{formatEstablishmentBreaks(text)}</React.Fragment>
-        );
-      }
-
-      return (
-        <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
-      );
-    };
-
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
         {task.instructions.map((text) => (
@@ -410,7 +390,6 @@ class CorrespondenceTaskRows extends React.PureComponent {
               className="task-instructions"
             >
               {
-                // formatInstructions(task, text)
                 <p>{text}</p>
               }
             </div>
