@@ -29,8 +29,7 @@ class CorrespondenceDetailsController < CorrespondenceController
     {
       correspondence: @correspondence,
       general_information: general_information,
-      corres_docs: @correspondence[:correspondenceDocuments],
-      taskInstructions: task_instructions
+      corres_docs: @correspondence[:correspondenceDocuments]
     }
   end
 end
