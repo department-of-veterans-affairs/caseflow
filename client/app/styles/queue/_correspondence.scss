@@ -1308,3 +1308,15 @@ $color-bg-hsl-a: hsl(0, 0%, 80%);
   }
 }
 
+.correspondence-case-timeline-container {
+  border: 1px solid $color-gray-darker;
+  width: fit-content;
+  padding-left: 30px;
+}
+
+.task-not-related-title {
+  font-size: 115%;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+

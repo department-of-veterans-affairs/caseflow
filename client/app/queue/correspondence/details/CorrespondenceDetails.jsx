@@ -16,11 +16,18 @@ const CorrespondenceDetails = (props) => {
     dispatch(loadCorrespondence(correspondence));
   }, []);
 
+  const correspondenceAndAppealTaskComponents = <>
+    <section className='task-not-related-title'>Tasks not related to an appeal</section>
+    <div className="correspondence-case-timeline-container">
+      <CorrespondenceCaseTimeline organizations={props.organizations} userCssId={props.userCssId} correspondence={props.correspondence} />
+      </div>
+      </>;
+
   const tabList = [
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: <CorrespondenceCaseTimeline organizations={props.organizations} userCssId={props.userCssId} correspondence={props.correspondence} />
+      page: correspondenceAndAppealTaskComponents
     },
     {
       disable: false,
@@ -59,7 +66,6 @@ const CorrespondenceDetails = (props) => {
           name="tasks-tabwindow"
           tabs={tabList}
         />
-        <section>Tasks not related to an appeal</section>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling"></td>
       </AppSegment>
     </>
