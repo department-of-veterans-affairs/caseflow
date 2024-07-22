@@ -148,15 +148,11 @@ const ReportPageButtons = ({
   );
 };
 
-const CheckBoxes = ({ header, options, name }) => {
-  const { field } = useController({
-    name
-  });
-  const [value, setValue] = React.useState({});
+const EventCheckboxGroup = ({ header, options, name, onChange }) => {
 
   return (
     <div>
-      <h4>{header}</h4>
+      { header && <h4>{header}</h4> }
       {options.map((option) => (
         <div key={option.id}>
           <Checkbox
@@ -164,12 +160,8 @@ const CheckBoxes = ({ header, options, name }) => {
             key={`${name}.${option.id}`}
             label={option.label}
             stronglabel
-            onChange={(val) => {
-              value[option.id] = val;
-              field.onChange(value);
-              setValue(value);
-            }}
             unpadded
+            onChange={(val) => onChange({ option, val })}
           />
         </div>
       ))}
@@ -177,49 +169,77 @@ const CheckBoxes = ({ header, options, name }) => {
   );
 };
 
-const RHFCheckboxGroup = ({ options, name }) => {
+const RHFCheckboxGroup = ({ options, name, control }) => {
   const { errors } = useFormContext();
 
   let fieldClasses = 'checkbox';
   const errorMessage = get(errors, name)?.message;
+
+  const { field } = useController({
+    control,
+    name
+  });
 
   if (errorMessage) {
     fieldClasses += ' usa-input-error';
     fieldClasses += ' less-error-padding';
   }
 
-  const errorSubMessage = 'Please select a checkbox from one of the sections below';
+  const [value, setValue] = React.useState({});
+
+  const onCheckboxClick = ({ option, val }) => {
+    value[option.id] = val;
+    field.onChange(value);
+    setValue(value);
+  };
+
+  const messageStyling = css({
+    fontSize: '17px !important',
+    paddingTop: '2px !important'
+  });
 
   return (
-    <fieldset>
+    <div>
       {name === 'specificEventType' ?
-        <div {...outerContainerStyling} className={fieldClasses}>
-          {errorMessage && <Alert type="error" title={errorMessage} message={errorSubMessage} />}
-          <CheckBoxes
-            header= "System"
-            options={options[0].system}
-            name={name}
-          />
-          <CheckBoxes
-            header= "General"
-            options={options[0].general}
-            name={name}
-          />
-          <CheckBoxes
-            header= "Requests"
-            options={options[0].requests}
-            name={name}
-          />
-        </div> :
-        <div {...outerContainerStyling} className={fieldClasses}>
+        <fieldset>
+          {errorMessage &&
+            <Alert
+              type="error"
+              message={ERRORS.AT_LEAST_ONE_CHECKBOX_OPTION}
+              messageStyling={messageStyling}
+            />
+          }
+          <div {...outerContainerStyling} style={{ paddingTop: '30px' }} >
+            <EventCheckboxGroup
+              header="System"
+              options={options[0].system}
+              name={name}
+              onChange={onCheckboxClick}
+            />
+            <EventCheckboxGroup
+              header="General"
+              options={options[0].general}
+              name={name}
+              onChange={onCheckboxClick}
+            />
+            <EventCheckboxGroup
+              header="Requests"
+              options={options[0].requests}
+              name={name}
+              onChange={onCheckboxClick}
+            />
+          </div>
+        </fieldset> :
+        <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
           {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
-          <CheckBoxes
+          <EventCheckboxGroup
             options={options}
             name={name}
+            onChange={onCheckboxClick}
           />
-        </div>
+        </fieldset>
       }
-    </fieldset>
+    </div>
   );
 };
 
@@ -472,9 +492,10 @@ RHFCheckboxGroup.propTypes = {
   errorMessage: PropTypes.string
 };
 
-CheckBoxes.propTypes = {
-  header: PropTypes.string,
+EventCheckboxGroup.propTypes = {
   options: PropTypes.array,
+  onChange: PropTypes.func,
+  header: PropTypes.string,
   name: PropTypes.string
 };
 

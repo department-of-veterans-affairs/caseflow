@@ -13,6 +13,7 @@ import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 describe('ReportPage', () => {
   const setup = (storeValues = {}) => {
@@ -422,7 +423,7 @@ describe('ReportPage', () => {
         await userEvent.click(generateTaskReport);
 
         await waitFor(() => {
-          expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+          expect(screen.getAllByText(ERRORS.AT_LEAST_ONE_CHECKBOX_OPTION).length).toBe(1);
         });
 
       });
