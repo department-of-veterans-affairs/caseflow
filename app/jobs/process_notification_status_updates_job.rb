@@ -1,13 +1,33 @@
 # frozen_string_literal: true
 
+# A job that pulls messages from the 'receive_notifications' FIFO SQS queue
+# that represent status updates for VA Notify notifications and persists
+# the information in our notifications table.
+#
+# The messages are queued by {Api::V1::VaNotifyController#notifications_update} which is
+# an endpoint where VA Notify sends information to us about notifications we've requested
+# that they send via their
+# {https://github.com/department-of-veterans-affairs/notification-api/blob/1b758dddf2d2c12d73415e4ee508cf6b0e101343/app/celery/service_callback_tasks.py#L29 send_delivery_status_to_service} callback.
+#
+# This information includes:
+# - The latest status pertaining to the notification's delivery (ex: success or temporary-failure)
+# - The status reason (extra context around the status, if available)
+# - The recipient's email or phone number
+#   - Caseflow simply provides VA Notify with the intended recipient's participant ID with each initial notification request, and it does not know of the destination of a message until they inform us.
+#
+# @see https://github.com/department-of-veterans-affairs/caseflow/wiki/VA-Notify
+# @see https://github.com/department-of-veterans-affairs/caseflow/wiki/Status-Webhook-API
 class ProcessNotificationStatusUpdatesJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
 
-  MESSAGE_GROUP_ID = "VANotifyStatusUpdate"
+  MESSAGE_GROUP_ID = "VANotifyStatusUpdate" # Used to only process messages queued by the status update webhook
   PROCESSING_LIMIT = 1000 # How many updates to perform per job execution
 
+  # Consumes messages from the 'receive_notifications' FIFO SQS queue whose 'MessageGroupId'
+  # attribute matches MESSAGE_GROUP_ID, and then persists data contained within those messages
+  # about VA Notify notifications to our 'notifications' table.
   def perform
     ensure_current_user_is_set
 
