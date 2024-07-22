@@ -29,11 +29,11 @@ export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
  * the proper helper functions.
  */
 export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: x - pageBoundingBox.left / scale,
-  y: y - pageBoundingBox.top / scale,
+  x: (x - pageBoundingBox.left) / scale,
+  y: (y - pageBoundingBox.top) / scale,
 });
 
-export const pageCoordsOfRootCoords2 = ({ x, y }, pageBoundingBox, scale) => ({
+export const pageCoordsOfRootCoordsPrototype = ({ x, y }, pageBoundingBox, scale) => ({
   x: x - pageBoundingBox.left * scale,
   y: y - pageBoundingBox.top * scale,
 });
@@ -70,7 +70,11 @@ export const getPageCoordinatesOfMouseEventPrototype = (event, container, scale,
     y: clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH),
   };
 
-  return rotateCoordinates(pageCoordsOfRootCoords2(constrainedRootCoords, container, scale), container, rotation);
+  return rotateCoordinates(
+    pageCoordsOfRootCoordsPrototype(constrainedRootCoords, container, scale),
+    container,
+    rotation
+  );
 };
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
