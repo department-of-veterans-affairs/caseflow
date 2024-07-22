@@ -309,7 +309,7 @@ export default class TranscriptionSettings extends React.PureComponent {
                       { sprintf(COPY.TRANSCRIPTION_SETTINGS_HEARINGS_SENT, contractor.name)}
                     </strong>
                     &nbsp;
-                    {`${contractor.transcription_count || 0} of `}
+                    {`${contractor.transcription_count} of `}
                     {contractor.current_goal}
                     {this.editTotalHearingsLink(contractor.id)}
                   </li>
