@@ -105,6 +105,15 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     end
   end
 
+  context "#aoj_affinity_days" do
+  end
+
+  context "#aoj_cavc_affinity" do
+  end
+
+  context "#aoj_aod_affinity" do
+  end
+
   context "constants" do
     it "should match array of INTEGER Levers" do
       expect(CaseDistributionLever::INTEGER_LEVERS).to match_array(integer_levers)
