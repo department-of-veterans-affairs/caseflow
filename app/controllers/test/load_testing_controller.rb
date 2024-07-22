@@ -23,7 +23,7 @@ class Test::LoadTestingController < ApplicationController
   end
 
   def find_functions
-    Functions.list_all.keys.sort
+    Functions.functions.sort
   end
 
   def find_roles
