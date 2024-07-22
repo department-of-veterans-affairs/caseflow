@@ -11,8 +11,8 @@ module DecisionReviewPolymorphicHelper
       association_name_mapping = { "Appeal" => :ama_appeal, "Hearing" => :ama_hearing }
       scope_mapping = { "Appeal" => :ama, "LegacyAppeal" => :legacy, "LegacyHearing" => :legacy, "Hearing" => :ama }
 
-      # LegacyAppeals + all of the non abstract subtypes of DecisionReview
-      types ||= %w[Appeal LegacyAppeal HigherLevelReview SupplementalClaim Remand]
+      # LegacyAppeals + all of the non abstract subtypes of DecisionReview not incuding child types for STI
+      types ||= %w[Appeal LegacyAppeal HigherLevelReview SupplementalClaim]
 
       types.each do |type|
         type_symbol = type.underscore.to_sym

@@ -35,7 +35,7 @@ describe BusinessLine do
       it "Returning only Remand tasks" do
         expect(
           subject.all? do |task|
-            task.type == DecisionReviewTask.name && task.appeal_type == Remand.name
+            task.type == DecisionReviewTask.name && task.appeal.type == Remand.name
           end
         ).to eq true
       end
@@ -67,7 +67,6 @@ describe BusinessLine do
         it "Attempting to return only Board Grant Effectuation tasks amounts to either only completed tasks
           or any empty result" do
           tasks = subject
-
           expect(tasks.empty? || tasks.all?(&:completed?)).to eq true
         end
       end

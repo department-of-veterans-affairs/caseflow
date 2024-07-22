@@ -387,7 +387,7 @@ feature "NonComp Reviews Queue", :postgres do
       table_rows = current_table_rows
 
       expect(table_rows.last.include?("Caregiver | Other\nCHAMPVA\n")).to eq true
-      expect(table_rows.first.include?(" Camp Lejune Family Member ")).to eq true
+      expect(table_rows.first.include?(" Beneficiary Travel ")).to eq true
 
       # Issue Types desc
       order_buttons[:issues_type].click
@@ -396,7 +396,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
       table_rows = current_table_rows
 
-      expect(table_rows.last.include?(" Camp Lejune Family Member ")).to eq true
+      expect(table_rows.last.include?(" Beneficiary Travel ")).to eq true
       expect(table_rows.first.include?("Caregiver | Other\nCHAMPVA")).to eq true
 
       # Days waiting asc
