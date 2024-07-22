@@ -6,16 +6,17 @@ const CorrespondenceCaseTimeline = (props) => {
   // const tabs = useSelector((state) => loadCorrespondence(state, {  }));
 
   const actions = [
-    {value: "changeTask", label:"Change task type"},
-    {value: "changeTask", label:"Assign to team"},
-    {value: "changeTask", label:"Assign to person"},
-    {value: "changeTask", label:"Mark task complete"},
-    {value: "changeTask", label:"Return to Inbound Ops"},
-    {value: "changeTask", label:"Cancel task"},
+    { value: 'changeTask', label: 'Change task type' },
+    { value: 'changeTask', label: 'Assign to team' },
+    { value: 'changeTask', label: 'Assign to person' },
+    { value: 'changeTask', label: 'Mark task complete' },
+    { value: 'changeTask', label: 'Return to Inbound Ops' },
+    { value: 'changeTask', label: 'Cancel task' },
   ];
 
   const formatTaskData = () => {
-    console.log(props.correspondence.tasksUnrelatedToAppeal)
+    console.log(props.correspondence.tasksUnrelatedToAppeal);
+
     return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
       return {
         assignedOn: task.assigned_at,
@@ -23,9 +24,9 @@ const CorrespondenceCaseTimeline = (props) => {
         label: task.type,
         instructions: task.instructions,
         availableActions: actions,
-      }
+      };
     }));
-  }
+  };
 
   formatTaskData();
 
@@ -81,7 +82,7 @@ const CorrespondenceCaseTimeline = (props) => {
       onHoldDuration: null,
       instructions: [
         [
-          null,null,'test'
+          null, null, 'test'
         ]
       ],
       decisionPreparedBy: null,
@@ -110,9 +111,9 @@ const CorrespondenceCaseTimeline = (props) => {
     <React.Fragment>
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-        <CorrespondenceTaskRows appeal={props.correspondence}
+          <CorrespondenceTaskRows appeal={props.correspondence}
             taskList={formatTaskData()}
-            editNodDateEnabled={true}
+            editNodDateEnabled
             statusSplit
           />
         </tbody>
