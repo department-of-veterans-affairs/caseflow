@@ -42,6 +42,12 @@ class Correspondence < CaseflowRecord
     Task.where(appeal_id: id, appeal_type: type)
   end
 
+  def correspondence_mail_tasks
+    tasks.where(type: [AssociatedWithClaimsFolderMailTask.name,
+                       AddressChangeMailTask.name,
+                       EvidenceOrArgumentMailTask.name, VacolsUpdatedMailTask.name])
+  end
+
   def review_package_task
     ReviewPackageTask.find_by(appeal_id: id, appeal_type: type)
   end
