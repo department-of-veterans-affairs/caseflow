@@ -7,6 +7,6 @@ module DecisionIssueBelongsToPolymorphicAppealConcern
   included do
     define_polymorphic_decision_review_associations(:decision_review,
                                                     :decision_issues,
-                                                    %w[Appeal HigherLevelReview SupplementalClaim Remand])
+                                                    %w[Appeal HigherLevelReview SupplementalClaim])
   end
 end

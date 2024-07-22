@@ -145,7 +145,7 @@ class BusinessLine < Organization
 
     def task_type_query_helper(join_association)
       Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, sub_type AS")
+        .select("tasks.id AS tasks_id, tasks.type AS task_type")
         .joins(join_association)
         .joins(issue_modification_request_join)
         .where(query_constraints)
@@ -153,24 +153,12 @@ class BusinessLine < Organization
     end
 
     def task_type_count
-      appeals_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as task_id, tasks.type as task_type, 'Appeal' AS decision_review_type")
-        .joins(ama_appeal: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      hlr_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as task_id, tasks.type as task_type, 'HigherLevelReview' AS decision_review_type")
-        .joins(higher_level_review: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
-      sc_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as task_id, tasks.type as task_type, supplemental_claims.type AS decision_review_type")
-        .joins(supplemental_claim: :request_issues)
-        .joins(issue_modification_request_join)
-        .where(query_constraints)
-        .where(issue_modification_request_filter)
+      appeals_query = task_type_query_helper(ama_appeal: :request_issues)
+        .select("'Appeal' AS decision_review_type")
+      hlr_query = task_type_query_helper(higher_level_review: :request_issues)
+        .select("'HigherLevelReview' AS decision_review_type")
+      sc_query = task_type_query_helper(supplemental_claim: :request_issues)
+        .select("supplemental_claims.type AS decision_review_type")
 
       task_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (

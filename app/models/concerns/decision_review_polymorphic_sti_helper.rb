@@ -5,8 +5,6 @@ module DecisionReviewPolymorphicSTIHelper
 
   class_methods do
     def define_polymorphic_decision_review_sti_associations(association_name, from_association_name, types = nil)
-      belongs_to association_name, polymorphic: true
-
       # Mappings between STI types and their associated parent type and parent database table
       sti_table_mapping = { "Remand" => :supplemental_claims }
       sti_type_mapping = { "Remand" => "SupplementalClaim" }
@@ -22,7 +20,7 @@ module DecisionReviewPolymorphicSTIHelper
         belongs_to belongs_to_association_name,
                    lambda {
                      where(from_association_name => { "#{association_name}_type": sti_type })
-                       .where("#{sti_table_name}.type = ?", type)
+                       .where(Arel::Table.new(sti_table_name)[:type].eq(type))
                    },
                    class_name: type, foreign_key: "#{association_name}_id", optional: true
       end
