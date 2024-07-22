@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TaskRows from '../components/TaskRows.jsx';
 import CorrespondenceTaskRows from './CorrespondenceTaskRows.jsx';
 const CorrespondenceCaseTimeline = (props) => {
-  // const tabs = useSelector((state) => loadCorrespondence(state, {  }));
 
   const actions = [
     { value: 'changeTask', label: 'Change task type' },
@@ -14,19 +12,37 @@ const CorrespondenceCaseTimeline = (props) => {
     { value: 'changeTask', label: 'Cancel task' },
   ];
 
-  const formatTaskData = () => {
-    console.log(props.correspondence.tasksUnrelatedToAppeal);
+  const getAvailableActions = (task) => {
+    // if(props.organizations.includes(task.assigned_to)) {
+    //   return true;
+    // }
+    // console.log(props)
+    // console.log(task)
+    console.log(props.userCssId);
+    console.log(task.assigned_to)
+    if(props.userCssId === task.assigned_to) {
+      console.log(props.currentUser);
+      console.log(task.assigned_to)
+      return actions;
+    }
 
+    return [];
+
+  }
+
+
+  const formatTaskData = () => {
     return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
+      console.log(getAvailableActions(task))
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,
         label: task.type,
         instructions: task.instructions,
         availableActions: actions,
-      };
+      }
     }));
-  };
+  }
 
   formatTaskData();
 
@@ -82,7 +98,7 @@ const CorrespondenceCaseTimeline = (props) => {
       onHoldDuration: null,
       instructions: [
         [
-          null, null, 'test'
+          null,null,'test'
         ]
       ],
       decisionPreparedBy: null,
@@ -111,7 +127,7 @@ const CorrespondenceCaseTimeline = (props) => {
     <React.Fragment>
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-          <CorrespondenceTaskRows appeal={props.correspondence}
+        <CorrespondenceTaskRows appeal={props.correspondence}
             taskList={formatTaskData()}
             editNodDateEnabled
             statusSplit

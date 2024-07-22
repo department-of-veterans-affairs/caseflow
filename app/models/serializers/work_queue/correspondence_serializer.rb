@@ -31,14 +31,15 @@ class WorkQueue::CorrespondenceSerializer
     # next unless filtered_tasks.empty?
     tasks = []
 
-    next unless !filtered_tasks.empty?
+    # next unless !filtered_tasks.empty?
 
     if !filtered_tasks.empty?
       filtered_tasks.each do |task|
+        # binding.pry
         tasks <<
           {
             type: task.type,
-            assigned_to: task.assigned_to.name,
+            assigned_to: task.assigned_to_type == "Organization" ? task.assigned_to.name : task.assigned_to.css_id,
             assigned_at: task.assigned_at.strftime("%m/%d/%Y"),
             instructions: task.instructions,
           }

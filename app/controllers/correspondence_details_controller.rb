@@ -7,6 +7,7 @@ class CorrespondenceDetailsController < CorrespondenceController
   before_action :correspondence
 
   def correspondence_details
+    @organizations = current_user.organizations.pluck(:name)
     @correspondence = WorkQueue::CorrespondenceSerializer
       .new(correspondence)
       .serializable_hash[:data][:attributes]
