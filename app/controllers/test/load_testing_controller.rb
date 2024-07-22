@@ -18,6 +18,7 @@ class Test::LoadTestingController < ApplicationController
   def find_features
     all_features = AllFeatureToggles.new.call.flatten.uniq.sort
     all_features.map! { |feature| feature.split(",")[0] }
+    all_features.map!(&:to_sym)
     all_features.map! { |feature| [feature, FeatureToggle.enabled?(feature)] }.to_h
   end
 
