@@ -36,9 +36,10 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
 
       number_of_messages_processed += process_batch_of_messages while number_of_messages_processed < PROCESSING_LIMIT
     rescue StandardError => error
+      log_error(error)
       raise error
     ensure
-      "clean up"
+      Rails.logger.info("#{number_of_messages_processed} messages have been processed by this execution.")
     end
   end
 
