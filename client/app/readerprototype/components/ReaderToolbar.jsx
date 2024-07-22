@@ -13,7 +13,6 @@ import DocumentCategoryIcons from '../../reader/DocumentCategoryIcons';
 
 import { handleClickDocumentTypeLink, openDownloadLink } from '../util/documentUtil';
 import { docToolbarStyles } from '../util/layoutUtil';
-import { toggleSearchBar as toggleSearchBarAction } from '../../reader/PdfViewer/PdfViewerActions';
 
 const ReaderToolbar = ({
   resetZoomLevel,
@@ -31,7 +30,8 @@ const ReaderToolbar = ({
   // hideSidebar,
   // toggleSidebar
 }) => {
-  const [searchTerm, setSearchTerm] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [_searchTerm, setSearchTerm] = useState(null);
 
   const onToggleSearchBar = () => {
     if (showSearchBar) {
