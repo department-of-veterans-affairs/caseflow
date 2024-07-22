@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CorrespondenceTaskRows from './CorrespondenceTaskRows.jsx';
+import CorrespondenceTaskRows from './CorrespondenceTaskRows';
 const CorrespondenceCaseTimeline = (props) => {
 
   const actions = [
@@ -28,7 +28,6 @@ const CorrespondenceCaseTimeline = (props) => {
 
   const formatTaskData = () => {
     return (props.correspondence.tasksUnrelatedToAppeal.map((task) => {
-      // console.log(getAvailableActions(task))
       return {
         assignedOn: task.assigned_at,
         assignedTo: task.assigned_to,

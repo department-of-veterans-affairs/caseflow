@@ -68,10 +68,6 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
-const issueUpdateTask = (task) => {
-  return task.type === 'IssuesUpdateTask';
-};
-
 const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
 };
@@ -160,13 +156,14 @@ class CorrespondenceTaskRows extends React.PureComponent {
 
   assignedToListItem = (task) => {
     const assignee = task.assigneeName;
+    console.log(task)
 
-    return assignee && !establishmentTask(task) ? (
+    return (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
-        <dd>{assignee}</dd>
+        <dd>{task.assignedTo}</dd>
       </div>
-    ) : null;
+    )
   };
 
   getAbbrevName = ({ firstName, lastName }) =>
@@ -177,7 +174,7 @@ class CorrespondenceTaskRows extends React.PureComponent {
     return task.assignedBy ? (
       <div className="cf-row-wrapper">
         <dt>{'ASSIGNED TO(R)'}</dt>
-        <dd>{task.assignedBy}</dd>
+        <dd>{'task.assignedBy'}</dd>
       </div>
     ) : null;
   };
