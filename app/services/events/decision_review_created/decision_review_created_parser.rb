@@ -34,7 +34,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def initialize(headers, payload_json)
-    process_nonrating(payload_json) if payload_json[:request_issues].present?
+    process_nonrating_issue_category(payload_json) if payload_json[:request_issues].present?
     @payload = payload_json.to_h.deep_symbolize_keys
     @headers = headers
     @veteran = @payload.dig(:veteran)
