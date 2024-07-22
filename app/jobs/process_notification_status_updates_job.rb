@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 # A job that pulls messages from the 'receive_notifications' FIFO SQS queue
 # that represent status updates for VA Notify notifications and persists
 # the information in our notifications table.
@@ -17,6 +18,7 @@
 #
 # @see https://github.com/department-of-veterans-affairs/caseflow/wiki/VA-Notify
 # @see https://github.com/department-of-veterans-affairs/caseflow/wiki/Status-Webhook-API
+# rubocop:enable Layout/LineLength
 class ProcessNotificationStatusUpdatesJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
