@@ -7,7 +7,7 @@ class DocketCoordinator
       direct_review: DirectReviewDocket.new,
       evidence_submission: EvidenceSubmissionDocket.new,
       hearing: HearingRequestDocket.new,
-      legacy_aoj_docket: LegacyAojDocket.new
+      aoj_legacy_docket: AojLegacyDocket.new
     }
 
     if FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
