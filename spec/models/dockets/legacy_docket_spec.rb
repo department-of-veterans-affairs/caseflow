@@ -362,7 +362,7 @@ describe LegacyDocket do
       :aod,
       bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "3",
+      bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
@@ -374,7 +374,7 @@ describe LegacyDocket do
       :case,
       bfkey: "12345",
       bfd19: 1.year.ago,
-      bfac: "3",
+      bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "81",
       bfdloout: 3.days.ago
