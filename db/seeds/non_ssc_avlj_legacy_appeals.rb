@@ -37,17 +37,17 @@ module Seeds
     def create_legacy_appeals
       # the naming comes from the acceptance criteria of APPEALS-45208
       #TODO: Rename these methods
-      create_ac_1_appeals #TEAM 1
-      create_ac_2_appeals #TEAM 1
-      # create_ac_3_appeals #TEAM 2
+      # create_ac_1_appeals #TEAM 1
+      # create_ac_2_appeals #TEAM 1
+      create_ac_3_appeals #TEAM 2
       # create_ac_4_appeals #TEAM 2
-      create_ac_5_appeals #TEAM 1
+      # # create_ac_5_appeals #TEAM 1
       # create_ac_6_appeals #TEAM 2
       # create_ac_7_appeals #TEAM 2
       # create_ac_8_appeals #TEAM 2
       # create_ac_9_appeals #TEAM 2
       # create_ac_10_appeals #TEAM 2
-      create_ac_11_appeals #TEAM 1
+      # create_ac_11_appeals #TEAM 1
       # create_ac_12_appeals #TEAM 3
       # create_ac_13_appeals #TEAM 3
     end
@@ -72,20 +72,20 @@ module Seeds
 
     def create_ac_3_appeals
       # A non-SSC AVLJ that Only has 4 priority cases where they held the last hearing and signed the most recent decision
-      avlj = User.find_by(css_id: "NONSSCAN03")
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj)
+      avlj = user.find_by(css_id: "NONSSCAN03")
+      create_legacy_appeal(priority=true, avlj, 200.days.ago, avlj)
+      create_legacy_appeal(priority=true, avlj, 100.days.ago, avlj)
+      create_legacy_appeal(priority=true, avlj, 50.days.ago, avlj)
+      create_legacy_appeal(priority=true, avlj, 10.days.ago, avlj)
     end
 
     def create_ac_4_appeals
       # A non-SSC AVLJ that Only has 4 non-priority cases where they held the last hearing and signed the most recent decision
-      avlj = User.find_by(css_id: "NONSSCAN04")
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj)
+      avlj = user.find_by(css_id: "NONSSCAN04")
+      create_legacy_appeal(priority=false, avlj, 200.days.ago)
+      create_legacy_appeal(priority=false, avlj, 100.days.ago)
+      create_legacy_appeal(priority=false, avlj, 50.days.ago)
+      create_legacy_appeal(priority=false, avlj, 10.days.ago, avlj)
     end
 
     def create_ac_5_appeals
@@ -103,11 +103,11 @@ module Seeds
       # A non-SSC AVLJ that Has 4 in alternating order by age of BRIEFF.BFD19 (Docket Date)
 # priority cases where they held the last hearing and signed the most recent decision
 # non-priority cases where they held the last hearing and signed the most recent decision
-      avlj = User.find_by(css_id: "NONSSCAN06")
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj) #oldest
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=false, avlj, docket_date, avlj)
-      create_legacy_appeal(priority=true, avlj, docket_date, avlj) #most recent
+      avlj = user.find_by(css_id: "NONSSCAN06")
+      create_legacy_appeal(priority=false, avlj, 300.days.ago) #oldest
+      create_legacy_appeal(priority=true, avlj, 250.days.ago)
+      create_legacy_appeal(priority=false, avlj, 100.days.ago, avlj)
+      create_legacy_appeal(priority=true, avlj, 60.days.ago, avlj) #most recent
     end
 
     def create_ac_7_appeals
