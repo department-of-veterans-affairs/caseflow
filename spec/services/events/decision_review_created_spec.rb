@@ -9,9 +9,10 @@ describe Events::DecisionReviewCreated do
   let!(:json_payload) { read_json_payload }
   let!(:headers) { sample_headers }
   let!(:parser) { Events::DecisionReviewCreated::DecisionReviewCreatedParser.load_example }
+  let!(:params) { { consumer_event_id: consumer_event_id, reference_id: reference_id } }
 
   describe "#create!" do
-    subject { described_class.create!(consumer_event_id, reference_id, headers, read_json_payload) }
+    subject { described_class.create!(params, headers, read_json_payload) }
 
     context "When event is completed info field returns to default state" do
       it "event field is an empty json object" do
@@ -77,7 +78,7 @@ describe Events::DecisionReviewCreated do
         expect(Rails.logger).to receive(:error) do |message|
           expect(message).to include(standard_error.message)
         end
-        expect { described_class.create!(consumer_event_id, reference_id, headers, json_payload) }
+        expect { described_class.create!(params, headers, json_payload) }
           .to raise_error(StandardError)
       end
 

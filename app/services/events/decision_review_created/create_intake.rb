@@ -7,7 +7,12 @@ class Events::DecisionReviewCreated::CreateIntake
   # that was created in the DecisionReviewCreated Service.
 
   class << self
-    def process!(event:, user:, veteran:, parser:, decision_review:)
+    def process!(params)
+      event = params[:event]
+      user = params[:user]
+      veteran = params[:veteran]
+      parser = params[:parser]
+      decision_review = params[:decision_review]
       # create Intake
       intake = Intake.create!(veteran_file_number: veteran.file_number,
                               user: user,
