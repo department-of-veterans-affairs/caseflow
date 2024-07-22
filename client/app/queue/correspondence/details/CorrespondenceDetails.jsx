@@ -20,7 +20,7 @@ const CorrespondenceDetails = (props) => {
     {
       disable: false,
       label: 'Correspondence and Appeal Tasks',
-      page: <CorrespondenceCaseTimeline correspondence={props.correspondence} />
+      page: <CorrespondenceCaseTimeline organizations={props.organizations} userCssId={props.userCssId} correspondence={props.correspondence} />
     },
     {
       disable: false,
