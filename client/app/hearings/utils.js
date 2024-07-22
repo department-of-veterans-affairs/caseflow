@@ -405,10 +405,11 @@ export const hearingTimeOptsWithZone = (options, local) =>
     moment.tz.setDefault();
 
     const displayLocalTime = local && localTime !== time;
+
     // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      ['value']: displayLocalTime ? `${localTime}` : time,
+      value: displayLocalTime ? `${localTime}` : time,
       [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
@@ -441,7 +442,7 @@ export const timezones = (time, roTimezone) => {
     const getAmTime = time.search('AM');
     const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
-    const selectedTime = splitTimeString === -1 ? time : time.slice(0,splitTimeString + 2).trim();
+    const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
     const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
     time = selectedTime;
