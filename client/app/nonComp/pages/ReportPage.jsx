@@ -181,15 +181,20 @@ const RHFCheckboxGroup = ({ options, name }) => {
   const { errors } = useFormContext();
 
   let fieldClasses = 'checkbox';
-
   const errorMessage = get(errors, name)?.message;
+
+  if (errorMessage) {
+    fieldClasses += ' usa-input-error';
+    fieldClasses += ' less-error-padding';
+  }
+
   const errorSubMessage = 'Please select a checkbox from one of the sections below';
 
   return (
     <fieldset>
-      {errorMessage && <Alert type="error" title={errorMessage} message={errorSubMessage} />}
       {name === 'specificEventType' ?
         <div {...outerContainerStyling} className={fieldClasses}>
+          {errorMessage && <Alert type="error" title={errorMessage} message={errorSubMessage} />}
           <CheckBoxes
             header= "System"
             options={options[0].system}
@@ -207,6 +212,7 @@ const RHFCheckboxGroup = ({ options, name }) => {
           />
         </div> :
         <div {...outerContainerStyling} className={fieldClasses}>
+          {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
           <CheckBoxes
             options={options}
             name={name}
