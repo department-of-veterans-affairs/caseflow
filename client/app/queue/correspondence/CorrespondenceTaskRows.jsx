@@ -9,7 +9,7 @@ import { CancelIcon } from '../../components/icons/CancelIcon';
 import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
 import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold, sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
+import { sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
