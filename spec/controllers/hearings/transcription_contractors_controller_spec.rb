@@ -47,10 +47,10 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       test_response = { transcription_contractors:
                         [{
                           **transcription_contractor_1.as_json,
-                          transcription_count: 0
+                          transcription_count_this_week: 0
                         }, {
                           **transcription_contractor_2.as_json,
-                          transcription_count: 0
+                          transcription_count_this_week: 0
                         }] }
       expect(response.status).to eq 200
       expect(response.body).to eq test_response.to_json
@@ -59,7 +59,7 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       allow(Time.zone).to receive(:today).and_return(Time.zone.today.end_of_week.yesterday)
       seed_transcriptions
       get :index, as: :json
-      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count")
+      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count_this_week")
       expect(response.status).to eq 200
       expect(response_counts).to eq transcription_contractor_counts_this_week
     end
@@ -68,7 +68,7 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       seed_transcriptions
       allow(Time.zone).to receive(:today).and_return(Time.zone.today.next_week.end_of_week.yesterday)
       get :index, as: :json
-      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count")
+      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count_this_week")
       expect(response.status).to eq 200
       expect(response_counts).to eq transcription_contractor_counts_next_week
     end
