@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class AojAppealRepository < AppealRepository
-  class AppealNotValidToClose < StandardError; end
-  class AppealNotValidToReopen < StandardError
-    def initialize(appeal_id)
-      super("Appeal id #{appeal_id} is not valid to reopen")
-    end
-  end
 
   # :nocov:
 
