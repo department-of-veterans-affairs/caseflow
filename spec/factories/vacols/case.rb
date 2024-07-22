@@ -307,7 +307,9 @@ FactoryBot.define do
               end
             end
 
-            # judge and attorney should be the VACOLS::Staff records of those users
+            # The judge and attorney should be the VACOLS::Staff records of those users
+            # This factory uses the :aod trait to mark it AOD instead of a transient attribute
+            # Pass `tied_to: false` to create an original appeal without a previous hearing
             factory :legacy_aoj_appeal do
               transient do
                 judge { nil }
@@ -345,6 +347,8 @@ FactoryBot.define do
                   )
                 end
 
+                # Build these instead of create so the folder after_create hooks don't execute and create another case
+                # until the original case has been created and the associations saved
                 original_folder = build(
                   :folder,
                   new_case.folder.attributes.except!("ticknum", "tidrecv", "tidcls", "tiaduser",
