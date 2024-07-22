@@ -31,10 +31,10 @@ class CorrespondenceDetailsController < CorrespondenceController
       general_information: general_information,
       corres_docs: @correspondence[:correspondenceDocuments]
     }
+  end
 
   # overriding method to allow users to access the correspondence details page
   def verify_correspondence_access
     true
-
   end
 end
