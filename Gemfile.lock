@@ -67,17 +67,17 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: fed623802afe7303f4b8b5fe27cff0e903699873
-  ref: fed623802afe7303f4b8b5fe27cff0e903699873
+  revision: aa3a6f65a68523d8fd6bf887e1f66cd483bea41d
+  branch: feature/APPEALS-43121-efolder
   specs:
-    ruby_claim_evidence_api (0.0.1)
+    ruby_claim_evidence_api (0.1.0)
       activesupport
       base64
       faraday
       faraday-multipart
       httpi
       railties
-      webmock (~> 3.6.2)
+      webmock (~> 3.11.0)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
@@ -162,8 +162,8 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     acts_as_tree (2.9.0)
       activerecord (>= 3.0.0)
-    addressable (2.8.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
@@ -172,7 +172,7 @@ GEM
     anbt-sql-formatter (0.1.0)
     ast (2.4.2)
     aws-eventstream (1.3.0)
-    aws-partitions (1.934.0)
+    aws-partitions (1.948.0)
     aws-sdk (3.2.0)
       aws-sdk-resources (~> 3)
     aws-sdk-accessanalyzer (1.30.0)
@@ -1456,6 +1456,7 @@ GEM
     backport (1.2.0)
     base64 (0.2.0)
     benchmark-ips (2.7.2)
+    bigdecimal (3.1.8)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
     bourbon (4.2.7)
@@ -1463,7 +1464,7 @@ GEM
       thor (~> 0.19)
     brakeman (4.7.1)
     browser (5.3.1)
-    builder (3.2.4)
+    builder (3.3.0)
     bullet (6.0.1)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
@@ -1498,7 +1499,7 @@ GEM
     coderay (1.1.3)
     colored2 (3.1.2)
     colorize (0.8.1)
-    concurrent-ruby (1.2.2)
+    concurrent-ruby (1.3.3)
     connection_pool (2.2.3)
     cork (0.3.0)
       colored2 (~> 3.1)
@@ -1506,8 +1507,9 @@ GEM
       i18n_data (~> 0.10.0)
       sixarm_ruby_unaccent (~> 1.1)
       unicode_utils (~> 1.4)
-    crack (0.4.3)
-      safe_yaml (~> 1.0.0)
+    crack (1.0.0)
+      bigdecimal
+      rexml
     crass (1.0.6)
     d3-rails (7.8.5)
       railties (>= 3.1)
@@ -1582,7 +1584,7 @@ GEM
       dry-logic (~> 1.0, >= 1.0.2)
     ecma-re-validator (0.2.1)
       regexp_parser (~> 1.2)
-    erubi (1.12.0)
+    erubi (1.13.0)
     execjs (2.7.0)
     factory_bot (5.2.0)
       activesupport (>= 4.2.0)
@@ -1591,7 +1593,7 @@ GEM
       railties (>= 4.2.0)
     faker (2.15.1)
       i18n (>= 1.6, < 2)
-    faraday (0.15.4)
+    faraday (0.17.6)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
@@ -1637,14 +1639,14 @@ GEM
     gyoku (1.3.1)
       builder (>= 2.1.2)
     hana (1.3.6)
-    hashdiff (1.0.0)
+    hashdiff (1.1.0)
     heapy (0.1.4)
     holidays (6.6.1)
     httpclient (2.8.3)
-    httpi (2.4.4)
+    httpi (2.5.0)
       rack
       socksify
-    i18n (1.14.1)
+    i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
     icalendar (2.6.1)
@@ -1693,7 +1695,7 @@ GEM
     logstasher (2.1.5)
       activesupport (>= 5.2)
       request_store
-    loofah (2.21.3)
+    loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.0.13)
@@ -1708,17 +1710,17 @@ GEM
     meta_request (0.7.2)
       rack-contrib (>= 1.1, < 3)
       railties (>= 3.0.0, < 7)
-    method_source (1.0.0)
+    method_source (1.1.0)
     mime-types (3.3)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_mime (1.1.2)
-    minitest (5.19.0)
+    minitest (5.24.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
     msgpack (1.4.2)
-    multipart-post (2.1.1)
+    multipart-post (2.4.1)
     multiverse (0.2.2)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
@@ -1739,9 +1741,9 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.9)
     no_proxy_fix (0.1.2)
-    nokogiri (1.15.5-x86_64-darwin)
+    nokogiri (1.15.6-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.5-x86_64-linux)
+    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -1773,10 +1775,10 @@ GEM
     pry-byebug (3.9.0)
       byebug (~> 11.0)
       pry (~> 0.13.0)
-    public_suffix (4.0.6)
+    public_suffix (5.1.1)
     puma (5.6.4)
       nio4r (~> 2.0)
-    racc (1.7.3)
+    racc (1.8.0)
     rack (2.2.6.4)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -1797,7 +1799,7 @@ GEM
       bundler (>= 1.3.0)
       railties (= 6.0.6.1)
       sprockets-rails (>= 2.0.0)
-    rails-dom-testing (2.1.1)
+    rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -1928,7 +1930,6 @@ GEM
       sexp_processor (~> 4.16)
     rubyzip (1.3.0)
     safe_shell (1.1.0)
-    safe_yaml (1.0.5)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -2022,7 +2023,7 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (~> 4.0, < 4.11)
-    webmock (3.6.2)
+    webmock (3.11.3)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -2045,12 +2046,13 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.12)
+    zeitwerk (2.6.16)
     ziptz (2.1.6)
 
 PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -2061,6 +2063,7 @@ DEPENDENCIES
   amoeba
   anbt-sql-formatter
   aws-sdk
+  aws-sdk-core (= 3.131.0)
   bgs!
   bootsnap
   brakeman
@@ -2168,4 +2171,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   2.4.19
+   2.4.22

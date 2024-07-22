@@ -11,6 +11,9 @@ gem "acts_as_tree"
 # amoeba gem for cloning appeals
 gem "amoeba"
 gem "aws-sdk"
+
+gem "aws-sdk-core", "3.131.0"
+
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "a2e055b5a52bd1e2bb8c2b3b8d5820b1a404cd3d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
@@ -70,7 +73,7 @@ gem "roo", "~> 2.7"
 gem "rswag-api"
 gem "rswag-ui"
 gem "rtf"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "fed623802afe7303f4b8b5fe27cff0e903699873"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", branch: "feature/APPEALS-43121-efolder"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
