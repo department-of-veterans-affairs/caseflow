@@ -67,7 +67,7 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: aa3a6f65a68523d8fd6bf887e1f66cd483bea41d
+  revision: 78cf3d2d849c170348c133ffb0e3fcd37db408ef
   branch: feature/APPEALS-43121-efolder
   specs:
     ruby_claim_evidence_api (0.1.0)
@@ -76,6 +76,7 @@ GIT
       faraday
       faraday-multipart
       httpi
+      rack (< 3)
       railties
       webmock (~> 3.11.0)
 
@@ -1715,7 +1716,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     mini_mime (1.1.2)
-    minitest (5.24.0)
+    minitest (5.24.1)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
@@ -1862,7 +1863,8 @@ GEM
       rack (>= 1.4)
     reverse_markdown (1.4.0)
       nokogiri
-    rexml (3.2.6)
+    rexml (3.3.2)
+      strscan
     roo (2.8.2)
       nokogiri (~> 1)
       rubyzip (>= 1.2.1, < 2.0.0)
@@ -1996,6 +1998,7 @@ GEM
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
+    strscan (3.1.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     test-prof (0.10.1)
