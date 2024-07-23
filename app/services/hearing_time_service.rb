@@ -32,8 +32,7 @@ class HearingTimeService
       time = Time.parse(date_and_time_string).utc
       time -= 1.hour if Time.zone.parse(date_and_time_string).dst?
       utc_time_string = "#{time.year}-#{time.month}-#{time.day} #{time.hour}:#{time.min} UTC"
-      formatted_string = utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %I:%M %p")
-      [formatted_string, VacolsHelper::VACOLS_DEFAULT_TIMEZONE].join(" ")
+      formatted_string = utc_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE).strftime("%F %H:%M %z")
     end
 
     def time_to_string(time, hearing)
