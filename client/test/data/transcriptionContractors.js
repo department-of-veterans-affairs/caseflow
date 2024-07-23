@@ -1,7 +1,7 @@
 export const transcriptionContractors = [
   {
     created_at: '2024-07-15T11:55:12.842-04:00',
-    current_goal: 0,
+    current_goal: 150,
     deleted_at: null,
     directory: 'BVA Hearing Transcripts/Genesis Government Solutions, Inc.',
     email: 'genesisgovernmentsolutions@test.com',
@@ -12,7 +12,8 @@ export const transcriptionContractors = [
     phone: '888-888-8888',
     poc: 'John Doe',
     previous_goal: 0,
-    updated_at: '2024-07-17T11:54:10.371-04:00'
+    updated_at: '2024-07-17T11:54:10.371-04:00',
+    transcription_count_this_week: 7
   },
   {
     created_at: '2024-07-15T11:55:12.842-04:00',
@@ -27,11 +28,12 @@ export const transcriptionContractors = [
     phone: '888-888-8888',
     poc: 'Jane Doe',
     previous_goal: 0,
-    updated_at: '2024-07-17T11:54:10.371-04:00'
+    updated_at: '2024-07-17T11:54:10.371-04:00',
+    transcription_count_this_week: 0
   },
   {
     created_at: '2024-07-15T11:55:12.842-04:00',
-    current_goal: 0,
+    current_goal: 120,
     deleted_at: null,
     directory: 'BVA Hearing Transcripts/The Ravens Group, Inc.',
     email: 'theravensgroup@test.com',
@@ -42,6 +44,7 @@ export const transcriptionContractors = [
     phone: '888-888-8888',
     poc: 'Johnny Bravo',
     previous_goal: 0,
-    updated_at: '2024-07-17T11:54:10.371-04:00'
+    updated_at: '2024-07-17T11:54:10.371-04:00',
+    transcription_count_this_week: 2
   },
 ];

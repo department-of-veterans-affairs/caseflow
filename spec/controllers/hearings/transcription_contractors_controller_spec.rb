@@ -14,6 +14,26 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       ]
     }
   end
+  let(:seed_transcriptions) do
+    create(:transcription,
+           transcription_contractor: transcription_contractor_1,
+           sent_to_transcriber_date: Time.zone.today.beginning_of_week.yesterday)
+
+    create(:transcription,
+           transcription_contractor: transcription_contractor_1,
+           sent_to_transcriber_date: Time.zone.today.beginning_of_week.tomorrow)
+
+    create(:transcription,
+           transcription_contractor: transcription_contractor_1,
+           sent_to_transcriber_date: Time.zone.today.next_week)
+
+    create(:transcription,
+           transcription_contractor: transcription_contractor_2,
+           sent_to_transcriber_date: Time.zone.today.beginning_of_week.tomorrow)
+  end
+
+  let(:transcription_contractor_counts_this_week) { [2, 1] }
+  let(:transcription_contractor_counts_next_week) { [1, 0] }
 
   describe "GET index" do
     it "returns blank when requesting HTML" do
@@ -22,10 +42,35 @@ RSpec.describe Hearings::TranscriptionContractorsController, type: :controller d
       expect(response.body).to eq ""
     end
     it "returns a JSON list of contractors when requesting JSON" do
+      Transcription.all
       get :index, as: :json
-      test_response = { transcription_contractors: [transcription_contractor_1, transcription_contractor_2] }
+      test_response = { transcription_contractors:
+                        [{
+                          **transcription_contractor_1.as_json,
+                          transcription_count_this_week: 0
+                        }, {
+                          **transcription_contractor_2.as_json,
+                          transcription_count_this_week: 0
+                        }] }
       expect(response.status).to eq 200
       expect(response.body).to eq test_response.to_json
+    end
+    it "returns the correct trascription counts for each contractor for this week" do
+      allow(Time.zone).to receive(:today).and_return(Time.zone.today.end_of_week.yesterday)
+      seed_transcriptions
+      get :index, as: :json
+      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count_this_week")
+      expect(response.status).to eq 200
+      expect(response_counts).to eq transcription_contractor_counts_this_week
+    end
+    it "returns the correct trascription counts for each contractor for next week" do
+      allow(Time.zone).to receive(:today).and_return(Time.zone.today.end_of_week.yesterday)
+      seed_transcriptions
+      allow(Time.zone).to receive(:today).and_return(Time.zone.today.next_week.end_of_week.yesterday)
+      get :index, as: :json
+      response_counts = JSON.parse(response.body)["transcription_contractors"].pluck("transcription_count_this_week")
+      expect(response.status).to eq 200
+      expect(response_counts).to eq transcription_contractor_counts_next_week
     end
   end
 
