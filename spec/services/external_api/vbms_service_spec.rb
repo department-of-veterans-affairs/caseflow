@@ -78,4 +78,55 @@ describe ExternalApi::VBMSService do
       end
     end
   end
+
+  describe ".update_document_in_vbms" do
+    let(:fake_document) do
+      instance_double(
+        UpdateDocumentInVbms,
+        document_type_id: 1,
+        pdf_location: "/path/to/test/location",
+        source: "my_source",
+        document_version_reference_id: "12345"
+      )
+    end
+    let(:appeal) { create(:appeal) }
+
+    context "with use_ce_api feature toggle enabled" do
+      before { FeatureToggle.enable!(:use_ce_api) }
+      after { FeatureToggle.disable!(:use_ce_api) }
+
+      let(:mock_file_update_payload) { instance_double(ClaimEvidenceFileUpdatePayload) }
+
+      it "calls the CE API" do
+        expect(File).to receive(:read).and_return("pdf byte string")
+        expect(ClaimEvidenceFileUpdatePayload).to receive(:new).and_return(mock_file_update_payload)
+        expect(VeteranFileUpdater)
+          .to receive(:update_veteran_file)
+          .with(
+            veteran_file_number: appeal.veteran_file_number,
+            file_uuid: "12345",
+            file_update_payload: mock_file_update_payload
+          )
+
+        described.update_document_in_vbms(appeal, fake_document)
+      end
+    end
+
+    context "with use_ce_api feature toggle disabled" do
+      let(:mock_init_update_response) { double(updated_document_token: "12345") }
+
+      it "calls the SOAP API implementation" do
+        expect(FeatureToggle).to receive(:enabled?).with(:use_ce_api).and_return(false)
+        expect(described).to receive(:init_vbms_client)
+        expect(described).to receive(:initialize_update).and_return(mock_init_update_response)
+        expect(described).to receive(:update_document).with(
+          appeal.veteran_file_number,
+          "12345",
+          "/path/to/test/location"
+        )
+
+        described.update_document_in_vbms(appeal, fake_document)
+      end
+    end
+  end
 end
