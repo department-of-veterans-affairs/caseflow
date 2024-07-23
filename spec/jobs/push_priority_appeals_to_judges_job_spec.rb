@@ -68,7 +68,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :aod,
           bfkey: ready_priority_bfkey,
           bfd19: 1.year.ago,
-          bfac: "3",
+          bfac: "1",
           bfmpro: "ACT",
           bfcurloc: "81",
           bfdloout: 3.days.ago,
@@ -103,7 +103,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         vacols_case = create(
           :case,
           bfd19: 1.year.ago,
-          bfac: "3",
+          bfac: "1",
           bfmpro: "ACT",
           bfcurloc: "81",
           bfdloout: 3.days.ago,
@@ -138,7 +138,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :case,
           :aod,
           bfd19: 1.year.ago,
-          bfac: "3",
+          bfac: "1",
           bfmpro: "ACT",
           bfcurloc: "not ready",
           bfdloout: 3.days.ago,
@@ -171,7 +171,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :aod,
           bfkey: ready_priority_bfkey2,
           bfd19: 1.year.ago,
-          bfac: "3",
+          bfac: "1",
           bfmpro: "ACT",
           bfcurloc: "81",
           bfdloout: 3.days.ago,
@@ -293,7 +293,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:judges) { create_list(:user, 5, :judge, :with_vacols_judge_record) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
-      (1..5).map do |i|
+      (1..4).map do |i|
         vacols_case = create(
           :case,
           :aod,
@@ -317,8 +317,33 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         vacols_case
       end
     end
+    let!(:aoj_legacy_priority_cases) do
+      (1..4).map do |i|
+        vacols_case = create(
+          :case,
+          :aod,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: i.months.ago,
+          folder: build(
+            :folder,
+            tinum: "1801#{format('%<index>03d', index: i)}",
+            titrnum: "123456789S"
+          )
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date
+        )
+        vacols_case
+      end
+    end
     let!(:ready_priority_hearing_cases) do
-      (1..5).map do |i|
+      (1..4).map do |i|
         appeal = create(:appeal,
                         :advanced_on_docket_due_to_age,
                         :ready_for_distribution,
@@ -331,7 +356,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:ready_priority_evidence_cases) do
-      (1..5).map do |i|
+      (1..4).map do |i|
         appeal = create(:appeal,
                         :type_cavc_remand,
                         :cavc_ready_for_distribution,
@@ -344,7 +369,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
     let!(:ready_priority_direct_cases) do
-      (1..5).map do |i|
+      (1..4).map do |i|
         appeal = create(:appeal,
                         :with_post_intake_tasks,
                         :advanced_on_docket_due_to_age,
@@ -355,7 +380,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
+    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count + aoj_legacy_priority_cases.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
     before do
@@ -371,8 +396,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expect(distributed_cases.count).to eq priority_count
         expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy", "aoj_legacy"))
+        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
       end
 
       it "distributes cases to each judge based on their priority target" do
@@ -406,11 +431,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
         # Ensure we distributed all available ready cases from any docket that are not tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
+        byebug
         expect(distributed_cases.count).to eq priority_count
         expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy", "aoj_legacy"))
+        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [4]
       end
 
       it "distributes cases to each judge based on their priority target" do
