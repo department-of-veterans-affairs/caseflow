@@ -26,7 +26,8 @@ class Task < CaseflowRecord
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
-  has_one :correspondence_appeal, through: :correspondences_appeals_tasks
+  has_one :correspondences_appeals_task
+  has_one :correspondence_appeal, through: :correspondences_appeals_task
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
   validates :assigned_to, :appeal, :type, :status, presence: true
@@ -185,7 +186,7 @@ class Task < CaseflowRecord
 
     def verify_user_can_create!(user, parent)
       # guard clause to allow InboundOpsTeam members to create mail/appeal tasks within Correspondence Intake
-      return true if parent.appeal_type == Correspondence.name && InboundOpsTeam.singleton.user_has_access?(user)
+      return true if InboundOpsTeam.singleton.user_has_access?(user)
 
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
